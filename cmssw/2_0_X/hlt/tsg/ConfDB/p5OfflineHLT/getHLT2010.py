@@ -14,8 +14,10 @@ def usage():
     print "Usage:"
     print "  ", sys.argv[0], " <ConfDBPath> <out name> <file:inputfile.root> [modification script]"
     print "Note:"
-    print "   You need to modify the arguments to the modification script"
+    print "   1. You need to modify the arguments to the modification script"
     print "   if you want non default arguments"
+    print "   2. If you are using DAQ ConfDB you need to modify this script"
+    print "      (to be automated in later improvements)"
     sys.exit(1)
 
 argc = len(sys.argv)
@@ -40,11 +42,13 @@ else:
     paths     = "  "
     psets     = "  "
 
-    myGet = "edmConfigFromDB       --orcoff --format Ascii --configName " + dbName + " " + essources + " " + esmodules + " " + modules + " " + services + " " + paths + " " + psets + " --input " + inputfile + " > " + outName
+    myGet = "edmConfigFromDB       --format Ascii --configName " + dbName + " " + essources + " " + esmodules + " " + modules + " " + services + " " + paths + " " + psets + " --input " + inputfile + " > " + outName
+    # if from DAQ ConfDB
+    #myGet = "edmConfigFromDB       --orcoff --format Ascii --configName " + dbName + " " + essources + " " + esmodules + " " + modules + " " + services + " " + paths + " " + psets + " --input " + inputfile + " > " + outName
     print "command: ", myGet
     os.system(myGet)
 
-    myMod = mod + " " + outName + " my" + outName + " 2"
+    myMod = mod + " " + outName + " my" + outName + " 10"
     print "command: ", myMod
     os.system(myMod)
 
