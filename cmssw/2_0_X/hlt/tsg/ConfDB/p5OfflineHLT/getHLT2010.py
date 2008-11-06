@@ -18,6 +18,8 @@ def usage():
     print "   if you want non default arguments"
     print "   2. If you are using DAQ ConfDB you need to modify this script"
     print "      (to be automated in later improvements)"
+    print "   3. If you are running on a local root file, don't forget to"
+    print "      *prefix* 'file:' to inputfile.root"
     sys.exit(1)
 
 argc = len(sys.argv)
@@ -48,7 +50,7 @@ else:
     print "command: ", myGet
     os.system(myGet)
 
-    myMod = mod + " " + outName + " my" + outName + " 10"
+    myMod = mod + " " + outName + " my" + outName + " 1000"
     print "command: ", myMod
     os.system(myMod)
 
