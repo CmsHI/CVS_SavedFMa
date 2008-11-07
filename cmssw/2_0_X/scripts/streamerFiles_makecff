@@ -1,0 +1,24 @@
+#!/bin/bash
+#-- Setup variables --
+if [ $1 ]; then mydir=$1;
+else mydir=$(pwd);
+fi
+#echo $mydir/file
+#$ls $mydir/*.root
+n=$(ls $mydir/*.dat | wc -w)
+#echo n is $n
+
+#-- print root files for cff---
+counter=0
+echo "replace NewEventStreamFileReader.fileNames = {"
+for i in $(ls $mydir/*.dat)
+do
+   let ++counter
+   if [ $counter -ne $n ];
+   then echo "'file:$i',"
+   else echo "'file:$i'"
+   fi
+#if [ $counter -eq $n ]; then echo $counter; fi
+done
+echo "}"
+
