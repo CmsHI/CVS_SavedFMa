@@ -29,6 +29,7 @@ if argc == 1:
 dbName = sys.argv[1]
 outName = sys.argv[2]
 inputfile = sys.argv[3]
+myMod = ""
 if argc == 5:
     mod = sys.argv[4]
     myMod = mod + " " + outName + " my" + outName + " 1000"
