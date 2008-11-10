@@ -6,6 +6,6 @@ if [ $# -eq 0 ]; then
    echo usage:
    echo "   $0 <inputHLTName> <outputHLTName> [maxEvents]"
 elif [ $# -eq 3 ]; then
-   sed -e 's/untracked int32 input = -1/untracked int32 input = '$3'/' $1 > $2
+   sed -e 's/process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32( -1 ) )/process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32( '"$3"' ) )/' $1 > $2
 fi
 

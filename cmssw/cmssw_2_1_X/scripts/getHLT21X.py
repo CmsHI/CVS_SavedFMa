@@ -47,7 +47,7 @@ else:
     paths     = "  "
     psets     = "  "
 
-    myGet = "edmConfigFromDB       --format Ascii --configName " + dbName + " " + essources + " " + esmodules + " " + modules + " " + services + " " + paths + " " + psets + " --input " + inputfile + " > " + outName
+    myGet = "edmConfigFromDB       --configName " + dbName + " " + essources + " " + esmodules + " " + modules + " " + services + " " + paths + " " + psets + " --input " + inputfile + " > " + outName
     # if from DAQ ConfDB
     #myGet = "edmConfigFromDB       --orcoff --format Ascii --configName " + dbName + " " + essources + " " + esmodules + " " + modules + " " + services + " " + paths + " " + psets + " --input " + inputfile + " > " + outName
     print "getHLT command: ", myGet
