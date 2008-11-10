@@ -8,7 +8,7 @@ import fileinput
 
 def usage():
     print sys.argv[0]
-    print "   A script to get 20X (2_0_10+) p5 timing cfg's from ConfDB and"
+    print "   A script to get 21X ~ HLT Dev cfg's from ConfDB and"
     print "   modify it with appropriate options and scripts to "
     print "   make it cmsRun out of box"
     print "Usage:"
@@ -29,7 +29,9 @@ if argc == 1:
 dbName = sys.argv[1]
 outName = sys.argv[2]
 inputfile = sys.argv[3]
-mod = sys.argv[4]
+if argc == 5:
+    mod = sys.argv[4]
+    myMod = mod + " " + outName + " my" + outName + " 1000"
 
 if os.path.exists(outName):
     print outName, "already exists - abort!"
@@ -47,10 +49,9 @@ else:
     myGet = "edmConfigFromDB       --format Ascii --configName " + dbName + " " + essources + " " + esmodules + " " + modules + " " + services + " " + paths + " " + psets + " --input " + inputfile + " > " + outName
     # if from DAQ ConfDB
     #myGet = "edmConfigFromDB       --orcoff --format Ascii --configName " + dbName + " " + essources + " " + esmodules + " " + modules + " " + services + " " + paths + " " + psets + " --input " + inputfile + " > " + outName
-    print "command: ", myGet
+    print "getHLT command: ", myGet
     os.system(myGet)
 
-    myMod = mod + " " + outName + " my" + outName + " 1000"
-    print "command: ", myMod
+    print "modification command: ", myMod
     os.system(myMod)
 
