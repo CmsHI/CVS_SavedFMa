@@ -47,10 +47,16 @@ else:
     paths     = "  "
     psets     = "  "
 
-    myGet = "edmConfigFromDB       --configName " + dbName + " " + essources + " " + esmodules + " " + modules + " " + services + " " + paths + " " + psets + " --input " + inputfile + " > " + outName
+    # Define commands
+    myGet = "edmConfigFromDB       --configName " + dbName + " " + essources + " " + esmodules + " " + modules + " " + services + " " + paths + " " + psets + " --input " + inputfile + " >> " + outName
     # if from DAQ ConfDB
     #myGet = "edmConfigFromDB       --orcoff --format Ascii --configName " + dbName + " " + essources + " " + esmodules + " " + modules + " " + services + " " + paths + " " + psets + " --input " + inputfile + " > " + outName
+    printmyGet= "echo '#" + myGet + "' > " + outName
+
+    # Output
     print "getHLT command: ", myGet
+    #print "printmyGet: ", printmyGet
+    os.system(printmyGet)
     os.system(myGet)
 
     print "modification command: ", myMod
