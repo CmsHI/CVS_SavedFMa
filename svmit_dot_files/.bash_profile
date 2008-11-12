@@ -27,7 +27,6 @@ export mit=~/mit
 #export cur_proj=$scratch/cmssw/CMSSW_2_1_9/src
 # for playback for HLT in 21X:
 export cur_proj=$scratch/cmssw/CMSSW_2_1_11/src
-export SavedFMa=$HOME/UserCode/SavedFMa
 
 #--------------------------------Universal------------------------------------
 . $HOME/UserCode/SavedFMa/univ_dot_files/.bash_univ
