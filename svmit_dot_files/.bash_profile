@@ -30,25 +30,5 @@ export cur_proj=$scratch/cmssw/CMSSW_2_1_11/src
 export SavedFMa=$HOME/UserCode/SavedFMa
 
 #--------------------------------Universal------------------------------------
-#---setup private environment variables---
-export PATH=$PATH:$HOME/bin
+. $HOME/UserCode/SavedFMa/univ_dot_files/.bash_univ
 
-#---My paths---
-export cfg=$cmsswwork/cfg
-export projects=$mit/research/projects
-export tier2=$projects/tier2
-export NAGIOS=$tier2/t2_svn/nagios
-export NAGIOS_PLUGINS=$tier2/t2_svn/trunk/packages/nagios/root/usr/lib64/nagios/plugins
-export data=$scratch/data
-export tsg=$cur_proj/hlt/tsg
-export playback=$cur_proj/EventFilter/AutoBU/playback
-# 21X working cvs
-export cvsWorking=$SavedFMa/cmssw/cmssw_2_1_X
-
-#---My shortcuts---
-alias ema='emacs -nw'
-alias xterm='xterm -fg green -bg black'
-
-#---fixes---
-#--backspace key--
-stty erase ^?
