@@ -8,20 +8,11 @@ if [ -f /etc/bashrc ]; then
 fi
 
 #---setup environment variables---
-#--mine--
-export PATH=$PATH:$HOME/bin
 #--root--
 #source /opt/bin/sh/setroot.sh 5-14-00
 #--hiroot--
 #source /opt/bin/sh/sethirootpath.sh ~/hiroot
 #. /opt/bin/sh/sethiroot.sh  
-#--CMSSW--
-#SL3
-#slc3_ia32_gcc323, source /net/hisrv0001/app/cmsprod/cms/setup/bashrc
-#SL4
-#export SCRAM_ARCH=slc4_ia32_gcc345
-#source /app/cms-sl4/cmsset_default.sh
-#source /app/cms-soft/cmsset_default.sh
 #--editor--
 #export EDITOR=emacs
 #---My top Paths---
@@ -39,6 +30,9 @@ export cur_proj=$scratch/cmssw/CMSSW_2_1_11/src
 export SavedFMa=$HOME/UserCode/SavedFMa
 
 #--------------------------------Universal------------------------------------
+#---setup private environment variables---
+export PATH=$PATH:$HOME/bin
+
 #---My paths---
 export cfg=$cmsswwork/cfg
 export projects=$mit/research/projects
