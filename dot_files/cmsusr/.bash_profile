@@ -15,7 +15,9 @@ export cmsswarea=$work/cmssw
 # for playback in 20X
 #export cur_pro=$cmsswarea/CMSSW_2_0_10/src
 # for playback in 21X
-export cur_proj=$cmsswarea/CMSSW_2_1_11/src
+#export cur_proj=$cmsswarea/CMSSW_2_1_11/src
+# for playback in privated modified 21X
+export cur_proj=$cmsswarea/modCMSSW_2_1_11/src
 
 #---Shortcuts----
 alias newfuval1_17='ssh -Y fuval-C2A11-17'
