@@ -191,7 +191,7 @@ my @PBproperties = ("parameterSet","string","file:$pwd/cfg/playback.cfg",
 
 my @RBproperties = ("runNumber",   "unsignedInt",$runNumber,
 		    "buClassName", "string",     $BUappname,
-		    "doCrcCheck",  "unsignedInt","1",
+		    "doCrcCheck",  "unsignedInt","0",
 		    "processKillerEnabled","boolean","true",
 		    "useEvmBoard","boolean","false",
 		    "monSleepSec", "unsignedInt","30",
