@@ -166,7 +166,6 @@ FUResourceBroker::FUResourceBroker(xdaq::ApplicationStub *s)
 
   // set application icon for hyperdaq
   getApplicationDescriptor()->setAttribute("icon", "/evf/images/rbicon.jpg");
-  FUResource::useEvmBoard_ = useEvmBoard_;
 }
 
 
@@ -197,6 +196,7 @@ bool FUResourceBroker::configuring(toolbox::task::WorkLoop* wl)
 				       dqmCellSize_.value_,
 				       bu_,sm_,
 				       log_);
+    FUResource::useEvmBoard_ = useEvmBoard_;
     FUResource::doFedIdCheck(doFedIdCheck_);
     resourceTable_->setDoCrcCheck(doCrcCheck_);
     resourceTable_->setDoDumpEvents(doDumpEvents_);
