@@ -179,6 +179,9 @@ my @BUproperties = ("runNumber","unsignedInt",$runNumber,
 		    "replay","boolean","false",
 		    "queueSize","unsignedInt","32",
 		    "crc","boolean","true",
+		    "deltaT","double","60.0",
+		    "deltaN","unsignedInt","1000",
+		    "monSleepSec","unsignedInt","20",
 		    "eventBufferSize","unsignedInt","0x400000");
 
     
