@@ -202,7 +202,8 @@ my @RBproperties = ("runNumber",   "unsignedInt",$runNumber,
 if (!$doEP) { push (@RPproperties,"doDropEvents","boolean","true"); }
 
 my @EPproperties = ("parameterSet",  "string",      "file:$EPcfg",
-		    "runNumber",     "unsignedInt", $runNumber);
+		    "runNumber",     "unsignedInt", $runNumber,
+		    "hasPrescaleService","boolean","false");
 
 if (!$doSM) { push (@EPproperties,"outputEnabled","boolean","false"); }
 
