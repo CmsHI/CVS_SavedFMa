@@ -314,7 +314,7 @@ if ($doSM) {
     print CTL makeCtlCommand("Configure",$SMappname,"SM",$hostname,$SMport,1);
 }
 if ($doPB) {
-    print CTL makeCtlCommand("Configure",$EPappname,"PB",$hostname,$BUport,10);
+    print CTL makeCtlCommand("Configure",$EPappname,"PB",$hostname,$BUport,40);
     print CTL makeCtlCommand("Enable",   $EPappname,"PB",$hostname,$BUport,5);
 }
 print CTL makeCtlCommand("Configure",$BUappname,"BU",$hostname,$BUport,0);
