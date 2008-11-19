@@ -25,7 +25,7 @@ using namespace std;
 
 namespace test{
 
-  static const unsigned int GTEVMId= 812;
+  static const unsigned int GTEVMId= 813;
   class GlobalNumbersAnalysis: public EDAnalyzer{
   private:
   public:
@@ -43,16 +43,10 @@ namespace test{
 
       if (size>0 ) {
 	  cout << "FED# " << setw(4) << GTEVMId << " " << setw(8) << size << " bytes " << endl;
-	  if(evf::evtn::evm_board_sense(data.data()))
+	  if(evf::evtn::daq_board_sense(data.data()))
 	    {
-	      cout << "FED# " << setw(4) << GTEVMId << " is the real GT EVM block " << endl;
-	      cout << "Event # " << evf::evtn::get(data.data(),true) << endl;
-	      cout << "LS # " << evf::evtn::getlbn(data.data()) << endl;
-	      cout << "ORBIT # " << evf::evtn::getorbit(data.data()) << endl;
-	      cout << "GPS LOW # " << evf::evtn::getgpslow(data.data()) << endl;
-	      cout << "GPS HI # " << evf::evtn::getgpshigh(data.data()) << endl;
-	      cout << "BX FROM FDL 0-xing # " << evf::evtn::getfdlbx(data.data()) << endl;
-	      cout << "PRESCALE INDEX FROM FDL 0-xing # " << evf::evtn::getfdlpsc(data.data()) << endl;
+	      cout << "FED# " << setw(4) << GTEVMId << " is the real GT DAQ block " << endl;
+	      cout << "Event # " << evf::evtn::get(data.data(),false) << endl;
 	    }
 	  }
 
