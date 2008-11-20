@@ -663,10 +663,41 @@ void FUResource::findFEDs() throw (evf::Exception)
     //if gtp EVM block is available set cell event number to global partition-independent trigger number
     //daq block partition-independent event number is left as an option in case of problems
 
+    // The following block is used to read information from the fed header
+    // It is part of the loop on FED's
+
+    // useEvmBoard_ is the boolean used to determine which Gt FED to use to to reassemble
+    // the event info from Gt 
+
+    // frankma: forces useEvmBoard false
+    useEvmBoard_ = false;
+    
+    // frankma added: printout of the function that is used to read the evtn from Gt FED 813
+    if(fedId == gtpEvmId_) {
+	LOG4CPLUS_INFO(log_,"--frankma gtpEvm_info: " << "useEvmBoard_: " << useEvmBoard_ );
+	LOG4CPLUS_INFO(log_,"--frankma gtpEvm_info: " << "fedId: " << fedId );
+	LOG4CPLUS_INFO(log_,"--frankma gtpEvm_info: " << "evf::evtn::evm_board_sense(fedHeaderAddr): " << evf::evtn::evm_board_sense(fedHeaderAddr) );
+	LOG4CPLUS_INFO(log_,"--frankma gtpEvmId: " << evf::evtn::get(fedHeaderAddr, true) );
+      }
+    if(fedId == gtpDaqId_) {
+	LOG4CPLUS_INFO(log_,"--frankma gtpDaq_info: " << "useEvmBoard_: " << useEvmBoard_ );
+	LOG4CPLUS_INFO(log_,"--frankma gtpDaq_info: " << "fedId: " << fedId );
+	LOG4CPLUS_INFO(log_,"--frankma gtpDaq_info: " << "evf::evtn::daq_board_sense(fedHeaderAddr): " << evf::evtn::daq_board_sense(fedHeaderAddr) );
+	LOG4CPLUS_INFO(log_,"--frankma gtpDaq: " << evf::evtn::get(fedHeaderAddr, false) );
+      }
+
+    // The original setEvtNumber block
     if(useEvmBoard_ && (fedId == gtpEvmId_))
-      if(evf::evtn::evm_board_sense(fedHeaderAddr)) shmCell_->setEvtNumber(evf::evtn::get(fedHeaderAddr, true));
+      if(evf::evtn::evm_board_sense(fedHeaderAddr)) {
+	  shmCell_->setEvtNumber(evf::evtn::get(fedHeaderAddr, true));
+	  LOG4CPLUS_INFO(log_,"--frankma set evtn: gtpEvmId: " << evf::evtn::get(fedHeaderAddr, true) );
+      }
     if(!useEvmBoard_ && (fedId == gtpDaqId_))
-      if(evf::evtn::daq_board_sense(fedHeaderAddr)) shmCell_->setEvtNumber(evf::evtn::get(fedHeaderAddr, false));
+      if(evf::evtn::daq_board_sense(fedHeaderAddr)) {
+	  shmCell_->setEvtNumber(evf::evtn::get(fedHeaderAddr, false));
+	  LOG4CPLUS_INFO(log_,"--frankma set evtn: gtpDaq: " << evf::evtn::get(fedHeaderAddr, false) );
+      }
+
     // crc check
     if (doCrcCheck_) {
       UInt_t conscheck=fedTrailer->conscheck;
