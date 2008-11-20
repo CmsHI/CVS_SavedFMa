@@ -577,6 +577,10 @@ bool FUResourceBroker::watching(toolbox::task::WorkLoop* wl)
     UInt_t evt   =evt_numbers[i];
     time_t tstamp=evt_tstamps[i]; if (tstamp==0) continue;
     double tdiff =difftime(tcurr,tstamp);
+
+    // frankma added output
+    LOG4CPLUS_INFO(log_,"--frankma: event read from ShM cells: evt "<<evt<<"   prc "<<pid);
+
     if (tdiff>timeOutSec_) {
       if(processKillerEnabled_)	{
 	LOG4CPLUS_ERROR(log_,"evt "<<evt<<" timed out, "<<"kill prc "<<pid);
