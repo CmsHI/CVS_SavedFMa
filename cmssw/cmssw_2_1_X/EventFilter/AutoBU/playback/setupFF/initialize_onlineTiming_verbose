@@ -513,9 +513,9 @@ sub makeCfgFu
     $result = $result . "  service = MessageLogger {\n";
     $result = $result . "    untracked vstring destinations = { \"cout\" }\n";
     $result = $result . "    untracked PSet    cout         = " .
-	                "{ untracked string threshold = \"WARNING\" }\n";
+	                "{ untracked string threshold = \"INFO\" }\n";
     $result = $result . "    untracked PSet    log4cplus    = " .
-	                "{ untracked string threshold = \"WARNING\" }\n";
+	                "{ untracked string threshold = \"INFO\" }\n";
     $result = $result . "  }\n\n";
 
     $result = $result . "  service = PrescaleService {\n";
@@ -646,8 +646,8 @@ sub makeCfgPlayback
     $result = $result . "  service = MessageLogger\n";
     $result = $result . "  {\n";
     $result = $result . "    untracked vstring destinations = { \"cout\" }\n";
-    $result = $result . "    untracked PSet    cout         = { untracked string threshold = \"FATAL\" }\n";
-    $result = $result . "    untracked PSet    log4cplus    = { untracked string threshold = \"WARNING\" }\n";
+    $result = $result . "    untracked PSet    cout         = { untracked string threshold = \"INFO\" }\n";
+    $result = $result . "    untracked PSet    log4cplus    = { untracked string threshold = \"INFO\" }\n";
     $result = $result . "  }\n\n";
     $result = $result . "  // modules\n\n";
     $result = $result . "  module playback = PlaybackRawDataProvider\n";
