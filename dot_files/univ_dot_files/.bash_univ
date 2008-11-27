@@ -21,6 +21,9 @@ export cvsWorking=$SavedFMa/cmssw/cmssw_2_1_X
 alias ema='emacs -nw'
 alias xterm='xterm -fg green -bg black'
 
+#---env variables
+export CVSEDITOR='emacs -nw'
+
 #---fixes---
 #--backspace key--
 stty erase ^?
