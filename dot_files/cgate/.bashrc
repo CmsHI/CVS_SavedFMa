@@ -25,9 +25,8 @@ alias t1='ssh -Y t2srv0001'
 alias t8='ssh -Y t2srv0008'
 alias daily='vi tier2/report/daily_operation/2008_daily_report.txt'
 
-#---fixes---
-#--backspace key--
-stty erase ^?
+#--------------------------------Universal------------------------------------
+. $HOME/UserCode/SavedFMa/dot_files/univ_dot_files/.bash_univ
 
 #---old---
 #---setup environment variables---
