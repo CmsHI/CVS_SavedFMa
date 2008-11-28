@@ -12,8 +12,13 @@ fi
 export mit=$HOME/mit
 export cmsswarea=$HOME/cmssw
 #--Working projects--
+# first practice with Yetkin
+#export cur_pro=$cmsswarea/CMSSW_2_0_0_pre6/src
+# production for the quick gen level dN/dpt
+#export cur_pro=$cmsswarea/CMSSW_2_1_4/src
 # for genJet
 export cur_pro=$cmsswarea/CMSSW_2_1_11/src
+export l1skim=$cmsswarea/CMSSW_2_1_7/src
 
 #---Shortcuts---
 #alias ana='cd $project/614; source INIT' // for 8.882 cdf
@@ -23,6 +28,7 @@ export cur_pro=$cmsswarea/CMSSW_2_1_11/src
 alias t9='ssh -Y t2srv0009'
 alias t1='ssh -Y t2srv0001'
 alias t8='ssh -Y t2srv0008'
+alias hibat='ssh -Y hibat0003'
 alias daily='vi tier2/report/daily_operation/2008_daily_report.txt'
 
 #--------------------------------Universal------------------------------------
