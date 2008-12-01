@@ -11,14 +11,18 @@ fi
 #---My top paths---
 export mit=$HOME/mit
 export cmsswarea=$HOME/cmssw
-#--Working projects--
+#===Working projects===
 # first practice with Yetkin
 #export cur_pro=$cmsswarea/CMSSW_2_0_0_pre6/src
+#--2_1_X--
 # production for the quick gen level dN/dpt
 #export cur_pro=$cmsswarea/CMSSW_2_1_4/src
 # for genJet
 export cur_pro=$cmsswarea/CMSSW_2_1_11/src
-export l1skim=$cmsswarea/CMSSW_2_1_7/src
+# for L1-skim
+export l1skim_area=$cmsswarea/CMSSW_2_1_7/src
+# for HLT validation
+export hlt_area=$cmsswarea/hltCMSSW_2_1_11/src
 
 #---Shortcuts---
 #alias ana='cd $project/614; source INIT' // for 8.882 cdf
