@@ -11,6 +11,7 @@ fi
 #---My top paths---
 export mit=$HOME/mit
 export cmsswarea=$HOME/cmssw
+export scratch=/net/pstore01/d00/scratch/frankma
 #===Working projects===
 # first practice with Yetkin
 #export cur_pro=$cmsswarea/CMSSW_2_0_0_pre6/src
