@@ -21,7 +21,7 @@ export results=$scratch/results
 export cmsswwork=$scratch/cmssw
 export lxp=/afs/cern.ch/user/f/frankma/public
 export mit=~/mit
-# for production for HLT online validation in 20X:
+# for production as well as playback setup for HLT online validation in 20X:
 #export cur_proj=$cmsswwork/CMSSW_2_0_11/src
 # for production for HLT online validation in 21X:
 #export cur_proj=$cmsswwork/CMSSW_2_1_9/src
