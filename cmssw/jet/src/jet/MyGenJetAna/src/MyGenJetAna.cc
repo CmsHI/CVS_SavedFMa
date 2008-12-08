@@ -42,6 +42,9 @@
 // genjetana include files
 #include <vector>
 #include <DataFormats/JetReco/interface/GenJet.h>
+#include "SimDataFormats/HepMCProduct/interface/HepMCProduct.h"
+
+#include "HepMC/GenEvent.h"
 
 // root include files
 #include "TFile.h"
@@ -69,13 +72,12 @@ class MyGenJetAna : public edm::EDAnalyzer {
 
       // -------------- methods -----------------------
       int fillJetTree(edm::Handle<std::vector<reco::GenJet> > jetvec, TNtuple * nt);
+      int fillGenPartlTree(edm::Handle<edm::HepMCProduct> mc, TNtuple * nt);
 
    private:
       virtual void beginJob(const edm::EventSetup&) ;
       virtual void analyze(const edm::Event&, const edm::EventSetup&);
       virtual void endJob() ;
-
-      // ----------member data ---------------------------
 };
 
 //
@@ -138,6 +140,16 @@ int MyGenJetAna::fillJetTree(edm::Handle<std::vector<reco::GenJet> > jetvec, TNt
    return 0;
 }
 
+int fillGenPartlsTree(edm::Handle<edm::HepMCProduct> mc, TNtuple * nt)
+{
+   const HepMC::GenEvent* evt;
+   evt = mc->GetEvent();
+   int genPartlN = evt->particles_size();
+   cout << "Number of Generated particles: " << genPartlN << endl;
+
+   return 0;
+}
+
 // ------------ method called to for each event  ------------
 void
 MyGenJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
@@ -169,6 +181,12 @@ MyGenJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    iEvent.getByLabel("iterativeCone5HiGenJets", higenjetVec);
    cout << endl << "===GenJet ran on sub event===" << endl;
    fillJetTree(higenjetVec, ntHiGenJets);
+
+   // The generated particles (via HepMC format)
+   Handle<HepMCProduct> mc;
+   iEvent.getByLabel("source", mc);
+   cout << endl << "===Gen Particles===" << endl;
+   fillGenPartlsTree(mc,ntGenPartls);
 }
 
 
