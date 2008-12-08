@@ -30,9 +30,23 @@
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
+// Data formats
+//#include <FastSimulation/CaloGeometryTools/interface/Transform3DPJ.h>
+//#include <DataFormats/JetReco/interface/GenJet.h>
+//#include <DataFormats/JetReco/interface/Jet.h>
+//#include "DataFormats/Common/interface/BoolCache.h"
+//#include "DataFormats/Math/interface/Point3D.h"
+//#include "DataFormats/Math/interface/Vector3D.h"
+//#include "DataFormats/Math/interface/LorentzVector.h"
+
 // genjetana include files
 #include <vector>
 #include <DataFormats/JetReco/interface/GenJet.h>
+
+// root include files
+#include "TFile.h"
+#include "TNtuple.h"
+//#include "TMath.h"
 
 using namespace std;
 
@@ -45,6 +59,12 @@ class MyGenJetAna : public edm::EDAnalyzer {
       explicit MyGenJetAna(const edm::ParameterSet&);
       ~MyGenJetAna();
 
+      // -------------- Define root ntuples -------------
+      TNtuple * ntGenPartls;
+      TNtuple * ntHiGenJets;
+
+      // -------------- Define output file -------------
+      TFile * tf;
 
    private:
       virtual void beginJob(const edm::EventSetup&) ;
@@ -139,6 +159,13 @@ MyGenJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    for (ihigenjet = higenjetVec->begin(); ihigenjet != higenjetVec->end(); ++ihigenjet) {
       cout << "higenjet " << hict << endl;
       cout << (*ihigenjet).print() << endl;
+      float pt = (*ihigenjet).pt();
+//      double pz = (*ihigenjet).pz(); somehow needs some ROOT::Math lib?
+      double pz = -100;
+      float eta = (*ihigenjet).eta();
+      float phi = (*ihigenjet).phi();
+      cout << "pt: " << pt << " pz: " << pz << " eta: " << eta <<  " phi: " << phi << endl;
+      ntHiGenJets->Fill(pt,pz,eta,phi);
       ++hict;
    }
 }
@@ -148,11 +175,19 @@ MyGenJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 void 
 MyGenJetAna::beginJob(const edm::EventSetup&)
 {
+   // dynamically allocate memory for the tfile and ntuples.
+   tf = new TFile("GenAna.root","RECREATE");
+   ntGenPartls = new TNtuple("GenParticles","Generated particles","pt:pz:eta:phi");
+   ntHiGenJets = new TNtuple("GenJets","Generator level iCone jets","pt:pz:eta:phi");
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void 
 MyGenJetAna::endJob() {
+   tf->cd();
+   ntGenPartls->Write();
+   ntHiGenJets->Write();
+   tf->Close();
 }
 
 //define this as a plug-in
