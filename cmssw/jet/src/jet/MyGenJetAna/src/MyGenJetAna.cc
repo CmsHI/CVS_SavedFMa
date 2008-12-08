@@ -61,10 +61,14 @@ class MyGenJetAna : public edm::EDAnalyzer {
 
       // -------------- Define root ntuples -------------
       TNtuple * ntGenPartls;
+      TNtuple * ntFullEvtGenJets;
       TNtuple * ntHiGenJets;
 
       // -------------- Define output file -------------
       TFile * tf;
+
+      // -------------- methods -----------------------
+      int fillJetTree(edm::Handle<std::vector<reco::GenJet> > jetvec, TNtuple * nt);
 
    private:
       virtual void beginJob(const edm::EventSetup&) ;
@@ -106,6 +110,34 @@ MyGenJetAna::~MyGenJetAna()
 // member functions
 //
 
+int MyGenJetAna::fillJetTree(edm::Handle<std::vector<reco::GenJet> > jetvec, TNtuple * nt)
+{
+   int genjetN = jetvec->size();
+   printf("total number of gen jets in collection: %d\n", genjetN);
+
+   // jet variables
+   int ct=0;
+   vector<reco::GenJet>::const_iterator igenjet;
+   for (igenjet = jetvec->begin(); igenjet != jetvec->end(); ++igenjet) {
+      cout << "genjet " << ct << endl;
+      cout << "had energy: " << (*igenjet).hadEnergy() << endl;
+      //-- Constituents --
+      //  wait for now b/c not yet implemented for the subevent jets 
+      //std::vector <const GenParticle*> mcparts = (*igenjet).getGenConstituents ();
+      //cout << (*igenjet).print() << endl;
+
+      float pt = (*igenjet).pt();
+//      double pz = (*igenjet).pz(); somehow needs some ROOT::Math lib?
+      double pz = -100;
+      float eta = (*igenjet).eta();
+      float phi = (*igenjet).phi();
+      cout << "pt: " << pt << " pz: " << pz << " eta: " << eta <<  " phi: " << phi << endl;
+      nt->Fill(pt,pz,eta,phi);
+      ++ct;
+   }
+   return 0;
+}
+
 // ------------ method called to for each event  ------------
 void
 MyGenJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
@@ -129,45 +161,14 @@ MyGenJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    // first for the original (all subevents) genJet collection
    Handle< vector<reco::GenJet> > genjetVec;
    iEvent.getByLabel("iterativeCone5GenJets", genjetVec);
-
-   int genjetN = genjetVec->size();
-   printf("total number of standard gen jets: %d\n", genjetN);
-
-   // jet variables
-   int ct=0;
-   vector<reco::GenJet>::const_iterator igenjet;
-   for (igenjet = genjetVec->begin(); igenjet != genjetVec->end(); ++igenjet) {
-      cout << "genjet " << ct << endl;
-      cout << "had energy: " << (*igenjet).hadEnergy() << endl;
-      //-- Constituents --
-      //  wait for now b/c not yet implemented for the subevent jets 
-      //std::vector <const GenParticle*> mcparts = (*igenjet).getGenConstituents ();
-      //cout << (*igenjet).print() << endl;
-      ++ct;
-   }
-
+   cout << "===GenJet ran on full event===" << endl;
+   fillJetTree(genjetVec, ntFullEvtGenJets);
+   
    // now for Yetkin's genJets
    Handle< vector<reco::GenJet> > higenjetVec;
    iEvent.getByLabel("iterativeCone5HiGenJets", higenjetVec);
-
-   int higenjetN = higenjetVec->size();
-   printf("total number of subevent gen jets: %d\n", higenjetN);
-
-   // jet variables
-   int hict=0;
-   vector<reco::GenJet>::const_iterator ihigenjet;
-   for (ihigenjet = higenjetVec->begin(); ihigenjet != higenjetVec->end(); ++ihigenjet) {
-      cout << "higenjet " << hict << endl;
-      cout << (*ihigenjet).print() << endl;
-      float pt = (*ihigenjet).pt();
-//      double pz = (*ihigenjet).pz(); somehow needs some ROOT::Math lib?
-      double pz = -100;
-      float eta = (*ihigenjet).eta();
-      float phi = (*ihigenjet).phi();
-      cout << "pt: " << pt << " pz: " << pz << " eta: " << eta <<  " phi: " << phi << endl;
-      ntHiGenJets->Fill(pt,pz,eta,phi);
-      ++hict;
-   }
+   cout << endl << "===GenJet ran on sub event===" << endl;
+   fillJetTree(higenjetVec, ntHiGenJets);
 }
 
 
@@ -178,7 +179,8 @@ MyGenJetAna::beginJob(const edm::EventSetup&)
    // dynamically allocate memory for the tfile and ntuples.
    tf = new TFile("GenAna.root","RECREATE");
    ntGenPartls = new TNtuple("GenParticles","Generated particles","pt:pz:eta:phi");
-   ntHiGenJets = new TNtuple("GenJets","Generator level iCone jets","pt:pz:eta:phi");
+   ntFullEvtGenJets = new TNtuple("FEGenJets","Generator level iCone jets on full event","pt:pz:eta:phi");
+   ntHiGenJets = new TNtuple("SEGenJets","Generator level iCone jets on subevents","pt:pz:eta:phi");
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
@@ -186,6 +188,7 @@ void
 MyGenJetAna::endJob() {
    tf->cd();
    ntGenPartls->Write();
+   ntFullEvtGenJets->Write();
    ntHiGenJets->Write();
    tf->Close();
 }
