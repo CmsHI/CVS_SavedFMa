@@ -3,6 +3,7 @@
 <use name=FWCore/ParameterSet>
 <use name=hepmc>
 <use name=SimDataFormats/HepMCProduct>
+<use name=SimGeneral/HepPDTRecord>
 <flags EDM_PLUGIN=1>
 <export>
    <lib name=jetMyGenJetAna>
