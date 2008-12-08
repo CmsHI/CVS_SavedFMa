@@ -72,12 +72,14 @@ class MyGenJetAna : public edm::EDAnalyzer {
 
       // -------------- methods -----------------------
       int fillJetTree(edm::Handle<std::vector<reco::GenJet> > jetvec, TNtuple * nt);
-      int fillGenPartlTree(edm::Handle<edm::HepMCProduct> mc, TNtuple * nt);
+      int fillGenPartlsTree(edm::Handle<edm::HepMCProduct> mc, TNtuple * nt);
 
    private:
       virtual void beginJob(const edm::EventSetup&) ;
       virtual void analyze(const edm::Event&, const edm::EventSetup&);
       virtual void endJob() ;
+
+      // ----------member data ---------------------------
 };
 
 //
@@ -140,13 +142,24 @@ int MyGenJetAna::fillJetTree(edm::Handle<std::vector<reco::GenJet> > jetvec, TNt
    return 0;
 }
 
-int fillGenPartlsTree(edm::Handle<edm::HepMCProduct> mc, TNtuple * nt)
+int MyGenJetAna::fillGenPartlsTree(edm::Handle<edm::HepMCProduct> mc, TNtuple * nt)
 {
    const HepMC::GenEvent* evt;
    evt = mc->GetEvent();
    int genPartlN = evt->particles_size();
    cout << "Number of Generated particles: " << genPartlN << endl;
 
+   HepMC::GenEvent::particle_const_iterator ip;
+   for (ip = evt->particles_begin(); ip!=evt->particles_end(); ++ip) {
+      if ((*ip)->status() == 1) {
+	 int pdg_id = (*ip)->pdg_id();
+	 float pt = (*ip)->momentum().perp();
+	 float pz = (*ip)->momentum().pz();
+	 float eta = (*ip)->momentum().eta();
+	 float phi = (*ip)->momentum().phi();
+	 nt->Fill(pt,pz,eta,phi);
+      }
+   }
    return 0;
 }
 
