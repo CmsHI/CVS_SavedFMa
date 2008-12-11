@@ -5,7 +5,7 @@
 # with command line options: Configuration/GenProduction/python/PYTHIA6_MinBias_10TeV_cff.py --filein=file:/net/pstore01/d00/scratch/frankma/data/cmssw/217/sim_skim/minbiasSummer08_IDEAL_V9_v1_SIM.root -s DIGI,L1 --datatier=DIGI --conditions=FrontierConditions_GlobalTag,IDEAL_V9::All -n 10 --no_exec
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process('L1')
+process = cms.Process('L1SKIM')
 
 # import of standard configurations
 process.load('Configuration/StandardSequences/Services_cff')
@@ -22,7 +22,7 @@ process.load('FWCore/MessageService/MessageLogger_cfi')
 
 # L1 configuration
 process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.L1Menu2008_2E30_Unprescaled_cff')
-#process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.L1Menu2008_2E30_PrescaleFactorsAlgoTrig_cff')
+process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.myL1Menu2008_2E30_PrescaleFactorsAlgoTrig_cff')
 
 # L1Extra needed by l1 skim filter
 process.load('L1Trigger/L1ExtraFromDigis/l1extraParticles_cfi')
@@ -42,7 +42,7 @@ process.l1filter = l1GtSeedFilter.hltLevel1GTSeed
 process.l1filter.L1GtReadoutRecordTag = cms.InputTag("simGtDigis")
 process.l1filter.L1GtObjectMapTag = cms.InputTag("simGtDigis")
 process.l1filter.L1SeedsLogicalExpression = \
-   'L1_DoubleEG1 OR L1_MinBias_HTT10'
+   'L1_DoubleEG1 OR L1_MinBias_HTT10 OR L1_ZeroBias'
 
 process.configurationMetadata = cms.untracked.PSet(
     version = cms.untracked.string('$Revision: 1.77 $'),
@@ -58,7 +58,10 @@ process.options = cms.untracked.PSet(
 )
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:/net/pstore01/d00/scratch/frankma/data/cmssw/217/sim_skim/minbiasSummer08_IDEAL_V9_v1_SIM.root')
+    fileNames = cms.untracked.vstring(
+       #'file:/net/pstore01/d00/scratch/frankma/data/cmssw/217/sim_skim/minbiasSummer08_IDEAL_V9_v1_SIM.root'
+       'dcache:/pnfs/cmsaf.mit.edu/t2bat/cms/store/mc/Summer08/MinBias/GEN-SIM-RAW/IDEAL_V9_v1/0029/00C2D656-7282-DD11-AC51-001C23C0F1F9.root'
+    )
 )
 
 # Output definition
