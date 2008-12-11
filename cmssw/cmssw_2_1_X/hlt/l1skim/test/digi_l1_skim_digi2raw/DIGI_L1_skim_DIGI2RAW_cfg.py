@@ -24,6 +24,19 @@ process.load('FWCore/MessageService/MessageLogger_cfi')
 process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.L1Menu2008_2E30_Unprescaled_cff')
 #process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.L1Menu2008_2E30_PrescaleFactorsAlgoTrig_cff')
 
+# L1Extra needed by l1 skim filter
+process.load('L1Trigger/L1ExtraFromDigis/l1extraParticles_cfi')
+process.l1extraParticles.muonSource = cms.InputTag("simGmtDigis")
+process.l1extraParticles.etTotalSource = cms.InputTag("simGctDigis")
+process.l1extraParticles.nonIsolatedEmSource = cms.InputTag("simGctDigis","nonIsoEm")
+process.l1extraParticles.etMissSource = cms.InputTag("simGctDigis")
+process.l1extraParticles.forwardJetSource = cms.InputTag("simGctDigis","forJets")
+process.l1extraParticles.centralJetSource = cms.InputTag("simGctDigis","cenJets")
+process.l1extraParticles.tauJetSource = cms.InputTag("simGctDigis","tauJets")
+process.l1extraParticles.isolatedEmSource = cms.InputTag("simGctDigis","isoEm")
+process.l1extraParticles.etHadSource = cms.InputTag("simGctDigis")
+
+
 process.configurationMetadata = cms.untracked.PSet(
     version = cms.untracked.string('$Revision: 1.77 $'),
     annotation = cms.untracked.string('Configuration/GenProduction/python/PYTHIA6_MinBias_10TeV_cff.py nevts:10'),
@@ -44,7 +57,7 @@ process.source = cms.Source("PoolSource",
 # Output definition
 process.output = cms.OutputModule("PoolOutputModule",
     outputCommands = process.FEVTDEBUGEventContent.outputCommands,
-    fileName = cms.untracked.string('PYTHIA6_MinBias_10TeV_cff_py_DIGI_L1.root'),
+    fileName = cms.untracked.string('DIGI_L1_L1Extra.root'),
     dataset = cms.untracked.PSet(
         dataTier = cms.untracked.string('DIGI'),
         filterName = cms.untracked.string('')
@@ -63,8 +76,9 @@ process.l1GtTrigReport.L1GtRecordInputTag = "simGtDigis"
 # Path and EndPath definitions
 process.digitisation_step = cms.Path(process.pdigi)
 process.L1simulation_step = cms.Path(process.SimL1Emulator)
+process.L1skim = cms.Path(process.l1extraParticles)
 process.report = cms.EndPath(process.l1GtTrigReport)
 process.out_step = cms.EndPath(process.output)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_step,process.report,process.out_step)
+process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_step,process.L1skim,process.report,process.out_step)
