@@ -36,6 +36,13 @@ process.l1extraParticles.tauJetSource = cms.InputTag("simGctDigis","tauJets")
 process.l1extraParticles.isolatedEmSource = cms.InputTag("simGctDigis","isoEm")
 process.l1extraParticles.etHadSource = cms.InputTag("simGctDigis")
 
+# L1 skim using HLTLevell1GTSeed filter
+import HLTrigger.HLTfilters.hltLevel1GTSeed_cfi as l1GtSeedFilter
+process.l1filter = l1GtSeedFilter.hltLevel1GTSeed
+process.l1filter.L1GtReadoutRecordTag = cms.InputTag("simGtDigis")
+process.l1filter.L1GtObjectMapTag = cms.InputTag("simGtDigis")
+process.l1filter.L1SeedsLogicalExpression = \
+   'L1_DoubleEG1 OR L1_MinBias_HTT10'
 
 process.configurationMetadata = cms.untracked.PSet(
     version = cms.untracked.string('$Revision: 1.77 $'),
@@ -57,7 +64,13 @@ process.source = cms.Source("PoolSource",
 # Output definition
 process.output = cms.OutputModule("PoolOutputModule",
     outputCommands = process.FEVTDEBUGEventContent.outputCommands,
-    fileName = cms.untracked.string('DIGI_L1_L1Extra.root'),
+    fileName = cms.untracked.string('DIGI_L1_L1Extra_skim.root'),
+    # Select on the events that passed path L1skim
+    SelectEvents = cms.untracked.PSet(
+       SelectEvents = cms.vstring(
+	  "L1skim"
+	  )
+    ),
     dataset = cms.untracked.PSet(
         dataTier = cms.untracked.string('DIGI'),
         filterName = cms.untracked.string('')
@@ -76,7 +89,7 @@ process.l1GtTrigReport.L1GtRecordInputTag = "simGtDigis"
 # Path and EndPath definitions
 process.digitisation_step = cms.Path(process.pdigi)
 process.L1simulation_step = cms.Path(process.SimL1Emulator)
-process.L1skim = cms.Path(process.l1extraParticles)
+process.L1skim = cms.Path(process.l1extraParticles*process.l1filter)
 process.report = cms.EndPath(process.l1GtTrigReport)
 process.out_step = cms.EndPath(process.output)
 
