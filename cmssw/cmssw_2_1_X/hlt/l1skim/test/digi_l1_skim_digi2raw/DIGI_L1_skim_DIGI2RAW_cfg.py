@@ -44,6 +44,10 @@ process.l1filter.L1GtObjectMapTag = cms.InputTag("simGtDigis")
 process.l1filter.L1SeedsLogicalExpression = \
    'L1_DoubleEG1 OR L1_MinBias_HTT10 OR L1_ZeroBias'
 
+# Digi to Raw
+process.load('Configuration/StandardSequences/DigiToRaw_cff')
+process.rawDataCollector.currentProcessOnly = True
+
 process.configurationMetadata = cms.untracked.PSet(
     version = cms.untracked.string('$Revision: 1.77 $'),
     annotation = cms.untracked.string('Configuration/GenProduction/python/PYTHIA6_MinBias_10TeV_cff.py nevts:10'),
@@ -66,12 +70,13 @@ process.source = cms.Source("PoolSource",
 
 # Output definition
 process.output = cms.OutputModule("PoolOutputModule",
-    outputCommands = process.FEVTDEBUGEventContent.outputCommands,
+    #outputCommands = process.FEVTDEBUGEventContent.outputCommands,
+    outputCommands = cms.untracked.vstring( 'keep *'),
     fileName = cms.untracked.string('DIGI_L1_L1Extra_skim.root'),
-    # Select on the events that passed path L1skim
+    # Select on the events that passed path L1skim_digi2raw_step
     SelectEvents = cms.untracked.PSet(
        SelectEvents = cms.vstring(
-	  "L1skim"
+	  "L1skim_digi2raw_step"
 	  )
     ),
     dataset = cms.untracked.PSet(
@@ -92,9 +97,9 @@ process.l1GtTrigReport.L1GtRecordInputTag = "simGtDigis"
 # Path and EndPath definitions
 process.digitisation_step = cms.Path(process.pdigi)
 process.L1simulation_step = cms.Path(process.SimL1Emulator)
-process.L1skim = cms.Path(process.l1extraParticles*process.l1filter)
+process.L1skim_digi2raw_step = cms.Path(process.l1extraParticles*process.l1filter*process.DigiToRaw)
 process.report = cms.EndPath(process.l1GtTrigReport)
 process.out_step = cms.EndPath(process.output)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_step,process.L1skim,process.report,process.out_step)
+process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_step,process.L1skim_digi2raw_step,process.report,process.out_step)
