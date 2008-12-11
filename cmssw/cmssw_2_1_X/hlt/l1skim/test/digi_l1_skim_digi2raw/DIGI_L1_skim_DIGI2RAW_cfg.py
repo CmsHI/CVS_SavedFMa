@@ -9,15 +9,20 @@ process = cms.Process('L1')
 
 # import of standard configurations
 process.load('Configuration/StandardSequences/Services_cff')
-process.load('FWCore/MessageService/MessageLogger_cfi')
 process.load('Configuration/StandardSequences/MixingNoPileUp_cff')
 process.load('Configuration/StandardSequences/GeometryPilot2_cff')
 process.load('Configuration/StandardSequences/MagneticField_38T_cff')
 process.load('Configuration/StandardSequences/Digi_cff')
 process.load('Configuration/StandardSequences/SimL1Emulator_cff')
-process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.L1Menu2008_2E30_Unprescaled_cff')
 process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
 process.load('Configuration/EventContent/EventContent_cff')
+
+# Message Logger
+process.load('FWCore/MessageService/MessageLogger_cfi')
+
+# L1 configuration
+process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.L1Menu2008_2E30_Unprescaled_cff')
+#process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.L1Menu2008_2E30_PrescaleFactorsAlgoTrig_cff')
 
 process.configurationMetadata = cms.untracked.PSet(
     version = cms.untracked.string('$Revision: 1.77 $'),
@@ -28,7 +33,8 @@ process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(10)
 )
 process.options = cms.untracked.PSet(
-    Rethrow = cms.untracked.vstring('ProductNotFound')
+    Rethrow = cms.untracked.vstring('ProductNotFound'),
+    wantSummary = cms.untracked.bool(True)
 )
 # Input source
 process.source = cms.Source("PoolSource",
@@ -50,10 +56,15 @@ process.output = cms.OutputModule("PoolOutputModule",
 # Other statements
 process.GlobalTag.globaltag = 'IDEAL_V9::All'
 
+# L1 Gt trigger report
+process.load("L1Trigger.GlobalTriggerAnalyzer.l1GtTrigReport_cfi")
+process.l1GtTrigReport.L1GtRecordInputTag = "simGtDigis"
+
 # Path and EndPath definitions
 process.digitisation_step = cms.Path(process.pdigi)
 process.L1simulation_step = cms.Path(process.SimL1Emulator)
+process.report = cms.EndPath(process.l1GtTrigReport)
 process.out_step = cms.EndPath(process.output)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_step,process.out_step)
+process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_step,process.report,process.out_step)
