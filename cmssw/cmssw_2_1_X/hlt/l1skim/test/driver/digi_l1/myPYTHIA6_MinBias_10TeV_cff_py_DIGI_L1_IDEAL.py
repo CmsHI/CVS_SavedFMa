@@ -25,10 +25,11 @@ process.configurationMetadata = cms.untracked.PSet(
     name = cms.untracked.string('PyReleaseValidation')
 )
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(10)
+    input = cms.untracked.int32(100)
 )
 process.options = cms.untracked.PSet(
-    Rethrow = cms.untracked.vstring('ProductNotFound')
+    Rethrow = cms.untracked.vstring('ProductNotFound'),
+    wantSummary = cms.untracked.bool(True)
 )
 # Input source
 process.source = cms.Source("PoolSource",
@@ -50,10 +51,14 @@ process.output = cms.OutputModule("PoolOutputModule",
 # Other statements
 process.GlobalTag.globaltag = 'IDEAL_V9::All'
 
+# L1 Gt trigger report
+process.load("L1Trigger.GlobalTriggerAnalyzer.l1GtTrigReport_cfi")
+process.l1GtTrigReport.L1GtRecordInputTag = "simGtDigis"
+
 # Path and EndPath definitions
 process.digitisation_step = cms.Path(process.pdigi)
 process.L1simulation_step = cms.Path(process.SimL1Emulator)
-process.out_step = cms.EndPath(process.output)
+process.out_step = cms.EndPath(process.l1GtTrigReport+process.output)
 
 # Schedule definition
 process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_step,process.out_step)
