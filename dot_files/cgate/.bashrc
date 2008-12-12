@@ -34,7 +34,8 @@ export hlt_area=$cmsswarea/hltCMSSW_2_1_11/src
 alias t9='ssh -Y t2srv0009'
 alias t1='ssh -Y t2srv0001'
 alias t8='ssh -Y t2srv0008'
-alias hibat='ssh -Y hibat0003'
+alias hibat3='ssh -Y hibat0003'
+alias hibat4='ssh -Y hibat0004'
 alias daily='vi tier2/report/daily_operation/2008_daily_report.txt'
 
 #--------------------------------Universal------------------------------------
