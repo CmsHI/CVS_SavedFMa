@@ -1,5 +1,4 @@
 #!/bin/bash
-echo $#
 if [ $# -eq 0 ]; then
    echo "$0 usage:"
    echo "   $0 <cfg_file_that_uses_L1_seeds>"
