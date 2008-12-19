@@ -49,7 +49,7 @@ process.load('Configuration/StandardSequences/DigiToRaw_cff')
 process.rawDataCollector.currentProcessOnly = True
 
 process.configurationMetadata = cms.untracked.PSet(
-    version = cms.untracked.string('$Revision: 1.6 $'),
+    version = cms.untracked.string('$Revision: 1.1 $'),
     annotation = cms.untracked.string('Configuration/GenProduction/python/PYTHIA6_MinBias_10TeV_cff.py nevts:10'),
     name = cms.untracked.string('PyReleaseValidation')
 )
@@ -67,6 +67,10 @@ process.source = cms.Source("PoolSource",
        'dcache:/pnfs/cmsaf.mit.edu/t2bat/cms/store/mc/Summer08/MinBias/GEN-SIM-RAW/IDEAL_V9_v1/0029/00C2D656-7282-DD11-AC51-001C23C0F1F9.root'
     )
 )
+#print process.source.fileNames
+import IDEAL_V9_v1_files
+process.source.fileNames = IDEAL_V9_v1_files.fileNames
+#print process.source.fileNames
 
 # Output definition
 process.output = cms.OutputModule("PoolOutputModule",
@@ -84,6 +88,11 @@ process.output = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     )
 )
+process.output.outputCommands = [
+   'drop *',
+   'keep *_rawDataCollector_*_L1SKIM'
+]
+#print process.output.outputCommands
 
 # Additional output definition
 
