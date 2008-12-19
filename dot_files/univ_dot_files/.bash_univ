@@ -3,7 +3,7 @@
 export PATH=$PATH:$HOME/bin
 
 #---My paths---
-export cfg=$cmsswwork/cfg
+export cfg=$cmsswarea/cfg
 export projects=$mit/research/projects
 export tier2=$projects/tier2
 export NAGIOS=$tier2/t2_svn/nagios
