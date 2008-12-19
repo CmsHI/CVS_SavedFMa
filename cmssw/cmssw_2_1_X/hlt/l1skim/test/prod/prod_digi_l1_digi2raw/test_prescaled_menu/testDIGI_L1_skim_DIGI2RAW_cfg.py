@@ -21,8 +21,9 @@ process.load('Configuration/EventContent/EventContent_cff')
 process.load('FWCore/MessageService/MessageLogger_cfi')
 
 # L1 configuration
-process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.L1Menu2008_2E30_Unprescaled_cff')
-process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.myL1Menu2008_2E30_PrescaleFactorsAlgoTrig_cff')
+#process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.L1Menu2008_2E30_Unprescaled_cff')
+#process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.myL1Menu2008_2E30_PrescaleFactorsAlgoTrig_cff')
+process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/lumi1030.L1MenuTsg21X_3E30_PrescaleFactorsAlgoTrig_cff')
 
 # L1Extra needed by l1 skim filter
 process.load('L1Trigger/L1ExtraFromDigis/l1extraParticles_cfi')
@@ -42,14 +43,14 @@ process.l1filter = l1GtSeedFilter.hltLevel1GTSeed
 process.l1filter.L1GtReadoutRecordTag = cms.InputTag("simGtDigis")
 process.l1filter.L1GtObjectMapTag = cms.InputTag("simGtDigis")
 process.l1filter.L1SeedsLogicalExpression = \
-   'L1_DoubleEG1 OR L1_MinBias_HTT10 OR L1_ZeroBias'
+   'L1_SingleJet15 OR L1_SingleJet30 OR L1_SingleJet50 OR L1_SingleJet70 OR L1_IsoEG10_Jet15_ForJet10 OR L1_SingleJet150  OR L1_DoubleJet70 OR L1_TripleJet50 OR L1_QuadJet15 OR L1_QuadJet30 OR L1_ETT60 OR L1_ETM20 OR L1_ETM30 OR L1_ETM40 OR L1_ETM50 OR L1_HTT300 OR L1_SingleIsoEG12 OR L1_SingleEG15 OR L1_SingleEG12 OR L1_SingleEG8 OR L1_SingleEG10 OR L1_DoubleIsoEG8 OR L1_DoubleEG10 OR L1_DoubleEG5 OR L1_ExclusiveDoubleIsoEG6 OR L1_SingleMu7 OR L1_DoubleMu3 OR L1_SingleMuOpen  OR L1_SingleMu3 OR L1_SingleMu5 OR L1_SingleMu10 OR L1_DoubleJet100  OR L1_SingleJet100  OR L1_Mu5_Jet15 OR L1_HTT200 OR L1_SingleTauJet80 OR L1_TauJet30_ETM30 OR L1_DoubleTauJet40 OR L1_DoubleTauJet20 OR L1_Mu3_IsoEG5 OR L1_Mu3_EG12 OR L1_IsoEG10_TauJet20 OR L1_IsoEG10_Jet20 OR L1_IsoEG10_Jet30 OR L1_EG5_TripleJet15 OR L1_Mu5_TauJet20 OR L1_Mu5_Jet15 OR L1_Mu3_TripleJet15 OR L1_ZeroBias OR L1_MinBias_HTT10 OR L1_SingleJetCountsHFTow  OR L1_DoubleJetCountsHFTow  OR L1_SingleJetCountsHFRing0Sum3 OR L1_DoubleJetCountsHFRing0Sum3  OR L1_SingleJetCountsHFRing0Sum6  OR L1_DoubleJetCountsHFRing0Sum6 OR L1_SingleEG2  OR L1_DoubleEG1 OR L1_SingleMuBeamHalo OR L1_SingleTauJet30  OR L1_SingleTauJet40  OR L1_SingleTauJet60 OR L1_SingleIsoEG5  OR L1_SingleIsoEG8  OR L1_SingleIsoEG10 OR L1_SingleIsoEG15  OR L1_SingleIsoEG20  OR L1_SingleIsoEG25  OR L1_SingleEG5  OR L1_SingleEG20  OR L1_SingleEG25'
 
 # Digi to Raw
 process.load('Configuration/StandardSequences/DigiToRaw_cff')
 process.rawDataCollector.currentProcessOnly = True
 
 process.configurationMetadata = cms.untracked.PSet(
-    version = cms.untracked.string('$Revision: 1.1 $'),
+    version = cms.untracked.string('$Revision: 1.6 $'),
     annotation = cms.untracked.string('Configuration/GenProduction/python/PYTHIA6_MinBias_10TeV_cff.py nevts:10'),
     name = cms.untracked.string('PyReleaseValidation')
 )
@@ -68,7 +69,7 @@ process.source = cms.Source("PoolSource",
     )
 )
 #print process.source.fileNames
-import IDEAL_V9_v1_files
+import hlt.l1skim.IDEAL_V9_v1_files as IDEAL_V9_v1_files
 process.source.fileNames = IDEAL_V9_v1_files.fileNames
 #print process.source.fileNames
 
