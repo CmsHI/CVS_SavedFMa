@@ -19,8 +19,10 @@ export scratch=/net/pstore01/d00/scratch/frankma
 # production for the quick gen level dN/dpt
 #export cur_pro=$cmsswarea/CMSSW_2_1_4/src
 # for 1st genJet test with producer copied from Yektin's dir:
-# ~yetkin/cmsJet/src
-export jet_area=$cmsswarea/CMSSW_2_1_11/src
+# first jet area, directly copied from ~yetkin/cmsJet/src
+#export jet_area=$cmsswarea/CMSSW_2_1_11/src
+# jet area setting up from cvs
+export jet_area=$cmsswarea/jetCMSSW_2_1_11/src
 # for L1-skim
 export l1skim_area=$cmsswarea/CMSSW_2_1_7/src
 # for HLT validation
