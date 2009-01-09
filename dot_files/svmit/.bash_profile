@@ -29,6 +29,8 @@ export mit=~/mit
 #export cur_proj=$cmsswwork/CMSSW_2_1_11/src
 # for playback for HLT in privately modified 21X:
 export cur_proj=$cmsswwork/modCMSSW_2_1_11/src
+# for l1 skim in 21X:
+export l1skim_area=$cmsswwork/l1skimCMSSW_2_1_7/src
 
 
 #--------------------------------Universal------------------------------------
