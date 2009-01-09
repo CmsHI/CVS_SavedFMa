@@ -12,7 +12,7 @@ def usage():
     print "   modify it with appropriate options and scripts to "
     print "   make it cmsRun out of box"
     print "Usage:"
-    print "  ", sys.argv[0], " <ConfDBPath> <out name> <file:inputfile.root> [modification script]"
+    print "  ", sys.argv[0], " <ConfDBPath> <out name> <file:inputfile.root> [modification script] [# of events to run]"
     print "Note:"
     print "   1. You need to modify the arguments to the modification script"
     print "   if you want non default arguments"
@@ -30,9 +30,12 @@ dbName = sys.argv[1]
 outName = sys.argv[2]
 inputfile = sys.argv[3]
 myMod = ""
-if argc == 5:
+if argc >= 5:
     mod = sys.argv[4]
-    myMod = mod + " " + outName + " my" + outName + " 1000"
+    nevt = 1000
+    if argc == 6:
+       nevt = sys.argv[5]
+    myMod = mod + " " + outName + " my" + outName + " " + nevt
 
 if os.path.exists(outName):
     print outName, "already exists - abort!"
