@@ -50,12 +50,12 @@ process.load('Configuration/StandardSequences/DigiToRaw_cff')
 process.rawDataCollector.currentProcessOnly = True
 
 process.configurationMetadata = cms.untracked.PSet(
-    version = cms.untracked.string('$Revision: 1.3 $'),
+    version = cms.untracked.string('$Revision: 1.6 $'),
     annotation = cms.untracked.string('Configuration/GenProduction/python/PYTHIA6_MinBias_10TeV_cff.py nevts:10'),
     name = cms.untracked.string('PyReleaseValidation')
 )
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(10)
+    input = cms.untracked.int32(1000)
 )
 process.options = cms.untracked.PSet(
     Rethrow = cms.untracked.vstring('ProductNotFound'),
@@ -69,15 +69,15 @@ process.source = cms.Source("PoolSource",
     )
 )
 #print process.source.fileNames
-import hlt.l1skim.IDEAL_V9_v1_files as IDEAL_V9_v1_files
-process.source.fileNames = IDEAL_V9_v1_files.fileNames
-#print process.source.fileNames
+import hlt.l1skim.STARTUP_V5_files as STARTUP_V5_files
+process.source.fileNames = STARTUP_V5_files.fileNames
+print process.source.fileNames[:2]
 
 # Output definition
 process.output = cms.OutputModule("PoolOutputModule",
     #outputCommands = process.FEVTDEBUGEventContent.outputCommands,
     outputCommands = cms.untracked.vstring( 'keep *'),
-    fileName = cms.untracked.string('DIGI_L1_L1Extra_skim.root'),
+    fileName = cms.untracked.string('Summer08_MinBias_STARTUPV5_L1skimmed_Raw.root'),
     # Select on the events that passed path L1skim_digi2raw_step
     SelectEvents = cms.untracked.PSet(
        SelectEvents = cms.vstring(
@@ -85,7 +85,7 @@ process.output = cms.OutputModule("PoolOutputModule",
 	  )
     ),
     dataset = cms.untracked.PSet(
-        dataTier = cms.untracked.string('DIGI'),
+        dataTier = cms.untracked.string('RAW'),
         filterName = cms.untracked.string('')
     )
 )
@@ -93,12 +93,12 @@ process.output.outputCommands = [
    'drop *',
    'keep *_rawDataCollector_*_L1SKIM'
 ]
-#print process.output.outputCommands
+print "process.output.outputCommands: ", process.output.outputCommands
 
 # Additional output definition
 
 # Other statements
-process.GlobalTag.globaltag = 'IDEAL_V9::All'
+process.GlobalTag.globaltag = 'STARTUP_V5::All'
 
 # L1 Gt trigger report
 process.load("L1Trigger.GlobalTriggerAnalyzer.l1GtTrigReport_cfi")
