@@ -11,7 +11,7 @@ export NAGIOS_PLUGINS=$tier2/t2_svn/trunk/packages/nagios/root/usr/lib64/nagios/
 export data=$scratch/data
 export tsg=$cur_proj/hlt/tsg
 export confDB=$tsg/ConfDB
-export playback=$cur_proj/EventFilter/AutoBU/playback
+#export playback=$cur_proj/EventFilter/AutoBU/playback
 #--cvs--
 export SavedFMa=$HOME/UserCode/SavedFMa
 # 21X working cvs
