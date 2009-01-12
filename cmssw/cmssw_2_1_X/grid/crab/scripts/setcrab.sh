@@ -16,7 +16,7 @@ voms-proxy-init -valid 720:00
 
 # Now setup CMSSW
 source $HOME/bin/basic/cmssw_set_basic.sh
-cd $l1skim_area
+#cd $l1skim_area
 cmsenv
 
 # 2. Source the crab env variables
