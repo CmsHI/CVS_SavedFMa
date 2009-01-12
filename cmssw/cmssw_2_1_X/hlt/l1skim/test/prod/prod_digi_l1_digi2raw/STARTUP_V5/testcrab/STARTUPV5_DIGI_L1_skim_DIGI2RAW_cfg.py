@@ -65,13 +65,14 @@ process.options = cms.untracked.PSet(
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
        #'file:/net/pstore01/d00/scratch/frankma/data/cmssw/217/sim_skim/minbiasSummer08_IDEAL_V9_v1_SIM.root'
-       'dcache:/pnfs/cmsaf.mit.edu/t2bat/cms/store/mc/Summer08/MinBias/GEN-SIM-RAW/IDEAL_V9_v1/0029/00C2D656-7282-DD11-AC51-001C23C0F1F9.root'
+       #'dcache:/pnfs/cmsaf.mit.edu/t2bat/cms/store/mc/Summer08/MinBias/GEN-SIM-RAW/IDEAL_V9_v1/0029/00C2D656-7282-DD11-AC51-001C23C0F1F9.root'
+       'file:/export/04a/frankma/data/217/basic_extractor/minbiasSummer08_STARTUP_V5.root'
     )
 )
 #print process.source.fileNames
-import hlt.l1skim.STARTUP_V5_files as STARTUP_V5_files
-process.source.fileNames = STARTUP_V5_files.fileNames
-print process.source.fileNames[:2]
+#import hlt.l1skim.STARTUP_V5_files as STARTUP_V5_files
+#process.source.fileNames = STARTUP_V5_files.fileNames
+#print process.source.fileNames[:2]
 
 # Output definition
 process.output = cms.OutputModule("PoolOutputModule",
