@@ -57,6 +57,16 @@ process.GlobalTag.globaltag = 'IDEAL_V9::All'
 process.load("L1Trigger.GlobalTriggerAnalyzer.l1GtTrigReport_cfi")
 process.l1GtTrigReport.L1GtRecordInputTag = cms.InputTag('simGtDigis','','L1')
 
+# Restore Random seed
+if hasattr(process, "RandomNumberGeneratorService"):
+    del process.RandomNumberGeneratorService.theSource
+else:
+    process.load("IOMC/RandomEngine/IOMC_cff")
+    del process.RandomNumberGeneratorService.theSource
+
+process.RandomNumberGeneratorService.restoreStateLabel = cms.untracked.string("randomEngineStateProducer")
+process.mix.playback = True
+
 # Path and EndPath definitions
 process.digitisation_step = cms.Path(process.pdigi)
 process.L1simulation_step = cms.Path(process.SimL1Emulator)
