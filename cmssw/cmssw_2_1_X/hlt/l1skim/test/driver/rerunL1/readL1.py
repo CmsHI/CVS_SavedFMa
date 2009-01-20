@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.77 
 # Source: /cvs_server/repositories/CMSSW/CMSSW/Configuration/PyReleaseValidation/python/ConfigBuilder.py,v 
-# with command line options: Configuration/GenProduction/python/PYTHIA6_MinBias_10TeV_cff.py --filein=file:/net/pstore01/d00/scratch/frankma/data/cmssw/217/sim_skim/minbiasSummer08_IDEAL_V9_v1_SIM.root -s DIGI,L1 --datatier=DIGI --conditions=FrontierConditions_GlobalTag,IDEAL_V9::All -n 100 --no_exec
+# with command line options: Configuration/GenProduction/python/PYTHIA6_MinBias_10TeV_cff.py --filein=file:/net/pstore01/d00/scratch/frankma/data/cmssw/217/sim_skim/minbiasSummer08_IDEAL_V9_v1_SIM.root -s DIGI,L1 --datatier=DIGI --conditions=FrontierConditions_GlobalTag,IDEAL_V9::All -n 10 --no_exec
 import FWCore.ParameterSet.Config as cms
 
 process = cms.Process('L1')
@@ -21,19 +21,22 @@ process.load('Configuration/EventContent/EventContent_cff')
 
 process.configurationMetadata = cms.untracked.PSet(
     version = cms.untracked.string('$Revision: 1.77 $'),
-    annotation = cms.untracked.string('Configuration/GenProduction/python/PYTHIA6_MinBias_10TeV_cff.py nevts:100'),
+    annotation = cms.untracked.string('Configuration/GenProduction/python/PYTHIA6_MinBias_10TeV_cff.py nevts:10'),
     name = cms.untracked.string('PyReleaseValidation')
 )
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(100)
 )
 process.options = cms.untracked.PSet(
-    Rethrow = cms.untracked.vstring('ProductNotFound')
+    Rethrow = cms.untracked.vstring('ProductNotFound'),
+    wantSummary = cms.untracked.bool(True)
 )
 # Input source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring('file:/net/pstore01/d00/scratch/frankma/data/cmssw/217/sim_skim/minbiasSummer08_IDEAL_V9_v1_SIM.root')
 )
+#process.source.fileNames = ["file:testL1HLTAllPath.root"]
+process.source.fileNames = ["rfio:/castor/cern.ch/user/f/frankma/data/cmssw/217/driver/genhlt/PYTHIA6_MinBias_10TeV_cff_GEN_SIM_DIGI_L1_DIGI2RAW_HLT.root"]
 
 # Output definition
 process.output = cms.OutputModule("PoolOutputModule",
@@ -50,10 +53,16 @@ process.output = cms.OutputModule("PoolOutputModule",
 # Other statements
 process.GlobalTag.globaltag = 'IDEAL_V9::All'
 
+# L1 Gt trigger report
+process.load("L1Trigger.GlobalTriggerAnalyzer.l1GtTrigReport_cfi")
+#process.l1GtTrigReport.L1GtRecordInputTag = cms.InputTag('simGtDigis','','L1')
+process.l1GtTrigReport.L1GtRecordInputTag = cms.InputTag('hltGtDigis','','HLT')
+
 # Path and EndPath definitions
 process.digitisation_step = cms.Path(process.pdigi)
 process.L1simulation_step = cms.Path(process.SimL1Emulator)
-process.out_step = cms.EndPath(process.output)
+process.out_step = cms.EndPath(process.l1GtTrigReport+process.output)
+process.report = cms.EndPath(process.l1GtTrigReport)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_step,process.out_step)
+process.schedule = cms.Schedule(process.report)
