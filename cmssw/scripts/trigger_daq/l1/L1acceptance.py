@@ -50,12 +50,13 @@ for l in l1:
    if i == 0:
       nTotalPrev = nTotalCur
       print "L1 menu: ", l1[i][colMenu]
-      print "  total L1 accepted event: ", nTotalCur
+      print "  total L1 input (from ", l1[i][colName], "): ", nTotalCur
       print
    # test nPas + nRej is consistent with the total (calculated from previous line)
    else:
       if nTotalCur != nTotalPrev:
-	 print "Problem: ", l1[i][colName], " has inconsistent total L1 input number"
+	 print "Problem: "
+	 print "   ", l1[i][colName], " has inconsistent total L1 input number with", l1[i-1][colName]
 	 sys.exit(2)
 
    # Calculate pass rate
