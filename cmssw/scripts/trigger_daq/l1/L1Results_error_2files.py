@@ -43,7 +43,7 @@ for line2 in open(file2).xreadlines():
 
 #print l1
 #print l2
-if len(l1) == len(l2):
+if l1[0][colMenu] == l2[0][colMenu] and len(l1) == len(l2):
    i=0
    for l in l1:
       #print "i:", i
@@ -56,5 +56,7 @@ if len(l1) == len(l2):
 	 print l1[i][colName].ljust(30), " ",str((x1-x2)/x1).rjust(20)
       i+=1
 else:
-   print "list lengths don't match: ", len(l1), " and ", len(l2)
+   print "Stop: Comparing different menus. Possible causes:"
+   print "   1. Menu names are different"
+   print "   2. # of L1 trigger bits don't match: ", len(l1), " and ", len(l2)
 
