@@ -1,4 +1,7 @@
 #! /usr/bin/python
+#
+# Note: only use for python 2.4+, to use the decimal module
+#
 
 import sys
 #from decimal import *
