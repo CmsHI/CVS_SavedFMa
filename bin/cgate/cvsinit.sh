@@ -1,5 +1,5 @@
 #!/bin/bash
-source ~/bin/basic/cmssw_set_basic.sh
+source $SavedFMa/bin/cgate/basic/cmssw_set_basic.sh
 #project CMSSW
 #kinit -4 frankma@CERN.CH
 kinit frankma@CERN.CH
