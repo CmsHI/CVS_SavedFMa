@@ -1,5 +1,5 @@
 #!/bin/bash
-source ~/bin/basic/cmssw_set_basic.sh
+setcms
 project CMSSW
 kinit -4 frankma@CERN.CH
 # p5 has not yet moved to Kerberos V
