@@ -31,16 +31,24 @@ export l1skim_area=$cmsswarea/CMSSW_2_1_7/src
 export hlt_area=$cmsswarea/hltCMSSW_2_1_11/src
 
 #---Shortcuts---
+#-- 8.882 class --
 #alias ana='cd $project/614; source INIT' // for 8.882 cdf
 #alias ana='cd $project/cms; source INIT;cd ../root/hgg'
+#-- IPMI project --
 #alias ipmitool='sudo ipmitool'
 #alias bmcutil='sudo bmcutil'
+#-- T2_MIT machines--
 alias t9='ssh -Y t2srv0009'
 alias t1='ssh -Y t2srv0001'
 alias t8='ssh -Y t2srv0008'
+alias hibat2='ssh -Y hibat0002'
 alias hibat3='ssh -Y hibat0003'
 alias hibat4='ssh -Y hibat0004'
+alias hibat5='ssh -Y hibat0005'
+#-- T2 report--
 alias daily='vi tier2/report/daily_operation/2008_daily_report.txt'
+#-- my CMSSW local settings --
+alias setcms=". $HOME/bin/basic/cmssw_set_basic.sh"
 
 #--------------------------------Universal------------------------------------
 . $HOME/UserCode/SavedFMa/dot_files/univ_dot_files/.bash_univ
