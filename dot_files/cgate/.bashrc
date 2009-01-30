@@ -7,6 +7,9 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
+#--------------------------------Universal------------------------------------
+. $HOME/UserCode/SavedFMa/dot_files/univ_dot_files/.bash_univ
+
 #--------------------------------cmsusr bash env------------------------------------
 #---My top paths---
 export mit=$HOME/mit
@@ -48,23 +51,14 @@ alias hibat5='ssh -Y hibat0005'
 #-- T2 report--
 alias daily='vi tier2/report/daily_operation/2008_daily_report.txt'
 #-- my CMSSW local settings --
-alias setcms=". $HOME/bin/basic/cmssw_set_basic.sh"
+alias setcms=". $SavedFMa/bin/cgate/basic/cmssw_set_basic.sh"
+alias cvscms=". $SavedFMa/bin/cgate/cvsinit.sh"
 
-#--------------------------------Universal------------------------------------
-. $HOME/UserCode/SavedFMa/dot_files/univ_dot_files/.bash_univ
-
-#---old---
+#------------------- Old --------------------------
 #---setup environment variables---
 #--root--
 #source /opt/bin/sh/setroot.sh 5-14-00
 #--hiroot--
 #source /opt/bin/sh/sethirootpath.sh ~/hiroot
 #. /opt/bin/sh/sethiroot.sh  
-#--CMSSW--
-#SL3
-#slc3_ia32_gcc323, source /net/hisrv0001/app/cmsprod/cms/setup/bashrc
-#SL4
-#export SCRAM_ARCH=slc4_ia32_gcc345
-#source /app/cms-sl4/cmsset_default.sh
-#source /app/cms-soft/cmsset_default.sh
 
