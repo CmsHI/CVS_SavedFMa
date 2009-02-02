@@ -182,6 +182,29 @@ void FUResource::processDataBlock(MemRef_t* bufRef)
   UInt_t buResourceId=block->buResourceId;
   UInt_t evtNumber   =block->eventNumber;
 
+  // frankma added output
+  LOG4CPLUS_INFO(log_,"Info of I2O block from BU" << endl
+	<<"  "
+	<<"   blockNb:"<<iBlock
+	<<"   nbBlocksInSuperFragment:"<<nBlock
+	<<"   superFragmentNb:"<<iSuperFrag
+	<<"   nbSuperFragmentsInEvent:"<<nSuperFrag
+	<<"   fuTransactionId:"<<fuResourceId
+	<<"   buResourceId:"<<buResourceId
+	<<"   eventNumber:"<<evtNumber
+	);
+
+  LOG4CPLUS_INFO(log_,"Info of internal RB values" << endl
+	<<"  "
+	<<"   blockNb:"<<iBlock_
+	<<"   nbBlocksInSuperFragment:"<<nBlock_
+	<<"   superFragmentNb:"<<iSuperFrag_
+	<<"   nbSuperFragmentsInEvent:"<<nSuperFrag_
+	<<"   fuTransactionId:"<<fuResourceId_
+	<<"   buResourceId:"<<buResourceId_
+	<<"   eventNumber:"<<evtNumber_
+	);
+
   // check fuResourceId consistency
   if (fuResourceId!=fuResourceId_) {
     nbErrors_++;
