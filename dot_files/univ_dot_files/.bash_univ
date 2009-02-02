@@ -13,9 +13,9 @@ export tsg=$cur_proj/hlt/tsg
 export confDB=$tsg/ConfDB
 #export playback=$cur_proj/EventFilter/AutoBU/playback
 #--cvs--
-export SavedFMa=$HOME/UserCode/SavedFMa
 # 21X working cvs
 export cvsWorking=$SavedFMa/cmssw/cmssw_2_1_X
+export EvFrun=$SavedFMa/pp/DAQ/EvF/run
 
 #---My shortcuts---
 alias ema='emacs -nw'

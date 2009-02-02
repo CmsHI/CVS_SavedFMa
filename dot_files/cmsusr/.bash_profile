@@ -7,12 +7,10 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-#--------------------------------Universal------------------------------------
-. $HOME/UserCode/SavedFMa/univ_dot_files/.bash_univ
-
 #--------------------------------cmsusr bash env------------------------------------
 #---My top paths---
 export work=$HOME/work
+export SavedFMa=$HOME/UserCode/SavedFMa
 export log=$work/log
 export cmsswarea=$work/cmssw
 # for playback in 20X
@@ -28,4 +26,7 @@ alias newfuval2_17='ssh -Y fuval-C2F12-17'
 #-- my CMSSW local settings --
 alias setcms=". $SavedFMa/bin/cmsusr/basic/cmssw_set_basic.sh"
 alias cvscms=". $SavedFMa/bin/cmsusr/cvsinit.sh"
+
+#--------------------------------Universal------------------------------------
+. $SavedFMa/dot_files/univ_dot_files/.bash_univ
 
