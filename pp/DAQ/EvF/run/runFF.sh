@@ -1,8 +1,8 @@
 #!/bin/bash -
 echo "$@"
 "$@"
-sleep 15
+sleep 20
 ./configure
-sleep 120
+sleep 150
 ./enable
 
