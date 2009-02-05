@@ -1,7 +1,7 @@
 #!/bin/bash
 #setcms
 #project CMSSW
-kinit frankma@CERN.CH
+#kinit frankma@CERN.CH
 # p5 has moved to Kerberos V
 export CVS_RSH=ssh
 #alias cvss='cvs -d ":ext:cmscvs.cern.ch:/cvs_server/repositories/CMSSW"'
