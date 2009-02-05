@@ -21,7 +21,7 @@ export EvFrun=$SavedFMa/pp/DAQ/EvF/run
 alias ema='emacs -nw'
 alias xterm='xterm -fg green -bg black'
 #--my universal CMSSW shortcuts--
-alias cvscms=". $SavedFMa/bin/cvsinit.sh"
+#alias cvscms=". $SavedFMa/bin/cvsinit.sh"
 
 #---env variables
 export CVSEDITOR='emacs -nw'
