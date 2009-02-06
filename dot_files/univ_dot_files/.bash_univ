@@ -3,6 +3,8 @@
 export PATH=$PATH:$HOME/bin
 
 #---My paths---
+export pparea=$work/pp
+export HIarea=$work/HI
 export cfg=$cmsswarea/cfg
 export projects=$mit/research/projects
 export tier2=$projects/tier2
