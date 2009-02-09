@@ -2,9 +2,9 @@ result=0
 echo "===Check XDAQ installation:==="
 env | grep XDAQ
 if [ $? -ne 0 ]; then
-   result=2
    echo XDAQ env not found
    echo try to setup scramv1 env.
+   exit 2
 fi
 
 echo
@@ -15,6 +15,9 @@ if [ $HOST ]; then
 else
     echo "Need to define host:==="
     echo "export HOST=$(hostname)"
+    #export HOST=$(hostname)
+    #echo "HOST exported"
+    exit 2
 fi
 
 echo
