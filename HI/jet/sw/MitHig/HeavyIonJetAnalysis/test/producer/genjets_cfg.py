@@ -34,7 +34,7 @@ process.source = cms.Source("PoolSource",
 )
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(10)
+      input = cms.untracked.int32(-1)
 )
 
 process.SimpleMemoryCheck = cms.Service('SimpleMemoryCheck',
@@ -53,7 +53,8 @@ process.iterativeCone5HiGenJets = cms.EDProducer("IterativeConeHiGenJetProducer"
 
 
 process.subevent = cms.EDAnalyzer('HeavyIonJetAnalyzer',
-   jetSrc = cms.vstring('iterativeCone5HiGenJets')
+   jetSrc = cms.vstring('iterativeCone5HiGenJets'),
+   doParticles = cms.untracked.bool(False)
 )
 
 process.allevent =  cms.EDAnalyzer('HeavyIonJetAnalyzer',
@@ -73,8 +74,12 @@ process.output = cms.OutputModule("PoolOutputModule",
 
 process.runjets = cms.Sequence(process.GeneInfo*process.hiGenParticles*process.iterativeCone5HiGenJets)
 process.pre = cms.Path(process.mix)
-# mixing module is needed by Philip's HiGenParticleProducer
-process.p = cms.Path(process.runjets*process.subevent*process.allevent)
+# Mixing module is needed by Philip's HiGenParticleProducer
+# also,
+# Run analyzer
+# - We don't run all event for the moment, which needs the standard iterativeCone5GenJets
+#   * we don't add this standard iCone5 jet finder, to keep things simple for now
+process.p = cms.Path(process.runjets*process.subevent)
 process.outpath = cms.EndPath(process.output)
 
 process.schedule = cms.Schedule(process.pre,process.p,process.outpath)
