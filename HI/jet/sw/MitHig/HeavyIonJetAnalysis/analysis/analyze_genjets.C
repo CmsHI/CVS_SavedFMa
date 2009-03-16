@@ -53,6 +53,7 @@ struct HydjetEvent{
 double analyze_with_cut(TTree* tsub, TTree* tall, double jetEtCut = 20);
 
 void analyze_genjets(char * infile = "genjets.root", char * outfile = "output.root"){
+//void analyze_genjets(char * infile = "../../producer/OoB/genjets.root", char * outfile = "output.root"){
 
   TFile* inf = new TFile(infile);
   TTree* tsub = dynamic_cast<TTree*>(inf->Get("subevent/hi"));
@@ -60,41 +61,41 @@ void analyze_genjets(char * infile = "genjets.root", char * outfile = "output.ro
 
   TFile* outf = new TFile(outfile,"recreate");
 
-  double x[6];
-  double y[6];
-
-  for(int i=0; i < 3; ++i){
-    x[i] = 5*i;
-    cout<<"Et Cut  : "<<x[i]<<endl;
-
-    y[i] = analyze_with_cut(tsub,tall,5*i);
-    cout<<"Overlap : "<<y[i]<<endl;
-
-  }  
-
-  TGraph* g1 = new TGraph(6,x,y);
-
-  TCanvas* c1 = new TCanvas();
-  g1->Draw("a*");
-
-  g1->Write();
-  c1->Write();
+//  double x[6];
+//  double y[6];
+//
+//  for(int i=0; i < 3; ++i){
+//    x[i] = 5*i;
+//    cout<<"Et Cut  : "<<x[i]<<endl;
+//
+//    y[i] = analyze_with_cut(tsub,tall,5*i);
+//    cout<<"Overlap : "<<y[i]<<endl;
+//
+//  }  
+//
+//  TGraph* g1 = new TGraph(6,x,y);
+//
+//  TCanvas* c1 = new TCanvas();
+//  g1->Draw("a*");
+//
+//  g1->Write();
+//  c1->Write();
 
   TCanvas* c5 = new TCanvas();
   tsub->Draw("njet");
   c5->Print("nsubjets.gif");
 
-  TCanvas* c6 = new TCanvas();
-  tall->Draw("njet");
-  c6->Print("nglobjets.gif");
+//  TCanvas* c6 = new TCanvas();
+//  tall->Draw("njet");
+//  c6->Print("nglobjets.gif");
 
   TCanvas* c7 = new TCanvas();
   tsub->Draw("et");
   c7->Print("subjet_et.gif");
 
-  TCanvas* c8 = new TCanvas();
-  tall->Draw("et");
-  c8->Print("globjet_et.gif");
+//  TCanvas* c8 = new TCanvas();
+//  tall->Draw("et");
+//  c8->Print("globjet_et.gif");
 
 
 
