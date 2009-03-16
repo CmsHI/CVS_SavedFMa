@@ -19,7 +19,7 @@ process.HydjetSource.hydjetMode = 'kQJetsOnly'
 #process.HydjetSource.hydjetMode = 'kJetsOnly'
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1000)
+    input = cms.untracked.int32(10)
 )
 
 process.SimpleMemoryCheck = cms.Service('SimpleMemoryCheck',
@@ -56,11 +56,11 @@ process.TFileService = cms.Service('TFileService',
 process.output = cms.OutputModule("PoolOutputModule",
     compressionLevel = cms.untracked.int32(2),
     commitInterval = cms.untracked.uint32(1),
-    fileName = cms.untracked.string('PbPb_edm.root')
+    fileName = cms.untracked.string('hydjet_edm.root')
 )
 
-process.runjets = cms.Sequence(process.GeneInfo*process.genJetParticles*process.iterativeCone5GenJets*process.iterativeCone5HiGenJets)
-process.p = cms.Path(process.runjets*process.subevent*process.allevent)
+#process.runjets = cms.Sequence(process.GeneInfo*process.genJetParticles*process.iterativeCone5GenJets*process.iterativeCone5HiGenJets)
+#process.p = cms.Path(process.runjets*process.subevent*process.allevent)
 process.outpath = cms.EndPath(process.output)
 
 
