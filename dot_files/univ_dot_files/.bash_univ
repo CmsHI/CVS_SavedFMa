@@ -1,18 +1,18 @@
 #--------------------------------Universal------------------------------------
 #---setup private environment variables---
-export PATH=$PATH:$HOME/bin
+export PATH=$PATH:$SavedFMa/bin
 
 #---My paths---
 export pparea=$work/pp
 export HIarea=$work/HI
-export cfg=$cmsswarea/cfg
+#export cfg=$cmsswarea/cfg
 export projects=$mit/research/projects
 export tier2=$projects/tier2
 export NAGIOS=$tier2/t2_svn/nagios
 export NAGIOS_PLUGINS=$tier2/t2_svn/trunk/packages/nagios/root/usr/lib64/nagios/plugins
 export data=$scratch/data
-export tsg=$cur_proj/hlt/tsg
-export confDB=$tsg/ConfDB
+#export tsg=$cur_proj/hlt/tsg
+#export confDB=$tsg/ConfDB
 #export playback=$cur_proj/EventFilter/AutoBU/playback
 #--cvs--
 # 21X working cvs
