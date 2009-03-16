@@ -401,14 +401,15 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
       ++(hev_.njet);
 
-      double ptsum = 0;
-      std::vector<const reco::Candidate*> constituents = jet->getJetConstituentsQuick();
-      for(int ic = 0; ic< constituents.size(); ++ic){
-	 const reco::GenParticle* p = dynamic_cast<const reco::GenParticle*>((constituents[ic]));
-	 ptsum += p->pt();
-      }
-
-      nt->Fill(jet->pt(),ptsum);      
+      // Check jet constituents
+//      double ptsum = 0;
+//      std::vector<const reco::Candidate*> constituents = jet->getJetConstituentsQuick();
+//      for(int ic = 0; ic< constituents.size(); ++ic){
+//	 const reco::GenParticle* p = dynamic_cast<const reco::GenParticle*>((constituents[ic]));
+//	 ptsum += p->pt();
+//      }
+//
+//      nt->Fill(jet->pt(),ptsum);      
    }
    
    /*
