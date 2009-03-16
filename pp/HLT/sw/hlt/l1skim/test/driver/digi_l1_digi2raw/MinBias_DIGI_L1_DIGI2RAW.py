@@ -22,16 +22,19 @@ process.load('Configuration/StandardSequences/EndOfProcess_cff')
 process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
 process.load('Configuration/EventContent/EventContent_cff')
 
+process.rawDataCollector.currentProcessOnly = True
+
 process.configurationMetadata = cms.untracked.PSet(
     version = cms.untracked.string('$Revision: 1.99.2.8 $'),
     annotation = cms.untracked.string('--filein=file:/home/frankma/data/pp/Summer08/MinBias/GEN-SIM-RAW/STARTUP_V5_STARTUP_V5_v1/00E549D0-826C-DD11-BBBF-001C23C105E3.root nevts:100'),
     name = cms.untracked.string('PyReleaseValidation')
 )
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(2000)
 )
 process.options = cms.untracked.PSet(
-    Rethrow = cms.untracked.vstring('ProductNotFound')
+    Rethrow = cms.untracked.vstring('ProductNotFound'),
+    wantSummary = cms.untracked.bool(True)
 )
 # Input source
 process.source = cms.Source("PoolSource",
@@ -41,23 +44,28 @@ process.source = cms.Source("PoolSource",
 # Output definition
 process.output = cms.OutputModule("PoolOutputModule",
     outputCommands = process.FEVTDEBUGEventContent.outputCommands,
-    fileName = cms.untracked.string('00E549D0-826C-DD11-BBBF-001C23C105E3_root_DIGI_L1_DIGI2RAW.root'),
+    fileName = cms.untracked.string('minbias_DIGI_L1_DIGI2RAW.root'),
     dataset = cms.untracked.PSet(
         dataTier = cms.untracked.string('RAW'),
         filterName = cms.untracked.string('')
     )
 )
+process.output.outputCommands = ["drop *", "keep *_rawDataCollector_*_DIGI2RAW"]
 
 # Additional output definition
 
 # Other statements
 process.GlobalTag.globaltag = 'STARTUP_V9::All'
 
+# L1 Gt trigger report
+process.load("L1Trigger.GlobalTriggerAnalyzer.l1GtTrigReport_cfi")
+process.l1GtTrigReport.L1GtRecordInputTag = "simGtDigis"
+
 # Path and EndPath definitions
 process.digitisation_step = cms.Path(process.pdigi)
 process.L1simulation_step = cms.Path(process.SimL1Emulator)
 process.digi2raw_step = cms.Path(process.DigiToRaw)
-process.endjob_step = cms.Path(process.endOfProcess)
+process.endjob_step = cms.Path(process.l1GtTrigReport+process.endOfProcess)
 process.out_step = cms.EndPath(process.output)
 
 # Schedule definition
