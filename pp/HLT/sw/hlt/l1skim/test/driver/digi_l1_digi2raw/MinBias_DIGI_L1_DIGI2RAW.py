@@ -1,8 +1,8 @@
 # Auto generated configuration file
 # using: 
-# Revision: 1.99.2.3 
+# Revision: 1.99.2.8 
 # Source: /cvs_server/repositories/CMSSW/CMSSW/Configuration/PyReleaseValidation/python/ConfigBuilder.py,v 
-# with command line options: --filein=file:/home/frankma/data/pp/Summer08/MinBias/GEN-SIM-RAW/STARTUP_V5_STARTUP_V5_v1/00E549D0-826C-DD11-BBBF-001C23C105E3.root -s DIGI,L1,DIGI2RAW --datatier=RAW --conditions=FrontierConditions_GlobalTag,STARTUP_V9::All --eventcontent=FEVTDEBUG --writeraw -n 100 --no_exec
+# with command line options: --filein=file:/home/frankma/data/pp/Summer08/MinBias/GEN-SIM-RAW/STARTUP_V5_STARTUP_V5_v1/00E549D0-826C-DD11-BBBF-001C23C105E3.root -s DIGI,L1,DIGI2RAW --datatier=RAW --conditions=FrontierConditions_GlobalTag,STARTUP_V9::All --eventcontent=FEVTDEBUG --writeraw -n 100 --no_exec --mc
 import FWCore.ParameterSet.Config as cms
 
 process = cms.Process('DIGI2RAW')
@@ -14,15 +14,16 @@ process.load('Configuration/StandardSequences/MixingNoPileUp_cff')
 process.load('Configuration/StandardSequences/GeometryPilot2_cff')
 process.load('Configuration/StandardSequences/MagneticField_38T_cff')
 process.load('Configuration/StandardSequences/Digi_cff')
-process.load('Configuration/StandardSequences/SimL1Emulator_cff')
-process.load('Configuration/StandardSequences/L1TriggerDefaultMenu_cff')
+process.load('L1Trigger/Configuration/SimL1Emulator_cff')
+process.load('L1Trigger/Configuration/L1StartupConfig_cff')
+process.load('L1TriggerConfig/L1GtConfigProducers/Luminosity/startup/L1Menu_Commissioning2009_v0_L1T_Scales_20080926_startup_Imp0_Unprescaled_cff')
 process.load('Configuration/StandardSequences/DigiToRaw_cff')
 process.load('Configuration/StandardSequences/EndOfProcess_cff')
 process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
 process.load('Configuration/EventContent/EventContent_cff')
 
 process.configurationMetadata = cms.untracked.PSet(
-    version = cms.untracked.string('$Revision: 1.99.2.3 $'),
+    version = cms.untracked.string('$Revision: 1.99.2.8 $'),
     annotation = cms.untracked.string('--filein=file:/home/frankma/data/pp/Summer08/MinBias/GEN-SIM-RAW/STARTUP_V5_STARTUP_V5_v1/00E549D0-826C-DD11-BBBF-001C23C105E3.root nevts:100'),
     name = cms.untracked.string('PyReleaseValidation')
 )
