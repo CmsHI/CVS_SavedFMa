@@ -22,6 +22,11 @@ process.load('Configuration/StandardSequences/EndOfProcess_cff')
 process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
 process.load('Configuration/EventContent/EventContent_cff')
 
+# For EventFilter.RawDataCollector.rawDataCollector_cfi from
+# Configuration/StandardSequences/DigiToRaw_cff
+# - Use only the RawDataCollections from the current process.
+#   * So the collector won't be confused about the old raw
+#     collections.
 process.rawDataCollector.currentProcessOnly = True
 
 process.configurationMetadata = cms.untracked.PSet(
