@@ -141,7 +141,7 @@ namespace cms
 	const GenParticle & p = (*inputHandle)[i];
         if(!selectForJet(p)) continue;
 	int subevent = (*subs)[GenParticleRef(inputHandle,i)];
-        cout<<"inputs size "<<inputs.size()<<" subevent "<<subevent<<endl;
+        // cout<<"inputs size "<<inputs.size()<<" subevent "<<subevent<<endl;
 
 	if(subevent >= inputs.size()) inputs.resize(subevent+1);
 
@@ -157,6 +157,7 @@ namespace cms
 	if(skipLastSubEvent_ && isub == nsub-1){
 	   cout<<"Sub-Event number "<<isub<<" with "<<input.size()<<" particles, skipped as background event."<<endl;
 	}else{
+	   cout << "           number of particles in subevent to make genjet: " << input.size() << endl;
 
 	   if (mVerbose) {
 	      std::cout << "BaseJetProducer::produce-> INPUT COLLECTION selected from" << mSrc
