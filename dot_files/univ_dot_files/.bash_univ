@@ -5,6 +5,7 @@ export PATH=$PATH:$SavedFMa/bin
 #---My paths---
 export pparea=$work/pp
 export HIarea=$work/HI
+export HIjetarea=$HIarea/jet
 #export cfg=$cmsswarea/cfg
 export projects=$mit/research/projects
 export tier2=$projects/tier2
@@ -22,6 +23,7 @@ export EvFrun=$SavedFMa/pp/DAQ/EvF/run
 #---My shortcuts---
 alias ema='emacs -nw'
 alias xterm='xterm -fg green -bg black'
+alias cvsdhead='cvs diff -rHEAD'
 #--my universal CMSSW shortcuts--
 #alias cvscms=". $SavedFMa/bin/cvsinit.sh"
 
