@@ -120,6 +120,7 @@ void analyze_genjets(char * infile = "genjets.root", char * outfile = "output.ro
   c9->Print("subevent_multiplicity.gif");
   TCanvas* c10 = new TCanvas();
   TH2F * hcandvb = new TH2F("submul_vs_b", "all subevents multiplicity vs b", 100,0,14, 1000, 0, 30000);
+  gPad->SetLogz();
   nt3->Draw("ncands:b>>submul_vs_b","","colz");
   c10->Print("submul_vs_b.gif");
   //-- Check gen particle ntuple: HepMC vs CMSSW GenParticle --
@@ -148,6 +149,7 @@ double analyze_with_cut(TTree* tsub, TTree* ntgenp, double jetEtCut){
    TH1F* h1 = new TH1F(Form("h1_et%02d",(int)jetEtCut),"Self Correlation;#Delta R;jets",200,0,6);
    TH1F* h2 = new TH1F(Form("h2_et%02d",(int)jetEtCut),"Relation between Globally reconstructed and Sub-Event based GenJets;#Delta R;jets",200,0,6);
    TH2F* het = new TH2F(Form("het_et%02d",(int)jetEtCut),";E_{T}^{sub-event genjet};E_{T}^{global genjet}",50,0,200,50,0,200);
+   TNtuple * ntgenpt2max = new TNtuple("ntgenpt2max","ntuple for top 2 pt partons in each pyquen subevent","pid1:pt1:eta1:phi1:status1:pid2:pt2:eta2:phi2:status2");
 
    double cone = 0.5;
    double match = cone/2.;
@@ -239,67 +241,98 @@ double analyze_with_cut(TTree* tsub, TTree* ntgenp, double jetEtCut){
 //       }
 //      
 //     }
+   }
 
    // Gen particle loop
-     int topn = 20;
-     float tmp =0;
-     for(int ip = 0; ip < ntgenp->GetEntries(); ++ip) {
-	ntgenp->GetEntry(ip);
+   int topn = 20;
+   float tmp =0;
+   cout << "Total # of particles in gen events: " << ntgenp->GetEntries() << endl;
+   for(int ip = 0; ip < ntgenp->GetEntries(); ++ip) {
+      ntgenp->GetEntry(ip);
+      if (ip % 1000000 == 0) cout <<"Particle "<<ip<<endl;    
 
-	// find the incoming proton, start from there and count topn
-	if ( genp.eta > 10000 ) {
-	   float maxpt1 = 0;
-	   float maxpt2 = 0;
-	   for (int jp = 0; jp < topn; ++jp) {
-	      ntgenp->GetEntry(ip+jp);
-	      cout << ip+jp << "  " << genp.pid << "  " << genp.pt << "  " << genp.eta << endl;
-	      if (genp.pt > maxpt1) {
-		 maxpt1 = genp.pt;
-	      }
-	      if (genp.pt > maxpt2 && genp.pt < maxpt1)
-		 maxpt2 = genp.pt;
-	      //cout << "maxpt1: " << maxpt1 << "  maxpt2: " << maxpt2 << endl;
-	   }
-	   ip+=topn;
-	   if (maxpt1>20)
-	      cout << "maxpt1: " << maxpt1 << "  maxpt2: " << maxpt2 << endl;
-	   //cin >>tmp;
-	   if (tmp==0)
-	      return 0;
+      // find the incoming proton, start from there and count topn
+      if ( (genp.eta > 10000) && (int(genp.ishydro) == 0) ) {
+	 GenParticle p1;
+	 p1.pt=0;
+	 GenParticle p2;
+	 p2.pt=0;
+	 for (int jp = 0; jp < topn; ++jp) {
+	    ntgenp->GetEntry(ip+jp);
+	    //	      cout << ip+jp << "  " << genp.pid << "  " << genp.pt << "  " << genp.eta << " " << genp.phi << endl;
+	    if (genp.pt > p1.pt) {
+	       //update
+	       p1 = genp;
+	    }
+	    if (genp.pt > p2.pt && genp.pt < p1.pt) {
+	       // update
+	       p2 = genp;
+	    }
+	 }
+	 ip+=topn;
+	 //	   if (maxpt1>20)
+	 //	   cout << "maxpt1 pid: " << p1.pid << " maxpt1: " << p1.pt << " maxpt1 phi:" << p1.phi<< endl;
+	 //	   cout << "maxpt2.pid: " << p2.pid << " maxpt2: " << p2.pt << " maxpt2 phi:" << p2.phi<< endl;
+	 ntgenpt2max->Fill(p1.pid, p1.pt, p1.eta, p1.phi, p1.status, p2.pid, p2.pt, p2.eta, p2.phi, p2.status);
+	 //	   cin >>tmp;
+	 //	   if (tmp==0)
+	 //	      return 0;
 
-	}
-     }
-
-
-
-
-
+      }
    }
 
 
    cout<<"End."<<endl;
+   TCanvas* c0 = new TCanvas();
+   gPad->SetLogz();
+   ntgenpt2max->Draw("phi1:phi2","","colz");
 
-   TCanvas* c1 = new TCanvas();
-   h1->Draw();
-
+   TH1F * hmaxpt1 = new TH1F("hmaxpt1","pt of hightest pt partons in subevent", 200,0,200);
+   hmaxpt1->SetLineColor(kRed-7);
+   TH1F * hmaxpt2 = new TH1F("hmaxpt2","pt of 2nd highest pt partons in subevent", 200,0,200);
+   hmaxpt2->SetLineColor(kMagenta-7);
+   TH1F * h2maxpt = new TH1F("h2maxpt","pt of 2 hightest pt partons in subevent", 200,0,200);
+   h2maxpt->SetLineColor(2);
+   h2maxpt->SetLineWidth(2);
+   TH1F * hjetet = new TH1F("hjetet","Et of subevent jets", 200,0,200);
+   hjetet->SetLineColor(kBlue);
+   hjetet->SetLineWidth(2);
+   TCanvas* c1 = new TCanvas("canpt","canvas_pt",1000,800);
+   gPad->SetLogy();
+   ntgenpt2max->Draw("pt1>>hmaxpt1");
+   ntgenpt2max->Draw("pt2>>hmaxpt2");
+   tsub->Draw("et>>hjetet");
+   h2maxpt->Add(hmaxpt1,hmaxpt2);
+   h2maxpt->Draw("same");
+   c1->Print("jetEt_vs_2highestPtPartons.gif");
    TCanvas* c2 = new TCanvas();
-   h2->Draw();
-
-   TCanvas* c3 = new TCanvas();
-   het->Draw("colz");
-
-
-   c1->Write();
-   c2->Write();
-   c3->Write();
+   gPad->SetLogy();
+   hmaxpt1->Draw();
+   hmaxpt2->Draw("same");
 
 
-   h1->Write();
-   h2->Write();
-   het->Write();
+//   TCanvas* c1 = new TCanvas();
+//   h1->Draw();
+//
+//   TCanvas* c2 = new TCanvas();
+//   h2->Draw();
+//
+//   TCanvas* c3 = new TCanvas();
+//   het->Draw("colz");
+//
+//
+//   c1->Write();
+//   c2->Write();
+//   c3->Write();
+//
+//
+//   h1->Write();
+//   h2->Write();
+//   het->Write();
+//
+//   double overlap = h1->Integral(0,cone/(h1->GetBinWidth(1)));
+//   overlap /= h1->Integral();
 
-   double overlap = h1->Integral(0,cone/(h1->GetBinWidth(1)));
-   overlap /= h1->Integral();
-
-   return overlap;
+//   return overlap;
+   return 0;
 }
