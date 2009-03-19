@@ -50,28 +50,42 @@ struct HydjetEvent{
 
 };
 
+struct GenParticle{
+   float pid;
+   float status;
+   float pt;
+   float eta;
+   float phi;
+   float charge;
+   float subeid;
+   float ishydro;
+};
+
 double analyze_with_cut(TTree* tsub, TTree* tall, double jetEtCut = 20);
 
 void analyze_genjets(char * infile = "genjets.root", char * outfile = "output.root"){
 //void analyze_genjets(char * infile = "../../producer/OoB/genjets.root", char * outfile = "output.root"){
 
   TFile* inf = new TFile(infile);
+  inf->ls();
   TTree* tsub = dynamic_cast<TTree*>(inf->Get("subevent/hi"));
-  TTree* tall = dynamic_cast<TTree*>(inf->Get("allevent/hi"));
+  //TTree* tall = dynamic_cast<TTree*>(inf->Get("allevent/hi"));
+  TNtuple * nt2 = dynamic_cast<TNtuple*>(inf->Get("subevent/nt2"));
+  TNtuple * nt3 = dynamic_cast<TNtuple*>(inf->Get("subevent/nt3"));
 
   TFile* outf = new TFile(outfile,"recreate");
 
-//  double x[6];
-//  double y[6];
-//
-//  for(int i=0; i < 3; ++i){
-//    x[i] = 5*i;
-//    cout<<"Et Cut  : "<<x[i]<<endl;
-//
-//    y[i] = analyze_with_cut(tsub,tall,5*i);
-//    cout<<"Overlap : "<<y[i]<<endl;
-//
-//  }  
+  double x[6];
+  double y[6];
+
+  for(int i=0; i < 1; ++i){
+    x[i] = 5*i;
+    cout<<"Et Cut  : "<<x[i]<<endl;
+
+    y[i] = analyze_with_cut(tsub,nt2,5*i);
+    cout<<"Overlap : "<<y[i]<<endl;
+
+  }  
 //
 //  TGraph* g1 = new TGraph(6,x,y);
 //
@@ -100,19 +114,35 @@ void analyze_genjets(char * infile = "genjets.root", char * outfile = "output.ro
 
 
   // Check frankma ntuples
-  TNtuple * nt3 = dynamic_cast<TNtuple*>(inf->Get("subevent/nt3"));
-
   TCanvas* c9 = new TCanvas();
-  TH1F * hcand = new TH1F("subevent_mul", "subevent multiplicity", 100, 0, 250);
+  TH1F * hcand = new TH1F("subevent_mul", "pyquen subevents multiplicity", 100, 0, 250);
   nt3->Draw("ncands>>subevent_mul");
+  c9->Print("subevent_multiplicity.gif");
   TCanvas* c10 = new TCanvas();
-  TH2F * hcandvb = new TH2F("submul_vs_b", "subevent multiplicity vs b", 100,0,14, 1000, 0, 25000);
-  nt3->Draw("ncands:b>>submul_vs_b");
+  TH2F * hcandvb = new TH2F("submul_vs_b", "all subevents multiplicity vs b", 100,0,14, 1000, 0, 30000);
+  nt3->Draw("ncands:b>>submul_vs_b","","colz");
+  c10->Print("submul_vs_b.gif");
+  //-- Check gen particle ntuple: HepMC vs CMSSW GenParticle --
+  // check pt
+  TH1F * hpt = new TH1F("genp_pt","HepMC particles pt vs CMSSW GenParticles pt", 100, 0, 70);
+  hpt->SetLineColor(2);
+  hpt->SetLineWidth(3);
+  TCanvas* c11 = new TCanvas();
+  gPad->SetLogy();
+  tsub->Draw("par_pt>>genp_pt");
+  nt2->Draw("pt","status==1","same");
+  // check eta
+  TH1F * heta = new TH1F("genp_eta","HepMC particles eta vs CMSSW GenParticles eta", 100, -10, 10);
+  heta->SetLineColor(2);
+  heta->SetLineWidth(3);
+  TCanvas* c12 = new TCanvas();
+  tsub->Draw("par_eta>>genp_eta");
+  nt2->Draw("eta","status==1","same");
 
 
 }
 
-double analyze_with_cut(TTree* tsub, TTree* tall, double jetEtCut){
+double analyze_with_cut(TTree* tsub, TTree* ntgenp, double jetEtCut){
   cout<<"Begin"<<endl;
 
    TH1F* h1 = new TH1F(Form("h1_et%02d",(int)jetEtCut),"Self Correlation;#Delta R;jets",200,0,6);
@@ -127,8 +157,9 @@ double analyze_with_cut(TTree* tsub, TTree* tall, double jetEtCut){
    cout<<"A"<<endl;
 
    HydjetEvent jet;
-   HydjetEvent jet2;
+   GenParticle genp;
 
+   //-- Set Jet tree branches --
    tsub->SetBranchAddress("b",&jet.b);
  
    tsub->SetBranchAddress("npart",&jet.npart);
@@ -153,11 +184,22 @@ double analyze_with_cut(TTree* tsub, TTree* tall, double jetEtCut){
    tsub->SetBranchAddress("vz",&jet.vz);
    tsub->SetBranchAddress("vr",&jet.vr);
 
-   tall->SetBranchAddress("njet",&jet2.njet);
-   tall->SetBranchAddress("et",jet2.et);
-   tall->SetBranchAddress("eta",jet2.eta);
-   tall->SetBranchAddress("phi",jet2.phi);
-   tall->SetBranchAddress("area",jet2.area);
+//   tall->SetBranchAddress("njet",&jet2.njet);
+//   tall->SetBranchAddress("et",jet2.et);
+//   tall->SetBranchAddress("eta",jet2.eta);
+//   tall->SetBranchAddress("phi",jet2.phi);
+//   tall->SetBranchAddress("area",jet2.area);
+
+   //-- Set Gen particle branches --
+   ntgenp->Print();
+   ntgenp->SetBranchAddress("pid",&genp.pid);
+   ntgenp->SetBranchAddress("status",&genp.status);
+   ntgenp->SetBranchAddress("pt",&genp.pt);
+   ntgenp->SetBranchAddress("eta",&genp.eta);
+   ntgenp->SetBranchAddress("phi",&genp.phi);
+   ntgenp->SetBranchAddress("charge",&genp.charge);
+   ntgenp->SetBranchAddress("subeid",&genp.subeid);
+   ntgenp->SetBranchAddress("ishydro",&genp.ishydro);
 
 
    cout<<"B"<<endl;
@@ -166,36 +208,66 @@ double analyze_with_cut(TTree* tsub, TTree* tall, double jetEtCut){
    // Event Loop
    for(int i = 0; i< tsub->GetEntries() && i < maxEvents; ++i){    
      tsub->GetEntry(i);
-     tall->GetEntry(i);
+//     tall->GetEntry(i);
      if (i % 1000 == 0) cout <<"Event "<<i<<endl;    
      // Selection on Events
 
      // Loop over GenJets
 
-     for(int j = 0; j < jet.njet; ++j){
-       if(jet.et[j] < jetEtCut) continue;
+//     for(int j = 0; j < jet.njet; ++j){
+//       if(jet.et[j] < jetEtCut) continue;
+//
+//       for(int j1 = 0; j1< jet.njet; ++j1){
+//         if(jet.et[j1] < jetEtCut) continue;
+//         double dR = deltaR(jet.eta[j],jet.phi[j],jet.eta[j1],jet.phi[j1]);
+//
+//	 if(dR != 0) 
+//	   h1->Fill(dR);
+//         if(dR < cone){
+//
+//         }
+//       }
+//
+//       for(int j2 = 0; j2< jet2.njet; ++j2){
+//	 if(jet2.et[j2] < jetEtCut) continue;
+//	 double dR = deltaR(jet.eta[j],jet.phi[j],jet2.eta[j2],jet2.phi[j2]);
+//
+//         h2->Fill(dR);
+//	 if(dR < match){
+//	   het->Fill(jet.et[j],jet2.et[j2]);
+//	 }
+//       }
+//      
+//     }
 
-       for(int j1 = 0; j1< jet.njet; ++j1){
-         if(jet.et[j1] < jetEtCut) continue;
-         double dR = deltaR(jet.eta[j],jet.phi[j],jet.eta[j1],jet.phi[j1]);
+   // Gen particle loop
+     int topn = 20;
+     float tmp =0;
+     for(int ip = 0; ip < ntgenp->GetEntries(); ++ip) {
+	ntgenp->GetEntry(ip);
 
-	 if(dR != 0) 
-	   h1->Fill(dR);
-         if(dR < cone){
+	// find the incoming proton, start from there and count topn
+	if ( genp.eta > 10000 ) {
+	   float maxpt1 = 0;
+	   float maxpt2 = 0;
+	   for (int jp = 0; jp < topn; ++jp) {
+	      ntgenp->GetEntry(ip+jp);
+	      cout << ip+jp << "  " << genp.pid << "  " << genp.pt << "  " << genp.eta << endl;
+	      if (genp.pt > maxpt1) {
+		 maxpt1 = genp.pt;
+	      }
+	      if (genp.pt > maxpt2 && genp.pt < maxpt1)
+		 maxpt2 = genp.pt;
+	      //cout << "maxpt1: " << maxpt1 << "  maxpt2: " << maxpt2 << endl;
+	   }
+	   ip+=topn;
+	   if (maxpt1>20)
+	      cout << "maxpt1: " << maxpt1 << "  maxpt2: " << maxpt2 << endl;
+	   //cin >>tmp;
+	   if (tmp==0)
+	      return 0;
 
-         }
-       }
-
-       for(int j2 = 0; j2< jet2.njet; ++j2){
-	 if(jet2.et[j2] < jetEtCut) continue;
-	 double dR = deltaR(jet.eta[j],jet.phi[j],jet2.eta[j2],jet2.phi[j2]);
-
-         h2->Fill(dR);
-	 if(dR < match){
-	   het->Fill(jet.et[j],jet2.et[j2]);
-	 }
-       }
-      
+	}
      }
 
 
