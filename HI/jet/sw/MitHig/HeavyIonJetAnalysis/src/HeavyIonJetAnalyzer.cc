@@ -327,37 +327,40 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
          cout<<"C"<<endl;
 	 for (unsigned i = 0; i < inputHandle->size(); ++i) {
 
-	    cout<<"D"<<endl;
+	    //cout<<"D"<<endl;
 
 	    const reco::GenParticle & p = (*inputHandle)[i];
-	    cout<<"E"<<endl;
+	    //cout<<"E"<<endl;
 
 	    int status = p.status();
 	    int pdg = p.pdgId();
-	    cout<<"F"<<endl;
+	    //cout<<"F"<<endl;
 
 	    int subid = (*subs)[reco::GenParticleRef(inputHandle,i)];
-	    cout<<"G"<<endl;
+	    //cout<<"G"<<endl;
 
-	    npsub[subid] ++;
- 
-	    int matched = 0;
-	    edm::SubEvent sub(subid);
-	    cout<<"H"<<endl;
-	    std::vector<HepMC::GenParticle*> hps = sub.getParticles(*evt);
-	    cout<<"I"<<endl;
-            npsub2[subid] = hps.size();
-	    cout<<"J"<<endl;
-	    for (unsigned j = 0; j < hps.size(); ++j) {
-	       cout<<"K"<<endl;
-	       HepMC::GenParticle* hp = hps[j];
-	       cout<<"L"<<endl;
-	       if(p.pdgId() == hp->pdg_id() && fabs(p.pt() - hp->momentum().perp())+fabs(p.eta() - hp->momentum().eta())+fabs(p.phi() - hp->momentum().phi()) < 0.1) matched = 1;
-	       cout<<"M"<<endl;
+	    // count the number of final particles for each subevent
+	    if ( status == 1 ) {
+	       npsub[subid] ++;
 	    }
-	    cout<<"N"<<endl;
-	    nt2->Fill(matched, pdg, status);
-	    cout<<"O"<<endl;
+ 
+//	    int matched = 0;
+//	    edm::SubEvent sub(subid);
+//	    cout<<"H"<<endl;
+//	    std::vector<HepMC::GenParticle*> hps = sub.getParticles(*evt);
+//	    cout<<"I"<<endl;
+//            npsub2[subid] = hps.size();
+//	    cout<<"J"<<endl;
+//	    for (unsigned j = 0; j < hps.size(); ++j) {
+//	       cout<<"K"<<endl;
+//	       HepMC::GenParticle* hp = hps[j];
+//	       cout<<"L"<<endl;
+//	       if(p.pdgId() == hp->pdg_id() && fabs(p.pt() - hp->momentum().perp())+fabs(p.eta() - hp->momentum().eta())+fabs(p.phi() - hp->momentum().phi()) < 0.1) matched = 1;
+//	       cout<<"M"<<endl;
+//	    }
+//	    cout<<"N"<<endl;
+//	    nt2->Fill(matched, pdg, status);
+//	    cout<<"O"<<endl;
 
 	 }
 
@@ -372,8 +375,12 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       npart = hi->Npart_proj()+hi->Npart_targ();
       nsub = hi->Ncoll_hard() + 1;
 
+      // This will loop over all subevents:
+      // from 0 to Ncoll_hard()-1 are the pyquen subevents
+      // Ncoll_hard() is the hydro subevent
       for(int i1 = 0; i1< nsub; ++i1){
-	 nt3->Fill(npsub[i1],npsub2[i1]);
+	 //nt3->Fill(npsub[i1],npsub2[i1]);
+	 nt3->Fill(npsub[i1],b,npart,nsub);
       }
 
       if(printLists_){
@@ -469,7 +476,7 @@ HeavyIonJetAnalyzer::beginJob(const edm::EventSetup& iSetup)
 
       nt = f->make<TNtuple>("nt","NTuple for debugging by Jets","ptjets:ptcons");
       nt2 = f->make<TNtuple>("nt2","NTuple for debugging by Particles","matched:pdg:status");
-      nt3 = f->make<TNtuple>("nt3","NTuple for debugging by SubEvents","ncands:nparts");
+      nt3 = f->make<TNtuple>("nt3","NTuple for debugging by SubEvents","ncands:b:npart:nsub");
 
       hydjetTree_->Branch("event",&hev_.event,"event/I");
       hydjetTree_->Branch("b",&hev_.b,"b/F");
