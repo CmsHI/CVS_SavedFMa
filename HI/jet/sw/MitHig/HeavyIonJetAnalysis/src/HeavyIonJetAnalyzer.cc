@@ -235,6 +235,7 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
    double vz = -99;
    double vr = -99;
    const GenEvent* evt;
+   int ishydro = 0;
 
    for(int is = 0; is< MAXSUBS; ++is) npsub[is] = 0;
 
@@ -281,7 +282,29 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       Handle<HepMCProduct> mc;
       iEvent.getByLabel("source",mc);
       evt = mc->GetEvent();
+   }
 
+   const HeavyIon* hi = evt->heavy_ion();
+   if(hi){
+      b = hi->impact_parameter();
+      npart = hi->Npart_proj()+hi->Npart_targ();
+      nsub = hi->Ncoll_hard() + 1;
+
+      // This will loop over all subevents:
+      // from 0 to Ncoll_hard()-1 are the pyquen subevents
+      // Ncoll_hard() is the hydro subevent
+      for(int i1 = 0; i1< nsub; ++i1){
+	 //nt3->Fill(npsub[i1],npsub2[i1]);
+	 nt3->Fill(npsub[i1],b,npart,nsub);
+      }
+
+      if(printLists_){
+	 out_b<<b<<endl;
+	 out_n<<npart<<endl;
+      }
+
+   }
+   
       if(doParticles_){
 	 int all = evt->particles_size();
 	 HepMC::GenEvent::particle_const_iterator begin = evt->particles_begin();
@@ -314,30 +337,44 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	 }
 
 
-	 cout<<"A"<<endl;
+	 //cout<<"A"<<endl;
 
 	 edm::Handle<reco::GenParticleCollection> inputHandle;
 	 iEvent.getByLabel("hiGenParticles",inputHandle);
 
-         cout<<"B"<<endl;
+         //cout<<"B"<<endl;
 
 	 edm::Handle<edm::SubEventMap> subs;
 	 iEvent.getByLabel("hiGenParticles",subs);
 
-         cout<<"C"<<endl;
+         //cout<<"C"<<endl;
+	 //-- Start the loop over each gen particle
 	 for (unsigned i = 0; i < inputHandle->size(); ++i) {
 
 	    //cout<<"D"<<endl;
 
+	    //-- Get particle from collection iterator --
 	    const reco::GenParticle & p = (*inputHandle)[i];
 	    //cout<<"E"<<endl;
 
+	    //-- Read particle properties --
 	    int status = p.status();
 	    int pdg = p.pdgId();
+	    double pt = p.pt();
+	    double eta = p.eta();
+	    double phi = p.phi();
+	    int charge = p.charge();
 	    //cout<<"F"<<endl;
 
+	    //-- Read subevent (vertex) id --
 	    int subid = (*subs)[reco::GenParticleRef(inputHandle,i)];
+	    if (subid == (nsub-1)){
+	       ishydro = 1;
+	    }
 	    //cout<<"G"<<endl;
+
+	    // Fill ntuple for ALL gen particles
+	    nt2->Fill(pdg,status,pt,eta,phi,charge,subid,ishydro);
 
 	    // count the number of final particles for each subevent
 	    if ( status == 1 ) {
@@ -366,30 +403,8 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
       }
       
-   }
    cout<<"P"<<endl;
 
-   const HeavyIon* hi = evt->heavy_ion();
-   if(hi){
-      b = hi->impact_parameter();
-      npart = hi->Npart_proj()+hi->Npart_targ();
-      nsub = hi->Ncoll_hard() + 1;
-
-      // This will loop over all subevents:
-      // from 0 to Ncoll_hard()-1 are the pyquen subevents
-      // Ncoll_hard() is the hydro subevent
-      for(int i1 = 0; i1< nsub; ++i1){
-	 //nt3->Fill(npsub[i1],npsub2[i1]);
-	 nt3->Fill(npsub[i1],b,npart,nsub);
-      }
-
-      if(printLists_){
-	 out_b<<b<<endl;
-	 out_n<<npart<<endl;
-      }
-
-   }
-   
    //   edm::Handle<reco::GenJetCollection> genjets;
    edm::Handle<reco::JetView> genjets;
    //   edm::Handle<vector<reco::Jet> > genjets;
@@ -475,7 +490,7 @@ HeavyIonJetAnalyzer::beginJob(const edm::EventSetup& iSetup)
       hydjetTree_ = f->make<TTree>("hi","Tree of Hydjet Events");
 
       nt = f->make<TNtuple>("nt","NTuple for debugging by Jets","ptjets:ptcons");
-      nt2 = f->make<TNtuple>("nt2","NTuple for debugging by Particles","matched:pdg:status");
+      nt2 = f->make<TNtuple>("nt2","NTuple for debugging by Particles","pid:status:pt:eta:phi:charge:subeid:ishydro");
       nt3 = f->make<TNtuple>("nt3","NTuple for debugging by SubEvents","ncands:b:npart:nsub");
 
       hydjetTree_->Branch("event",&hev_.event,"event/I");
