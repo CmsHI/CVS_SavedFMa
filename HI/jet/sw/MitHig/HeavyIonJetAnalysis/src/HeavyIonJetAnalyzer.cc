@@ -284,27 +284,19 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       evt = mc->GetEvent();
    }
 
+   //-- Read in the heavy ion event information --
    const HeavyIon* hi = evt->heavy_ion();
    if(hi){
       b = hi->impact_parameter();
       npart = hi->Npart_proj()+hi->Npart_targ();
       nsub = hi->Ncoll_hard() + 1;
-
-      // This will loop over all subevents:
-      // from 0 to Ncoll_hard()-1 are the pyquen subevents
-      // Ncoll_hard() is the hydro subevent
-      for(int i1 = 0; i1< nsub; ++i1){
-	 //nt3->Fill(npsub[i1],npsub2[i1]);
-	 nt3->Fill(npsub[i1],b,npart,nsub);
-      }
-
-      if(printLists_){
-	 out_b<<b<<endl;
-	 out_n<<npart<<endl;
-      }
-
+//      if(printLists_){
+//	 out_b<<b<<endl;
+//	 out_n<<npart<<endl;
+//      }
    }
    
+   //-- Loop over the particles --
       if(doParticles_){
 	 int all = evt->particles_size();
 	 HepMC::GenEvent::particle_const_iterator begin = evt->particles_begin();
@@ -402,7 +394,16 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	 }
 
       }
-      
+
+   //-- Fill ntuple for each subevnet --
+   if(hi){
+      // This will loop over all subevents:
+      // from 0 to Ncoll_hard()-1 are the pyquen subevents
+      // Ncoll_hard() is the hydro subevent
+      for(int i1 = 0; i1< nsub; ++i1){
+	 nt3->Fill(npsub[i1],b,npart,nsub);
+      }
+   }
    cout<<"P"<<endl;
 
    //   edm::Handle<reco::GenJetCollection> genjets;
