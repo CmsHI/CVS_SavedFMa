@@ -30,11 +30,14 @@ process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 process.load("RecoHI.HiCandidateAlgos.hiGenParticles_cfi")
 
 process.source = cms.Source("PoolSource",
-   fileNames = cms.untracked.vstring('file:hydjet_edm.root')
+   fileNames = cms.untracked.vstring('file:hydjet_kQJetsOnly_edm.root')
 )
+import MitHig.HeavyIonJetAnalysis.hydjet_yenjie_1m as infiles
+process.source.fileNames = infiles.fileNames
+print process.source.fileNames
 
 process.maxEvents = cms.untracked.PSet(
-      input = cms.untracked.int32(-1)
+      input = cms.untracked.int32(50)
 )
 
 process.SimpleMemoryCheck = cms.Service('SimpleMemoryCheck',
@@ -54,7 +57,7 @@ process.iterativeCone5HiGenJets = cms.EDProducer("IterativeConeHiGenJetProducer"
 
 process.subevent = cms.EDAnalyzer('HeavyIonJetAnalyzer',
    jetSrc = cms.vstring('iterativeCone5HiGenJets'),
-   doParticles = cms.untracked.bool(False)
+   doParticles = cms.untracked.bool(True)
 )
 
 process.allevent =  cms.EDAnalyzer('HeavyIonJetAnalyzer',
@@ -80,6 +83,6 @@ process.pre = cms.Path(process.mix)
 # - We don't run all event for the moment, which needs the standard iterativeCone5GenJets
 #   * we don't add this standard iCone5 jet finder, to keep things simple for now
 process.p = cms.Path(process.runjets*process.subevent)
-process.outpath = cms.EndPath(process.output)
+#process.outpath = cms.EndPath(process.output)
 
-process.schedule = cms.Schedule(process.pre,process.p,process.outpath)
+process.schedule = cms.Schedule(process.pre,process.p)#,process.outpath)
