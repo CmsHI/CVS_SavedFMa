@@ -91,6 +91,7 @@ void analyze_genjets(char * infile = "genjets.root", char * outfile = "output.ro
 
   TCanvas* c7 = new TCanvas();
   tsub->Draw("et");
+  gPad->SetLogy();
   c7->Print("subjet_et.gif");
 
 //  TCanvas* c8 = new TCanvas();
@@ -98,6 +99,15 @@ void analyze_genjets(char * infile = "genjets.root", char * outfile = "output.ro
 //  c8->Print("globjet_et.gif");
 
 
+  // Check frankma ntuples
+  TNtuple * nt3 = dynamic_cast<TNtuple*>(inf->Get("subevent/nt3"));
+
+  TCanvas* c9 = new TCanvas();
+  TH1F * hcand = new TH1F("subevent_mul", "subevent multiplicity", 100, 0, 250);
+  nt3->Draw("ncands>>subevent_mul");
+  TCanvas* c10 = new TCanvas();
+  TH2F * hcandvb = new TH2F("submul_vs_b", "subevent multiplicity vs b", 100,0,14, 1000, 0, 25000);
+  nt3->Draw("ncands:b>>submul_vs_b");
 
 
 }
