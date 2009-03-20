@@ -32,9 +32,7 @@ process.load("RecoHI.HiCandidateAlgos.hiGenParticles_cfi")
 process.source = cms.Source("PoolSource",
    fileNames = cms.untracked.vstring('file:hydjet_kQJetsOnly_edm.root')
 )
-import MitHig.HeavyIonJetAnalysis.hydjet_yenjie_1m as infiles
-process.source.fileNames = infiles.fileNames
-print process.source.fileNames
+print process.source.fileNames[:10]
 
 process.maxEvents = cms.untracked.PSet(
       input = cms.untracked.int32(10000)
