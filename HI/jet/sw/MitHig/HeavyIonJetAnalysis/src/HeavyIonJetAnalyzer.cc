@@ -490,7 +490,7 @@ HeavyIonJetAnalyzer::beginJob(const edm::EventSetup& iSetup)
    if(doAnalysis_){
       hydjetTree_ = f->make<TTree>("hi","Tree of Hydjet Events");
 
-      nt = f->make<TNtuple>("nt","NTuple for debugging by Jets","ptjets:ptcons");
+      //nt = f->make<TNtuple>("nt","NTuple for debugging by Jets","ptjets:ptcons");
       nt2 = f->make<TNtuple>("nt2","NTuple for debugging by Particles","pid:status:pt:eta:phi:charge:subeid:ishydro");
       nt3 = f->make<TNtuple>("nt3","NTuple for debugging by SubEvents","ncands:b:npart:nsub");
 
