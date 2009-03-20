@@ -15,7 +15,7 @@ source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env.sh
 voms-proxy-init -valid 720:00
 
 # Now setup CMSSW
-source $HOME/bin/basic/cmssw_set_basic.sh
+#source $HOME/bin/basic/cmssw_set_basic.sh
 #cd $l1skim_area
 cmsenv
 
@@ -25,5 +25,5 @@ cmsenv
 # The lastest version:
 source /afs/cern.ch/cms/ccs/wm/scripts/Crab/crab.sh
 
-cd -
+#cd -
 
