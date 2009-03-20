@@ -23,10 +23,14 @@ mv UserCode/MitHig .
 mv UserCode/yetkin/RecoHI .
 #-- Now co private code --
 cvs co -r cmssw_2_2_5_run1M_0 UserCode/SavedFMa/HI/jet/sw
+# source codes
 mv UserCode/SavedFMa/HI/jet/sw/SimDataFormats/HiGenData/BuildFile SimDataFormats/HiGenData/BuildFile
 mv UserCode/SavedFMa/HI/jet/sw/RecoHI/HiJetAlgos/src/BaseHiGenJetProducer.cc RecoHI/HiJetAlgos/src/BaseHiGenJetProducer.cc
-mv UserCode/SavedFMa/HI/jet/sw/MitHig/HeavyIonJetAnalysis/src/HeavyIonJetAnalyzer.cc
+mv UserCode/SavedFMa/HI/jet/sw/MitHig/HeavyIonJetAnalysis/src/HeavyIonJetAnalyzer.cc MitHig/HeavyIonJetAnalysis/src/HeavyIonJetAnalyzer.cc
+# configurations
 mv UserCode/SavedFMa/HI/jet/sw/MitHig/HeavyIonJetAnalysis/test MitHig/HeavyIonJetAnalysis/
+rm -r MitHig/HeavyIonJetAnalysis/prod
+rm -r MitHig/HeavyIonJetAnalysis/analysis
 mv UserCode/SavedFMa/HI/jet/sw/MitHig/HeavyIonJetAnalysis/prod MitHig/HeavyIonJetAnalysis/
 mv UserCode/SavedFMa/HI/jet/sw/MitHig/HeavyIonJetAnalysis/analysis MitHig/HeavyIonJetAnalysis/
 rm -r UserCode
