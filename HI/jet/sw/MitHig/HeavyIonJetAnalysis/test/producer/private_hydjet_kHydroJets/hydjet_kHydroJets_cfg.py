@@ -15,7 +15,8 @@ process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 
 process.load("GeneratorInterface.HydjetInterface.hydjetSourceDefault_cfi")
 process.HydjetSource.allowEmptyEvents = cms.bool(False)
-process.HydjetSource.hydjetMode = 'kQJetsOnly'
+process.HydjetSource.hydjetMode = 'kHydroJets'
+#process.HydjetSource.hydjetMode = 'kQJetsOnly'
 #process.HydjetSource.hydjetMode = 'kJetsOnly'
 
 process.maxEvents = cms.untracked.PSet(
