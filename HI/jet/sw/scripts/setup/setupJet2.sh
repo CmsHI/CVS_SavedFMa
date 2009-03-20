@@ -25,8 +25,10 @@ mv UserCode/yetkin/RecoHI .
 cvs co -r cmssw_2_2_5_run1M_0 UserCode/SavedFMa/HI/jet/sw
 mv UserCode/SavedFMa/HI/jet/sw/SimDataFormats/HiGenData/BuildFile SimDataFormats/HiGenData/BuildFile
 mv UserCode/SavedFMa/HI/jet/sw/RecoHI/HiJetAlgos/src/BaseHiGenJetProducer.cc RecoHI/HiJetAlgos/src/BaseHiGenJetProducer.cc
-mv UserCode/SavedFMa/HI/jet/sw/MitHig/HeavyIonJetAnalysis/test/ .
-mv UserCode/SavedFMa/HI/jet/sw/MitHig/HeavyIonJetAnalysis/prod/ .
+mv UserCode/SavedFMa/HI/jet/sw/MitHig/HeavyIonJetAnalysis/test MitHig/HeavyIonJetAnalysis/
+mv UserCode/SavedFMa/HI/jet/sw/MitHig/HeavyIonJetAnalysis/prod MitHig/HeavyIonJetAnalysis/
 rm -r UserCode
+
+#-- Finally build --
 scramv1 b
 
