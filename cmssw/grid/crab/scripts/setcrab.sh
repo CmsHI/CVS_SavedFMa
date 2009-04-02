@@ -1,10 +1,13 @@
 #!/bin/bash
 # 
+# Certificate:
+# - https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideCrabHowTo#Get_a_Grid_certificate
+#
 # Setup CRAB env.
-#   Following WorkBookRunningGrid
+# - Following WorkBookRunningGrid
 #
 # Note:
-#   Make you you source these env scripts in the correct order, as
+# - Make you you source these env scripts in the correct order, as
 #   according to the twiki instructions
 #
 
