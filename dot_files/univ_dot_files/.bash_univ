@@ -24,6 +24,9 @@ export EvFrun=$SavedFMa/pp/DAQ/EvF/run
 alias ema='emacs -nw'
 alias xterm='xterm -fg green -bg black'
 alias cvsdhead='cvs diff -rHEAD'
+alias l='ls --color=auto'
+alias ll='ls -ltr --color=auto'
+alias la='ls -a --color=auto'
 #--my universal CMSSW shortcuts--
 #alias cvscms=". $SavedFMa/bin/cvsinit.sh"
 
