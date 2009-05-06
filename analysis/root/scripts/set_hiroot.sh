@@ -1,5 +1,15 @@
 #!/bin/sh
 
+#
+# script to setup hiroot
+# - basic ideas
+#   * set the env variables for main paths
+# - cf
+#   * http://www.cmsaf.mit.edu/twiki/bin/view/Software/HIROOT
+#   * http://viktor.lns.mit.edu/viewcvs/hiroot/trunk/README?view=markup
+#
+
+
 #--- Setup Root env using script ---
 . $SavedFMa/analysis/root/scripts/set_root.sh
 
