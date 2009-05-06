@@ -1,8 +1,8 @@
 /** \file
  * 
  * 
- * $Date: 2009/01/10 01:05:51 $
- * $Revision: 1.3 $
+ * $Date: 2009/05/06 16:04:11 $
+ * $Revision: 1.2 $
  * \author N. Amapane - S. Argiro'
  *
 */
@@ -74,7 +74,7 @@ namespace test{
 	    }
 	  }
 
-      //--- Read FED 813 ---
+      //--- Read FED 814 ---
       const FEDRawData& data2 = rawdata->FEDData(GTPEId);
       size=data2.size();
 
