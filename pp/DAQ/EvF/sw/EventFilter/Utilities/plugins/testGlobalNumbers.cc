@@ -26,6 +26,7 @@ using namespace std;
 namespace test{
 
   static const unsigned int GTEVMId= 812;
+  static const unsigned int GTDAQId= 813;
   static const unsigned int GTPEId= 814;
   class GlobalNumbersAnalysis: public EDAnalyzer{
   private:
@@ -37,11 +38,13 @@ namespace test{
     void analyze(const Event & e, const EventSetup& c){
       cout << "--- Run: " << e.id().run()
 	   << " Event: " << e.id().event() << endl;
+      //--- Get the fedrawdata collection ---
       Handle<FEDRawDataCollection> rawdata;
       e.getByType(rawdata);
+
+      //--- Read FED 812 ---
       const FEDRawData& data = rawdata->FEDData(GTEVMId);
       size_t size=data.size();
-
       if (size>0 ) {
 	  cout << "FED# " << setw(4) << GTEVMId << " " << setw(8) << size << " bytes " << endl;
 	  if(evf::evtn::evm_board_sense(data.data()))
@@ -57,6 +60,21 @@ namespace test{
 	    }
 	  }
 
+
+      //--- Read FED 813 ---
+      const FEDRawData& data1 = rawdata->FEDData(GTDAQId);
+      size=data1.size();
+
+      if (size>0 ) {
+	  cout << "FED# " << setw(4) << GTDAQId << " " << setw(8) << size << " bytes " << endl;
+	  if(evf::evtn::daq_board_sense(data1.data()))
+	    {
+	      cout << "FED# " << setw(4) << GTDAQId << " is the real GT DAQ block " << endl;
+	      cout << "Event # " << evf::evtn::get(data1.data(),false) << endl;
+	    }
+	  }
+
+      //--- Read FED 813 ---
       const FEDRawData& data2 = rawdata->FEDData(GTPEId);
       size=data2.size();
 
