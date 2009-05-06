@@ -7,19 +7,19 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-#--------------------------------Universal------------------------------------
-. $HOME/UserCode/SavedFMa/dot_files/univ_dot_files/.bash_univ
-
 #--------------------------------cmsusr bash env------------------------------------
-#---My top paths---
+#===My top paths===
 export mit=$HOME/mit
 export scratch=/net/pstore01/d00/scratch/frankma
 export work=$HOME/work
 export cmsswarea=$work/cmssw
 export hiroot=$work/hiroot
+export SavedFMa=$HOME/UserCode/SavedFMa
+
 #===Working projects===
 # first practice with Yetkin
 #export cur_pro=$cmsswarea/CMSSW_2_0_0_pre6/src
+#
 #--2_1_X--
 # production for the quick gen level dN/dpt
 #export cur_pro=$cmsswarea/CMSSW_2_1_4/src
@@ -27,11 +27,14 @@ export hiroot=$work/hiroot
 # first jet area, directly copied from ~yetkin/cmsJet/src
 #export jet_area=$cmsswarea/CMSSW_2_1_11/src
 # jet area setting up from cvs
-export jet_area=$cmsswarea/jetCMSSW_2_1_11/src
+#export jet_area=$cmsswarea/jetCMSSW_2_1_11/src
 # for L1-skim
 export l1skim_area=$cmsswarea/CMSSW_2_1_7/src
 # for HLT validation
 export hlt_area=$cmsswarea/hltCMSSW_2_1_11/src
+#
+#---2_2_X---
+export jet_sw=$work/HI/jet/sw/CMSSW_2_2_5/src
 
 #---Shortcuts---
 #-- 8.882 class --
@@ -52,7 +55,13 @@ alias hibat5='ssh -Y hibat0005'
 alias daily='vi tier2/report/daily_operation/2008_daily_report.txt'
 #-- my CMSSW local settings --
 alias setcms=". $SavedFMa/bin/cgate/basic/cmssw_set_basic.sh"
-alias cvscms=". $SavedFMa/bin/cgate/cvsinit.sh"
+alias cvscms=". $SavedFMa/bin/cvsinit.sh"
+#-- Root stup --
+alias setroot=". /net/hisrv0001/home/frankma/UserCode/SavedFMa/bin/cgate/set_root.sh"
+alias sethiroot=". /net/hisrv0001/home/frankma/UserCode/SavedFMa/bin/cgate/set_hiroot.sh"
+
+#--------------------------------Universal------------------------------------
+. $HOME/UserCode/SavedFMa/dot_files/univ_dot_files/.bash_univ
 
 #------------------- Old --------------------------
 #---setup environment variables---
