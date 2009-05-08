@@ -1,10 +1,19 @@
 import FWCore.ParameterSet.Config as cms
 
 #process = cms.Process("HLTtimer")
-import hlt.tsg.myp5_cmsRun_online_timingHLTV6 as myhlt
+import hlt.hi.HIHLT_2_2_6_HLT as myhlt
 process = myhlt.process
 
-process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32( 1000 ) )
+import os
+l = os.listdir("/tmp/frankma/data/mb/")
+l.sort()
+#l[8:] = []
+fileNames = []
+for i in l:
+   fileNames.append("file:/tmp/frankma/data/mb/" + i)
+process.source.fileNames = fileNames
+process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32( -1 ) )
+print process.source.fileNames[:20]
 
 # Bryan's timer
 process.PathTimerService = cms.Service( "PathTimerService" )
@@ -12,20 +21,28 @@ process.timer = cms.EDProducer( "PathTimerInserter" )
 
 
 #print process.hltDefaultOutput.fileName
-process.hltDefaultOutput.fileName = "file:/tmp/HLTTimerOutput.root"
+process.out4A.fileName = "file:/tmp/HLTTimerOutput.root"
 #process.hltDefaultOutput.outputCommands.append('keep HLTPerformanceInfo_*_*_*')
-process.hltDefaultOutput.outputCommands = ['keep HLTPerformanceInfo_*_*_*']
-print process.hltDefaultOutput.outputCommands
-del process.hltDefaultOutput.SelectEvents
+process.out4A.outputCommands = ['keep HLTPerformanceInfo_*_*_*']
+print process.out4A.outputCommands
+del process.out4A.SelectEvents
 
 # Print out orginal paths
 # cf
 # - http://cmslxr.fnal.gov/lxr/source/L1Trigger/Configuration/python/patchToRerunL1Emulator.py
 # - for listing all the attributes of a python object, use: dir([obj])
 #   * cf http://docs.python.org/library/functions.html
-# - for end path (python) class definition
-#   * $CMSSW_RELEASE_BASE/python/FWCore/ParameterSet/SequenceTypes.py
+# - cmssw end path in python
+#   * is a dict
+#     + cf help(process.outpath)
+#   * class definition
+#     + $CMSSW_RELEASE_BASE/python/FWCore/ParameterSet/SequenceTypes.py
+
+# Using the itervalues() in dict to step through the dict container.
 print "All paths found in original cfg:"
+for iterable in process.paths.itervalues():
+   print "  ", iterable.label(),": ", iterable
+print "All endpaths found in original cfg:"
 for iterable in process.endpaths.itervalues():
    print "  ", iterable.label(),": ", iterable
    #del iterable
