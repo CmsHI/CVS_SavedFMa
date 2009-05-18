@@ -18,7 +18,8 @@
 #include <THIConstIndexGenerator.h>
 #include <THIHydjet.h>
 #include <THIPythia.h>
-#include "createHRIT.C"
+// hictl is taking from $HIROOT/macro/hictl
+#include "hictl/createHRIT.C"
 #endif
 
 void createPythiaDijet100(ULong_t n = 10000, ULong_t runno = 777, 
