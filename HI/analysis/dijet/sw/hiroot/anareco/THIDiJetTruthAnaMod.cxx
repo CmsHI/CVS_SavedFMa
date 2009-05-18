@@ -24,6 +24,7 @@
 #include "THIPhotonMCType.h"
 #include "THIMCGammaJetSignalDef.h"
 #include "THIMatchedParticles.h"
+//#include "THILorentzVector.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -473,6 +474,43 @@ void THIDiJetTruthAnaMod::Process()
    printf("Done Fill ntuple\n");
    // event statistics for normalization--------------------------------
 
+
+   //--- Fill ntuple for leading partons ---
+   //-- get values--
+   UInt_t eve = fEvent->GetEventNum();
+   UInt_t run = fEvent->GetRunNum();
+//   THILorentzVector pcm = fNearParton->GetMom() + fAwayParton->GetMom();
+//   Float_t mass = pcm.Mag(); 
+//   Float_t cmeta = pcm.Eta();
+   TVector3 v1(fNearParton->Get3Mom().X(),
+	 fNearParton->Get3Mom().Y(),
+	 fNearParton->Get3Mom().Z()
+	 );
+   TVector3 v2(fAwayParton->Get3Mom().X(),
+	 fAwayParton->Get3Mom().Y(),
+	 fAwayParton->Get3Mom().Z()
+	 );
+   TLorentzVector lv1(v1,v1.Mag());
+   TLorentzVector lv2(v2,v2.Mag());
+
+   TVector3 vs = v1 +v2;
+   //      printf("MASS: np %f ap %f vs %f\n",fNearParton->GetMom().Mag(),fAwayParton->GetMom().Mag(),vs.Mag());
+   //      THIVectorT vs = fNearParton->Get3Mom() + fAwayParton->Get3Mom();
+   Float_t mass =  TMath::Sqrt(pow(lv1.E()+lv2.E(),2)-pow(vs.Mag(),2));
+   //TMath::Sqrt(pow(fNearParton->GetMom().Mag()+fAwayParton->GetMom().Mag(),2)-pow(vs.Mag(),2));
+   Float_t cmeta = (fNearParton->GetEta()+fAwayParton->GetEta())/2;
+   Double_t dphi = TMath::Abs(fAwayParton->GetMom().DeltaPhi(fNearParton->GetMom()));
+   //-- fill nt --
+   fNTLPartons->Fill(run,eve,mass,cmeta,dphi,
+	 fNearParton->GetId(),fNearParton->GetStatus(),fNearParton->GetEt(),fNearParton->GetEta(),fNearParton->GetPhi(),
+	 fAwayParton->GetId(),fAwayParton->GetStatus(),fAwayParton->GetEt(),fAwayParton->GetEta(),fAwayParton->GetPhi()
+	 );
+   printf("Run%d Evt#%d mass:%f cmeta:%f lparton id|stat: %d|%d eta|eta|phi: (%f|%f|%f) aparton id|stat: %d|%d eta|eta|phi: (%f|%f|%f)",
+	 run,eve,mass,cmeta,
+	 fNearParton->GetId(),fNearParton->GetStatus(),fNearParton->GetEt(),fNearParton->GetEta(),fNearParton->GetPhi(),
+	 fAwayParton->GetId(),fAwayParton->GetStatus(),fAwayParton->GetEt(),fAwayParton->GetEta(),fAwayParton->GetPhi()
+	 );
+
    // Check the particles inside cone and get variables-----------------
    Int_t numsub = fGenRecords->GetEntries();
    for(Int_t ise = 0;ise<numsub; ise++) {
@@ -547,5 +585,8 @@ void THIDiJetTruthAnaMod::SlaveBegin()
    
    fNTECStat = new TNtuple("NTECStat","NTECStat","run:eve:mass:cmeta:npid:npet:npetsm:npeta:npphi:nplpet:nplpid:nplpdr:apid:apet:apetsm:apeta:apphi:apdphi:aplpet:aplpid:aplpdr");
    AddOutput(fNTECStat);
+
+   fNTLPartons = new TNtuple("NTLPartons","leading partons","run:eve:mass:cmeta:dphi:nlpid:nlpstat:nlpet:nlpeta:nlpphi:alpid:alpstat:alpet:alpeta:alpphi");
+   AddOutput(fNTLPartons);
    
 }
