@@ -8,6 +8,7 @@
 
 const Float_t PI = 3.14159;
 
+//=================================Helper Functions==================================
 //--- Find Histogram by name ---
 TH1* findHist(const char* hn1)
 {
@@ -69,7 +70,7 @@ TH1F * createHist(const char* name, const char* title, const int nbin, const flo
 }
 
 //--- Set Histogram ---
-void setHist(TH1* h, const int lc=0, const int ls=0, const int lw=0, const char* xtitle = "", const char* ytitle = "", const int msz=0, const int mst=0, const double norm = 1)
+void setHist(TH1* h, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double norm = 1, const char* xtitle = "", const char* ytitle = "")
 {
    //--- Set histo properties ---
    if (lc!=0) h->SetLineColor(lc);
@@ -84,10 +85,10 @@ void setHist(TH1* h, const int lc=0, const int ls=0, const int lw=0, const char*
    //--- Normalize ---
    h->Scale(norm);
 }
-void setHist(const char* name, const int lc=0, const int ls=0, const int lw=0, const char* xtitle = "", const char* ytitle = "", const int msz=0, const int mst=0, const double norm = 1)
+void setHist(const char* name, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double norm = 1, const char* xtitle = "", const char* ytitle = "")
 {
    TH1F * h;
-   if (h=dynamic_cast<TH1F*>(findHist(name))) setHist(h,lc,ls,lw,xtitle,ytitle,msz,mst,norm);
+   if (h=dynamic_cast<TH1F*>(findHist(name))) setHist(h,lc,ls,lw,msz,mst,norm,xtitle,ytitle);
 }
 
 //--- Make Canvas ---
@@ -97,7 +98,7 @@ TCanvas * makeCanvas(const char* name, const char* title, bool log=false, const 
    TCanvas * c;
    TString cname(Form("c%s",name));
 
-   if (strcmp(opt,"same")!=0) {
+   if (!TString(opt).Contains("same")) {
       c = new TCanvas(cname.Data(),title,dx,dy);
 //      printf("Canvas: %d\n",c);
       if (log) c->SetLogy();
@@ -106,17 +107,18 @@ TCanvas * makeCanvas(const char* name, const char* title, bool log=false, const 
    return c;
 }
 
+//=============================== Main Functions =====================================
 //--- function to draw histograms from TTree ---
 void drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0)
 {
    //--- Print some info ---
-   if (strcmp(opt,"same")!=0) printf("\n");
+   if (!TString(opt).Contains("same")) printf("\n");
    printf("%s, tree: %d. Draw: %s\n", name, nt, draw);
 //   nt->Print();
 
    //--- Make/set histogram ---
    printf("hist: %s %d %f %f\n",name,nbin,min,max);
-   TH1F * h = new TH1F(name, title, nbin, min, max);
+   TH1F * h = createHist(name, title, nbin, min, max);
    setHist(h,lc,ls,lw);
 
    //--- Draw ---
@@ -129,7 +131,7 @@ void drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, con
 void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0)
 {
    // find input histos
-   if (strcmp(opt,"same")!=0) printf("\n");
+   if (!TString(opt).Contains("same")) printf("\n");
    printf("h1: %s. h2: %s. Draw: %s\n", hn1, hn2, name);
    TH1F * h1; TH1F * h2;
    if (gROOT->FindObject(hn1))
@@ -147,7 +149,7 @@ void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* 
 
    //--- Make/set histogram ---
    printf("hist: %s %d %f %f\n",name,nbin,min,max);
-   TH1F * h = new TH1F(name, title, nbin, min, max);
+   TH1F * h = createHist(name, title, nbin, min, max);
    setHist(h,lc,ls,lw);
 
    //--- Action ---
@@ -161,7 +163,7 @@ void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* 
 //--- function to draw histograms ---
 void drawNormHist(TH1* h, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = 1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0)
 {
-   setHist(h,lc,ls,lw,xtitle,ytitle,msz,mst,norm);
+   setHist(h,lc,ls,lw,msz,mst,norm,xtitle,ytitle);
    makeCanvas(Form("normalized_%s",h->GetName()),title, log,opt);
    h->Draw(opt);
 }
