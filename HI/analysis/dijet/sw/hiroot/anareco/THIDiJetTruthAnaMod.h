@@ -53,6 +53,7 @@ protected:
    TNtuple                        *fNTECStat;             //!ntuple with ecal cluster statitics
    TNtuple                        *fNTTruePFF;            //!ntuple with gamma jet and background particles
    TNtuple                        *fNTTruePFFBG;          //!ntuple with gamma jet and background particles
+   TNtuple                        *fNTLPartons;           //!ntuple of leading partons in each event
 
    Float_t                         fIsPromPhoton;         //!prompt photon event flag
    Float_t                         fIsIsolated;           //!isolated particle event flag
