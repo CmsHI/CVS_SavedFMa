@@ -24,5 +24,6 @@
 #pragma link C++ class THISuperClusIsolationMod+;
 #pragma link C++ class THISuperClusProperties+;
 #pragma link C++ class THITrackEffMod+;
+#pragma link C++ class THIDiJetTruthAnaMod+;
 
 #endif // __CINT__
