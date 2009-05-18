@@ -16,10 +16,11 @@
 #include <THIGenerator.h>
 #include <THIIndexGenerator.h>
 #include <THITreeWriter.h>
+#include <TSystem.h>
 #endif
 
 //________________________________________________________________________
-void createHRIT(THIGenerator *gen, THIIndexGenerator *igen, ULong_t n, ULong_t runno)
+void createHRIT(THIGenerator *gen, THIIndexGenerator *igen, ULong_t n, ULong_t runno, TString pref = "hrt")
 {
    gDebugMask = THIDebug::kTreeWriting;
    gDebugLevel = 1; //Increase this if needed.
@@ -35,6 +36,8 @@ void createHRIT(THIGenerator *gen, THIIndexGenerator *igen, ULong_t n, ULong_t r
       tw.SetNamePrefix(Form("%s_hrt",pref.Data()));
       tw.SetIndexNamePrefix(Form("%s_hrit",pref.Data()));
    }
+   tw.SetNamePrefix(Form("%s_hrt",pref.Data()));
+   tw.SetIndexNamePrefix(Form("%s_hrit",pref.Data()));
 
    tw.Generate(runno,n);
 }
