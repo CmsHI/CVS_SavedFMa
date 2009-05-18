@@ -72,4 +72,6 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    //TH1F * hNearFFRatio = new TH1F("hFFRatio","FF ratio", 100,0,10);
    drawDivHist("hXiNearPyquen","hXiNearPythia","","hNearFFRatio","Near FF ratio: Pyquen/Pythia",100,0,10,false,kBlue+2,1,3);
    drawDivHist("hXiAwayPyquen","hXiAwayPythia","same","hAwayFFRatio","draw Away FF ratio: Pyquen/Pythia",100,0,10,false,kGreen+2,7,3);
+
+   printAllCanvases();
 }
