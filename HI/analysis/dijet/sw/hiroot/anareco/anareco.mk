@@ -21,6 +21,7 @@ anarecoDH := \
      THISuperClusIsolationMod.h \
      THISuperClusProperties.h \
      THITrackEffMod.h \
+     THIDiJetTruthAnaMod.h \
 
 
 anarecoLIBEXTRA := \
