@@ -1,7 +1,27 @@
+#include "TTree.h"
+#include "TNtuple.h"
+#include "TH1F.h"
+#include "TCanvas.h"
+#include "TROOT.h"
 #include "TString.h"
 #include "TRegexp.h"
 
 const Float_t PI = 3.14159;
+
+//--- Find Histogram by name ---
+TH1* findHist(const char* hn1)
+{
+   TH1* h;
+   if (gROOT->FindObject(hn1)) {
+      h = dynamic_cast<TH1*>(gROOT->FindObject(hn1));
+//      printf("hist: %d\n",h);
+      return h;
+   }
+   else {
+      printf("%s is not found, please check the histogram name\n", hn1);
+      return 0;
+   }
+}
 
 //--- Print Canvas with a given name ---
 void printCanvas(const char* name, const char* title)//, TCanvas * c)
@@ -19,7 +39,7 @@ void printCanvas(const char* name, const char* title)//, TCanvas * c)
    TString ttitle(title);
    TRegexp re("draw");
 //   cout << ttitle << " contains: " << "draw" << "?   " << ttitle.Contains(re) << endl;
-   cout << "draw " << name << "?   " << ttitle.Contains(re) << endl;
+//   cout << "draw " << name << "?   " << ttitle.Contains(re) << endl;
    if (ttitle.Contains(re)) {
       c->Print(Form("plots/%s.gif",name));
    }
@@ -37,14 +57,37 @@ void printAllCanvases()
    }
 }
 
-//--- Set Histogram ---
-void setHist(TH1* h, const int lc=0, const int ls=0, const int lw=0, const char* xtitle = "", const char* ytitle = "", const int norm = 1)
+//--- Creat Histogram ---
+TH1F * createHist(const char* name, const char* title, const int nbin, const float min, const float max)
 {
-   //   printf("color %d\n",lc);
+   // Save the errors, so that later when scale or divided by another histo,
+   // the errors will scale with the same factor and not recalculated after scale.
+   // cf "Filling Histograms" in root manual
+   TH1F * h = new TH1F(name,title,nbin,min,max);
+   h->Sumw2();
+   return h;
+}
+
+//--- Set Histogram ---
+void setHist(TH1* h, const int lc=0, const int ls=0, const int lw=0, const char* xtitle = "", const char* ytitle = "", const int msz=0, const int mst=0, const double norm = 1)
+{
+   //--- Set histo properties ---
    if (lc!=0) h->SetLineColor(lc);
    if (ls!=0) h->SetLineStyle(ls);
    if (lw!=0) h->SetLineWidth(lw);
+   if (msz!=0) h->SetMarkerSize(msz);
+   if (mst!=0) h->SetMarkerStyle(mst);
+   printf("%s %s %f\n",xtitle,ytitle,norm);
+   if (strcmp(xtitle,"")!=0)   h->SetXTitle(xtitle);
+   if (strcmp(ytitle,"")!=0)   h->SetYTitle(ytitle);
 
+   //--- Normalize ---
+   h->Scale(norm);
+}
+void setHist(const char* name, const int lc=0, const int ls=0, const int lw=0, const char* xtitle = "", const char* ytitle = "", const int msz=0, const int mst=0, const double norm = 1)
+{
+   TH1F * h;
+   if (h=dynamic_cast<TH1F*>(findHist(name))) setHist(h,lc,ls,lw,xtitle,ytitle,msz,mst,norm);
 }
 
 //--- Make Canvas ---
@@ -82,7 +125,7 @@ void drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, con
    printf("%s has: %f entries\n",name,h->GetEntries());
 }
 
-//--- function to draw divided histograms ---
+//--- function to divide histograms then draw---
 void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0)
 {
    // find input histos
@@ -114,3 +157,23 @@ void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* 
    TCanvas * c = makeCanvas(name,title,log,opt);
    h->Draw(opt);
 }
+
+//--- function to draw histograms ---
+void drawNormHist(TH1* h, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = 1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0)
+{
+   setHist(h,lc,ls,lw,xtitle,ytitle,msz,mst,norm);
+   makeCanvas(Form("normalized_%s",h->GetName()),title, log,opt);
+   h->Draw(opt);
+}
+void drawNormHist(const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = 1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0)
+{
+   TH1F * h;
+   if (gROOT->FindObject(hn))
+      h = dynamic_cast<TH1F*>(gROOT->FindObject(hn));
+   else {
+      printf("%s is not found, please check the histogram name\n", hn);
+      return;
+   }
+   drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst);
+}
+
