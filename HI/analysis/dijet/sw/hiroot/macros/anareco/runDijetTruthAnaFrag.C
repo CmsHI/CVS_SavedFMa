@@ -15,7 +15,7 @@
 #endif
 
 // the macro which does the work
-void runDijetTruthAnaFrag(Int_t rnum, const char *hrts, Bool_t useProof=kFALSE)
+void runDijetTruthAnaFrag(Int_t rnum, const char * genIn, const char *hrts, Bool_t useProof=kFALSE)
 {
    gDebugMask = THIDebug::kAnalysis;
    gDebugLevel = 1; //Increase this if needed.
@@ -40,7 +40,7 @@ void runDijetTruthAnaFrag(Int_t rnum, const char *hrts, Bool_t useProof=kFALSE)
 
    // set output file name
    //   ana->SetAnaOutputName(Form("ptspec_%06d.root",rnum));
-   ana->SetAnaOutputName(Form("%s/truth_%06d.root",getenv("HIROOT_BASEURL"),rnum));
+   ana->SetAnaOutputName(Form("%s/%s_truth_%06d.root",getenv("HIROOT_BASEURL"),genIn,rnum));
 
    // run generic analysis macro
    runAnaGeneric(ana);
