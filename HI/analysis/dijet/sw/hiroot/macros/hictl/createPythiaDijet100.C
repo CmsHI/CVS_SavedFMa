@@ -21,7 +21,7 @@
 #include "createHRIT.C"
 #endif
 
-void createPythiaDijet30(ULong_t n = 10000, ULong_t runno = 666, 
+void createPythiaDijet100(ULong_t n = 10000, ULong_t runno = 777, 
 		     Bool_t index=kFALSE, Float_t energy = 4000)
 {
    gDebugMask = THIDebug::kTreeWriting;
@@ -34,8 +34,8 @@ void createPythiaDijet30(ULong_t n = 10000, ULong_t runno = 666,
    h.SetWarmupRuns(1000);
    h.SetSeed(myseed,kTRUE);
 
-   h.SetPtHardMin(30);
-   h.SetPtHardMax(40); 
+   h.SetPtHardMin(100);
+   h.SetPtHardMax(110); 
 
    h.SetMSEL(0);        // = 0 for user specification of sub-processes   
 
@@ -79,7 +79,7 @@ void createPythiaDijet30(ULong_t n = 10000, ULong_t runno = 666,
    if(index)
       igen = new THIConstIndexGenerator(1);
 
-   createHRIT(&h,igen,n,runno);
+   createHRIT(&h,igen,n,runno,"pythia100");
 
    delete igen;
 
