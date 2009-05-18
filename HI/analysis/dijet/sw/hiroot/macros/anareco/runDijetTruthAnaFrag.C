@@ -11,7 +11,7 @@
 #include <THIDebug.h>
 #include <THIDiJetTruthAnaMod.h>
 #include <THIAnalysis.h>
-#include "runAnaGeneric.C"
+#include "ana/runAnaGeneric.C"
 #endif
 
 // the macro which does the work
