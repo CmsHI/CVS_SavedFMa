@@ -176,6 +176,63 @@ void THIDiJetTruthAnaMod::GetLeadJets(const THIJetCollection *jl)
       float et = jl->At(i)->GetEt();
       printf("jet read out: et: %f\n",et);
    }
+
+   // Search for dijets and if found fill histograms with their properties.
+
+   Double_t phicut = 2.8;  // phi cut for dijets
+   Double_t etcut  = 50.;  // et cut for dijets
+
+   //find max Et:
+   Double_t maxe = -1.;
+   Int_t maxi = -1;
+   const UInt_t num = fJetArray->GetEntries();
+   for(UInt_t i=0; i<num; i++)
+   {
+      const THIJet *kj = fJetArray->At(i);
+      if(maxe < kj->GetEt()) {maxe = kj->GetEt(); maxi=i;}
+   }
+   Double_t phi1 = fJetArray->At(maxi)->GetPhi(), phi2, dphi;
+
+   // search for dijet pair on opposite side in Phi
+   Double_t maxed = -1., maxdphi=0.;
+   Int_t maxid = -1;
+   for(UInt_t i=0; i<num; i++)
+   {
+      const THIJet *kj=fJetArray->At(i);
+      phi2=kj->GetPhi();
+      dphi = phi1 - phi2;
+      while (dphi>=TMath::Pi())dphi-=2.*TMath::Pi();
+      while (dphi<-TMath::Pi())dphi+=2.*TMath::Pi();
+      dphi=TMath::Abs(dphi);
+      // this is a dijet candidate. Choose the max. Et of them.
+      if(dphi>phicut && maxed < kj->GetEt()) 
+      {
+	 maxed=kj->GetEt();
+	 maxid=i;
+	 maxdphi=dphi;
+      }
+      HDB(kAnalysis, 4) {
+	 if(dphi>phicut)
+	    Info("Dijets",
+		  "DIJET CANDIDATE: %f %f %f\n",
+		  phi1,phi2,dphi);
+      }
+   }
+   if(maxid<0) return;  // no dijet pair found
+
+   // dijet is the two jets with index "maxi" and "maxid".
+   HDB(kAnalysis, 4)
+      Info("Dijets", "FINAL DIJET: %f %f %f %f\n",
+	    fJetArray->At(maxi)->GetPhi(),fJetArray->At(maxi)->GetEt(),
+	    fJetArray->At(maxid)->GetPhi(),fJetArray->At(maxid)->GetEt());
+
+   if(fJetArray->At(maxi)->GetEt()<etcut) 
+      return;  // do not fill jets below a cut.
+
+   HDB(kAnalysis, 4) 
+      Info("Dijets", "Passes the energy cut. \n"); 
+
+   printf("base for FF: max et's: %f %f\n",fJetArray->At(maxi)->GetEt(),fJetArray->At(maxid)->GetEt());
 }
 
 //________________________________________________________________________
@@ -523,7 +580,6 @@ void THIDiJetTruthAnaMod::Process()
 
    if(fStatOnly)
       return;
-   printf("Done Fill ntuple\n");
    // event statistics for normalization--------------------------------
 
    //--- Fill ntuple for leading partons ---
@@ -595,6 +651,8 @@ void THIDiJetTruthAnaMod::Process()
 	 }
       }
    }
+
+   printf("Done Fill ntuple\n\n");
 }
 
 
