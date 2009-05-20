@@ -43,7 +43,6 @@ class THIGenRecord;
 class THIVertex;
 class THIParticleArray;
 class THIPhotonMCType;
-class THIJetArray;
 
 
 class THIDiJetTruthAnaMod : public THIAnaBaseMod {
@@ -68,6 +67,8 @@ protected:
    Float_t                         fNearSMET;           //!away side parton 
    const THIParticle                    *fAwayLeading;           //!away side parton
    const THIParticle                    *fNearLeading;           //!near side parton
+   const THIJet                    *fAwayLeadingJet;           //!away side parton
+   const THIJet                    *fNearLeadingJet;           //!near side parton
    //--- jet info
    TString                  fJetAArrayName;     //name of array of jet arrays
    Bool_t                   fLoad;              //if true load jet array from tree branch

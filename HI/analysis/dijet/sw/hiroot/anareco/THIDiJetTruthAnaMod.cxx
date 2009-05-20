@@ -232,7 +232,10 @@ void THIDiJetTruthAnaMod::GetLeadJets(const THIJetCollection *jl)
    HDB(kAnalysis, 4) 
       Info("Dijets", "Passes the energy cut. \n"); 
 
-   printf("base for FF: max et's: %f %f\n",fJetArray->At(maxi)->GetEt(),fJetArray->At(maxid)->GetEt());
+   //--- set leading jets ---
+   fNearLeadingJet = fJetArray->At(maxi);
+   fAwayLeadingJet = fJetArray->At(maxid);
+   printf("base for FF: max et's: %f %f\n",fNearLeadingJet->GetEt(),fAwayLeadingJet->GetEt());
 }
 
 //________________________________________________________________________
