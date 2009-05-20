@@ -58,6 +58,7 @@ protected:
    TNtuple                        *fNTTruePFF;            //!ntuple with gamma jet and background particles
    TNtuple                        *fNTTruePFFBG;          //!ntuple with gamma jet and background particles
    TNtuple                        *fNTLPartons;           //!ntuple of leading partons in each event
+   TNtuple                        *fNTLeading;            //!ntuple of leading partons in each event
 
    Float_t                         fIsPromPhoton;         //!prompt photon event flag
    Float_t                         fIsIsolated;           //!isolated particle event flag
@@ -67,8 +68,8 @@ protected:
    Float_t                         fNearSMET;           //!away side parton 
    const THIParticle                    *fAwayLeading;           //!away side parton
    const THIParticle                    *fNearLeading;           //!near side parton
-   const THIJet                    *fAwayLeadingJet;           //!away side parton
-   const THIJet                    *fNearLeadingJet;           //!near side parton
+   const THIJet                    *fAwayLeadingJet;           //!away side jet
+   const THIJet                    *fNearLeadingJet;           //!near side jet
    //--- jet info
    TString                  fJetAArrayName;     //name of array of jet arrays
    Bool_t                   fLoad;              //if true load jet array from tree branch
