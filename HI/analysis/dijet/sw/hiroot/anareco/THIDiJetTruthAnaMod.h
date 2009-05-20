@@ -31,6 +31,10 @@ class TProfile;
 #ifndef HIROOT_THIObjectCollection
 #include "THIObjectCollection.h"   
 #endif
+#ifndef HIROOT_THIJetCollection
+#include "THIJetCollection.h"
+#endif
+
 
 
 class THIParticle;
@@ -39,6 +43,7 @@ class THIGenRecord;
 class THIVertex;
 class THIParticleArray;
 class THIPhotonMCType;
+class THIJetArray;
 
 
 class THIDiJetTruthAnaMod : public THIAnaBaseMod {
@@ -63,6 +68,13 @@ protected:
    Float_t                         fNearSMET;           //!away side parton 
    const THIParticle                    *fAwayLeading;           //!away side parton
    const THIParticle                    *fNearLeading;           //!near side parton
+   //--- jet info
+   TString                  fJetAArrayName;     //name of array of jet arrays
+   Bool_t                   fLoad;              //if true load jet array from tree branch
+   THIObjectCollection     *fJetAArray;         //!input array of jet arrays (published or loaded)
+   THIJetCollection        *fJetArray;          //!active jet collection from for-loop in Process()
+   //---
+
 
    TF1                            *fTrackingEfficiency;   //! Function parametrizing the tracking efficiency      
    TF1                            *fGaus;                 //! Function parametrizing the tracking efficiency      
@@ -77,12 +89,19 @@ protected:
    void                           GetPartons(const THIParticle *trigPart);
    const THIParticle             *GetLeading(const THIParticle *trigPart);
    void                           FillEClusNTuple(const THIParticle *trigPart);
+   void                           FillLeadNTuple();    //! Fill ntuple for leading partons and jets
    void                           FillFragFuncNTuple( const THIParticle *part, Double_t nearEt, Double_t nearEta, Double_t nearPhi, Double_t awayEt, Double_t awayEta, Double_t awayPhi, Double_t awayDPhi, const THIParticle *trigPart, TNtuple *NTuple);
    void                           SetStatOnly(Bool_t b) {fStatOnly = b;}
 public:
    THIDiJetTruthAnaMod(const char *name="DiJetTruthAnaMod", 
                         const char *title="Gamma and matching jet spectra analysis module");
    virtual ~THIDiJetTruthAnaMod() {};
+   //--- jet ana related functions
+   const char              *GetJetName()              const { return fJetAArrayName; }
+   Bool_t                   GetLoadBranch()           const { return fLoad; }
+   void                     SetJetName(const char *jetname) { fJetAArrayName = jetname; }
+   void                     GetLeadJets(const THIJetCollection * jl);
+
    
 
    ClassDef(THIDiJetTruthAnaMod,1)  //TAM module for gamma-tagged truth matching
