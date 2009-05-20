@@ -57,7 +57,11 @@ THIDiJetTruthAnaMod::THIDiJetTruthAnaMod(const char *name, const char *title) :
    fAwayParton(0),
    fNearParton(0),
    fTrackingEfficiency(0),
-   fStatOnly(kFALSE)
+   fStatOnly(kFALSE),
+   //jet related
+   fJetAArrayName(THIJetArray::kCaloJetsName),
+   fLoad(kFALSE),
+   fJetAArray(0)
 {
    // Default and user constructor.
    fReso = new TF1("fReso","sqrt(pow(0.017,2)+pow(4.6/x,2)+pow(1.3/sqrt(x),2)+pow(15/x,2))",0,400);
@@ -166,6 +170,15 @@ const THIParticle *THIDiJetTruthAnaMod::GetLeading(const THIParticle *trigPart)
 }
 
 //________________________________________________________________________
+void THIDiJetTruthAnaMod::GetLeadJets(const THIJetCollection *jl)
+{
+   for (int i=0; i<jl->GetEntries(); ++i) {
+      float et = jl->At(i)->GetEt();
+      printf("jet read out: et: %f\n",et);
+   }
+}
+
+//________________________________________________________________________
 void THIDiJetTruthAnaMod::GetPartons(const THIParticle *trigPart)
 {
    //Find the partons
@@ -227,6 +240,45 @@ void THIDiJetTruthAnaMod::GetPartons(const THIParticle *trigPart)
    }
 }
 
+//_______________________________________________________________________
+void THIDiJetTruthAnaMod::FillLeadNTuple()
+{
+   //-- get values--
+   UInt_t eve = fEvent->GetEventNum();
+   UInt_t run = fEvent->GetRunNum();
+//   THILorentzVector pcm = fNearParton->GetMom() + fAwayParton->GetMom();
+//   Float_t mass = pcm.Mag(); 
+//   Float_t cmeta = pcm.Eta();
+   TVector3 v1(fNearParton->Get3Mom().X(),
+	 fNearParton->Get3Mom().Y(),
+	 fNearParton->Get3Mom().Z()
+	 );
+   TVector3 v2(fAwayParton->Get3Mom().X(),
+	 fAwayParton->Get3Mom().Y(),
+	 fAwayParton->Get3Mom().Z()
+	 );
+   TLorentzVector lv1(v1,v1.Mag());
+   TLorentzVector lv2(v2,v2.Mag());
+
+   TVector3 vs = v1 +v2;
+   //      printf("MASS: np %f ap %f vs %f\n",fNearParton->GetMom().Mag(),fAwayParton->GetMom().Mag(),vs.Mag());
+   //      THIVectorT vs = fNearParton->Get3Mom() + fAwayParton->Get3Mom();
+   Float_t mass =  TMath::Sqrt(pow(lv1.E()+lv2.E(),2)-pow(vs.Mag(),2));
+   //TMath::Sqrt(pow(fNearParton->GetMom().Mag()+fAwayParton->GetMom().Mag(),2)-pow(vs.Mag(),2));
+   Float_t cmeta = (fNearParton->GetEta()+fAwayParton->GetEta())/2;
+   Double_t dphi = TMath::Abs(fAwayParton->GetMom().DeltaPhi(fNearParton->GetMom()));
+   //-- fill nt --
+   fNTLPartons->Fill(run,eve,mass,cmeta,dphi,
+	 fNearParton->GetId(),fNearParton->GetStatus(),fNearParton->GetEt(),fNearParton->GetEta(),fNearParton->GetPhi(),
+	 fAwayParton->GetId(),fAwayParton->GetStatus(),fAwayParton->GetEt(),fAwayParton->GetEta(),fAwayParton->GetPhi()
+	 );
+   printf("Run%d Evt#%d mass:%f cmeta:%f lparton id|stat: %d|%d eta|eta|phi: (%f|%f|%f) aparton id|stat: %d|%d eta|eta|phi: (%f|%f|%f)\n",
+	 run,eve,mass,cmeta,
+	 fNearParton->GetId(),fNearParton->GetStatus(),fNearParton->GetEt(),fNearParton->GetEta(),fNearParton->GetPhi(),
+	 fAwayParton->GetId(),fAwayParton->GetStatus(),fAwayParton->GetEt(),fAwayParton->GetEta(),fAwayParton->GetPhi()
+	 );
+
+}
 
 //________________________________________________________________________
 void THIDiJetTruthAnaMod::FillEClusNTuple(const THIParticle *trigPart)
@@ -474,53 +526,35 @@ void THIDiJetTruthAnaMod::Process()
    printf("Done Fill ntuple\n");
    // event statistics for normalization--------------------------------
 
-
    //--- Fill ntuple for leading partons ---
-   //-- get values--
-   UInt_t eve = fEvent->GetEventNum();
-   UInt_t run = fEvent->GetRunNum();
-//   THILorentzVector pcm = fNearParton->GetMom() + fAwayParton->GetMom();
-//   Float_t mass = pcm.Mag(); 
-//   Float_t cmeta = pcm.Eta();
-   TVector3 v1(fNearParton->Get3Mom().X(),
-	 fNearParton->Get3Mom().Y(),
-	 fNearParton->Get3Mom().Z()
-	 );
-   TVector3 v2(fAwayParton->Get3Mom().X(),
-	 fAwayParton->Get3Mom().Y(),
-	 fAwayParton->Get3Mom().Z()
-	 );
-   TLorentzVector lv1(v1,v1.Mag());
-   TLorentzVector lv2(v2,v2.Mag());
+   FillLeadNTuple();
 
-   TVector3 vs = v1 +v2;
-   //      printf("MASS: np %f ap %f vs %f\n",fNearParton->GetMom().Mag(),fAwayParton->GetMom().Mag(),vs.Mag());
-   //      THIVectorT vs = fNearParton->Get3Mom() + fAwayParton->Get3Mom();
-   Float_t mass =  TMath::Sqrt(pow(lv1.E()+lv2.E(),2)-pow(vs.Mag(),2));
-   //TMath::Sqrt(pow(fNearParton->GetMom().Mag()+fAwayParton->GetMom().Mag(),2)-pow(vs.Mag(),2));
-   Float_t cmeta = (fNearParton->GetEta()+fAwayParton->GetEta())/2;
-   Double_t dphi = TMath::Abs(fAwayParton->GetMom().DeltaPhi(fNearParton->GetMom()));
-   //-- fill nt --
-   fNTLPartons->Fill(run,eve,mass,cmeta,dphi,
-	 fNearParton->GetId(),fNearParton->GetStatus(),fNearParton->GetEt(),fNearParton->GetEta(),fNearParton->GetPhi(),
-	 fAwayParton->GetId(),fAwayParton->GetStatus(),fAwayParton->GetEt(),fAwayParton->GetEta(),fAwayParton->GetPhi()
-	 );
-   printf("Run%d Evt#%d mass:%f cmeta:%f lparton id|stat: %d|%d eta|eta|phi: (%f|%f|%f) aparton id|stat: %d|%d eta|eta|phi: (%f|%f|%f)",
-	 run,eve,mass,cmeta,
-	 fNearParton->GetId(),fNearParton->GetStatus(),fNearParton->GetEt(),fNearParton->GetEta(),fNearParton->GetPhi(),
-	 fAwayParton->GetId(),fAwayParton->GetStatus(),fAwayParton->GetEt(),fAwayParton->GetEta(),fAwayParton->GetPhi()
-	 );
+   //--- Loop over the subevents ---
+   Int_t numsub = fGenRecords->GetEntries();
+//   const UInt_t numsub = fJetAArray->GetEntries();
+   for(Int_t ise = 0;ise<numsub; ise++) {
+      //--so far no other subevents --
+      if (ise==0) {
+	 //--- jet related
+	 for(UInt_t i=0; i<numsub; i++) {
+	    fJetArray = 
+	       dynamic_cast<THIJetCollection*>(fJetAArray->At(i));
+
+	    if(fJetArray==0) {
+	       Error("Process", "Could not get jet collection for entry %d", i);
+	       continue;
+	    }
+	    GetLeadJets(fJetArray);
+	 }
+	 //---
+      }
 
    // Check the particles inside cone and get variables-----------------
-   Int_t numsub = fGenRecords->GetEntries();
-   for(Int_t ise = 0;ise<numsub; ise++) {
       THIMCGenRecord *gen = dynamic_cast<THIMCGenRecord*>(fGenRecords->At(ise));
       THICollection<THIParticle> *Particles = gen->GetParticles();
       Int_t nump = Particles->GetEntries();
       for(Int_t i=0; i< nump; i++){
-	 
 	 const THIParticle *p=Particles->At(i);
-	 
 	 if(p->GetStatus()==1){
 	    if(p->GetStatus()==1 && p->GetCharge() != 0){
 	       if(TMath::Abs(p->GetEta()) <= 2.5){//found some photons having charge =+-1 ^^
@@ -589,4 +623,13 @@ void THIDiJetTruthAnaMod::SlaveBegin()
    fNTLPartons = new TNtuple("NTLPartons","leading partons","run:eve:mass:cmeta:dphi:nlpid:nlpstat:nlpet:nlpeta:nlpphi:alpid:alpstat:alpet:alpeta:alpphi");
    AddOutput(fNTLPartons);
    
+   // jet related
+   if (fLoad) {
+      ReqBranch(fJetAArrayName,fJetAArray);
+   } else {
+      // get published jets
+      fJetAArray = dynamic_cast<THIObjectCollection*>
+	 (FindPublicObj(fJetAArrayName));
+   }
+
 }
