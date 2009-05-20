@@ -61,7 +61,9 @@ THIDiJetTruthAnaMod::THIDiJetTruthAnaMod(const char *name, const char *title) :
    //jet related
    fJetAArrayName(THIJetArray::kCaloJetsName),
    fLoad(kFALSE),
-   fJetAArray(0)
+   fJetAArray(0),
+   fNearLeadingJet(0),
+   fAwayLeadingJet(0)
 {
    // Default and user constructor.
    fReso = new TF1("fReso","sqrt(pow(0.017,2)+pow(4.6/x,2)+pow(1.3/sqrt(x),2)+pow(15/x,2))",0,400);
@@ -327,16 +329,59 @@ void THIDiJetTruthAnaMod::FillLeadNTuple()
    //TMath::Sqrt(pow(fNearParton->GetMom().Mag()+fAwayParton->GetMom().Mag(),2)-pow(vs.Mag(),2));
    Float_t cmeta = (fNearParton->GetEta()+fAwayParton->GetEta())/2;
    Double_t dphi = TMath::Abs(fAwayParton->GetMom().DeltaPhi(fNearParton->GetMom()));
-   //-- fill nt --
-   fNTLPartons->Fill(run,eve,mass,cmeta,dphi,
-	 fNearParton->GetId(),fNearParton->GetStatus(),fNearParton->GetEt(),fNearParton->GetEta(),fNearParton->GetPhi(),
-	 fAwayParton->GetId(),fAwayParton->GetStatus(),fAwayParton->GetEt(),fAwayParton->GetEta(),fAwayParton->GetPhi()
-	 );
-   printf("Run%d Evt#%d mass:%f cmeta:%f lparton id|stat: %d|%d eta|eta|phi: (%f|%f|%f) aparton id|stat: %d|%d eta|eta|phi: (%f|%f|%f)\n",
-	 run,eve,mass,cmeta,
-	 fNearParton->GetId(),fNearParton->GetStatus(),fNearParton->GetEt(),fNearParton->GetEta(),fNearParton->GetPhi(),
-	 fAwayParton->GetId(),fAwayParton->GetStatus(),fAwayParton->GetEt(),fAwayParton->GetEta(),fAwayParton->GetPhi()
-	 );
+   
+   //-- set array --
+   Float_t fX[100];
+   for(Int_t i = 0; i < 100; i++) fX[i] = 0;
+   Int_t   fn = 0;
+   // Fill basic info
+   fX[fn] = run; //0
+   fX[++fn] = eve;
+   fX[++fn] = mass;
+   fX[++fn] = cmeta;;
+   fX[++fn] = dphi;
+   // Fill leading partons info
+   fX[++fn] = fNearParton->GetId(); //5
+   fX[++fn] = fNearParton->GetStatus();
+   fX[++fn] = fNearParton->GetEt();
+   fX[++fn] = fNearParton->GetEta();
+   fX[++fn] = fNearParton->GetPhi();
+   fX[++fn] = fAwayParton->GetId(); //10
+   fX[++fn] = fAwayParton->GetStatus();
+   fX[++fn] = fAwayParton->GetEt();
+   fX[++fn] = fAwayParton->GetEta();
+   fX[++fn] = fAwayParton->GetPhi();
+   // Fill leading jets info
+   if ( fNearLeadingJet && fAwayLeadingJet ){
+      fX[++fn] = fNearLeadingJet->GetEt(); //15
+      fX[++fn] = fNearLeadingJet->GetEta();
+      fX[++fn] = fNearLeadingJet->GetPhi();
+      fX[++fn] = fAwayLeadingJet->GetEt(); //18
+      fX[++fn] = fAwayLeadingJet->GetEta();
+      fX[++fn] = fAwayLeadingJet->GetPhi();
+
+      fNTLeading->Fill(fX);
+      printf("Run%.0f Evt#%4.0f mass:%4.2f cmeta:%4.2f dphi: %4.2f\n", fX[0],fX[1],fX[2],fX[3],fX[4]);
+      printf("            near id|stat (et|eta|phi)    away id|stat (et|eta|phi\n");
+      printf("  lpartons.  1) %4.2f|%4.2f (%4.2f|%4.2f|%4.2f)  2) %4.2f|%4.2f (%4.2f|%4.2f|%4.2f)\n",
+	    fX[5],fX[6],fX[7],fX[8],fX[9],
+	    fX[10],fX[11],fX[12],fX[13],fX[14]
+	    );
+      printf("  ljets.     1)           (%4.2f|%4.2f|%4.2f)  2)           (%4.2f|%4.2f|%4.2f)\n",
+	    fX[15],fX[16],fX[17],fX[18],fX[19],fX[20]
+	    );
+   }
+   else {
+      fNTLPartons->Fill(run,eve,mass,cmeta,dphi,
+	    fNearParton->GetId(),fNearParton->GetStatus(),fNearParton->GetEt(),fNearParton->GetEta(),fNearParton->GetPhi(),
+	    fAwayParton->GetId(),fAwayParton->GetStatus(),fAwayParton->GetEt(),fAwayParton->GetEta(),fAwayParton->GetPhi()
+	    );
+      printf("Run%d Evt#%d mass:%4.2f cmeta:%4.2f lparton id|stat: %d|%d eta|eta|phi: (%4.2f|%4.2f|%4.2f) aparton id|stat: %d|%d eta|eta|phi: (%4.2f|%4.2f|%4.2f)\n",
+	    run,eve,mass,cmeta,
+	    fNearParton->GetId(),fNearParton->GetStatus(),fNearParton->GetEt(),fNearParton->GetEta(),fNearParton->GetPhi(),
+	    fAwayParton->GetId(),fAwayParton->GetStatus(),fAwayParton->GetEt(),fAwayParton->GetEta(),fAwayParton->GetPhi()
+	    );
+   }
 
 }
 
@@ -585,30 +630,27 @@ void THIDiJetTruthAnaMod::Process()
       return;
    // event statistics for normalization--------------------------------
 
-   //--- Fill ntuple for leading partons ---
-   FillLeadNTuple();
-
    //--- Loop over the subevents ---
    Int_t numsub = fGenRecords->GetEntries();
 //   const UInt_t numsub = fJetAArray->GetEntries();
    for(Int_t ise = 0;ise<numsub; ise++) {
       //--so far no other subevents --
-      if (ise==0) {
-	 //--- jet related
-	 for(UInt_t i=0; i<numsub; i++) {
-	    fJetArray = 
-	       dynamic_cast<THIJetCollection*>(fJetAArray->At(i));
+      if (ise>0) continue;
 
-	    if(fJetArray==0) {
-	       Error("Process", "Could not get jet collection for entry %d", i);
-	       continue;
-	    }
-	    GetLeadJets(fJetArray);
-	 }
-	 //---
+      //--- jet related
+      fJetArray = dynamic_cast<THIJetCollection*>(fJetAArray->At(ise));
+      if(fJetArray==0) {
+	 Error("Process", "Could not get jet collection for entry %d", ise);
+	 continue;
       }
+      //-- get the leading jets --
+      GetLeadJets(fJetArray);
 
-   // Check the particles inside cone and get variables-----------------
+      // Now we have both the leading partons and jets
+      //--- Fill ntuple for leading partons and jets ---
+      FillLeadNTuple();
+
+      // Check the particles inside cone and get variables-----------------
       THIMCGenRecord *gen = dynamic_cast<THIMCGenRecord*>(fGenRecords->At(ise));
       THICollection<THIParticle> *Particles = gen->GetParticles();
       Int_t nump = Particles->GetEntries();
@@ -653,8 +695,7 @@ void THIDiJetTruthAnaMod::Process()
 	    }
 	 }
       }
-   }
-
+   } // done with subevt loop
    printf("Done Fill ntuple\n\n");
 }
 
@@ -684,6 +725,10 @@ void THIDiJetTruthAnaMod::SlaveBegin()
    fNTLPartons = new TNtuple("NTLPartons","leading partons","run:eve:mass:cmeta:dphi:nlpid:nlpstat:nlpet:nlpeta:nlpphi:alpid:alpstat:alpet:alpeta:alpphi");
    AddOutput(fNTLPartons);
    
+   fNTLeading = new TNtuple("NTLeading","leading partons and jets",
+	 "run:eve:mass:cmeta:dphi:nlpid:nlpstat:nlpet:nlpeta:nlpphi:alpid:alpstat:alpet:alpeta:alpphi:nljet:nljeta:nljphi:aljet:aljeta:aljphi");
+   AddOutput(fNTLeading);
+
    // jet related
    if (fLoad) {
       ReqBranch(fJetAArrayName,fJetAArray);
