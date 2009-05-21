@@ -64,10 +64,10 @@ protected:
    Float_t                         fIsIsolated;           //!isolated particle event flag
    THIParticle                    *fAwayParton;           //!away side parton
    THIParticle                    *fNearParton;           //!near side parton
-   Float_t                         fAwaySMET;           //!away side parton 
-   Float_t                         fNearSMET;           //!away side parton 
-   const THIParticle                    *fAwayLeading;           //!away side parton
-   const THIParticle                    *fNearLeading;           //!near side parton
+   Float_t                         fAwaySMET;           //!
+   Float_t                         fNearSMET;           //!
+   const THIParticle                    *fAwayLeading;           //!away side leading particle
+   const THIParticle                    *fNearLeading;           //!near side leading particle
    const THIJet                    *fAwayLeadingJet;           //!away side jet
    const THIJet                    *fNearLeadingJet;           //!near side jet
    //--- jet info
@@ -75,7 +75,8 @@ protected:
    Bool_t                   fLoad;              //if true load jet array from tree branch
    THIObjectCollection     *fJetAArray;         //!input array of jet arrays (published or loaded)
    THIJetCollection        *fJetArray;          //!active jet collection from for-loop in Process()
-   //---
+   //--- jet ana
+   Float_t                         fDeltaRMatch;           //! Jet matching max dR
 
 
    TF1                            *fTrackingEfficiency;   //! Function parametrizing the tracking efficiency      
@@ -103,7 +104,8 @@ public:
    Bool_t                   GetLoadBranch()           const { return fLoad; }
    void                     SetJetName(const char *jetname) { fJetAArrayName = jetname; }
    void                     GetLeadJets(const THIJetCollection * jl);
-
+   void                     PrintJetCol(const THIJetCollection * jetcol);
+   const THIJet            *GetMatchedJet(const THIParticle * parton, const THIJetCollection * jetcol, const Float_t dRMax);
    
 
    ClassDef(THIDiJetTruthAnaMod,1)  //TAM module for gamma-tagged truth matching
