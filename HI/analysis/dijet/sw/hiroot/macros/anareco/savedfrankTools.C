@@ -47,14 +47,14 @@ void printCanvas(const char* name, const char* title)//, TCanvas * c)
 }
 
 //--- Print all created canvasses ---
-void printAllCanvases()
+void printAllCanvases(const char* folder="plots")
 {
    TSeqCollection * sc = dynamic_cast<TSeqCollection*>(gROOT->GetListOfCanvases());
    for (int i =0; i<sc->GetSize(); ++i) {
       TCanvas * c = dynamic_cast<TCanvas*>(sc->At(i));
       TString cname(c->GetName());
-      printf("Canvas: %s\n",cname.Data());
-      c->Print(Form("plots/%s.gif",cname.Data()));
+      printf("Canvas: %s/%s.gif\n",folder,cname.Data());
+      c->Print(Form("%s/%s.gif",folder,cname.Data()));
    }
 }
 
