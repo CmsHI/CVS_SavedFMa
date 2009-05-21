@@ -410,9 +410,10 @@ void THIDiJetTruthAnaMod::FillLeadNTuple()
       fX[++fn] = fAwayLeadingJet->GetEt(); //18
       fX[++fn] = fAwayLeadingJet->GetEta();
       fX[++fn] = fAwayLeadingJet->GetPhi();
+      fX[++fn] = TMath::Abs(fAwayLeadingJet->GetMom().DeltaPhi(fNearLeadingJet->GetMom())); //21 jdphi
 
       fNTLeading->Fill(fX);
-      printf("Run%.0f Evt#%4.0f mass:%7.2f cmeta:%7.2f dphi: %7.2f\n", fX[0],fX[1],fX[2],fX[3],fX[4]);
+      printf("Run%.0f Evt#%4.0f mass:%7.2f cmeta:%7.2f pdphi: %7.2f jdphi: %7.2f\n", fX[0],fX[1],fX[2],fX[3],fX[4],fX[21]);
       printf("             near id|stat (et|eta|phi)              away id|stat (et|eta|phi\n");
       printf("  lpartons.  1) %7.2f|%7.2f (%7.2f|%7.2f|%7.2f)  2) %7.2f|%7.2f (%7.2f|%7.2f|%7.2f)\n",
 	    fX[5],fX[6],fX[7],fX[8],fX[9],
@@ -675,7 +676,8 @@ void THIDiJetTruthAnaMod::Process()
    fGaus->SetParameter(2,reso);
    fAwaySMET = fAwayParton->GetEt()*fGaus->GetRandom();
 
-   FillEClusNTuple(trigPart);
+   // Christof's converted ntuple for the leading jets
+//   FillEClusNTuple(trigPart);
 
    if(fStatOnly)
       return;
@@ -781,8 +783,8 @@ void THIDiJetTruthAnaMod::SlaveBegin()
    fNTLPartons = new TNtuple("NTLPartons","leading partons","run:eve:mass:cmeta:dphi:nlpid:nlpstat:nlpet:nlpeta:nlpphi:alpid:alpstat:alpet:alpeta:alpphi");
    AddOutput(fNTLPartons);
    
-   fNTLeading = new TNtuple("NTLeading","leading partons and jets",
-	 "run:eve:mass:cmeta:dphi:nlpid:nlpstat:nlpet:nlpeta:nlpphi:alpid:alpstat:alpet:alpeta:alpphi:nljet:nljeta:nljphi:aljet:aljeta:aljphi");
+   fNTLeading = new TNtuple("NTLeading","leading partons and matched jets",
+	 "run:eve:mass:cmeta:dphi:nlpid:nlpstat:nlpet:nlpeta:nlpphi:alpid:alpstat:alpet:alpeta:alpphi:nljet:nljeta:nljphi:aljet:aljeta:aljphi:jdphi");
    AddOutput(fNTLeading);
 
    // jet related
