@@ -103,6 +103,7 @@ public:
    const char              *GetJetName()              const { return fJetAArrayName; }
    Bool_t                   GetLoadBranch()           const { return fLoad; }
    void                     SetJetName(const char *jetname) { fJetAArrayName = jetname; }
+   void                     SetJetDeltaRMatch(Float_t dRMax)   { fDeltaRMatch = dRMax; }
    void                     GetLeadJets(const THIJetCollection * jl);
    void                     PrintJetCol(const THIJetCollection * jetcol);
    const THIJet            *GetMatchedJet(const THIParticle * parton, const THIJetCollection * jetcol, const Float_t dRMax);
