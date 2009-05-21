@@ -25,6 +25,7 @@
 #include "THIMCGammaJetSignalDef.h"
 #include "THIMatchedParticles.h"
 //#include "THILorentzVector.h"
+//#include "THIJet.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,7 +64,9 @@ THIDiJetTruthAnaMod::THIDiJetTruthAnaMod(const char *name, const char *title) :
    fLoad(kFALSE),
    fJetAArray(0),
    fNearLeadingJet(0),
-   fAwayLeadingJet(0)
+   fAwayLeadingJet(0),
+   //initialize matching radius
+   fDeltaRMatch(TMath::Pi()/4)
 {
    // Default and user constructor.
    fReso = new TF1("fReso","sqrt(pow(0.017,2)+pow(4.6/x,2)+pow(1.3/sqrt(x),2)+pow(15/x,2))",0,400);
@@ -87,6 +90,17 @@ const THIParticle *THIDiJetTruthAnaMod::GetMother(const THIParticle *p)
    return p;
 }
 
+
+void THIDiJetTruthAnaMod::PrintJetCol(const THIJetCollection * jetcol)
+{
+   printf("Print Jet col: Et  Eta Phi\n");
+   for (UInt_t i=0; i<jetcol->GetEntries(); ++i) {
+      // get the ith jet
+      const THIJet * ijet = jetcol->At(i);
+      // Print jet info
+      printf("  cand jet: %2u: %6.2f %6.2f %6.2f\n", i, ijet->GetEt(), ijet->GetEta(), ijet->GetPhi());
+   }
+}
 
 //________________________________________________________________________
 const THIParticle *THIDiJetTruthAnaMod::GetTriggerGenParticle()
@@ -241,6 +255,43 @@ void THIDiJetTruthAnaMod::GetLeadJets(const THIJetCollection *jl)
 }
 
 //________________________________________________________________________
+const THIJet *THIDiJetTruthAnaMod::GetMatchedJet(const THIParticle * parton, const THIJetCollection * jetcol, const Float_t dRMax)
+{
+   // Initialize variables
+   Double_t etCand = 0;
+   Int_t iCand = -1;
+
+   // Step through match candidates.
+   for (UInt_t i=0; i<jetcol->GetEntries(); ++i) {
+      // get the ith jet
+      const THIJet * ijet = jetcol->At(i);
+      // find dR between parton and jet
+      Float_t dR = parton->GetMom().DeltaR(ijet->GetMom());
+      // cut on dR
+      if (dR > dRMax) continue;
+      // Get max et jet within the dRMax cone of the parton
+      if (ijet->GetEt() > etCand) {
+	 etCand = ijet->GetEt();
+	 iCand = (Int_t) i;
+      }
+   }
+   // Finished stepping through match candidates. Check if found a matched jet.
+   if (iCand < 0) {
+      printf("No matched jet found\n");
+      return NULL;
+   }
+
+   // Print results
+   const THIJet * jet = jetcol->At(iCand);
+   printf("             Et  Eta Phi\n");
+   printf("parton:      %6.2f %6.2f %6.2f\n", parton->GetEt(), parton->GetEta(), parton->GetPhi());
+   printf("matched jet: %6.2f %6.2f %6.2f\n", jet->GetEt(), jet->GetEta(), jet->GetPhi());
+
+   // Return results
+   return jetcol->At(iCand);
+}
+
+//________________________________________________________________________
 void THIDiJetTruthAnaMod::GetPartons(const THIParticle *trigPart)
 {
    //Find the partons
@@ -361,13 +412,13 @@ void THIDiJetTruthAnaMod::FillLeadNTuple()
       fX[++fn] = fAwayLeadingJet->GetPhi();
 
       fNTLeading->Fill(fX);
-      printf("Run%.0f Evt#%4.0f mass:%4.2f cmeta:%4.2f dphi: %4.2f\n", fX[0],fX[1],fX[2],fX[3],fX[4]);
-      printf("            near id|stat (et|eta|phi)    away id|stat (et|eta|phi\n");
-      printf("  lpartons.  1) %4.2f|%4.2f (%4.2f|%4.2f|%4.2f)  2) %4.2f|%4.2f (%4.2f|%4.2f|%4.2f)\n",
+      printf("Run%.0f Evt#%4.0f mass:%7.2f cmeta:%7.2f dphi: %7.2f\n", fX[0],fX[1],fX[2],fX[3],fX[4]);
+      printf("             near id|stat (et|eta|phi)              away id|stat (et|eta|phi\n");
+      printf("  lpartons.  1) %7.2f|%7.2f (%7.2f|%7.2f|%7.2f)  2) %7.2f|%7.2f (%7.2f|%7.2f|%7.2f)\n",
 	    fX[5],fX[6],fX[7],fX[8],fX[9],
 	    fX[10],fX[11],fX[12],fX[13],fX[14]
 	    );
-      printf("  ljets.     1)           (%4.2f|%4.2f|%4.2f)  2)           (%4.2f|%4.2f|%4.2f)\n",
+      printf("  ljets.     1)                 (%7.2f|%7.2f|%7.2f)  2)                 (%7.2f|%7.2f|%7.2f)\n",
 	    fX[15],fX[16],fX[17],fX[18],fX[19],fX[20]
 	    );
    }
@@ -376,7 +427,7 @@ void THIDiJetTruthAnaMod::FillLeadNTuple()
 	    fNearParton->GetId(),fNearParton->GetStatus(),fNearParton->GetEt(),fNearParton->GetEta(),fNearParton->GetPhi(),
 	    fAwayParton->GetId(),fAwayParton->GetStatus(),fAwayParton->GetEt(),fAwayParton->GetEta(),fAwayParton->GetPhi()
 	    );
-      printf("Run%d Evt#%d mass:%4.2f cmeta:%4.2f lparton id|stat: %d|%d eta|eta|phi: (%4.2f|%4.2f|%4.2f) aparton id|stat: %d|%d eta|eta|phi: (%4.2f|%4.2f|%4.2f)\n",
+      printf("Run%d Evt#%d mass:%7.2f cmeta:%7.2f lparton id|stat: %d|%d eta|eta|phi: (%7.2f|%7.2f|%7.2f) aparton id|stat: %d|%d eta|eta|phi: (%7.2f|%7.2f|%7.2f)\n",
 	    run,eve,mass,cmeta,
 	    fNearParton->GetId(),fNearParton->GetStatus(),fNearParton->GetEt(),fNearParton->GetEta(),fNearParton->GetPhi(),
 	    fAwayParton->GetId(),fAwayParton->GetStatus(),fAwayParton->GetEt(),fAwayParton->GetEta(),fAwayParton->GetPhi()
@@ -643,8 +694,13 @@ void THIDiJetTruthAnaMod::Process()
 	 Error("Process", "Could not get jet collection for entry %d", ise);
 	 continue;
       }
+      PrintJetCol(fJetArray);
+
       //-- get the leading jets --
-      GetLeadJets(fJetArray);
+//      GetLeadJets(fJetArray);
+      //--- Get the matched jets;
+      fNearLeadingJet = GetMatchedJet(fNearParton,fJetArray,fDeltaRMatch);
+      fAwayLeadingJet = GetMatchedJet(fAwayParton,fJetArray,fDeltaRMatch);
 
       // Now we have both the leading partons and jets
       //--- Fill ntuple for leading partons and jets ---
