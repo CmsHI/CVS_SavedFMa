@@ -58,7 +58,8 @@ protected:
    TNtuple                        *fNTTruePFF;            //!ntuple with gamma jet and background particles
    TNtuple                        *fNTTruePFFBG;          //!ntuple with gamma jet and background particles
    TNtuple                        *fNTLPartons;           //!ntuple of leading partons in each event
-   TNtuple                        *fNTLeading;            //!ntuple of leading partons in each event
+   TNtuple                        *fNTPartonLeading;            //!ntuple of leading partons + matched jetsin each event
+   TNtuple                        *fNTJetLeading;            //!ntuple of leading jets + matched partons in each event
 
    Float_t                         fIsPromPhoton;         //!prompt photon event flag
    Float_t                         fIsIsolated;           //!isolated particle event flag
@@ -92,7 +93,7 @@ protected:
    void                           GetPartons(const THIParticle *trigPart);
    const THIParticle             *GetLeading(const THIParticle *trigPart);
    void                           FillEClusNTuple(const THIParticle *trigPart);
-   void                           FillLeadNTuple();    //! Fill ntuple for leading partons and jets
+   void                           FillLeadNTuple(const THIParticle * nlp, const THIParticle * alp, const THIJet * nlj, const THIJet *alj, TNtuple * lnt);    //! Fill ntuple for leading partons and jets
    void                           FillFragFuncNTuple( const THIParticle *part, Double_t nearEt, Double_t nearEta, Double_t nearPhi, Double_t awayEt, Double_t awayEta, Double_t awayPhi, Double_t awayDPhi, const THIParticle *trigPart, TNtuple *NTuple);
    void                           SetStatOnly(Bool_t b) {fStatOnly = b;}
 public:
