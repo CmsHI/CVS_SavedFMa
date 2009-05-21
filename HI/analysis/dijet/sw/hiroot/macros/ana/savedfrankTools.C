@@ -1,6 +1,7 @@
 #include "TTree.h"
 #include "TNtuple.h"
 #include "TH1F.h"
+#include "TH2D.h"
 #include "TCanvas.h"
 #include "TROOT.h"
 #include "TString.h"
@@ -108,7 +109,7 @@ TCanvas * makeCanvas(const char* name, const char* title, bool log=false, const 
 }
 
 //=============================== Main Functions =====================================
-//--- function to draw histograms from TTree ---
+//--- function to draw 1D histograms from TTree ---
 void drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0)
 {
    //--- Print some info ---
@@ -123,6 +124,24 @@ void drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, con
 
    //--- Draw ---
    TCanvas * c = makeCanvas(name,title,log,opt);
+   nt->Draw(draw, cut, opt);
+   printf("%s has: %f entries\n",name,h->GetEntries());
+}
+//--- function to draw 2D histograms from TTree ---
+void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nxbin, const float xmin, const float xmax, const int nybin, const float ymin, const float ymax,  UInt_t log=0)
+{
+   //--- Print some info ---
+   if (!TString(opt).Contains("same")) printf("\n");
+   printf("%s, tree: %d. Draw: %s\n", name, nt, draw);
+//   nt->Print();
+
+   //--- Make/set histogram ---
+   printf("hist: %s %d %f %f %d %f %f\n",name,nxbin,xmin,xmax,nybin,ymin,ymax);
+   TH2D * h = new TH2D(name,title,nxbin,xmin,xmax,nybin,ymin,ymax);
+
+   //--- Draw ---
+   TCanvas * c = makeCanvas(name,title,false,opt);
+   if (!TString(opt).Contains("same") && log) c->SetLogz();
    nt->Draw(draw, cut, opt);
    printf("%s has: %f entries\n",name,h->GetEntries());
 }
