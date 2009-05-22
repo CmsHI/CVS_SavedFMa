@@ -702,10 +702,21 @@ void THIDiJetTruthAnaMod::Process()
       //--- Get the matched jets;
       fNearLeadingJet = GetMatchedJet(fNearParton,fJetArray,fDeltaRMatch);
       fAwayLeadingJet = GetMatchedJet(fAwayParton,fJetArray,fDeltaRMatch);
+      if (fNearLeadingJet==0 || fAwayLeadingJet==0) {
+	 printf("Since one parton is not matched, skip this event\n");
+	 continue;
+      }
 
       // Now we have both the leading partons and jets
-      //--- Fill ntuple for leading partons and jets ---
+      //--- Fill ntuple for leading partons and matching jets ---
       FillLeadNTuple(fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fNTPartonLeading);
+      //--- Fill ntuple for leading jets and matching partons---
+      if (fNearLeadingJet->GetEt() > fAwayLeadingJet->GetEt()) {
+	 FillLeadNTuple(fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fNTJetLeading);
+      }
+      else {
+	 FillLeadNTuple(fAwayParton,fNearParton,fAwayLeadingJet,fNearLeadingJet,fNTJetLeading);
+      }
 
       // Check the particles inside cone and get variables-----------------
       THIMCGenRecord *gen = dynamic_cast<THIMCGenRecord*>(fGenRecords->At(ise));
