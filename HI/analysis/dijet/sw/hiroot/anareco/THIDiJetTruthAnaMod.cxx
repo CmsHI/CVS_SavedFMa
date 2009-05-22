@@ -695,28 +695,41 @@ void THIDiJetTruthAnaMod::Process()
 	 Error("Process", "Could not get jet collection for entry %d", ise);
 	 continue;
       }
-      PrintJetCol(fJetArray);
+      // Print the jet info
+      // PrintJetCol(fJetArray);
 
-      //-- get the leading jets --
-//      GetLeadJets(fJetArray);
+      //----- get the leading jets -----
+      //  GetLeadJets(fJetArray); // This is for the leading jets (unmatched). So
+      //  we don't use for now.
       //--- Get the matched jets;
       fNearLeadingJet = GetMatchedJet(fNearParton,fJetArray,fDeltaRMatch);
       fAwayLeadingJet = GetMatchedJet(fAwayParton,fJetArray,fDeltaRMatch);
+      //-- Check results--
       if (fNearLeadingJet==0 || fAwayLeadingJet==0) {
 	 printf("Since one parton is not matched, skip this event\n");
 	 continue;
       }
 
-      // Now we have both the leading partons and jets
-      //--- Fill ntuple for leading partons and matching jets ---
+      //=== Now we have both the leading partons and jets ===
+      //--- Fill ntuple for *leading partons* and matching jets ---
       FillLeadNTuple(fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fNTPartonLeading);
+
+      //--- From now on we use *jet leading* partons and jets ---
+      if (fNearLeadingJet->GetEt() < fAwayLeadingJet->GetEt()) {
+	 const THIJet * jtemp = 0;
+	 THIParticle * ptemp =0;
+	 ptemp = fAwayParton;
+	 jtemp = fAwayLeadingJet;
+	 fAwayParton = fNearParton;
+	 fAwayLeadingJet = fNearLeadingJet;
+	 fNearParton = ptemp;
+	 fNearLeadingJet = jtemp;
+      }
+//      else {
+//	 FillLeadNTuple(fAwayParton,fNearParton,fAwayLeadingJet,fNearLeadingJet,fNTJetLeading);
+//      }
       //--- Fill ntuple for leading jets and matching partons---
-      if (fNearLeadingJet->GetEt() > fAwayLeadingJet->GetEt()) {
-	 FillLeadNTuple(fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fNTJetLeading);
-      }
-      else {
-	 FillLeadNTuple(fAwayParton,fNearParton,fAwayLeadingJet,fNearLeadingJet,fNTJetLeading);
-      }
+      FillLeadNTuple(fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fNTJetLeading);
 
       // Check the particles inside cone and get variables-----------------
       THIMCGenRecord *gen = dynamic_cast<THIMCGenRecord*>(fGenRecords->At(ise));
