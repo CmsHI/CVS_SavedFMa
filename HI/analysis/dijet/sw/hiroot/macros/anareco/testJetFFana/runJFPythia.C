@@ -29,10 +29,14 @@
 #include <THITreeWriterMod.h>
 #include <THIJetAnaMod.h>
 #include <THIAnalysis.h>
+#include <THIExampleAnaMod.h>
+#include <THIDiJetTruthAnaMod.h>
 #include "ana/runAnaGeneric.C"
 #endif
 
-void runJFPythia(const char *hrts, 
+void runJFPythia(Int_t rnum,
+                 const char * genIn,
+                 const char *hrts, 
                  Int_t mode = 0,
 		 const char *outfile="jfpythia_output.root",
                  const char *myjetsname="myjets",
@@ -69,6 +73,16 @@ void runJFPythia(const char *hrts,
          THIJetAnaMod(kFALSE, "anaJets", "Jet Finder Analysis Module");
       anaJetsMod->SetJetName(findJetsMod->GetJetName());
       findJetsMod->Add(anaJetsMod);
+
+      // add test
+      THIDiJetTruthAnaMod *anaDijetFFMod = new 
+         THIDiJetTruthAnaMod("anaJets", "Jet Finder Analysis Module");
+      anaDijetFFMod->SetJetName(findJetsMod->GetJetName());
+//      anaDijetFFMod->SetJetDeltaRMatch(TMath::Pi()/4);
+      anaDijetFFMod->SetJetDeltaRMatch(TMath::Pi()/3);
+      findJetsMod->Add(anaDijetFFMod);
+
+      ana->SetAnaOutputName(Form("%s/%s_dijet_%06d.root",getenv("HIROOT_BASEURL"),genIn,rnum));
 
       if(mode == 1) {
          THITreeWriterMod *twMod = new THITreeWriterMod("treeewrite", "Tree Writing Module");
