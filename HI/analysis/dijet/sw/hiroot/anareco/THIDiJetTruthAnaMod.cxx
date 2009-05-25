@@ -570,8 +570,9 @@ void THIDiJetTruthAnaMod::FillFragFuncNTuple( const THIParticle *part, Double_t 
       fX[fn++] = fAwaySMET;
       fX[fn++] = fAwayParton->GetEta();
       fX[fn++] = fAwayParton->GetPhi();
-      Double_t apdphi = trigPart->GetMom().DeltaPhi(fAwayParton->GetPhi());
-      fX[fn++] = apdphi+2*TMath::Pi()*(apdphi<0);
+//      Double_t apdphi = trigPart->GetMom().DeltaPhi(fAwayParton->GetPhi());
+//      fX[fn++] = apdphi+2*TMath::Pi()*(apdphi<0);
+      fX[fn++] = awayDPhi+2*TMath::Pi()*(awayDPhi<0);
       Double_t dis  =  THIEtaPhi::DeltaR2(fAwayParton->GetPhi(), fAwayLeading->GetPhi(), fAwayParton->GetEta(), fAwayLeading->GetEta());
       fX[fn++] = fAwayLeading->GetEt();
       fX[fn++] = fAwayLeading->GetId();
@@ -715,7 +716,8 @@ void THIDiJetTruthAnaMod::Process()
       FillLeadNTuple(fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fNTPartonLeading);
 
       //--- From now on we use *jet leading* partons and jets ---
-      if (fNearLeadingJet->GetEt() < fAwayLeadingJet->GetEt()) {
+      Bool_t jlead = kTRUE;
+      if (jlead && (fNearLeadingJet->GetEt() < fAwayLeadingJet->GetEt()) ) {
 	 const THIJet * jtemp = 0;
 	 THIParticle * ptemp =0;
 	 ptemp = fAwayParton;
@@ -725,9 +727,6 @@ void THIDiJetTruthAnaMod::Process()
 	 fNearParton = ptemp;
 	 fNearLeadingJet = jtemp;
       }
-//      else {
-//	 FillLeadNTuple(fAwayParton,fNearParton,fAwayLeadingJet,fNearLeadingJet,fNTJetLeading);
-//      }
       //--- Fill ntuple for leading jets and matching partons---
       FillLeadNTuple(fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fNTJetLeading);
 
@@ -743,6 +742,8 @@ void THIDiJetTruthAnaMod::Process()
 		  if(ise==0){ // away part + sig parts
 		     // near part + true jet + sig parts
 		     //smear
+
+		     //--- Fill parton based FF ---
 		     FillFragFuncNTuple(p,
 					fNearParton->GetEt(), 
 					fNearParton->GetEta(),
@@ -752,6 +753,17 @@ void THIDiJetTruthAnaMod::Process()
 					fAwayParton->GetPhi(),
 					trigPart->GetMom().DeltaPhi(fAwayParton->GetPhi()), 
 					trigPart, fNTTruePFF);
+		     //--- Fill jet based FF ---
+		     FillFragFuncNTuple(p,
+					fNearLeadingJet->GetEt(), 
+					fNearLeadingJet->GetEta(),
+					fNearLeadingJet->GetPhi(), 
+					fAwayLeadingJet->GetEt(), 
+					fAwayLeadingJet->GetEta(), 
+					fAwayLeadingJet->GetPhi(),
+					fNearLeadingJet->GetMom().DeltaPhi(fAwayLeadingJet->GetPhi()), 
+					trigPart, fNTJetFF);
+		     //--- 
 		     /* FillFragFuncNTuple(p,
 					fNearParton->GetEt(), 
 					fNearParton->GetEta(),
@@ -794,12 +806,17 @@ void THIDiJetTruthAnaMod::SlaveBegin()
    ReqBranch(THIVertexArray::kVerticesName, fVertices);
    ReqBranch(THIGenRecordArray::kRecordsName, fGenRecords);
 
-   fNTTruePFF = new TNtuple("NTTruePFF","NTTruePFF","run:eve:mass:cmeta:npid:npet:npetsm:npeta:npphi:nplpet:nplpid:nplpdr:apid:apet:apetsm:apeta:apphi:apdphi:aplpet:aplpid:aplpdr:ppid:ppt:peta:pphi:pndphi:pndeta:pndr:pndrbg:padphi:padeta:padr:padrbg:rec:zn:za");
-   AddOutput(fNTTruePFF);
+   //--- For every particle ---
+   fNTJetFF = new TNtuple("NTJetFF","NTJetFF","run:eve:mass:cmeta:npid:npet:npetsm:npeta:npphi:nplpet:nplpid:nplpdr:apid:apet:apetsm:apeta:apphi:apdphi:aplpet:aplpid:aplpdr:ppid:ppt:peta:pphi:pndphi:pndeta:pndr:pndrbg:padphi:padeta:padr:padrbg:rec:zn:za");
+   AddOutput(fNTJetFF);
    
    fNTTruePFFBG = new TNtuple("NTTruePFFBG","NTTruePFFBG","run:eve:mass:cmeta:npid:npet:npetsm:npeta:npphi:nplpet:nplpid:nplpdr:apid:apet:apetsm:apeta:apphi:apdphi:aplpet:aplpid:aplpdr:ppid:ppt:peta:pphi:pndphi:pndeta:pndr:padphi:padeta:padr:rec:zn:za");
    AddOutput(fNTTruePFFBG);
    
+   fNTTruePFF = new TNtuple("NTTruePFF","NTTruePFF","run:eve:mass:cmeta:npid:npet:npetsm:npeta:npphi:nplpet:nplpid:nplpdr:apid:apet:apetsm:apeta:apphi:apdphi:aplpet:aplpid:aplpdr:ppid:ppt:peta:pphi:pndphi:pndeta:pndr:pndrbg:padphi:padeta:padr:padrbg:rec:zn:za");
+   AddOutput(fNTTruePFF);
+
+   //--- For every event ---
    fNTECStat = new TNtuple("NTECStat","NTECStat","run:eve:mass:cmeta:npid:npet:npetsm:npeta:npphi:nplpet:nplpid:nplpdr:apid:apet:apetsm:apeta:apphi:apdphi:aplpet:aplpid:aplpdr");
    AddOutput(fNTECStat);
 
