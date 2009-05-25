@@ -57,6 +57,7 @@ protected:
    TNtuple                        *fNTECStat;             //!ntuple with ecal cluster statitics
    TNtuple                        *fNTTruePFF;            //!ntuple with gamma jet and background particles
    TNtuple                        *fNTTruePFFBG;          //!ntuple with gamma jet and background particles
+   TNtuple                        *fNTJetFF;              //!ntuple with jet based FF
    TNtuple                        *fNTLPartons;           //!ntuple of leading partons in each event
    TNtuple                        *fNTPartonLeading;            //!ntuple of leading partons + matched jetsin each event
    TNtuple                        *fNTJetLeading;            //!ntuple of leading jets + matched partons in each event
