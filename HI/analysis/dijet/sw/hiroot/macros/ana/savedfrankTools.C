@@ -89,7 +89,10 @@ void setHist(TH1* h, const int lc=0, const int ls=0, const int lw=0, const int m
 
    //--- Normalize ---
    printf("Scale: %s by %f\n",h->GetName(),norm);
-   h->Scale(norm);
+   if (norm!=1.) {
+      Float_t binNorm = 1./h->GetBinWidth(1);
+      h->Scale(binNorm*norm);
+   }
 }
 void setHist(const char* name, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double norm = 1, const char* xtitle = "", const char* ytitle = "")
 {
