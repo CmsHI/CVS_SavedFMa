@@ -65,8 +65,9 @@ THIDiJetTruthAnaMod::THIDiJetTruthAnaMod(const char *name, const char *title) :
    fJetAArray(0),
    fNearLeadingJet(0),
    fAwayLeadingJet(0),
-   //initialize matching radius
-   fDeltaRMatch(TMath::Pi()/4)
+   //initialize cuts
+   fDeltaRMatch(TMath::Pi()/4),
+   fJetEtMin(30.)
 {
    // Default and user constructor.
    fReso = new TF1("fReso","sqrt(pow(0.017,2)+pow(4.6/x,2)+pow(1.3/sqrt(x),2)+pow(15/x,2))",0,400);
@@ -265,10 +266,15 @@ const THIJet *THIDiJetTruthAnaMod::GetMatchedJet(const THIParticle * parton, con
    for (UInt_t i=0; i<jetcol->GetEntries(); ++i) {
       // get the ith jet
       const THIJet * ijet = jetcol->At(i);
+
+      //-- Make cuts--
       // find dR between parton and jet
       Float_t dR = parton->GetMom().DeltaR(ijet->GetMom());
       // cut on dR
       if (dR > dRMax) continue;
+      // cut on EtMin
+      if (ijet->GetEt() < fJetEtMin) continue;
+
       // Get max et jet within the dRMax cone of the parton
       if (ijet->GetEt() > etCand) {
 	 etCand = ijet->GetEt();
