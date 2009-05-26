@@ -13,14 +13,14 @@ const char * drdbFFE="E1 same";
 
 const Double_t XIMAX = 9.;
 //TString AnaJetEtCut = ">70.";
-TString PythiaAnaJetEtCut = ">0.";
-TString PyquenAnaJetEtCut = ">0.";
+TString PythiaAnaJetEtCut = ">50.";
+TString PyquenAnaJetEtCut = ">50.";
 TString AnaPConeCut = "<0.5";
 TString PythiaNearFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut;
 TString PythiaAwayFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut;
 TString PyquenNearFFCut = TString("npet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut;
 TString PyquenAwayFFCut = TString("npet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut;
-bool NoNorm = true;
+bool NoNorm = false;
 
 void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia100_5k_dijet_000777.root",
             char * infname2 = "/net/pstore01/d00/scratch/frankma/hiroot/pyquen100_5k_dijet_000777.root",
