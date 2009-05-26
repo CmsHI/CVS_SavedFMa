@@ -559,10 +559,10 @@ void THIDiJetTruthAnaMod::FillFragFuncNTuple( const THIParticle *part, Double_t 
       fn+=2;
    if(fNearParton!=0){
       fX[fn++] = fNearParton->GetId();
-      fX[fn++] = fNearParton->GetEt();
+      fX[fn++] = fNearLeadingJet->GetEt();
       fX[fn++] = fNearSMET;
-      fX[fn++] = fNearParton->GetEta();
-      fX[fn++] = fNearParton->GetPhi();
+      fX[fn++] = fNearLeadingJet->GetEta();
+      fX[fn++] = fNearLeadingJet->GetPhi();
       Double_t dis  =  THIEtaPhi::DeltaR2(fNearParton->GetPhi(), fNearLeading->GetPhi(), fNearParton->GetEta(), fNearLeading->GetEta());
       fX[fn++] = fNearLeading->GetEt();
       fX[fn++] = fNearLeading->GetId();
@@ -572,10 +572,10 @@ void THIDiJetTruthAnaMod::FillFragFuncNTuple( const THIParticle *part, Double_t 
       fn+=7;
    if(fAwayParton!=0){
       fX[fn++] = fAwayParton->GetId();
-      fX[fn++] = fAwayParton->GetEt();
+      fX[fn++] = fAwayLeadingJet->GetEt();
       fX[fn++] = fAwaySMET;
-      fX[fn++] = fAwayParton->GetEta();
-      fX[fn++] = fAwayParton->GetPhi();
+      fX[fn++] = fAwayLeadingJet->GetEta();
+      fX[fn++] = fAwayLeadingJet->GetPhi();
 //      Double_t apdphi = trigPart->GetMom().DeltaPhi(fAwayParton->GetPhi());
 //      fX[fn++] = apdphi+2*TMath::Pi()*(apdphi<0);
       fX[fn++] = awayDPhi+2*TMath::Pi()*(awayDPhi<0);
