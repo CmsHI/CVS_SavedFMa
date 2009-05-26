@@ -35,8 +35,10 @@
 #endif
 
 void runJFPythia(Int_t rnum,
-                 const char * genIn,
+//                 const char * genIn,
                  const char *hrts, 
+		 Float_t DeltaRMax = TMath::Pi()/9,
+		 Float_t JetEtMin = 30.,
                  Int_t mode = 0,
 		 const char *outfile="jfpythia_output.root",
                  const char *myjetsname="myjets",
@@ -53,7 +55,7 @@ void runJFPythia(Int_t rnum,
    if (mode <= 1) {
       // setup the jet finder
       THIIterativeConeFinder *jf= new THIIterativeConeFinder();
-      jf->SetRadius(0.7);
+      jf->SetRadius(0.5);
       jf->SetJetTh(3.);
       jf->SetSeedTh(1.);
    
@@ -79,10 +81,11 @@ void runJFPythia(Int_t rnum,
          THIDiJetTruthAnaMod("anaJets", "Jet Finder Analysis Module");
       anaDijetFFMod->SetJetName(findJetsMod->GetJetName());
 //      anaDijetFFMod->SetJetDeltaRMatch(TMath::Pi()/4);
-      anaDijetFFMod->SetJetDeltaRMatch(TMath::Pi()/3);
+      anaDijetFFMod->SetJetDeltaRMatch(DeltaRMax);
+      anaDijetFFMod->SetJetEtMin(JetEtMin);
       findJetsMod->Add(anaDijetFFMod);
 
-      ana->SetAnaOutputName(Form("%s/%s_dijet_%06d.root",getenv("HIROOT_BASEURL"),genIn,rnum));
+      ana->SetAnaOutputName(Form("%s/dijet_%06d.root",getenv("HIROOT_BASEURL"),rnum));
 
       if(mode == 1) {
          THITreeWriterMod *twMod = new THITreeWriterMod("treeewrite", "Tree Writing Module");
