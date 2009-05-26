@@ -11,6 +11,7 @@
 const Float_t PI = 3.14159;
 const Float_t PI2 = 2*3.14159;
 
+void savedfrankTools() {}
 //=================================Helper Functions==================================
 //--- Find Histogram by name ---
 TH1* findHist(const char* hn1)
@@ -158,7 +159,7 @@ void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, co
 }
 
 //--- function to divide histograms then draw---
-void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0)
+void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const float ymax=0)
 {
    // find input histos
    if (!TString(opt).Contains("same")) printf("\n");
@@ -186,6 +187,7 @@ void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* 
    h->Divide(h1,h2);
 
    //--- Draw ---
+   if (ymax) h->SetAxisRange(0,ymax,"Y");
    TCanvas * c = makeCanvas(name,title,log,opt);
    h->Draw(opt);
 }
