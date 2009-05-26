@@ -1,3 +1,4 @@
+//#include "TFile.h"
 #include "TTree.h"
 #include "TNtuple.h"
 #include "TH1F.h"
@@ -8,6 +9,7 @@
 #include "TRegexp.h"
 
 const Float_t PI = 3.14159;
+const Float_t PI2 = 2*3.14159;
 
 //=================================Helper Functions==================================
 //--- Find Histogram by name ---
@@ -77,6 +79,7 @@ void setHist(TH1* h, const int lc=0, const int ls=0, const int lw=0, const int m
    if (lc!=0) h->SetLineColor(lc);
    if (ls!=0) h->SetLineStyle(ls);
    if (lw!=0) h->SetLineWidth(lw);
+   if (lc!=0) h->SetMarkerColor(lc);
    if (msz!=0) h->SetMarkerSize(msz);
    if (mst!=0) h->SetMarkerStyle(mst);
    printf("%s %s %f\n",xtitle,ytitle,norm);
@@ -110,7 +113,7 @@ TCanvas * makeCanvas(const char* name, const char* title, bool log=false, const 
 
 //=============================== Main Functions =====================================
 //--- function to draw 1D histograms from TTree ---
-void drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0)
+void drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0, const int msz =0, const int mst =0, float norm=1)
 {
    //--- Print some info ---
    if (!TString(opt).Contains("same")) printf("\n");
@@ -120,7 +123,7 @@ void drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, con
    //--- Make/set histogram ---
    printf("hist: %s %d %f %f\n",name,nbin,min,max);
    TH1F * h = createHist(name, title, nbin, min, max);
-   setHist(h,lc,ls,lw);
+   setHist(h,lc,ls,lw,msz,mst,norm);
 
    //--- Draw ---
    TCanvas * c = makeCanvas(name,title,log,opt);
@@ -147,7 +150,7 @@ void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, co
 }
 
 //--- function to divide histograms then draw---
-void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0)
+void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0)
 {
    // find input histos
    if (!TString(opt).Contains("same")) printf("\n");
@@ -169,7 +172,7 @@ void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* 
    //--- Make/set histogram ---
    printf("hist: %s %d %f %f\n",name,nbin,min,max);
    TH1F * h = createHist(name, title, nbin, min, max);
-   setHist(h,lc,ls,lw);
+   setHist(h,lc,ls,lw,msz,mst);
 
    //--- Action ---
    h->Divide(h1,h2);
@@ -188,13 +191,25 @@ void drawNormHist(TH1* h, const char* opt="", const char* title="", const char* 
 }
 void drawNormHist(const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = 1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0)
 {
-   TH1F * h;
+   TH1 * h;
    if (gROOT->FindObject(hn))
-      h = dynamic_cast<TH1F*>(gROOT->FindObject(hn));
+      h = dynamic_cast<TH1*>(gROOT->FindObject(hn));
    else {
-      printf("%s is not found, please check the histogram name\n", hn);
+      printf("**%s is not found, please check the histogram name\n", hn);
       return;
    }
+   drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst);
+}
+void drawNormHist(TFile * f, const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = 1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0)
+{
+   TH1 * h;
+   if (f->Get(hn))
+      h = dynamic_cast<TH1*>(f->Get(hn));
+   else {
+      printf("**%s is not found, please check the histogram name\n", hn);
+      return;
+   }
+   printf("retrieved: %s", h->GetName());
    drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst);
 }
 
