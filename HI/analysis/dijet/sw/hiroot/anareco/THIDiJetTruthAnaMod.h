@@ -79,6 +79,7 @@ protected:
    THIJetCollection        *fJetArray;          //!active jet collection from for-loop in Process()
    //--- jet ana
    Float_t                         fDeltaRMatch;           //! Jet matching max dR
+   Float_t                         fJetEtMin;              //! Minimum found jet Et accepted
 
 
    TF1                            *fTrackingEfficiency;   //! Function parametrizing the tracking efficiency      
@@ -106,6 +107,7 @@ public:
    Bool_t                   GetLoadBranch()           const { return fLoad; }
    void                     SetJetName(const char *jetname) { fJetAArrayName = jetname; }
    void                     SetJetDeltaRMatch(Float_t dRMax)   { fDeltaRMatch = dRMax; }
+   void                     SetJetEtMin(Float_t EtMin)   { fJetEtMin = EtMin; }
    void                     GetLeadJets(const THIJetCollection * jl);
    void                     PrintJetCol(const THIJetCollection * jetcol);
    const THIJet            *GetMatchedJet(const THIParticle * parton, const THIJetCollection * jetcol, const Float_t dRMax);
