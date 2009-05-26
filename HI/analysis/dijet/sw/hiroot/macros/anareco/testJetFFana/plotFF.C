@@ -13,13 +13,14 @@ const char * drdbFFE="E1 same";
 
 const Double_t XIMAX = 9.;
 //TString AnaJetEtCut = ">70.";
-TString PythiaAnaJetEtCut = ">30.";
-TString PyquenAnaJetEtCut = ">80.";
+TString PythiaAnaJetEtCut = ">0.";
+TString PyquenAnaJetEtCut = ">0.";
 TString AnaPConeCut = "<0.5";
 TString PythiaNearFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut;
-TString PythiaAwayFFCut = TString("apet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut;
+TString PythiaAwayFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut;
 TString PyquenNearFFCut = TString("npet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut;
-TString PyquenAwayFFCut = TString("apet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut;
+TString PyquenAwayFFCut = TString("npet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut;
+bool NoNorm = true;
 
 void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia100_5k_dijet_000777.root",
             char * infname2 = "/net/pstore01/d00/scratch/frankma/hiroot/pyquen100_5k_dijet_000777.root",
@@ -58,8 +59,8 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
       drawTree(ntPythia, "npet>>hNLPartonPPythia",PythiaNearFFCut.Data(),drsgFF,    "hNLPartonPPythia","Pythia: leading partons",100,80,200,true,kRed,1,3);
       drawTree(ntPyquen, "npet>>hNLPartonPPyquen",PyquenNearFFCut.Data(),drdbFF,"hNLPartonPPyquen","Pyquen: leading partons",100,80,200,true,kBlue,1,3);
       // -away--
-      drawTree(ntPythia, "apet>>hALPartonPPythia","",drdbFF,"hALPartonPPythia","Pythia: leading partons",100,80,200,true,kRed,7,3);
-      drawTree(ntPyquen, "apet>>hALPartonPPyquen","",drdbFF,"hALPartonPPyquen","draw Pyquen: leading partons",100,80,200,true,kBlue,7,3);
+      drawTree(ntPythia, "apet>>hALPartonPPythia",PythiaAwayFFCut.Data(),drdbFF,"hALPartonPPythia","Pythia: leading partons",100,80,200,true,kRed,7,3);
+      drawTree(ntPyquen, "apet>>hALPartonPPyquen",PyquenAwayFFCut.Data(),drdbFF,"hALPartonPPyquen","draw Pyquen: leading partons",100,80,200,true,kBlue,7,3);
    }
    
 
@@ -84,11 +85,13 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    drawTree(ntJetLeadingPyquen, "nljet>>hCheckNearLJetPyquen","",drdbFF,"hCheckNearLJetPyquen",";Et [GeV];",100,0,200,true,kRed-2,1,3,1,8);
    Float_t nJetPythia = drawTree(ntJetLeadingPythia, "nljet>>hCheckCutNearLJetPythia",(TString("nljet")+PythiaAnaJetEtCut).Data(),drdbFFE,    "hCheckCutNearLJetPythia",";Et [GeV];",100,0,200,true,kBlack,1,3,1,8);
    Float_t nJetPyquen = drawTree(ntJetLeadingPyquen, "nljet>>hCheckCutNearLJetPyquen",(TString("nljet")+PyquenAnaJetEtCut).Data(),drdbFFE,"hCheckCutNearLJetPyquen",";Et [GeV];",100,0,200,true,kBlue,1,3,1,8);
+   drawTree(ntJetLeadingPythia, "aljet>>hCheckCutAwayLJetPythia",(TString("nljet")+PythiaAnaJetEtCut).Data(),drdbFFE,    "hCheckCutAwayLJetPythia",";Et [GeV];",100,0,200,true,kBlack,1,3,1,4);
+   drawTree(ntJetLeadingPyquen, "aljet>>hCheckCutAwayLJetPyquen",(TString("nljet")+PyquenAnaJetEtCut).Data(),drdbFFE,"hCheckCutAwayLJetPyquen",";Et [GeV];",100,0,200,true,kBlue,1,3,1,4);
    float nJetPythiaNorm = 1./nJetPythia;
-   //nJetPythiaNorm = 1.;
+   if (NoNorm) nJetPythiaNorm = 1.;
    printf("nJetPythias: %f,  jnorm: %f\n",nJetPythia,nJetPythiaNorm);
    float nJetPyquenNorm = 1./nJetPyquen;
-   //nJetPyquenNorm = 1.;
+   if (NoNorm) nJetPyquenNorm = 1.;
    printf("nJetPyquens: %f,  jnorm: %f\n",nJetPyquen,nJetPyquenNorm);
 
    //=== Finally: plot fragmentation properties ===
