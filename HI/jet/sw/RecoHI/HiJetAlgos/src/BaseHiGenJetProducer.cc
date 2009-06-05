@@ -151,6 +151,24 @@ namespace cms
      }
 
      int nsub = inputs.size();
+
+     //-- Define a collection of "jet arrays" for the different subevents
+     vector< vector<ProtoJet> > outputs;
+     // number of pyquen subevents = (total # of subevent) - (1 hydro subevent)
+     int nHardSub = 0;
+     if(skipLastSubEvent_) {
+	nHardSub = nsub-1;
+     }
+     // changes the capacity of the vector
+     outputs.reserve(nHardSub);
+     // fill the vector with empty jet vectors
+     for (int ijv = 0; ijv < nHardSub; ++ijv) {
+	vector<ProtoJet> jv;
+	outputs.push_back(jv);
+     }
+     cout << "# reserved subevnets for vec of jet vectors: " << nHardSub << endl;
+     //--
+
      for(int isub = 0; isub < nsub; ++isub){
 	cout<<"Processing Sub-Event : "<<isub<<endl;
 	JetReco::InputCollection & input = inputs[isub];
@@ -175,7 +193,13 @@ namespace cms
 	   }
 	   else {
 	      cout<<"Algorithm running on sub-event..."<<endl;
-	      this->runAlgorithm (input, &output);
+//	      this->runAlgorithm (input, &output);
+	      //-- seems that we can only run on the input once
+	      //  b/c cms icon algo erases the inputs as it goes along
+	      cout << "outputs collection capacity: " << outputs.capacity() << endl;
+	      cout << "outputs collection size: " << outputs.size() << endl;
+	      vector <ProtoJet> * isuboutput = &(outputs[isub]);
+	      this->runAlgorithm (input, isuboutput );
 	   }
 	}
      }
@@ -207,6 +231,21 @@ namespace cms
 
 	   if (mVerbose) dumpJets (*jets);
 	   e.put(jets);
+
+	   //--- save subevent genjets ---
+	   cout<<"Saving Subevent GenJets..."<<endl;
+	   
+	   // --allocate memory for collection of jet vectors--
+	   auto_ptr<vector<GenJetCollection> > sejets (new vector<GenJetCollection>);
+	   // need to individually allocate for each subevent
+	   // --loop over the subevents--
+	   for (int ise = 0; ise < outputs.size(); ++ise) {
+//	      GenJetCollection jets = sejets->at(ise);
+//	      int sejsize = outputs[ise].size();
+//	      cout << "subevnet: " << ise << "  # of jets found: " << sejsize << endl;
+//	      jets.reserve(sejsize);
+	      cout << "subevent: " << ise << " # of jets found: " << outputs[ise].size() << endl;
+	   }// --finished the subevent loop--
 	}
   }
 }
