@@ -11,23 +11,27 @@ const char * drdbFF="hist same";
 const char * drsgFFE="E1 ";
 const char * drdbFFE="E1 same";
 
-const Int_t NXIBIN = 10;
-const Double_t XIMAX = 9.;
 //TString AnaJetEtCut = ">70.";
-TString PythiaAnaJetEtCut = ">100.";
-TString PyquenAnaJetEtCut = ">100.";
-TString ParticlePtCut = ">0.5";
-TString AnaPConeCut = "<0.5";
-TString PythiaNearFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
-TString PythiaAwayFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
-TString PyquenNearFFCut = TString("npet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
-TString PyquenAwayFFCut = TString("npet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
-bool NoNorm = false;
 
 void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia100_5k_dijet_000777.root",
             char * infname2 = "/net/pstore01/d00/scratch/frankma/hiroot/pyquen100_5k_dijet_000777.root",
-	    char * plotdir = "plots")
+	    char * plotdir = "plots",
+	    const Int_t NXIBIN = 10,
+	    const Double_t XIMAX = 9.
+      )
 {
+   //=== Setup ana cuts ===
+   TString PythiaAnaJetEtCut = ">100.";
+   TString PyquenAnaJetEtCut = ">100.";
+   TString ParticlePtCut = ">0.5";
+   TString AnaPConeCut = "<0.5";
+   TString PythiaNearFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
+   TString PythiaAwayFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
+   TString PyquenNearFFCut = TString("npet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
+   TString PyquenAwayFFCut = TString("npet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
+   bool NoNorm = false;
+
+   //=== Get input files ===
    printf("%s\n",infname1);
    printf("%s\n",infname2);
    //---pythia---
