@@ -14,8 +14,8 @@ const char * drdbFFE="E1 same";
 const Int_t NXIBIN = 10;
 const Double_t XIMAX = 9.;
 //TString AnaJetEtCut = ">70.";
-TString PythiaAnaJetEtCut = ">50.";
-TString PyquenAnaJetEtCut = ">50.";
+TString PythiaAnaJetEtCut = ">100.";
+TString PyquenAnaJetEtCut = ">100.";
 TString ParticlePtCut = ">0.5";
 TString AnaPConeCut = "<0.5";
 TString PythiaNearFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
@@ -121,7 +121,7 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
 //   drawDivHist("hXiAwayJetPyquen","hXiAwayPythia",drdbFFE,"hAwayJetFFRatio","draw Away FF ratio: Pyquen/Pythia",100,0,XIMAX,1,kBlue,7,3,1,4);
    //---FF ratio2---
    // -parton-
-   drawDivHist("hXiNearPyquen","hXiNearPythia",drsgFF,"hNearFFRatio",";#xi_{pyquen}/#xi_{pythia};",NXIBIN,0,XIMAX,0,kRed-2,1,3,0,0,2.5);
+   drawDivHist("hXiNearPyquen","hXiNearPythia",drsgFF,"hNearFFRatio",";#xi_{pyquen}/#xi_{pythia};",NXIBIN,0,XIMAX,0,kRed-2,1,3,0,0,3.);
    drawDivHist("hXiAwayPyquen","hXiAwayPythia",drdbFF,"hAwayFFRatio","draw Away FF ratio: Pyquen/Pythia",NXIBIN,0,XIMAX,0,kRed-2,7,3,1,4);
    // -Jet-
    drawDivHist("hXiNearJetPyquen","hXiNearJetPythia",drdbFFE,"hNearJetFFRatio",";#xi_{pyquen}/#xi_{pythia};",NXIBIN,0,XIMAX,0,kBlue,1,3,1,8);
