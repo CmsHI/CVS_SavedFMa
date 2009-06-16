@@ -27,17 +27,33 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    //=== Setup ana cuts ===
    // --Et--
    TString PythiaAnaJetEtCut;
-   if (PythiaAnaJetEtMin.IsDigit()) PythiaAnaJetEtCut = ">"+PythiaAnaJetEtMin;
-   else terminate(Form("%s is not a digit",PythiaAnaJetEtMin.Data()));
+   if (!PythiaAnaJetEtMin.IsDigit())
+      terminate(Form("PythiaAnaJetEtMin: %s is not a digit",PythiaAnaJetEtMin.Data()));
+   PythiaAnaJetEtCut = "npet>"+PythiaAnaJetEtMin;
+   if (!PythiaAnaJetEtMax.IsNull()) {
+      if (!PythiaAnaJetEtMax.IsDigit())
+	 terminate(Form("PythiaAnaJetEtMax: %s is not a digit",PythiaAnaJetEtMax.Data()));
+      PythiaAnaJetEtCut += (" && npet<"+PythiaAnaJetEtMax);
+   }
+   //--
    TString PyquenAnaJetEtCut;
-   if (PyquenAnaJetEtMin.IsDigit()) PyquenAnaJetEtCut = ">"+PyquenAnaJetEtMin;
-   else terminate(Form("%s is not a digit",PyquenAnaJetEtMin.Data()));
-   TString ParticlePtCut = ">0.5";
+   if (!PyquenAnaJetEtMin.IsDigit())
+      terminate(Form("PyquenAnaJetEtMin: %s is not a digit",PyquenAnaJetEtMin.Data()));
+   PyquenAnaJetEtCut = "npet>"+PyquenAnaJetEtMin;
+   if (!PyquenAnaJetEtMax.IsNull()) {
+      if (!PyquenAnaJetEtMax.IsDigit())
+	 terminate(Form("PyquenAnaJetEtMax: %s is not a digit",PyquenAnaJetEtMax.Data()));
+      PyquenAnaJetEtCut += (" && npet<"+PyquenAnaJetEtMax);
+   }
+   // --Jet constituent--
    TString AnaPConeCut = "<0.5";
-   TString PythiaNearFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
-   TString PythiaAwayFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
-   TString PyquenNearFFCut = TString("npet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
-   TString PyquenAwayFFCut = TString("npet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
+   // --Particle pt--
+   TString ParticlePtCut = "ppt>0.5";
+
+   TString PythiaNearFFCut = PythiaAnaJetEtCut + " && " + "abs(pndphi)" + AnaPConeCut + " && " + ParticlePtCut;
+   TString PythiaAwayFFCut = PythiaAnaJetEtCut + " && " + "abs(padphi)" + AnaPConeCut + " && " + ParticlePtCut;
+   TString PyquenNearFFCut = PyquenAnaJetEtCut + " && " + "abs(pndphi)" + AnaPConeCut + " && " + ParticlePtCut;
+   TString PyquenAwayFFCut = PyquenAnaJetEtCut + " && " + "abs(padphi)" + AnaPConeCut + " && " + ParticlePtCut;
 
    bool NoNorm = false;
 
@@ -93,10 +109,10 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    drawNormHist(infile, "hJetEtDist",drsgFF,"","Jet Et [GeV]","#",1,true,2,7,3,1,1);
    drawTree(ntJetLeadingPythia, "nljet>>hCheckNearLJetPythia","",drdbFF,    "hCheckNearLJetPythia",";Et [GeV];",100,0,200,true,kRed,1,3,1,8);
    drawTree(ntJetLeadingPyquen, "nljet>>hCheckNearLJetPyquen","",drdbFF,"hCheckNearLJetPyquen",";Et [GeV];",100,0,200,true,kRed-2,1,3,1,8);
-   Float_t nJetPythia = drawTree(ntJetLeadingPythia, "nljet>>hCheckCutNearLJetPythia",(TString("nljet")+PythiaAnaJetEtCut).Data(),drdbFFE,    "hCheckCutNearLJetPythia",";Et [GeV];",100,0,200,true,kBlack,1,3,1,8);
-   Float_t nJetPyquen = drawTree(ntJetLeadingPyquen, "nljet>>hCheckCutNearLJetPyquen",(TString("nljet")+PyquenAnaJetEtCut).Data(),drdbFFE,"hCheckCutNearLJetPyquen",";Et [GeV];",100,0,200,true,kBlue,1,3,1,8);
-   drawTree(ntJetLeadingPythia, "aljet>>hCheckCutAwayLJetPythia",(TString("nljet")+PythiaAnaJetEtCut).Data(),drdbFFE,    "hCheckCutAwayLJetPythia",";Et [GeV];",100,0,200,true,kBlack,1,3,1,4);
-   drawTree(ntJetLeadingPyquen, "aljet>>hCheckCutAwayLJetPyquen",(TString("nljet")+PyquenAnaJetEtCut).Data(),drdbFFE,"hCheckCutAwayLJetPyquen",";Et [GeV];",100,0,200,true,kBlue,1,3,1,4);
+   Float_t nJetPythia = drawTree(ntJetLeadingPythia, "nljet>>hCheckCutNearLJetPythia",(PythiaAnaJetEtCut.ReplaceAll("npet","nljet")).Data(),drdbFFE,    "hCheckCutNearLJetPythia",";Et [GeV];",100,0,200,true,kBlack,1,3,1,8);
+   Float_t nJetPyquen = drawTree(ntJetLeadingPyquen, "nljet>>hCheckCutNearLJetPyquen",(PythiaAnaJetEtCut.ReplaceAll("npet","nljet")).Data(),drdbFFE,"hCheckCutNearLJetPyquen",";Et [GeV];",100,0,200,true,kBlue,1,3,1,8);
+   drawTree(ntJetLeadingPythia, "aljet>>hCheckCutAwayLJetPythia",(PythiaAnaJetEtCut.ReplaceAll("npet","nljet")).Data(),drdbFFE,    "hCheckCutAwayLJetPythia",";Et [GeV];",100,0,200,true,kBlack,1,3,1,4);
+   drawTree(ntJetLeadingPyquen, "aljet>>hCheckCutAwayLJetPyquen",(PythiaAnaJetEtCut.ReplaceAll("npet","nljet")).Data(),drdbFFE,"hCheckCutAwayLJetPyquen",";Et [GeV];",100,0,200,true,kBlue,1,3,1,4);
    float nJetPythiaNorm = 1./nJetPythia;
    if (NoNorm) nJetPythiaNorm = 1.;
    printf("nJetPythias: %f,  jnorm: %f\n",nJetPythia,nJetPythiaNorm);
