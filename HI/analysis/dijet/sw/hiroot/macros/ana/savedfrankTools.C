@@ -7,12 +7,21 @@
 #include "TROOT.h"
 #include "TString.h"
 #include "TRegexp.h"
+#include "TFile.h"
 
 const Float_t PI = 3.14159;
 const Float_t PI2 = 2*3.14159;
 
 void savedfrankTools() {}
 //=================================Helper Functions==================================
+//--- Debug helps---
+void terminate(char * msg)
+{
+   printf("Error:\n");
+   printf("---%s\n",msg);
+   exit(1);
+}
+
 //--- Find Histogram by name ---
 TH1* findHist(const char* hn1)
 {
