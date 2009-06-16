@@ -13,12 +13,12 @@ export input1="$HIROOT_BASEURL/$job/$gen1/$rootskim"
 #== output vars ===
 export ana=ptMin100
 export plotbase=$dijetSens/jetana/plots
-export NXIBIN=100
+export NXIBIN=25
 
 #=== cuts ===
-export PythiaAnaJetEtMin=100t
+export PythiaAnaJetEtMin=90
 export PythiaAnaJetEtMax=""
-export PyquenAnaJetEtMin=100
+export PyquenAnaJetEtMin=90
 export PyquenAnaJetEtMax=""
 
 ./runJetAnaBase.sh
