@@ -22,6 +22,15 @@ void terminate(char * msg)
    exit(1);
 }
 
+//--- Find File by name ---
+TFile * findFile(const char * fn)
+{
+   TFile * infile = new TFile(fn);
+   if (!infile->IsOpen())
+      terminate(Form("%s cannot be opened!",fn));
+   return infile;
+}
+   
 //--- Find Histogram by name ---
 TH1* findHist(const char* hn1)
 {
@@ -33,8 +42,16 @@ TH1* findHist(const char* hn1)
    }
    else {
       printf("%s is not found, please check the histogram name\n", hn1);
-      return 0;
+      exit(1);
    }
+}
+
+//--- Find TTree by name ---
+TTree * findTree(const char* fn, const char * tn)
+{
+   TFile* infile = findFile(fn);
+   TTree * t = dynamic_cast<TTree*>(infile->Get("NTTruePFF"));
+   return t;
 }
 
 //--- Print Canvas with a given name ---

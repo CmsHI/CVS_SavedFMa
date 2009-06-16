@@ -8,5 +8,8 @@ void driverTools ()
    for (int i =0; i<10; ++i) h->Fill(3);
    drawNormHist("testh","histE1","normalized hist","#xi","per jet",0.1,true,2,0,3,1,1);
 
-   terminate("now exit");
+   TTree * tr1 = findTree("/net/pstore01/d00/scratch/frankma/hiroot/prodPtHat50/pythia50/iCone5_match35_jetEtCut30_ntJetEt/test_50k.root","NTTruePFF");
+   tr1->Print();
+   TString msg("message");
+   terminate(Form("%s now exit\n",msg.Data()));
 }
