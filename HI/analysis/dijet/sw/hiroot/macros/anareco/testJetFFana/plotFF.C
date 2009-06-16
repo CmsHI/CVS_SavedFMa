@@ -15,14 +15,23 @@ const char * drdbFFE="E1 same";
 
 void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia100_5k_dijet_000777.root",
             char * infname2 = "/net/pstore01/d00/scratch/frankma/hiroot/pyquen100_5k_dijet_000777.root",
+	    TString PythiaAnaJetEtMin = "90",
+	    TString PythiaAnaJetEtMax = "",
+	    TString PyquenAnaJetEtMin = "90",
+	    TString PyquenAnaJetEtMax = "",
 	    char * plotdir = "plots",
 	    const Int_t NXIBIN = 10,
 	    const Double_t XIMAX = 9.
       )
 {
    //=== Setup ana cuts ===
-   TString PythiaAnaJetEtCut = ">100.";
-   TString PyquenAnaJetEtCut = ">100.";
+   // --Et--
+   TString PythiaAnaJetEtCut;
+   if (PythiaAnaJetEtMin.IsDigit()) PythiaAnaJetEtCut = ">"+PythiaAnaJetEtMin;
+   else terminate(Form("%s is not a digit",PythiaAnaJetEtMin.Data()));
+   TString PyquenAnaJetEtCut;
+   if (PyquenAnaJetEtMin.IsDigit()) PyquenAnaJetEtCut = ">"+PyquenAnaJetEtMin;
+   else terminate(Form("%s is not a digit",PyquenAnaJetEtMin.Data()));
    TString ParticlePtCut = ">0.5";
    TString AnaPConeCut = "<0.5";
    TString PythiaNearFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;

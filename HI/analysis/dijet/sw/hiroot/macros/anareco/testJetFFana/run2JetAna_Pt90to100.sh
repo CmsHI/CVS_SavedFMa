@@ -15,5 +15,11 @@ export ana=ptMin100
 export plotbase=$dijetSens/jetana/plots
 export NXIBIN=100
 
+#=== cuts ===
+export PythiaAnaJetEtMin=100t
+export PythiaAnaJetEtMax=""
+export PyquenAnaJetEtMin=100
+export PyquenAnaJetEtMax=""
+
 ./runJetAnaBase.sh
 
