@@ -38,31 +38,26 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    TString PythiaAwayFFCut = TString("npet")+PythiaAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
    TString PyquenNearFFCut = TString("npet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(pndphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
    TString PyquenAwayFFCut = TString("npet")+PyquenAnaJetEtCut+TString(" && ")+TString("abs(padphi)")+AnaPConeCut+TString(" && ppt")+ParticlePtCut;
+
    bool NoNorm = false;
 
    //=== Get input files ===
    printf("%s\n",infname1);
    printf("%s\n",infname2);
    //---pythia---
-   TFile * infile = new TFile(infname1);
+   TFile * infile = findFile(infname1);
    TNtuple * ntPythia = dynamic_cast<TNtuple*>(infile->Get("NTTruePFF"));
    TNtuple * ntJetPythia = dynamic_cast<TNtuple*>(infile->Get("NTJetFF"));
-   // -leading-
    TNtuple * ntJetLeadingPythia = dynamic_cast<TNtuple*>(infile->Get("NTJetLeading"));
    //---pyquen---
-   TFile * infile2 = new TFile(infname2);
+   TFile * infile2 = findFile(infname2);
    TNtuple * ntPyquen = dynamic_cast<TNtuple*>(infile2->Get("NTTruePFF"));
    TNtuple * ntJetPyquen = dynamic_cast<TNtuple*>(infile2->Get("NTJetFF"));
    TNtuple * ntJetLeadingPyquen = dynamic_cast<TNtuple*>(infile2->Get("NTJetLeading"));
+
    //---output---
    TFile * outfile = new TFile("FFHistos.root","RECREATE");
 
-//   TCanvas * cffMcut = new TCanvas("cffMcut","cffMcut",800,500,700,450);
-//   cff->SetLogy();
-//   ntTruePFF->Draw("log(1/zn)>>hXiNearMcut","abs(pndphi)<0.5 && (mass>200 && mass<280)");
-//   ntTruePFF->Draw("log(1/za)>>hXiAwayMcut","abs(padphi)<0.5 && (mass>200 && mass<280)",drdbFF);
-
-   
    Bool_t check = kTRUE;
    if (check) {
       //---- Check dijet properties ----
@@ -125,13 +120,6 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    drawTree(ntPyquen, "log(1/za)>>hXiAwayPyquen",PyquenAwayFFCut.Data(),drdbFF,"hXiAwayPyquen",";(away) #xi=ln(E_{t}^{Jet}/E_{t}^{Particle})",NXIBIN,0,XIMAX,true,kRed-2,1,3,0,0,nJetPyquenNorm);
    drawTree(ntPythia, "log(1/za)>>hXiAwayPythia",PythiaAwayFFCut.Data(),drdbFF,"hXiAwayPythia",";#xi=ln(E_{t}^{Jet}/E_{t}^{Particle};",NXIBIN,0,XIMAX,true,kRed,1,3,0,0,nJetPythiaNorm);
 
-   //---FF ratio1---
-   // -parton-
-//   drawDivHist("hXiNearPyquen","hXiNearPythia",drsgFF,"hNearFFRatio",";#xi_{pyquen}/#xi_{pythia};",100,0,XIMAX,1,kRed-2,1,3);
-//   drawDivHist("hXiAwayPyquen","hXiAwayPythia",drdbFF,"hAwayFFRatio","draw Away FF ratio: Pyquen/Pythia",100,0,XIMAX,1,kRed-2,7,3,1,4);
-//   // -Jet-
-//   drawDivHist("hXiNearJetPyquen","hXiNearPythia",drdbFFE,"hNearJetFFRatio",";#xi_{pyquen}/#xi_{pythia};",100,0,XIMAX,1,kBlue,1,3,1,8);
-//   drawDivHist("hXiAwayJetPyquen","hXiAwayPythia",drdbFFE,"hAwayJetFFRatio","draw Away FF ratio: Pyquen/Pythia",100,0,XIMAX,1,kBlue,7,3,1,4);
    //---FF ratio2---
    // -parton-
    drawDivHist("hXiNearPyquen","hXiNearPythia",drsgFF,"hNearFFRatio",";#xi_{pyquen}/#xi_{pythia};",NXIBIN,0,XIMAX,0,kRed-2,1,3,0,0,3.);
@@ -140,6 +128,7 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    drawDivHist("hXiNearJetPyquen","hXiNearJetPythia",drdbFFE,"hNearJetFFRatio",";#xi_{pyquen}/#xi_{pythia};",NXIBIN,0,XIMAX,0,kBlue,1,3,1,8);
    drawDivHist("hXiAwayJetPyquen","hXiAwayJetPythia",drdbFFE,"hAwayJetFFRatio","draw Away FF ratio: Pyquen/Pythia",NXIBIN,0,XIMAX,0,kBlue,7,3,1,4);
 
+   //=== Save and exit ===
    printAllCanvases(plotdir);
    outfile->Write();
    outfile->Close();
