@@ -17,8 +17,8 @@ void savedfrankTools() {}
 //--- Debug helps---
 void terminate(char * msg)
 {
-   printf("Error:\n");
-   printf("---%s\n",msg);
+   printf("===Error:===\n");
+   printf("   %s\n",msg);
    exit(1);
 }
 
