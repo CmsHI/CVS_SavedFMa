@@ -10,16 +10,20 @@ export infileName=test_50k.root
 export input0="$HIROOT_BASEURL/$job/$gen0/$rootskim"
 export input1="$HIROOT_BASEURL/$job/$gen1/$rootskim"
 
-#== output vars ===
-export ana=ptMin100
-export plotbase=$dijetSens/jetana/plots
+#=== analysis vars ===
+export doCheck="kTRUE"
 export NXIBIN=25
-
-#=== cuts ===
+export XIMAX=9
+# --cuts--
 export PythiaAnaJetEtMin=90
 export PythiaAnaJetEtMax=""
 export PyquenAnaJetEtMin=90
 export PyquenAnaJetEtMax=""
+
+#== output vars ===
+export ana=pythia_${PythiaAnaJetEtMin}_${PythiaAnaJetEtMax}_pyquen_${PyquenAnaJetEtMin}_${PyquenAnaJetEtMax}
+export plotbase=$dijetSens/jetana/plots
+
 
 ./runJetAnaBase.sh
 

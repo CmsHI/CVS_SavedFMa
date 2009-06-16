@@ -32,7 +32,7 @@ if [ ! -e $plotjFF ]; then mkdir $plotjFF; fi
 root -b -q plotJetLeading.C+\(true,\"$pythiafile\",\"$pyquenfile\",\"$plotjleading\"\)
 echo
 # -pyquen-
-root -b -q plotFF.C+\(\"$pythiafile\",\"$pyquenfile\",\"$PythiaAnaJetEtMin\",\"$PythiaAnaJetEtMax\",\"$PyquenAnaJetEtMin\",\"$PyquenAnaJetEtMax\",\"$plotjFF\",$NXIBIN\)
+root -b -q plotFF.C+\(\"$pythiafile\",\"$pyquenfile\",\"$PythiaAnaJetEtMin\",\"$PythiaAnaJetEtMax\",\"$PyquenAnaJetEtMin\",\"$PyquenAnaJetEtMax\",\"$plotjFF\",$NXIBIN,$XIMAX,$doCheck\)
 
 # final plots
 plotFinalpath=$plotanabase/final
