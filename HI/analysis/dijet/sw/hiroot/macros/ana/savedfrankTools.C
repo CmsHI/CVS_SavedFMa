@@ -242,7 +242,7 @@ void drawNormHist(const char* hn, const char* opt="", const char* title="", cons
       printf("**%s is not found, please check the histogram name\n", hn);
       return;
    }
-   drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst);
+   drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst,ymax);
 }
 TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double ymax=0)
 {
@@ -254,7 +254,7 @@ TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* ti
       return 0;
    }
    printf("retrieved: %s", h->GetName());
-   drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst);
+   drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst,ymax);
    return h;
 }
 
