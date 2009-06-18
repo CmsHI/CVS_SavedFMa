@@ -100,7 +100,7 @@ TH1F * createHist(const char* name, const char* title, const int nbin, const flo
 }
 
 //--- Set Histogram ---
-void setHist(TH1* h, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double norm = -1, const char* xtitle = "", const char* ytitle = "")
+void setHist(TH1* h, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double norm = -1, const char* xtitle = "", const char* ytitle = "", const double ymax=0)
 {
    //--- Set histo properties ---
    if (lc!=0) h->SetLineColor(lc);
@@ -119,11 +119,15 @@ void setHist(TH1* h, const int lc=0, const int ls=0, const int lw=0, const int m
       Float_t binNorm = 1./h->GetBinWidth(1);
       h->Scale(binNorm*norm);
    }
+
+   //--- set y scale ---
+   if (ymax) h->SetAxisRange(0,ymax,"Y");
 }
-void setHist(const char* name, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double norm = -1, const char* xtitle = "", const char* ytitle = "")
+
+void setHist(const char* name, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double norm = -1, const char* xtitle = "", const char* ytitle = "", const double ymax=0)
 {
    TH1F * h;
-   if (h=dynamic_cast<TH1F*>(findHist(name))) setHist(h,lc,ls,lw,msz,mst,norm,xtitle,ytitle);
+   if (h=dynamic_cast<TH1F*>(findHist(name))) setHist(h,lc,ls,lw,msz,mst,norm,xtitle,ytitle,ymax);
 }
 
 //--- Make Canvas ---
@@ -223,13 +227,13 @@ void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* 
 }
 
 //--- function to draw histograms ---
-void drawNormHist(TH1* h, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0)
+void drawNormHist(TH1* h, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double ymax=0)
 {
-   setHist(h,lc,ls,lw,msz,mst,norm,xtitle,ytitle);
+   setHist(h,lc,ls,lw,msz,mst,norm,xtitle,ytitle,ymax);
    makeCanvas(Form("normalized_%s",h->GetName()),title, log,opt);
    h->Draw(opt);
 }
-void drawNormHist(const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0)
+void drawNormHist(const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double ymax=0)
 {
    TH1 * h;
    if (gROOT->FindObject(hn))
@@ -240,7 +244,7 @@ void drawNormHist(const char* hn, const char* opt="", const char* title="", cons
    }
    drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst);
 }
-TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0)
+TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double ymax=0)
 {
    TH1 * h;
    if (f->Get(hn))
