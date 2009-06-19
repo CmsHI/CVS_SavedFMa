@@ -148,7 +148,7 @@ TCanvas * makeCanvas(const char* name, const char* title, bool log=false, const 
 
 //=============================== Main Functions =====================================
 //--- function to draw 1D histograms from TTree ---
-Float_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0, const int msz =0, const int mst =0, float norm=-1.)
+Float_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0, const int msz =0, const int mst =0, float norm=-1.,const double ymax=0)
 {
    //--- Print some info ---
    if (!TString(opt).Contains("same")) printf("\n");
@@ -165,7 +165,7 @@ Float_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, 
    printf("%s has: %f entries\n",name,h->GetEntries());
 
    //--- Set Hist ---
-   setHist(h,lc,ls,lw,msz,mst,norm);
+   setHist(h,lc,ls,lw,msz,mst,norm,"","",ymax);
 
    //--- Draw final hist ---
    h->Draw(opt);
