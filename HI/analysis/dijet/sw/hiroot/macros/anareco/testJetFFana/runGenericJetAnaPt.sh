@@ -15,14 +15,16 @@ export input1="$HIROOT_BASEURL/$job/$gen1/$rootskim"
 export doCheck="kTRUE"
 export NXIBIN=25
 export XIMAX=8
+export XIYMAX=10
 # --cuts--
 export PythiaAnaJetEtMin=$2
 export PythiaAnaJetEtMax=$3
 export PyquenAnaJetEtMin=$4
 export PyquenAnaJetEtMax=$5
+export JDPhiMin=$6
 
 #== output vars ===
-export ana=${infileName%.*}_pythia_${PythiaAnaJetEtMin}_${PythiaAnaJetEtMax}_pyquen_${PyquenAnaJetEtMin}_${PyquenAnaJetEtMax}
+export ana=${infileName%.*}_pythia_${PythiaAnaJetEtMin}_${PythiaAnaJetEtMax}_pyquen_${PyquenAnaJetEtMin}_${PyquenAnaJetEtMax}_jdphi_$JDPhiMin
 export plotbase=$dijetSens/jetana/plots
 
 
