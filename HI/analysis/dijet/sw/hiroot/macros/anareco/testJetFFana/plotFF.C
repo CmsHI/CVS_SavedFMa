@@ -80,7 +80,7 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    TNtuple * ntJetLeadingPyquen = dynamic_cast<TNtuple*>(infile2->Get("NTJetLeading"));
 
    //---output---
-   TFile * outfile = new TFile("FFHistos.root","RECREATE");
+   TFile * outfile = new TFile(Form("%s/FFHistos.root",plotdir),"RECREATE");
 
    if (check) {
       printf("\n============================Do Checks======================\n");
