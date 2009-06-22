@@ -1,10 +1,16 @@
 #!/bin/bash
 
-for i in $(seq 70 10 130); do
+PtBin=20
+amin=50
+dphi=3.0
+
+tar xf macros.tar
+
+for i in $(seq 70 $PtBin 130); do
    pytmin=$i
-   pytmax=$((i+10))
+   pytmax=$((i+$PtBin))
    pyqmin=$i
-   pyqmax=$((i+10))
-   #echo $pytmin $pytmax
-   ./runGenericJetAnaPt.sh test_50k.root $pytmin $pytmax $pyqmin $pyqmax
+   pyqmax=$((i+$PtBin))
+   echo $pytmin $pytmax $pyqmin $pyqmax $amin $dphi
+   ./runGenericJetAnaPt.sh test_300k.root $pytmin $pytmax $amin $pyqmin $pyqmax $amin $dphi
 done
