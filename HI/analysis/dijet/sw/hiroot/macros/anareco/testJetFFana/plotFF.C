@@ -10,10 +10,14 @@ using namespace dijetAna;
 
 void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia100_5k_dijet_000777.root",
             char * infname2 = "/net/pstore01/d00/scratch/frankma/hiroot/pyquen100_5k_dijet_000777.root",
-	    TString PythiaAnaJetEtMin = "90",
-	    TString PythiaAnaJetEtMax = "",
-	    TString PyquenAnaJetEtMin = "90",
-	    TString PyquenAnaJetEtMax = "",
+	    // -pythia-
+	    TString PythiaAnaNJetEtMin = "90",
+	    TString PythiaAnaNJetEtMax = "",
+	    TString PythiaAnaAJetEtMin = "50",
+	    // -pyquen-
+	    TString PyquenAnaNJetEtMin = "90",
+	    TString PyquenAnaNJetEtMax = "",
+	    TString PyquenAnaAJetEtMin = "50",
 	    TString JDPhiMin = "3.0",
 	    char * plotdir = "plots",
 	    const Int_t NXIBIN = 10,
@@ -22,26 +26,39 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
 	    Bool_t check = kFALSE
       )
 {
+   cout << PythiaAnaNJetEtMin << " " << PythiaAnaNJetEtMax << " " << PythiaAnaAJetEtMin << " "
+      << PyquenAnaNJetEtMin << " " << PyquenAnaNJetEtMax << " " << PyquenAnaAJetEtMin
+      << endl;
    //=== Setup ana cuts ===
    // --Et--
    TString PythiaAnaJetCut;
-   if (!PythiaAnaJetEtMin.IsDigit())
-      terminate(Form("PythiaAnaJetEtMin: %s is not a digit",PythiaAnaJetEtMin.Data()));
-   PythiaAnaJetCut = "npet>"+PythiaAnaJetEtMin;
-   if (!PythiaAnaJetEtMax.IsNull()) {
-      if (!PythiaAnaJetEtMax.IsDigit())
-	 terminate(Form("PythiaAnaJetEtMax: %s is not a digit",PythiaAnaJetEtMax.Data()));
-      PythiaAnaJetCut += (" && npet<"+PythiaAnaJetEtMax);
+   if (!PythiaAnaNJetEtMin.IsDigit())
+      terminate(Form("PythiaAnaNJetEtMin: %s is not a digit",PythiaAnaNJetEtMin.Data()));
+   PythiaAnaJetCut = "npet>"+PythiaAnaNJetEtMin;
+   if (!PythiaAnaNJetEtMax.IsNull()) {
+      if (!PythiaAnaNJetEtMax.IsDigit())
+	 terminate(Form("PythiaAnaNJetEtMax: %s is not a digit",PythiaAnaNJetEtMax.Data()));
+      PythiaAnaJetCut += (" && npet<"+PythiaAnaNJetEtMax);
+   }
+   if (!PythiaAnaAJetEtMin.IsNull()) {
+      if (!PythiaAnaAJetEtMin.IsDigit())
+	 terminate(Form("PythiaAnaAJetEtMin: %s is not a digit",PythiaAnaAJetEtMin.Data()));
+      PythiaAnaJetCut += (" && apet>"+PythiaAnaAJetEtMin);
    }
    //--
    TString PyquenAnaJetCut;
-   if (!PyquenAnaJetEtMin.IsDigit())
-      terminate(Form("PyquenAnaJetEtMin: %s is not a digit",PyquenAnaJetEtMin.Data()));
-   PyquenAnaJetCut = "npet>"+PyquenAnaJetEtMin;
-   if (!PyquenAnaJetEtMax.IsNull()) {
-      if (!PyquenAnaJetEtMax.IsDigit())
-	 terminate(Form("PyquenAnaJetEtMax: %s is not a digit",PyquenAnaJetEtMax.Data()));
-      PyquenAnaJetCut += (" && npet<"+PyquenAnaJetEtMax);
+   if (!PyquenAnaNJetEtMin.IsDigit())
+      terminate(Form("PyquenAnaNJetEtMin: %s is not a digit",PyquenAnaNJetEtMin.Data()));
+   PyquenAnaJetCut = "npet>"+PyquenAnaNJetEtMin;
+   if (!PyquenAnaNJetEtMax.IsNull()) {
+      if (!PyquenAnaNJetEtMax.IsDigit())
+	 terminate(Form("PyquenAnaNJetEtMax: %s is not a digit",PyquenAnaNJetEtMax.Data()));
+      PyquenAnaJetCut += (" && npet<"+PyquenAnaNJetEtMax);
+   }
+   if (!PyquenAnaAJetEtMin.IsNull()) {
+      if (!PyquenAnaAJetEtMin.IsDigit())
+	 terminate(Form("PyquenAnaAJetEtMin: %s is not a digit",PyquenAnaAJetEtMin.Data()));
+      PyquenAnaJetCut += (" && apet>"+PyquenAnaAJetEtMin);
    }
    // --Opening angle--
    TString JDPhiCut = ("apdphi>" + JDPhiMin);
@@ -131,9 +148,15 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    printf("Near Pyquen FF cut: %s\n",PyquenNearLeadingCut.Data());
    printf("Away Pyquen FF cut: %s\n",PyquenAwayLeadingCut.Data());
    //-- draw uncut distributions--
-   drawNormHist(infile, "hJetEtDist",drsgFF,"","Jet Et [GeV]","#",1,true,2,7,3,1,1);
-   drawTree(ntJetLeadingPythia, "nljet>>hCheckNearLJetPythia","",drdbFF,    "hCheckNearLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kRed,1,3,1,8);
-   drawTree(ntJetLeadingPyquen, "nljet>>hCheckNearLJetPyquen","",drdbFF,"hCheckNearLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kRed-2,1,3,1,8);
+   // --comp with AnaJet
+   drawNormHist(infile, "hJetEtDist",drsgFF,"","Jet Et [GeV]","#",1,true,2,7,1,1,1);
+   drawNormHist(infile, "hLeadJetEtDist",drdbFF,"","Jet Et [GeV]","#",1,true,2,7,3,1,1);
+   drawTree(ntJetLeadingPythia, "nljet>>hCheckNearLJetPythia0","",drdbFF,"hCheckNearLJetPythia0",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,1,1,8);
+   // --from jet leading--
+   drawTree(ntJetLeadingPythia, "nljet>>hCheckNearLJetPythia","",drsgFF,"hCheckNearLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,1,1,8);
+   drawTree(ntJetLeadingPyquen, "nljet>>hCheckNearLJetPyquen","",drdbFF,"hCheckNearLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,1,1,1,8);
+   drawTree(ntJetLeadingPythia, "aljet>>hCheckAwayLJetPythia","",drdbFF,"hCheckAwayLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,7,1,1,8);
+   drawTree(ntJetLeadingPyquen, "aljet>>hCheckAwayLJetPyquen","",drdbFF,"hCheckAwayLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,7,1,1,8);
    //-- *apply cuts and calc normalization* --
    Float_t nJetPythia = drawTree(ntJetLeadingPythia, "nljet>>hCheckCutNearLJetPythia",PythiaNearLeadingCut.Data(),drdbFF,"hCheckCutNearLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,3,1,8);
    Float_t nJetPyquen = drawTree(ntJetLeadingPyquen, "nljet>>hCheckCutNearLJetPyquen",PyquenNearLeadingCut.Data(),drdbFF,"hCheckCutNearLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,1,3,1,8);
