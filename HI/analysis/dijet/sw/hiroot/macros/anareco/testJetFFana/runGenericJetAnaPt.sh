@@ -1,6 +1,8 @@
 #!/bin/bash -
 . /net/hisrv0001/home/frankma/UserCode/SavedFMa/bin/cgate/set_hiroot.sh
 
+echo "$@"
+
 #== input vars==
 export job=prodPtHat50
 export gen0=pythia50
@@ -17,14 +19,16 @@ export NXIBIN=25
 export XIMAX=8
 export XIYMAX=10
 # --cuts--
-export PythiaAnaJetEtMin=$2
-export PythiaAnaJetEtMax=$3
-export PyquenAnaJetEtMin=$4
-export PyquenAnaJetEtMax=$5
-export JDPhiMin=$6
+export PythiaAnaNJetEtMin=$2
+export PythiaAnaNJetEtMax=$3
+export PythiaAnaAJetEtMin=$4
+export PyquenAnaNJetEtMin=$5
+export PyquenAnaNJetEtMax=$6
+export PyquenAnaAJetEtMin=$7
+export JDPhiMin=$8
 
 #== output vars ===
-export ana=${infileName%.*}_pythia_${PythiaAnaJetEtMin}_${PythiaAnaJetEtMax}_pyquen_${PyquenAnaJetEtMin}_${PyquenAnaJetEtMax}_jdphi_$JDPhiMin
+export ana=${infileName%.*}_pythia_${PythiaAnaNJetEtMin}_${PythiaAnaNJetEtMax}_${PythiaAnaAJetEtMin}_pyquen_${PyquenAnaNJetEtMin}_${PyquenAnaNJetEtMax}_${PyquenAnaAJetEtMin}_jdphi_$JDPhiMin
 export plotbase=$dijetSens/jetana/plots
 
 
