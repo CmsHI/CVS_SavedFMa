@@ -118,10 +118,10 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    //=== Get Normalizations ===
    //-- copy cuts --
    printf("\n=====================Calc Nomalizations=======================\n");
-   TString PythiaNearLeadingCut = PythiaAnaJetCut.ReplaceAll("npet","nljet");
-   TString PythiaAwayLeadingCut = PythiaAnaJetCut.ReplaceAll("npet","nljet");
-   TString PyquenNearLeadingCut = PyquenAnaJetCut.ReplaceAll("npet","nljet");
-   TString PyquenAwayLeadingCut = PyquenAnaJetCut.ReplaceAll("npet","nljet");
+   TString PythiaNearLeadingCut = PythiaAnaJetCut.ReplaceAll("pet","ljet");
+   TString PythiaAwayLeadingCut = PythiaAnaJetCut.ReplaceAll("pet","ljet");
+   TString PyquenNearLeadingCut = PyquenAnaJetCut.ReplaceAll("pet","ljet");
+   TString PyquenAwayLeadingCut = PyquenAnaJetCut.ReplaceAll("pet","ljet");
    PythiaNearLeadingCut = PythiaAnaJetCut.ReplaceAll("apdphi","jdphi");
    PythiaAwayLeadingCut = PythiaAnaJetCut.ReplaceAll("apdphi","jdphi");
    PyquenNearLeadingCut = PyquenAnaJetCut.ReplaceAll("apdphi","jdphi");
@@ -132,14 +132,14 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    printf("Away Pyquen FF cut: %s\n",PyquenAwayLeadingCut.Data());
    //-- draw uncut distributions--
    drawNormHist(infile, "hJetEtDist",drsgFF,"","Jet Et [GeV]","#",1,true,2,7,3,1,1);
-   drawTree(ntJetLeadingPythia, "nljet>>hCheckNearLJetPythia","",drdbFF,    "hCheckNearLJetPythia",";Et [GeV];",100,0,200,true,kRed,1,3,1,8);
-   drawTree(ntJetLeadingPyquen, "nljet>>hCheckNearLJetPyquen","",drdbFF,"hCheckNearLJetPyquen",";Et [GeV];",100,0,200,true,kRed-2,1,3,1,8);
+   drawTree(ntJetLeadingPythia, "nljet>>hCheckNearLJetPythia","",drdbFF,    "hCheckNearLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kRed,1,3,1,8);
+   drawTree(ntJetLeadingPyquen, "nljet>>hCheckNearLJetPyquen","",drdbFF,"hCheckNearLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kRed-2,1,3,1,8);
    //-- *apply cuts and calc normalization* --
-   Float_t nJetPythia = drawTree(ntJetLeadingPythia, "nljet>>hCheckCutNearLJetPythia",PythiaNearLeadingCut.Data(),drdbFF,"hCheckCutNearLJetPythia",";Et [GeV];",100,0,200,true,kBlack,1,3,1,8);
-   Float_t nJetPyquen = drawTree(ntJetLeadingPyquen, "nljet>>hCheckCutNearLJetPyquen",PyquenNearLeadingCut.Data(),drdbFF,"hCheckCutNearLJetPyquen",";Et [GeV];",100,0,200,true,kBlue,1,3,1,8);
+   Float_t nJetPythia = drawTree(ntJetLeadingPythia, "nljet>>hCheckCutNearLJetPythia",PythiaNearLeadingCut.Data(),drdbFF,"hCheckCutNearLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,3,1,8);
+   Float_t nJetPyquen = drawTree(ntJetLeadingPyquen, "nljet>>hCheckCutNearLJetPyquen",PyquenNearLeadingCut.Data(),drdbFF,"hCheckCutNearLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,1,3,1,8);
    //-- draw also the away side after cut --
-   drawTree(ntJetLeadingPythia, "aljet>>hCheckCutAwayLJetPythia",PythiaAwayLeadingCut.Data(),drdbFFE,"hCheckCutAwayLJetPythia",";Et [GeV];",100,0,200,true,kBlack,1,3,1,4);
-   drawTree(ntJetLeadingPyquen, "aljet>>hCheckCutAwayLJetPyquen",PyquenAwayLeadingCut.Data(),drdbFFE,"hCheckCutAwayLJetPyquen",";Et [GeV];",100,0,200,true,kBlue,1,3,1,4);
+   drawTree(ntJetLeadingPythia, "aljet>>hCheckCutAwayLJetPythia",PythiaAwayLeadingCut.Data(),drdbFFE,"hCheckCutAwayLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,3,1,4);
+   drawTree(ntJetLeadingPyquen, "aljet>>hCheckCutAwayLJetPyquen",PyquenAwayLeadingCut.Data(),drdbFFE,"hCheckCutAwayLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,1,3,1,4);
    float nJetPythiaNorm = 1./nJetPythia;
    if (NoNorm) nJetPythiaNorm = 1.;
    printf("nJetPythias: %f,  jnorm: %f\n",nJetPythia,nJetPythiaNorm);
