@@ -2,17 +2,19 @@
 
 PtBin=20
 amin=50
-dphi=3.0
+dphi=2.5
+dphibin=0.1
 
-for i in $(seq 70 $PtBin 130); do
+for i in $(seq 1 6); do
    pytmin=90
    pytmax=$(($pytmin+$PtBin))
-   pyqmin=$i
+   pyqmin=90
    pyqmax=$(($pyqmin+$PtBin))
+   dphi=$(echo "$dphi+$dphibin" | bc)
    echo $pytmin $pytmax $pyqmin $pyqmax $amin $dphi
    #./runGenericJetAnaPt.sh test_50k.root $pytmin $pytmax $amin $pyqmin $pyqmax $amin $dphi
    #./runGenericJetAnaPt.sh test_300k.root $pytmin $pytmax $amin $pyqmin $pyqmax $amin $dphi
-   #./condor64.sh ./runGenericJetAnaPt.sh test_50k.root $pytmin $pytmax $amin $pyqmin $pyqmax $amin $dphi
-   ./condor64.sh ./runGenericJetAnaPt.sh test_300k.root $pytmin $pytmax $amin $pyqmin $pyqmax $amin $dphi
+   #./condor64.sh runGenericJetAnaPt.sh test_50k.root $pytmin $pytmax $amin $pyqmin $pyqmax $amin $dphi
+   ./condor64.sh runGenericJetAnaPt.sh test_300k.root $pytmin $pytmax $amin $pyqmin $pyqmax $amin $dphi
 done
 
