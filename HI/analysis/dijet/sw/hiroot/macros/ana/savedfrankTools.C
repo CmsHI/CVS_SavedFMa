@@ -230,6 +230,7 @@ void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* 
 void drawNormHist(TH1* h, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double ymax=0)
 {
    setHist(h,lc,ls,lw,msz,mst,norm,xtitle,ytitle,ymax);
+   //printf("---------------draw: %s\n",h->GetName());
    makeCanvas(Form("normalized_%s",h->GetName()),title, log,opt);
    h->Draw(opt);
 }
@@ -253,7 +254,7 @@ TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* ti
       printf("**%s is not found, please check the histogram name\n", hn);
       return 0;
    }
-   printf("retrieved: %s", h->GetName());
+   printf("retrieved: %s\n", h->GetName());
    drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst,ymax);
    return h;
 }
