@@ -109,7 +109,7 @@ struct Jets{
 
 //void analyze_jets(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/pythia_dijet_pt80to120_hydjet_mb_4TeV_d20090612/jet234.root"){
 
-void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/pythia_dijet_pt80to120_hydjet_mb_4TeV_d20090615/run2/pre.root"){
+void analyze_sig(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/pythia_dijet_pt80to120_hydjet_mb_4TeV_d20090615/run2/pre.root"){
 
    double r50max = 1000.15;
    double r50min = 0.;
@@ -125,8 +125,8 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
 
    TFile* inf = new TFile(infile);
    TTree* tsub = dynamic_cast<TTree*>(inf->Get("genevent/hi"));
-   //TTree* treco = dynamic_cast<TTree*>(inf->Get("signalevent/hi"));
-   TTree* treco = dynamic_cast<TTree*>(inf->Get("recoevent/hi"));
+   TTree* treco = dynamic_cast<TTree*>(inf->Get("signalevent/hi"));
+   //TTree* treco = dynamic_cast<TTree*>(inf->Get("recoevent/hi"));
    //TTree* treco = dynamic_cast<TTree*>(inf->Get("corrected/hi"));
 
    bool doEfficiency = true;
