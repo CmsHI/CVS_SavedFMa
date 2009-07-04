@@ -135,6 +135,7 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
    bool doProfiles = true;
    bool do2D = true;
    bool showFits = false;
+   bool drawDeltaR = true;
 
    double x[6];
    double y[6];
@@ -180,12 +181,12 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
    int nsize[3] = {20,10,5}; 
 
    // Make a ntuple of the fake jets
-   TNtuple * ntAllRecoJets = new TNtuple("ntAllRecoJets","ntuple to analyze all jets","b:npart:et:eta:phi");
-   TNtuple * ntAllGenJets = new TNtuple("ntAllGenJets","ntuple to analyze all jets","b:npart:et:eta:phi");
-   TNtuple * ntMatRecoJets = new TNtuple("ntMatRecoJets","ntuple to analyze matched jets","b:npart:et:eta:phi");
-   TNtuple * ntMatGenJets = new TNtuple("ntMatGenJets","ntuple to analyze matched jets","b:npart:et:eta:phi");
-   TNtuple * ntUnMatRecoJets = new TNtuple("ntUnMatRecoJets","ntuple to analyze unmatched jets","b:npart:et:eta:phi");
-   TNtuple * ntUnMatGenJets = new TNtuple("ntUnMatGenJets","ntuple to analyze unmatched jets","b:npart:et:eta:phi");
+   TNtuple * ntAllRecoJets = new TNtuple("ntAllRecoJets","ntuple to analyze all jets","evt:b:npart:et:eta:phi");
+   TNtuple * ntAllGenJets = new TNtuple("ntAllGenJets","ntuple to analyze all jets","evt:b:npart:et:eta:phi");
+   TNtuple * ntMatRecoJets = new TNtuple("ntMatRecoJets","ntuple to analyze matched jets","evt:b:npart:et:eta:phi");
+   TNtuple * ntMatGenJets = new TNtuple("ntMatGenJets","ntuple to analyze matched jets","evt:b:npart:et:eta:phi");
+   TNtuple * ntUnMatRecoJets = new TNtuple("ntUnMatRecoJets","ntuple to analyze unmatched jets","evt:b:npart:et:eta:phi");
+   TNtuple * ntUnMatGenJets = new TNtuple("ntUnMatGenJets","ntuple to analyze unmatched jets","evt:b:npart:et:eta:phi");
 
    TH1D* h1 = new TH1D(Form("h1_et%02d",(int)(version)),"Di-Jet Correlation;#Delta R;jets",200,0,6);
    TH1D* h2 = new TH1D(Form("h2_et%02d",(int)(version)),"#Delta R between RecoJets and GenJets;#Delta R;jet pairs",100,0,1);
@@ -368,7 +369,7 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
 
 	 nrecojet++;
 	 // fill all reco jets
-	 ntAllRecoJets->Fill(event.b,event.npart,recojet.et[j],recojet.eta[j],recojet.phi[j]);
+	 ntAllRecoJets->Fill(i,event.b,event.npart,recojet.et[j],recojet.eta[j],recojet.phi[j]);
 
 	 for(int j1 = 0; j1< recojet.njet; ++j1){
 
@@ -420,12 +421,12 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
 
 	    if(etBin > 6)
 	       hsca2[bbin][etaBin]->Fill(recojet.et[j]/genjet.et[j2match]);
-	    ntMatRecoJets->Fill(event.b,event.npart,recojet.et[j],recojet.eta[j],recojet.phi[j]);
+	    ntMatRecoJets->Fill(i,event.b,event.npart,recojet.et[j],recojet.eta[j],recojet.phi[j]);
 	 }else{
 	    //Jet is a fake
 	    hfake1[bbin][etaReco]->Fill(recojet.et[j]);
 	    hFake2D->Fill(event.npart,recojet.et[j]);
-	    ntUnMatRecoJets->Fill(event.b,event.npart,recojet.et[j],recojet.eta[j],recojet.phi[j]);
+	    ntUnMatRecoJets->Fill(i,event.b,event.npart,recojet.et[j],recojet.eta[j],recojet.phi[j]);
 	 }      
       }
 
@@ -454,7 +455,7 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
 
 	 ngenjet++;
 	 // fill all genjets to nt
-	 ntAllGenJets->Fill(event.b,event.npart,genjet.et[j2],genjet.eta[j2],genjet.phi[j2]);
+	 ntAllGenJets->Fill(i,event.b,event.npart,genjet.et[j2],genjet.eta[j2],genjet.phi[j2]);
 
 	 int counter  = 0;       
 	 int j1match = -99;
@@ -487,7 +488,7 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
 	       }
 
 	       // fill ntuple of matched genjets
-	       ntMatGenJets->Fill(event.b,event.npart,genjet.et[j2],genjet.eta[j2],genjet.phi[j2]);
+	       ntMatGenJets->Fill(i,event.b,event.npart,genjet.et[j2],genjet.eta[j2],genjet.phi[j2]);
 
 	       // found matched reco jet, no need to continue to loop
 	       break;
@@ -501,7 +502,7 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
 	    printf("caljet: %f | %f | %f\n",recojet.et[j1],recojet.eta[j1],recojet.phi[j1]);
 	 }
 	 else {
-	    ntUnMatGenJets->Fill(event.b,event.npart,genjet.et[j2],genjet.eta[j2],genjet.phi[j2]);
+	    ntUnMatGenJets->Fill(i,event.b,event.npart,genjet.et[j2],genjet.eta[j2],genjet.phi[j2]);
 	 }
 	 if(j1match > -99){
 	    //	 cout<<"j2 matched is "<<j2<<endl;
@@ -619,7 +620,7 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
       hB->Draw();
    }
 
-   if(0){
+   if(drawDeltaR){
 
       TCanvas* c1 = new TCanvas(Form("c1_et%02d",(int)(version)),Form("c1_et%02d",(int)(version)),400,400);
       h1->Draw();
