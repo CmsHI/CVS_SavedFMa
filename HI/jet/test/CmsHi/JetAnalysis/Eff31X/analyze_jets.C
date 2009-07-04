@@ -131,7 +131,7 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
 
    bool doEfficiency = true;
    bool doFake = false;
-   bool doEnergy = false;
+   bool doEnergy = true;
    bool doProfiles = true;
    bool do2D = true;
    bool showFits = false;
@@ -356,9 +356,14 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
       hVtx->Fill(event.vz);
       hB->Fill(event.b);
 
-      // Loop over RecoJets
-      for(int j = 0; j < recojet.njet; ++j){
+      printf("========================Event: %d, b: %f, npart: %f===================\n",i,event.b,event.npart);
 
+      // Loop over RecoJets
+      printf("       et | eta | phi\n");
+      for(int j = 0; j < recojet.njet; ++j){
+	 printf("recjet uncut: %f | %f | %f\n",recojet.et[j],recojet.eta[j],recojet.phi[j]);
+      }
+      for(int j = 0; j < recojet.njet; ++j){
 	 double recojetetaj = etaVertex(recojet.eta[j],event.vz);
 
 	 int etaReco = getBin(fabs(recojet.eta[j]),nEtaBins,etaBins);
@@ -431,6 +436,12 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
       }
 
       //Second Loop over GenJets
+      printf("Genjet uncut:  et | eta | phi\n");
+      for(int j2 = 0; j2< genjet.njet; ++j2){
+	 printf("      %f | %f | %f\n",genjet.et[j2],genjet.eta[j2],genjet.phi[j2]);
+      }
+      printf("\n*** match result:***\n");
+      printf("        et | eta | phi\n");
       for(int j2 = 0; j2< genjet.njet; ++j2){
 	 if(genjet.et[j2] < genJetEt) continue;
 
@@ -494,12 +505,10 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
 	       break;
 	    }
 	 }     
-	 printf("\n************** match result: %d ***********\n",matchedGenjet);
-	 printf("Event: %d, b: %f, npart: %f\n",i,event.b,event.npart);
-	 printf("        et | eta | phi\n");
+	 printf("Matched? %d\n",matchedGenjet);
 	 printf("genjet: %f | %f | %f\n",genjet.et[j2],genjet.eta[j2],genjet.phi[j2]);
 	 if (matchedGenjet) {
-	    printf("caljet: %f | %f | %f\n",recojet.et[j1],recojet.eta[j1],recojet.phi[j1]);
+	    printf("recjet: %f | %f | %f\n",recojet.et[j1],recojet.eta[j1],recojet.phi[j1]);
 	 }
 	 else {
 	    ntUnMatGenJets->Fill(i,event.b,event.npart,genjet.et[j2],genjet.eta[j2],genjet.phi[j2]);
