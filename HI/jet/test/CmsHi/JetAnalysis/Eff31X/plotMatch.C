@@ -37,9 +37,9 @@ void compareMatch (TFile * fin, char * jtype="Gen", char * draw="et")
   h3->Delete();
 }
 
-void plotMatch ()
+void plotMatch (char * infname="plots.root")
 {
-   TFile * fin = new TFile("plots.root");
+   TFile * fin = new TFile(infname);
    compareMatch(fin,"Gen","et");
    compareMatch(fin,"Gen","eta");
    compareMatch(fin,"Gen","phi");
