@@ -405,7 +405,7 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       hev_.phi[hev_.njet] = phi;
 
       hev_.area[hev_.njet] = jet->jetArea();
-      printf("                     Fill tree: evtn|jetn|et|eta|phi: %d | %d | %f | %f**\n", hev_.event,hev_.njet,hev_.et[hev_.njet],hev_.eta[hev_.njet],hev_.phi[hev_.njet]);
+      printf("                     Fill tree: evtn|jetn|et|eta|phi: %d | %d | %f | %f | %f**\n", hev_.event,hev_.njet,hev_.et[hev_.njet],hev_.eta[hev_.njet],hev_.phi[hev_.njet]);
 
       // Constituents
       std::vector<const reco::Candidate*> members = jet->getJetConstituentsQuick();
