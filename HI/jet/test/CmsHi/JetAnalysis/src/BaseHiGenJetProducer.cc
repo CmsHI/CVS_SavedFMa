@@ -38,19 +38,27 @@ using namespace JetReco;
 
 namespace {
 
-   bool checkHydro(GenParticleRef& p){
+   int checkHydro(GenParticleRef& p){
 
       const Candidate* m1 = p->mother();
+      // frankma comment:
+      //   each particle has mother is from pythia
+      //cout << "My id|status: " << abs(p->pdgId()) << "|" << p->status() << " has mother? " << (int)m1 << endl;
       while(m1){
 	 int pdg = abs(m1->pdgId());
 	 LogDebug("SubEventMothers")<<"Pdg ID : "<<pdg<<endl;
+	 // frankma comment:
+	 // sometimes the first particle checked does not have a parton mother
+	 // it could be the initial proton, or it could be radiated from the initial proton
 	 if(pdg < 9 || pdg == 21){
-	    LogDebug("SubEventMothers")<<"Parton Found! Pdg ID : "<<pdg<<endl;
-	    return false;
+	    LogDebug("SubEventMothers")<<"Parton Found! Pdg ID : "<<pdg<< " status: " << m1->status() << endl;
+	    //return false;
 	 }
          const Candidate* m = m1->mother();
 	 m1 = m;
       }
+      // it seems a tree level parton has status 3
+      // if (p->status() == 3) return false
       return true;
    }
    
@@ -157,7 +165,19 @@ namespace cms
 	   nsubparticle.resize(subevent+1);
 	}
 	
-	if(hydroTag[subevent]<0) hydroTag[subevent] = (int)checkHydro(pref);
+	// frankma comment:
+	//  if tag < 0, b/c if it has been checked once we don't want to check again
+	//  b/c then it would be resetting the hydro tag. So if the last particle checked
+	//  does not have a parton mother then it would reset the tag to false!
+	//  On the other hand,
+	//  if use tag < 0, and if the first particle checked does not have a parton mother
+	//  then it would sometimes wrongly assign it as hydro
+	//  in rare cases when the first particle checked is the proton, or something
+	//  radiated from the proton then it would wronly assing it as hydro
+	// frankma suggestion:
+	// don't try to check hydro this way! check it in a second particle loop!
+	// And it wouldn't be so bad if we stop after the first tree level parton is found
+	if(hydroTag[subevent]<=0) hydroTag[subevent] = (int)checkHydro(pref);
 
 	if(nsubparticle[subevent]> nMax_ && hydroTag[subevent] != 1){
            LogDebug("JetsInHydro")<<"More particles than maximum particles cut, although not previously identified as sub-event, Sub-Event :  "<<subevent;
@@ -175,7 +195,7 @@ namespace cms
      int nsub = inputs.size();
 
      for(int isub = 0; isub < nsub; ++isub){
-	cout<<"Processing Sub-Event : "<<isub<<endl;
+	cout<<"Processing Sub-Event : "<<isub<< "  hydrotag: " << hydroTag[isub] << endl;
 	JetReco::InputCollection & input = inputs[isub];
 	if(hydroTag[isub] == 1){
 	   cout<<"Sub-Event number "<<isub<<" with more than "<<input.size()<<" particles, skipped as background event. Number of total sub-events: "<<nsub<<endl;
