@@ -1,6 +1,6 @@
 // File: BaseHiGenJetProducer.cc
 // Author: Y.Yilmaz, 2008
-// $Id: BaseHiGenJetProducer.cc,v 1.6 2009/06/16 12:38:21 yilmaz Exp $
+// $Id: BaseHiGenJetProducer.cc,v 1.7 2009/06/27 18:23:43 yilmaz Exp $
 //--------------------------------------------
 #include <memory>
 
@@ -37,20 +37,24 @@ using namespace reco;
 using namespace JetReco;
 
 namespace {
-  const bool debug = false;
 
-   bool selectForJet(const reco::GenParticle& par){
-      if(par.status() != 1) return false;
+   bool checkHydro(GenParticleRef& p){
 
-      // Below to be FIXED!!! What is a Jet???
-      if(abs(par.pdgId()) == 11 || abs(par.pdgId()) == 12 ||
-	 abs(par.pdgId()) == 13 ||abs(par.pdgId()) == 14 ||
-	 abs(par.pdgId()) == 15 ||abs(par.pdgId()) == 16 
-	 ) return false;
-
-	 return true;
+      const Candidate* m1 = p->mother();
+      while(m1){
+	 int pdg = abs(m1->pdgId());
+	 LogDebug("SubEventMothers")<<"Pdg ID : "<<pdg<<endl;
+	 if(pdg < 9 || pdg == 21){
+	    LogDebug("SubEventMothers")<<"Parton Found! Pdg ID : "<<pdg<<endl;
+	    return false;
+	 }
+         const Candidate* m = m1->mother();
+	 m1 = m;
+      }
+      return true;
    }
-
+   
+   const bool debug = false;
 
   bool makeCaloJet (const string& fTag) {
     return fTag == "CaloJet";
@@ -82,15 +86,6 @@ namespace {
     fJet->setNPasses (fProtojet.nPasses ());
   }
 
- /*
-  void copyConstituents (const JetReco::InputCollection& fConstituents, const reco::GenParticleCollection& fInput, reco::Jet* fJet) {
-    // put constituents
-    for (unsigned iConstituent = 0; iConstituent < fConstituents.size (); ++iConstituent) {
-       fJet->addDaughter (fInput[fConstituents[iConstituent].index ()].sourceCandidatePtr(0));
-    }
-  }
-*/
-
    void copyConstituents (const JetReco::InputCollection& fConstituents, const edm::View <Candidate>& fInput, reco::Jet* fJet) {
       // put constituents
       for (unsigned iConstituent = 0; iConstituent < fConstituents.size (); ++iConstituent) {
@@ -111,7 +106,7 @@ namespace cms
       mEtInputCut (conf.getParameter<double>("inputEtMin")),
       mEInputCut (conf.getParameter<double>("inputEMin")),
       ignoreHydro_ (conf.getUntrackedParameter<bool>("ignoreHydro", true)),
-      nHydro_(conf.getUntrackedParameter<double>("maxParticles", 2000))
+      nMax_(conf.getUntrackedParameter<double>("maxParticles", 2000))
   {
     std::string alias = conf.getUntrackedParameter<string>( "alias", conf.getParameter<std::string>("@module_label"));
     if (makeCaloJet (mJetType)) {
@@ -136,12 +131,8 @@ namespace cms
   {
      using namespace reco;
 
-     //     edm::Handle<GenParticleCollection> inputHandle;
      edm::Handle< edm::View<Candidate> > inputHandle;
      e.getByLabel(mSrc,inputHandle);
-
-     edm::Handle<GenParticleCollection> genparts; 
-     e.getByLabel(mapSrc,genparts);
 
      edm::Handle<edm::SubEventMap> subs;
      e.getByLabel(mapSrc,subs);
@@ -149,62 +140,45 @@ namespace cms
      vector <ProtoJet> output;
      vector<JetReco::InputCollection> inputs;
 
-     int hydroEvent = -1;
      vector<int> nsubparticle;
+     vector<int> hydroTag;
 
      for (unsigned i = 0; i < inputHandle->size(); ++i) {
-
-	//	const GenParticle & p = (*inputHandle)[i];
-	//	const  & p = (*inputHandle)[i];
-	//        if(!selectForJet(p)) continue;
-	//	int subevent = (*subs)[GenParticleRef(inputHandle,i)];
-	//	int subevent = (*subs)[((*inputHandle)[i])]
-	//	CandidateRef pref(inputHandle.id(),i);
-	//	GenParticleRef pref(inputHandle->id(),i,inputHandle->productGetter());
-	//	GenParticleRef pref(genparts,);
-
+	
 	GenParticleRef pref = inputHandle->refAt(i).castTo<GenParticleRef>();
-
-	//	int subevent = (*subs)[CandidateRef(inputHandle.id(),i)]
 	int subevent = (*subs)[pref];
         LogDebug("SubEventJets")<<"inputs size "<<inputs.size()<<" subevent "<<subevent;
-
+	
 	if(subevent >= inputs.size()){ 
+	   //	   hydroTag.push_back(-1);
+	   hydroTag.resize(subevent+1);
+	   hydroTag[subevent] = -1;
 	   inputs.resize(subevent+1);
 	   nsubparticle.resize(subevent+1);
 	}
-	//	cout<<"inputs size "<<inputs.size()<<" subevent "<<subevent<<endl;
-	if(nsubparticle[subevent]< nHydro_){
-	   //	   (inputs[subevent]).push_back(JetReco::InputItem(&p,i));	
+	
+	if(hydroTag[subevent]<0) hydroTag[subevent] = (int)checkHydro(pref);
+
+	if(nsubparticle[subevent]> nMax_ && hydroTag[subevent] != 1){
+           LogDebug("JetsInHydro")<<"More particles than maximum particles cut, although not previously identified as sub-event, Sub-Event :  "<<subevent;
+	   
+	   hydroTag[subevent] = 1;
+	}
+	
+	
+	if(hydroTag[subevent] != 1){
 	   (inputs[subevent]).push_back(JetReco::InputItem(&((*inputHandle)[i]),i));
 	   nsubparticle[subevent]++;
-	}else{
-	   LogDebug("JetsInHydro")<<"More particles than hydro cut, Sub-Event :  "<<subevent;
-	   if(subevent != hydroEvent && hydroEvent != -1){
-	      edm::LogError("JetsInHydro")<<"More than one hydro event identified, Sub-Event :  "<<subevent;
-	   }
-           hydroEvent = subevent;
 	}
      }
-
+     
      int nsub = inputs.size();
-
-     if(ignoreHydro_ && hydroEvent == -1){
-       int nbig = -1;
-       for(int isub = 0; isub < nsub; ++isub){
-	 int subsize = inputs[isub].size();
-	 if(subsize>nbig){
-	   nbig = subsize;
-	   hydroEvent = isub;
-	 }
-       }
-     }
 
      for(int isub = 0; isub < nsub; ++isub){
 	cout<<"Processing Sub-Event : "<<isub<<endl;
 	JetReco::InputCollection & input = inputs[isub];
-	if(isub == hydroEvent){
-	   cout<<"Sub-Event number "<<isub<<" with more than "<<input.size()<<" particles, skipped as background event."<<endl;
+	if(hydroTag[isub] == 1){
+	   cout<<"Sub-Event number "<<isub<<" with more than "<<input.size()<<" particles, skipped as background event. Number of total sub-events: "<<nsub<<endl;
 	}else{
 
 	   if (mVerbose) {
