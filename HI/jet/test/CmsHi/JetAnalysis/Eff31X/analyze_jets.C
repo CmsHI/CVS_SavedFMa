@@ -633,9 +633,11 @@ void analyze_fakes(char * infile = "/home/yilmaz/analysis/jets/4TeV/corrected/py
 
       TCanvas* c1 = new TCanvas(Form("c1_et%02d",(int)(version)),Form("c1_et%02d",(int)(version)),400,400);
       h1->Draw();
+      c1->Print(Form("c1_et%02d.gif",(int)(version)));
 
       TCanvas* c2 = new TCanvas(Form("c2_et%02d",(int)(version)),Form("c2_et%02d",(int)(version)),400,400);
       h2->Draw();
+      c2->Print(Form("c2_et%02d.gif",(int)(version)));
    }
 
    if(0){
