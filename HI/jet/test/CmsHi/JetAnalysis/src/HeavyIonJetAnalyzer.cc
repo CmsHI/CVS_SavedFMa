@@ -191,6 +191,9 @@ class HeavyIonJetAnalyzer : public edm::EDAnalyzer {
 
    HydjetEvent hev_;
   MyJet yet_;
+   
+   // count # of events
+   int nEvt;
 
    TNtuple *ntpart;
 
@@ -222,7 +225,8 @@ class HeavyIonJetAnalyzer : public edm::EDAnalyzer {
 //
 // constructors and destructor
 //
-HeavyIonJetAnalyzer::HeavyIonJetAnalyzer(const edm::ParameterSet& iConfig)
+HeavyIonJetAnalyzer::HeavyIonJetAnalyzer(const edm::ParameterSet& iConfig) :
+   nEvt(0)
 {
    //now do what ever initialization is needed
    fBFileName = iConfig.getUntrackedParameter<std::string>("output_b", "b_values.txt");
@@ -260,12 +264,13 @@ void
 HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
-  cout<<"Analyze"<<endl;
+  cout<<"Analyze"<<" " << jetSrc_[0].c_str() << "  Event: " << nEvt <<endl;
 
    using namespace edm;
    using namespace HepMC;
   
-   hev_.event = iEvent.id().event();
+//   hev_.event = iEvent.id().event();
+   hev_.event = nEvt;
    for(int ieta = 0; ieta < ETABINS; ++ieta){
       hev_.n[ieta] = 0;
       hev_.ptav[ieta] = 0;
@@ -388,7 +393,8 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       const reco::Jet* jet = &((*genjets)[ijet]);
       //	 const reco::GenJet* jet = dynamic_cast<const reco::GenJet*>(&((*genjets)[ijet]));
 
-      cout<<"Jet Quantities : "<<jet->et()<<" "<<jet->eta()<<" "<<jet->phi()<<" "<<jet->jetArea()<<endl;
+      //cout<<"Jet Quantities : "<<jet->et()<<" "<<jet->eta()<<" "<<jet->phi()<<" "<<jet->jetArea()<<endl;
+      printf("**%s Info: evtn|et|eta|phi: %d | %f | %f | %f**\n", jetSrc_[0].c_str(),nEvt, jet->et(),jet->eta(),jet->phi());
 
       double phi = jet->phi()-phi0;
       if(phi > PI) phi = phi - 2*PI;
@@ -399,6 +405,7 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       hev_.phi[hev_.njet] = phi;
 
       hev_.area[hev_.njet] = jet->jetArea();
+      printf("                     Fill tree: evtn|jetn|et|eta|phi: %d | %d | %f | %f**\n", hev_.event,hev_.njet,hev_.et[hev_.njet],hev_.eta[hev_.njet],hev_.phi[hev_.njet]);
 
       // Constituents
       std::vector<const reco::Candidate*> members = jet->getJetConstituentsQuick();
@@ -428,7 +435,7 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       for(int im = 0; im < nm; ++im){
 	const reco::Candidate* candi = members[im];
 	double dr = deltaR(jet->eta(),jet->phi(),candi->eta(),candi->phi());
-	cout<<"Constiutuent's Delta R = "<<dr<<endl;
+//	cout<<"Constiutuent's Delta R = "<<dr<<endl;
 
 	double phicon = candi->phi()-phi0;
 	if(phicon > PI) phicon = phicon - 2*PI;
@@ -518,7 +525,7 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
    hev_.vr = vr;
 
    hydjetTree_->Fill();
-
+   ++nEvt;
 }
 
 
@@ -587,7 +594,7 @@ HeavyIonJetAnalyzer::beginJob(const edm::EventSetup& iSetup)
 
       hydjetTree_->Branch("ncons",hev_.ncons,"ncons[njet]/I");
 
-      jetTree_->Branch("event",&hev_.event,"event/I");
+      jetTree_->Branch("event",&yet_.event,"event/I");
       jetTree_->Branch("b",&hev_.b,"b/F");
 
       jetTree_->Branch("ncons",&yet_.ncons,"ncons/I");
