@@ -27,6 +27,7 @@ alias cvsdhead='cvs diff -rHEAD'
 alias l='ls --color=auto'
 alias ll='ls -ltr --color=auto'
 alias la='ls -a --color=auto'
+alias rm='rm -i'
 #--my universal CMSSW shortcuts--
 #alias cvscms=". $SavedFMa/bin/cvsinit.sh"
 
