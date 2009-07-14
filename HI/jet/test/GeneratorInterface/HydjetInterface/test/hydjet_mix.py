@@ -1,5 +1,9 @@
 import FWCore.ParameterSet.Config as cms
 
+#
+# cf https://twiki.cern.ch/twiki/bin/view/CMS/HeavyIonEventEmbedding
+#
+
 process = cms.Process("MIX")
 
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
@@ -23,6 +27,12 @@ process.source = cms.Source('PoolSource',
       #fileNames = cms.untracked.vstring('file:///d00/yjlee/sample/hydjet_mb_2_2_4/1EA7C31D-83FB-DD11-8218-001C23BED6CA.root')
       fileNames = cms.untracked.vstring('dcache:/pnfs/cmsaf.mit.edu/hibat/cms/users/davidlw/HYDJET_Minbias_4TeV_31X/sim/HYDJET_Minbias_4TeV_seq11_31X.root')
       )
+#
+# Note:
+#   We cannot do gen and mix together at one step b/c pyquen cannot have 2 instances
+#   in one job
+#   cf Yetkin
+# Thus, we start from a hydjet file
 process.source.fileNames = ['file:/home/frankma/scratch/HI/jet/cmssw310pre10/hydjet_gen.root']
 
 
