@@ -34,7 +34,12 @@ export l1skim_area=$cmsswarea/CMSSW_2_1_7/src
 export hlt_area=$cmsswarea/hltCMSSW_2_1_11/src
 #
 #---2_2_X---
-export jet_sw=$work/HI/jet/sw/CMSSW_2_2_5/src
+#export jet_sw=$work/HI/jet/sw/CMSSW_2_2_5/src
+#---jet gen level studies---
+export dijetSens=$work/hiroot/test/dijet
+#---Jet sw---
+export jet31Xsw=$work/HI/jet/sw/CMSSW_3_1_0_pre10/src
+export jet31Xrun=$scratch/HI/jet/cmssw310pre10
 
 #---Shortcuts---
 #-- 8.882 class --
@@ -62,12 +67,4 @@ alias sethiroot=". /net/hisrv0001/home/frankma/UserCode/SavedFMa/bin/cgate/set_h
 
 #--------------------------------Universal------------------------------------
 . $HOME/UserCode/SavedFMa/dot_files/univ_dot_files/.bash_univ
-
-#------------------- Old --------------------------
-#---setup environment variables---
-#--root--
-#source /opt/bin/sh/setroot.sh 5-14-00
-#--hiroot--
-#source /opt/bin/sh/sethirootpath.sh ~/hiroot
-#. /opt/bin/sh/sethiroot.sh  
 
