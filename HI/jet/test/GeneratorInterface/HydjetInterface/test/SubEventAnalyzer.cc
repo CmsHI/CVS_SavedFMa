@@ -67,6 +67,7 @@ class SubEventAnalyzer : public edm::EDAnalyzer {
       // ----------member data ---------------------------
 
    TNtuple* subs;
+   TNtuple* subs2;
    TNtuple* events;
    TNtuple* vertices;
 
@@ -163,9 +164,11 @@ SubEventAnalyzer::doHepMC(const edm::Event& iEvent){
       HepMC::GenVertex* vert = *v;
    }
 
-   Handle<GenHIEvent> genhi;
-   iEvent.getByLabel(hepmcLabel_,genhi);
-   int nsub = genhi->getNsubs();
+   //   Handle<GenHIEvent> genhi;
+   //   iEvent.getByLabel(hepmcLabel_,genhi);
+   //   int nsub = genhi->getNsubs();
+
+   int nsub = evt->heavy_ion()->Ncoll_hard();
 
    for(int isub = 0; isub < nsub; isub++){
 
@@ -173,7 +176,7 @@ SubEventAnalyzer::doHepMC(const edm::Event& iEvent){
       double con = 0;
       int index = 0;
 
-      SubEvent sub = genhi->getSubEvent(isub);
+      SubEvent sub(isub);
       GenVertex* v = sub.getVertex(*evt);
       GenVertex::vertex_iterator vbeg = v->vertices_begin(HepMC::relatives);
       GenVertex::vertex_iterator vend = v->vertices_end(HepMC::relatives);
@@ -223,7 +226,7 @@ SubEventAnalyzer::doHepMC(const edm::Event& iEvent){
    Etot = Etot + etot;
 
    double width = dNdEta.GetRMS();
-   subs->Fill(pthigh,con,nps,npsall,etot,width);
+   subs->Fill(isub,npsall);
 
    }
 
@@ -239,8 +242,13 @@ SubEventAnalyzer::beginJob(const edm::EventSetup&)
 {
 
    vertices = fs->make<TNtuple>("vertices","","mom:npi:npo");
-   subs = fs->make<TNtuple>("subs","","pthigh:mom:npr:np:etot:width");
+   subs = fs->make<TNtuple>("subs","","sub:np");
+
    events = fs->make<TNtuple>("events","","pthigh:mom:npr:np:etot:width:nsub");
+
+   subs2 = fs->make<TNtuple>("subs2","","sub:np");
+
+
 
 }
 
@@ -261,7 +269,7 @@ SubEventAnalyzer::doGenParticleCandidates(const edm::Event& iEvent){
   iEvent.getByLabel(genPartsLabel_,subs);
 
   int hydroEvent = -1;
-  vector<int> nsubparticle;
+  vector<vector<int> > nsubparticle;
   for (unsigned i = 0; i < inputHandle->size(); ++i) {
     GenParticleRef pref = inputHandle->refAt(i).castTo<GenParticleRef>();
 
@@ -271,9 +279,15 @@ SubEventAnalyzer::doGenParticleCandidates(const edm::Event& iEvent){
     if(subevent >= nsubparticle.size()){ 
       nsubparticle.resize(subevent+1);
     }
+
+    nsubparticle[subevent].push_back(1);
     
   }
 
+  for(int i = 0; i < nsubparticle.size(); ++i){
+     int np = nsubparticle[i].size();
+     subs2->Fill(i,np);
+  }
 
 }
 
