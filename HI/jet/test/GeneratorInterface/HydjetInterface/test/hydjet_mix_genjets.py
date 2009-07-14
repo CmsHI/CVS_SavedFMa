@@ -12,7 +12,7 @@ process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.load("CmsHi.Utilities.HiGenParticles_cfi")
 
 
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(1)
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1)
                                        )
 
 process.SimpleMemoryCheck = cms.Service('SimpleMemoryCheck',
@@ -33,7 +33,7 @@ process.source = cms.Source('PoolSource',
 #   in one job
 #   cf Yetkin
 # Thus, we start from a hydjet file
-process.source.fileNames = ['file:/home/frankma/scratch/HI/jet/cmssw310pre10/hydjet_gen.root']
+process.source.fileNames = ['file:/home/frankma/scratch/HI/jet/cmssw310pre10/hydjet/hydjet_gen_50.root']
 
 
 #------------------------------- Signal: "signal" -------------------------------
@@ -62,6 +62,10 @@ process.signal.PythiaParameters.kinematics = cms.vstring (
       )   
 process.signal.doQuench = False
 
+# ===Convert signal to GenParticles===
+process.load("PhysicsTools.HepMCCandAlgos.genParticles_cfi")
+process.genParticles.src = cms.InputTag("signal")
+
 # ----------------------------- Do Embedding -----------------------------------
 ##################################################################################
 # Embed Pyquen signal into Background source at SIM level
@@ -79,16 +83,21 @@ process.TFileService = cms.Service('TFileService',
                                    fileName = cms.string('31X.root')
                                    )
 
+#------------------------------- Now do jets ----------------------------------
+process.load("CmsHi.JetAnalysis.HiJetAnalysisModules_cff")
+
 #------------------------------  Save and run -------------------------------
 process.output = cms.OutputModule("PoolOutputModule",
-            fileName = cms.untracked.string('hydjet_gen_mixed.root')
-	          )
+      fileName = cms.untracked.string('hydjet_gen_mix_jets.root')
+      )
 
 process.save = cms.EndPath(process.output)
 
 #process.p = cms.Path(process.generator*process.signal*process.mix*process.hiGenParticles*process.ana)
-process.p = cms.Path(process.signal*process.mix*process.hiGenParticles*process.ana)
+process.p = cms.Path(process.signal*process.mix*process.genParticles*process.hiGenParticles*process.ana)
+process.genjets = cms.Path(process.signalJets+process.subEventJets)
 process.save = cms.EndPath(process.output)
 
+process.s = cms.Schedule(process.p,process.genjets,process.save)
 
 
