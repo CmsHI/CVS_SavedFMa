@@ -559,7 +559,7 @@ sub makeCfgFu
     }
 
     $result = $result . "  service = MessageLogger {\n";
-    $result = $result . "    untracked vstring destinations = { \"cout\" }\n";
+    $result = $result . "    untracked vstring destinations = { \"cout\", \"log4cplus\"}\n";
     $result = $result . "    untracked PSet    cout         = " .
 	                "{ untracked string threshold = \"WARNING\" }\n";
     $result = $result . "    untracked PSet    log4cplus    = " .
@@ -662,7 +662,7 @@ sub makeCfgFuPython
 	$result = $result . "process.Stepper = cms.Service (\"Stepper\") \n\n";
     }
     $result = $result . "process.MessageLogger = cms.Service (\"MessageLogger\",\n";
-    $result = $result . "    destinations = cms.untracked.vstring(\'cout\'),\n";
+    $result = $result . "    destinations = cms.untracked.vstring(\'cout\', \"log4cplus\"),\n";
     $result = $result . "    cout = cms.untracked.PSet (\n" .
 	                "    threshold = cms.untracked.string(\'WARNING\')\n" .
 			"    ),\n";
@@ -721,9 +721,9 @@ sub makeCfgFuPython
     $result = $result . "    compression_level    = cms.untracked.int32(1)\n";
     $result = $result . "    )\n\n";
     $result = $result . "process.p0 = cms.Path(process.errorInjector)\n";
-    $result = $result . "process.p1 = cms.Path(process.m1*process.a1 )\n";
-    $result = $result . "process.p2 = cms.Path(process.m2*process.a2 )\n";
-    $result = $result . "process.p3 = cms.Path(process.m3*process.a3 )\n";
+#    $result = $result . "process.p1 = cms.Path(process.m1*process.a1 )\n";
+#    $result = $result . "process.p2 = cms.Path(process.m2*process.a2 )\n";
+#    $result = $result . "process.p3 = cms.Path(process.m3*process.a3 )\n";
 
     if ($doDQM) {
 	$result = $result . "process.p4 = cms.Path( process.dqm )\n";
