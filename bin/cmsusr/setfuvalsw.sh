@@ -1,4 +1,10 @@
 #!/bin/bash -
+# make checks
+hostname | grep '^fuval'
+if [ ! $? -eq 0 ]; then
+   echo "first go to a fuval machine!"
+   return 1
+fi
 if [ -z $DAQHIsw ]; then
    echo "bad dir: $DAQHIsw"
    return 1
