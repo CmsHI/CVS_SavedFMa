@@ -36,5 +36,5 @@ $EvF/scripts/stripOnlConvertedHLT2.sh $rawOut $playbackCfg
 if [ ! -e backup ]; then
    mkdir backup
 fi
-mv $rawout old
+mv $rawOut old
 
