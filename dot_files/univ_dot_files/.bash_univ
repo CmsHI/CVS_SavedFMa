@@ -4,6 +4,7 @@ export PATH=$PATH:$SavedFMa/bin
 
 #---My paths---
 # -top-
+export data=$scratch/data
 export ppsw=$work/pp
 export HIsw=$work/HI
 export pprun=$scratch/pp
@@ -13,7 +14,7 @@ export jetrun=$HIrun/jet
 export DAQHIsw=$HIsw/DAQ/sw
 export DAQHItest=$HIsw/DAQ/test
 export DAQrun=$HIrun/DAQ
-export data=$scratch/data
+export HLTHIrun=$HIrun/HLT
 # -older-
 export projects=$mit/research/projects
 export tier2=$projects/tier2
