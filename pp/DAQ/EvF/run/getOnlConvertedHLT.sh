@@ -2,8 +2,14 @@
 if [ $# -eq 0 ]; then
    echo "usage:"
    echo "   $0 <cfgPath in ConfDB> [ConfigDB code Path]"
+   echo
+   echo "   use in the dir you want the playback cfg"
    exit 1
 fi
+
+# setup env
+# This is where you checked out UserCode/SavedFMa/pp/DAQ/EvF
+EvF=$SavedFMa/pp/DAQ/EvF
 
 if [ $# -ge 1 ]; then
    cfgPath=$1
@@ -19,8 +25,10 @@ else
 fi
 
 # Run onlineConverter
-./runOnlConverter.sh $1
+# - Note
+#   * don't forget to define streams!
+$EvF/run/runOnlConverter.sh $1
 
 # Run stripOnlConvertedHLT2.sh
-$SavedFMa/pp/DAQ/EvF/sw/EventFilter/ConfigDB/test/stripOnlConvertedHLT2.sh $rawOut $playbackCfg
+$EvF/sw/EventFilter/ConfigDB/test/stripOnlConvertedHLT2.sh $rawOut $playbackCfg
 
