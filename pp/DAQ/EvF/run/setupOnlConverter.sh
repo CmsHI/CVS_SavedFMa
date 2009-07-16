@@ -15,7 +15,12 @@ fi
 
 cd $evfSwPath
 echo checking out EventFilter/ConfigDB to $(pwd)
-# co and compile ConfigDB (java) code
+# co ConfigDB (java) code
+# - cf https://twiki.cern.ch/twiki/bin/view/CMS/EvfHiltonWorkingTutorialOnlineConverter
+# - history
+#   * rHEAD of 2009.7.16:
+#     OnlineConverter.java -r1.43 moved to python
+#
 if [ -e EventFilter/ConfigDB ]; then
    cd EventFilter/ConfigDB
    cvs up
@@ -24,14 +29,14 @@ else
    cd EventFilter/ConfigDB/
 fi
 
-#
-# rHEAD of 2009.7.16:
-#   OnlineConverter.java -r1.43 moved to python
-#
-
-# V00-26-04 is the head as of 2009.1.28
-# cf https://twiki.cern.ch/twiki/bin/view/CMS/EvfHiltonWorkingTutorialOnlineConverter
+# Compile
 #    for more information regarding the OnlineConverter
+# - Check the build.xml file
+#   * I think all we are trying to do here is to build
+#   * the .jar files ~ .so for c++?
+# - Env needs
+#   * [classic-]ant
+#   * This is just java code, independent from CMSSW env!
 ant
 cd $startpath
 
