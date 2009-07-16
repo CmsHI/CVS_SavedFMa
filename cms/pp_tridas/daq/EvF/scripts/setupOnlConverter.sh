@@ -17,7 +17,7 @@ if [ ! -e $evfSwPath ]; then
 fi
 
 cd $evfSwPath
-echo checking out EventFilter/ConfigDB to $(pwd)
+echo EventFilter/ConfigDB code at $evfSwPath
 # co ConfigDB (java) code
 # - cf https://twiki.cern.ch/twiki/bin/view/CMS/EvfHiltonWorkingTutorialOnlineConverter
 # - history
