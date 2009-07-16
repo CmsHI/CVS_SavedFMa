@@ -9,7 +9,7 @@ fi
 
 # setup env
 # This is where you checked out UserCode/SavedFMa/pp/DAQ/EvF
-EvF=$SavedFMa/pp/DAQ/EvF
+EvF=$SavedFMa/cms/pp_tridas/daq/EvF
 
 if [ $# -ge 1 ]; then
    cfgPath=$1
@@ -27,8 +27,14 @@ fi
 # Run onlineConverter
 # - Note
 #   * don't forget to define streams!
-$EvF/run/runOnlConverter.sh $1
+$EvF/scripts/runOnlConverter.sh $1
 
 # Run stripOnlConvertedHLT2.sh
-$EvF/sw/EventFilter/ConfigDB/test/stripOnlConvertedHLT2.sh $rawOut $playbackCfg
+$EvF/scripts/stripOnlConvertedHLT2.sh $rawOut $playbackCfg
+
+# clean up
+if [ ! -e backup ]; then
+   mkdir backup
+fi
+mv $rawout old
 
