@@ -1,31 +1,26 @@
 #!/bin/bash
 if [ $# -eq 0 ]; then
    echo "usage:"
-   echo "   $0 <cfgPath in ConfDB> <raw_outname> [ConfigDB code Path]"
+   echo "   $0 <cfgPath in ConfDB> [ConfigDB code Path]"
    exit 1
 fi
 
-if [ $# -ge 2 ]; then
+if [ $# -ge 1 ]; then
    cfgPath=$1
-   rawOut=$2
+   rawOut=playback_`echo $cfgPath | awk -F/ '{print $(NF-1) $(NF)}'`.rawOut
+   playbackCfg=${rawOut%.*}_cfg.py
+   echo playbackCfg: $playbackCfg
 fi
 
-if [ $# -ge 3 ]; then
-   confdbPath=$3
+if [ $# -ge 2 ]; then
+   confdbPath=$2
 else
-   confdbPath="."
+   confdbPath=$DAQHIsw/EventFilter/ConfigDB
 fi
 
 # Run onlineConverter
-cd $confdbPath/test
-./runOnlineConverter --configName $cfgPath > $rawOut
-cd -
-mv $confdbPath/test/$rawOut .
+./runOnlConverter.sh $1
 
 # Run stripOnlConvertedHLT2.sh
-cvs co -r cmssw_2_1_11 UserCode/SavedFMa/pp/DAQ/EvF/sw/EventFilter/ConfigDB/test/
-playbackCfg=$(echo "$cfgPath" | awk -F/ '{print $(NF-1)$(NF)}'| sed 's/cmsRun/playback/')
-playbackCfg=$playbackCfg.cfg
-echo playbackCfg: $playbackCfg
-UserCode/SavedFMa/pp/DAQ/EvF/sw/EventFilter/ConfigDB/test/stripOnlConvertedHLT2.sh $rawOut $playbackCfg
+$SavedFMa/pp/DAQ/EvF/sw/EventFilter/ConfigDB/test/stripOnlConvertedHLT2.sh $rawOut $playbackCfg
 

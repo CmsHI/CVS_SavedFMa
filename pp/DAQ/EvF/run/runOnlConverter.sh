@@ -18,8 +18,9 @@ fi
 
 # Run ConfigDB/test/runOnlineConverter
 #  * a perl script
-#  * just need
+#  * env needs
 #    + cmssw-evf-confdb-converter.jar defined
+#  * parameter needs
 #    + the proper arguments for the java converter to access the database
 #  
 #  Note the generated cmd in runOnlineConverter near the end:
