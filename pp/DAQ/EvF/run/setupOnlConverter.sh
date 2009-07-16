@@ -1,5 +1,8 @@
 #!/bin/bash -
 
+# usage:
+#  setupOnlConverter.sh [$evfSwPath] 
+
 if [ $# -ge 1 ]; then
    evfSwPath=$1
 else
