@@ -1,5 +1,4 @@
 #!/bin/bash -
-. /home/frankma/UserCode/SavedFMa/bin/cvsinit.sh
 if [ ! -e setup ]; then mkdir setup; fi
 
 # check out scripts to setup/scripts
