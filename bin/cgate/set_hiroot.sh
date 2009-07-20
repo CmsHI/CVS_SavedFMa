@@ -11,7 +11,7 @@
 
 
 #--- Setup Root env using script ---
-setroot
+. /net/hisrv0001/home/frankma/UserCode/SavedFMa/bin/cgate/set_root.sh
 
 #--- Setup hiroot env ---
 source /opt/bin/sh/sethirootpath.sh $HOME/work/hiroot
@@ -20,3 +20,4 @@ source /opt/bin/sh/sethirootpath.sh $HOME/work/hiroot
 
 export HIROOT=$HOME/work/hiroot
 export LD_LIBRARY_PATH=$HIROOT/lib:$LD_LIBRARY_PATH
+export HIROOT_BASEURL=/net/pstore01/d00/scratch/frankma/hiroot
