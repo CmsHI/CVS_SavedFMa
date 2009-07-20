@@ -2,7 +2,8 @@
 #-- For available tags: --
 # https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions
 #defaultRecord="CMS_COND_20X_GLOBALTAG"
-defaultRecord="CMS_COND_21X_GLOBALTAG"
+#defaultRecord="CMS_COND_21X_GLOBALTAG"
+defaultRecord="CMS_COND_31X_GLOBALTAG"
 
 #-- For availabe frontier or local DB Connections --
 # https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideORACLEProductionAndDevelopmentDatabaseSetup#Production
