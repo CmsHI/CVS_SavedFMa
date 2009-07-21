@@ -13,5 +13,6 @@ fi
 cd $DAQHIsw
 source EventFilter/Deployment/scripts/local-rpm-env.sh CMSSW
 alias cmsenv='eval `scramv1 runtime -sh`'
+export CMSSW_DATA_PATH=/opt/cmssw/slc4onl_ia32_gcc346/cms
 cd -
 
