@@ -154,8 +154,15 @@ if ($doSM) {
 }
 
 if ($doPB) {
-    open(CFG,">./cfg/playback.cfg") or die ("Can't open file: $!\n");
-    print CFG makeCfgPlayback($PBfile);
+    if ($doPyCfg){
+       $PBcfg = "$pwd/cfg/playback_cfg.py"}
+    else {
+       $PBcfg = "$pwd/cfg/playback.cfg"}
+    open(CFG,">$PBcfg") or die ("Can't open file: $!\n");
+    if ($doPyCfg){
+       print CFG makeCfgPlaybackPython($PBfile);}
+    else{
+       print CFG makeCfgPlayback($PBfile);}
     close(CFG);
 }
 
@@ -215,7 +222,7 @@ my @BUproperties = ("runNumber","unsignedInt",$runNumber,
 		    "eventBufferSize","unsignedInt","0x400000");
 
     
-my @PBproperties = ("parameterSet","string","file:$pwd/cfg/playback.cfg",
+my @PBproperties = ("parameterSet","string","file:$PBcfg",
 		    "hasSharedMemory","boolean","false",
 		    "hasPrescaleService","boolean","false");
 
@@ -833,6 +840,60 @@ sub makeCfgPlayback
     return $result;
 }
 
+################################################################################
+sub makeCfgPlaybackPython
+{
+    my ($file) = (@_);
+
+    my @input_files;
+
+    if ($file =~ m/\.root$/) {
+	push (@input_files, $file);
+    }
+    else {
+	open (FILELIST,$file);
+	while (<FILELIST>) {
+	    my $next_file = $_;
+	    chomp($next_file);
+	    if ($next_file =~ m/\.root$/) { push (@input_files, $next_file); }
+	    else { print("ERROR: $next_file does not appear to be a ROOT file.\n"); }
+	}
+    }
+    
+    my $result = "";
+
+    $result = $result . "import FWCore.ParameterSet.Config as cms\n\n";
+    $result = $result . "process = cms.Process(\"PLAYBACK\") \n";
+    $result = $result . "#process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(100 ) )\n\n";
+
+    $result = $result . "# source\n";
+    $result = $result . "process.source = cms.Source(\"PoolSource\",\n";
+    $result = $result . "    fileNames    = cms.untracked.vstring(";
+    foreach (@input_files) { $result = $result . "\n      'file:" . $_ . "',"; }
+    $result =~ s/,$/\n    \)\n/;
+    $result = $result . ")\n\n";
+
+    $result = $result . "# services\n";
+    $result = $result . "process.MessageLogger = cms.Service (\"MessageLogger\",\n";
+    $result = $result . "    destinations = cms.untracked.vstring(\'cout\', \"log4cplus\"),\n";
+    $result = $result . "    cout = cms.untracked.PSet (\n" .
+	                "    threshold = cms.untracked.string(\'INFO\')\n" .
+			"    ),\n";
+    $result = $result . "    log4cplus = cms.untracked.PSet(\n" .
+	                "    threshold = cms.untracked.string(\'INFO\')\n" .
+                        "    )\n";
+    $result = $result . ")\n\n";
+
+    $result = $result . "# modules\n";
+    $result = $result . "process.playback = cms.EDAnalyzer(\"PlaybackRawDataProvider\",\n";
+    $result = $result . "    queueSize    = cms.untracked.uint32(32)\n";
+    $result = $result . ")\n\n";
+
+    $result = $result . "# path(s)\n";
+    $result = $result . "process.p = cms.Path(process.playback)\n\n";
+    
+    return $result;
+}
 
 ################################################################################
 sub makeXmlHeader
