@@ -14,7 +14,7 @@ export jetrun=$HIrun/jet
 export DAQHIsw=$HIsw/DAQ/sw
 export DAQHItest=$HIsw/DAQ/test
 export DAQHIrun=$HIrun/DAQ
-export HLTHIsw=$HIsw/HLT
+export HLTHIsw=$HIsw/HLT/sw
 export HLTHIrun=$HIrun/HLT
 # -older-
 export projects=$mit/research/projects
