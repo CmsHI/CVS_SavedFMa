@@ -5,10 +5,10 @@ if [ $# -eq 0 ]; then
 fi
 if [ $# -eq 1 ]; then
    fileName=${1##/*/}
-   destination=`pwd`/$fileName
+   destination=$fileName
 fi
 if [ $# -gt 1 ]; then
-   destination=`pwd`/$2
+   destination=$2
 fi
 
 echo "cp -v $1 $destination" > getfiles.sh
