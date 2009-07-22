@@ -26,6 +26,7 @@ using namespace std;
 namespace test{
 
   static const unsigned int GTEVMId= 812;
+  static const unsigned int GTDAQId= 813;
   static const unsigned int GTPEId= 814;
   class GlobalNumbersAnalysis: public EDAnalyzer{
   private:
@@ -56,6 +57,25 @@ namespace test{
 	      cout << "GPS HI # " << evf::evtn::getgpshigh(data.data()) << endl;
 	      cout << "BX FROM FDL 0-xing # " << evf::evtn::getfdlbx(data.data()) << endl;
 	      cout << "PRESCALE INDEX FROM FDL 0-xing # " << evf::evtn::getfdlpsc(data.data()) << endl;
+	    }
+	  }
+
+      // GT DAQ: 813
+      const FEDRawData& data3 = rawdata->FEDData(GTDAQId);
+      size =data3.size();
+
+      if (size>0 ) {
+	  cout << "FED# " << setw(4) << GTDAQId << " " << setw(8) << size << " bytes " << endl;
+	  if(evf::evtn::daq_board_sense(data3.data()))
+	    {
+	      cout << "FED# " << setw(4) << GTDAQId << " is the real GT DAQ block " << endl;
+	      cout << "Event # " << evf::evtn::get(data3.data(),false) << endl;
+	      cout << "LS # " << evf::evtn::getlbn(data3.data()) << endl;
+	      cout << "ORBIT # " << evf::evtn::getorbit(data3.data()) << endl;
+	      cout << "GPS LOW # " << evf::evtn::getgpslow(data3.data()) << endl;
+	      cout << "GPS HI # " << evf::evtn::getgpshigh(data3.data()) << endl;
+	      cout << "BX FROM FDL 0-xing # " << evf::evtn::getfdlbx(data3.data()) << endl;
+	      cout << "PRESCALE INDEX FROM FDL 0-xing # " << evf::evtn::getfdlpsc(data3.data()) << endl;
 	    }
 	  }
 
