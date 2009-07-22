@@ -1,0 +1,5 @@
+#!/bin/bash
+if [ ! -e log ]; then mkdir log; fi
+run="cmsRun $1 >& log/${1%.py}.txt &"
+echo $run
+$run
