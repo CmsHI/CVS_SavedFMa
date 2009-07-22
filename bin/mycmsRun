@@ -1,5 +1,18 @@
 #!/bin/bash
 if [ ! -e log ]; then mkdir log; fi
-run="cmsRun $1 >& log/${1%.py}.txt &"
+
+if [ $# -eq 0 ]; then
+   echo Usage:
+   echo "  mycmsRun <cfg.py> [postfix]"
+   exit 1;
+fi
+
+if [ $# -ge 2 ]; then
+   append=_$2
+fi
+
+outf=${1%.py}$append.txt
+
+run="cmsRun $1 >& log/$outf &"
 echo $run
-cmsRun $1 >& log/${1%.py}.txt &
+cmsRun $1 >& log/$outf &
