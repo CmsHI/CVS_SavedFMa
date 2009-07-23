@@ -229,6 +229,7 @@ my @PBproperties = ("parameterSet","string","file:$PBcfg",
 my @RBproperties = ("runNumber",   "unsignedInt",$runNumber,
 		    "buClassName", "string",     $BUappname,
 		    "doCrcCheck",  "unsignedInt","1",
+		    "useEvmBoard","boolean","false",
 		    "processKillerEnabled","boolean","false",
 		    "monSleepSec", "unsignedInt","5",
 		    "nbRawCells",  "unsignedInt","16",
@@ -289,6 +290,9 @@ for ($i=0;$i<$doEP;$i++) {
 }
 
 # SM context
+# Note:
+# - If using option: -noSM
+#   * Then PTapp won't be initialzed, and a minor error occurs
 if ($doSM) {
     print XML makeXmlContextHeader("SM",$hostname,$SMport);
     print XML makeXmlEndpoint($hostname,50002,$i2oprotocol);
