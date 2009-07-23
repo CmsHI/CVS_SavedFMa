@@ -93,4 +93,4 @@ fi
 
 
 # finally, run
-edmConfigFromDB --configName $dbCfg --input $1 > $name
+edmConfigFromDB --configName $dbCfg --input $infile > $name
