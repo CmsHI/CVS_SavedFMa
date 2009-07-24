@@ -53,7 +53,7 @@ namespace DiJetAna {
    // ===Default Constructor===
    DiJets::DiJets() :
       genTag_("none"),
-      cutTag_("v0")
+      cutTag_("vdefault")
    {
       jetTree_ = NULL;
       particleTree_ = NULL;
