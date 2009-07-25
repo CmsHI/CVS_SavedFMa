@@ -30,6 +30,7 @@ namespace DiJetAna
 
 	 // Mutator Functions
 	 void SetCutTag(char* cutTag) { cutTag_ = TString(cutTag); }
+	 void SetDefaults();
 	 // jet level cuts
 	 void SetNearJetEtMin(Float_t njmin) { nearJetEtMin_ = njmin; }
 	 void SetNearJetEtMax(Float_t njmax) { nearJetEtMax_ = njmax; }
@@ -46,35 +47,57 @@ namespace DiJetAna
 	 Float_t nearJetEtMin_;
 	 Float_t nearJetEtMax_;
 	 Float_t awayJetEtMin_;
+	 Float_t jetEtaMax_;
 	 Float_t dPhiMin_;
 	 // particle level cuts
 	 Float_t partlPtMin_;
+
+	 // tree branch names
+	 // jet level cuts
+	 TString tNJEt_;
+	 TString tAJEt_;
+	 TString tDPhi_;
+	 TString tNJEta_;
+	 TString tAJEta_;
+	 // particle level cuts
+	 TString tPPt_;
    };
 
    //
    // AnaCuts class implementation
    //
 
+   // Default values
+   void AnaCuts::SetDefaults()
+   {
+      partlPtMin_ = 0.5;
+      // tree branch names
+      tNJEt_ = "nljet";
+      tAJEt_ = "aljet";
+      tDPhi_ = "jdphi";
+      tNJEta_ = "nljeta";
+      tAJEta_ = "aljeta";
+   }
    // Constructor
    AnaCuts::AnaCuts() :
+      // cut
       cutTag_("vdefault"),
       nearJetEtMin_(0),
       nearJetEtMax_(10000),
       awayJetEtMin_(0),
-      dPhiMin_(0),
-      partlPtMin_(0.5)
+      dPhiMin_(0)
    {
-      // empty
+      SetDefaults();
    }
    AnaCuts::AnaCuts(char* cutTag) :
+      // cut
       cutTag_(cutTag),
       nearJetEtMin_(-1),
       nearJetEtMax_(-1),
       awayJetEtMin_(-1),
-      dPhiMin_(-1),
-      partlPtMin_(0.5)
+      dPhiMin_(-1)
    {
-      // empty
+      SetDefaults();
    }
 
    // === Friend Functions ===
@@ -84,8 +107,10 @@ namespace DiJetAna
       if ( ct.nearJetEtMin_ >= 0) {
 	 cout << "njmin: " << ct.nearJetEtMin_ << ", njmax: " << ct.nearJetEtMax_
 	    << ", ajmin: " << ct.awayJetEtMin_ << ", dphimin: " << ct.dPhiMin_
-	    << ", pptmin: " << ct.partlPtMin_;
+	    << ", pptmin: " << ct.partlPtMin_ <<endl;
       }
+      cout << "tree branches: " << endl
+	 << ct.tNJEt_ << " " << ct.tAJEt_ << " " << ct.tDPhi_ << " " << ct.tNJEta_ << " " << ct.tAJEta_;
       return os;
    }
 
