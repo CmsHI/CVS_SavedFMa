@@ -21,12 +21,12 @@ namespace DiJetAna
 	 // ---Accessor Functions---
 	 TString GetCutTag() const { return cutTag_; }
 	 // jet level cuts
-	 Float_t GetNearJetEtMin() const { return nearJetEtMin_; }
-	 Float_t GetNearJetEtMax() const { return nearJetEtMax_; }
-	 Float_t GetAwayJetEtMin() const { return awayJetEtMin_; }
-	 Float_t GetDPhiMin() const { return dPhiMin_; }
+	 Double_t GetNearJetEtMin() const { return nearJetEtMin_; }
+	 Double_t GetNearJetEtMax() const { return nearJetEtMax_; }
+	 Double_t GetAwayJetEtMin() const { return awayJetEtMin_; }
+	 Double_t GetDPhiMin() const { return dPhiMin_; }
 	 // particle level cuts
-	 Float_t GetPPtMin() const { return partlPtMin_; }
+	 Double_t GetPPtMin() const { return partlPtMin_; }
 	 // final tree cut
 	 TString GetDiJetCut() const { return dijetCut_; }
 	 TString GetNJetPartlCut() const { return nearJetPartlsCut_; }
@@ -36,16 +36,16 @@ namespace DiJetAna
 	 void SetCutTag(char* cutTag) { cutTag_ = TString(cutTag); }
 	 void SetDefaults();
 	 // jet level cuts
-	 void SetNearJetEtMin(Float_t njmin) { nearJetEtMin_ = njmin; }
-	 void SetNearJetEtMax(Float_t njmax) { nearJetEtMax_ = njmax; }
-	 void SetAwayJetEtMin(Float_t ajmin) { awayJetEtMin_ = ajmin; }
-	 void SetDPhiMin(Float_t dphimin) { dPhiMin_ = dphimin; }
-	 void SetJetEtaMax(Float_t jetamax) { jetEtaMax_ = jetamax; }
+	 void SetNearJetEtMin(Double_t njmin) { nearJetEtMin_ = njmin; }
+	 void SetNearJetEtMax(Double_t njmax) { nearJetEtMax_ = njmax; }
+	 void SetAwayJetEtMin(Double_t ajmin) { awayJetEtMin_ = ajmin; }
+	 void SetDPhiMin(Double_t dphimin) { dPhiMin_ = dphimin; }
+	 void SetJetEtaMax(Double_t jetamax) { jetEtaMax_ = jetamax; }
 	 // particle level cuts
-	 void SetPartlPtMin(Float_t pptmin) { partlPtMin_ = pptmin; }
-	 void SetJetPartlDRMax(Float_t jpdrmax) { jetPartlDRMax_ = jpdrmax; }
+	 void SetPartlPtMin(Double_t pptmin) { partlPtMin_ = pptmin; }
+	 void SetJetPartlDRMax(Double_t jpdrmax) { jetPartlDRMax_ = jpdrmax; }
 	 // final tree cut
-	 TString AndCut(TString var, Float_t val, TString opt);
+	 TString AndCut(TString var, Double_t val, TString opt);
 	 void CreateJetCut();
 	 void CreateJetParticlesCut();
 
@@ -54,14 +54,14 @@ namespace DiJetAna
       protected:
 	 TString cutTag_;
 	 // jet level cuts
-	 Float_t nearJetEtMin_;
-	 Float_t nearJetEtMax_;
-	 Float_t awayJetEtMin_;
-	 Float_t jetEtaMax_;
-	 Float_t dPhiMin_;
+	 Double_t nearJetEtMin_;
+	 Double_t nearJetEtMax_;
+	 Double_t awayJetEtMin_;
+	 Double_t jetEtaMax_;
+	 Double_t dPhiMin_;
 	 // particle level cuts
-	 Float_t partlPtMin_;
-	 Float_t jetPartlDRMax_;
+	 Double_t partlPtMin_;
+	 Double_t jetPartlDRMax_;
 
 	 // tree branch names
 	 // jet level
@@ -131,7 +131,7 @@ namespace DiJetAna
    }
    
    // === String for Tree Cut ===
-   TString AnaCuts::AndCut(TString var, Float_t val, TString opt)
+   TString AnaCuts::AndCut(TString var, Double_t val, TString opt)
    {
       TString result;
       if (!opt.Contains("first"))
@@ -166,7 +166,7 @@ namespace DiJetAna
       partlsCut_ += AndCut(tPPt_,partlPtMin_,"first min");
 
       // now dR cut from n,a jet
-      Float_t dR2Max=jetPartlDRMax_*jetPartlDRMax_;
+      Double_t dR2Max=jetPartlDRMax_*jetPartlDRMax_;
       // from near jet
       nearJetPartlsCut_ = dijetCut_ + " && " + partlsCut_;
       nearJetPartlsCut_ += AndCut(tNJPDR2_,dR2Max,"max");
