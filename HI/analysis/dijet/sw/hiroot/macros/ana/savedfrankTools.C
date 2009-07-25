@@ -1,3 +1,5 @@
+#ifndef SAVEDFRANKTOOLS_H
+#define SAVEDFRANKTOOLS_H
 //#include "TFile.h"
 #include "TTree.h"
 #include "TNtuple.h"
@@ -259,3 +261,4 @@ TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* ti
    return h;
 }
 
+#endif //SAVEDFRANKTOOLS_H
