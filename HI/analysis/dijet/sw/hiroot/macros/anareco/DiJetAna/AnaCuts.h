@@ -64,6 +64,7 @@ namespace DiJetAna
 	 // particle level cuts
 	 Double_t partlPtMin_;
 	 Double_t jetPartlDRMax_;
+	 // Tree data
 	 TreeData td_;
 
 	 // Final jet cut string for tree

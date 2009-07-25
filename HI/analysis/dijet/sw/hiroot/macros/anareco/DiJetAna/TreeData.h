@@ -12,6 +12,8 @@ namespace DiJetAna
 	 // jet level
 	 TString tNJEt_;
 	 TString tAJEt_;
+	 TString tNPtnEt_;
+	 TString tAPtnEt_;
 	 TString tDPhi_;
 	 TString tNJEta_;
 	 TString tAJEta_;
@@ -28,6 +30,8 @@ namespace DiJetAna
       // tree branch names
       tNJEt_("nljet"),
       tAJEt_("aljet"),
+      tNPtnEt_("nlpet"),
+      tAPtnEt_("alpet"),
       tDPhi_("jdphi"),
       tNJEta_("nljeta"),
       tAJEta_("aljeta"),

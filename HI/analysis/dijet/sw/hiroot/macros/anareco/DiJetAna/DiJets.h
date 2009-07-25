@@ -8,14 +8,28 @@
 #include "TString.h"
 #include "TTree.h"
 #include "AnaCuts.h"
+#include "TreeData.h"
+#include "ana/savedfrankTools.C"
 
 namespace DiJetAna {
    // Some constants
+   // for jets
+   const Int_t ETAMIN=-4;
+   const Int_t ETAMAX=4;
+   const UInt_t NBIN=100;
+   const char * drsgE="E1";
+   const char * drdbE="E1 same";
+   const char * drsg="hist";
+   //const char * drdb="E1 hist same";
+   const char * drdb="hist same";
+   TString drsg2("colz");
+   TString drsg2nc("BOX");
+   TString drdb2nc("same");
+   // for FF
    const char * drsgFF="hist";
    const char * drdbFF="hist same";
    const char * drsgFFE="E1 ";
    const char * drdbFFE="E1 same";
-
    Int_t HJETETBINS = 100;
    Double_t HJETETMIN = 0;
    Double_t HJETETMAX = 200;
@@ -52,6 +66,8 @@ namespace DiJetAna {
 	 void SetJetPartlDRMax(Double_t jpdrmax) { cut_.SetJetPartlDRMax(jpdrmax); }
 	 // create tree cuts
 	 void CreateCuts() { cut_.CreateJetCut(); cut_.CreateJetParticlesCut(); }
+	 // plot dijets
+	 void PlotDiJets();
 
 
 	 // Freind Functions
@@ -64,6 +80,8 @@ namespace DiJetAna {
 	 TTree*		      jetTree_;
 	 TTree*		      particleTree_;
 	 Int_t                verbosity_;
+	 // Tree data
+	 TreeData td_;
    };
 
    // Dijets class implementation
@@ -83,6 +101,15 @@ namespace DiJetAna {
    {
       jetTree_ = jetTree;
       particleTree_ = particleTree;
+   }
+
+   void DiJets::PlotDiJets()
+   {
+      //--- Et ---
+      // -near-
+      //jetTree_->Print();
+      drawTree(jetTree_,Form("%s>>hNearLParton%s",td_.tNPtnEt_.Data(),genTag_.Data()),cut_.GetDiJetCut().Data(),drsg, Form("hNearLParton%s",genTag_.Data()),";(near) jet Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX);
+      drawTree(jetTree_,Form("%s>>hNearLJet%s",td_.tNJEt_.Data(),genTag_.Data()),     cut_.GetDiJetCut().Data(),drdbE,Form("hNearLJet%s",genTag_.Data()),     ";(near) parton Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX);
    }
 
    // === Friend Functions ===
