@@ -40,15 +40,16 @@ namespace DiJetAna {
 	 // --- Mutator Functions ---
 	 void SetGenTag(char* genTag) { genTag_ = TString(genTag); }
 	 void SetCutTag(char* cutTag) { cut_.SetCutTag(cutTag); }
+	 void SetVerbosity(Int_t v) { verbosity_ = v; }
 	 // jet level cuts
-	 void SetNearJetEtMin(Float_t njmin) { cut_.SetNearJetEtMin(njmin); }
-	 void SetNearJetEtMax(Float_t njmax) { cut_.SetNearJetEtMax(njmax); }
-	 void SetAwayJetEtMin(Float_t ajmin) { cut_.SetAwayJetEtMin(ajmin); }
-	 void SetDPhiMin(Float_t dphimin) { cut_.SetDPhiMin(dphimin); }
-	 void SetJetEtaMax(Float_t jetamax) { cut_.SetJetEtaMax(jetamax); }
+	 void SetNearJetEtMin(Double_t njmin) { cut_.SetNearJetEtMin(njmin); }
+	 void SetNearJetEtMax(Double_t njmax) { cut_.SetNearJetEtMax(njmax); }
+	 void SetAwayJetEtMin(Double_t ajmin) { cut_.SetAwayJetEtMin(ajmin); }
+	 void SetDPhiMin(Double_t dphimin) { cut_.SetDPhiMin(dphimin); }
+	 void SetJetEtaMax(Double_t jetamax) { cut_.SetJetEtaMax(jetamax); }
 	 // particle level cuts
-	 void SetPartlPtMin(Float_t pptmin) { cut_.SetPartlPtMin(pptmin); }
-	 void SetJetPartlDRMax(Float_t jpdrmax) { cut_.SetJetPartlDRMax(jpdrmax); }
+	 void SetPartlPtMin(Double_t pptmin) { cut_.SetPartlPtMin(pptmin); }
+	 void SetJetPartlDRMax(Double_t jpdrmax) { cut_.SetJetPartlDRMax(jpdrmax); }
 	 // create tree cuts
 	 void CreateCuts() { cut_.CreateJetCut(); cut_.CreateJetParticlesCut(); }
 
@@ -62,11 +63,13 @@ namespace DiJetAna {
 	 AnaCuts              cut_;
 	 TTree*		      jetTree_;
 	 TTree*		      particleTree_;
+	 Int_t                verbosity_;
    };
 
    // Dijets class implementation
    // ===Constructors===
    DiJets::DiJets() :
+      verbosity_(1),
       genTag_("none")
    {
       jetTree_ = NULL;
@@ -74,6 +77,7 @@ namespace DiJetAna {
    }
 
    DiJets::DiJets(char*  genTag, char* cutTag, TTree* jetTree, TTree* particleTree) :
+      verbosity_(1),
       genTag_(genTag),
       cut_(cutTag)
    {
@@ -87,7 +91,10 @@ namespace DiJetAna {
       os << "generator: " << dj.genTag_;
       if (dj.jetTree_) os << "  jet tree: " << dj.jetTree_->GetName();
       if (dj.particleTree_) os << "  particle tree: " << dj.particleTree_->GetName();
-      os << endl << dj.cut_ << endl;
+      if ( dj.verbosity_ >= 1)
+	 os << endl << "cut: " << dj.cut_.GetCutTag() << endl;
+      if ( dj.verbosity_ >= 2)
+	 os << endl << dj.cut_ << endl;
       return os;
    }
 
