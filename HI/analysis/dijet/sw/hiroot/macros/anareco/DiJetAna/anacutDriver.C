@@ -6,12 +6,16 @@ using namespace DiJetAna;
 void anacutDriver ()
 {
    AnaCuts cut0;
-   cut0.SetCutTag("vset");
    printf("cut0: %s\n",cut0.GetCutTag().Data());
    cout << cut0 << endl;
 
-   AnaCuts cut1("v1");
-   printf("cut1: %s\n",cut1.GetCutTag().Data());
-   cout << cut1 << endl;
+   AnaCuts c1("v1");
+   c1.SetNearJetEtMin(90);
+   c1.SetNearJetEtMax(110);
+   c1.SetAwayJetEtMin(90);
+   c1.SetDPhiMin(2.8);
+   //c1.SetPPtMin(0.5);
+
+   cout << c1 << endl;
    
 }
