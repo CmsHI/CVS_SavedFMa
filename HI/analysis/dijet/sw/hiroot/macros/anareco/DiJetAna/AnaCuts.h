@@ -18,7 +18,7 @@ namespace DiJetAna
 	 AnaCuts();
 	 AnaCuts(char* cutTag);
 
-	 // Accessor Functions
+	 // ---Accessor Functions---
 	 TString GetCutTag() const { return cutTag_; }
 	 // jet level cuts
 	 Float_t GetNearJetEtMin() const { return nearJetEtMin_; }
@@ -27,8 +27,10 @@ namespace DiJetAna
 	 Float_t GetDPhiMin() const { return dPhiMin_; }
 	 // particle level cuts
 	 Float_t GetPPtMin() const { return partlPtMin_; }
+	 // final tree cut
+	 TString GetJetTreeCut() const { return jetTreeCut_; }
 
-	 // Mutator Functions
+	 // --- Mutator Functions ---
 	 void SetCutTag(char* cutTag) { cutTag_ = TString(cutTag); }
 	 void SetDefaults();
 	 // jet level cuts
@@ -36,12 +38,16 @@ namespace DiJetAna
 	 void SetNearJetEtMax(Float_t njmax) { nearJetEtMax_ = njmax; }
 	 void SetAwayJetEtMin(Float_t ajmin) { awayJetEtMin_ = ajmin; }
 	 void SetDPhiMin(Float_t dphimin) { dPhiMin_ = dphimin; }
+	 void SetJetEtaMax(Float_t jetamax) { jetEtaMax_ = jetamax; }
 	 // particle level cuts
 	 void SetPPtMin(Float_t pptmin) { partlPtMin_ = pptmin; }
+	 // final tree cut
+	 void AndCut(TString var, Float_t val, TString opt);
+	 void CreateJetTreeCut();
 
-	 // Friend Functions
+	 // --- Friend Functions ---
 	 friend ostream& operator <<(ostream& outs, const AnaCuts& ct);
-      private:
+      protected:
 	 TString cutTag_;
 	 // jet level cuts
 	 Float_t nearJetEtMin_;
@@ -53,14 +59,17 @@ namespace DiJetAna
 	 Float_t partlPtMin_;
 
 	 // tree branch names
-	 // jet level cuts
+	 // jet level
 	 TString tNJEt_;
 	 TString tAJEt_;
 	 TString tDPhi_;
 	 TString tNJEta_;
 	 TString tAJEta_;
-	 // particle level cuts
+	 // particle level
 	 TString tPPt_;
+
+	 // Final jet cut string for tree
+	 TString jetTreeCut_;
    };
 
    //
@@ -71,14 +80,16 @@ namespace DiJetAna
    void AnaCuts::SetDefaults()
    {
       partlPtMin_ = 0.5;
+      jetEtaMax_ = 2.0;
       // tree branch names
       tNJEt_ = "nljet";
       tAJEt_ = "aljet";
       tDPhi_ = "jdphi";
       tNJEta_ = "nljeta";
       tAJEta_ = "aljeta";
+      jetTreeCut_ = "";
    }
-   // Constructor
+   // === Constructors ===
    AnaCuts::AnaCuts() :
       // cut
       cutTag_("vdefault"),
@@ -99,18 +110,47 @@ namespace DiJetAna
    {
       SetDefaults();
    }
+   
+   // === String for Tree Cut ===
+   void AnaCuts::AndCut(TString var, Float_t val, TString opt)
+   {
+      if (!opt.Contains("first"))
+	 jetTreeCut_ += " && ";
+      if (opt.Contains("abs"))
+	 var = TString("abs(") + var + ")";
+
+      if (opt.Contains("min"))
+	 jetTreeCut_ += (var + ">" + Form("%.1f",val));
+      if (opt.Contains("max"))
+	 jetTreeCut_ += (var + "<" + Form("%.1f",val));
+   }
+
+   void AnaCuts::CreateJetTreeCut()
+   {
+      AndCut(tNJEta_,jetEtaMax_,"first max abs");
+      AndCut(tAJEta_,jetEtaMax_,"max abs");
+      AndCut(tNJEt_,nearJetEtMin_,"min");
+      AndCut(tNJEt_,nearJetEtMax_,"max");
+      AndCut(tAJEt_,awayJetEtMin_,"min");
+      AndCut(tDPhi_,dPhiMin_,"min");
+   }
 
    // === Friend Functions ===
    ostream& operator <<(ostream& os, const AnaCuts& ct)
    {
       cout << "cut: " << ct.cutTag_ << endl;
+      cout << "Default cuts:" << endl;
+      cout << "  jet_eta_max: " << ct.jetEtaMax_ 
+	   << ", pptmin: " << ct.partlPtMin_ <<endl;
+      cout << "Aet ana cuts:" << endl;
       if ( ct.nearJetEtMin_ >= 0) {
-	 cout << "njmin: " << ct.nearJetEtMin_ << ", njmax: " << ct.nearJetEtMax_
-	    << ", ajmin: " << ct.awayJetEtMin_ << ", dphimin: " << ct.dPhiMin_
-	    << ", pptmin: " << ct.partlPtMin_ <<endl;
+	 cout << "  njmin: " << ct.nearJetEtMin_ << ", njmax: " << ct.nearJetEtMax_
+	    << ", ajmin: " << ct.awayJetEtMin_ << ", dphimin: " << ct.dPhiMin_ << endl;
       }
-      cout << "tree branches: " << endl
-	 << ct.tNJEt_ << " " << ct.tAJEt_ << " " << ct.tDPhi_ << " " << ct.tNJEta_ << " " << ct.tAJEta_;
+      cout << "Tree branches: " << endl;
+      cout << "  " << ct.tNJEt_ << " " << ct.tAJEt_ << " " << ct.tDPhi_ << " " << ct.tNJEta_ << " " << ct.tAJEta_ << endl;
+      cout << "jet tree cut: " << endl;
+      cout << "  " <<  ct.jetTreeCut_;
       return os;
    }
 
