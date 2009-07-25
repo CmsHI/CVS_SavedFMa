@@ -44,6 +44,7 @@ namespace DiJetAna
 	 // final tree cut
 	 TString AndCut(TString var, Float_t val, TString opt);
 	 void CreateJetTreeCut();
+	 void CreateJetParticlesTreeCut();
 
 	 // --- Friend Functions ---
 	 friend ostream& operator <<(ostream& outs, const AnaCuts& ct);
@@ -70,6 +71,8 @@ namespace DiJetAna
 
 	 // Final jet cut string for tree
 	 TString jetTreeCut_;
+	 TString partlsTreeCut_;
+	 TString jetPartlsTreeCut_;
    };
 
    //
@@ -87,7 +90,11 @@ namespace DiJetAna
       tDPhi_ = "jdphi";
       tNJEta_ = "nljeta";
       tAJEta_ = "aljeta";
+      tPPt_ = "ppt";
+      // tree cuts
       jetTreeCut_ = "";
+      partlsTreeCut_ = "";
+      jetPartlsTreeCut_ = "";
    }
    // === Constructors ===
    AnaCuts::AnaCuts() :
@@ -138,6 +145,12 @@ namespace DiJetAna
       jetTreeCut_ += AndCut(tDPhi_,dPhiMin_,"min");
    }
 
+   void AnaCuts::CreateJetParticlesTreeCut()
+   {
+      partlsTreeCut_ += AndCut(tPPt_,partlPtMin_,"first min");
+      jetPartlsTreeCut_ = jetTreeCut_ + " && " + partlsTreeCut_;
+   }
+
    // === Friend Functions ===
    ostream& operator <<(ostream& os, const AnaCuts& ct)
    {
@@ -151,9 +164,12 @@ namespace DiJetAna
 	    << ", ajmin: " << ct.awayJetEtMin_ << ", dphimin: " << ct.dPhiMin_ << endl;
       }
       cout << "Tree branches: " << endl;
-      cout << "  " << ct.tNJEt_ << " " << ct.tAJEt_ << " " << ct.tDPhi_ << " " << ct.tNJEta_ << " " << ct.tAJEta_ << endl;
-      cout << "jet tree cut: " << endl;
-      cout << "  " <<  ct.jetTreeCut_;
+      cout << "  jet:       " << ct.tNJEt_ << " " << ct.tAJEt_ << " " << ct.tDPhi_ << " " << ct.tNJEta_ << " " << ct.tAJEta_ << endl;
+      cout << "  particles: " << ct.tPPt_ << endl;
+      cout << "tree cuts: " << endl;
+      cout << "  jet:           " <<  ct.jetTreeCut_ << endl;
+      cout << "  particles:     " <<  ct.partlsTreeCut_ << endl;
+      cout << "  jet_particles: " <<  ct.jetPartlsTreeCut_ << endl;
       return os;
    }
 

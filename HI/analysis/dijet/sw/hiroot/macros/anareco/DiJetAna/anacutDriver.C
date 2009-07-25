@@ -16,6 +16,7 @@ void anacutDriver ()
    c1.SetDPhiMin(2.8);
    //c1.SetPPtMin(0.5);
    c1.CreateJetTreeCut();
+   c1.CreateJetParticlesTreeCut();
 
    cout << c1 << endl;
    
