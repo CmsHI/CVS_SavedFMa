@@ -28,7 +28,9 @@ namespace DiJetAna
 	 // particle level cuts
 	 Float_t GetPPtMin() const { return partlPtMin_; }
 	 // final tree cut
-	 TString GetJetTreeCut() const { return jetTreeCut_; }
+	 TString GetDiJetCut() const { return dijetCut_; }
+	 TString GetNJetPartlCut() const { return nearJetPartlsCut_; }
+	 TString GetAJetPartlCut() const { return awayJetPartlsCut_; }
 
 	 // --- Mutator Functions ---
 	 void SetCutTag(char* cutTag) { cutTag_ = TString(cutTag); }
@@ -44,8 +46,8 @@ namespace DiJetAna
 	 void SetJetPartlDRMax(Float_t jpdrmax) { jetPartlDRMax_ = jpdrmax; }
 	 // final tree cut
 	 TString AndCut(TString var, Float_t val, TString opt);
-	 void CreateJetTreeCut();
-	 void CreateJetParticlesTreeCut();
+	 void CreateJetCut();
+	 void CreateJetParticlesCut();
 
 	 // --- Friend Functions ---
 	 friend ostream& operator <<(ostream& outs, const AnaCuts& ct);
@@ -74,10 +76,10 @@ namespace DiJetAna
 	 TString tAJPDR2_;
 
 	 // Final jet cut string for tree
-	 TString jetTreeCut_;
-	 TString partlsTreeCut_;
-	 TString nearJetPartlsTreeCut_;
-	 TString awayJetPartlsTreeCut_;
+	 TString dijetCut_;
+	 TString partlsCut_;
+	 TString nearJetPartlsCut_;
+	 TString awayJetPartlsCut_;
    };
 
    //
@@ -99,10 +101,10 @@ namespace DiJetAna
       tNJPDR2_ = "pndr";
       tAJPDR2_ = "padr";
       // tree cuts
-      jetTreeCut_ = "";
-      partlsTreeCut_ = "";
-      nearJetPartlsTreeCut_ = "";
-      awayJetPartlsTreeCut_ = "";
+      dijetCut_ = "";
+      partlsCut_ = "";
+      nearJetPartlsCut_ = "";
+      awayJetPartlsCut_ = "";
    }
    // === Constructors ===
    AnaCuts::AnaCuts() :
@@ -148,29 +150,29 @@ namespace DiJetAna
       return result;
    }
 
-   void AnaCuts::CreateJetTreeCut()
+   void AnaCuts::CreateJetCut()
    {
-      jetTreeCut_ += AndCut(tNJEta_,jetEtaMax_,"first max abs");
-      jetTreeCut_ += AndCut(tAJEta_,jetEtaMax_,"max abs");
-      jetTreeCut_ += AndCut(tNJEt_,nearJetEtMin_,"min");
-      jetTreeCut_ += AndCut(tNJEt_,nearJetEtMax_,"max");
-      jetTreeCut_ += AndCut(tAJEt_,awayJetEtMin_,"min");
-      jetTreeCut_ += AndCut(tDPhi_,dPhiMin_,"min");
+      dijetCut_ += AndCut(tNJEta_,jetEtaMax_,"first max abs");
+      dijetCut_ += AndCut(tAJEta_,jetEtaMax_,"max abs");
+      dijetCut_ += AndCut(tNJEt_,nearJetEtMin_,"min");
+      dijetCut_ += AndCut(tNJEt_,nearJetEtMax_,"max");
+      dijetCut_ += AndCut(tAJEt_,awayJetEtMin_,"min");
+      dijetCut_ += AndCut(tDPhi_,dPhiMin_,"min");
    }
 
-   void AnaCuts::CreateJetParticlesTreeCut()
+   void AnaCuts::CreateJetParticlesCut()
    {
       // first all particles are given a pt cut
-      partlsTreeCut_ += AndCut(tPPt_,partlPtMin_,"first min");
+      partlsCut_ += AndCut(tPPt_,partlPtMin_,"first min");
 
       // now dR cut from n,a jet
       Float_t dR2Max=jetPartlDRMax_*jetPartlDRMax_;
       // from near jet
-      nearJetPartlsTreeCut_ = jetTreeCut_ + " && " + partlsTreeCut_;
-      nearJetPartlsTreeCut_ += AndCut(tNJPDR2_,dR2Max,"max");
+      nearJetPartlsCut_ = dijetCut_ + " && " + partlsCut_;
+      nearJetPartlsCut_ += AndCut(tNJPDR2_,dR2Max,"max");
       // from away jet
-      awayJetPartlsTreeCut_ = jetTreeCut_ + " && " + partlsTreeCut_;
-      awayJetPartlsTreeCut_ += AndCut(tAJPDR2_,dR2Max,"max");
+      awayJetPartlsCut_ = dijetCut_ + " && " + partlsCut_;
+      awayJetPartlsCut_ += AndCut(tAJPDR2_,dR2Max,"max");
    }
 
    // === Friend Functions ===
@@ -189,15 +191,15 @@ namespace DiJetAna
 	 os << "Jet_Particle cuts:" << endl;
 	 os << "  jpdRmax: " << ct.jetPartlDRMax_ << endl;
       }
-      os << "Tree branches: " << endl;
+      os << "Tree branches' names: " << endl;
       os << "  jet:       " << ct.tNJEt_ << " " << ct.tAJEt_ << " " << ct.tDPhi_ << " " << ct.tNJEta_ << " " << ct.tAJEta_ 
 	   << " " << ct.tNJPDR2_ << " " << ct.tAJPDR2_ << endl;
       os << "  particles: " << ct.tPPt_ << endl;
       os << "tree cuts: " << endl;
-      os << "  jet:                " <<  ct.jetTreeCut_ << endl;
-      os << "  particles:          " <<  ct.partlsTreeCut_ << endl;
-      os << "  near_jet_particles: " <<  ct.nearJetPartlsTreeCut_ << endl;
-      os << "  away_jet_particles: " <<  ct.awayJetPartlsTreeCut_ << endl;
+      os << "  jet:                " <<  ct.dijetCut_ << endl;
+      os << "  particles:          " <<  ct.partlsCut_ << endl;
+      os << "  near_jet_particles: " <<  ct.nearJetPartlsCut_ << endl;
+      os << "  away_jet_particles: " <<  ct.awayJetPartlsCut_ << endl;
       return os;
    }
 

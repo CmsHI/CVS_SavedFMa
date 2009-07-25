@@ -14,10 +14,10 @@ void anacutDriver ()
    c1.SetNearJetEtMax(110);
    c1.SetAwayJetEtMin(50);
    c1.SetDPhiMin(2.8);
-   //c1.SetPPtMin(0.5);
+   //c1.SetPartlPtMin(0.5);
    c1.SetJetPartlDRMax(0.5);
-   c1.CreateJetTreeCut();
-   c1.CreateJetParticlesTreeCut();
+   c1.CreateJetCut();
+   c1.CreateJetParticlesCut();
 
    cout << c1 << endl;
    

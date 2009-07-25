@@ -42,9 +42,23 @@ void dijetsDriver(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/py
 
    DiJets dj1;
    dj1.SetGenTag("pythia");
-   dj1.SetCutTag("v1");
    cout << dj1 << endl;
 
    DiJets dj2("pyquen","v1",ntJetPyquen,ntJetLeadingPyquen);
+   dj2.SetNearJetEtMin(90);
+   dj2.SetNearJetEtMax(110);
+   dj2.SetAwayJetEtMin(50);
+   dj2.SetDPhiMin(2.8);
+   dj2.SetPartlPtMin(0.5); //0.5 by default
+   dj2.SetJetPartlDRMax(0.5);
+   dj2.CreateCuts();
+
    cout << dj2 << endl;
+
+   // === Jet ana ===
+   printf("now jet cut: \n  %s\n",dj2.GetCut().GetDiJetCut().Data());
+
+   // === FF ===
+   printf("now near jet_particles cut: \n  %s\n",dj2.GetCut().GetNJetPartlCut().Data());
+   printf("now away jet_particles cut: \n  %s\n",dj2.GetCut().GetAJetPartlCut().Data());
 }

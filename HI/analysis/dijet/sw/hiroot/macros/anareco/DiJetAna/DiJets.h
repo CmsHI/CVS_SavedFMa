@@ -7,6 +7,7 @@
 #include <iostream>
 #include "TString.h"
 #include "TTree.h"
+#include "AnaCuts.h"
 
 namespace DiJetAna {
    // Some constants
@@ -26,17 +27,31 @@ namespace DiJetAna {
 	 DiJets();
 	 DiJets(char*  genTag, char* cutTag, TTree* jetTree, TTree* particleTree); 
 
-	 // Accessor Functions
+	 // --- Accessor Functions ---
 	 int GetNNearJets();
 	 int GetNAwayJets();
 	 TString GetGenTag() const { return genTag_; }
-	 TString GetCutTag() const { return cutTag_; }
+	 TString GetCutTag() const { return cut_.GetCutTag(); }
 	 TTree* GetJetTree() const { return jetTree_; }
 	 TTree* GetParticleTree() const { return particleTree_; }
+	 // get cut
+	 AnaCuts GetCut() const { return cut_; }
 
-	 // Mutator Functions
+	 // --- Mutator Functions ---
 	 void SetGenTag(char* genTag) { genTag_ = TString(genTag); }
-	 void SetCutTag(char* cutTag) { cutTag_ = TString(cutTag); }
+	 void SetCutTag(char* cutTag) { cut_.SetCutTag(cutTag); }
+	 // jet level cuts
+	 void SetNearJetEtMin(Float_t njmin) { cut_.SetNearJetEtMin(njmin); }
+	 void SetNearJetEtMax(Float_t njmax) { cut_.SetNearJetEtMax(njmax); }
+	 void SetAwayJetEtMin(Float_t ajmin) { cut_.SetAwayJetEtMin(ajmin); }
+	 void SetDPhiMin(Float_t dphimin) { cut_.SetDPhiMin(dphimin); }
+	 void SetJetEtaMax(Float_t jetamax) { cut_.SetJetEtaMax(jetamax); }
+	 // particle level cuts
+	 void SetPartlPtMin(Float_t pptmin) { cut_.SetPartlPtMin(pptmin); }
+	 void SetJetPartlDRMax(Float_t jpdrmax) { cut_.SetJetPartlDRMax(jpdrmax); }
+	 // create tree cuts
+	 void CreateCuts() { cut_.CreateJetCut(); cut_.CreateJetParticlesCut(); }
+
 
 	 // Freind Functions
 	 friend ostream& operator <<(ostream& outs, const DiJets& dj);
@@ -44,16 +59,15 @@ namespace DiJetAna {
 
       private:
 	 TString	      genTag_;
-	 TString	      cutTag_;
+	 AnaCuts              cut_;
 	 TTree*		      jetTree_;
 	 TTree*		      particleTree_;
    };
 
    // Dijets class implementation
-   // ===Default Constructor===
+   // ===Constructors===
    DiJets::DiJets() :
-      genTag_("none"),
-      cutTag_("vdefault")
+      genTag_("none")
    {
       jetTree_ = NULL;
       particleTree_ = NULL;
@@ -61,7 +75,7 @@ namespace DiJetAna {
 
    DiJets::DiJets(char*  genTag, char* cutTag, TTree* jetTree, TTree* particleTree) :
       genTag_(genTag),
-      cutTag_(cutTag)
+      cut_(cutTag)
    {
       jetTree_ = jetTree;
       particleTree_ = particleTree;
@@ -70,9 +84,10 @@ namespace DiJetAna {
    // === Friend Functions ===
    ostream& operator <<(ostream& os, const DiJets& dj)
    {
-      cout << "generator: " << dj.genTag_ << "  cut: " << dj.cutTag_;
-      if (dj.jetTree_) cout << "  jet tree: " << dj.jetTree_->GetName();
-      if (dj.particleTree_) cout << "  particle tree: " << dj.particleTree_->GetName();
+      os << "generator: " << dj.genTag_;
+      if (dj.jetTree_) os << "  jet tree: " << dj.jetTree_->GetName();
+      if (dj.particleTree_) os << "  particle tree: " << dj.particleTree_->GetName();
+      os << endl << dj.cut_ << endl;
       return os;
    }
 
