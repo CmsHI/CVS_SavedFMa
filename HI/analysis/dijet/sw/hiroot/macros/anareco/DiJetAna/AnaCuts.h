@@ -42,7 +42,7 @@ namespace DiJetAna
 	 // particle level cuts
 	 void SetPPtMin(Float_t pptmin) { partlPtMin_ = pptmin; }
 	 // final tree cut
-	 void AndCut(TString var, Float_t val, TString opt);
+	 TString AndCut(TString var, Float_t val, TString opt);
 	 void CreateJetTreeCut();
 
 	 // --- Friend Functions ---
@@ -112,27 +112,30 @@ namespace DiJetAna
    }
    
    // === String for Tree Cut ===
-   void AnaCuts::AndCut(TString var, Float_t val, TString opt)
+   TString AnaCuts::AndCut(TString var, Float_t val, TString opt)
    {
+      TString result;
       if (!opt.Contains("first"))
-	 jetTreeCut_ += " && ";
+	 result += " && ";
       if (opt.Contains("abs"))
 	 var = TString("abs(") + var + ")";
 
       if (opt.Contains("min"))
-	 jetTreeCut_ += (var + ">" + Form("%.1f",val));
+	 result += (var + ">" + Form("%.1f",val));
       if (opt.Contains("max"))
-	 jetTreeCut_ += (var + "<" + Form("%.1f",val));
+	 result += (var + "<" + Form("%.1f",val));
+
+      return result;
    }
 
    void AnaCuts::CreateJetTreeCut()
    {
-      AndCut(tNJEta_,jetEtaMax_,"first max abs");
-      AndCut(tAJEta_,jetEtaMax_,"max abs");
-      AndCut(tNJEt_,nearJetEtMin_,"min");
-      AndCut(tNJEt_,nearJetEtMax_,"max");
-      AndCut(tAJEt_,awayJetEtMin_,"min");
-      AndCut(tDPhi_,dPhiMin_,"min");
+      jetTreeCut_ += AndCut(tNJEta_,jetEtaMax_,"first max abs");
+      jetTreeCut_ += AndCut(tAJEta_,jetEtaMax_,"max abs");
+      jetTreeCut_ += AndCut(tNJEt_,nearJetEtMin_,"min");
+      jetTreeCut_ += AndCut(tNJEt_,nearJetEtMax_,"max");
+      jetTreeCut_ += AndCut(tAJEt_,awayJetEtMin_,"min");
+      jetTreeCut_ += AndCut(tDPhi_,dPhiMin_,"min");
    }
 
    // === Friend Functions ===
