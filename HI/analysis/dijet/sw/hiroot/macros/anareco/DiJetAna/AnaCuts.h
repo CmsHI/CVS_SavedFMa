@@ -176,28 +176,28 @@ namespace DiJetAna
    // === Friend Functions ===
    ostream& operator <<(ostream& os, const AnaCuts& ct)
    {
-      cout << "cut: " << ct.cutTag_ << endl;
-      cout << "Default cuts:" << endl;
-      cout << "  jet_eta_max: " << ct.jetEtaMax_ 
+      os << "cut: " << ct.cutTag_ << endl;
+      os << "Default cuts:" << endl;
+      os << "  jet_eta_max: " << ct.jetEtaMax_ 
 	   << ", pptmin: " << ct.partlPtMin_ <<endl;
       if ( ct.nearJetEtMin_ >= 0) {
-	 cout << "Jet ana cuts:" << endl;
-	 cout << "  njmin: " << ct.nearJetEtMin_ << ", njmax: " << ct.nearJetEtMax_
+	 os << "Jet ana cuts:" << endl;
+	 os << "  njmin: " << ct.nearJetEtMin_ << ", njmax: " << ct.nearJetEtMax_
 	    << ", ajmin: " << ct.awayJetEtMin_ << ", dphimin: " << ct.dPhiMin_ << endl;
       }
       if ( ct.jetPartlDRMax_ >= 0) {
-	 cout << "Jet_Particle cuts:" << endl;
-	 cout << "  jpdRmax: " << ct.jetPartlDRMax_ << endl;
+	 os << "Jet_Particle cuts:" << endl;
+	 os << "  jpdRmax: " << ct.jetPartlDRMax_ << endl;
       }
-      cout << "Tree branches: " << endl;
-      cout << "  jet:       " << ct.tNJEt_ << " " << ct.tAJEt_ << " " << ct.tDPhi_ << " " << ct.tNJEta_ << " " << ct.tAJEta_ 
+      os << "Tree branches: " << endl;
+      os << "  jet:       " << ct.tNJEt_ << " " << ct.tAJEt_ << " " << ct.tDPhi_ << " " << ct.tNJEta_ << " " << ct.tAJEta_ 
 	   << " " << ct.tNJPDR2_ << " " << ct.tAJPDR2_ << endl;
-      cout << "  particles: " << ct.tPPt_ << endl;
-      cout << "tree cuts: " << endl;
-      cout << "  jet:                " <<  ct.jetTreeCut_ << endl;
-      cout << "  particles:          " <<  ct.partlsTreeCut_ << endl;
-      cout << "  near_jet_particles: " <<  ct.nearJetPartlsTreeCut_ << endl;
-      cout << "  away_jet_particles: " <<  ct.awayJetPartlsTreeCut_ << endl;
+      os << "  particles: " << ct.tPPt_ << endl;
+      os << "tree cuts: " << endl;
+      os << "  jet:                " <<  ct.jetTreeCut_ << endl;
+      os << "  particles:          " <<  ct.partlsTreeCut_ << endl;
+      os << "  near_jet_particles: " <<  ct.nearJetPartlsTreeCut_ << endl;
+      os << "  away_jet_particles: " <<  ct.awayJetPartlsTreeCut_ << endl;
       return os;
    }
 
