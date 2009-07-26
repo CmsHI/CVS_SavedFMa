@@ -59,6 +59,8 @@ void dijetsDriver(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/py
 
    // === Jet ana ===
    printf("now jet cut: \n  %s\n",dj2.GetCut().GetDiJetCut().Data());
+   dj2.CalcNumDiJets();
+   printf("# of dijets after cut: %d, normalization: %f\n",dj2.GetNumDiJets(),dj2.GetDiJetsNorm());
    dj2.PlotDiJets();
 
    // === FF ===

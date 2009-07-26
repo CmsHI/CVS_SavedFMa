@@ -44,29 +44,35 @@ namespace DiJetAna {
 	 // --- Accessor Functions ---
 	 int GetNNearJets();
 	 int GetNAwayJets();
-	 TString GetGenTag() const { return genTag_; }
-	 TString GetCutTag() const { return cut_.GetCutTag(); }
-	 TTree* GetJetTree() const { return jetTree_; }
-	 TTree* GetParticleTree() const { return particleTree_; }
+	 TString GetGenTag()                const { return genTag_; }
+	 TString GetCutTag()                const { return cut_.GetCutTag(); }
+	 TTree* GetJetTree()                const { return jetTree_; }
+	 TTree* GetParticleTree()           const { return particleTree_; }
 	 // get cut
-	 AnaCuts GetCut() const { return cut_; }
+	 AnaCuts GetCut()                   const { return cut_; }
+	 // dijets related
+	 Int_t    GetNumDiJets()            const { return numDijets_; }
+	 Double_t GetDiJetsNorm()           const { return 1./(Double_t)numDijets_; }
 
 	 // --- Mutator Functions ---
-	 void SetGenTag(char* genTag) { genTag_ = TString(genTag); }
-	 void SetCutTag(char* cutTag) { cut_.SetCutTag(cutTag); }
-	 void SetVerbosity(Int_t v) { verbosity_ = v; }
+	 void SetGenTag(char* genTag)             { genTag_ = TString(genTag); }
+	 void SetCutTag(char* cutTag)             { cut_.SetCutTag(cutTag); }
+	 void SetVerbosity(Int_t v)               { verbosity_ = v; }
 	 // jet level cuts
-	 void SetNearJetEtMin(Double_t njmin) { cut_.SetNearJetEtMin(njmin); }
-	 void SetNearJetEtMax(Double_t njmax) { cut_.SetNearJetEtMax(njmax); }
-	 void SetAwayJetEtMin(Double_t ajmin) { cut_.SetAwayJetEtMin(ajmin); }
-	 void SetDPhiMin(Double_t dphimin) { cut_.SetDPhiMin(dphimin); }
-	 void SetJetEtaMax(Double_t jetamax) { cut_.SetJetEtaMax(jetamax); }
+	 void SetNearJetEtMin(Double_t njmin)     { cut_.SetNearJetEtMin(njmin); }
+	 void SetNearJetEtMax(Double_t njmax)     { cut_.SetNearJetEtMax(njmax); }
+	 void SetAwayJetEtMin(Double_t ajmin)     { cut_.SetAwayJetEtMin(ajmin); }
+	 void SetDPhiMin(Double_t dphimin)        { cut_.SetDPhiMin(dphimin); }
+	 void SetJetEtaMax(Double_t jetamax)      { cut_.SetJetEtaMax(jetamax); }
 	 // particle level cuts
-	 void SetPartlPtMin(Double_t pptmin) { cut_.SetPartlPtMin(pptmin); }
-	 void SetJetPartlDRMax(Double_t jpdrmax) { cut_.SetJetPartlDRMax(jpdrmax); }
+	 void SetPartlPtMin(Double_t pptmin)      { cut_.SetPartlPtMin(pptmin); }
+	 void SetJetPartlDRMax(Double_t jpdrmax)  { cut_.SetJetPartlDRMax(jpdrmax); }
 	 // create tree cuts
-	 void CreateCuts() { cut_.CreateJetCut(); cut_.CreateJetParticlesCut(); }
-	 // plot dijets
+	 void CreateCuts()                        { cut_.CreateJetCut(); cut_.CreateJetParticlesCut(); }
+	 
+	 // --- dijet calculations ---
+	 void CalcNumDiJets();
+	 // --- make plots ---
 	 void PlotDiJets();
 
 
@@ -82,6 +88,9 @@ namespace DiJetAna {
 	 Int_t                verbosity_;
 	 // Tree data
 	 TreeData td_;
+	 // dijets ana info
+	 Int_t                numDijets_;
+	 Double_t             dijetsNorm_;
    };
 
    // Dijets class implementation
@@ -103,13 +112,27 @@ namespace DiJetAna {
       particleTree_ = particleTree;
    }
 
+   // === DiJet calculations ===
+   void DiJets::CalcNumDiJets()
+   {
+      Int_t jn = jetTree_->Draw(td_.tNJEt_,  cut_.GetDiJetCut().Data());
+      Int_t pn = jetTree_->Draw(td_.tNPtnEt_,cut_.GetDiJetCut().Data());
+      if (jn!=pn) {
+	 printf("Normalization error: dijetn != partonN.\n");
+	 printf("dijetn: %d, partonN: %d\n",jn,pn);
+	 exit(1);
+      } 
+      numDijets_ = jn;
+   }
+
    void DiJets::PlotDiJets()
    {
       //--- Et ---
-      // -near-
       //jetTree_->Print();
       drawTree(jetTree_,Form("%s>>hNearLParton%s",td_.tNPtnEt_.Data(),genTag_.Data()),cut_.GetDiJetCut().Data(),drsg, Form("hNearLParton%s",genTag_.Data()),";(near) jet Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX);
       drawTree(jetTree_,Form("%s>>hNearLJet%s",td_.tNJEt_.Data(),genTag_.Data()),     cut_.GetDiJetCut().Data(),drdbE,Form("hNearLJet%s",genTag_.Data()),     ";(near) parton Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX);
+      drawTree(jetTree_,Form("%s>>hAwayLParton%s",td_.tAPtnEt_.Data(),genTag_.Data()),cut_.GetDiJetCut().Data(),drsg, Form("hAwayLParton%s",genTag_.Data()),";(away) jet Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX);
+      drawTree(jetTree_,Form("%s>>hAwayLJet%s",td_.tAJEt_.Data(),genTag_.Data()),     cut_.GetDiJetCut().Data(),drdbE,Form("hAwayLJet%s",genTag_.Data()),     ";(away) parton Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX);
    }
 
    // === Friend Functions ===
