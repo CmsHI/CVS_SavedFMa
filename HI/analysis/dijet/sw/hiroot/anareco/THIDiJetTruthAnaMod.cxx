@@ -578,7 +578,9 @@ void THIDiJetTruthAnaMod::FillFragFuncNTuple( const THIParticle *part, Double_t 
       fX[fn++] = fAwayLeadingJet->GetPhi();
 //      Double_t apdphi = trigPart->GetMom().DeltaPhi(fAwayParton->GetPhi());
 //      fX[fn++] = apdphi+2*TMath::Pi()*(apdphi<0);
-      fX[fn++] = awayDPhi+2*TMath::Pi()*(awayDPhi<0);
+      // for the particle nt, we just care about the jet cut. parton dphi is not handled here.
+      Double_t ajdphi = fNearLeadingJet->GetMom().DeltaPhi(fAwayLeadingJet->GetPhi());
+      fX[fn++] = ajdphi+2*TMath::Pi()*(ajdphi<0);
       Double_t dis  =  THIEtaPhi::DeltaR2(fAwayParton->GetPhi(), fAwayLeading->GetPhi(), fAwayParton->GetEta(), fAwayLeading->GetEta());
       fX[fn++] = fAwayLeading->GetEt();
       fX[fn++] = fAwayLeading->GetId();
@@ -591,15 +593,17 @@ void THIDiJetTruthAnaMod::FillFragFuncNTuple( const THIParticle *part, Double_t 
    //   pndphi:pndeta:pndr:padphi:padeta:padr:
    //   rec:zn:za
    Double_t pndphi,pndeta,pndr,pndrbg,padphi,padeta,padr,padrbg;
-   pndphi = THIEtaPhi::DeltaPhi(part->GetPhi(), nearPhi);
-   pndeta  = part->GetEta() - nearEta;
-   pndr = THIEtaPhi::DeltaR2(part->GetPhi(), nearPhi, part->GetEta(), nearEta);
-   pndrbg = THIEtaPhi::DeltaR2(part->GetPhi(), nearPhi+TMath::Pi()/2, part->GetEta(), nearEta);
+   // we will use the same particle selection, regardless of the jet et used.
+   // the selection will always be reco (gen)jet based
+   pndphi = THIEtaPhi::DeltaPhi(part->GetPhi(), fNearLeadingJet->GetPhi());
+   pndeta  = part->GetEta() - fNearLeadingJet->GetEta();
+   pndr = TMath::Sqrt( THIEtaPhi::DeltaR2(part->GetPhi(), fNearLeadingJet->GetPhi(), part->GetEta(), fNearLeadingJet->GetEta()) );
+   pndrbg = TMath::Sqrt( THIEtaPhi::DeltaR2(part->GetPhi(), fNearLeadingJet->GetPhi()+TMath::Pi()/2, part->GetEta(), fNearLeadingJet->GetEta()) );
 
-   padphi = THIEtaPhi::DeltaPhi(part->GetPhi(), awayPhi);
-   padeta = part->GetEta() - awayEta;
-   padr = THIEtaPhi::DeltaR2(part->GetPhi(), awayPhi, part->GetEta(), awayEta);
-   padrbg = THIEtaPhi::DeltaR2(part->GetPhi(), awayPhi+TMath::Pi()/2, part->GetEta(), awayEta);
+   padphi = THIEtaPhi::DeltaPhi(part->GetPhi(), fAwayLeadingJet->GetPhi());
+   padeta = part->GetEta() - fAwayLeadingJet->GetEta();
+   padr = TMath::Sqrt( THIEtaPhi::DeltaR2(part->GetPhi(), fAwayLeadingJet->GetPhi(), part->GetEta(), fAwayLeadingJet->GetEta()) );
+   padrbg = TMath::Sqrt( THIEtaPhi::DeltaR2(part->GetPhi(), fAwayLeadingJet->GetPhi()+TMath::Pi()/2, part->GetEta(), fAwayLeadingJet->GetEta()) );
 
    fX[fn++] = part->GetId();
    fX[fn++] = part->GetPt();
@@ -813,13 +817,13 @@ void THIDiJetTruthAnaMod::SlaveBegin()
    ReqBranch(THIGenRecordArray::kRecordsName, fGenRecords);
 
    //--- For every particle ---
-   fNTJetFF = new TNtuple("NTJetFF","NTJetFF","run:eve:mass:cmeta:npid:npet:npetsm:npeta:npphi:nplpet:nplpid:nplpdr:apid:apet:apetsm:apeta:apphi:apdphi:aplpet:aplpid:aplpdr:ppid:ppt:peta:pphi:pndphi:pndeta:pndr:pndrbg:padphi:padeta:padr:padrbg:rec:zn:za");
+   fNTJetFF = new TNtuple("NTJetFF","NTJetFF","run:eve:mass:cmeta:npid:nljet:npetsm:nljeta:nljphi:nplpet:nplpid:nplpdr:apid:aljet:apetsm:aljeta:aljphi:jdphi:aplpet:aplpid:aplpdr:ppid:ppt:peta:pphi:pndphi:pndeta:pndr:pndrbg:padphi:padeta:padr:padrbg:rec:zn:za");
    AddOutput(fNTJetFF);
    
-   fNTTruePFFBG = new TNtuple("NTTruePFFBG","NTTruePFFBG","run:eve:mass:cmeta:npid:npet:npetsm:npeta:npphi:nplpet:nplpid:nplpdr:apid:apet:apetsm:apeta:apphi:apdphi:aplpet:aplpid:aplpdr:ppid:ppt:peta:pphi:pndphi:pndeta:pndr:padphi:padeta:padr:rec:zn:za");
+   fNTTruePFFBG = new TNtuple("NTTruePFFBG","NTTruePFFBG","run:eve:mass:cmeta:npid:nljet:npetsm:nljeta:nljphi:nplpet:nplpid:nplpdr:apid:aljet:apetsm:aljeta:aljphi:jdphi:aplpet:aplpid:aplpdr:ppid:ppt:peta:pphi:pndphi:pndeta:pndr:padphi:padeta:padr:rec:zn:za");
    AddOutput(fNTTruePFFBG);
    
-   fNTTruePFF = new TNtuple("NTTruePFF","NTTruePFF","run:eve:mass:cmeta:npid:npet:npetsm:npeta:npphi:nplpet:nplpid:nplpdr:apid:apet:apetsm:apeta:apphi:apdphi:aplpet:aplpid:aplpdr:ppid:ppt:peta:pphi:pndphi:pndeta:pndr:pndrbg:padphi:padeta:padr:padrbg:rec:zn:za");
+   fNTTruePFF = new TNtuple("NTTruePFF","NTTruePFF","run:eve:mass:cmeta:npid:nljet:npetsm:nljeta:nljphi:nplpet:nplpid:nplpdr:apid:aljet:apetsm:aljeta:aljphi:jdphi:aplpet:aplpid:aplpdr:ppid:ppt:peta:pphi:pndphi:pndeta:pndr:pndrbg:padphi:padeta:padr:padrbg:rec:zn:za");
    AddOutput(fNTTruePFF);
 
    //--- For every event ---
