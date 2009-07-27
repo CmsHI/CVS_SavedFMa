@@ -19,8 +19,8 @@ namespace DiJetAna
 	 TString tAJEta_;
 	 // particle level
 	 TString tPPt_;
-	 TString tNJPDR2_;
-	 TString tAJPDR2_;
+	 TString tNJPDR_;
+	 TString tAJPDR_;
 
 	 TreeData();
    };
@@ -36,8 +36,8 @@ namespace DiJetAna
       tNJEta_("nljeta"),
       tAJEta_("aljeta"),
       tPPt_("ppt"),
-      tNJPDR2_("pndr"),
-      tAJPDR2_("padr")
+      tNJPDR_("pndr"),
+      tAJPDR_("padr")
    {
    }
 }

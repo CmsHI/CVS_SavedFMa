@@ -149,13 +149,12 @@ namespace DiJetAna
       partlsCut_ += AndCut(td_.tPPt_,partlPtMin_,"first min");
 
       // now dR cut from n,a jet
-      Double_t dR2Max=jetPartlDRMax_*jetPartlDRMax_;
       // from near jet
       nearJetPartlsCut_ = dijetCut_ + " && " + partlsCut_;
-      nearJetPartlsCut_ += AndCut(td_.tNJPDR2_,dR2Max,"max");
+      nearJetPartlsCut_ += AndCut(td_.tNJPDR_,jetPartlDRMax_,"max");
       // from away jet
       awayJetPartlsCut_ = dijetCut_ + " && " + partlsCut_;
-      awayJetPartlsCut_ += AndCut(td_.tAJPDR2_,dR2Max,"max");
+      awayJetPartlsCut_ += AndCut(td_.tAJPDR_,jetPartlDRMax_,"max");
    }
 
    // === Friend Functions ===
@@ -176,7 +175,7 @@ namespace DiJetAna
       }
       os << "Tree branches' names: " << endl;
       os << "  jet:       " << ct.td_.tNJEt_ << " " << ct.td_.tAJEt_ << " " << ct.td_.tDPhi_ << " " << ct.td_.tNJEta_ << " " << ct.td_.tAJEta_ 
-	   << " " << ct.td_.tNJPDR2_ << " " << ct.td_.tAJPDR2_ << endl;
+	   << " " << ct.td_.tNJPDR_ << " " << ct.td_.tAJPDR_ << endl;
       os << "  particles: " << ct.td_.tPPt_ << endl;
       os << "tree cuts: " << endl;
       os << "  jet:                " <<  ct.dijetCut_ << endl;
