@@ -1,4 +1,4 @@
-. $SavedFMa/bin/cmsusr/cvsinit.sh
+. $SavedFMa/bin/cvsinit.sh
 cd
 cvs co UserCode/SavedFMa
 cd UserCode/SavedFMa
