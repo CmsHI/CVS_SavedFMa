@@ -1,6 +1,7 @@
 #--------------------------------Universal------------------------------------
 #---setup private environment variables---
 export PATH=$PATH:$SavedFMa/bin
+export PATH=$PATH:$SavedFMa/data/scripts/transfer
 
 #---My paths---
 # -top-
@@ -42,6 +43,8 @@ alias dialup='ssh -Y frankma@x.dialup.mit.edu'
 alias lxplus='ssh -Y frankma@lxplus.cern.ch'
 alias cmsusr5='ssh -Y frankma@cmsusr5.cern.ch'
 alias svmithi01='ssh -Y frankma@svmithi01.cern.ch'
+# env setup shortcuts
+alias updateCvs='. /nfshome0/frankma/UserCode/SavedFMa/bin/updateCvs.sh'
 
 #---env variables
 export CVSEDITOR='emacs -nw'
