@@ -1,4 +1,4 @@
-setfuval
+. /nfshome0/frankma/UserCode/SavedFMa/bin/cmsusr/setfuvalsw.sh
 echo "=== Online CMSSW installations ==="
 scramv1 list | grep CMSSW
 echo
