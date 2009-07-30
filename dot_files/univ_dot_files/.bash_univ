@@ -45,6 +45,7 @@ alias lxplus='ssh -Y frankma@lxplus.cern.ch'
 alias cmsusr5='ssh -Y frankma@cmsusr5.cern.ch'
 alias svmithi01='ssh -Y frankma@svmithi01.cern.ch'
 # env setup shortcuts
+alias cvscms=". $SavedFMa/bin/cvsinit.sh"
 alias updateCvs=". $SavedFMa/bin/updateCvs.sh"
 alias mycmsenv=". $SavedFMa/bin/env/mycmssw_env.sh"
 
