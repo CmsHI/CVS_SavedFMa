@@ -8,6 +8,7 @@ fi
 cat > env.sh << EOF
 cd $1
 eval \`scramv1 ru -sh\`
+. \$SavedFMa/bin/env/mycmssw_env.sh
 cd -
 EOF
 
