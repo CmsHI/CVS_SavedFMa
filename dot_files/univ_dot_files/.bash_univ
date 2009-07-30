@@ -2,6 +2,7 @@
 #---setup private environment variables---
 export PATH=$PATH:$SavedFMa/bin
 export PATH=$PATH:$SavedFMa/data/scripts/transfer
+export PATH=$PATH:$SavedFMa/bin/cmsusr
 
 #---My paths---
 # -top-
