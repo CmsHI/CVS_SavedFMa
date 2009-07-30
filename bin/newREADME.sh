@@ -1,3 +1,3 @@
 #! /bin/bash -
-$HOME/bin/templates/newNote.sh README $HOME/bin/templates/README_new.txt $1
+$SavedFMa/bin/templates/newNote.sh README $SavedFMa/bin/templates/README_new.txt $1
 
