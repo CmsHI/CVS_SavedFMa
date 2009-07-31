@@ -1,3 +1,9 @@
+//
+// Class to represent event tree data
+// - inspiration from:
+//   * http://root.cern.ch/root/html/tutorials/tree/hvector.C.html
+//
+
 #ifndef TREEDIJETEVENTDATA_H
 #define TREEDIJETEVENTDATA_H
 #include <vector>
