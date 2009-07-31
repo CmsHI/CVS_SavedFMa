@@ -7,9 +7,9 @@ echo "$@"
 export job=prodPtHat50
 export gen0=pythia50
 export gen1=pyquen50
-export rootskim=iCone5_match35_jetEtCut30_ntJetEt
-export infileName=test_50k.root
-#export infileName=$1
+export rootskim=iCone5_match35_jetEtCut30_Mod_r115
+export infileName=dijet_000001.root
+export infileName=$1
 export input0="$HIROOT_BASEURL/$job/$gen0/$rootskim"
 export input1="$HIROOT_BASEURL/$job/$gen1/$rootskim"
 export infile0=$input0/$infileName
@@ -18,7 +18,7 @@ export infile1=$input0/$infileName
 #=== analysis vars ===
 export doCheck="kTRUE"
 export NXIBIN=25
-export XIMAX=8
+export XIMAX=7
 export XIYMAX=10
 # --cuts--
 export PythiaAnaNJetEtMin=$2
@@ -31,9 +31,10 @@ export JDPhiMin=$8
 
 #== output vars ===
 export ana=${infileName%.*}_pythia_${PythiaAnaNJetEtMin}_${PythiaAnaNJetEtMax}_${PythiaAnaAJetEtMin}_pyquen_${PyquenAnaNJetEtMin}_${PyquenAnaNJetEtMax}_${PyquenAnaAJetEtMin}_jdphi_$JDPhiMin
-export plotbase=$dijetSens/jetana/plots
+export plotbase=$dijetSens/jetana/DiJetAna/plots
 
 
 #./runJetAnaBase.sh
-root -b -q dijetsDriver.C+\(\"$infile0\",\"$infile1\"\)
+#root -b -q dijetsDriver.C+\(\"$infile0\",\"$infile1\"\)
+./runJetAnaBase.sh
 
