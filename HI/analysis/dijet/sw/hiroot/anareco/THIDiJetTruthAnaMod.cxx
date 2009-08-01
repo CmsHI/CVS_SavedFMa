@@ -14,6 +14,7 @@
 #include <TRandom3.h>
 #include <TVector3.h>
 #include <TLorentzVector.h>
+#include <TTree.h>
 
 
 #include "THIEvent.h"
@@ -25,8 +26,10 @@
 #include "THIMCGammaJetSignalDef.h"
 #include "THIMatchedParticles.h"
 //#include "THILorentzVector.h"
-//#include "THIJet.h"
 
+// dijet tree data class
+#include "/net/hisrv0001/home/frankma/work/hiroot/test/dijet/jetana/DiJetAna/TreeDiJetEventData.h"
+using namespace DiJetAna;
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -840,6 +843,12 @@ void THIDiJetTruthAnaMod::SlaveBegin()
    fNTJetLeading = new TNtuple("NTJetLeading","leading partons and matched jets",
 	 "run:eve:mass:cmeta:dphi:nlpid:nlpstat:nlpet:nlpeta:nlpphi:alpid:alpstat:alpet:alpeta:alpphi:nljet:nljeta:nljphi:aljet:aljeta:aljphi:jdphi");
    AddOutput(fNTJetLeading);
+
+   //-- Dijet event data
+   fEvtTree = new TTree("evtTree","dijet event tree");
+   TreeDiJetEventData td(fEvtTree);
+   td.SetBranches();
+   AddOutput(fEvtTree);
 
    // jet related
    if (fLoad) {

@@ -36,7 +36,6 @@ class TProfile;
 #endif
 
 
-
 class THIParticle;
 class THIEvent;
 class THIGenRecord;
@@ -44,6 +43,8 @@ class THIVertex;
 class THIParticleArray;
 class THIPhotonMCType;
 
+// dijet tree data class
+class TTree;
 
 class THIDiJetTruthAnaMod : public THIAnaBaseMod {
 protected:
@@ -80,6 +81,8 @@ protected:
    //--- jet ana
    Float_t                         fDeltaRMatch;           //! Jet matching max dR
    Float_t                         fJetEtMin;              //! Minimum found jet Et accepted
+   //--- dijet ana event data
+   TTree                           *fEvtTree;
 
 
    TF1                            *fTrackingEfficiency;   //! Function parametrizing the tracking efficiency      
