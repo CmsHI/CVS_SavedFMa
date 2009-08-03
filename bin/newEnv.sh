@@ -6,9 +6,10 @@ if [ $# -eq 0 ]; then
 fi
 
 cat > env.sh << EOF
+rundir=\$PWD
 cd $1
 eval \`scramv1 ru -sh\`
 . \$SavedFMa/bin/env/mycmssw_env.sh
-cd -
+cd \$rundir
 EOF
 
