@@ -53,6 +53,8 @@ case $release in
    321)  #dbCfg=/dev/CMSSW_3_2_0/pre1/HIon_V20 official
          dbCfg=/user/frankma/HI/cmssw320/devHIon_V20
    ;;
+   322)  dbCfg=/dev/CMSSW_3_2_2/HIon
+   ;;
    *)      echo release $release: no menu set
    exit 1
    ;;
@@ -75,7 +77,7 @@ if [ -z $infile ]; then
 fi
 
 # set output name
-name=r$release
+name=cmssw$release
 if echo $dbCfg | grep -q '/V[[:alnum:]]$'; then
    name=${name}_`echo $dbCfg | awk -F/ '{print $(NF-1) $(NF)}'`
 else
