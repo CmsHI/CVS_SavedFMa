@@ -846,8 +846,8 @@ void THIDiJetTruthAnaMod::SlaveBegin()
 
    //-- Dijet event data
    fEvtTree = new TTree("evtTree","dijet event tree");
-   TreeDiJetEventData td(fEvtTree);
-   td.SetBranches();
+   fEvtData = new TreeDiJetEventData(fEvtTree);
+   fEvtData->SetBranches();
    AddOutput(fEvtTree);
 
    // jet related

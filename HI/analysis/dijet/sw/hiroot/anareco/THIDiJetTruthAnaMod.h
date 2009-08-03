@@ -1,5 +1,5 @@
 //
-// $Id: THIDiJetTruthAnaMod.h 4883 2007-12-12 18:03:03Z cer $
+// $Id: THIDiJetTruthAnaMod.h,v 1.12 2009/08/01 02:56:28 frankma Exp $
 //
 
 #ifndef HIROOT_THIDiJetTruthAnaMod
@@ -45,6 +45,7 @@ class THIPhotonMCType;
 
 // dijet tree data class
 class TTree;
+namespace DiJetAna { class TreeDiJetEventData; }
 
 class THIDiJetTruthAnaMod : public THIAnaBaseMod {
 protected:
@@ -83,6 +84,7 @@ protected:
    Float_t                         fJetEtMin;              //! Minimum found jet Et accepted
    //--- dijet ana event data
    TTree                           *fEvtTree;
+   DiJetAna::TreeDiJetEventData    *fEvtData;
 
 
    TF1                            *fTrackingEfficiency;   //! Function parametrizing the tracking efficiency      
