@@ -103,4 +103,5 @@ fi
 edmConfigFromDB --configName $dbCfg --input $infile > $name
 if [ $cusPy ]; then
    cat $cusPy | grep -v 'as cms' >> $name
+   echo 'process=customise(process)' >> $name
 fi
