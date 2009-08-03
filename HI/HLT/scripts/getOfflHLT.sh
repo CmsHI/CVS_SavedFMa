@@ -57,7 +57,8 @@ case $release in
    321)  #dbCfg=/dev/CMSSW_3_2_0/pre1/HIon_V20 official
          dbCfg=/user/frankma/HI/cmssw320/devHIon_V20
    ;;
-   322)  dbCfg=/dev/CMSSW_3_2_2/HIon
+   322)  #dbCfg=/dev/CMSSW_3_2_2/HIon
+         dbCfg=/user/frankma/HI/cmssw322/HIonV1
    ;;
    *)      echo release $release: no menu set
    exit 1
