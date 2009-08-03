@@ -32,6 +32,7 @@ process=mycustomise(process)
 print "===Summary of Final Configuration==="
 print "input: \n  ", process.source.fileNames
 print "# events: \n  ", process.maxEvents.input
+print "global tag: \n ", process.GlobalTag.globaltag
 # Using the itervalues() in dict to step through the dict container.
 print "All paths found in cfg:"
 for iterable in process.paths.itervalues():
