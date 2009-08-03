@@ -4,19 +4,43 @@ if [ ! -e log ]; then mkdir log; fi
 if [ $# -eq 0 ]; then
    echo Usage:
    echo "  mycmsRun <cfg.py> [cms inputs]"
+   echo "                    [-a file_name_appendix]"
+   echo "                    [-c check_only]"
    echo "Eg:"
    echo "  mycmsRun skim_cfg_custom_skim_options.py print files=file:Minbias_DIGI_L1_DIGI2RAW.root maxEvents=12 output=file:Minbias_raw_cmssw322patch2_Digi2RawFix_Ecal_Dttf.root"
    exit 1;
 fi
 
-#if [ $# -ge 2 ]; then
-#   append=_$2
-#fi
-#outf=${1%.py}$append.txt
-outf=${1%.py}.txt
+# initialize var's
+appendix=
+check=false
+# save options
+cmsopt=
+cfgName=$1
+# par in vars
+while [ $# -gt 0 ]; do
+   case $1 in 
+      -a)  appendix=$2
+      shift
+      ;;
+      -c)  check=true
+      ;;
+      --)  shift # By convention, --ends options
+      break
+      ;;
+      *)  cmsopt="$cmsopt $1"
+#      ;;
+   esac
+   shift # setup for next iteration
+done
+
+outf=${cfgName%.py}_${appendix}.txt
 
 echo cmsRun options: "$@" > log/$outf
-run="cmsRun ""$@"" >> log/$outf 2>&1 &"
+run="cmsRun ""$cmsopt"" >> log/$outf 2>&1 &"
 echo $run
 
-eval $run
+if [ $check == true ]; then
+   echo run!
+   eval $run
+fi
