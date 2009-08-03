@@ -7,6 +7,7 @@
 print_help () {
    echo usage:
    echo "  getOfflHLT.sh [-c] [-r release] <-f file:raw.root> [-v]"
+   echo "                [--cus custom.py]"
 }
 
 if [ $# -eq 0 ]; then
@@ -16,7 +17,7 @@ fi
 
 # initialze variables
 checkConfDB="false"  release=  dbCfg=  
-infile=  verbose=0
+infile=  verbose=0 cusPy=
 
 # set variables
 while [ $# -gt 0 ]; do
@@ -30,6 +31,9 @@ while [ $# -gt 0 ]; do
       shift
       ;;
       -v)  verbose=1
+      ;;
+      --cus) cusPy=$2
+      shift
       ;;
       --)  shift # By convention, --ends options
       break
@@ -97,3 +101,6 @@ fi
 
 # finally, run
 edmConfigFromDB --configName $dbCfg --input $infile > $name
+if [ $cusPy ]; then
+   cat $cusPy | grep -v 'as cms' >> $name
+fi
