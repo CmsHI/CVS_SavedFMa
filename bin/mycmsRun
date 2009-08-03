@@ -40,7 +40,7 @@ echo cmsRun options: "$@" > log/$outf
 run="cmsRun ""$cmsopt"" >> log/$outf 2>&1 &"
 echo $run
 
-if [ $check == true ]; then
+if [ $check == false ]; then
    echo run!
    eval $run
 fi
