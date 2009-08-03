@@ -23,7 +23,6 @@ def mycustomise(process):
 #   process.options.wantSummary = cms.untracked.bool(True)
    process.source.fileNames = options.files
    process.maxEvents.input = options.maxEvents
-   process.output.fileName = options.output
    return(process)
 
 # redefine process
@@ -33,8 +32,6 @@ process=mycustomise(process)
 print "===Summary of Final Configuration==="
 print "input: \n  ", process.source.fileNames
 print "# events: \n  ", process.maxEvents.input
-print "output: \n  ", process.output.fileName
-print "event content: \n  ", process.output.outputCommands
 # Using the itervalues() in dict to step through the dict container.
 print "All paths found in cfg:"
 for iterable in process.paths.itervalues():
