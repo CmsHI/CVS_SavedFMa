@@ -77,6 +77,16 @@ namespace DiJetAna
 	 Double_t       	    zn_[MAXNPARTICLES];
 	 Double_t       	    za_[MAXNPARTICLES];
 	 
+	 // -- jet cone info --
+	 Double_t		    nljCone5Et_;
+	 Double_t    		    nljCone7Et_;
+	 UInt_t			    nljCone5NP_;
+	 UInt_t			    nljCone7NP_;
+
+	 Double_t	      	    aljCone5Et_;
+	 Double_t    		    aljCone7Et_;
+	 UInt_t			    aljCone5NP_;
+	 UInt_t			    aljCone7NP_;
 
 	 // --- tree branch names ---
 	 // jet level
@@ -95,6 +105,7 @@ namespace DiJetAna
 	 // === Functions ===
 	 TreeDiJetEventData(TTree * tree);
 	 void SetBranches();
+	 void ClearCounters();
 
       private:
 	 TTree*                             tree_;
@@ -105,6 +116,16 @@ namespace DiJetAna
       //
       // We will call the default constructor of the event variables   
       //
+
+      // -- jet cone info --
+      nljCone5Et_(0),
+      nljCone7Et_(0),
+      nljCone5NP_(0),
+      nljCone7NP_(0),
+      aljCone5Et_(0),
+      aljCone7Et_(0),
+      aljCone5NP_(0),
+      aljCone7NP_(0),
 
       // tree branch names
       tNJEt_("nljet"),
@@ -181,6 +202,29 @@ namespace DiJetAna
 
       tree_->Branch("zn",this->zn_,"zn[evtnp]/D");
       tree_->Branch("za",this->za_,"za[evtnp]/D");
+
+	 // -- jet cone info --
+      tree_->Branch("nljCone5Et", &(this->nljCone5Et_), "nljCone5Et/D");
+      tree_->Branch("nljCone7Et", &(this->nljCone7Et_), "nljCone7Et/D");
+      tree_->Branch("nljCone5NP", &(this->nljCone5NP_), "nljCone5NP/D");
+      tree_->Branch("nljCone7NP", &(this->nljCone7NP_), "nljCone7NP/D");
+
+      tree_->Branch("aljCone5Et", &(this->aljCone5Et_), "aljCone5Et/D");
+      tree_->Branch("aljCone7Et", &(this->aljCone7Et_), "aljCone7Et/D");
+      tree_->Branch("aljCone5NP", &(this->aljCone5NP_), "aljCone5NP/D");
+      tree_->Branch("aljCone7NP", &(this->aljCone7NP_), "aljCone7NP/D");
+   }
+   void TreeDiJetEventData::ClearCounters()
+   {
+      evtnp_      = 0;
+      nljCone5Et_ = 0;
+      nljCone7Et_ = 0;
+      nljCone5NP_ = 0;
+      nljCone7NP_ = 0;
+      aljCone5Et_ = 0;
+      aljCone7Et_ = 0;
+      aljCone5NP_ = 0;
+      aljCone7NP_ = 0;
    }
 }
 

@@ -11,7 +11,9 @@ void treedijeteventdataDriver()
    TTree * evtt = new TTree("evtTree","dijet event data tree");
 
    TreeDiJetEventData td(evtt);
-   printf("%f\n",td.nljet_);
+   printf("initial\n");
+   printf("nljet_: %d\n",td.nljet_);
+   printf("nljCone5Et_: %f\n",td.nljCone5Et_);
 
    // set branch
    td.SetBranches();
@@ -80,6 +82,7 @@ void treedijeteventdataDriver()
 
 
    evtt->Fill();
+   td.ClearCounters();
 
    // save
    f.Write();
