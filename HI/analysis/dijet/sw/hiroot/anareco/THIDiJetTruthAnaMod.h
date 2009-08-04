@@ -103,6 +103,11 @@ protected:
    void                           FillLeadNTuple(const THIParticle * nlp, const THIParticle * alp, const THIJet * nlj, const THIJet *alj, TNtuple * lnt);    //! Fill ntuple for leading partons and jets
    void                           FillFragFuncNTuple( const THIParticle *part, Double_t nearEt, Double_t nearEta, Double_t nearPhi, Double_t awayEt, Double_t awayEta, Double_t awayPhi, Double_t awayDPhi, const THIParticle *trigPart, TNtuple *NTuple);
    void                           SetStatOnly(Bool_t b) {fStatOnly = b;}
+
+   // --- Dijet Event Tree ---
+   void                           CalcJetVars( const THIParticle* trigPart, const THIParticle * nlp, const THIParticle * alp, const THIJet * nlj, const THIJet *alj, DiJetAna::TreeDiJetEventData *ed);    //! Calc vars for leading partons and jets
+   void                           CalcParticleVars( const THIParticle *part, Double_t nearEt, Double_t nearEta, Double_t nearPhi, Double_t awayEt, Double_t awayEta, Double_t awayPhi, Double_t awayDPhi, const THIParticle *trigPart, DiJetAna::TreeDiJetEventData *ed);
+
 public:
    THIDiJetTruthAnaMod(const char *name="DiJetTruthAnaMod", 
                         const char *title="Gamma and matching jet spectra analysis module");

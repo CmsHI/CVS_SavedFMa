@@ -445,6 +445,60 @@ void THIDiJetTruthAnaMod::FillLeadNTuple(const THIParticle * nlp, const THIParti
 //   }
 }
 
+void THIDiJetTruthAnaMod::CalcJetVars( const THIParticle* trigPart, const THIParticle * nlp, const THIParticle * alp, const THIJet * nlj, const THIJet *alj, DiJetAna::TreeDiJetEventData *ed)
+{
+   // === event level ===
+   ed->event_ = fEvent->GetEventNum();
+
+   // === parton level ===
+   TVector3 v1(nlp->Get3Mom().X(),
+	 nlp->Get3Mom().Y(),
+	 nlp->Get3Mom().Z()
+	 );
+   TVector3 v2(alp->Get3Mom().X(),
+	 alp->Get3Mom().Y(),
+	 alp->Get3Mom().Z()
+	 );
+   TLorentzVector lv1(v1,v1.Mag());
+   TLorentzVector lv2(v2,v2.Mag());
+
+   TVector3 vs = v1 +v2;
+   //      printf("MASS: np %f ap %f vs %f\n",nlp->GetMom().Mag(),alp->GetMom().Mag(),vs.Mag());
+   //      THIVectorT vs = nlp->Get3Mom() + alp->Get3Mom();
+   ed->mass_ =  TMath::Sqrt(pow(lv1.E()+lv2.E(),2)-pow(vs.Mag(),2));
+   //TMath::Sqrt(pow(nlp->GetMom().Mag()+alp->GetMom().Mag(),2)-pow(vs.Mag(),2));
+   ed->cmeta_ = (nlp->GetEta()+alp->GetEta())/2;
+
+   ed->nlpid_	  = nlp->GetId();
+   ed->nlpstat_	  = nlp->GetHepStatus();;
+   ed->nlpet_	  = nlp->GetEt();
+   ed->nlpetsm_	  = fNearSMET;
+   ed->nlpeta_	  = nlp->GetEta();
+   ed->nlpphi_	  = nlp->GetPhi();
+
+   ed->alpid_	  = alp->GetId();
+   ed->alpstat_	  = alp->GetHepStatus();;
+   ed->alpet_	  = alp->GetEt();
+   ed->alpetsm_	  = fAwaySMET;
+   ed->alpeta_	  = alp->GetEta();
+   ed->alpphi_	  = alp->GetPhi();
+
+   //Double_t apdphi = trigPart->GetMom().DeltaPhi(alp->GetPhi());
+   //ed->pdphi_	  = apdphi+2*TMath::Pi()*(apdphi<0);
+   ed->pdphi_     = TMath::Abs(alp->GetMom().DeltaPhi(nlp->GetMom()));
+
+   // === jet level ===
+   ed->nljet_	  = nlj->GetEt();
+   ed->nljeta_	  = nlj->GetEta();
+   ed->nljphi_	  = nlj->GetPhi();
+
+   ed->aljet_	  = alj->GetEt();
+   ed->aljeta_	  = alj->GetEta();
+   ed->aljphi_	  = alj->GetPhi();
+
+   ed->jdphi_	  = TMath::Abs(alj->GetMom().DeltaPhi(nlj->GetMom()));
+}
+
 //________________________________________________________________________
 void THIDiJetTruthAnaMod::FillEClusNTuple(const THIParticle *trigPart)
 {
@@ -631,6 +685,68 @@ void THIDiJetTruthAnaMod::FillFragFuncNTuple( const THIParticle *part, Double_t 
    
 }
 //________________________________________________________________________
+void THIDiJetTruthAnaMod::CalcParticleVars( const THIParticle *part, Double_t nearEt, Double_t nearEta, Double_t nearPhi, Double_t awayEt, Double_t awayEta, Double_t awayPhi,  Double_t awayDPhi, const THIParticle *trigPart, TreeDiJetEventData *ed) 
+{
+   // === Calc variables for each particle ==
+   // Note:
+   // - We assume at this point both partons and matched jets are found.
+
+   // counter for # particles in event used for this analysis
+   // - Mainly counting hadrons
+   // we can use this counter
+   Int_t ip = ed->evtnp_;
+
+   // basic particle info
+   ed->ppid_[ip]	  = part->GetId();
+   ed->ppt_[ip]	  = part->GetPt();
+   ed->peta_[ip]	  = part->GetEta();
+   ed->pphi_[ip]	  = part->GetPhi();
+
+   // --- Relation to jet ---
+   // Note:
+   // we will use the same particle selection, regardless of the jet et used.
+   // the selection will always be reco (gen)jet based
+
+   ed->pndphi_[ip]	  = THIEtaPhi::DeltaPhi(part->GetPhi(), fNearLeadingJet->GetPhi());
+   //fX[fn++] = pndphi+(2*TMath::Pi()*(pndphi<-1*TMath::Pi()/2));
+   ed->pndeta_[ip]	  = part->GetEta() - fNearLeadingJet->GetEta();
+   ed->pndr_[ip]	  = THIEtaPhi::DeltaR(part->GetPhi(), fNearLeadingJet->GetPhi(), part->GetEta(), fNearLeadingJet->GetEta());
+   ed->pndrbg_[ip]	  = THIEtaPhi::DeltaR(part->GetPhi(), fNearLeadingJet->GetPhi()+TMath::Pi()/2, part->GetEta(), fNearLeadingJet->GetEta());
+
+   ed->padphi_[ip]	  = THIEtaPhi::DeltaPhi(part->GetPhi(), fAwayLeadingJet->GetPhi());
+   //fX[fn++] = padphi+(2*TMath::Pi()*(padphi<-1*TMath::Pi()/2));
+   ed->padeta_[ip]	  = part->GetEta() - fAwayLeadingJet->GetEta();
+   ed->padr_[ip]	  = THIEtaPhi::DeltaR(part->GetPhi(), fAwayLeadingJet->GetPhi(), part->GetEta(), fAwayLeadingJet->GetEta());
+   ed->padrbg_[ip]	  = THIEtaPhi::DeltaR(part->GetPhi(), fAwayLeadingJet->GetPhi()+TMath::Pi()/2, part->GetEta(), fAwayLeadingJet->GetEta());
+
+   // -- fragmentation variables --
+   ed->zn_[ip]	  = part->GetPt()/nearEt;
+   ed->za_[ip]	  = part->GetPt()/awayEt;
+   
+   // === Calc cone vars ===
+   if (ed->pndr_[ip] < 0.5) {
+      ed->nljCone5Et_ += part->GetPt();
+      ++(ed->nljCone5NP_);
+   }
+   if (ed->pndr_[ip] < 0.7) {
+      ed->nljCone7Et_ += part->GetPt();
+      ++(ed->nljCone7NP_);
+   }
+
+   if (ed->padr_[ip] < 0.5) {
+      ed->aljCone5Et_ += part->GetPt();
+      ++(ed->aljCone5NP_);
+   }
+   if (ed->padr_[ip] < 0.7) {
+      ed->aljCone7Et_ += part->GetPt();
+      ++(ed->aljCone7NP_);
+   }
+
+   // increase counter
+   ++(ed->evtnp_);
+}
+
+//________________________________________________________________________
 void THIDiJetTruthAnaMod::Process()
 {
    // Process entries of the tree 
@@ -742,6 +858,8 @@ void THIDiJetTruthAnaMod::Process()
       }
       //--- Fill ntuple for leading jets and matching partons---
       FillLeadNTuple(fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fNTJetLeading);
+      // calc jet level for event data
+      CalcJetVars(trigPart, fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fEvtData);
 
       // Check the particles inside cone and get variables-----------------
       THIMCGenRecord *gen = dynamic_cast<THIMCGenRecord*>(fGenRecords->At(ise));
@@ -750,11 +868,19 @@ void THIDiJetTruthAnaMod::Process()
       for(Int_t i=0; i< nump; i++){
 	 const THIParticle *p=Particles->At(i);
 	 if(p->GetStatus()==1){
+	    // -- use only stable particles
 	    if(p->GetStatus()==1 && p->GetCharge() != 0){
-	       if(TMath::Abs(p->GetEta()) <= 2.5){//found some photons having charge =+-1 ^^
+	       // -- only charged particles
+	       // Note:
+	       // - This is only used for the analysis, but
+	       //   jet finding is done on all stable particles (check)
+	       if(TMath::Abs(p->GetEta()) <= 2.5){
+		  // -- Eta selection on particles --
+		  // - 2.5 For the tracker acceptance
+
+		  // only one subevent here
 		  if(ise==0){ // away part + sig parts
 		     // near part + true jet + sig parts
-		     //smear
 
 		     //--- Fill parton based FF ---
 		     FillFragFuncNTuple(p,
@@ -776,31 +902,27 @@ void THIDiJetTruthAnaMod::Process()
 					fAwayLeadingJet->GetPhi(),
 					fNearLeadingJet->GetMom().DeltaPhi(fAwayLeadingJet->GetPhi()), 
 					trigPart, fNTJetFF);
-		     //--- 
-		     /* FillFragFuncNTuple(p,
+		     //--- Calc vars for event data tree
+		     CalcParticleVars(  p,
 					fNearParton->GetEt(), 
 					fNearParton->GetEta(),
 					fNearParton->GetPhi(), 
 					fAwayParton->GetEt(), 
 					fAwayParton->GetEta(), 
-					fAwayParton->GetPhi()+0.5*TMath::Pi(),
-					trigPart->GetMom().DeltaPhi(fAwayParton->GetPhi()),
-					trigPart, fNTTruePFFBG);
-		     		     FillFragFuncNTuple(p,
-					fNearParton->GetEt(), 
-					fNearParton->GetEta(),
-					fNearParton->GetPhi(), 
-					fAwayParton->GetEt(), 
-					fAwayParton->GetEta(), 
-					fAwayParton->GetPhi()-0.5*TMath::Pi(),
-					trigPart->GetMom().DeltaPhi(fAwayParton->GetPhi()),
-					trigPart, fNTTruePFFBG);
-		     */
+					fAwayParton->GetPhi(),
+					trigPart->GetMom().DeltaPhi(fAwayParton->GetPhi()), 
+					trigPart, fEvtData);
 		  }
 	       }
 	    }
 	 }
-      }
+      } // done with particle loop
+
+      // === Now all particle, jet level vars have been calculated ===
+      //  -- Fill Event Tree --
+      printf("===Will now fill event tree===\n");
+      printf("event: %d, nljet: %f, aljet: %f, ppt: %f\n",fEvtData->event_,fEvtData->nljet_,fEvtData->aljet_,fEvtData->ppt_);
+      fEvtTree->Fill();
    } // done with subevt loop
    printf("Done Fill ntuple\n\n");
 }
