@@ -637,7 +637,7 @@ void THIDiJetTruthAnaMod::FillFragFuncNTuple( const THIParticle *part, Double_t 
 //      fX[fn++] = apdphi+2*TMath::Pi()*(apdphi<0);
       // for the particle nt, we just care about the jet cut. parton dphi is not handled here.
       Double_t ajdphi = fNearLeadingJet->GetMom().DeltaPhi(fAwayLeadingJet->GetPhi());
-      fX[fn++] = ajdphi+2*TMath::Pi()*(ajdphi<0);
+      fX[fn++] = TMath::Abs(ajdphi);
       Double_t dis  =  THIEtaPhi::DeltaR2(fAwayParton->GetPhi(), fAwayLeading->GetPhi(), fAwayParton->GetEta(), fAwayLeading->GetEta());
       fX[fn++] = fAwayLeading->GetEt();
       fX[fn++] = fAwayLeading->GetId();
@@ -841,6 +841,10 @@ void THIDiJetTruthAnaMod::Process()
       }
 
       //=== Now we have both the leading partons and jets ===
+
+      // first clear event data counters
+      fEvtData->ClearCounters();
+      
       //--- Fill ntuple for *leading partons* and matching jets ---
       FillLeadNTuple(fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fNTPartonLeading);
 
@@ -921,7 +925,7 @@ void THIDiJetTruthAnaMod::Process()
       // === Now all particle, jet level vars have been calculated ===
       //  -- Fill Event Tree --
       printf("===Will now fill event tree===\n");
-      printf("event: %d, nljet: %f, aljet: %f, ppt: %f\n",fEvtData->event_,fEvtData->nljet_,fEvtData->aljet_,fEvtData->ppt_);
+      printf("event: %d, nljet: %f, aljet: %f, ppt: %f\n",fEvtData->event_,fEvtData->nljet_,fEvtData->aljet_,fEvtData->ppt_[0]);
       fEvtTree->Fill();
    } // done with subevt loop
    printf("Done Fill ntuple\n\n");
