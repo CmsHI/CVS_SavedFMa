@@ -18,6 +18,6 @@ cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/jetana/DiJetAna/plotFin
 cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/jetana/DiJetAna/runGenericJetAnaPt.sh .
 cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/jetana/DiJetAna/runJetAnaBase.sh .
 # job
-cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/job/jetBaseCutMod/runICone5_JetEt30_Mod_r116.sh runMod_ICone5_JetEt30.sh
-cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/job/jetBaseCutMod/runJob_ICone5_JetEt30.sh .
+cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/job/DiJetAna/runICone5_JetEt30_Mod_r116.sh runMod_ICone5_JetEt30.sh
+#cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/job/DiJetAna/runJob_ICone5_JetEt30.sh .
 
