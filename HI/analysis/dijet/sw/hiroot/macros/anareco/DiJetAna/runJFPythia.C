@@ -76,13 +76,13 @@ void runJFPythia(Int_t rnum,
       anaJetsMod->SetJetName(findJetsMod->GetJetName());
       findJetsMod->Add(anaJetsMod);
 
-      // add test
+      //=== Add Dijet ana mod ===
       THIDiJetTruthAnaMod *anaDijetFFMod = new 
          THIDiJetTruthAnaMod("anaJets", "Jet Finder Analysis Module");
       anaDijetFFMod->SetJetName(findJetsMod->GetJetName());
-//      anaDijetFFMod->SetJetDeltaRMatch(TMath::Pi()/4);
       anaDijetFFMod->SetJetDeltaRMatch(DeltaRMax);
       anaDijetFFMod->SetJetEtMin(JetEtMin);
+      anaDijetFFMod->SetSelParticles(kFALSE);
       findJetsMod->Add(anaDijetFFMod);
 
       ana->SetAnaOutputName(Form("%s/dijet_%06d.root",getenv("HIROOT_BASEURL"),rnum));
