@@ -84,6 +84,7 @@ protected:
    //--- jet ana
    Float_t                         fDeltaRMatch;           //! Jet matching max dR
    Float_t                         fJetEtMin;              //! Minimum found jet Et accepted
+   Bool_t			   fSelParticles;           //! Do particle selection or not
    //--- dijet ana event data
    DiJetAna::TreeDiJetEventData    *fEvtDataTrueFF;
    DiJetAna::TreeDiJetEventData    *fEvtDataJetFF;
@@ -114,14 +115,18 @@ public:
    THIDiJetTruthAnaMod(const char *name="DiJetTruthAnaMod", 
                         const char *title="Gamma and matching jet spectra analysis module");
    virtual ~THIDiJetTruthAnaMod() {};
-   //--- jet ana related functions
+   //=== jet ana related functions ===
+   // accessors
    const char              *GetJetName()              const { return fJetAArrayName; }
    Bool_t                   GetLoadBranch()           const { return fLoad; }
+   void                     GetLeadJets(const THIJetCollection * jl);
+   void                     PrintJetCol(const THIJetCollection * jetcol);
+   // mutators
    void                     SetJetName(const char *jetname) { fJetAArrayName = jetname; }
    void                     SetJetDeltaRMatch(Float_t dRMax)   { fDeltaRMatch = dRMax; }
    void                     SetJetEtMin(Float_t EtMin)   { fJetEtMin = EtMin; }
-   void                     GetLeadJets(const THIJetCollection * jl);
-   void                     PrintJetCol(const THIJetCollection * jetcol);
+   void                     SetSelParticles( Bool_t s=kTRUE ){ fSelParticles = s; }
+   // ana
    const THIJet            *GetMatchedJet(const THIParticle * parton, const THIJetCollection * jetcol, const Float_t dRMax);
    
 

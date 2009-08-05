@@ -70,7 +70,8 @@ THIDiJetTruthAnaMod::THIDiJetTruthAnaMod(const char *name, const char *title) :
    fAwayLeadingJet(0),
    //initialize cuts
    fDeltaRMatch(TMath::Pi()/4),
-   fJetEtMin(30.)
+   fJetEtMin(30.),
+   fSelParticles(kTRUE)
 {
    // Default and user constructor.
    fReso = new TF1("fReso","sqrt(pow(0.017,2)+pow(4.6/x,2)+pow(1.3/sqrt(x),2)+pow(15/x,2))",0,400);
@@ -870,7 +871,7 @@ void THIDiJetTruthAnaMod::Process()
 	 const THIParticle *p=Particles->At(i);
 	 if(p->GetStatus()==1){
 	    // -- use only stable particles
-	    if(p->GetStatus()==1 && p->GetCharge() != 0){
+	    if(!fSelParticles || p->GetCharge()!=0){
 	       // -- only charged particles
 	       // Note:
 	       // - This is only used for the analysis, but
