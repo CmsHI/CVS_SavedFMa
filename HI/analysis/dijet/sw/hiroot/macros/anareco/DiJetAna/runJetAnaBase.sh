@@ -5,13 +5,13 @@ pythiafile=$input0/$infileName
 echo input0: $pythiafile
 if [ ! -e $pythiafile ]; then
    echo bad input file: $pythiafile
-   exit
+   exit 1
 fi
 pyquenfile=$input1/$infileName
 echo input1: $pyquenfile
 if [ ! -e $pyquenfile ]; then
    echo bad input file: $pyquenfile
-   exit
+   exit 1
 fi
 
 # outputs
