@@ -13,7 +13,7 @@ echo "$@"
 export job=prodPtHat50
 export gen0=pythia50
 export gen1=pyquen50
-export rootskim=iCone5_match35_jetEtCut30_Mod_r116
+export rootskim=iCone5_match35_jetEtCut30_Mod_120
 export infileName=dijet_000001.root
 export infileName=$1
 export input0="$HIROOT_BASEURL/$job/$gen0/$rootskim"

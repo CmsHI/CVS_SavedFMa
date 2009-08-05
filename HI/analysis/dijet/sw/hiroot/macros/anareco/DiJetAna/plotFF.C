@@ -1,5 +1,6 @@
 #include <iostream>
 #include "TFile.h"
+#include "TTree.h"
 #include "TNtuple.h"
 #include "TCanvas.h"
 #include "TH1F.h"
@@ -36,14 +37,14 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    //=== Get input files ===
    //---pythia---
    TFile * infile = findFile(infname1);
-   TNtuple * ntPythia = dynamic_cast<TNtuple*>(infile->Get("NTTruePFF"));
-   TNtuple * ntJetPythia = dynamic_cast<TNtuple*>(infile->Get("NTJetFF"));
-   TNtuple * ntJetLeadingPythia = dynamic_cast<TNtuple*>(infile->Get("NTJetLeading"));
+   TTree * ntPythia = findTree(infile,"evtTreeTrueFF");
+   TTree * ntJetPythia = findTree(infile,"evtTreeJetFF");
+   TTree * ntJetLeadingPythia = findTree(infile,"evtTreeJetFF");
    //---pyquen---
    TFile * infile2 = findFile(infname2);
-   TNtuple * ntPyquen = dynamic_cast<TNtuple*>(infile2->Get("NTTruePFF"));
-   TNtuple * ntJetPyquen = dynamic_cast<TNtuple*>(infile2->Get("NTJetFF"));
-   TNtuple * ntJetLeadingPyquen = dynamic_cast<TNtuple*>(infile2->Get("NTJetLeading"));
+   TTree * ntPyquen = findTree(infile2,"evtTreeTrueFF");
+   TTree * ntJetPyquen = findTree(infile2,"evtTreeJetFF");
+   TTree * ntJetLeadingPyquen = findTree(infile2,"evtTreeJetFF");
 
    //---output---
    TFile * outfile = new TFile(Form("%s/FFHistos.root",plotdir),"RECREATE");

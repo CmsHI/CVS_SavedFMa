@@ -1,5 +1,6 @@
 #include <iostream>
 #include "TFile.h"
+#include "TTree.h"
 #include "TNtuple.h"
 #include "TCanvas.h"
 #include "TH1F.h"
@@ -28,12 +29,13 @@ void plotJetLeading(bool doCheck=true,
    printf("%s\n",infname1);
    printf("%s\n",infname2);
    TFile * infile = new TFile(infname1);
-//   TNtuple * ntPythia = dynamic_cast<TNtuple*>(infile->Get("NTLPartons"));
-//   TNtuple * ntPythia = dynamic_cast<TNtuple*>(infile->Get("NTPartonLeading"));
-   TNtuple * ntPythia = dynamic_cast<TNtuple*>(infile->Get("NTJetLeading"));
+//   TNtuple * ntPythia = findTree(infile,"NTLPartons");
+//   TNtuple * ntPythia = findTree(infile,"NTPartonLeading");
+   TTree * ntPythia = findTree(infile,"evtTreeJetFF");
    TFile * infile2 = new TFile(infname2);
-//   TNtuple * ntPyquen = dynamic_cast<TNtuple*>(infile2->Get("NTPartonLeading"));
-   TNtuple * ntPyquen = dynamic_cast<TNtuple*>(infile2->Get("NTJetLeading"));
+//   TNtuple * ntPyquen = findTree(infile2,"NTPartonLeading");
+//   TNtuple * ntPyquen = findTree(infile2,"NTJetLeading");
+   TTree * ntPyquen = findTree(infile2,"evtTreeJetFF");
    TFile * outfile = new TFile("LeadingHistos.root","RECREATE");
 
    //--- If do checks ---
