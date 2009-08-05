@@ -63,6 +63,8 @@ protected:
    TNtuple                        *fNTLPartons;           //!ntuple of leading partons in each event
    TNtuple                        *fNTPartonLeading;            //!ntuple of leading partons + matched jetsin each event
    TNtuple                        *fNTJetLeading;            //!ntuple of leading jets + matched partons in each event
+   TTree                           *fEvtTreeTrueFF;
+   TTree                           *fEvtTreeJetFF;
 
    Float_t                         fIsPromPhoton;         //!prompt photon event flag
    Float_t                         fIsIsolated;           //!isolated particle event flag
@@ -83,8 +85,8 @@ protected:
    Float_t                         fDeltaRMatch;           //! Jet matching max dR
    Float_t                         fJetEtMin;              //! Minimum found jet Et accepted
    //--- dijet ana event data
-   TTree                           *fEvtTree;
-   DiJetAna::TreeDiJetEventData    *fEvtData;
+   DiJetAna::TreeDiJetEventData    *fEvtDataTrueFF;
+   DiJetAna::TreeDiJetEventData    *fEvtDataJetFF;
 
 
    TF1                            *fTrackingEfficiency;   //! Function parametrizing the tracking efficiency      

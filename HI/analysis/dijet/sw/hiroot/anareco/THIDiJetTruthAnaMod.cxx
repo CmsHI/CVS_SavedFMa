@@ -843,7 +843,8 @@ void THIDiJetTruthAnaMod::Process()
       //=== Now we have both the leading partons and jets ===
 
       // first clear event data counters
-      fEvtData->ClearCounters();
+      fEvtDataTrueFF->ClearCounters();
+      fEvtDataJetFF->ClearCounters();
       
       //--- Fill ntuple for *leading partons* and matching jets ---
       FillLeadNTuple(fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fNTPartonLeading);
@@ -863,7 +864,8 @@ void THIDiJetTruthAnaMod::Process()
       //--- Fill ntuple for leading jets and matching partons---
       FillLeadNTuple(fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fNTJetLeading);
       // calc jet level for event data
-      CalcJetVars(trigPart, fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fEvtData);
+      CalcJetVars(trigPart, fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fEvtDataTrueFF);
+      CalcJetVars(trigPart, fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fEvtDataJetFF);
 
       // Check the particles inside cone and get variables-----------------
       THIMCGenRecord *gen = dynamic_cast<THIMCGenRecord*>(fGenRecords->At(ise));
@@ -906,7 +908,7 @@ void THIDiJetTruthAnaMod::Process()
 					fAwayLeadingJet->GetPhi(),
 					fNearLeadingJet->GetMom().DeltaPhi(fAwayLeadingJet->GetPhi()), 
 					trigPart, fNTJetFF);
-		     //--- Calc vars for event data tree
+		     //=== Calc vars for event data tree ===
 		     CalcParticleVars(  p,
 					fNearParton->GetEt(), 
 					fNearParton->GetEta(),
@@ -915,7 +917,17 @@ void THIDiJetTruthAnaMod::Process()
 					fAwayParton->GetEta(), 
 					fAwayParton->GetPhi(),
 					trigPart->GetMom().DeltaPhi(fAwayParton->GetPhi()), 
-					trigPart, fEvtData);
+					trigPart, fEvtDataTrueFF);
+		     //--- Fill jet based FF ---
+		     CalcParticleVars(  p,
+					fNearLeadingJet->GetEt(), 
+					fNearLeadingJet->GetEta(),
+					fNearLeadingJet->GetPhi(), 
+					fAwayLeadingJet->GetEt(), 
+					fAwayLeadingJet->GetEta(), 
+					fAwayLeadingJet->GetPhi(),
+					fNearLeadingJet->GetMom().DeltaPhi(fAwayLeadingJet->GetPhi()), 
+					trigPart, fEvtDataJetFF);
 		  }
 	       }
 	    }
@@ -925,8 +937,9 @@ void THIDiJetTruthAnaMod::Process()
       // === Now all particle, jet level vars have been calculated ===
       //  -- Fill Event Tree --
       printf("===Will now fill event tree===\n");
-      printf("event: %d, nljet: %f, aljet: %f, ppt: %f\n",fEvtData->event_,fEvtData->nljet_,fEvtData->aljet_,fEvtData->ppt_[0]);
-      fEvtTree->Fill();
+      printf("event (jet FF data tree): %d, nljet: %f, aljet: %f, ppt: %f\n",fEvtDataJetFF->event_,fEvtDataJetFF->nljet_,fEvtDataJetFF->aljet_,fEvtDataJetFF->ppt_[0]);
+      fEvtTreeTrueFF->Fill();
+      fEvtTreeJetFF->Fill();
    } // done with subevt loop
    printf("Done Fill ntuple\n\n");
 }
@@ -971,10 +984,15 @@ void THIDiJetTruthAnaMod::SlaveBegin()
    AddOutput(fNTJetLeading);
 
    //-- Dijet event data
-   fEvtTree = new TTree("evtTree","dijet event tree");
-   fEvtData = new TreeDiJetEventData(fEvtTree);
-   fEvtData->SetBranches();
-   AddOutput(fEvtTree);
+   fEvtTreeTrueFF = new TTree("evtTreeTrueFF","dijet event tree, with parton calc'ed FF");
+   fEvtDataTrueFF = new TreeDiJetEventData(fEvtTreeTrueFF);
+   fEvtDataTrueFF->SetBranches();
+   AddOutput(fEvtTreeTrueFF);
+
+   fEvtTreeJetFF = new TTree("evtTreeJetFF","dijet event tree, with jet calc'ed FF");
+   fEvtDataJetFF = new TreeDiJetEventData(fEvtTreeJetFF);
+   fEvtDataJetFF->SetBranches();
+   AddOutput(fEvtTreeJetFF);
 
    // jet related
    if (fLoad) {
