@@ -805,9 +805,6 @@ void THIDiJetTruthAnaMod::Process()
    fGaus->SetParameter(2,reso);
    fAwaySMET = fAwayParton->GetEt()*fGaus->GetRandom();
 
-   // Christof's converted ntuple for the leading jets
-//   FillEClusNTuple(trigPart);
-
    if(fStatOnly)
       return;
    // event statistics for normalization--------------------------------
@@ -861,8 +858,6 @@ void THIDiJetTruthAnaMod::Process()
 	 fNearParton = ptemp;
 	 fNearLeadingJet = jtemp;
       }
-      //--- Fill ntuple for leading jets and matching partons---
-      FillLeadNTuple(fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fNTJetLeading);
       // calc jet level for event data
       CalcJetVars(trigPart, fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fEvtDataTrueFF);
       CalcJetVars(trigPart, fNearParton,fAwayParton,fNearLeadingJet,fAwayLeadingJet,fEvtDataJetFF);
@@ -885,30 +880,9 @@ void THIDiJetTruthAnaMod::Process()
 		  // - 2.5 For the tracker acceptance
 
 		  // only one subevent here
-		  if(ise==0){ // away part + sig parts
-		     // near part + true jet + sig parts
-
-		     //--- Fill parton based FF ---
-		     FillFragFuncNTuple(p,
-					fNearParton->GetEt(), 
-					fNearParton->GetEta(),
-					fNearParton->GetPhi(), 
-					fAwayParton->GetEt(), 
-					fAwayParton->GetEta(), 
-					fAwayParton->GetPhi(),
-					trigPart->GetMom().DeltaPhi(fAwayParton->GetPhi()), 
-					trigPart, fNTTruePFF);
-		     //--- Fill jet based FF ---
-		     FillFragFuncNTuple(p,
-					fNearLeadingJet->GetEt(), 
-					fNearLeadingJet->GetEta(),
-					fNearLeadingJet->GetPhi(), 
-					fAwayLeadingJet->GetEt(), 
-					fAwayLeadingJet->GetEta(), 
-					fAwayLeadingJet->GetPhi(),
-					fNearLeadingJet->GetMom().DeltaPhi(fAwayLeadingJet->GetPhi()), 
-					trigPart, fNTJetFF);
+		  if(ise==0){
 		     //=== Calc vars for event data tree ===
+		     //--- Fill parton based FF ---
 		     CalcParticleVars(  p,
 					fNearParton->GetEt(), 
 					fNearParton->GetEta(),
