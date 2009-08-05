@@ -49,10 +49,12 @@ TH1* findHist(const char* hn1)
 }
 
 //--- Find TTree by name ---
-TTree * findTree(const char* fn, const char * tn)
+TTree * findTree(TFile * infile, const char * tn)
 {
-   TFile* infile = findFile(fn);
-   TTree * t = dynamic_cast<TTree*>(infile->Get("NTTruePFF"));
+   TTree * t = dynamic_cast<TTree*>(infile->Get(tn));
+   if (!t)
+      terminate(Form("%s not found in %s",tn,infile->GetName()));
+
    return t;
 }
 
