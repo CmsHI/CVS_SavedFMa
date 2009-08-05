@@ -1,7 +1,14 @@
 #!/bin/bash -
+if [ $# -eq 0 ]; then
+   echo "Usage:"
+   echo "  $0 <run_#> <tag>"
+   exit 1
+fi
+
 . /net/hisrv0001/home/frankma/UserCode/SavedFMa/bin/cgate/set_hiroot.sh
 #tar -xf macros.tar
 runn=$1
+tag=$2
 
 base=/net/pstore01/d00/scratch/frankma/hiroot
 job=prodPtHat50
@@ -12,7 +19,7 @@ gen1=pyquen50
 # ana var's
 dRCut="0.35"
 EtCut="30."
-ana=iCone5_match35_jetEtCut30_Mod_r116
+ana=iCone5_match35_jetEtCut30_Mod_${tag}
 
 #--pythia--
 for genSource in $gen0 $gen1; do
