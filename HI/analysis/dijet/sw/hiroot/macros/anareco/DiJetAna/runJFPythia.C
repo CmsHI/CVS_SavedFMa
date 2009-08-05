@@ -82,7 +82,7 @@ void runJFPythia(Int_t rnum,
       anaDijetFFMod->SetJetName(findJetsMod->GetJetName());
       anaDijetFFMod->SetJetDeltaRMatch(DeltaRMax);
       anaDijetFFMod->SetJetEtMin(JetEtMin);
-      anaDijetFFMod->SetSelParticles(kFALSE);
+      anaDijetFFMod->SetSelParticles(kTRUE);
       findJetsMod->Add(anaDijetFFMod);
 
       ana->SetAnaOutputName(Form("%s/dijet_%06d.root",getenv("HIROOT_BASEURL"),rnum));

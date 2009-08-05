@@ -77,16 +77,16 @@ void plotJetLeading(bool doCheck=true,
 
    // === Cone info ===
    // -- # particles --
-   drawTree(trJetPythia, "nljCone5NP>>hNJCone5NPPythia","",drsgE,"hNJCone5NPPythia",";# particles in 0.5 cone;",NBIN,0,40,0,kBlack,1,3,1,8);
-   drawTree(trJetPythia, "aljCone5NP>>hAJCone5NPPythia","",drdbE,"hAJCone5NPPythia",";# particles in 0.5 cone;",NBIN,0,40,0,kBlack,1,3,1,4);
-   drawTree(trJetPyquen, "nljCone5NP>>hNJCone5NPPyquen","",drdbE,"hNJCone5NPPyquen",";# particles in 0.5 cone;",NBIN,0,40,0,kBlue,1,3,1,8);
-   drawTree(trJetPyquen, "aljCone5NP>>hAJCone5NPPyquen","",drdbE,"hAJCone5NPPyquen",";# particles in 0.5 cone;",NBIN,0,40,0,kBlue,1,3,1,4);
+   drawTree(trJetPythia, "nljCone5NP>>hNJCone5NPPythia","",drsgE,"hNJCone5NPPythia",";# charged particles in 0.5 cone;",NBIN,0,40,0,kBlack,1,3,1,8);
+   drawTree(trJetPythia, "aljCone5NP>>hAJCone5NPPythia","",drdbE,"hAJCone5NPPythia",";# charged particles in 0.5 cone;",NBIN,0,40,0,kBlack,1,3,1,4);
+   drawTree(trJetPyquen, "nljCone5NP>>hNJCone5NPPyquen","",drdbE,"hNJCone5NPPyquen",";# charged particles in 0.5 cone;",NBIN,0,40,0,kBlue,1,3,1,8);
+   drawTree(trJetPyquen, "aljCone5NP>>hAJCone5NPPyquen","",drdbE,"hAJCone5NPPyquen",";# charged particles in 0.5 cone;",NBIN,0,40,0,kBlue,1,3,1,4);
 
    // --Et--
-   drawTree(trJetPythia, "nljCone5Et>>hNJCone5EtPythia","",drsgE,"hNJCone5EtPythia",";tot Et in 0.5 cone;",NBIN,0,100,0,kBlack,1,3,1,8);
-   drawTree(trJetPythia, "aljCone5Et>>hAJCone5EtPythia","",drdbE,"hAJCone5EtPythia",";tot Et in 0.5 cone;",NBIN,0,100,0,kBlack,1,3,1,4);
-   drawTree(trJetPyquen, "nljCone5Et>>hNJCone5EtPyquen","",drdbE,"hNJCone5EtPyquen",";tot Et in 0.5 cone;",NBIN,0,100,0,kBlue,1,3,1,8);
-   drawTree(trJetPyquen, "aljCone5Et>>hAJCone5EtPyquen","",drdbE,"hAJCone5EtPyquen",";tot Et in 0.5 cone;",NBIN,0,100,0,kBlue,1,3,1,4);
+   drawTree(trJetPythia, "nljCone5Et>>hNJCone5EtPythia","",drsgE,"hNJCone5EtPythia",";charged particles Et_{tot} in 0.5 cone;",NBIN,0,100,0,kBlack,1,3,1,8);
+   drawTree(trJetPythia, "aljCone5Et>>hAJCone5EtPythia","",drdbE,"hAJCone5EtPythia",";charged particles Et_{tot} in 0.5 cone;",NBIN,0,100,0,kBlack,1,3,1,4);
+   drawTree(trJetPyquen, "nljCone5Et>>hNJCone5EtPyquen","",drdbE,"hNJCone5EtPyquen",";charged particles Et_{tot} in 0.5 cone;",NBIN,0,100,0,kBlue,1,3,1,8);
+   drawTree(trJetPyquen, "aljCone5Et>>hAJCone5EtPyquen","",drdbE,"hAJCone5EtPyquen",";charged particles Et_{tot} in 0.5 cone;",NBIN,0,100,0,kBlue,1,3,1,4);
 
    //-------------- Done Save Plots----------------------
    printAllCanvases(plotdir);
