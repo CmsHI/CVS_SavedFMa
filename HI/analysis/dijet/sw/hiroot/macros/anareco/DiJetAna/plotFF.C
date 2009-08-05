@@ -37,14 +37,12 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    //=== Get input files ===
    //---pythia---
    TFile * infile = findFile(infname1);
-   TTree * ntPythia = findTree(infile,"evtTreeTrueFF");
-   TTree * ntJetPythia = findTree(infile,"evtTreeJetFF");
-   TTree * ntJetLeadingPythia = findTree(infile,"evtTreeJetFF");
+   TTree * trTruePythia = findTree(infile,"evtTreeTrueFF");
+   TTree * trJetPythia = findTree(infile,"evtTreeJetFF");
    //---pyquen---
    TFile * infile2 = findFile(infname2);
-   TTree * ntPyquen = findTree(infile2,"evtTreeTrueFF");
-   TTree * ntJetPyquen = findTree(infile2,"evtTreeJetFF");
-   TTree * ntJetLeadingPyquen = findTree(infile2,"evtTreeJetFF");
+   TTree * trTruePyquen = findTree(infile2,"evtTreeTrueFF");
+   TTree * trJetPyquen = findTree(infile2,"evtTreeJetFF");
 
    //---output---
    TFile * outfile = new TFile(Form("%s/FFHistos.root",plotdir),"RECREATE");
@@ -52,7 +50,7 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    // === setup cuts ===
    printf("\n=========================Cuts setup======================\n");
    // ==pythia==
-   DiJets pyt("Pythia","vjet1",ntJetLeadingPythia,ntJetPythia);
+   DiJets pyt("Pythia","vjet1",trJetPythia,trJetPythia);
    pyt.SetNearJetEtMin(PythiaAnaNJetEtMin);
    pyt.SetNearJetEtMax(PythiaAnaNJetEtMax);
    pyt.SetAwayJetEtMin(PythiaAnaAJetEtMin);
@@ -68,7 +66,7 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    printf("# of dijets after cut: %d, normalization: %f\n",pyt.GetNumDiJets(),pyt.GetDiJetsNorm());
 
    // ==pyquen==
-   DiJets pyq("Pyquen","vjet1",ntJetLeadingPyquen,ntJetPyquen);
+   DiJets pyq("Pyquen","vjet1",trJetPyquen,trJetPyquen);
    pyq.SetNearJetEtMin(PyquenAnaNJetEtMin);
    pyq.SetNearJetEtMax(PyquenAnaNJetEtMax);
    pyq.SetAwayJetEtMin(PyquenAnaAJetEtMin);
@@ -90,49 +88,49 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
       printf("%s\n",infname2);
       //---- Check dijet properties ----
       //--- inv mass ---
-      drawTree(ntJetPythia, "mass>>hMassPPythia","",drsgFF,"hMassPPythia","Pythia: inv mass of dijet",100,0,1800,true,kRed,1,3);
-      drawTree(ntJetPyquen, "mass>>hMassPPyquen","",drdbFF,"hMassPPyquen","draw Pyquen: inv mass of dijet",100,0,1800,true,kBlue,1,3);
+      drawTree(trJetPythia, "mass>>hMassPPythia","",drsgFF,"hMassPPythia","Pythia: inv mass of dijet",100,0,1800,true,kRed,1,3);
+      drawTree(trJetPyquen, "mass>>hMassPPyquen","",drdbFF,"hMassPPyquen","draw Pyquen: inv mass of dijet",100,0,1800,true,kBlue,1,3);
       //--- Et ---
       // -pythia-
-      drawTree(ntJetPythia, "nljet>>hNLPartonPPythia",pyt.GetCut().GetNJetPartlCut().Data(),drsgFF,"hNLPartonPPythia","Pythia: leading partons",HJETETBINS,HJETETMIN,HJETETMAX,0,kRed,1,3);
-      drawTree(ntJetPythia, "aljet>>hALPartonPPythia",pyt.GetCut().GetAJetPartlCut().Data(),drdbFF,"hALPartonPPythia","Pythia: leading partons",HJETETBINS,HJETETMIN,HJETETMAX,0,kRed,7,3);
+      drawTree(trJetPythia, "nljet>>hNLPartonPPythia",pyt.GetCut().GetNJetPartlCut().Data(),drsgFF,"hNLPartonPPythia","Pythia: leading partons",HJETETBINS,HJETETMIN,HJETETMAX,0,kRed,1,3);
+      drawTree(trJetPythia, "aljet>>hALPartonPPythia",pyt.GetCut().GetAJetPartlCut().Data(),drdbFF,"hALPartonPPythia","Pythia: leading partons",HJETETBINS,HJETETMIN,HJETETMAX,0,kRed,7,3);
       // -pyquen--
-      drawTree(ntJetPyquen, "nljet>>hNLPartonPPyquen",pyq.GetCut().GetNJetPartlCut().Data(),drdbFF,"hNLPartonPPyquen","Pyquen: leading partons",HJETETBINS,HJETETMIN,HJETETMAX,0,kBlue,1,3);
-      drawTree(ntJetPyquen, "aljet>>hALPartonPPyquen",pyq.GetCut().GetAJetPartlCut().Data(),drdbFF,"hALPartonPPyquen","Pyquen: leading partons",HJETETBINS,HJETETMIN,HJETETMAX,0,kBlue,7,3);
+      drawTree(trJetPyquen, "nljet>>hNLPartonPPyquen",pyq.GetCut().GetNJetPartlCut().Data(),drdbFF,"hNLPartonPPyquen","Pyquen: leading partons",HJETETBINS,HJETETMIN,HJETETMAX,0,kBlue,1,3);
+      drawTree(trJetPyquen, "aljet>>hALPartonPPyquen",pyq.GetCut().GetAJetPartlCut().Data(),drdbFF,"hALPartonPPyquen","Pyquen: leading partons",HJETETBINS,HJETETMIN,HJETETMAX,0,kBlue,7,3);
    }
    
 
    //=== Particles ===
    //--- inclusive angular correlations to leading partons---
    // -near-
-   drawTree(ntPyquen, "pndphi>>hnPdPhiPyquen","",drsgFF,"hnPdPhiPyquen",";d#phi(particle,Jet);",100,-0.5*PI,1.5*PI,false,kBlue,1,3);
-   drawTree(ntPythia, "pndphi>>hnPdPhiPythia","",drdbFF,"hnPdPhiPythia","Pythia: dphi to leading partons",100,-0.5*PI,1.5*PI,false,kRed,1,3);
-   drawTree(ntJetPyquen, "pndphi>>hnPdPhiJetPyquen","",drdbFF,"hnPdPhiJetPyquen","JetPyquen: dphi to leading partons",100,-0.5*PI,1.5*PI,false,kBlue,1,3);
-   drawTree(ntJetPythia, "pndphi>>hnPdPhiJetPythia","",drdbFF,"hnPdPhiJetPythia","JetPythia: dphi to leading partons",100,-0.5*PI,1.5*PI,false,kRed,1,3);
+   drawTree(trTruePyquen, "pndphi>>hnPdPhiPyquen","",drsgFF,"hnPdPhiPyquen",";d#phi(particle,Jet);",100,-0.5*PI,1.5*PI,false,kBlue,1,3);
+   drawTree(trTruePythia, "pndphi>>hnPdPhiPythia","",drdbFF,"hnPdPhiPythia","Pythia: dphi to leading partons",100,-0.5*PI,1.5*PI,false,kRed,1,3);
+   drawTree(trJetPyquen, "pndphi>>hnPdPhiJetPyquen","",drdbFF,"hnPdPhiJetPyquen","JetPyquen: dphi to leading partons",100,-0.5*PI,1.5*PI,false,kBlue,1,3);
+   drawTree(trJetPythia, "pndphi>>hnPdPhiJetPythia","",drdbFF,"hnPdPhiJetPythia","JetPythia: dphi to leading partons",100,-0.5*PI,1.5*PI,false,kRed,1,3);
    // -away-
-//   drawTree(ntPyquen, "padphi>>haPdPhiPyquen","",drdbFF,"haPdPhiPyquen","Pyquen: dphi to leading partons",100,-0.5*PI,1.5*PI,false,kBlue,7,3);
-//   drawTree(ntPythia, "padphi>>haPdPhiPythia","",drdbFF,"haPdPhiPythia","draw Pythia: dphi to leading partons",100,-0.5*PI,1.5*PI,false,kRed,7,3);
+//   drawTree(trTruePyquen, "padphi>>haPdPhiPyquen","",drdbFF,"haPdPhiPyquen","Pyquen: dphi to leading partons",100,-0.5*PI,1.5*PI,false,kBlue,7,3);
+//   drawTree(trTruePythia, "padphi>>haPdPhiPythia","",drdbFF,"haPdPhiPythia","draw Pythia: dphi to leading partons",100,-0.5*PI,1.5*PI,false,kRed,7,3);
 
    //--- inclusive Pt ---
-   drawTree(ntPythia, "ppt>>hPPtPythia","",drsgFF,"hPPtPythia","Pythia: Pt of final state particles",100,0,50,true,kRed,1,3);
-   drawTree(ntPyquen, "ppt>>hPPtPyquen","",drdbFF,"hPPtPyquen","draw Pyquen: Pt of final state particles",100,0,50,true,kBlue,1,3);
+   drawTree(trTruePythia, "ppt>>hPPtPythia","",drsgFF,"hPPtPythia","Pythia: Pt of final state particles",100,0,50,true,kRed,1,3);
+   drawTree(trTruePyquen, "ppt>>hPPtPyquen","",drdbFF,"hPPtPyquen","draw Pyquen: Pt of final state particles",100,0,50,true,kBlue,1,3);
 
 
    // === Draw: jet  distributions ===
    // --comp with AnaJet
    drawNormHist(infile, "hJetEtDist",drsgFF,"","Jet Et [GeV]","#",1,true,2,7,1,1,1);
    drawNormHist(infile, "hLeadJetEtDist",drdbFF,"","Jet Et [GeV]","#",1,true,2,7,3,1,1);
-   drawTree(ntJetLeadingPythia, "nljet>>hCheckNearLJetPythia0","",drdbFF,"hCheckNearLJetPythia0",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,1,1,8);
+   drawTree(trJetPythia, "nljet>>hCheckNearLJetPythia0","",drdbFF,"hCheckNearLJetPythia0",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,1,1,8);
    // --from jet leading--
-   drawTree(ntJetLeadingPythia, "nljet>>hCheckNearLJetPythia","",drsgFF,"hCheckNearLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,1,1,8);
-   drawTree(ntJetLeadingPyquen, "nljet>>hCheckNearLJetPyquen","",drdbFF,"hCheckNearLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,1,1,1,8);
-   drawTree(ntJetLeadingPythia, "aljet>>hCheckAwayLJetPythia","",drdbFF,"hCheckAwayLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,7,1,1,8);
-   drawTree(ntJetLeadingPyquen, "aljet>>hCheckAwayLJetPyquen","",drdbFF,"hCheckAwayLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,7,1,1,8);
+   drawTree(trJetPythia, "nljet>>hCheckNearLJetPythia","",drsgFF,"hCheckNearLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,1,1,8);
+   drawTree(trJetPyquen, "nljet>>hCheckNearLJetPyquen","",drdbFF,"hCheckNearLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,1,1,1,8);
+   drawTree(trJetPythia, "aljet>>hCheckAwayLJetPythia","",drdbFF,"hCheckAwayLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,7,1,1,8);
+   drawTree(trJetPyquen, "aljet>>hCheckAwayLJetPyquen","",drdbFF,"hCheckAwayLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,7,1,1,8);
    //-- *apply cuts* --
-   drawTree(ntJetLeadingPythia, "nljet>>hCheckCutNearLJetPythia",pyt.GetCut().GetDiJetCut().Data(),drdbFF,"hCheckCutNearLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,3,1,8);
-   drawTree(ntJetLeadingPyquen, "nljet>>hCheckCutNearLJetPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbFF,"hCheckCutNearLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,1,3,1,8);
-   drawTree(ntJetLeadingPythia, "aljet>>hCheckCutAwayLJetPythia",pyt.GetCut().GetDiJetCut().Data(),drdbFFE,"hCheckCutAwayLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,3,1,4);
-   drawTree(ntJetLeadingPyquen, "aljet>>hCheckCutAwayLJetPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbFFE,"hCheckCutAwayLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,1,3,1,4);
+   drawTree(trJetPythia, "nljet>>hCheckCutNearLJetPythia",pyt.GetCut().GetDiJetCut().Data(),drdbFF,"hCheckCutNearLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,3,1,8);
+   drawTree(trJetPyquen, "nljet>>hCheckCutNearLJetPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbFF,"hCheckCutNearLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,1,3,1,8);
+   drawTree(trJetPythia, "aljet>>hCheckCutAwayLJetPythia",pyt.GetCut().GetDiJetCut().Data(),drdbFFE,"hCheckCutAwayLJetPythia",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlack,1,3,1,4);
+   drawTree(trJetPyquen, "aljet>>hCheckCutAwayLJetPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbFFE,"hCheckCutAwayLJetPyquen",";Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,kBlue,1,3,1,4);
 
    float nJetPythiaNorm = pyt.GetDiJetsNorm();
    if (NoNorm) nJetPythiaNorm = 1.;
@@ -144,15 +142,15 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    //=== Finally: plot fragmentation properties ===
    printf("\n===================== Plot FF =======================\n");
    // -near-
-   drawTree(ntJetPythia, "log(1/zn)>>hXiNearJetPythia",pyt.GetCut().GetNJetPartlCut().Data(),drsgFFE,"hXiNearJetPythia",";(near) #xi=ln(E_{t}^{Jet}/E_{t}^{Particle});",NXIBIN,0,XIMAX,0,kBlack,1,3,1,8,nJetPythiaNorm,XIYMAX);
-   drawTree(ntJetPyquen, "log(1/zn)>>hXiNearJetPyquen",pyq.GetCut().GetNJetPartlCut().Data(),drdbFFE,"hXiNearJetPyquen","JetPyquen: FF of near parton",NXIBIN,0,XIMAX,0,kBlue,1,3,1,8,nJetPyquenNorm,XIYMAX);
-   drawTree(ntPyquen, "log(1/zn)>>hXiNearPyquen",pyq.GetCut().GetNJetPartlCut().Data(),drdbFF,"hXiNearPyquen",";(near) #xi=ln(E_{t}^{Jet}/E_{t}^{Particle})",NXIBIN,0,XIMAX,0,kRed-2,1,3,0,0,nJetPyquenNorm,XIYMAX);
-   drawTree(ntPythia, "log(1/zn)>>hXiNearPythia",pyt.GetCut().GetNJetPartlCut().Data(),drdbFF,"hXiNearPythia",";#xi=ln(E_{t}^{Jet}/E_{t}^{Particle};",NXIBIN,0,XIMAX,0,kRed,1,3,0,0,nJetPythiaNorm,XIYMAX);
+   drawTree(trJetPythia, "log(1/zn)>>hXiNearJetPythia",pyt.GetCut().GetNJetPartlCut().Data(),drsgFFE,"hXiNearJetPythia",";(near) #xi=ln(E_{t}^{Jet}/E_{t}^{Particle});",NXIBIN,0,XIMAX,0,kBlack,1,3,1,8,nJetPythiaNorm,XIYMAX);
+   drawTree(trJetPyquen, "log(1/zn)>>hXiNearJetPyquen",pyq.GetCut().GetNJetPartlCut().Data(),drdbFFE,"hXiNearJetPyquen","JetPyquen: FF of near parton",NXIBIN,0,XIMAX,0,kBlue,1,3,1,8,nJetPyquenNorm,XIYMAX);
+   drawTree(trTruePyquen, "log(1/zn)>>hXiNearPyquen",pyq.GetCut().GetNJetPartlCut().Data(),drdbFF,"hXiNearPyquen",";(near) #xi=ln(E_{t}^{Jet}/E_{t}^{Particle})",NXIBIN,0,XIMAX,0,kRed-2,1,3,0,0,nJetPyquenNorm,XIYMAX);
+   drawTree(trTruePythia, "log(1/zn)>>hXiNearPythia",pyt.GetCut().GetNJetPartlCut().Data(),drdbFF,"hXiNearPythia",";#xi=ln(E_{t}^{Jet}/E_{t}^{Particle};",NXIBIN,0,XIMAX,0,kRed,1,3,0,0,nJetPythiaNorm,XIYMAX);
    // -away-
-   drawTree(ntJetPythia, "log(1/za)>>hXiAwayJetPythia",pyt.GetCut().GetAJetPartlCut().Data(),drsgFFE,"hXiAwayJetPythia",";(away) #xi=ln(E_{t}^{Jet}/E_{t}^{Particle});",NXIBIN,0,XIMAX,0,kBlack,1,3,1,8,nJetPythiaNorm,XIYMAX);
-   drawTree(ntJetPyquen, "log(1/za)>>hXiAwayJetPyquen",pyq.GetCut().GetAJetPartlCut().Data(),drdbFFE,"hXiAwayJetPyquen","JetPyquen: FF of near parton",NXIBIN,0,XIMAX,0,kBlue,1,3,1,8,nJetPyquenNorm,XIYMAX);
-   drawTree(ntPyquen, "log(1/za)>>hXiAwayPyquen",pyq.GetCut().GetAJetPartlCut().Data(),drdbFF,"hXiAwayPyquen",";(away) #xi=ln(E_{t}^{Jet}/E_{t}^{Particle})",NXIBIN,0,XIMAX,0,kRed-2,1,3,0,0,nJetPyquenNorm,XIYMAX);
-   drawTree(ntPythia, "log(1/za)>>hXiAwayPythia",pyt.GetCut().GetAJetPartlCut().Data(),drdbFF,"hXiAwayPythia",";#xi=ln(E_{t}^{Jet}/E_{t}^{Particle};",NXIBIN,0,XIMAX,0,kRed,1,3,0,0,nJetPythiaNorm,XIYMAX);
+   drawTree(trJetPythia, "log(1/za)>>hXiAwayJetPythia",pyt.GetCut().GetAJetPartlCut().Data(),drsgFFE,"hXiAwayJetPythia",";(away) #xi=ln(E_{t}^{Jet}/E_{t}^{Particle});",NXIBIN,0,XIMAX,0,kBlack,1,3,1,8,nJetPythiaNorm,XIYMAX);
+   drawTree(trJetPyquen, "log(1/za)>>hXiAwayJetPyquen",pyq.GetCut().GetAJetPartlCut().Data(),drdbFFE,"hXiAwayJetPyquen","JetPyquen: FF of near parton",NXIBIN,0,XIMAX,0,kBlue,1,3,1,8,nJetPyquenNorm,XIYMAX);
+   drawTree(trTruePyquen, "log(1/za)>>hXiAwayPyquen",pyq.GetCut().GetAJetPartlCut().Data(),drdbFF,"hXiAwayPyquen",";(away) #xi=ln(E_{t}^{Jet}/E_{t}^{Particle})",NXIBIN,0,XIMAX,0,kRed-2,1,3,0,0,nJetPyquenNorm,XIYMAX);
+   drawTree(trTruePythia, "log(1/za)>>hXiAwayPythia",pyt.GetCut().GetAJetPartlCut().Data(),drdbFF,"hXiAwayPythia",";#xi=ln(E_{t}^{Jet}/E_{t}^{Particle};",NXIBIN,0,XIMAX,0,kRed,1,3,0,0,nJetPythiaNorm,XIYMAX);
 
    //---FF ratio2---
    // -parton-

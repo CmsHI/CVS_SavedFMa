@@ -2,6 +2,8 @@
 if [ $# -eq 0 ]; then
    echo "Usage:"
    echo "  $0 <run_#> <tag>"
+   echo "Eg:"
+   echo "  ./runICone5_JetEt30_Mod.sh 1 121"
    exit 1
 fi
 
