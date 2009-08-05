@@ -47,18 +47,18 @@ namespace DiJetAna
 	 Double_t		    nljetsm_;
 	 Double_t		    nljeta_;
 	 Double_t		    nljphi_;
-	 ULong_t		    nljnp_;
+	 Int_t	  		    nljnp_;
 
 	 Double_t		    aljet_;
 	 Double_t		    aljetsm_;
 	 Double_t		    aljeta_;
 	 Double_t		    aljphi_;
-	 ULong_t		    aljnp_;
+	 Int_t	  		    aljnp_;
 
 	 Double_t		    jdphi_;
 
 	 // -- particle info --
-	 UInt_t			    evtnp_;
+	 Int_t			    evtnp_;
 	 Int_t		  	    ppid_[MAXNPARTICLES];
 	 Double_t	      	    ppt_[MAXNPARTICLES];
 	 Double_t		    peta_[MAXNPARTICLES];
@@ -80,13 +80,13 @@ namespace DiJetAna
 	 // -- jet cone info --
 	 Double_t		    nljCone5Et_;
 	 Double_t    		    nljCone7Et_;
-	 UInt_t			    nljCone5NP_;
-	 UInt_t			    nljCone7NP_;
+	 Int_t			    nljCone5NP_;
+	 Int_t			    nljCone7NP_;
 
 	 Double_t	      	    aljCone5Et_;
 	 Double_t    		    aljCone7Et_;
-	 UInt_t			    aljCone5NP_;
-	 UInt_t			    aljCone7NP_;
+	 Int_t			    aljCone5NP_;
+	 Int_t			    aljCone7NP_;
 
 	 // --- tree branch names ---
 	 // jet level
@@ -118,14 +118,14 @@ namespace DiJetAna
       //
 
       // -- jet cone info --
-      nljCone5Et_(0),
-      nljCone7Et_(0),
-      nljCone5NP_(0),
-      nljCone7NP_(0),
-      aljCone5Et_(0),
-      aljCone7Et_(0),
-      aljCone5NP_(0),
-      aljCone7NP_(0),
+      nljCone5Et_(-1),
+      nljCone7Et_(-1),
+      nljCone5NP_(-1),
+      nljCone7NP_(-1),
+      aljCone5Et_(-1),
+      aljCone7Et_(-1),
+      aljCone5NP_(-1),
+      aljCone7NP_(-1),
 
       // tree branch names
       tNJEt_("nljet"),
@@ -173,18 +173,18 @@ namespace DiJetAna
       tree_->Branch("nljetsm", &(this->nljetsm_), "nljetsm/D");
       tree_->Branch("nljeta", &(this->nljeta_), "nljeta/D");
       tree_->Branch("nljphi", &(this->nljphi_), "nljphi/D");
-      tree_->Branch("nljnp", &(this->nljnp_), "nljnp/l");
+      tree_->Branch("nljnp", &(this->nljnp_), "nljnp/I");
 
       tree_->Branch("aljet", &(this->aljet_), "aljet/D");
       tree_->Branch("aljetsm", &(this->aljetsm_), "aljetsm/D");
       tree_->Branch("aljeta", &(this->aljeta_), "aljeta/D");
       tree_->Branch("aljphi", &(this->aljphi_), "aljphi/D");
-      tree_->Branch("aljnp", &(this->aljnp_), "aljnp/l");
+      tree_->Branch("aljnp", &(this->aljnp_), "aljnp/I");
 
       tree_->Branch("jdphi", &(this->jdphi_), "jdphi/D");
 
       // -- particle info --
-      tree_->Branch("evtnp",&(this->evtnp_),"evtnp/i");
+      tree_->Branch("evtnp",&(this->evtnp_),"evtnp/I");
       tree_->Branch("ppid",this->ppid_,"ppid[evtnp]/I");
       tree_->Branch("ppt",this->ppt_,"ppt[evtnp]/D");
       tree_->Branch("peta",this->peta_,"peta[evtnp]/D");
@@ -206,13 +206,13 @@ namespace DiJetAna
 	 // -- jet cone info --
       tree_->Branch("nljCone5Et", &(this->nljCone5Et_), "nljCone5Et/D");
       tree_->Branch("nljCone7Et", &(this->nljCone7Et_), "nljCone7Et/D");
-      tree_->Branch("nljCone5NP", &(this->nljCone5NP_), "nljCone5NP/D");
-      tree_->Branch("nljCone7NP", &(this->nljCone7NP_), "nljCone7NP/D");
+      tree_->Branch("nljCone5NP", &(this->nljCone5NP_), "nljCone5NP/I");
+      tree_->Branch("nljCone7NP", &(this->nljCone7NP_), "nljCone7NP/I");
 
       tree_->Branch("aljCone5Et", &(this->aljCone5Et_), "aljCone5Et/D");
       tree_->Branch("aljCone7Et", &(this->aljCone7Et_), "aljCone7Et/D");
-      tree_->Branch("aljCone5NP", &(this->aljCone5NP_), "aljCone5NP/D");
-      tree_->Branch("aljCone7NP", &(this->aljCone7NP_), "aljCone7NP/D");
+      tree_->Branch("aljCone5NP", &(this->aljCone5NP_), "aljCone5NP/I");
+      tree_->Branch("aljCone7NP", &(this->aljCone7NP_), "aljCone7NP/I");
    }
    void TreeDiJetEventData::ClearCounters()
    {
