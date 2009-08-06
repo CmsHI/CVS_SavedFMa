@@ -26,13 +26,18 @@ if [ ! -e $plotjleading ]; then mkdir $plotjleading; fi
 plotjFF=$plotanabase/jFF
 echo "$plotjFF"
 if [ ! -e $plotjFF ]; then mkdir $plotjFF; fi
+plotjShapes=$plotanabase/jShapes
+echo "$plotjShapes"
+if [ ! -e $plotjShapes ]; then mkdir $plotjShapes; fi
 
 # run
-# -pythia-
+# -Jet-
 root -b -q plotJetLeading.C+\(true,\"$pythiafile\",\"$pyquenfile\",\"$plotjleading\"\)
+#root -b -q checkBadCones.C+\(true,\"$pythiafile\",\"$pyquenfile\",\"$plotjleading\"\)
 echo
-# -pyquen-
+# -Particles-
 root -b -q plotFF.C+\(\"$pythiafile\",\"$pyquenfile\",$PythiaAnaNJetEtMin,$PythiaAnaNJetEtMax,$PythiaAnaAJetEtMin,$PyquenAnaNJetEtMin,$PyquenAnaNJetEtMax,$PyquenAnaAJetEtMin,$JDPhiMin,\"$plotjFF\",$NXIBIN,$XIMAX,$XIYMAX,$doCheck\)
+root -b -q plotShapes.C+\(\"$pythiafile\",\"$pyquenfile\",$PythiaAnaNJetEtMin,$PythiaAnaNJetEtMax,$PythiaAnaAJetEtMin,$PyquenAnaNJetEtMin,$PyquenAnaNJetEtMax,$PyquenAnaAJetEtMin,$JDPhiMin,\"$plotjShapes\",$NXIBIN,$XIMAX,$XIYMAX,$doCheck\)
 
 # final plots
 plotFinalpath=$plotanabase/final
