@@ -91,10 +91,10 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
    drawTree(trJetPyquen, "aljCone5NP>>hAJCone5NPPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5NPPyquen",";# charged particles in 0.5 cone;",NBIN,0,40,1,kBlue,1,3,1,4);
 
    // --Et--
-   drawTree(trJetPythia, "nljCone5Et>>hNJCone5EtPythia",pyt.GetCut().GetDiJetCut().Data(),drsgE,"hNJCone5EtPythia",";charged particles Et_{tot} in 0.5 cone;",NBIN/2,0,120,1,kBlack,1,3,1,8);
-   drawTree(trJetPythia, "aljCone5Et>>hAJCone5EtPythia",pyt.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5EtPythia",";charged particles Et_{tot} in 0.5 cone;",NBIN/2,0,120,1,kBlack,1,3,1,4);
-   drawTree(trJetPyquen, "nljCone5Et>>hNJCone5EtPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbE,"hNJCone5EtPyquen",";charged particles Et_{tot} in 0.5 cone;",NBIN/2,0,120,1,kBlue,1,3,1,8);
-   drawTree(trJetPyquen, "aljCone5Et>>hAJCone5EtPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5EtPyquen",";charged particles Et_{tot} in 0.5 cone;",NBIN/2,0,120,1,kBlue,1,3,1,4);
+   drawTree(trJetPythia, "nljCone5Et>>hNJCone5EtPythia",pyt.GetCut().GetDiJetCut().Data(),drsgE,"hNJCone5EtPythia",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/2,0,120,1,kBlack,1,3,1,8);
+   drawTree(trJetPythia, "aljCone5Et>>hAJCone5EtPythia",pyt.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5EtPythia",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/2,0,120,1,kBlack,1,3,1,4);
+   drawTree(trJetPyquen, "nljCone5Et>>hNJCone5EtPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbE,"hNJCone5EtPyquen",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/2,0,120,1,kBlue,1,3,1,8);
+   drawTree(trJetPyquen, "aljCone5Et>>hAJCone5EtPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5EtPyquen",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/2,0,120,1,kBlue,1,3,1,4);
 
 
    //=== Save and exit ===
