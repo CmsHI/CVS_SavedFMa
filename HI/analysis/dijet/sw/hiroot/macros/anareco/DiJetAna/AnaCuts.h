@@ -104,11 +104,11 @@ namespace DiJetAna
    AnaCuts::AnaCuts(char* cutTag) :
       // cut
       cutTag_(cutTag),
-      nearJetEtMin_(-1),
-      nearJetEtMax_(-1),
-      awayJetEtMin_(-1),
-      dPhiMin_(-1),
-      jetPartlDRMax_(-1)
+      nearJetEtMin_(0),
+      nearJetEtMax_(10000),
+      awayJetEtMin_(0),
+      dPhiMin_(0),
+      jetPartlDRMax_(0.5)
    {
       SetDefaults();
    }
