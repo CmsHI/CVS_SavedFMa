@@ -13,8 +13,9 @@ cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/job/DiJetAna/runICone5_
 
 # macros
 cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/jetana/DiJetAna/rootlogon.C .
-cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/jetana/DiJetAna/plotFF.C .
 cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/jetana/DiJetAna/plotJetLeading.C .
+cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/jetana/DiJetAna/plotFF.C .
+cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/jetana/DiJetAna/plotShapes.C .
 cp -v /net/hisrv0001/home/frankma/work/hiroot/test/dijet/jetana/DiJetAna/plotFinal.C .
 
 
