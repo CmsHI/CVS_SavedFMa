@@ -13,9 +13,13 @@
 
 namespace DiJetAna {
    // Some constants
+   const Int_t PHINBIN=50;
+   const Float_t PHIMIN=-3.14;
+   const Float_t PHIMAX=3.14;
+   const Int_t ETANBIN=50;
+   const Float_t ETAMIN=-2.8;
+   const Float_t ETAMAX=2.8;
    // for jets
-   const Int_t ETAMIN=-4;
-   const Int_t ETAMAX=4;
    const UInt_t NBIN=100;
    const char * drsgE="E1";
    const char * drdbE="E1 same";
@@ -39,7 +43,7 @@ namespace DiJetAna {
    {
       public:
 	 DiJets();
-	 DiJets(char*  genTag, char* cutTag, TTree* jetTree, TTree* particleTree); 
+	 DiJets(char*  genTag, char* cutTag, TTree* jetTree); 
 
 	 // --- Accessor Functions ---
 	 int GetNNearJets();
@@ -47,7 +51,6 @@ namespace DiJetAna {
 	 TString GetGenTag()                const { return genTag_; }
 	 TString GetCutTag()                const { return cut_.GetCutTag(); }
 	 TTree* GetJetTree()                const { return jetTree_; }
-	 TTree* GetParticleTree()           const { return particleTree_; }
 	 // get cut
 	 AnaCuts GetCut()                   const { return cut_; }
 	 // dijets related
@@ -84,7 +87,6 @@ namespace DiJetAna {
 	 TString	      genTag_;
 	 AnaCuts              cut_;
 	 TTree*		      jetTree_;
-	 TTree*		      particleTree_;
 	 Int_t                verbosity_;
 	 // Tree data
 	 TreeData td_;
@@ -100,16 +102,14 @@ namespace DiJetAna {
       genTag_("none")
    {
       jetTree_ = NULL;
-      particleTree_ = NULL;
    }
 
-   DiJets::DiJets(char*  genTag, char* cutTag, TTree* jetTree, TTree* particleTree) :
+   DiJets::DiJets(char*  genTag, char* cutTag, TTree* jetTree) :
       verbosity_(1),
       genTag_(genTag),
       cut_(cutTag)
    {
       jetTree_ = jetTree;
-      particleTree_ = particleTree;
    }
 
    // === DiJet calculations ===
@@ -140,7 +140,6 @@ namespace DiJetAna {
    {
       os << "generator: " << dj.genTag_;
       if (dj.jetTree_) os << "  jet tree: " << dj.jetTree_->GetName();
-      if (dj.particleTree_) os << "  particle tree: " << dj.particleTree_->GetName();
       if ( dj.verbosity_ >= 1)
 	 os << endl << "cut: " << dj.cut_.GetCutTag() << endl;
       if ( dj.verbosity_ >= 2)
