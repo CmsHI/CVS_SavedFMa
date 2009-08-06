@@ -47,14 +47,14 @@ void dijetsDriver(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/py
    cout << dj1 << endl;
 
    DiJets dj2("Pyquen","v2",trJetPythia);
-   dj2.SetNearJetEtMin(90);
-   dj2.SetNearJetEtMax(110);
-   dj2.SetAwayJetEtMin(50);
-   dj2.SetDPhiMin(2.8);
-   dj2.SetPartlPtMin(0.5); //0.5 by default
-   dj2.SetJetPartlDRMax(0.5);
-   dj2.SetVerbosity(2);
+//   dj2.SetPartlPtMin(0.5); //0.5 by default
+//   dj2.SetNearJetEtMin(PythiaAnaNJetEtMin);
+//   dj2.SetNearJetEtMax(PythiaAnaNJetEtMax);
+//   dj2.SetAwayJetEtMin(PythiaAnaAJetEtMin);
+//   dj2.SetDPhiMin(JDPhiMin);
+//   dj2.SetJetPartlDRMax(0.5);
    dj2.CreateCuts();
+   dj2.SetVerbosity(2);
 
    cout << dj2 << endl;
 
