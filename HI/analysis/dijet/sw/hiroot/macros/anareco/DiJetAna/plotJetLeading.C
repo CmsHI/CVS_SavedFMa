@@ -23,7 +23,7 @@ void plotJetLeading(bool doCheck=true,
    TFile * infile2 = new TFile(infname2);
 //   TNtuple * trJetPyquen = findTree(infile2,"NTPartonLeading");
    TTree * trJetPyquen = findTree(infile2,"evtTreeJetFF");
-   TFile * outfile = new TFile("LeadingHistos.root","RECREATE");
+   TFile * outfile = new TFile(Form("%s/JetHistos.root",plotdir),"RECREATE");
    
    //=== Make kinematic cuts ===
    DiJets dijetana("Dijets","vdefault",trJetPythia);
@@ -83,16 +83,17 @@ void plotJetLeading(bool doCheck=true,
 
    // === Cone info ===
    // -- # particles --
-   drawTree(trJetPythia, "nljCone5NP>>hNJCone5NPPythia",dijetana.GetCut().GetDiJetCut().Data(),drsgE,"hNJCone5NPPythia",";# charged particles in 0.5 cone;",NBIN,0,40,0,kBlack,1,3,1,8);
-   drawTree(trJetPythia, "aljCone5NP>>hAJCone5NPPythia",dijetana.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5NPPythia",";# charged particles in 0.5 cone;",NBIN,0,40,0,kBlack,1,3,1,4);
-   drawTree(trJetPyquen, "nljCone5NP>>hNJCone5NPPyquen",dijetana.GetCut().GetDiJetCut().Data(),drdbE,"hNJCone5NPPyquen",";# charged particles in 0.5 cone;",NBIN,0,40,0,kBlue,1,3,1,8);
-   drawTree(trJetPyquen, "aljCone5NP>>hAJCone5NPPyquen",dijetana.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5NPPyquen",";# charged particles in 0.5 cone;",NBIN,0,40,0,kBlue,1,3,1,4);
+   drawTree(trJetPythia, "nljCone5NP>>hNJCone5NPPythia",dijetana.GetCut().GetDiJetCut().Data(),drsgE,"hNJCone5NPPythia",";# charged particles in 0.5 cone;",NBIN,0,40,1,kBlack,1,3,1,8);
+   drawTree(trJetPythia, "aljCone5NP>>hAJCone5NPPythia",dijetana.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5NPPythia",";# charged particles in 0.5 cone;",NBIN,0,40,1,kBlack,1,3,1,4);
+   drawTree(trJetPyquen, "nljCone5NP>>hNJCone5NPPyquen",dijetana.GetCut().GetDiJetCut().Data(),drdbE,"hNJCone5NPPyquen",";# charged particles in 0.5 cone;",NBIN,0,40,1,kBlue,1,3,1,8);
+   drawTree(trJetPyquen, "aljCone5NP>>hAJCone5NPPyquen",dijetana.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5NPPyquen",";# charged particles in 0.5 cone;",NBIN,0,40,1,kBlue,1,3,1,4);
 
    // --Et--
-   drawTree(trJetPythia, "nljCone5Et>>hNJCone5EtPythia",dijetana.GetCut().GetDiJetCut().Data(),drsgE,"hNJCone5EtPythia",";charged particles Et_{tot} in 0.5 cone;",NBIN,0,100,0,kBlack,1,3,1,8);
-   drawTree(trJetPythia, "aljCone5Et>>hAJCone5EtPythia",dijetana.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5EtPythia",";charged particles Et_{tot} in 0.5 cone;",NBIN,0,100,0,kBlack,1,3,1,4);
-   drawTree(trJetPyquen, "nljCone5Et>>hNJCone5EtPyquen",dijetana.GetCut().GetDiJetCut().Data(),drdbE,"hNJCone5EtPyquen",";charged particles Et_{tot} in 0.5 cone;",NBIN,0,100,0,kBlue,1,3,1,8);
-   drawTree(trJetPyquen, "aljCone5Et>>hAJCone5EtPyquen",dijetana.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5EtPyquen",";charged particles Et_{tot} in 0.5 cone;",NBIN,0,100,0,kBlue,1,3,1,4);
+   drawTree(trJetPythia, "nljCone5Et>>hNJCone5EtPythia",dijetana.GetCut().GetDiJetCut().Data(),drsgE,"hNJCone5EtPythia",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/2,0,120,1,kBlack,1,3,1,8);
+   drawTree(trJetPythia, "aljCone5Et>>hAJCone5EtPythia",dijetana.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5EtPythia",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/2,0,120,1,kBlack,1,3,1,4);
+   drawTree(trJetPyquen, "nljCone5Et>>hNJCone5EtPyquen",dijetana.GetCut().GetDiJetCut().Data(),drdbE,"hNJCone5EtPyquen",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/2,0,120,1,kBlue,1,3,1,8);
+   drawTree(trJetPyquen, "aljCone5Et>>hAJCone5EtPyquen",dijetana.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5EtPyquen",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/2,0,120,1,kBlue,1,3,1,4);
+
 
    //-------------- Done Save Plots----------------------
    printAllCanvases(plotdir);
