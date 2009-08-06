@@ -30,29 +30,30 @@ void dijetsDriver(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/py
    //=== Get input files ===
    //---pythia---
    TFile * infile = findFile(infname1);
-   TNtuple * ntPythia = dynamic_cast<TNtuple*>(infile->Get("NTTruePFF"));
-   TNtuple * ntJetPythia = dynamic_cast<TNtuple*>(infile->Get("NTJetFF"));
-   TNtuple * ntJetLeadingPythia = dynamic_cast<TNtuple*>(infile->Get("NTJetLeading"));
+   TTree * trTruePythia = findTree(infile,"evtTreeTrueFF");
+   TTree * trJetPythia = findTree(infile,"evtTreeJetFF");
    //---pyquen---
    TFile * infile2 = findFile(infname2);
-   TNtuple * ntPyquen = dynamic_cast<TNtuple*>(infile2->Get("NTTruePFF"));
-   TNtuple * ntJetPyquen = dynamic_cast<TNtuple*>(infile2->Get("NTJetFF"));
-   TNtuple * ntJetLeadingPyquen = dynamic_cast<TNtuple*>(infile2->Get("NTJetLeading"));
+   TTree * trTruePyquen = findTree(infile2,"evtTreeTrueFF");
+   TTree * trJetPyquen = findTree(infile2,"evtTreeJetFF");
 
    //=== Creat output ===
    TFile * outfile = new TFile(Form("%s/dijets.root",plotdir),"RECREATE");
 
    DiJets dj1;
    dj1.SetGenTag("Pythia");
+   dj1.SetVerbosity(2);
+   dj1.CreateCuts();
    cout << dj1 << endl;
 
-   DiJets dj2("Pyquen","v2",ntJetLeadingPyquen,ntJetPyquen);
+   DiJets dj2("Pyquen","v2",trJetPythia);
    dj2.SetNearJetEtMin(90);
    dj2.SetNearJetEtMax(110);
    dj2.SetAwayJetEtMin(50);
    dj2.SetDPhiMin(2.8);
    dj2.SetPartlPtMin(0.5); //0.5 by default
    dj2.SetJetPartlDRMax(0.5);
+   dj2.SetVerbosity(2);
    dj2.CreateCuts();
 
    cout << dj2 << endl;
