@@ -759,6 +759,8 @@ void THIDiJetTruthAnaMod::Process()
    LoadBranch(THIParticleArray::kParticlesName);
    LoadBranch(THIVertexArray::kVerticesName);
 
+   printf("===== Beginning to process Event: %d =====\n",fEvent->GetEventNum());
+
    if(fGenRecords == 0) {
       SendError(kAbortAnalysis, "Process", "THIDiJetTruthAnaMod: Sorry, could not get find gen records.");
       return; 
@@ -871,12 +873,13 @@ void THIDiJetTruthAnaMod::Process()
 	 const THIParticle *p=Particles->At(i);
 	 if(p->GetStatus()==1){
 	    // -- use only stable particles
-	    if(!fSelParticles || p->GetCharge()!=0){
+	    if(!fSelParticles ||
+		 ( p->GetCharge()!=0 && p->GetPt()>0.5 && TMath::Abs(p->GetEta())<=2.5 ) 
+	      ){
 	       // -- only charged particles
 	       // Note:
 	       // - This is only used for the analysis, but
 	       //   jet finding is done on all stable particles (check)
-	       if(TMath::Abs(p->GetEta()) <= 2.5){
 		  // -- Eta selection on particles --
 		  // - 2.5 For the tracker acceptance
 
@@ -904,19 +907,18 @@ void THIDiJetTruthAnaMod::Process()
 					fNearLeadingJet->GetMom().DeltaPhi(fAwayLeadingJet->GetPhi()), 
 					trigPart, fEvtDataJetFF);
 		  }
-	       }
 	    }
 	 }
       } // done with particle loop
 
       // === Now all particle, jet level vars have been calculated ===
       //  -- Fill Event Tree --
-      printf("===Will now fill event tree===\n");
+      printf("---Will now fill event tree---n");
       printf("event (jet FF data tree): %d, nljet: %f, aljet: %f, ppt: %f\n",fEvtDataJetFF->event_,fEvtDataJetFF->nljet_,fEvtDataJetFF->aljet_,fEvtDataJetFF->ppt_[0]);
       fEvtTreeTrueFF->Fill();
       fEvtTreeJetFF->Fill();
+      printf("Done Fill ntuple\n\n");
    } // done with subevt loop
-   printf("Done Fill ntuple\n\n");
 }
 
 
