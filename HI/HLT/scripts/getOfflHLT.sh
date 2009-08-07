@@ -8,6 +8,8 @@ print_help () {
    echo usage:
    echo "  getOfflHLT.sh [-c] [-r release] <-f file:raw.root> [-v]"
    echo "                [--cus custom.py]"
+   echo "  Newest available rel: 322"
+   echo "  Past rel's: 321, 311"
 }
 
 if [ $# -eq 0 ]; then
