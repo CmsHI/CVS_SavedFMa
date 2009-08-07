@@ -4,6 +4,7 @@ export PATH=$PATH:$SavedFMa/bin
 export PATH=$PATH:$SavedFMa/data/scripts/transfer
 export PATH=$PATH:$SavedFMa/bin/cmsusr
 export PATH=$PATH:$SavedFMa/HI/HLT/scripts
+export PATH=$PATH:$SavedFMa/cms/pp_tridas/daq/EvF/scripts
 
 #---My paths---
 # -top-
