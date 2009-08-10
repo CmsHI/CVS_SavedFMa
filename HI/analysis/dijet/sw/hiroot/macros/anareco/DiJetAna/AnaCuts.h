@@ -50,6 +50,8 @@ namespace DiJetAna
 	 TString AndCut(TString var, Double_t val, TString opt);
 	 void CreateJetCut();
 	 void CreateJetParticlesCut();
+	 // weights
+	 void AddWeight(const TString& w, TString& cut);
 
 	 // --- Friend Functions ---
 	 friend ostream& operator <<(ostream& outs, const AnaCuts& ct);
@@ -72,6 +74,8 @@ namespace DiJetAna
 	 TString partlsCut_;
 	 TString nearJetPartlsCut_;
 	 TString awayJetPartlsCut_;
+	 // weights
+	 Bool_t hasWeight_;
    };
 
    //
@@ -88,6 +92,8 @@ namespace DiJetAna
       partlsCut_ = "";
       nearJetPartlsCut_ = "";
       awayJetPartlsCut_ = "";
+      // weight
+      hasWeight_ = kFALSE;
    }
    // === Constructors ===
    AnaCuts::AnaCuts() :
@@ -156,6 +162,20 @@ namespace DiJetAna
       awayJetPartlsCut_ = dijetCut_ + " && " + partlsCut_;
       awayJetPartlsCut_ += AndCut(td_.tAJPDR_,jetPartlDRMax_,"max");
    }
+
+   // --- weights ---
+   void AnaCuts::AddWeight(const TString& w, TString& cut)
+   {
+      // for now forsee only add weight one time
+//      if (!hasWeight_) {
+//	 hasWeight_=kTRUE;
+//      }
+
+      cut = "( "+cut+" )";
+      cut = cut + " * ( " + w + " )";
+      cout << "added weight: " << cut << endl;
+   }
+
 
    // === Friend Functions ===
    ostream& operator <<(ostream& os, const AnaCuts& ct)
