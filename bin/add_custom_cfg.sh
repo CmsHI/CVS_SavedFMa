@@ -14,6 +14,9 @@ cusCfgName=${cusCfg##*/}
 cusCfgName=${cusCfgName%.py}
 out=${mainCfgName}_${cusCfgName}.py
 
-cmd="cat $mainCfg $cusCfg > $out"
+cmd="cat $mainCfg $cusCfg >> $out"
 echo $cmd
+
+# run
+echo $cmd > $out
 eval $cmd
