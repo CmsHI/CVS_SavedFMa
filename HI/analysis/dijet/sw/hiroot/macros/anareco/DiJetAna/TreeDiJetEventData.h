@@ -103,6 +103,8 @@ namespace DiJetAna
 	 TString tAJPDR_;
 
 	 // === Functions ===
+	 void SetDefaults();
+	 TreeDiJetEventData();
 	 TreeDiJetEventData(TTree * tree);
 	 void SetBranches();
 	 void ClearCounters();
@@ -111,34 +113,45 @@ namespace DiJetAna
 	 TTree*                             tree_;
    };
 
-   // constructor
-   TreeDiJetEventData::TreeDiJetEventData(TTree * tree) :
+   // Defaults
+   void TreeDiJetEventData::SetDefaults()
+   {
+      // -- jet cone info --
+      nljCone5Et_ = -1;
+      nljCone7Et_ = -1;
+      nljCone5NP_ = -1;
+      nljCone7NP_ = -1;
+      aljCone5Et_ = -1;
+      aljCone7Et_ = -1;
+      aljCone5NP_ = -1;
+      aljCone7NP_ = -1;
+
+      // tree branch names
+      tNJEt_ = "nljet";
+      tAJEt_ = "aljet";
+      tNPtnEt_ = "nlpet";
+      tAPtnEt_ = "alpet";
+      tDPhi_ = "jdphi";
+      tNJEta_ = "nljeta";
+      tAJEta_ = "aljeta";
+      tPPt_ = "ppt";
+      tNJPDR_ = "pndr";
+      tAJPDR_ = "padr";
+   }
+   // constructors
+   TreeDiJetEventData::TreeDiJetEventData()
       //
       // We will call the default constructor of the event variables   
       //
-
-      // -- jet cone info --
-      nljCone5Et_(-1),
-      nljCone7Et_(-1),
-      nljCone5NP_(-1),
-      nljCone7NP_(-1),
-      aljCone5Et_(-1),
-      aljCone7Et_(-1),
-      aljCone5NP_(-1),
-      aljCone7NP_(-1),
-
-      // tree branch names
-      tNJEt_("nljet"),
-      tAJEt_("aljet"),
-      tNPtnEt_("nlpet"),
-      tAPtnEt_("alpet"),
-      tDPhi_("jdphi"),
-      tNJEta_("nljeta"),
-      tAJEta_("aljeta"),
-      tPPt_("ppt"),
-      tNJPDR_("pndr"),
-      tAJPDR_("padr")
    {
+      SetDefaults();
+   }
+   TreeDiJetEventData::TreeDiJetEventData(TTree * tree)
+      //
+      // We will call the default constructor of the event variables   
+      //
+   {
+      SetDefaults();
       tree_ = tree;
    }
 

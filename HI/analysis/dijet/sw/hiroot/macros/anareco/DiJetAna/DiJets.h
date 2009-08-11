@@ -8,7 +8,7 @@
 #include "TString.h"
 #include "TTree.h"
 #include "AnaCuts.h"
-#include "TreeData.h"
+#include "TreeDiJetEventData.h"
 #include "ana/savedfrankTools.C"
 
 namespace DiJetAna {
@@ -90,7 +90,7 @@ namespace DiJetAna {
 	 TTree*		      jetTree_;
 	 Int_t                verbosity_;
 	 // Tree data
-	 TreeData td_;
+	 TreeDiJetEventData td_;
 	 // dijets ana info
 	 Int_t                numDijets_;
 	 Double_t             dijetsNorm_;

@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include "TString.h"
-#include "TreeData.h"
+#include "TreeDiJetEventData.h"
 
 namespace DiJetAna
 {
@@ -76,7 +76,7 @@ namespace DiJetAna
 	 Double_t partlPtMin_;
 	 Double_t jetPartlDRMax_;
 	 // Tree data
-	 TreeData td_;
+	 TreeDiJetEventData td_;
 
 	 // Final jet cut string for tree
 	 TString dijetCut_;
