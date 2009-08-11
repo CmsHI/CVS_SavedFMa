@@ -30,6 +30,9 @@ void plotFinal(char * infname1 = "LeadingHistos.root",
    TH1D * hXiNearJetPythia = dynamic_cast<TH1D*>(drawNormHist(f2,"hXiNearJetPythia",drdbE,"","","",-1,0,kBlack,0,0,0,0,10));
    TH1D * hXiNearJetPyquen = dynamic_cast<TH1D*>(drawNormHist(f2,"hXiNearJetPyquen",drdbE,"","","",-1,0,kBlue,0,0,0,0,10));
 
+   TH1F * h = dynamic_cast<TH1F*>(findHist("hNearFFRatio"));
+   h->SetTitleSize(0.04,"Y");
+   h->GetYaxis()->SetTitleOffset(1.4);
    TH1F * hPnR = dynamic_cast<TH1F*>(drawNormHist(f2,"hNearFFRatio",drsg,"","","",-1,0,kRed,0,0,0,0,4));
    TH1F * hPaR = dynamic_cast<TH1F*>(drawNormHist(f2,"hAwayFFRatio",drdb,"","","",-1,0,kRed,0,0,0,0,4));
    TH1F * hJnR = dynamic_cast<TH1F*>(drawNormHist(f2,"hNearJetFFRatio",drdbE,"","","",-1,0,kBlue,0,0,0,0,4));

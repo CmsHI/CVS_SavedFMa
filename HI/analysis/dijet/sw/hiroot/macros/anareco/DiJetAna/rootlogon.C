@@ -62,10 +62,17 @@
    gStyle->SetStatFontSize(0.02);
    //gStyle->SetOptStat(1111);
    //gStyle->SetOptStat(0);
+
+   // my options
    gStyle->SetPadLeftMargin(0.17);
    gStyle->SetPadRightMargin(0.17);
    gStyle->SetPadBottomMargin(0.17);
    //gStyle->SetPadTopMargin(0.05);
    gStyle->SetPadTopMargin(0.17);
 
+   gStyle->SetNdivisions(5);
+   gStyle->SetTitleXSize(.05);
+   gStyle->SetTitleYSize(.04);
+   gStyle->SetTitleXOffset(1.2);
+   gStyle->SetTitleYOffset(1.4);
 }
