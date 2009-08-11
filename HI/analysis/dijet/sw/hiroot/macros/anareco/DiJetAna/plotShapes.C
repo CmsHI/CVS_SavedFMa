@@ -91,11 +91,28 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
    drawTree(trJetPyquen, "aljCone5NP>>hAJCone5NPPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5NPPyquen",";# charged particles in 0.5 cone;",NBIN,0,40,1,kBlue,1,3,1,4);
 
    // --Et--
-   drawTree(trJetPythia, "nljCone5Et>>hNJCone5EtPythia",pyt.GetCut().GetDiJetCut().Data(),drsgE,"hNJCone5EtPythia",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/2,0,120,1,kBlack,1,3,1,8);
-   drawTree(trJetPythia, "aljCone5Et>>hAJCone5EtPythia",pyt.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5EtPythia",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/2,0,120,1,kBlack,1,3,1,4);
-   drawTree(trJetPyquen, "nljCone5Et>>hNJCone5EtPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbE,"hNJCone5EtPyquen",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/2,0,120,1,kBlue,1,3,1,8);
-   drawTree(trJetPyquen, "aljCone5Et>>hAJCone5EtPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5EtPyquen",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/2,0,120,1,kBlue,1,3,1,4);
+   drawTree(trJetPythia, "nljCone5Et>>hNJCone5EtPythia",pyt.GetCut().GetDiJetCut().Data(),drsgE,"hNJCone5EtPythia",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/5,0,120,0,kBlack,1,3,1,8);
+   drawTree(trJetPythia, "aljCone5Et>>hAJCone5EtPythia",pyt.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5EtPythia",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/5,0,120,1,kBlack,1,3,1,4);
+   drawTree(trJetPyquen, "nljCone5Et>>hNJCone5EtPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbE,"hNJCone5EtPyquen",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/5,0,120,1,kBlue,1,3,1,8);
+   drawTree(trJetPyquen, "aljCone5Et>>hAJCone5EtPyquen",pyq.GetCut().GetDiJetCut().Data(),drdbE,"hAJCone5EtPyquen",";#sum_{in 0.5 cone} E_{T}^{charged particles} [GeV];",NBIN/5,0,120,1,kBlue,1,3,1,4);
 
+   // === Add Jet Shape Weights ===
+   printf("===== Add Weights =====\n");
+   pyt.cut_.AddWeight("ppt/nljCone5Et",pyt.cut_.nearJetPartlsCut_);
+   pyt.cut_.AddWeight("ppt/aljCone5Et",pyt.cut_.awayJetPartlsCut_);
+   cout << pyt << endl;
+   pyq.cut_.AddWeight("ppt/nljCone5Et",pyq.cut_.nearJetPartlsCut_);
+   pyq.cut_.AddWeight("ppt/aljCone5Et",pyq.cut_.awayJetPartlsCut_);
+   cout << pyq << endl;
+
+   drawTree(trJetPythia, "pndr>>hNJCone5DiffShapePythia",pyt.GetCut().GetNJetPartlCut().Data(),drsgE,"hNJCone5DiffShapePythia",";dR;#rho(dR)",NBIN/10,0,0.5,1,kBlack,1,3,1,8,pyt.GetDiJetsNorm());
+   drawTree(trJetPythia, "padr>>hAJCone5DiffShapePythia",pyt.GetCut().GetAJetPartlCut().Data(),drdbE,"hAJCone5DiffShapePythia",";dR;#rho(dR)",NBIN/10,0,0.5,1,kBlack,1,3,1,4,pyt.GetDiJetsNorm());
+   drawTree(trJetPyquen, "pndr>>hNJCone5DiffShapePyquen",pyq.GetCut().GetNJetPartlCut().Data(),drdbE,"hNJCone5DiffShapePyquen",";dR;#rho(dR)",NBIN/10,0,0.5,1,kBlue,1,3,1,8,pyq.GetDiJetsNorm());
+   drawTree(trJetPyquen, "padr>>hAJCone5DiffShapePyquen",pyq.GetCut().GetAJetPartlCut().Data(),drdbE,"hAJCone5DiffShapePyquen",";dR;#rho(dR)",NBIN/10,0,0.5,1,kBlue,1,3,1,4,pyq.GetDiJetsNorm());
+
+   // ---ratio---
+   drawDivHist("hNJCone5DiffShapePyquen","hNJCone5DiffShapePythia",drsgFFE,"hNJCone5DiffShapeRatio",";dR;#rho_{pythia}(dR)/#rho_{pyquen}(dR)",NBIN/10,0,0.5,0,kBlue,1,3,1,8,3.);
+   drawDivHist("hAJCone5DiffShapePyquen","hAJCone5DiffShapePythia",drdbFFE,"hAJCone5DiffShapeRatio",";dR;#rho(dR)",NBIN/10,0,0.5,0,kBlue,1,3,1,4,3.);
 
    //=== Save and exit ===
    printAllCanvases(plotdir);
