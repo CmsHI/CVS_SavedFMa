@@ -33,6 +33,9 @@ namespace DiJetAna
 	 TString GetDiJetCut() const { return dijetCut_; }
 	 TString GetNJetPartlCut() const { return nearJetPartlsCut_; }
 	 TString GetAJetPartlCut() const { return awayJetPartlsCut_; }
+	 // cut with weights
+	 TString GetNJetPartlCutW() const { return AddWeight(nearJetPartlsWt_,nearJetPartlsCut_); }
+	 TString GetAJetPartlCutW() const { return AddWeight(awayJetPartlsWt_,awayJetPartlsCut_); }
 
 	 // --- Mutator Functions ---
 	 void SetCutTag(char* cutTag) { cutTag_ = TString(cutTag); }
@@ -51,10 +54,16 @@ namespace DiJetAna
 	 void CreateJetCut();
 	 void CreateJetParticlesCut();
 	 // weights
-	 void AddWeight(const TString& w, TString& cut);
+	 // - note:
+	 //   * We need to make this a const function so that the Get functions can use
+	 //     this function.
+	 //   * cf http://cboard.cprogramming.com/cplusplus-programming/103606-error-passing-const-argument-discards-qualifiers.html
+	 TString AddWeight (const TString& w, TString cut) const;
+	 void SetWeightParticles(const TString& w);
 
 	 // --- Friend Functions ---
 	 friend ostream& operator <<(ostream& outs, const AnaCuts& ct);
+
       protected:
 	 TString cutTag_;
 	 // jet level cuts
@@ -75,7 +84,8 @@ namespace DiJetAna
 	 TString nearJetPartlsCut_;
 	 TString awayJetPartlsCut_;
 	 // weights
-	 Bool_t hasWeight_;
+	 TString nearJetPartlsWt_;
+	 TString awayJetPartlsWt_;
    };
 
    //
@@ -93,7 +103,8 @@ namespace DiJetAna
       nearJetPartlsCut_ = "";
       awayJetPartlsCut_ = "";
       // weight
-      hasWeight_ = kFALSE;
+      nearJetPartlsWt_ = "";
+      awayJetPartlsWt_ = "";
    }
    // === Constructors ===
    AnaCuts::AnaCuts() :
@@ -164,17 +175,20 @@ namespace DiJetAna
    }
 
    // --- weights ---
-   void AnaCuts::AddWeight(const TString& w, TString& cut)
+   void AnaCuts::SetWeightParticles(const TString& w)
    {
-      // for now forsee only add weight one time
-//      if (!hasWeight_) {
-//	 hasWeight_=kTRUE;
-//      }
-
+      nearJetPartlsWt_ = w;
+      awayJetPartlsWt_ = w;
+      awayJetPartlsWt_.ReplaceAll("nl","al");
+   }
+   TString AnaCuts::AddWeight(const TString& w, TString cut) const
+   {
       cut = "( "+cut+" )";
       cut = cut + " * ( " + w + " )";
-      cout << "added weight: " << cut << endl;
+      //cout << "added weight: " << cut << endl;
+      return cut;
    }
+
 
 
    // === Friend Functions ===
@@ -202,6 +216,8 @@ namespace DiJetAna
       os << "  particles:          " <<  ct.partlsCut_ << endl;
       os << "  near_jet_particles: " <<  ct.nearJetPartlsCut_ << endl;
       os << "  away_jet_particles: " <<  ct.awayJetPartlsCut_ << endl;
+      os << "  near_jptl + weight: " <<  ct.GetNJetPartlCutW() << endl;
+      os << "  away_jptl + weight: " <<  ct.GetAJetPartlCutW() << endl;
       return os;
    }
 

@@ -19,8 +19,7 @@ void anacutDriver ()
    c1.CreateJetCut();
    c1.CreateJetParticlesCut();
 
-   c1.AddWeight("ppt/nljCone5Et",c1.nearJetPartlsCut_);
-   c1.AddWeight("ppt/aljCone5Et",c1.awayJetPartlsCut_);
+   c1.SetWeightParticles("ppt/nljCone5Et");
 
    cout << c1 << endl;
 
