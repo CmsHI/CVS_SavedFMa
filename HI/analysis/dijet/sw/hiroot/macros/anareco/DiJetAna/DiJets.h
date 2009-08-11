@@ -82,10 +82,11 @@ namespace DiJetAna {
 	 // Freind Functions
 	 friend ostream& operator <<(ostream& outs, const DiJets& dj);
 	 
+	 // === public members ===
+	 AnaCuts              cut_;
 
       private:
 	 TString	      genTag_;
-	 AnaCuts              cut_;
 	 TTree*		      jetTree_;
 	 Int_t                verbosity_;
 	 // Tree data
