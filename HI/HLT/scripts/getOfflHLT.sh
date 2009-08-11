@@ -17,6 +17,8 @@ if [ $# -eq 0 ]; then
    exit 1
 fi
 
+# Save command prompt
+cmdprompt="$@"
 # initialze variables
 checkConfDB="false"  release=  dbCfg=  
 infile=  verbose=0 cusPy=
@@ -103,7 +105,11 @@ fi
 
 
 # finally, run
-edmConfigFromDB --configName $dbCfg --input $infile > $name
+echo "# command line: $cmdprompt" > $name
+cmd="edmConfigFromDB --configName $dbCfg --input $infile >> $name"
+echo "# execute: $cmd" >> $name
+eval $cmd
+
 if [ $cusPy ]; then
    cat $cusPy | grep -v 'as cms' >> $name
    echo 'process=customise(process)' >> $name
