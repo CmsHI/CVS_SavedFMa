@@ -5,7 +5,7 @@ if [ $# -eq 0 ]; then
    echo "Usage: "
    echo "  $0 <infile_name> <pyq_nljetmin> <pyq_nljetmax> <pyq_aljetmin> <pyq_nljetmin> <pyq_nljetmax> <pyq_aljetmin> <jdphimin> <tag_name>"
    echo "Eg:"
-   echo "  ./runGenericJetAnaPt.sh dijet_000001.root 90 110 50 90 110 50 2.8 121"
+   echo "  ./runGenericJetAnaPt.sh dijet_000001.root 90 110 50 90 110 50 2.8 StudyShapes"
    exit 1;
 fi
 
@@ -15,7 +15,7 @@ echo "$@"
 export job=prodPtHat50
 export gen0=pythia50
 export gen1=pyquen50
-export rootskim=iCone5_match35_jetEtCut30_Mod_123SelP
+export rootskim=iCone5_match35_jetEtCut30_Mod_123SelPJob
 export infileName=dijet_000001.root
 export infileName=$1
 export input0="$HIROOT_BASEURL/$job/$gen0/$rootskim"
