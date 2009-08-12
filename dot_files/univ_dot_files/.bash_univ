@@ -29,6 +29,8 @@ export NAGIOS_PLUGINS=$tier2/t2_svn/trunk/packages/nagios/root/usr/lib64/nagios/
 # 21X working cvs
 export cvsWorking=$SavedFMa/cmssw/cmssw_2_1_X
 export EvFrun=$SavedFMa/pp/DAQ/EvF/run
+# --cmssw helpers--
+export mySeqPython=$SavedFMa/cmssw/MyConfiguration/Sequences/python
 
 #---My shortcuts---
 alias ema='emacs -nw'
