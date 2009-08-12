@@ -15,6 +15,7 @@ fi
 appendix=
 check=false
 # save options
+cmdline="mycmsRun ""$@"
 cmsopt=
 cfgName=$1
 # par in vars
@@ -36,7 +37,8 @@ done
 
 outf=${cfgName%.py}_${appendix}.txt
 
-echo cmsRun options: "$cmsopt" > log/$outf
+echo $cmdline > log/$outf
+echo cmsRun options: "$cmsopt" >> log/$outf
 run="cmsRun ""$cmsopt"" >> log/$outf 2>&1 &"
 echo $run
 
