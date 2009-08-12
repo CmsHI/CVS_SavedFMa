@@ -18,5 +18,5 @@ cmd="cat $mainCfg $cusCfg >> $out"
 echo $cmd
 
 # run
-echo $cmd > $out
+echo "#cmdline: $cmd" > $out
 eval $cmd
