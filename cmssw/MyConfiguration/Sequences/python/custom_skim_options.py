@@ -19,7 +19,7 @@ options.output = 'output.root'
 options.parseArguments()
 
 # now define the customization
-def customise(process):
+def customise_skim(process):
 #   process.options.wantSummary = cms.untracked.bool(True)
    process.source.fileNames = options.files
    process.maxEvents.input = options.maxEvents
@@ -28,7 +28,7 @@ def customise(process):
    return(process)
 
 # redefine process
-process=customise(process)
+process=customise_skim(process)
 
 # === print out summary of cfg ===
 print "===Summary of Final Configuration==="
