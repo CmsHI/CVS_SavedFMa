@@ -2,6 +2,14 @@
 if [ $# -eq 0 ]; then
    echo "Usage:"
    echo "  add_custom_cfg.sh <main_cfg.py> <cus_cfg.py>"
+   echo "Examples:"
+   echo '  add_custom_cfg.sh DIGI_RAW_MC_31X_V3_driver.py $SavedFMa/cmssw/MyConfiguration/Sequences/python/add_source_dbs_cff.py'
+   echo "    * for dbs source"
+   echo '  add_custom_cfg.sh custom_DIGI_RAW_MC_31X_V3_driver.py $SavedFMa/cmssw/MyConfiguration/Sequences/python/custom_skim_options.py'
+   echo "    * for skimming"
+   echo '  add_custom_cfg.sh custom_DIGI_RAW_MC_31X_V3_driver.py $SavedFMa/cmssw/MyConfiguration/Sequences/python/mycustom_options.py'
+   echo "    * for options and input parsing"
+   echo '  add_custom_cfg.sh custom_DIGI_RAW_MC_31X_V3_driver.py $SavedFMa/cmssw/MyConfiguration/Sequences/python/output_cfg_summary.py'
    exit 1
 fi
 
@@ -36,7 +44,3 @@ eval $cmd
 # clean up
 rm -f tmp.py
 
-# add output of cfg summary
-#if [ $SavedFMa/cmssw/MyConfiguration/Sequences/python/output_cfg_summary.py ]; then
-#   cat $SavedFMa/cmssw/MyConfiguration/Sequences/python/output_cfg_summary.py >> $out
-#fi
