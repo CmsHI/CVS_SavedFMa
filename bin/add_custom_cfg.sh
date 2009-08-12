@@ -20,3 +20,8 @@ echo $cmd
 # run
 echo "#cmdline: $cmd" > $out
 eval $cmd
+
+# add output of cfg summary
+if [ $SavedFMa/cmssw/MyConfiguration/Sequences/python/output_cfg_summary.py ]; then
+   cat $SavedFMa/cmssw/MyConfiguration/Sequences/python/output_cfg_summary.py >> $out
+fi
