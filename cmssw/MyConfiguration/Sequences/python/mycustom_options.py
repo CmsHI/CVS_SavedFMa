@@ -12,8 +12,8 @@ print "\nBegin My Customization\n"
 import FWCore.ParameterSet.VarParsing as VarParsing
 options = VarParsing.VarParsing ('standard')
 # set default values
-options.files = 'file:input.root'
-options.maxEvents = 100
+options.files = ''
+options.maxEvents = -1
 options.output = 'output.root'
 # get and parse the command line arguments
 options.parseArguments()
@@ -21,9 +21,11 @@ options.parseArguments()
 # now define the customization
 def mycustomise(process):
    process.options.wantSummary = cms.untracked.bool(True)
-   try:
+   if (options.files == ''):
       process.source.fileNames = options.files
-      process.maxEvents.input = options.maxEvents
+   process.maxEvents.input = options.maxEvents
+   try:
+      process.output.fileName = options.output
    except:
       print "no output module with the given name"
    return(process)
