@@ -20,25 +20,14 @@ options.parseArguments()
 
 # now define the customization
 def mycustomise(process):
-#   process.options.wantSummary = cms.untracked.bool(True)
-   process.source.fileNames = options.files
-   process.maxEvents.input = options.maxEvents
+   process.options.wantSummary = cms.untracked.bool(True)
+   try:
+      process.source.fileNames = options.files
+      process.maxEvents.input = options.maxEvents
+   except:
+      print "no output module with the given name"
    return(process)
 
 # redefine process
 process=mycustomise(process)
-
-# === print out summary of cfg ===
-print "===Summary of Final Configuration==="
-print "input: \n  ", process.source.fileNames
-print "# events: \n  ", process.maxEvents.input
-print "global tag: \n ", process.GlobalTag.globaltag
-# Using the itervalues() in dict to step through the dict container.
-print "All paths found in cfg:"
-for iterable in process.paths.itervalues():
-   print "  ", iterable.label(),": ", iterable
-
-print "\nAll endpaths found in  cfg:"
-for iterable in process.endpaths.itervalues():
-   print "  ", iterable.label(),": ", iterable
 
