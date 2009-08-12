@@ -9,6 +9,12 @@ if [ $# -eq 0 ]; then
    echo "    * for skimming"
    echo '  add_custom_cfg.sh custom_DIGI_RAW_MC_31X_V3_driver.py $SavedFMa/cmssw/MyConfiguration/Sequences/python/mycustom_options.py'
    echo "    * for options and input parsing"
+   echo
+   echo '  add_custom_cfg.sh playback_HIonV1V11_cfg.py $SavedFMa/cmssw/MyConfiguration/Sequences/python/custom_offsite_offline.py'
+   echo 
+   echo '  add_custom_cfg.sh playback_HIonV1V11_cfg.py $SavedFMa/cmssw/MyConfiguration/Sequences/python/custom_p5_online.py'
+   echo 
+   echo '  Finally:'
    echo '  add_custom_cfg.sh custom_DIGI_RAW_MC_31X_V3_driver.py $SavedFMa/cmssw/MyConfiguration/Sequences/python/output_cfg_summary.py'
    exit 1
 fi
