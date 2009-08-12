@@ -5,5 +5,4 @@ def add_source_from_dbs_cff(process):
    return(process)
 
 process = add_source_from_dbs_cff(process)
-print process.source.fileNames
 
