@@ -26,6 +26,8 @@ case $1 in
    # to be used at fuval machine!
    eval "$2=/tmp/frankma"
    ;;
+   mit)
+   eval "$2=cgate.mit.edu:/net/pstore01/d00/scratch/frankma/data/cmssw"
 esac
 }
 
