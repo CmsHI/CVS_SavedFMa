@@ -60,6 +60,7 @@ alias hibat5='ssh -Y hibat0005'
 alias daily='vi tier2/report/daily_operation/2008_daily_report.txt'
 #-- my CMSSW local settings --
 alias setcms=". $SavedFMa/bin/cgate/basic/cmssw_set_basic.sh"
+alias setosg=". $SavedFMa/bin/cgate/basic/osg_cmssw_set_basic.sh"
 alias cvscms=". $SavedFMa/bin/cvsinit.sh"
 #-- Root stup --
 alias setroot=". /net/hisrv0001/home/frankma/UserCode/SavedFMa/bin/cgate/set_root.sh"
