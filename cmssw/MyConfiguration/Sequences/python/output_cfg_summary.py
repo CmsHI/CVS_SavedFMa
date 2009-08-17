@@ -3,7 +3,7 @@
 #   * cf: http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/SavedFMa/pp/HLT/sw/hlt/timing/test/bryanTimer.py?view=markup
 #
 def output_cfg_summary(process):
-   print "======================= Configuration Summary ===================="
+   print "============ Configuration Summary for: ",process.name_(),"==========="
    print "=== source ==="
    print "  ", process.source
    print "\n=== Options ==="
