@@ -21,7 +21,7 @@ options.parseArguments()
 # now define the customization
 def mycustomise(process):
    process.options.wantSummary = cms.untracked.bool(True)
-   if (options.files == ''):
+   if (options.files != ''):
       process.source.fileNames = options.files
    process.maxEvents.input = options.maxEvents
    try:
