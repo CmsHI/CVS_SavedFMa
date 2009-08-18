@@ -7,10 +7,11 @@
 #
 def output_cfg_summary(process):
    print "================ Configuration Summary for: ",process.name_(),"==============="
-   print "=== source cfg head 20: ==="
-   sourcelines=process.source.dumpPython().split('\n')
-   for i in sourcelines[:20]:
-      print i
+   print "=== source cfg head: ==="
+#   sourcelines=process.source.dumpPython().split('\n')
+#   for i in sourcelines[:20]:
+#      print i
+   print process.source.dumpPython()[:1000]
 
    print "\n=== Options ==="
    try:
