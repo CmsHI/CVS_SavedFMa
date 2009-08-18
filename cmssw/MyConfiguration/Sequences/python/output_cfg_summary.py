@@ -23,7 +23,10 @@ def output_cfg_summary(process):
       print "  event content: ", process.output.outputCommands, "\n"
    except:
       print ""
-   print "  options: ", process.options, "\n"
+   try:
+      print "  options: ", process.options, "\n"
+   except:
+      print "no process.options defined in this cfg"
 
    print "\n=== verbosity ==="
    try:

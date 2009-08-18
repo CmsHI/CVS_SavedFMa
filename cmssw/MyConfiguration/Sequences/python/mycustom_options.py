@@ -20,7 +20,10 @@ options.parseArguments()
 
 # now define the customization
 def mycustomise(process):
-   process.options.wantSummary = cms.untracked.bool(True)
+   try:
+      process.options.wantSummary = cms.untracked.bool(True)
+   except:
+      print "no process.options defined in this cfg"
    if (options.files[0] != 'input0.root'):
       process.source.fileNames = options.files
    process.maxEvents.input = options.maxEvents
