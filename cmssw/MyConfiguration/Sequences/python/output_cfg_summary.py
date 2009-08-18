@@ -2,10 +2,16 @@
 # - iteralbles
 #   * cf: http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/SavedFMa/pp/HLT/sw/hlt/timing/test/bryanTimer.py?view=markup
 #
+# - string operations
+#   * cf http://docs.python.org/library/stdtypes.html
+#
 def output_cfg_summary(process):
-   print "============ Configuration Summary for: ",process.name_(),"==========="
-   print "=== source ==="
-   print "  ", process.source
+   print "================ Configuration Summary for: ",process.name_(),"==============="
+   print "=== source cfg head 20: ==="
+   sourcelines=process.source.dumpPython().split('\n')
+   for i in sourcelines[:20]:
+      print i
+
    print "\n=== Options ==="
    try:
       print "  # events: ", process.maxEvents.input, "\n"
@@ -19,8 +25,11 @@ def output_cfg_summary(process):
    print "  options: ", process.options, "\n"
 
    print "\n=== verbosity ==="
-   print "  categories:", process.MessageLogger.categories
-   print "  destinations:", process.MessageLogger.destinations
+   try:
+      print "  categories:", process.MessageLogger.categories
+      print "  destinations:", process.MessageLogger.destinations
+   except:
+      print "cfg has no MessageLogger definition"
 
    # --Using the itervalues() in dict to step through the dict container--
    print "\n===All paths found in cfg:==="
