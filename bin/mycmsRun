@@ -41,6 +41,7 @@ echo $cmdline > log/$outf
 echo cmsRun options: "$cmsopt" >> log/$outf
 run="cmsRun ""$cmsopt"" >> log/$outf 2>&1 &"
 echo $run
+echo   At `date`
 
 if [ $check == false ]; then
    echo run!
