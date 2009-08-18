@@ -5,7 +5,12 @@
 print "\nBegin Skim Customization\n"
 # now define the customization
 def customise_skim(process):
-   process.output.outputCommands = ['drop *','keep FEDRawDataCollection_rawDataCollector_*_DIGI2RAW']
+   classname="FEDRawDataCollection"
+   modulename="rawDataCollector"
+   processname=process.name_()
+   rawtag=classname+"_"+modulename+"_*_"+processname
+
+   process.output.outputCommands = ['drop *','keep '+rawtag]
    return(process)
 
 # redefine process
