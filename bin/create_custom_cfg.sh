@@ -9,6 +9,7 @@ fi
 
 script=create_custom_python_cfg.sh
 echo "#!/bin/bash -" > $script
+echo "#command line: create_custom_cfg.sh $@" >> $script
 
 cfg0=$1
 shift
