@@ -43,4 +43,12 @@ def output_cfg_summary(process):
    for iterable in process.endpaths.itervalues():
       print "  ", iterable.label(),": ", iterable
 
+   # final schedule
+   print "\n===Final Schedule of cfg:==="
+   try:
+      for i in process.schedule:
+	 print "  ", i.label(), ": ", i
+   except:
+      print "*** Attention ***: No schedule defined in cfg"
+
 output_cfg_summary(process)
