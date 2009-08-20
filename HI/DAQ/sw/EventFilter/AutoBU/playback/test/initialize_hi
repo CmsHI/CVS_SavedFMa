@@ -214,12 +214,28 @@ my @apps = ($BUappname,$BUlocalid,0,
 
 if ($doSM) { push (@apps,$SMappname); push (@apps,$SMlocalid); push (@apps,0); }
 
+# === HI event data info ===
+$maxHIEvtSize=0x400000; # ~ 4MB cf Christof's March 09, 09 TSG talk
+
+$rawHIEvtBufferSize=2*$maxHIEvtSize;
+$recoOnlyHIEvtBufferSize=0x200000; # ~ pp for now
+$recoHIEvtBufferSize=$rawHIEvtBufferSize+$recoOnlyHIEvtBufferSize;
+$dqmHIEvtBufferSize=0x100000; # ~ pp for now
+
+# --summary output--
+print "HI data buffer sizes:\n";
+printf "  raw:  %e\n", $rawHIEvtBufferSize;
+printf "  reco: %e\n", $recoHIEvtBufferSize;
+printf "  dqm:  %e\n", $dqmHIEvtBufferSize;
+
+
+# === xdaq parameters ===
 my @BUproperties = ("runNumber","unsignedInt",$runNumber,
 		    "replay","boolean","false",
 		    "queueSize","unsignedInt","32",
 		    "crc","boolean","true",
 		    "overwriteEvtId","boolean","false",
-		    "eventBufferSize","unsignedInt","0x400000");
+		    "eventBufferSize","unsignedInt",$rawHIEvtBufferSize);
 
     
 my @PBproperties = ("parameterSet","string","file:$PBcfg",
@@ -235,9 +251,9 @@ my @RBproperties = ("runNumber",   "unsignedInt",$runNumber,
 		    "nbRawCells",  "unsignedInt","16",
 		    "nbRecoCells", "unsignedInt","8",
 		    "nbDqmCells",  "unsignedInt","8",
-		    "rawCellSize", "unsignedInt","0x200000",
-		    "recoCellSize","unsignedInt","0x400000",
-                    "dqmCellSize", "unsignedInt","0x100000");
+		    "rawCellSize", "unsignedInt",$rawHIEvtBufferSize,
+		    "recoCellSize","unsignedInt",$recoHIEvtBufferSize,
+                    "dqmCellSize", "unsignedInt",$dqmHIEvtBufferSize);
 
 if (!$doEP) { push (@RPproperties,"doDropEvents","boolean","true"); }
 
@@ -253,6 +269,7 @@ my @SMproperties = ("STparameterSet",   "string",     "file:$SMcfg",
 		    "fileCatalog",      "string",     "summaryCatalog.txt",
 		    "setupLabel",       "string",     "test");
 
+#die ("finished setting parameters\n");
 
 open (XML,">./xml/evf.xml") or die ("Can't open file: $!\n");
 print XML makeXmlHeader();
