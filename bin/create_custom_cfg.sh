@@ -26,3 +26,6 @@ else
 fi
 
 chmod +x $script
+
+# run script
+./$script
