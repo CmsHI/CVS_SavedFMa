@@ -60,6 +60,7 @@ namespace DiJetAna
 	 // -- particle info --
 	 Int_t			    evtnp_;
 	 Int_t		  	    ppid_[MAXNPARTICLES];
+	 Int_t		  	    pch_[MAXNPARTICLES];
 	 Double_t	      	    ppt_[MAXNPARTICLES];
 	 Double_t		    peta_[MAXNPARTICLES];
 	 Double_t		    pphi_[MAXNPARTICLES];
@@ -79,14 +80,22 @@ namespace DiJetAna
 	 
 	 // -- jet cone info --
 	 Double_t		    nljCone5Et_;
-	 Double_t    		    nljCone7Et_;
 	 Int_t			    nljCone5NP_;
-	 Int_t			    nljCone7NP_;
+	 Double_t    		    nljCone10Et_;
+	 Int_t			    nljCone10NP_;
+	 Double_t		    nljCone15Et_;
+	 Int_t			    nljCone15NP_;
+	 Double_t    		    nljCone30Et_;
+	 Int_t			    nljCone30NP_;
 
 	 Double_t	      	    aljCone5Et_;
-	 Double_t    		    aljCone7Et_;
 	 Int_t			    aljCone5NP_;
-	 Int_t			    aljCone7NP_;
+	 Double_t    		    aljCone10Et_;
+	 Int_t			    aljCone10NP_;
+	 Double_t		    aljCone15Et_;
+	 Int_t			    aljCone15NP_;
+	 Double_t    		    aljCone30Et_;
+	 Int_t			    aljCone30NP_;
 
 	 // --- tree branch names ---
 	 // jet level
@@ -118,13 +127,21 @@ namespace DiJetAna
    {
       // -- jet cone info --
       nljCone5Et_ = -1;
-      nljCone7Et_ = -1;
       nljCone5NP_ = -1;
-      nljCone7NP_ = -1;
+      nljCone10Et_ = -1;
+      nljCone10NP_ = -1;
+      nljCone15Et_ = -1;
+      nljCone15NP_ = -1;
+      nljCone30Et_ = -1;
+      nljCone30NP_ = -1;
       aljCone5Et_ = -1;
-      aljCone7Et_ = -1;
       aljCone5NP_ = -1;
-      aljCone7NP_ = -1;
+      aljCone10Et_ = -1;
+      aljCone10NP_ = -1;
+      aljCone15Et_ = -1;
+      aljCone15NP_ = -1;
+      aljCone30Et_ = -1;
+      aljCone30NP_ = -1;
 
       // tree branch names
       tNJEt_ = "nljet";
@@ -199,6 +216,7 @@ namespace DiJetAna
       // -- particle info --
       tree_->Branch("evtnp",&(this->evtnp_),"evtnp/I");
       tree_->Branch("ppid",this->ppid_,"ppid[evtnp]/I");
+      tree_->Branch("pch",this->pch_,"pch[evtnp]/I");
       tree_->Branch("ppt",this->ppt_,"ppt[evtnp]/D");
       tree_->Branch("peta",this->peta_,"peta[evtnp]/D");
       tree_->Branch("pphi",this->pphi_,"pphi[evtnp]/D");
@@ -218,26 +236,42 @@ namespace DiJetAna
 
 	 // -- jet cone info --
       tree_->Branch("nljCone5Et", &(this->nljCone5Et_), "nljCone5Et/D");
-      tree_->Branch("nljCone7Et", &(this->nljCone7Et_), "nljCone7Et/D");
       tree_->Branch("nljCone5NP", &(this->nljCone5NP_), "nljCone5NP/I");
-      tree_->Branch("nljCone7NP", &(this->nljCone7NP_), "nljCone7NP/I");
+      tree_->Branch("nljCone10Et", &(this->nljCone10Et_), "nljCone10Et/D");
+      tree_->Branch("nljCone10NP", &(this->nljCone10NP_), "nljCone10NP/I");
+      tree_->Branch("nljCone15Et", &(this->nljCone15Et_), "nljCone15Et/D");
+      tree_->Branch("nljCone15NP", &(this->nljCone15NP_), "nljCone15NP/I");
+      tree_->Branch("nljCone30Et", &(this->nljCone30Et_), "nljCone30Et/D");
+      tree_->Branch("nljCone30NP", &(this->nljCone30NP_), "nljCone30NP/I");
 
       tree_->Branch("aljCone5Et", &(this->aljCone5Et_), "aljCone5Et/D");
-      tree_->Branch("aljCone7Et", &(this->aljCone7Et_), "aljCone7Et/D");
       tree_->Branch("aljCone5NP", &(this->aljCone5NP_), "aljCone5NP/I");
-      tree_->Branch("aljCone7NP", &(this->aljCone7NP_), "aljCone7NP/I");
+      tree_->Branch("aljCone10Et", &(this->aljCone10Et_), "aljCone10Et/D");
+      tree_->Branch("aljCone10NP", &(this->aljCone10NP_), "aljCone10NP/I");
+      tree_->Branch("aljCone15Et", &(this->aljCone15Et_), "aljCone15Et/D");
+      tree_->Branch("aljCone15NP", &(this->aljCone15NP_), "aljCone15NP/I");
+      tree_->Branch("aljCone30Et", &(this->aljCone30Et_), "aljCone30Et/D");
+      tree_->Branch("aljCone30NP", &(this->aljCone30NP_), "aljCone30NP/I");
    }
    void TreeDiJetEventData::ClearCounters()
    {
       evtnp_      = 0;
       nljCone5Et_ = 0;
-      nljCone7Et_ = 0;
       nljCone5NP_ = 0;
-      nljCone7NP_ = 0;
+      nljCone10Et_ = 0;
+      nljCone10NP_ = 0;
+      nljCone15Et_ = 0;
+      nljCone15NP_ = 0;
+      nljCone30Et_ = 0;
+      nljCone30NP_ = 0;
       aljCone5Et_ = 0;
-      aljCone7Et_ = 0;
+      aljCone10Et_ = 0;
       aljCone5NP_ = 0;
-      aljCone7NP_ = 0;
+      aljCone10NP_ = 0;
+      aljCone15Et_ = 0;
+      aljCone15NP_ = 0;
+      aljCone30Et_ = 0;
+      aljCone30NP_ = 0;
    }
 }
 

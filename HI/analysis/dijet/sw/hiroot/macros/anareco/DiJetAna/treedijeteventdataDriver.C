@@ -12,11 +12,12 @@ void treedijeteventdataDriver()
 
    TreeDiJetEventData td(evtt);
    printf("initial\n");
-   printf("nljet_: %d\n",td.nljet_);
+   printf("nljet_: %f\n",td.nljet_);
    printf("nljCone5Et_: %f\n",td.nljCone5Et_);
 
    // set branch
    td.SetBranches();
+
 
    //  --event level--
    td.run_=77;
@@ -61,6 +62,7 @@ void treedijeteventdataDriver()
    for(int i=0; i<10; ++i) {
       ++evtnp;
       td.ppid_[i] = 3;
+      td.pch_[i] = 3;
       td.ppt_[i] = 3;
       td.peta_[i] = 3;
       td.pphi_[i] = 3;
@@ -79,7 +81,6 @@ void treedijeteventdataDriver()
       td.za_[i] = 4;
    }
    td.evtnp_ = evtnp;
-
 
    evtt->Fill();
    td.ClearCounters();
