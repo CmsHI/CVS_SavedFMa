@@ -699,7 +699,8 @@ void THIDiJetTruthAnaMod::CalcParticleVars( const THIParticle *part, Double_t ne
 
    // basic particle info
    ed->ppid_[ip]	  = part->GetId();
-   ed->ppt_[ip]	  = part->GetPt();
+   ed->pch_[ip]	  	  = part->GetCharge();
+   ed->ppt_[ip]		  = part->GetPt();
    ed->peta_[ip]	  = part->GetEta();
    ed->pphi_[ip]	  = part->GetPhi();
 
