@@ -729,18 +729,36 @@ void THIDiJetTruthAnaMod::CalcParticleVars( const THIParticle *part, Double_t ne
       ed->nljCone5Et_ += part->GetPt();
       ++(ed->nljCone5NP_);
    }
-   if (ed->pndr_[ip] < 0.7) {
-      ed->nljCone7Et_ += part->GetPt();
-      ++(ed->nljCone7NP_);
-   }
-
    if (ed->padr_[ip] < 0.5) {
       ed->aljCone5Et_ += part->GetPt();
       ++(ed->aljCone5NP_);
    }
-   if (ed->padr_[ip] < 0.7) {
-      ed->aljCone7Et_ += part->GetPt();
-      ++(ed->aljCone7NP_);
+
+   if (ed->pndr_[ip] < 1.0) {
+      ed->nljCone10Et_ += part->GetPt();
+      ++(ed->nljCone10NP_);
+   }
+   if (ed->padr_[ip] < 1.0) {
+      ed->aljCone10Et_ += part->GetPt();
+      ++(ed->aljCone10NP_);
+   }
+
+   if (ed->pndr_[ip] < 1.5) {
+      ed->nljCone15Et_ += part->GetPt();
+      ++(ed->nljCone10NP_);
+   }
+   if (ed->padr_[ip] < 1.5) {
+      ed->aljCone15Et_ += part->GetPt();
+      ++(ed->aljCone10NP_);
+   }
+
+   if (ed->pndr_[ip] < 3.0) {
+      ed->nljCone30Et_ += part->GetPt();
+      ++(ed->nljCone10NP_);
+   }
+   if (ed->padr_[ip] < 3.0) {
+      ed->aljCone30Et_ += part->GetPt();
+      ++(ed->aljCone10NP_);
    }
 
    // increase counter
