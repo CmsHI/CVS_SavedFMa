@@ -9,7 +9,7 @@
 #include "TTree.h"
 #include "AnaCuts.h"
 #include "TreeDiJetEventData.h"
-#include "ana/savedfrankTools.C"
+#include "/net/hisrv0001/home/frankma/UserCode/SavedFMa/HI/analysis/dijet/sw/hiroot/macros/ana/savedfrankTools.C"
 
 namespace DiJetAna {
    // Some constants
@@ -139,6 +139,7 @@ namespace DiJetAna {
    // === Friend Functions ===
    ostream& operator <<(ostream& os, const DiJets& dj)
    {
+      using namespace std;
       os << "generator: " << dj.genTag_;
       if (dj.jetTree_) os << "  jet tree: " << dj.jetTree_->GetName();
       if ( dj.verbosity_ >= 1)

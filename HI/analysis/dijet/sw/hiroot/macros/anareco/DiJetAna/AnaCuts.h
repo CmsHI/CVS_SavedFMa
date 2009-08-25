@@ -194,6 +194,7 @@ namespace DiJetAna
    // === Friend Functions ===
    ostream& operator <<(ostream& os, const AnaCuts& ct)
    {
+      using namespace std;
       os << "cut: " << ct.cutTag_ << endl;
       os << "Default cuts:" << endl;
       os << "  jet_eta_max: " << ct.jetEtaMax_ 

@@ -6,9 +6,10 @@
 #include "TH1F.h"
 #include "TROOT.h"
 #include "TString.h"
-#include "ana/savedfrankTools.C"
+#include "/net/hisrv0001/home/frankma/UserCode/SavedFMa/HI/analysis/dijet/sw/hiroot/macros/ana/savedfrankTools.C"
 #include "DiJets.h"
 using namespace DiJetAna;
+using namespace std;
 
 void plotJetLeading(bool doCheck=true,
 	         char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia100_5k_dijet_000777.root",
