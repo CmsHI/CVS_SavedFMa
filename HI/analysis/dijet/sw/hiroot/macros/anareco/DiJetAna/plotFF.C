@@ -56,8 +56,12 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    pyt.SetAwayJetEtMin(PythiaAnaAJetEtMin);
    pyt.SetDPhiMin(JDPhiMin);
    pyt.SetJetPartlDRMax(0.5);
+   // make cut
    pyt.CreateCuts();
    pyt.SetVerbosity(2);
+   // FF specific
+   pyt.cut_.AndJetParticlesCut("pch",0,"abs min");
+   // output
    cout << pyt << endl;
 
    // -norm-
@@ -72,8 +76,12 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    pyq.SetAwayJetEtMin(PyquenAnaAJetEtMin);
    pyq.SetDPhiMin(JDPhiMin);
    pyq.SetJetPartlDRMax(0.5);
+   // make cut
    pyq.CreateCuts();
    pyq.SetVerbosity(2);
+   // FF specific
+   pyq.cut_.AndJetParticlesCut("pch",0,"abs min");
+   // output
    cout << pyq << endl;
 
    // -norm-
