@@ -7,6 +7,7 @@
 #include "TROOT.h"
 #include "/net/hisrv0001/home/frankma/UserCode/SavedFMa/HI/analysis/dijet/sw/hiroot/macros/ana/savedfrankTools.C"
 #include "DiJets.h"
+#include <vector>
 using namespace DiJetAna;
 using namespace std;
 
@@ -54,40 +55,32 @@ void plotFF(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pythia10
    pyt.SetNearJetEtMin(PythiaAnaNJetEtMin);
    pyt.SetNearJetEtMax(PythiaAnaNJetEtMax);
    pyt.SetAwayJetEtMin(PythiaAnaAJetEtMin);
-   pyt.SetDPhiMin(JDPhiMin);
-   pyt.SetJetPartlDRMax(0.5);
-   // make cut
-   pyt.CreateCuts();
-   pyt.SetVerbosity(2);
-   // FF specific
-   pyt.cut_.AndJetParticlesCut("pch",0,"abs min");
-   // output
-   cout << pyt << endl;
-
-   // -norm-
-   printf("now jet cut: \n  %s\n",pyt.GetCut().GetDiJetCut().Data());
-   pyt.CalcNumDiJets();
-   printf("# of dijets after cut: %d, normalization: %f\n",pyt.GetNumDiJets(),pyt.GetDiJetsNorm());
-
    // ==pyquen==
    DiJets pyq("Pyquen","vjet1",trJetPyquen);
    pyq.SetNearJetEtMin(PyquenAnaNJetEtMin);
    pyq.SetNearJetEtMax(PyquenAnaNJetEtMax);
    pyq.SetAwayJetEtMin(PyquenAnaAJetEtMin);
-   pyq.SetDPhiMin(JDPhiMin);
-   pyq.SetJetPartlDRMax(0.5);
-   // make cut
-   pyq.CreateCuts();
-   pyq.SetVerbosity(2);
-   // FF specific
-   pyq.cut_.AndJetParticlesCut("pch",0,"abs min");
-   // output
-   cout << pyq << endl;
+   // == common cuts, actions==
+   vector<DiJets*> vgen;
+   vgen.push_back(&pyt);
+   vgen.push_back(&pyq);
+   for (int ig=0; ig<vgen.size(); ++ig) {
+      vgen[ig]->SetDPhiMin(JDPhiMin);
+      vgen[ig]->SetJetPartlDRMax(0.5);
+      // make cut
+      vgen[ig]->CreateCuts();
+      vgen[ig]->SetVerbosity(2);
+      // FF specific
+      vgen[ig]->cut_.AndJetParticlesCut("pch",0,"abs min");
+      // output
+      cout << *(vgen[ig]) << endl;
 
-   // -norm-
-   printf("now jet cut: \n  %s\n",pyq.GetCut().GetDiJetCut().Data());
-   pyq.CalcNumDiJets();
-   printf("# of dijets after cut: %d, normalization: %f\n",pyq.GetNumDiJets(),pyq.GetDiJetsNorm());
+      // -norm-
+      printf("now jet cut: \n  %s\n",vgen[ig]->GetCut().GetDiJetCut().Data());
+      vgen[ig]->CalcNumDiJets();
+      printf("# of dijets after cut: %d, normalization: %f\n",vgen[ig]->GetNumDiJets(),vgen[ig]->GetDiJetsNorm());
+      printf("===================\n\n");
+   }
    // ===
 
    if (check) {
