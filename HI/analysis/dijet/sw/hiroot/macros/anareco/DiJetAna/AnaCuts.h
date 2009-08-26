@@ -51,6 +51,10 @@ namespace DiJetAna
 	 void SetJetPartlDRMax(Double_t jpdrmax) { jetPartlDRMax_ = jpdrmax; }
 	 // final tree cut
 	 TString AndCut(TString var, Double_t val, TString opt);
+	 void AndJetParticlesCut(TString var, Double_t val, TString opt) {
+	    nearJetPartlsCut_ += AndCut(var,val,opt);
+	    awayJetPartlsCut_ += AndCut(var,val,opt);
+	 }
 	 void CreateJetCut();
 	 void CreateJetParticlesCut();
 	 // weights
