@@ -54,33 +54,31 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
    pyt.SetNearJetEtMin(PythiaAnaNJetEtMin);
    pyt.SetNearJetEtMax(PythiaAnaNJetEtMax);
    pyt.SetAwayJetEtMin(PythiaAnaAJetEtMin);
-   pyt.SetDPhiMin(JDPhiMin);
-   pyt.SetJetPartlDRMax(0.5);
-   pyt.CreateCuts();
-   pyt.SetVerbosity(2);
-   cout << pyt << endl;
-
-   // -norm-
-   printf("now jet cut: \n  %s\n",pyt.GetCut().GetDiJetCut().Data());
-   pyt.CalcNumDiJets();
-   printf("# of dijets after cut: %d, normalization: %f\n",pyt.GetNumDiJets(),pyt.GetDiJetsNorm());
-
    // ==pyquen==
    DiJets pyq("Pyquen","vjet1",trJetPyquen);
    pyq.SetNearJetEtMin(PyquenAnaNJetEtMin);
    pyq.SetNearJetEtMax(PyquenAnaNJetEtMax);
    pyq.SetAwayJetEtMin(PyquenAnaAJetEtMin);
-   pyq.SetDPhiMin(JDPhiMin);
-   pyq.SetJetPartlDRMax(0.5);
-   pyq.CreateCuts();
-   pyq.SetVerbosity(2);
-   cout << pyq << endl;
+   // == common cuts, actions==
+   vector<DiJets*> vgen;
+   vgen.push_back(&pyt);
+   vgen.push_back(&pyq);
+   for (int ig=0; ig<vgen.size(); ++ig) {
+      vgen[ig]->SetDPhiMin(JDPhiMin);
+      vgen[ig]->SetJetPartlDRMax(0.5);
+      // make cut
+      vgen[ig]->CreateCuts();
+      vgen[ig]->SetVerbosity(2);
+      // output
+      cout << *(vgen[ig]) << endl;
 
-   // -norm-
-   printf("now jet cut: \n  %s\n",pyq.GetCut().GetDiJetCut().Data());
-   pyq.CalcNumDiJets();
-   printf("# of dijets after cut: %d, normalization: %f\n",pyq.GetNumDiJets(),pyq.GetDiJetsNorm());
-   // === 
+      // -norm-
+      printf("now jet cut: \n  %s\n",vgen[ig]->GetCut().GetDiJetCut().Data());
+      vgen[ig]->CalcNumDiJets();
+      printf("# of dijets after cut: %d, normalization: %f\n",vgen[ig]->GetNumDiJets(),vgen[ig]->GetDiJetsNorm());
+      printf("===================\n\n");
+   }
+   // ===
 
 
    // === Cone info ===
