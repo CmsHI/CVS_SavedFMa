@@ -3,7 +3,7 @@
 
 void histMathDriver()
 {
-   TH1D * hin = new TH1D("hin","input",100,0,100);
+   TH1D * hin = new TH1D("hin","input",20,0,100);
    for (int i=0; i<100; ++i) {
       hin->Fill(i);
    }
