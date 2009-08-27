@@ -10,9 +10,17 @@
 #include "TString.h"
 #include "TRegexp.h"
 #include "TFile.h"
+// private includes
+#include "HistMath.C"
 
 const Float_t PI = 3.14159;
 const Float_t PI2 = 2*3.14159;
+
+//
+// Helper tools for root ana
+// Todo
+// - change TH1F to TH1D
+//
 
 void savedfrankTools() {}
 //=================================Helper Functions==================================
@@ -69,7 +77,7 @@ void printCanvas(const char* name, const char* title)//, TCanvas * c)
       printf("canvas for %s is not found, please check the canvas name\n", cname.Data());
       return;
    }
-   printf("Print Canvas: %d\n",c);
+   //printf("Print Canvas: %x\n",c);
 
    TString ttitle(title);
    TRegexp re("draw");
@@ -156,7 +164,7 @@ Float_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, 
 {
    //--- Print some info ---
    if (!TString(opt).Contains("same")) printf("\n");
-   printf("%s, tree: %d. Draw: %s. Norm: %f\n", name, nt, draw, norm);
+   printf("%s, tree: %x. Draw: %s. Norm: %f\n", name, nt, draw, norm);
 //   nt->Print();
 
    //--- Make/set histogram ---
@@ -181,7 +189,7 @@ void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, co
 {
    //--- Print some info ---
    if (!TString(opt).Contains("same")) printf("\n");
-   printf("%s, tree: %d. Draw: %s\n", name, nt, draw);
+   printf("%s, tree: %x. Draw: %s\n", name, nt, draw);
 //   nt->Print();
 
    //--- Make/set histogram ---
@@ -263,4 +271,20 @@ TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* ti
    return h;
 }
 
+// === draw integral of histograms ===
+TH1 * drawIntHist(const char* hinName, const char* houtName, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "",
+                 const double norm = -1, int log = 0, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0,
+		 const double ymax=0)
+{
+   TH1D * hin = (TH1D*)findHist(hinName);
+
+   // create integrated histogram
+   TH1D * hout = integrateHist(hin);
+   hout->SetName(houtName);
+   hout->SetTitle(title);
+
+   // set integrated histogram properties
+   drawNormHist(hout,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst,ymax);
+   return hout;
+}
 #endif //SAVEDFRANKTOOLS_H
