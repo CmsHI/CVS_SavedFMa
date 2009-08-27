@@ -34,6 +34,11 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
       << PyquenAnaNJetEtMin << " " << PyquenAnaNJetEtMax << " " << PyquenAnaAJetEtMin
       << endl;
 
+   // === Ana cone Size ===
+   UInt_t dRDig = 10;
+   Float_t dRMax = dRDig*0.1;
+   printf("==== Cone size: %f ====\n", dRMax);
+
    bool NoNorm = false;
 
    //=== Get input files ===
@@ -67,7 +72,7 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
    vgen.push_back(&pyq);
    for (UInt_t ig=0; ig<vgen.size(); ++ig) {
       vgen[ig]->SetDPhiMin(JDPhiMin);
-      vgen[ig]->SetJetPartlDRMax(0.5);
+      vgen[ig]->SetJetPartlDRMax(dRMax);
       // make cut
       vgen[ig]->CreateCuts();
       vgen[ig]->SetVerbosity(2);
@@ -86,9 +91,10 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
    // === Jet Shape Ana Properties ===
    // -- sizes of cone to perfrom ana --
    vector<Int_t> vcone;
-   vcone.push_back(5);
+   vcone.push_back(dRDig);
    // -- plotting properties --
    //  - jet level -
+   Double_t coneNPMAX = 60;
    UInt_t coneEtNBIN = NBIN/5;
    Double_t coneEtMAX = 120;
    //  - shape level -
@@ -102,13 +108,13 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
       // === Jet Cone info ===
       // -- # particles --
       drawTree(trJetPythia, Form("nljCone%dNP>>hNJCone%dNPPythia",vcone[ic],vcone[ic]),pyt.GetCut().GetDiJetCut().Data(),drsgE,
-	    Form("hNJCone%dNPPythia",vcone[ic]),Form(";# charged particles in 0.%d cone;",vcone[ic]),NBIN,0,40,1,kBlack,1,3,1,8);
+	    Form("hNJCone%dNPPythia",vcone[ic]),Form(";# charged particles in 0.%d cone;",vcone[ic]),NBIN,0,coneNPMAX,0,kBlack,1,3,1,8);
       drawTree(trJetPythia, Form("aljCone%dNP>>hAJCone%dNPPythia",vcone[ic],vcone[ic]),pyt.GetCut().GetDiJetCut().Data(),drdbE,
-	    Form("hAJCone%dNPPythia",vcone[ic]),Form(";# charged particles in 0.%d cone;",vcone[ic]),NBIN,0,40,1,kBlack,1,3,1,4);
+	    Form("hAJCone%dNPPythia",vcone[ic]),Form(";# charged particles in 0.%d cone;",vcone[ic]),NBIN,0,coneNPMAX,0,kBlack,1,3,1,4);
       drawTree(trJetPyquen, Form("nljCone%dNP>>hNJCone%dNPPyquen",vcone[ic],vcone[ic]),pyq.GetCut().GetDiJetCut().Data(),drdbE,
-	    Form("hNJCone%dNPPyquen",vcone[ic]),Form(";# charged particles in 0.%d cone;",vcone[ic]),NBIN,0,40,1,kBlue,1,3,1,8);
+	    Form("hNJCone%dNPPyquen",vcone[ic]),Form(";# charged particles in 0.%d cone;",vcone[ic]),NBIN,0,coneNPMAX,0,kBlue,1,3,1,8);
       drawTree(trJetPyquen, Form("aljCone%dNP>>hAJCone%dNPPyquen",vcone[ic],vcone[ic]),pyq.GetCut().GetDiJetCut().Data(),drdbE,
-	    Form("hAJCone%dNPPyquen",vcone[ic]),Form(";# charged particles in 0.%d cone;",vcone[ic]),NBIN,0,40,1,kBlue,1,3,1,4);
+	    Form("hAJCone%dNPPyquen",vcone[ic]),Form(";# charged particles in 0.%d cone;",vcone[ic]),NBIN,0,coneNPMAX,0,kBlue,1,3,1,4);
       // --Et--
       drawTree(trJetPythia, Form("nljCone%dEt>>hNJCone%dEtPythia",vcone[ic],vcone[ic]),pyt.GetCut().GetDiJetCut().Data(),drsgE,
 	    Form("hNJCone%dEtPythia",vcone[ic]),Form(";# charged particles in 0.%d cone;",vcone[ic]),coneEtNBIN,0,coneEtMAX,0,kBlack,1,3,1,8);
