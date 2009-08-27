@@ -74,6 +74,11 @@ void createPyquenDijet50(ULong_t n = 10000, ULong_t runno = 777,
    h.SetBottomMass(4.8);  //(PYTHIA value)
    h.SetTopMass(175.0);   //(PYTHIA value)
  
+   // Setup pyquen quen model:
+   // - without Coll Eloss
+   //   * to study JES with energy conservation
+   h.SetDoColl(kFALSE);
+   h.SetDoRad(kTRUE);
    h.Init();
 
    THIIndexGenerator *igen = 0;
