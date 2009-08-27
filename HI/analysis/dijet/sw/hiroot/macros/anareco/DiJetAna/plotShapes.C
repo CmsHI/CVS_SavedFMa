@@ -94,7 +94,7 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
    vcone.push_back(dRDig);
    // -- plotting properties --
    //  - jet level -
-   Double_t coneNPMAX = 60;
+   Double_t coneNPMAX = 80;
    UInt_t coneEtNBIN = NBIN/5;
    Double_t coneEtMAX = 120;
    //  - shape level -
@@ -127,9 +127,9 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
 
       // === Add Jet Shape Weights ===
       printf("===== Add Weights =====\n");
-      pyt.cut_.SetWeightParticles("ppt/nljCone5Et");
+      pyt.cut_.SetWeightParticles(Form("ppt/nljCone%dEt",dRDig));
       cout << pyt << endl;
-      pyq.cut_.SetWeightParticles("ppt/nljCone5Et");
+      pyq.cut_.SetWeightParticles(Form("ppt/nljCone%dEt",dRDig));
       cout << pyq << endl;
 
       // === Differential Jet Shapes ===
