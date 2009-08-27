@@ -95,10 +95,8 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
 
    // -- Study different Shape denominators --
    vector<TString> vcbase;
-   //  -for each fixed cone-
-   for ( UInt_t ic=0; ic<vcone.size(); ++ic) {
-      vcbase.push_back(TString(Form("nljCone%dEt",vcone[ic])));
-   }
+   //  -for fixed cone et base-
+      vcbase.push_back(TString(Form("nljCone%dEt",dRDig)));
    //  -parton et based-
    //vcbase.push_back(TSTring("ppt/nlpet"));
 
@@ -114,7 +112,14 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
    Double_t shapeMsz = 1.3;
    Double_t intShpMax = 1.1;
 
+   //
    // Plot Jet shapes for different cones (one for now) and cone et bases
+   // - Note
+   //   * We can only loop on one cone size now for techincal reasons
+   //     1. need to figure out a way to change the dRMax cut
+   //     2. need to figure out a way to find the fixed cone size et base
+   //        that corresponds to the cone size in loop
+   //        
    for ( UInt_t ic=0; ic<vcone.size(); ++ic) {
       // === Jet Cone info ===
       // -- # particles --
