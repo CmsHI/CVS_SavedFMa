@@ -76,6 +76,8 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
       // make cut
       vgen[ig]->CreateCuts();
       vgen[ig]->SetVerbosity(2);
+      // Shapes specific
+      vgen[ig]->SetPartlPtMin(1.2); //0.5 by default
       // output
       cout << *(vgen[ig]) << endl;
 
