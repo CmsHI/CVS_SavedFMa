@@ -40,6 +40,10 @@ namespace DiJetAna
 	 // --- Mutator Functions ---
 	 void SetCutTag(char* cutTag) { cutTag_ = TString(cutTag); }
 	 void SetDefaults();
+	 void ReplaceJetParticlesCut(const char * sold, const char * snew) {
+	    nearJetPartlsCut_.ReplaceAll(sold,snew);
+	    awayJetPartlsCut_.ReplaceAll(sold,snew);
+	 }
 	 // jet level cuts
 	 void SetNearJetEtMin(Double_t njmin) { nearJetEtMin_ = njmin; }
 	 void SetNearJetEtMax(Double_t njmax) { nearJetEtMax_ = njmax; }
