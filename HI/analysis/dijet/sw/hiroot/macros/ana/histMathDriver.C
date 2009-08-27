@@ -11,7 +11,15 @@ void histMathDriver()
    TH1D* hIntegral = integrateHist(hin);
    TH1D* hIntegral2 = integrateHist(hIntegral);
 
-   // with a function
+   // draw
+   hIntegral2->Draw("E2");
+
+
+   //
+   // === with a function ===
+   // - cf http://root.cern.ch/root/html/tutorials/hist/fillrandom.C.html
+   //
+
    //form1 = new TFormula("form1","abs(sin(x)/x)");
    //sqroot = new TF1("sqroot","x*gaus(0) + [3]*form1",0,10);
    //sqroot->SetParameters(10,4,1,20);

@@ -13,8 +13,12 @@ TH1D * integrateHist(TH1 * hin)
 
    Float_t sum = 0.;
    for (Int_t i=1; i<=hin->GetNbinsX(); ++i) {
+      // calc the integral up to this bin
       sum += (hin->GetBinContent(i) * hin->GetBinWidth(i));
+      // set the integral up to this bin
       hout->SetBinContent(i,sum);
+      // set the error
+      hout->SetBinError(i,0);
    }
    return hout;
 }
