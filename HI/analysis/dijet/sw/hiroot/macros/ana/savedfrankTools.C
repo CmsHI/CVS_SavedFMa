@@ -112,7 +112,7 @@ TH1F * createHist(const char* name, const char* title, const int nbin, const flo
 }
 
 //--- Set Histogram ---
-void setHist(TH1* h, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double norm = -1, const char* xtitle = "", const char* ytitle = "", const double ymax=0)
+void setHist(TH1* h, const int lc=0, const int ls=0, const Width_t lw=0, const Size_t msz=0, const int mst=0, const double norm = -1, const char* xtitle = "", const char* ytitle = "", const double ymax=0)
 {
    //--- Set histo properties ---
    if (lc!=0) h->SetLineColor(lc);
@@ -136,7 +136,7 @@ void setHist(TH1* h, const int lc=0, const int ls=0, const int lw=0, const int m
    if (ymax) h->SetAxisRange(0,ymax,"Y");
 }
 
-void setHist(const char* name, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double norm = -1, const char* xtitle = "", const char* ytitle = "", const double ymax=0)
+void setHist(const char* name, const int lc=0, const int ls=0, const Width_t lw=0, const Size_t msz=0, const int mst=0, const double norm = -1, const char* xtitle = "", const char* ytitle = "", const double ymax=0)
 {
    TH1F * h;
    if (h=dynamic_cast<TH1F*>(findHist(name))) setHist(h,lc,ls,lw,msz,mst,norm,xtitle,ytitle,ymax);
@@ -160,7 +160,7 @@ TCanvas * makeCanvas(const char* name, const char* title, bool log=false, const 
 
 //=============================== Main Functions =====================================
 //--- function to draw 1D histograms from TTree ---
-Float_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0, const int msz =0, const int mst =0, float norm=-1.,const double ymax=0)
+Float_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const Width_t lw=0, const Size_t msz =0, const int mst =0, float norm=-1.,const double ymax=0)
 {
    //--- Print some info ---
    if (!TString(opt).Contains("same")) printf("\n");
@@ -204,7 +204,7 @@ void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, co
 }
 
 //--- function to divide histograms then draw---
-void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const float ymax=0)
+void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const int lc=0, const int ls=0, const Width_t lw=0, const Size_t msz=0, const int mst=0, const float ymax=0)
 {
    // find input histos
    if (!TString(opt).Contains("same")) printf("\n");
@@ -239,14 +239,14 @@ void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* 
 }
 
 //--- function to draw histograms ---
-void drawNormHist(TH1* h, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double ymax=0)
+void drawNormHist(TH1* h, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const Width_t lw=0, const Size_t msz=0, const int mst=0, const double ymax=0)
 {
    setHist(h,lc,ls,lw,msz,mst,norm,xtitle,ytitle,ymax);
    //printf("---------------draw: %s\n",h->GetName());
    makeCanvas(Form("normalized_%s",h->GetName()),title, log,opt);
    h->Draw(opt);
 }
-void drawNormHist(const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double ymax=0)
+void drawNormHist(const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const Width_t lw=0, const Size_t msz=0, const int mst=0, const double ymax=0)
 {
    TH1 * h;
    if (gROOT->FindObject(hn))
@@ -257,7 +257,7 @@ void drawNormHist(const char* hn, const char* opt="", const char* title="", cons
    }
    drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst,ymax);
 }
-TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0, const double ymax=0)
+TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const int lc=0, const int ls=0, const Width_t lw=0, const Size_t msz=0, const int mst=0, const double ymax=0)
 {
    TH1 * h;
    if (f->Get(hn))
@@ -273,7 +273,7 @@ TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* ti
 
 // === draw integral of histograms ===
 TH1 * drawIntHist(const char* hinName, const char* houtName, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "",
-                 const double norm = -1, int log = 0, const int lc=0, const int ls=0, const int lw=0, const int msz=0, const int mst=0,
+                 const double norm = -1, int log = 0, const int lc=0, const int ls=0, const Width_t lw=0, const Size_t msz=0, const int mst=0,
 		 const double ymax=0)
 {
    TH1D * hin = (TH1D*)findHist(hinName);
