@@ -114,6 +114,7 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
    Double_t shapeMsz = 1.3;
    Double_t intShpMax = 1.1;
 
+   // Plot Jet shapes for different cones (one for now) and cone et bases
    for ( UInt_t ic=0; ic<vcone.size(); ++ic) {
       for (UInt_t ib=0; ib<vwt.size(); ++ib) {
 	 // === Jet Cone info ===
