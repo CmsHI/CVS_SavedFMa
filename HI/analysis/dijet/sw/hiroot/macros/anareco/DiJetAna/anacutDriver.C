@@ -23,4 +23,8 @@ void anacutDriver ()
 
    cout << c1 << endl;
 
+   printf("=== now we'll replace dr cut ===\n");
+   c1.ReplaceJetParticlesCut("dr<0.50","dr<1.0");
+   cout << c1 << endl;
+
 }
