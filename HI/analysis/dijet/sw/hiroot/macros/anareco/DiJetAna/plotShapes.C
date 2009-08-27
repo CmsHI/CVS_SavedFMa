@@ -137,8 +137,6 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
 	       Form("hAJCone%dEtPyquen",vcone[ic]),Form(";# charged particles in 0.%d cone;",vcone[ic]),coneEtNBIN,0,coneEtMAX,0,kBlue,1,3,1,4);
 
 	 // === Add Jet Shape Weights ===
-	 // - Note
-	 //   * This should be the last modification to cut_ b/c it appends weights to it
 	 printf("===== Add Weights =====\n");
 	 pyt.cut_.SetWeightParticles(vwt[ib].Data());
 	 cout << pyt << endl;

@@ -76,6 +76,6 @@ void dijetsDriver(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/py
 
    //-------------- Done Save Plots----------------------
    printAllCanvases(plotdir);
-   outfile->Write();
-   outfile->Close();
+//   outfile->Write();
+//   outfile->Close();
 }
