@@ -96,9 +96,9 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
    // -- Study different Shape denominators --
    vector<TString> vcbase;
    //  -for fixed cone et base-
-      vcbase.push_back(TString(Form("nljCone%dEt",dRDig)));
+   vcbase.push_back(TString(Form("nljCone%dEt",dRDig)));
    //  -parton et based-
-   //vcbase.push_back(TSTring("ppt/nlpet"));
+   vcbase.push_back(TString("nlpet"));
 
    // -- plotting properties --
    //  - jet level -
@@ -150,31 +150,36 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
 	 pyq.cut_.SetWeightParticles(Form("ppt/%s",vcbase[ib].Data()));
 	 cout << pyq << endl;
 
+	 // -- label aliases --
+	 TString nbkey(vcbase[ib]);
+	 TString abkey(vcbase[ib].ReplaceAll("nl","al"));
+	 printf("Label aliases:\n");
+	 printf("  near: %s, away: %s\n",nbkey.Data(),abkey.Data());
 	 // === Differential Jet Shapes ===
-	 drawTree(trJetPythia, Form("pndr>>hNJCone%dDiffShapePythia",vcone[ic]),pyt.GetCut().GetNJetPartlCutW().Data(),drsgE,
-	       Form("hNJCone%dDiffShapePythia",vcone[ic]),";r;#rho(r)",rNBIN,0,rMAX,1,kBlack,1,3,1,8,pyt.GetDiJetsNorm());
-	 drawTree(trJetPythia, Form("padr>>hAJCone%dDiffShapePythia",vcone[ic]),pyt.GetCut().GetAJetPartlCutW().Data(),drdbE,
-	       Form("hAJCone%dDiffShapePythia",vcone[ic]),";r;#rho(r)",rNBIN,0,rMAX,1,kBlack,1,3,1,4,pyt.GetDiJetsNorm());
-	 drawTree(trJetPyquen, Form("pndr>>hNJCone%dDiffShapePyquen",vcone[ic]),pyq.GetCut().GetNJetPartlCutW().Data(),drdbE,
-	       Form("hNJCone%dDiffShapePyquen",vcone[ic]),";r;#rho(r)",rNBIN,0,rMAX,1,kBlue,1,3,1,8,pyq.GetDiJetsNorm());
-	 drawTree(trJetPyquen, Form("padr>>hAJCone%dDiffShapePyquen",vcone[ic]),pyq.GetCut().GetAJetPartlCutW().Data(),drdbE,
-	       Form("hAJCone%dDiffShapePyquen",vcone[ic]),";r;#rho(r)",rNBIN,0,rMAX,1,kBlue,1,3,1,4,pyq.GetDiJetsNorm());
+	 drawTree(trJetPythia, Form("pndr>>%sDiffShapePythia",nbkey.Data()),pyt.GetCut().GetNJetPartlCutW().Data(),drsgE,
+	       Form("%sDiffShapePythia",nbkey.Data()),";r;#rho(r)",rNBIN,0,rMAX,1,kBlack,1,3,1,8,pyt.GetDiJetsNorm());
+	 drawTree(trJetPythia, Form("padr>>%sDiffShapePythia",abkey.Data()),pyt.GetCut().GetAJetPartlCutW().Data(),drdbE,
+	       Form("%sDiffShapePythia",abkey.Data()),";r;#rho(r)",rNBIN,0,rMAX,1,kBlack,1,3,1,4,pyt.GetDiJetsNorm());
+	 drawTree(trJetPyquen, Form("pndr>>%sDiffShapePyquen",nbkey.Data()),pyq.GetCut().GetNJetPartlCutW().Data(),drdbE,
+	       Form("%sDiffShapePyquen",nbkey.Data()),";r;#rho(r)",rNBIN,0,rMAX,1,kBlue,1,3,1,8,pyq.GetDiJetsNorm());
+	 drawTree(trJetPyquen, Form("padr>>%sDiffShapePyquen",abkey.Data()),pyq.GetCut().GetAJetPartlCutW().Data(),drdbE,
+	       Form("%sDiffShapePyquen",abkey.Data()),";r;#rho(r)",rNBIN,0,rMAX,1,kBlue,1,3,1,4,pyq.GetDiJetsNorm());
 
 	 // -- ratio --
-	 drawDivHist(Form("hNJCone%dDiffShapePyquen",vcone[ic]),Form("hNJCone%dDiffShapePythia",vcone[ic]),drsgFFE,
-	       Form("hNJCone%dDiffShapeRatio",vcone[ic]),";r;#rho_{pythia}(r)/#rho_{pyquen}(r)",rNBIN,0,rMAX,0,kBlue,1,3,1,8,3.);
-	 drawDivHist(Form("hAJCone%dDiffShapePyquen",vcone[ic]),Form("hAJCone%dDiffShapePythia",vcone[ic]),drdbFFE,
-	       Form("hAJCone%dDiffShapeRatio",vcone[ic]),";r;#rho(r)",rNBIN,0,rMAX,0,kBlue,1,3,1,4,3.);
+	 drawDivHist(Form("%sDiffShapePyquen",nbkey.Data()),Form("%sDiffShapePythia",nbkey.Data()),drsgFFE,
+	       Form("%sDiffShapeRatio",nbkey.Data()),";r;#rho_{pythia}(r)/#rho_{pyquen}(r)",rNBIN,0,rMAX,0,kBlue,1,3,1,8,3.);
+	 drawDivHist(Form("%sDiffShapePyquen",abkey.Data()),Form("%sDiffShapePythia",abkey.Data()),drdbFFE,
+	       Form("%sDiffShapeRatio",abkey.Data()),";r;#rho(r)",rNBIN,0,rMAX,0,kBlue,1,3,1,4,3.);
 
 	 // === Integral Jet Shapes ===
 	 // -- Ref R cone based --
-	 drawIntHist(Form("hNJCone%dDiffShapePythia",vcone[ic]),Form("hNJCone%dIntShapePythia",vcone[ic]),drsgP,"Integrated Jet Shape","r",
+	 drawIntHist(Form("%sDiffShapePythia",nbkey.Data()),Form("%sIntShapePythia",nbkey.Data()),drsgP,"Integrated Jet Shape","r",
 	       Form("#sum_{0.%d cone}E_{T}/E_{T}^{1.0 cone}",vcone[ic]),-1,0,kBlack,1,3,shapeMsz,kFullCircle,intShpMax);
-	 drawIntHist(Form("hAJCone%dDiffShapePythia",vcone[ic]),Form("hAJCone%dIntShapePythia",vcone[ic]),drdbP,"Integrated Jet Shape","r",
+	 drawIntHist(Form("%sDiffShapePythia",abkey.Data()),Form("%sIntShapePythia",abkey.Data()),drdbP,"Integrated Jet Shape","r",
 	       Form("#sum_{0.%d cone}E_{T}/E_{T}^{1.0 cone}",vcone[ic]),-1,0,kBlack,1,3,shapeMsz,kOpenCircle,intShpMax);
-	 drawIntHist(Form("hNJCone%dDiffShapePyquen",vcone[ic]),Form("hNJCone%dIntShapePyquen",vcone[ic]),drdbP,"Integrated Jet Shape","r",
+	 drawIntHist(Form("%sDiffShapePyquen",nbkey.Data()),Form("%sIntShapePyquen",nbkey.Data()),drdbP,"Integrated Jet Shape","r",
 	       Form("#sum_{0.%d cone}E_{T}/E_{T}^{1.0 cone}",vcone[ic]),-1,0,kBlue,1,3,shapeMsz,kFullCircle,intShpMax);
-	 drawIntHist(Form("hAJCone%dDiffShapePyquen",vcone[ic]),Form("hAJCone%dIntShapePyquen",vcone[ic]),drdbP,"Integrated Jet Shape","r",
+	 drawIntHist(Form("%sDiffShapePyquen",abkey.Data()),Form("%sIntShapePyquen",abkey.Data()),drdbP,"Integrated Jet Shape","r",
 	       Form("#sum_{0.%d cone}E_{T}/E_{T}^{1.0 cone}",vcone[ic]),-1,0,kBlue,1,3,shapeMsz,kOpenCircle,intShpMax);
       }
    }
