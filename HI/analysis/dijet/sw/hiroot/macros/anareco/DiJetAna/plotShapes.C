@@ -94,13 +94,13 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
    vcone.push_back(dRDig);
 
    // -- Study different Shape denominators --
-   vector<TString> vwt;
+   vector<TString> vcbase;
    //  -for each fixed cone-
    for ( UInt_t ic=0; ic<vcone.size(); ++ic) {
-      vwt.push_back(TString(Form("ppt/nljCone%dEt",vcone[ic])));
+      vcbase.push_back(TString(Form("nljCone%dEt",vcone[ic])));
    }
    //  -parton et based-
-   //vwt.push_back(TSTring("ppt/nlpet"));
+   //vcbase.push_back(TSTring("ppt/nlpet"));
 
    // -- plotting properties --
    //  - jet level -
@@ -137,12 +137,12 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
 	    Form("hAJCone%dEtPyquen",vcone[ic]),Form(";# charged particles in 0.%d cone;",vcone[ic]),coneEtNBIN,0,coneEtMAX,0,kBlue,1,3,1,4);
 
       // === Now plot jet shapes for each cone et base ===
-      for (UInt_t ib=0; ib<vwt.size(); ++ib) {
+      for (UInt_t ib=0; ib<vcbase.size(); ++ib) {
 	 // === Add Jet Shape Weights ===
 	 printf("===== Add Weights =====\n");
-	 pyt.cut_.SetWeightParticles(vwt[ib].Data());
+	 pyt.cut_.SetWeightParticles(Form("ppt/%s",vcbase[ib].Data()));
 	 cout << pyt << endl;
-	 pyq.cut_.SetWeightParticles(vwt[ib].Data());
+	 pyq.cut_.SetWeightParticles(Form("ppt/%s",vcbase[ib].Data()));
 	 cout << pyq << endl;
 
 	 // === Differential Jet Shapes ===
