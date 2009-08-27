@@ -265,8 +265,8 @@ namespace DiJetAna
       nljCone30Et_ = 0;
       nljCone30NP_ = 0;
       aljCone5Et_ = 0;
-      aljCone10Et_ = 0;
       aljCone5NP_ = 0;
+      aljCone10Et_ = 0;
       aljCone10NP_ = 0;
       aljCone15Et_ = 0;
       aljCone15NP_ = 0;
