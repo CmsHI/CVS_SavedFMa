@@ -746,20 +746,20 @@ void THIDiJetTruthAnaMod::CalcParticleVars( const THIParticle *part, Double_t ne
 
    if (ed->pndr_[ip] < 1.5) {
       ed->nljCone15Et_ += part->GetPt();
-      ++(ed->nljCone10NP_);
+      ++(ed->nljCone15NP_);
    }
    if (ed->padr_[ip] < 1.5) {
       ed->aljCone15Et_ += part->GetPt();
-      ++(ed->aljCone10NP_);
+      ++(ed->aljCone15NP_);
    }
 
    if (ed->pndr_[ip] < 3.0) {
       ed->nljCone30Et_ += part->GetPt();
-      ++(ed->nljCone10NP_);
+      ++(ed->nljCone30NP_);
    }
    if (ed->padr_[ip] < 3.0) {
       ed->aljCone30Et_ += part->GetPt();
-      ++(ed->aljCone10NP_);
+      ++(ed->aljCone30NP_);
    }
 
    // increase counter
