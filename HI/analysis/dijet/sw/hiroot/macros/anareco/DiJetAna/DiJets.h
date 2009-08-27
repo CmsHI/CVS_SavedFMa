@@ -29,6 +29,8 @@ namespace DiJetAna {
    TString drsg2("colz");
    TString drsg2nc("BOX");
    TString drdb2nc("same");
+   const char * drsgP="P";
+   const char * drdbP="P same";
    // for FF
    const char * drsgFF="hist";
    const char * drdbFF="hist same";
