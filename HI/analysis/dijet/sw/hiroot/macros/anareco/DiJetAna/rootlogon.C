@@ -64,7 +64,7 @@
    //gStyle->SetPadTopMargin(0.05);
    gStyle->SetPadTopMargin(0.17);
 
-   gStyle->SetNdivisions(5);
+   gStyle->SetNdivisions(6);
    gStyle->SetTitleXSize(.05);
    gStyle->SetTitleYSize(.04);
    gStyle->SetTitleXOffset(1.2);
