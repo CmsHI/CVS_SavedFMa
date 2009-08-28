@@ -176,7 +176,7 @@ void plotShapes(char * infname1 = "/net/pstore01/d00/scratch/frankma/hiroot/pyth
 
 	 // -- ratio --
 	 drawDivHist(Form("%sDiffShapePyquen",nbkey.Data()),Form("%sDiffShapePythia",nbkey.Data()),drsgFFE,
-	       Form("%sDiffShapeRatio",nbkey.Data()),";r;#rho_{pythia}(r)/#rho_{pyquen}(r)",rNBIN,0,rMAX,0,kBlue,1,3,1,8,3.);
+	       Form("%sDiffShapeRatio",nbkey.Data()),";r;#rho_{pyquen}(r)/#rho_{pythia}(r)",rNBIN,0,rMAX,0,kBlue,1,3,1,8,3.);
 	 drawDivHist(Form("%sDiffShapePyquen",abkey.Data()),Form("%sDiffShapePythia",abkey.Data()),drdbFFE,
 	       Form("%sDiffShapeRatio",abkey.Data()),";r;#rho(r)",rNBIN,0,rMAX,0,kBlue,1,3,1,4,3.);
 
