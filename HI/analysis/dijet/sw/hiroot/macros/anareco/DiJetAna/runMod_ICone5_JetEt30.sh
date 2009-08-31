@@ -8,12 +8,12 @@ if [ $# -eq 0 ]; then
 fi
 
 . /net/hisrv0001/home/frankma/UserCode/SavedFMa/bin/cgate/set_hiroot.sh
-#tar -xf macros.tar
+tar -xf macros.tar
 runn=$1
 tag=$2
 
 base=/net/pstore01/d00/scratch/frankma/hiroot
-job=prodPtHat50
+job=prodPtHat50QRad
 gen0=pythia50
 gen1=pyquen50
 
