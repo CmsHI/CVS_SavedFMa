@@ -2,6 +2,8 @@
 print_help () {
    echo usage:
    echo "  get_data.sh [-s source] [-d destination] [-r release] <-t data_tier> [-v]"
+   echo "  - sites:"
+   echo "    * svmit, p5, fuval, mit"
 }
 
 if [ $# -eq 0 ]; then
