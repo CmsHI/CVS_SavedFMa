@@ -12,6 +12,8 @@ echo "#!/bin/bash -" > $script
 echo "#command line: create_custom_cfg.sh $@" >> $script
 
 cfg0=$1
+newcfg=custom_${cfg0##*/}
+
 shift
 
 if [ $# -eq 0 ]; then
@@ -20,10 +22,10 @@ else
    echo "add_custom_cfg.sh $cfg0 $1" >> $script
    shift
    while [ $# -gt 0 ]; do
-      echo "add_custom_cfg.sh custom_$cfg0 $1" >> $script
+      echo "add_custom_cfg.sh $newcfg $1" >> $script
       shift
    done
-   echo "add_custom_cfg.sh custom_$cfg0 $mySeqPython/output_cfg_summary.py" >> $script
+   echo "add_custom_cfg.sh $newcfg $mySeqPython/output_cfg_summary.py" >> $script
 fi
 
 chmod +x $script
