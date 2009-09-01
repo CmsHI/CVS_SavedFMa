@@ -19,7 +19,7 @@ getAdrs () {
    # $2=value
 case $1 in
    svmit)
-   eval "$2=svmithi01.cern.ch:/home/frankma/scratch/data"
+   eval "$2=svmithi01.cern.ch:/d01/frankma/scratch/data"
    ;;
    p5)
    eval "$2=cmsusr5:/tmp/frankma"
