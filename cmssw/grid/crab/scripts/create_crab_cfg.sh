@@ -7,13 +7,18 @@ if [ $# -eq 0 ]; then
    return 1
 fi
 
+# input
 dbspath=/Hydjet_MinBias_4TeV/Summer09-MC_31X_V3-GaussianVtx_312_ver1/GEN-SIM-RAW
 pycfg=$1
+# job specification
 totnevt=$2
 nperjob=500
+# output
 outfile=hydjetMinBias325DigiToRawFixEcalTag.root
-outdir=/d01/frankma/scratch/data/simCMSSW_3_2_5_DigiToRawFix_EcalTag/raw
+outbase=$data/simCMSSW_3_2_5_DigiToRawFix_EcalTag_hyjetMinBiasJob
+outdir=$outbase/raw
 
+if [ ! -e $outbase ]; then mkdir $outbase; fi
 if [ ! -e $outdir ]; then mkdir $outdir; fi
 
 # edit python
