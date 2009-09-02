@@ -7,16 +7,19 @@ if [ $# -eq 0 ]; then
    return 1
 fi
 
+# ===== Job Setup =====
 # input
-dbspath=/Hydjet_MinBias_4TeV/Summer09-MC_31X_V3-GaussianVtx_312_ver1/GEN-SIM-RAW
+dbspath=/Hydjet_B0_4TeV/Summer09-MC_31X_V3-GaussianVtx_312_ver1/GEN-SIM-RAW
 pycfg=$1
 # job specification
 totnevt=$2
-nperjob=500
+nperjob=250
 # output
-outfile=hydjetMinBias325DigiToRawFixEcalTag.root
-outbase=$data/simCMSSW_3_2_5_DigiToRawFix_EcalTag_hyjetMinBiasJob
+outfile=hydjetB0_325DigiToRawFixEcalTag.root
+outbase=$data/simCMSSW_3_2_5_DigiToRawFix_EcalTag_hyjetB0Job
 outdir=$outbase/raw
+
+# ===== Execute =====
 
 if [ ! -e $outbase ]; then mkdir $outbase; fi
 if [ ! -e $outdir ]; then mkdir $outdir; fi
