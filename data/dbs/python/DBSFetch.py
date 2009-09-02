@@ -2,6 +2,8 @@
 #
 # taken from ElectroWeakAnalysis/TauTriggerEfficiency/python/DBSFetch.py
 #   * cf https://hypernews.cern.ch/HyperNews/CMS/get/swDevelopment/2156.html
+# - Note
+#   * To be used with python 2.4 and above
 #
 
 #!/usr/bin/env python
