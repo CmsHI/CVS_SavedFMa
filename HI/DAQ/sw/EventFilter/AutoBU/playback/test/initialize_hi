@@ -500,7 +500,8 @@ sub getLibraryPath
     my ($pkg) = (@_);
     
     my $cmssw_base         = $ENV{"CMSSW_BASE"};
-    my $cmssw_release_base = $ENV{"CMSSW_RELEASE_BASE"};
+    #my $cmssw_release_base = $ENV{"CMSSW_RELEASE_BASE"};
+    my $cmssw_release_base = "/opt/cmssw/pro";
 
     my $result = "/lib/" . $ENV{"SCRAM_ARCH"};
     
@@ -508,7 +509,8 @@ sub getLibraryPath
 	$result = $cmssw_base . $result;
     }
     else {
-	$result = $cmssw_release_base . $result;
+       #$result = $cmssw_release_base . $result;
+	$result = $cmssw_release_base . "/lib/";
     }
 
     return $result;
