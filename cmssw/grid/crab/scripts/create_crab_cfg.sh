@@ -4,6 +4,7 @@
 #   * assumes crab env has been already set
 # - For output to castor
 #   * cf https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideCrabHowTo#4_Stage_out_in_your_own_director
+#   * cf https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideCrabHowTo#5_LSF_Stage_out
 #
 
 if [ $# -eq 0 ]; then
@@ -57,7 +58,8 @@ else
    sed 's/^return_data = 1/return_data = 0/' tmpcrab.cfg | \
    sed 's/^copy_data = 0/copy_data = 1/' | \
    sed 's/^#storage_element=srm-cms.cern.ch/storage_element=srm-cms.cern.ch/' | \
-   sed 's;^#storage_path=/srm/managerv2?SFN=/castor/cern.ch/;storage_path=/srm/managerv2?SFN=/castor/cern.ch/;' \
+   # Since we are working at cern, we should use the LSF mode
+   sed 's;^#storage_path=/srm/managerv2?SFN=/castor/cern.ch/;/castor/cern.ch/;;' \
    > crab.cfg
    echo "user_remote_dir=$sedir" >> crab.cfg
    # check castor dir
