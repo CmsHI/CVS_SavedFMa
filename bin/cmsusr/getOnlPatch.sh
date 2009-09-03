@@ -5,4 +5,10 @@ if [ $# -eq 0 ]; then
    exit 1
 fi
 
-cp -r /opt/cmssw/$1/patch/src/* .
+onlsw=$1
+
+cp -r /opt/cmssw/$onlsw/patch/src/* .
+
+# log
+echo $onlsw snapshot:
+/nfshome0/frankma/UserCode/SavedFMa/bin/cmsusr/checkOnlineCmssw.sh $onlsw > setup.log
