@@ -59,7 +59,7 @@ else
    sed 's/^copy_data = 0/copy_data = 1/' | \
    sed 's/^#storage_element=srm-cms.cern.ch/storage_element=srm-cms.cern.ch/' | \
    # Since we are working at cern, we should use the LSF mode
-   sed 's;^#storage_path=/srm/managerv2?SFN=/castor/cern.ch/;/castor/cern.ch/;;' \
+   sed 's;^#storage_path=/srm/managerv2?SFN=/castor/cern.ch/;storage_path=/castor/cern.ch/;' \
    > crab.cfg
    echo "user_remote_dir=$sedir" >> crab.cfg
    # check castor dir
