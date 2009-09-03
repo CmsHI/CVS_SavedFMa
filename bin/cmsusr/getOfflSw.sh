@@ -1,2 +1,2 @@
 #!/bin/bash -
-cvs co -r CMSSW_3_1_1 EventFilter/AutoBU
+cvs co -r CMSSW_3_2_5 EventFilter/AutoBU
