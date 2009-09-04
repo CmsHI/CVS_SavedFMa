@@ -1,9 +1,11 @@
 #!/bin/bash -
 print_help () {
-   echo usage:
-   echo "  get_data.sh [-s source] [-d destination] [-r release] <-t data_tier> [-v]"
+   echo Usage:
+   echo "  get_data.sh [-s source] [-d destination] [-r release] <-t data_tier> [-v -c] [--tag file_name_tag]"
    echo "  - sites:"
    echo "    * svmit, p5, fuval, mit"
+   echo Eg:
+   echo "  get_data -s svmit -d p5 -r simCMSSW_3_2_5_DigiToRawFix_EcalTag_hyjetJob --tag hydjetB0* -v"
 }
 
 if [ $# -eq 0 ]; then
@@ -42,6 +44,7 @@ srcstoreKey=
 localstoreKey=
 verbose=0
 check=false
+tag=*
 
 # set variables
 while [ $# -gt 0 ]; do
@@ -61,6 +64,9 @@ while [ $# -gt 0 ]; do
       -v)  verbose=1
       ;;
       -c) check=true
+      ;;
+      --tag)  tag=$2
+      shift
       ;;
       --)  shift # By convention, --ends options
       break
@@ -83,7 +89,7 @@ localstore=/tmp/frankma
 
 # -relative data directory-
 datadir=$rel/$tier
-getcmd="scp $srcstore/$datadir/*.root $localstore/$datadir/"
+getcmd="scp $srcstore/$datadir/$tag.root $localstore/$datadir/"
 if [ $verbose -ge 1 ]; then
    echo srcstore: $srcstore
    echo localstore: $localstore
