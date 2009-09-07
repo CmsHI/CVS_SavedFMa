@@ -1,5 +1,10 @@
 #
-# dataset: /RelValHydjetQ_MinBias_4TeV/CMSSW_3_2_4-MC_31X_V3-v1/GEN-SIM-RAW
+# - For reference configuration:
+#   * /d00/icali/CMSSW_3_1_0/src/cfgFiles/SiStrip/SiStrip_SimToRaw_VR_cfg.py
+#
+
+#
+# - dataset: /RelValHydjetQ_MinBias_4TeV/CMSSW_3_2_4-MC_31X_V3-v1/GEN-SIM-RAW
 #
 
 def custom_TrackerVR(process):
