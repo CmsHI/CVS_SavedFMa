@@ -6,7 +6,10 @@ cmsenv
 addpkg EventFilter/SiStripRawToDigi
 
 # dataformats
-# this fixes the "SiStripNoises for a strip out of range" problem
+# this supposedly fixes the "SiStripNoises for a strip out of range" problem
+# - cf
+#   * CondFormats/SiStripObjects/src/SiStripNoises.cc
+#     + V15-03-02, HEAD as of 2009/9/7
 cvs co -r V15-03-02 CondFormats/SiStripObjects
 
 # this should work for 330pre2 b/c Ivan just used 2009/9/4
