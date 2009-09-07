@@ -46,11 +46,11 @@ def custom_TrackerVR(process):
    #   * EventFilter/SiStripRawToDigi/src/SiStripFEDBufferComponents.[cc/h]
    #     + for mode_key definitions
    process.newSiStripDigiToRaw = cms.EDProducer(
-      "sistrip::SiStripDigiToRawModule",
+      "SiStripDigiToRawModule",
       InputModuleLabel = cms.string('simSiStripDigis'),
       InputDigiLabel = cms.string('VirginRaw'),
-      FedReadoutMode = cms.untracked.string('VIRGIN_RAW'),
-      UseFedKey = cms.untracked.bool(False),
+      FedReadoutMode = cms.string('VIRGIN_RAW'),
+      UseFedKey = cms.bool(False),
       UseWrongDigiType = cms.bool(False)
       ) 
 
