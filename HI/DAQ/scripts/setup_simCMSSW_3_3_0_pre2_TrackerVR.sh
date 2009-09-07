@@ -5,7 +5,10 @@ cmsenv
 
 addpkg EventFilter/SiStripRawToDigi
 
-# dataformat
+# dataformats
+# this fixes the "SiStripNoises for a strip out of range" problem
+cvs co -r V15-03-02 CondFormats/SiStripObjects
+
 # this should work for 330pre2 b/c Ivan just used 2009/9/4
 cp -r /d00/icali/CMSSW_3_1_0/src/SimTracker .
 
