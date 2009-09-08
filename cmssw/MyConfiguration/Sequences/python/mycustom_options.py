@@ -28,7 +28,7 @@ def mycustomise(process):
       process.source.fileNames = options.files
    process.maxEvents.input = options.maxEvents
    try:
-      if (options.output != 'default_output.root'):
+      if ('default_output' not in options.output):
 	 process.output.fileName = options.output
    except:
       print "no output module with the given name"
