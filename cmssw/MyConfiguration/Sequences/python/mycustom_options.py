@@ -14,7 +14,7 @@ options = VarParsing.VarParsing ('standard')
 # set default values
 options.files = 'input0.root'
 options.maxEvents = -1
-options.output = 'output.root'
+options.output = 'default_output.root'
 # get and parse the command line arguments
 options.parseArguments()
 
@@ -28,7 +28,8 @@ def mycustomise(process):
       process.source.fileNames = options.files
    process.maxEvents.input = options.maxEvents
    try:
-      process.output.fileName = options.output
+      if (options.output != 'default_output.root'):
+	 process.output.fileName = options.output
    except:
       print "no output module with the given name"
    return(process)
