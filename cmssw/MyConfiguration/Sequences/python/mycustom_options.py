@@ -23,7 +23,9 @@ def mycustomise(process):
    try:
       process.options.wantSummary = cms.untracked.bool(True)
    except:
-      print "no process.options defined in this cfg"
+      process.options = cms.untracked.PSet(
+	 wantSummary = cms.untracked.bool(True)
+      )
    if (options.files[0] != 'input0.root'):
       process.source.fileNames = options.files
    process.maxEvents.input = options.maxEvents
