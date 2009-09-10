@@ -21,9 +21,11 @@ cvs co -r CMSSW_3_3_0_pre2 RecoJets/Configuration
 cvs co -r CMSSW_3_3_0_pre2 RecoHI/HiJetAlgos
 
 # Need the HiGenParticleProducer class
-cvs co UserCode/CmsHi/Utilities
+cvs co -r V00-01-02 UserCode/CmsHi/Utilities
 # Need head version for the HiGenParticleProducer class to compile
 cvs co -r V04-00-00 SimGeneral/TrackingAnalysis # HEAD as of 2009.9.9
+# other needed classes for the package to compile
+cvs co -r cvs co -r V00-01-02 DataFormats/HeavyIonEvent
 
 # - No other code needed
 #   * hi jet reco code is the new structure in 330pre2
