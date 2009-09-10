@@ -31,6 +31,6 @@ cvs co -r V04-00-00 SimGeneral/TrackingAnalysis # HEAD as of 2009.9.9
 #     with the normal DataFormats/HepMCCandidate for now
 #     until it is fixed in the Development_3xy_HeavyIons branch
 mv UserCode/CmsHi .
-rm -rf CmsHi
+rm -rf UserCode
 
 scramv1 b
