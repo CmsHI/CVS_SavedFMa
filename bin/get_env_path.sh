@@ -1,5 +1,5 @@
 #!/bin/bash -
-result= `env | grep "$1=" | awk -F= '{print $2}'`
+result=`env | grep "$1=" | awk -F= '{print $2}'`
 
 if [ $result ]; then
    echo $result
