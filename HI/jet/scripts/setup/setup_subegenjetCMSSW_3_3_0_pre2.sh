@@ -32,6 +32,10 @@ cvs co -r cvs co -r V00-01-02 DataFormats/HeavyIonEvent
 #   * using the normal PhysicsTools/HepMCCandAlgos hepmc converter
 #     with the normal DataFormats/HepMCCandidate for now
 #     until it is fixed in the Development_3xy_HeavyIons branch
+
+# just for quick check
+cvs co UserCode/CmsHi/JetAnalysis
+
 mv UserCode/CmsHi .
 rm -rf UserCode
 
