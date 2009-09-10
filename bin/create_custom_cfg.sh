@@ -9,7 +9,12 @@ fi
 
 # prepare env
 script=create_custom_python_cfg.sh
+# added convenience
+if [ ! -e mySeq ]; then
+   ln -s $mySeqPython mySeq
+fi
 
+# start building create custom python script
 echo "#!/bin/bash -" > $script
 echo "#command line: create_custom_cfg.sh $@" >> $script
 
@@ -35,5 +40,3 @@ chmod +x $script
 # run script
 ./$script
 
-# added convenience
-ln -s $mySeqPython mySeq
