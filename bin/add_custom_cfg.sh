@@ -32,7 +32,7 @@ cusCfgName=${cusCfg##*/}
 cusCfgName=${cusCfgName%.py}
 #out=${mainCfgName}_${cusCfgName}.py
 pref="custom"
-echo $mainCfgName | grep $pref
+echo $mainCfgName | grep $pref > /dev/null
 if [ $? -ne 0 ]; then
    out=${pref}_${mainCfgName}.py
    cmd="cat $mainCfg $cusCfg >> $out"
