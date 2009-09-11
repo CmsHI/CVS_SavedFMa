@@ -23,7 +23,9 @@ cvs co -r CMSSW_3_3_0_pre2 RecoHI/HiJetAlgos
 # Need the HiGenParticleProducer class
 cvs co -r V00-01-02 UserCode/CmsHi/Utilities
 # Need head version for the HiGenParticleProducer class to compile
-cvs co -r V04-00-00 SimGeneral/TrackingAnalysis # HEAD as of 2009.9.9
+# - seems not yet working fully, stick to V00-01-02 UserCode/CmsHi/Utilities
+#   for now
+#cvs co -r V04-00-00 SimGeneral/TrackingAnalysis # HEAD as of 2009.9.9
 # other needed classes for the package to compile
 cvs co -r cvs co -r V00-01-02 DataFormats/HeavyIonEvent
 
@@ -34,6 +36,8 @@ cvs co -r cvs co -r V00-01-02 DataFormats/HeavyIonEvent
 #     until it is fixed in the Development_3xy_HeavyIons branch
 
 # just for quick check
+# - note
+#   * need the HEAD version, which deleted the older jet producer
 cvs co UserCode/CmsHi/JetAnalysis
 
 mv UserCode/CmsHi .
