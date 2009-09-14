@@ -4,6 +4,10 @@
 #   * assumes crab env has been already set
 # - For output to castor
 #   * cf https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideCrabHowTo#4_Stage_out_in_your_own_director
+# - Warning
+#   * be careful with command line parsing!
+#     + don't use command line parsing for cmssw when using crab, b/c both are using python
+#       and cmssw will get the command line of crab :(
 #
 
 if [ $# -eq 0 -o $# -lt 4 ]; then
