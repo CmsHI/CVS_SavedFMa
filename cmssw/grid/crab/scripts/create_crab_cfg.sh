@@ -4,6 +4,7 @@
 #   * assumes crab env has been already set
 # - For output to castor
 #   * cf https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideCrabHowTo#4_Stage_out_in_your_own_director
+#
 # - Warning
 #   * be careful with command line parsing!
 #     + don't use command line parsing for cmssw when using crab, b/c both are using python
@@ -23,18 +24,19 @@ fi
 
 # ===== Job Setup =====
 # input
-dbspath=/Hydjet_B0_4TeV/Summer09-MC_31X_V3-GaussianVtx_312_ver1/GEN-SIM-RAW
-pycfg=$1
+dbspath=/Hydjet_MinBias_4TeV/Summer09-MC_31X_V3-GaussianVtx_312_ver1/GEN-SIM-RAW
 # job specification
-totnevt=$2
-nperjob=250
+nperjob=100
 # output
 outfile=output.root
+
+# ===== Execute =====
+# automated setup from command line
+pycfg=$1
+totnevt=$2
 storage=$3
 sbasepath=${4%/*}
 spath=$4
-
-# ===== Execute =====
 
 # edit python
 jobpycfg=job_${pycfg##*/}
