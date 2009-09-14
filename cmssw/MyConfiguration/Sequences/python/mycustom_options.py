@@ -9,6 +9,8 @@
 # === Addition of Customization ===
 print "\nBegin My Customization\n"
 # command line inputs
+import sys
+print "cmssw command line arguements:",sys.argv
 import FWCore.ParameterSet.VarParsing as VarParsing
 options = VarParsing.VarParsing ('standard')
 # set default values
