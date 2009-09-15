@@ -160,7 +160,7 @@ TCanvas * makeCanvas(const char* name, const char* title, bool log=false, const 
 
 //=============================== Main Functions =====================================
 //--- function to draw 1D histograms from TTree ---
-Double_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const double min, const double max, bool log=false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz =0, const Style_t mst =0, double norm=-1.,const double ymax=0)
+TH1D * drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const double min, const double max, bool log=false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz =0, const Style_t mst =0, double norm=-1.,const double ymax=0)
 {
    //--- Print some info ---
    if (!TString(opt).Contains("same")) printf("\n");
@@ -170,7 +170,7 @@ Double_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt,
 //   nt->Print();
 
    //--- Make/set histogram ---
-   printf("hist: %s %d %f %f\n",name,nbin,min,max);
+   printf("hist: %s %d %f %f, c: %d\n",name,nbin,min,max,lc);
    TH1D * h = createHist(name, title, nbin, min, max);
 
    //--- Draw Hist, get entries past cut ---
@@ -184,7 +184,7 @@ Double_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt,
    //--- Draw final hist ---
    h->Draw(opt);
 
-   return n;
+   return h;
 }
 //--- function to draw 2D histograms from TTree ---
 void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nxbin, const double xmin, const double xmax, const int nybin, const double ymin, const double ymax,  UInt_t log=0)
