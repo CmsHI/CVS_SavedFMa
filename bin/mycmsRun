@@ -17,7 +17,7 @@ check=false
 # save options
 cmdline="mycmsRun ""$@"
 cmsopt=
-cfgName=$1
+cfgName=${1##*/}
 # par in vars
 while [ $# -gt 0 ]; do
    case $1 in 
