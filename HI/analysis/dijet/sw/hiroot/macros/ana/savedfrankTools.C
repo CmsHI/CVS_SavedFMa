@@ -164,7 +164,9 @@ Double_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt,
 {
    //--- Print some info ---
    if (!TString(opt).Contains("same")) printf("\n");
-   printf("%s, tree: %x. Draw: %s. Norm: %f\n", name, nt, draw, norm);
+   // -- define draw command --
+   TString drawcmd(Form("%s>>%s",draw,name));
+   printf("%s, tree: %x. Draw: %s. Norm: %f\n", name, nt, drawcmd.Data(), norm);
 //   nt->Print();
 
    //--- Make/set histogram ---
@@ -173,7 +175,7 @@ Double_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt,
 
    //--- Draw Hist, get entries past cut ---
    TCanvas * c = makeCanvas(name,title,log,opt);
-   Double_t n = nt->Draw(draw, cut, opt);
+   Double_t n = nt->Draw(drawcmd, cut, opt);
    printf("%s has: %f entries\n",name,h->GetEntries());
 
    //--- Set Hist ---
