@@ -454,7 +454,7 @@ HeavyIonJetAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       for(int im = 0; im < nm; ++im){
 	const reco::Candidate* candi = members[im];
 	double dr = deltaR(jet->eta(),jet->phi(),candi->eta(),candi->phi());
-	cout<<"Constiutuent's Delta R = "<<dr<<endl;
+	LogDebug("JetContent")<<"Constiutuent's Delta R = "<<dr<<endl;
 
 	double phicon = candi->phi()-phi0;
 	if(phicon > PI) phicon = phicon - 2*PI;
