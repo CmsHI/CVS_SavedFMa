@@ -4,10 +4,10 @@ using namespace std;
 
 void driverTools ()
 {
-   TH1F * h = createHist("testh","new hist",10,0,10);
+   TH1D * h = createHist("testh","new hist",10,0,10);
    for (int i =0; i<10; ++i) h->Fill(3);
    drawNormHist("testh","histE1","normalized hist","#xi","per jet",0.1,true,kRed,0,3,1,1);
-   TH1F * h2 = createHist("testh2","new hist",10,0,10);
+   TH1D * h2 = createHist("testh2","new hist",10,0,10);
    for (int i =0; i<20; ++i) h2->Fill(3);
    drawNormHist("testh2","histE1 same","normalized hist","#xi","per jet",0.1,true,kBlue,0,3,1,1);
 

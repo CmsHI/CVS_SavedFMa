@@ -3,7 +3,7 @@
 //#include "TFile.h"
 #include "TTree.h"
 #include "TNtuple.h"
-#include "TH1F.h"
+#include "TH1D.h"
 #include "TH2D.h"
 #include "TCanvas.h"
 #include "TROOT.h"
@@ -13,13 +13,13 @@
 // private includes
 #include "HistMath.C"
 
-const Float_t PI = 3.14159;
-const Float_t PI2 = 2*3.14159;
+const Double_t PI = 3.14159;
+const Double_t PI2 = 2*3.14159;
 
 //
 // Helper tools for root ana
 // Todo
-// - change TH1F to TH1D
+// - change TH1D to TH1D
 //
 
 void savedfrankTools() {}
@@ -101,12 +101,12 @@ void printAllCanvases(const char* folder="plots")
 }
 
 //--- Creat Histogram ---
-TH1F * createHist(const char* name, const char* title, const int nbin, const float min, const float max)
+TH1D * createHist(const char* name, const char* title, const int nbin, const double min, const double max)
 {
    // Save the errors, so that later when scale or divided by another histo,
    // the errors will scale with the same factor and not recalculated after scale.
    // cf "Filling Histograms" in root manual
-   TH1F * h = new TH1F(name,title,nbin,min,max);
+   TH1D * h = new TH1D(name,title,nbin,min,max);
    h->Sumw2();
    return h;
 }
@@ -128,7 +128,7 @@ void setHist(TH1* h, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0,
    //--- Normalize ---
    if (norm>0.) {
       printf("Scale: %s by %f\n",h->GetName(),norm);
-      Float_t binNorm = 1./h->GetBinWidth(1);
+      Double_t binNorm = 1./h->GetBinWidth(1);
       h->Scale(binNorm*norm);
    }
 
@@ -138,8 +138,8 @@ void setHist(TH1* h, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0,
 
 void setHist(const char* name, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz=0, const Style_t mst=0, const double norm = -1, const char* xtitle = "", const char* ytitle = "", const double ymax=0)
 {
-   TH1F * h;
-   if (h=dynamic_cast<TH1F*>(findHist(name))) setHist(h,lc,ls,lw,msz,mst,norm,xtitle,ytitle,ymax);
+   TH1D * h;
+   if (h=dynamic_cast<TH1D*>(findHist(name))) setHist(h,lc,ls,lw,msz,mst,norm,xtitle,ytitle,ymax);
 }
 
 //--- Make Canvas ---
@@ -160,7 +160,7 @@ TCanvas * makeCanvas(const char* name, const char* title, bool log=false, const 
 
 //=============================== Main Functions =====================================
 //--- function to draw 1D histograms from TTree ---
-Float_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz =0, const Style_t mst =0, float norm=-1.,const double ymax=0)
+Double_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const double min, const double max, bool log=false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz =0, const Style_t mst =0, double norm=-1.,const double ymax=0)
 {
    //--- Print some info ---
    if (!TString(opt).Contains("same")) printf("\n");
@@ -169,11 +169,11 @@ Float_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, 
 
    //--- Make/set histogram ---
    printf("hist: %s %d %f %f\n",name,nbin,min,max);
-   TH1F * h = createHist(name, title, nbin, min, max);
+   TH1D * h = createHist(name, title, nbin, min, max);
 
    //--- Draw Hist, get entries past cut ---
    TCanvas * c = makeCanvas(name,title,log,opt);
-   Float_t n = nt->Draw(draw, cut, opt);
+   Double_t n = nt->Draw(draw, cut, opt);
    printf("%s has: %f entries\n",name,h->GetEntries());
 
    //--- Set Hist ---
@@ -185,7 +185,7 @@ Float_t drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, 
    return n;
 }
 //--- function to draw 2D histograms from TTree ---
-void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nxbin, const float xmin, const float xmax, const int nybin, const float ymin, const float ymax,  UInt_t log=0)
+void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nxbin, const double xmin, const double xmax, const int nybin, const double ymin, const double ymax,  UInt_t log=0)
 {
    //--- Print some info ---
    if (!TString(opt).Contains("same")) printf("\n");
@@ -204,20 +204,20 @@ void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, co
 }
 
 //--- function to divide histograms then draw---
-void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* name, const char* title, const int nbin, const float min, const float max, bool log=false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz=0, const Style_t mst=0, const float ymax=0)
+void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* name, const char* title, const int nbin, const double min, const double max, bool log=false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz=0, const Style_t mst=0, const double ymax=0)
 {
    // find input histos
    if (!TString(opt).Contains("same")) printf("\n");
    printf("h1: %s. h2: %s. Draw: %s\n", hn1, hn2, name);
-   TH1F * h1; TH1F * h2;
+   TH1D * h1; TH1D * h2;
    if (gROOT->FindObject(hn1))
-      h1 = dynamic_cast<TH1F*>(gROOT->FindObject(hn1));
+      h1 = dynamic_cast<TH1D*>(gROOT->FindObject(hn1));
    else {
       printf("%s is not found, please check the histogram name\n", hn1);
       return;
    }
    if (gROOT->FindObject(hn2))
-      h2 = dynamic_cast<TH1F*>(gROOT->FindObject(hn2));
+      h2 = dynamic_cast<TH1D*>(gROOT->FindObject(hn2));
    else {
       printf("%s is not found, please check the histogram name\n", hn2);
       return;
@@ -225,7 +225,7 @@ void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* 
 
    //--- Make/set histogram ---
    printf("hist: %s %d %f %f\n",name,nbin,min,max);
-   TH1F * h = createHist(name, title, nbin, min, max);
+   TH1D * h = createHist(name, title, nbin, min, max);
    setHist(h,lc,ls,lw,msz,mst);
 
    //--- Action ---
