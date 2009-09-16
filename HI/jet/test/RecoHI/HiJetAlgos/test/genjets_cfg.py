@@ -7,8 +7,7 @@ process.load('Configuration/StandardSequences/Services_cff')
 process.load('FWCore/MessageService/MessageLogger_cfi')
 process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
 # hi jet cfg
-process.load("RecoHI.HiJetAlgos.IterativeCone5HiGenJets_cff")
-process.load("RecoHI.HiJetAlgos.RecoHiJets_EventContent_cff")
+process.load("CmsHi.JetAnalysis.IterativeCone5HiGenJets_cff")
 # subevent map
 process.load("CmsHi.Utilities.HiGenParticles_cfi")
 # quick check analyzer
@@ -30,8 +29,8 @@ process.source = cms.Source("PoolSource",
 # Output definition
 process.output = cms.OutputModule("PoolOutputModule",
     splitLevel = cms.untracked.int32(0),
-    outputCommands = process.RecoHiJetsFEVT.outputCommands,
-    fileName = cms.untracked.string('semgenjets326.root'),
+    #outputCommands = process.RecoHiJetsFEVT.outputCommands,
+    fileName = cms.untracked.string('edm_output.root'),
     dataset = cms.untracked.PSet(
         dataTier = cms.untracked.string('RECO'),
         filterName = cms.untracked.string('')
