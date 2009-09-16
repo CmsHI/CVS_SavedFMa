@@ -10,7 +10,7 @@ def customise_skim(process):
    processname=process.name_()
    rawtag=classname+"_"+modulename+"_*_"+processname
 
-   process.output.outputCommands = ['drop *','keep '+rawtag]
+   process.output.outputCommands = cms.untracked.vstring('drop *','keep '+rawtag)
    return(process)
 
 # redefine process
