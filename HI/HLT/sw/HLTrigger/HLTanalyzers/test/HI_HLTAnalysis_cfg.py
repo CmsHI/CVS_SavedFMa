@@ -49,6 +49,6 @@ process.analyzeThis = cms.Path( process.hltanalysis )
 process.schedule = cms.Schedule( 
     process.DoHLTHIJets, 
     process.DoHLTHIMuon, 
-    process.DoHLTHIPhoton#, 
-    #process.analyzeThis
+    process.DoHLTHIPhoton, 
+    process.analyzeThis
     )

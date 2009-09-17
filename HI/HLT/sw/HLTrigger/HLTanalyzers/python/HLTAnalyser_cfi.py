@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
     ### GEN objects
-    mctruth                         = cms.InputTag("genParticles"),
+    mctruth                         = cms.InputTag("hiGenParticles"),
     genEventScale                   = cms.InputTag("genEventScale"),
 
     ### SIM objects
@@ -19,13 +19,13 @@ hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
     hltresults                      = cms.InputTag("TriggerResults::HLT"),
     
     ### reconstructed objects
-    genjets                         = cms.InputTag("iterativeCone5GenJets"),
+    genjets                         = cms.InputTag("iterativeCone5HiGenJets"),
     genmet                          = cms.InputTag("genMet"),
-    recjets                         = cms.InputTag("hltIterativeCone5CaloJets"),
-    reccorjets                      = cms.InputTag("hltMCJetCorJetIcone5"),
+    recjets                         = cms.InputTag("hltIterativeCone5PileupSubtractionCaloJets"),
+    reccorjets                      = cms.InputTag("hltMCJetCorJetIcone5PU"),
     recmet                          = cms.InputTag("hltMet"),
     ht                              = cms.InputTag("hltHtMet"),
-    calotowers                      = cms.InputTag("towerMaker"),
+    calotowers                      = cms.InputTag("hltTowerMakerForAll"),
     muon                            = cms.InputTag("muons"),
     Electron                        = cms.InputTag("pixelMatchGsfElectrons"),
     Photon                          = cms.InputTag("photons"),
@@ -113,6 +113,6 @@ hltanalysis = cms.EDAnalyzer("HLTAnalyzer",
         CalJetMin     = cms.double(0.0),
         GenJetMin     = cms.double(0.0),
         Monte         = cms.bool(True),
-        Debug         = cms.bool(False)
+        Debug         = cms.bool(True)
     )
 )

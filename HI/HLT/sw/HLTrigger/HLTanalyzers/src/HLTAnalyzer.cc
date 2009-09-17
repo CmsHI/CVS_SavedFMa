@@ -74,6 +74,7 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   //  MuLinkTag_        = conf.getParameter<edm::InputTag> ("MuLinkTag");
   HLTTau_           = conf.getParameter<edm::InputTag> ("HLTTau");
 
+  /*
   // btag OpenHLT input collections
   m_rawBJets                = conf.getParameter<edm::InputTag>("CommonBJetsL2");
   m_correctedBJets          = conf.getParameter<edm::InputTag>("CorrectedBJetsL2");
@@ -111,6 +112,7 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   L1NonIsoPixelSeeds_       = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIso");
   L1IsoPixelSeedsLW_        = conf.getParameter<edm::InputTag> ("PixelSeedL1IsoLargeWindows");
   L1NonIsoPixelSeedsLW_     = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIsoLargeWindows");
+  */
 
   // AlCa OpenHLT input collections  
   EERecHitTag_              = conf.getParameter<edm::InputTag> ("EERecHits"); 
@@ -141,11 +143,13 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
 
   // Setup the different analysis
   jet_analysis_.setup(conf, HltTree);
+  /*
   bjet_analysis_.setup(conf, HltTree);
   elm_analysis_.setup(conf, HltTree);
   muon_analysis_.setup(conf, HltTree);
+  */
   alca_analysis_.setup(conf, HltTree); 
-  track_analysis_.setup(conf, HltTree);
+  //track_analysis_.setup(conf, HltTree);
   mct_analysis_.setup(conf, HltTree);
   hlt_analysis_.setup(conf, HltTree);
   evt_header_.setup(HltTree);
@@ -240,9 +244,11 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<reco::IsolatedPixelTrackCandidateCollection> isopixeltracksL3; 
 
   // new stuff for the egamma EleId
+  /*
    edm::InputTag ecalRechitEBTag (string("hltEcalRegionalEgammaRecHit:EcalRecHitsEB"));
    edm::InputTag ecalRechitEETag (string("hltEcalRegionalEgammaRecHit:EcalRecHitsEE"));
    EcalClusterLazyTools lazyTools( iEvent, iSetup, ecalRechitEBTag, ecalRechitEETag);
+  */
 
   edm::ESHandle<MagneticField>                theMagField;
   iSetup.get<IdealMagneticFieldRecord>().get(theMagField);
@@ -383,6 +389,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     caloTowers,
     HltTree);
   
+  /*
   muon_analysis_.analyze(
     muon,
     mucands2,
@@ -422,6 +429,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
      BSPosition,
      eIDValueMap,
      HltTree);
+  */
 
   mct_analysis_.analyze(
     mctruth,
@@ -449,9 +457,11 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     l1CaloGeom,
     HltTree);  
 
+  /*
   track_analysis_.analyze( 
     isopixeltracksL3, 
     HltTree); 
+  */
 
   hlt_analysis_.analyze(
     hltresults,
@@ -469,6 +479,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     gctRingSums,
     HltTree);
   
+  /*
   bjet_analysis_.analyze(
     hRawBJets, 
     hCorrectedBJets,
@@ -481,6 +492,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     hPerformanceBJetsL25,
     hPerformanceBJetsL3,
     HltTree);
+  */
 
   evt_header_.analyze(iEvent, HltTree);
 
