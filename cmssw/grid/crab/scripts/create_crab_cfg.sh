@@ -13,12 +13,14 @@
 
 if [ $# -eq 0 -o $# -lt 4 ]; then
    echo "Usage:"
-   echo ". create_crab_cfg.sh <job_cfg.py> <totnevt> <output_storage> <storage_path_base/subdir>"
-   echo "output_storage:"
+   echo ". ./create_crab_cfg.sh <job_cfg.py> <totnevt> <output_storage> <storage_path_base/subdir>"
+   echo "Output_storage choices:"
    echo "  castor,mit,local"
    echo "Eg:"
-   echo '. create_crab_cfg.sh custom_genjets_cfg.py 10 local $data/semgenjetCMSSW_3_2_6/tree'
-   echo '. create_crab_cfg.sh custom_DIGI_RAW_MC_31X_V3_driver.py castor simCMSSW_3_2_5_DigiToRawFix_EcalTag/raw'
+   echo '  . ./create_crab_cfg.sh custom_genjets_cfg.py 10 local $data/semgenjetCMSSW_3_2_6/tree'
+   echo '  . ./create_crab_cfg.sh custom_DIGI_RAW_MC_31X_V3_driver.py castor simCMSSW_3_2_5_DigiToRawFix_EcalTag/raw'
+   echo "Warning:"
+   echo " if output to local, size limit: 50MB"
    return 1
 fi
 
