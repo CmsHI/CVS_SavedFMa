@@ -244,6 +244,7 @@ void OHltConfig::print()
   cout << "Number of Samples: "<<pnames.size()<<  endl;
   cout << "**********************************" <<  endl;
   for (unsigned int i=0;i<pnames.size();i++) {
+    cout << "isPhysics["<<i<<"]: " << pisPhysicsSample[i] << endl;
     cout << "pnames["<<i<<"]: " << pnames[i] << endl;
     cout << "ppaths["<<i<<"]: " << ppaths[i] << endl;
     cout << "pfnames["<<i<<"]: " << pfnames[i] << endl;

@@ -116,23 +116,27 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
     }
   else if(ohltobject == "jet")
     {
-      nhlt=NrecoJetCorCal;
+      nhlt=NrecoJetCal;
       for(int i=0;i<nhlt;i++){
-        hltpt[i] = recoJetCorCalPt[i];
-        hlteta[i] = recoJetCorCalEta[i];
-        hltphi[i] = recoJetCorCalPhi[i];
+        hltpt[i] = recoJetCalPt[i];
+        hlteta[i] = recoJetCalEta[i];
+        hltphi[i] = recoJetCalPhi[i];
+	h2->Fill(hltpt[i]);;
       }
       if (cfg->selectBranchL1extra) nl1= NL1CenJet;
       for(int i=0;i<nl1;i++){
         l1pt[i] = L1CenJetEt[i];
         l1eta[i] = L1CenJetEta[i];
         l1phi[i] = L1CenJetPhi[i];
+	h3->Fill(l1pt[i]);
       }
-      if (cfg->selectBranchReco) nrec=NrecoJetCorCal;
+      if (cfg->selectBranchReco) nrec=NrecoJetCal;
       for(int i=0;i<nrec;i++){
-        recopt[i] = recoJetCorCalPt[i];
-        recoeta[i] = recoJetCorCalEta[i];
-        recophi[i] = recoJetCorCalPhi[i];
+        recopt[i] = recoJetCalPt[i];
+        recoeta[i] = recoJetCalEta[i];
+        recophi[i] = recoJetCalPhi[i];
+        cout << "EffCurve% jet:" << i << "  pt: " << recopt[i] << endl;
+	h4->Fill(recopt[i]);
       }
       mctruthpid = 21; // gluons - probably should be GenJets or something
     }
@@ -142,6 +146,8 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
   Float_t etacutforpt = 3.0;
   Float_t ptcutforeta = 5.0;
   Float_t drmatch = 0.5;
+
+  return;
 
   // Do efficiency of HLT/GEN
   if(hlteffmode == "GEN" && (cfg->selectBranchMC))
