@@ -7,6 +7,7 @@
 #include <TLeaf.h>
 #include <TFormula.h>
 #include <TMath.h>
+#include <TNtuple.h>
 
 #include <iostream>
 #include <iomanip>
@@ -16,7 +17,8 @@ using namespace std;
 
 void OHltTree::Loop(OHltRateCounter *rc,OHltConfig *cfg,OHltMenu *menu,int procID
 		    ,float &Den,TH1F* &h1,TH1F* &h2,TH1F* &h3,TH1F* &h4 
-		    ,SampleDiagnostics& primaryDatasetsDiagnostics)
+		    ,SampleDiagnostics& primaryDatasetsDiagnostics,
+		    TNtuple* ntlead)
 {
   cout<<"Start looping on sample "<<procID<<endl;
   if (fChain == 0) {cerr<<"Error: no tree!"<<endl; return;}
@@ -132,7 +134,8 @@ void OHltTree::Loop(OHltRateCounter *rc,OHltConfig *cfg,OHltMenu *menu,int procI
     if (cfg->pisPhysicsSample[procID]==2)ohltobject="muon";
     if (cfg->pisPhysicsSample[procID]==3)ohltobject="ele_mu";
     if (cfg->pisPhysicsSample[procID]==4)ohltobject="jet";
-    PlotOHltEffCurves(cfg,hlteffmode,ohltobject,h1,h2,h3,h4);
+    cout << "Will do efficiency for: " << ohltobject << " output nt: " << ntlead << endl;
+    PlotOHltEffCurves(cfg,hlteffmode,ohltobject,h1,h2,h3,h4,ntlead);
 
 
     //////////////////////////////////////////////////////////////////

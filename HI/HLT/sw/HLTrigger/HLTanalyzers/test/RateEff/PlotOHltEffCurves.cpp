@@ -4,10 +4,11 @@
 #include <TString.h>
 #include "TH1.h"
 #include "TH2.h"
+#include "TNtuple.h"
 
 using namespace std;
 
-void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohltobject,TH1F* &h1,TH1F* &h2,TH1F* &h3,TH1F* &h4)
+void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohltobject,TH1F* &h1,TH1F* &h2,TH1F* &h3,TH1F* &h4,TNtuple* ntlead)
 {
   // Generic N, pT, eta, phi varibles
   Int_t nhlt=0;
@@ -139,6 +140,16 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
 	h4->Fill(recopt[i]);
       }
       mctruthpid = 21; // gluons - probably should be GenJets or something
+
+      // fill leading ntuple
+      if(ntlead) {
+	 ntlead->Fill(recoJetGenPt[0],recoJetGenEta[0],recoJetGenPhi[0],
+	              recoJetCalPt[0],recoJetCalEta[0],recoJetCalPhi[0],
+		      L1CenJetEt[0],L1CenJetEta[0],L1CenJetPhi[0],
+		      L1_SingleJet15,-1);
+      } else {
+	 cout << "leading phy obj ntuple not defined" << endl;
+      }
     }
   // Now really make efficiency curves
 

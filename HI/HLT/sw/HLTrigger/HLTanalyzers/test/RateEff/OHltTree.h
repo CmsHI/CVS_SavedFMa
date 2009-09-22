@@ -26,6 +26,7 @@
 
 #include "TH1.h"
 #include "TH2.h"
+#include "TNtuple.h"
 
 class OHltTree {
 public :
@@ -1081,9 +1082,10 @@ public :
 
   void Loop(OHltRateCounter *rc,OHltConfig *cfg,OHltMenu *menu,int pID
 						,float &Den,TH1F* &h1,TH1F* &h2,TH1F* &h3,TH1F* &h4
-						,SampleDiagnostics& primaryDatasetsDiagnostics);
+						,SampleDiagnostics& primaryDatasetsDiagnostics,
+						TNtuple * ntlead=0);
 
-  void PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohltobject,TH1F* &h1,TH1F* &h2,TH1F* &h3,TH1F* &h4);
+  void PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohltobject,TH1F* &h1,TH1F* &h2,TH1F* &h3,TH1F* &h4,TNtuple * ntlead);
   void CheckOpenHlt(OHltConfig *cfg,OHltMenu *menu,OHltRateCounter *rc,int it);
   void PrintOhltVariables(int level, int type);
   int OpenHltTauPassed(float Et,float Eiso, float L25Tpt, int L25Tiso,float L3Tpt, int L3Tiso);

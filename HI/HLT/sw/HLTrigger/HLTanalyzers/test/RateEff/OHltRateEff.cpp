@@ -5,6 +5,7 @@
 
 #include <TString.h>
 #include <TTree.h>
+#include <TNtuple.h>
 #include <TChain.h>
 #include "OHltTree.h"
 #include "OHltMenu.h"
@@ -274,8 +275,10 @@ void calcEff(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
       TH1F *h4 = new TH1F("etaden","etaden",nbineta,etamin,etamax);
       TH1F *Eff_pt = new TH1F("eff_pt","eff_pt",nbinpt,ptmin,ptmax);
       TH1F *Eff_eta = new TH1F("eff_eta","eff_eta",nbineta,etamin,etamax);
+      TNtuple *ntlead = new TNtuple("ntlead","Leading phy obj","genpt:geneta:genphi:recpt:receta:recphi:l1pt:l1eta:l1phi:l1bit:hltbit");
 
-      procs[i]->Loop(rcs[i],cfg,menu,i,DenEff,h1,h2,h3,h4,hltDatasets[i]);
+      cout << "Will do efficiency. lead nt: " << ntlead << endl;
+      procs[i]->Loop(rcs[i],cfg,menu,i,DenEff,h1,h2,h3,h4,hltDatasets[i],ntlead);
       
       for (int j=0;j<ntrig;j++) {
 	Eff[j]    += OHltRateCounter::eff((float)rcs[i]->iCount[j],DenEff);
@@ -316,6 +319,7 @@ void calcEff(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
       h4->Write(); 
       Eff_pt->Write();
       Eff_eta->Write();
+      ntlead->Write();
 
       theFile->Close();
 
