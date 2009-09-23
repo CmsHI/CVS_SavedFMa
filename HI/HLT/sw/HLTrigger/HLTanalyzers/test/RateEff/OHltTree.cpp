@@ -128,7 +128,7 @@ void OHltTree::Loop(OHltRateCounter *rc,OHltConfig *cfg,OHltMenu *menu,int procI
     TString ohltobject;
     //    hlteffmode="GEN";
     //    hlteffmode="L1";
-    hlteffmode="RECO";
+    hlteffmode="GEN";
     ohltobject="None";
     if (cfg->pisPhysicsSample[procID]==1)ohltobject="electron";
     if (cfg->pisPhysicsSample[procID]==2)ohltobject="muon";

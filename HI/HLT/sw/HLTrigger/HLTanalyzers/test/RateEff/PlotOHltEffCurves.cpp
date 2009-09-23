@@ -33,6 +33,7 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
   Int_t mctruthpid = -1;
   // generic leading varialbes
   Float_t lrecpt=-10, lreceta=-10, lrecphi=-10, lgenpt=-10, lgeneta=-10, lgenphi=-10, ll1pt=-10, ll1eta=-10, ll1phi=-10;
+  Float_t l1dr=-10, recdr=-10;
   // other
   Int_t l1bit=-10, hltbit=-10;
 
@@ -134,14 +135,12 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
         hltpt[i] = recoJetCalPt[i];
         hlteta[i] = recoJetCalEta[i];
         hltphi[i] = recoJetCalPhi[i];
-	h2->Fill(hltpt[i]);;
       }
       if (cfg->selectBranchL1extra) nl1= NL1CenJet;
       for(int i=0;i<nl1;i++){
         l1pt[i] = L1CenJetEt[i];
         l1eta[i] = L1CenJetEta[i];
         l1phi[i] = L1CenJetPhi[i];
-	h3->Fill(l1pt[i]);
       }
       if (cfg->selectBranchReco) nrec=NrecoJetCal;
       for(int i=0;i<nrec;i++){
@@ -149,7 +148,6 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
         recoeta[i] = recoJetCalEta[i];
         recophi[i] = recoJetCalPhi[i];
         if(ntlead) cout << "EffCurve% jet:" << i << "  pt: " << recopt[i] << "  l1bit: " << l1bit << endl;
-	h4->Fill(recopt[i]);
       }
       mctruthpid = 21; // gluons - probably should be GenJets or something
     }
@@ -171,8 +169,10 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
 	ll1eta = l1eta[0];
 	ll1phi = l1phi[0];
      }
-     Float_t l1dr = DeltaR(ll1eta,ll1phi,lgeneta,lgenphi);;
-     Float_t recdr = DeltaR(lreceta,lrecphi,lgeneta,lgenphi);;
+     if (NrecoJetGen>0 && nrec>0) {
+	l1dr = DeltaR(ll1eta,ll1phi,lgeneta,lgenphi);;
+	recdr = DeltaR(lreceta,lrecphi,lgeneta,lgenphi);;
+     }
      ntlead->Fill(lgenpt,lgeneta,lgenphi,lrecpt,lreceta,lrecphi,
 	   ll1pt,ll1eta,ll1phi,l1bit,hltbit,l1dr,recdr);
   }
@@ -184,7 +184,42 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
   Float_t ptcutforeta = 5.0;
   Float_t drmatch = 0.5;
 
-  return;
+  if (ntlead) cout << "Eff mode: " << hlteffmode << endl;
+  // Do Efficiency of leading Detector Physics Object Reco/GEN
+  if (hlteffmode == "GEN" && ntlead)
+  {
+     if (lgenpt>0) {
+	if(lrecpt>50)
+	{
+	   /*
+	    * Any additional cuts on the numerator for the HLT efficiency (isolation,
+	    * matching, tagging, etc.) will go here!
+	    */
+	   pass = 1;
+	}
+	cout << "recdr: " << recdr << "  pass? " << pass << endl;
+	// Fill histograms for eff vs. pT
+	if(fabs(lgeneta) < etacutforpt)
+	{
+	   h2->Fill(lgenpt);
+	   if(pass == 1)
+	      h1->Fill(lgenpt);
+	}
+
+	// Fill histograms for eff vs. eta
+	if(lgenpt > ptcutforeta)
+	{
+	   h4->Fill(lgeneta);
+	   if(pass == 1)
+	      h3->Fill(lgeneta);
+	}
+     }
+
+     // If did leading efficiency, don't do the full efficiency
+     return;
+  }
+
+  // === Full Efficiencies ===
 
   // Do efficiency of HLT/GEN
   if(hlteffmode == "GEN" && (cfg->selectBranchMC))
