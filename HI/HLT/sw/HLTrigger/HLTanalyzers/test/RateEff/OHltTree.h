@@ -289,6 +289,7 @@ public :
   bool ohPhotL1Dupl[8000]; 
 
   //L1's
+
   /* For 8E29 Menu */
   Int_t           L1_DoubleEG05_TopBottom;
   Int_t           L1_DoubleMuTopBottom; 
@@ -799,6 +800,7 @@ public :
   TBranch        *b_L1_IsoEG10_Jet6_ForJet6;   //! 
 
   //L1's
+
   TBranch        *b_L1_Mu5_Jet6;   //!
   TBranch        *b_L1_EG5_TripleJet6; //!   
   TBranch        *b_L1_SingleJet6; //!  
@@ -1085,6 +1087,7 @@ public :
 						,SampleDiagnostics& primaryDatasetsDiagnostics,
 						TNtuple * ntlead=0);
 
+  Float_t DeltaR(Float_t eta1, Float_t phi1, Float_t eta2, Float_t phi2);
   void PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohltobject,TH1F* &h1,TH1F* &h2,TH1F* &h3,TH1F* &h4,TNtuple * ntlead);
   void CheckOpenHlt(OHltConfig *cfg,OHltMenu *menu,OHltRateCounter *rc,int it);
   void PrintOhltVariables(int level, int type);

@@ -275,9 +275,9 @@ void calcEff(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
       TH1F *h4 = new TH1F("etaden","etaden",nbineta,etamin,etamax);
       TH1F *Eff_pt = new TH1F("eff_pt","eff_pt",nbinpt,ptmin,ptmax);
       TH1F *Eff_eta = new TH1F("eff_eta","eff_eta",nbineta,etamin,etamax);
-      TNtuple *ntlead = new TNtuple("ntlead","Leading phy obj","genpt:geneta:genphi:recpt:receta:recphi:l1pt:l1eta:l1phi:l1bit:hltbit");
+      TNtuple *ntlead = new TNtuple("ntlead","Leading phy obj","genpt:geneta:genphi:recpt:receta:recphi:l1pt:l1eta:l1phi:l1bit:hltbit:l1dr:recdr");
 
-      cout << "Will do efficiency. lead nt: " << ntlead << endl;
+      //cout << "Will do efficiency. lead nt: " << ntlead << endl;
       procs[i]->Loop(rcs[i],cfg,menu,i,DenEff,h1,h2,h3,h4,hltDatasets[i],ntlead);
       
       for (int j=0;j<ntrig;j++) {

@@ -7,6 +7,13 @@
 #include "TNtuple.h"
 
 using namespace std;
+Float_t OHltTree::DeltaR(Float_t eta1, Float_t phi1, Float_t eta2, Float_t phi2)
+{
+   Float_t deta = eta2 - eta1;
+   Float_t dphi = phi2 - phi2;
+   Float_t dr = sqrt((deta*deta) + (dphi*dphi));
+   return dr;
+}
 
 void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohltobject,TH1F* &h1,TH1F* &h2,TH1F* &h3,TH1F* &h4,TNtuple* ntlead)
 {
@@ -24,6 +31,10 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
   Float_t recoeta[500];
   Float_t recophi[500];
   Int_t mctruthpid = -1;
+  // generic leading varialbes
+  Float_t lrecpt=-10, lreceta=-10, lrecphi=-10, lgenpt=-10, lgeneta=-10, lgenphi=-10, ll1pt=-10, ll1eta=-10, ll1phi=-10;
+  // other
+  Int_t l1bit=-10, hltbit=-10;
 
 
   if(ohltobject == "muon")
@@ -118,6 +129,7 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
   else if(ohltobject == "jet")
     {
       nhlt=NrecoJetCal;
+      l1bit=map_BitOfStandardHLTPath["L1_SingleJet15"];
       for(int i=0;i<nhlt;i++){
         hltpt[i] = recoJetCalPt[i];
         hlteta[i] = recoJetCalEta[i];
@@ -136,21 +148,35 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
         recopt[i] = recoJetCalPt[i];
         recoeta[i] = recoJetCalEta[i];
         recophi[i] = recoJetCalPhi[i];
-        cout << "EffCurve% jet:" << i << "  pt: " << recopt[i] << endl;
+        if(ntlead) cout << "EffCurve% jet:" << i << "  pt: " << recopt[i] << "  l1bit: " << l1bit << endl;
 	h4->Fill(recopt[i]);
       }
       mctruthpid = 21; // gluons - probably should be GenJets or something
-
-      // fill leading ntuple
-      if(ntlead) {
-	 ntlead->Fill(recoJetGenPt[0],recoJetGenEta[0],recoJetGenPhi[0],
-	              recoJetCalPt[0],recoJetCalEta[0],recoJetCalPhi[0],
-		      L1CenJetEt[0],L1CenJetEta[0],L1CenJetPhi[0],
-		      L1_SingleJet15,-1);
-      } else {
-	 cout << "leading phy obj ntuple not defined" << endl;
-      }
     }
+
+  // === fill leading ntuple ===
+  if(ntlead) {
+     if (NrecoJetGen>0) {
+	lgenpt = recoJetGenPt[0];
+	lgeneta = recoJetGenEta[0];
+	lgenphi = recoJetGenPhi[0];
+     }
+     if (nrec>0) {
+	lrecpt = recopt[0];
+	lreceta = recoeta[0];
+	lrecphi = recophi[0];
+     }
+     if (nl1>0) {
+	ll1pt = l1pt[0];
+	ll1eta = l1eta[0];
+	ll1phi = l1phi[0];
+     }
+     Float_t l1dr = DeltaR(ll1eta,ll1phi,lgeneta,lgenphi);;
+     Float_t recdr = DeltaR(lreceta,lrecphi,lgeneta,lgenphi);;
+     ntlead->Fill(lgenpt,lgeneta,lgenphi,lrecpt,lreceta,lrecphi,
+	   ll1pt,ll1eta,ll1phi,l1bit,hltbit,l1dr,recdr);
+  }
+
   // Now really make efficiency curves
 
   Int_t pass = 0;
