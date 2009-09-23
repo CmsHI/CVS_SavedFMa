@@ -147,7 +147,7 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
         recopt[i] = recoJetCalPt[i];
         recoeta[i] = recoJetCalEta[i];
         recophi[i] = recoJetCalPhi[i];
-        if(ntlead) cout << "EffCurve% jet:" << i << "  pt: " << recopt[i] << "  l1bit: " << l1bit << endl;
+        //if(ntlead) cout << "EffCurve% jet:" << i << "  pt: " << recopt[i] << "  l1bit: " << l1bit << endl;
       }
       mctruthpid = 21; // gluons - probably should be GenJets or something
     }
@@ -184,7 +184,7 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
   Float_t ptcutforeta = 5.0;
   Float_t drmatch = 0.5;
 
-  if (ntlead) cout << "Eff mode: " << hlteffmode << endl;
+  //if (ntlead) cout << "Eff mode: " << hlteffmode << endl;
   // Do Efficiency of leading Detector Physics Object Reco/GEN
   if (hlteffmode == "GEN" && ntlead)
   {
@@ -197,7 +197,7 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
 	    */
 	   pass = 1;
 	}
-	cout << "recdr: " << recdr << "  pass? " << pass << endl;
+	//cout << "recdr: " << recdr << "  pass? " << pass << endl;
 	// Fill histograms for eff vs. pT
 	if(fabs(lgeneta) < etacutforpt)
 	{
