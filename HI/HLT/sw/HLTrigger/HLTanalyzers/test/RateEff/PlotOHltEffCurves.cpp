@@ -39,7 +39,8 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
   Float_t recophi[500];
   Int_t mctruthpid = -1;
   // generic leading varialbes
-  Float_t lrecpt=-10, lreceta=-10, lrecphi=-10, lgenpt=-10, lgeneta=-10, lgenphi=-10, ll1pt=-10, ll1eta=-10, ll1phi=-10;
+  Float_t lrecpt=-10, lreceta=-10, lrecphi=-10, lgenpt=-10, lgeneta=-10, lgenphi=-10, ll1pt=-10, ll1eta=-10,ll1phi=-10;
+  Int_t  l1j15, l1j30, l1j50;
   Float_t recdr=-10, recdrgen2=-10, recdphi=-10, recdphigen2=-10;
   // other
   Int_t l1bit=-10, hltbit=-10;
@@ -161,6 +162,9 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
 
   // === fill leading ntuple ===
   if(ntlead) {
+     l1j15=map_BitOfStandardHLTPath["L1_SingleJet15"];
+     l1j30=map_BitOfStandardHLTPath["L1_SingleJet30"];
+     l1j50=map_BitOfStandardHLTPath["L1_SingleJet50"];
      if (NrecoJetGen>0) {
 	lgenpt = recoJetGenPt[0];
 	lgeneta = recoJetGenEta[0];
@@ -184,7 +188,9 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
 	recdrgen2 = DeltaR(lreceta,lrecphi,recoJetGenEta[1],recoJetGenPhi[1]);;
      }
      ntlead->Fill(lgenpt,lgeneta,lgenphi,lrecpt,lreceta,lrecphi,
-	   ll1pt,ll1eta,ll1phi,l1bit,hltbit,recdphi,recdphigen2,recdr,recdrgen2);
+	   ll1pt,l1j15,l1j30,l1j50,hltbit,recdphi,recdphigen2,recdr,recdrgen2);
+     printf("leading - gen:(%f,%f,%f); calo: (%f,%f,%f); l1: (%d,%d,%d)\n",
+	   lgenpt,lgeneta,lgenphi,lrecpt,lreceta,lrecphi,l1j15,l1j30,l1j50);
   }
 
   // Now really make efficiency curves
