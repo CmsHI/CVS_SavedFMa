@@ -1,6 +1,5 @@
 #ifndef TGRAPHTOOLS_H
 #define TGRAPHTOOLS_H
-#endif //TGRAPHTOOLS_H
 
 void tgraphTools() {}
 
@@ -11,5 +10,7 @@ void clearXErrorBar(TGraphAsymmErrors * gr)
       gr->SetPointEXlow(i,0);
    }
 }
+
+#endif //TGRAPHTOOLS_H
 
 
