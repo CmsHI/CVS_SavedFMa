@@ -7,7 +7,7 @@
 #include "TString.h"
 using namespace std;
 
-void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hden, TH1D* heff, TH1D* hfake)
+void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hden, TH1D* heff, TH1D* hfake,Color_t * vc)
 {
    // Ana Parameters
    Double_t etaAcc = 3;
@@ -25,11 +25,6 @@ void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hde
    TCanvas * ceff = new TCanvas("ceff","ceff",500,500);
    TCanvas * cfake = new TCanvas("cfake","cfake",500,500);
    //
-   TGraphAsymmErrors *gEfficiency = new TGraphAsymmErrors();
-   gEfficiency->SetMarkerColor(kGreen-2);
-   gEfficiency->SetMarkerStyle(kFullCircle);
-   gEfficiency->SetMarkerSize(1.2);
-   //
    TGraphAsymmErrors *gFake = new TGraphAsymmErrors();
    gFake->SetMarkerColor(kRed);
    gFake->SetMarkerStyle(kOpenCircle);
@@ -43,6 +38,12 @@ void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hde
       cout << "effcut: " << effcut << endl;
       ntlead->Draw("genpt>>hden",genjetcut,"hist");
       ntlead->Draw("genpt>>hnum",effcut,"same hist");
+      //
+      TGraphAsymmErrors *gEfficiency = new TGraphAsymmErrors();
+      gEfficiency->SetMarkerStyle(kFullCircle);
+      gEfficiency->SetMarkerSize(1.2);
+      gEfficiency->SetMarkerColor(vc[i]);
+      //
       gEfficiency->BayesDivide(hnum,hden);
 
       ceff->cd();
@@ -55,7 +56,6 @@ void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hde
       ntlead->Draw("recpt>>hden",caljetcut,"hist");
       fakecut=caljetcut + Form(" && abs(recdr)>%f && abs(recdrgen2)>%f",dRMax,dRMax);
       cout << "fakecut: " << fakecut << endl;
-      //ntlead->Draw("recpt>>hnum","recpt>0 && abs(receta)<3 && abs(recdr)>0.5 && abs(recdrgen2)>0.5","same hist");
       ntlead->Draw("recpt>>hnum",fakecut,"same hist");
       gFake->BayesDivide(hnum,hden);
 
@@ -72,14 +72,17 @@ void plotEffFake(char * infile = "MyEffHist_0.root")
    Int_t NBIN=30;
    Int_t MAXPT=150;
    vector<Double_t> vthresh;
-   //vthresh.push_back(30);
-   //vthresh.push_back(35);
+   vthresh.push_back(30);
+   vthresh.push_back(35);
    vthresh.push_back(50);
+   Color_t colors[4] = {kGreen-2, kBlue, kMagenta-4, kRed+2};
 
+   // === Get Ntuple ===
    TFile * intf = new TFile(infile);
    TNtuple * ntlead;
    intf->GetObject("ntlead",ntlead);
 
+   // === Book Histograms ===
    TH1D * hnum = new TH1D("hnum","hnum",NBIN,0,MAXPT);
    hnum->Sumw2();
    hnum->SetLineColor(kRed);
@@ -116,5 +119,6 @@ void plotEffFake(char * infile = "MyEffHist_0.root")
    ntlead->Draw("genpt","recpt>0 && abs(recdr<0.5) && genpt>40","same");
    ntlead->Draw("genpt","recpt>0 && abs(recdrgen2<0.5) && genpt>40","same");
 
-   calcEffFake(ntlead,vthresh,hnum,hden,heff,hfake);
+   // === Do Calculations ===
+   calcEffFake(ntlead,vthresh,hnum,hden,heff,hfake, colors);
 }
