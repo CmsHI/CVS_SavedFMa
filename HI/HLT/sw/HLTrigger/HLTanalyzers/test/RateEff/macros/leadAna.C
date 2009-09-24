@@ -18,7 +18,7 @@ void leadAna (char * infile = "MyEffHist_0.root")
    hnum->SetLineColor(kRed);
    TH1D * hden = new TH1D("hden","hden",NBIN,0,MAXPT);
    hden->Sumw2();
-   TH1D * heff = new TH1D("heff","heff",NBIN,0,MAXPT);
+   TH1D * heff = new TH1D("heff",";E_{T}^{gen jet} [GeV]; Trigger Efficiency",NBIN,0,MAXPT);
    heff->Sumw2();
    heff->SetMarkerStyle(kFullCircle);
    heff->SetLineColor(kGreen);
@@ -27,7 +27,7 @@ void leadAna (char * infile = "MyEffHist_0.root")
    hnumFake->SetLineColor(kRed);
    TH1D * hdenFake = new TH1D("hdenFake","hdenFake",NBIN,0,MAXPT);
    hdenFake->Sumw2();
-   TH1D * hfake = new TH1D("hfake","hfake",NBIN,0,MAXPT);
+   TH1D * hfake = new TH1D("hfake",";E_{T}^{calo jet, uncorr} [GeV]; Fake Trigger Rate",NBIN,0,MAXPT);
    hfake->Sumw2();
    hfake->SetMarkerStyle(kOpenCircle);
    hfake->SetLineColor(kBlue);
@@ -61,7 +61,8 @@ void leadAna (char * infile = "MyEffHist_0.root")
    gEfficiency->SetMarkerColor(kGreen-2);
    gEfficiency->SetMarkerStyle(kFullCircle);
    gEfficiency->SetMarkerSize(1.2);
-   gEfficiency->Draw("apz same");
+   heff->Draw();
+   gEfficiency->Draw("pz");
 
    // Fakes
    TCanvas * cptfake = new TCanvas("cptfake","cptfake");
@@ -76,5 +77,6 @@ void leadAna (char * infile = "MyEffHist_0.root")
    gFake->SetMarkerSize(1.2);
 
    TCanvas * cfake = new TCanvas("cfake","cfake",500,500);
-   gFake->Draw("apz");
+   hfake->Draw();
+   gFake->Draw("pz");
 }
