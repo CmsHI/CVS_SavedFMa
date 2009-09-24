@@ -7,11 +7,18 @@
 #include "TNtuple.h"
 
 using namespace std;
-Float_t OHltTree::DeltaR(Float_t eta1, Float_t phi1, Float_t eta2, Float_t phi2)
+Double_t OHltTree::DeltaPhi(Double_t phi1, Double_t phi2)
 {
-   Float_t deta = eta2 - eta1;
-   Float_t dphi = phi2 - phi2;
-   Float_t dr = sqrt((deta*deta) + (dphi*dphi));
+   Double_t diff = phi1-phi2;
+   while (diff >= TMath::Pi()) diff -= 2.*TMath::Pi();
+   while (diff < -TMath::Pi()) diff += 2.*TMath::Pi();
+   return diff;
+}
+Double_t OHltTree::DeltaR(Double_t eta1, Double_t phi1, Double_t eta2, Double_t phi2)
+{
+   Double_t deta = eta2 - eta1;
+   Double_t dphi = DeltaPhi(phi1,phi2);
+   Double_t dr = sqrt((deta*deta) + (dphi*dphi));
    return dr;
 }
 
@@ -33,7 +40,7 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
   Int_t mctruthpid = -1;
   // generic leading varialbes
   Float_t lrecpt=-10, lreceta=-10, lrecphi=-10, lgenpt=-10, lgeneta=-10, lgenphi=-10, ll1pt=-10, ll1eta=-10, ll1phi=-10;
-  Float_t l1dr=-10, recdr=-10;
+  Float_t recdr=-10, recdrgen2=-10, recdphi=-10, recdphigen2=-10;
   // other
   Int_t l1bit=-10, hltbit=-10;
 
@@ -170,11 +177,14 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
 	ll1phi = l1phi[0];
      }
      if (NrecoJetGen>0 && nrec>0) {
-	l1dr = DeltaR(ll1eta,ll1phi,lgeneta,lgenphi);;
+	//l1dr = DeltaR(ll1eta,ll1phi,lgeneta,lgenphi);;
+	recdphi = DeltaPhi(lrecphi,lgenphi);
+	recdphigen2 = DeltaPhi(lrecphi,recoJetGenPhi[1]);
 	recdr = DeltaR(lreceta,lrecphi,lgeneta,lgenphi);;
+	recdrgen2 = DeltaR(lreceta,lrecphi,recoJetGenEta[1],recoJetGenPhi[1]);;
      }
      ntlead->Fill(lgenpt,lgeneta,lgenphi,lrecpt,lreceta,lrecphi,
-	   ll1pt,ll1eta,ll1phi,l1bit,hltbit,l1dr,recdr);
+	   ll1pt,ll1eta,ll1phi,l1bit,hltbit,recdphi,recdphigen2,recdr,recdrgen2);
   }
 
   // Now really make efficiency curves

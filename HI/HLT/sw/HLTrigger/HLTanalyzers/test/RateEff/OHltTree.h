@@ -948,7 +948,8 @@ public :
 						,SampleDiagnostics& primaryDatasetsDiagnostics,
 						TNtuple * ntlead=0);
 
-  Float_t DeltaR(Float_t eta1, Float_t phi1, Float_t eta2, Float_t phi2);
+  Double_t DeltaPhi(Double_t phi1, Double_t phi2);
+  Double_t DeltaR(Double_t eta1, Double_t phi1, Double_t eta2, Double_t phi2);
   void PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohltobject,TH1F* &h1,TH1F* &h2,TH1F* &h3,TH1F* &h4,TNtuple * ntlead);
   void CheckOpenHlt(OHltConfig *cfg,OHltMenu *menu,OHltRateCounter *rc,int it);
   void PrintOhltVariables(int level, int type);
