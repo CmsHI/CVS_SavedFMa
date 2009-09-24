@@ -189,8 +189,8 @@ void OHltTree::PlotOHltEffCurves(OHltConfig *cfg,TString hlteffmode,TString ohlt
      }
      ntlead->Fill(lgenpt,lgeneta,lgenphi,lrecpt,lreceta,lrecphi,
 	   ll1pt,l1j15,l1j30,l1j50,hltbit,recdphi,recdphigen2,recdr,recdrgen2);
-     printf("leading - gen:(%f,%f,%f); calo: (%f,%f,%f); l1: (%d,%d,%d)\n",
-	   lgenpt,lgeneta,lgenphi,lrecpt,lreceta,lrecphi,l1j15,l1j30,l1j50);
+//     printf("leading - gen:(%f,%f,%f); calo: (%f,%f,%f); l1: (%d,%d,%d)\n",
+//	   lgenpt,lgeneta,lgenphi,lrecpt,lreceta,lrecphi,l1j15,l1j30,l1j50);
   }
 
   // Now really make efficiency curves
