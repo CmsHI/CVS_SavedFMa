@@ -5,6 +5,8 @@
 #include "TCanvas.h"
 #include "TGraphAsymmErrors.h"
 #include "TString.h"
+#include "TLegend.h"
+#include "/home/frankma/UserCode/SavedFMa/analysis/root/macros/tgraphTools.C"
 using namespace std;
 
 void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hden, TH1D* heff, TH1D* hfake,Color_t * vc)
@@ -24,6 +26,8 @@ void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hde
    cpt->SetLogy();
    TCanvas * ceff = new TCanvas("ceff","ceff",500,500);
    TCanvas * cfake = new TCanvas("cfake","cfake",500,500);
+   TLegend *legeff = new TLegend(0.19,0.79,0.5,0.92);
+   legeff->SetFillColor(0);
    //
    TGraphAsymmErrors *gFake = new TGraphAsymmErrors();
    gFake->SetMarkerColor(kRed);
@@ -31,7 +35,7 @@ void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hde
    gFake->SetMarkerSize(1.2);
 
    // Do calculations for each threshold
-   for (Int_t i=0; i<vthresh.size(); ++i) {
+   for (UInt_t i=0; i<vthresh.size(); ++i) {
       // Efficiency
       cpt->cd();
       effcut=genjetcut + Form(" && abs(receta)<%f && recpt>%f",etaAcc,vthresh[i]);
@@ -45,11 +49,14 @@ void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hde
       gEfficiency->SetMarkerColor(vc[i]);
       //
       gEfficiency->BayesDivide(hnum,hden);
+      clearXErrorBar(gEfficiency);
 
       ceff->cd();
       if (i==0)
 	 heff->Draw();
       gEfficiency->Draw("pz");
+
+      legeff->AddEntry(gEfficiency,Form("HLT_HIJet%dU",(Int_t)vthresh[i]),"p");
 
       // Fakes
       cpt->cd();
@@ -58,12 +65,16 @@ void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hde
       cout << "fakecut: " << fakecut << endl;
       ntlead->Draw("recpt>>hnum",fakecut,"same hist");
       gFake->BayesDivide(hnum,hden);
+      clearXErrorBar(gFake);
 
       cfake->cd();
       if (i==0)
 	 hfake->Draw();
       gFake->Draw("pz");
    }
+
+   ceff->cd();
+   legeff->Draw();
 }
 
 void plotEffFake(char * infile = "MyEffHist_0.root")
