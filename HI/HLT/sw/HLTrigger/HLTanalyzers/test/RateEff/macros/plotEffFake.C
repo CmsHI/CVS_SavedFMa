@@ -7,6 +7,7 @@
 #include "TString.h"
 #include "TLegend.h"
 #include "/home/frankma/UserCode/SavedFMa/analysis/root/macros/tgraphTools.C"
+#include "/home/frankma/UserCode/SavedFMa/analysis/root/macros/savedfrankTools.C"
 using namespace std;
 
 void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hden, TH1D* heff, TH1D* hfake,Color_t * vc)
@@ -28,6 +29,7 @@ void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hde
    TCanvas * cfake = new TCanvas("cfake","cfake",500,500);
    TLegend *legeff = new TLegend(0.19,0.79,0.5,0.92);
    legeff->SetFillColor(0);
+   legeff->SetTextSize(0.035);
    //
    TGraphAsymmErrors *gFake = new TGraphAsymmErrors();
    gFake->SetMarkerColor(kRed);
@@ -114,17 +116,17 @@ void plotEffFake(char * infile = "MyEffHist_0.root")
    hfake->SetLineColor(kBlue);
 
    // === Do checks ===
-   TCanvas * c0 = new TCanvas("c0","c0");
+   TCanvas * c0 = new TCanvas("cdphi","c0");
    // here we see that quite often the leading cal jet corresponds to the
    // away side of the gen jet
    // However it does not add up to the unmatched distribution, so we are
    // still missing some.
    ntlead->Draw("abs(recdphi)","recpt>0");
    ntlead->Draw("abs(recdphigen2)","recpt>0","same");
-   TCanvas * c1 = new TCanvas("c1","c1");
+   TCanvas * c1 = new TCanvas("cdr","c1");
    ntlead->Draw("abs(recdr)","recpt>0");
    ntlead->Draw("abs(recdrgen2)","recpt>0","same");
-   TCanvas * c2 = new TCanvas("c2","c2");
+   TCanvas * c2 = new TCanvas("cmatch","c2");
    // Though at high pt most leading cal jets match
    ntlead->Draw("genpt","recpt>0 && genpt>40");
    ntlead->Draw("genpt","recpt>0 && abs(recdr<0.5) && genpt>40","same");
@@ -132,4 +134,7 @@ void plotEffFake(char * infile = "MyEffHist_0.root")
 
    // === Do Calculations ===
    calcEffFake(ntlead,vthresh,hnum,hden,heff,hfake, colors);
+
+   // Print Canvases
+   printAllCanvases("./results/hlt");
 }
