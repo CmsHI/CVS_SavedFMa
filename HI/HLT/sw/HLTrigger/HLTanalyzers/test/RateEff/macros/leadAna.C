@@ -2,30 +2,32 @@
 #include "TNtuple.h"
 #include "TH1D.h"
 #include "TCanvas.h"
+#include "TGraphAsymmErrors.h"
 
 void leadAna (char * infile = "MyEffHist_0.root")
 {
    TFile * intf = new TFile(infile);
    TNtuple * ntlead;
    intf->GetObject("ntlead",ntlead);
+   Int_t NBIN=30;
    Int_t MAXPT=150;
    //ntlead->Print();
 
-   TH1D * hnum = new TH1D("hnum","hnum",MAXPT,0,MAXPT);
+   TH1D * hnum = new TH1D("hnum","hnum",NBIN,0,MAXPT);
    hnum->Sumw2();
    hnum->SetLineColor(kRed);
-   TH1D * hden = new TH1D("hden","hden",MAXPT,0,MAXPT);
+   TH1D * hden = new TH1D("hden","hden",NBIN,0,MAXPT);
    hden->Sumw2();
-   TH1D * heff = new TH1D("heff","heff",MAXPT,0,MAXPT);
+   TH1D * heff = new TH1D("heff","heff",NBIN,0,MAXPT);
    heff->Sumw2();
    heff->SetMarkerStyle(kFullCircle);
    heff->SetLineColor(kGreen);
-   TH1D * hnumFake = new TH1D("hnumFake","hnumFake",MAXPT,0,MAXPT);
+   TH1D * hnumFake = new TH1D("hnumFake","hnumFake",NBIN,0,MAXPT);
    hnumFake->Sumw2();
    hnumFake->SetLineColor(kRed);
-   TH1D * hdenFake = new TH1D("hdenFake","hdenFake",MAXPT,0,MAXPT);
+   TH1D * hdenFake = new TH1D("hdenFake","hdenFake",NBIN,0,MAXPT);
    hdenFake->Sumw2();
-   TH1D * hfake = new TH1D("hfake","hfake",MAXPT,0,MAXPT);
+   TH1D * hfake = new TH1D("hfake","hfake",NBIN,0,MAXPT);
    hfake->Sumw2();
    hfake->SetMarkerStyle(kOpenCircle);
    hfake->SetLineColor(kBlue);
@@ -53,16 +55,26 @@ void leadAna (char * infile = "MyEffHist_0.root")
    ntlead->Draw("genpt>>hden","genpt>0","hist");
    ntlead->Draw("genpt>>hnum","recpt>50 && abs(receta)<3","same hist");
 
-   TCanvas * ceff = new TCanvas("ceff","ceff");
-   heff->Divide(hnum,hden);
-   heff->Draw();
+   TCanvas * ceff = new TCanvas("ceff","ceff",500,500);
+   TGraphAsymmErrors *gEfficiency = new TGraphAsymmErrors();
+   gEfficiency->BayesDivide(hnum,hden);
+   gEfficiency->SetMarkerColor(kGreen-2);
+   gEfficiency->SetMarkerStyle(kFullCircle);
+   gEfficiency->SetMarkerSize(1.2);
+   gEfficiency->Draw("apz same");
 
    // Fakes
    TCanvas * cptfake = new TCanvas("cptfake","cptfake");
    cptfake->SetLogy();
    ntlead->Draw("recpt>>hdenFake","recpt>0 && abs(receta)<3","hist");
    ntlead->Draw("recpt>>hnumFake","recpt>0 && abs(receta)<3 && abs(recdr)>0.5 && abs(recdrgen2)>0.5","same hist");
-   TCanvas * cfake = new TCanvas("cfake","cfake");
-   hfake->Divide(hnumFake,hdenFake);
-   hfake->Draw();
+
+   TGraphAsymmErrors *gFake = new TGraphAsymmErrors();
+   gFake->BayesDivide(hnumFake,hdenFake);
+   gFake->SetMarkerColor(kRed);
+   gFake->SetMarkerStyle(kOpenCircle);
+   gFake->SetMarkerSize(1.2);
+
+   TCanvas * cfake = new TCanvas("cfake","cfake",500,500);
+   gFake->Draw("apz");
 }
