@@ -10,12 +10,12 @@
 #include "/home/frankma/UserCode/SavedFMa/analysis/root/macros/savedfrankTools.C"
 using namespace std;
 
-void calcEffFake(TTree * ntlead, vector<Int_t> vthresh, TH1D* hnum, TH1D* hden, TH1D* heff, TH1D* hfake,Color_t * vc)
+void calcEffFake(TTree * ntlead, vector<Int_t> vthresh, TH1D* hnum, TH1D* hden, TH1D* heff, TH1D* hfake,Color_t * vc, TString effvar="genpt")
 {
    // Ana Parameters
    Double_t etaAcc = 3;
    Double_t dRMax = 0.5;
-   TString genjetcut("genpt>0");
+   TString genjetcut(Form("%s>0",effvar.Data()));
    TString caljetcut(Form("recpt>0 && abs(receta)<%f",etaAcc));
    cout << "gen jets den: " << genjetcut << endl;
    cout << "cal jets den: " << caljetcut << endl;
@@ -41,8 +41,8 @@ void calcEffFake(TTree * ntlead, vector<Int_t> vthresh, TH1D* hnum, TH1D* hden, 
       cpt->cd();
       effcut=genjetcut + Form(" && l1j%d==1",vthresh[i]);
       cout << "effcut: " << effcut << endl;
-      ntlead->Draw("genpt>>hden",genjetcut,"hist");
-      ntlead->Draw("genpt>>hnum",effcut,"same hist");
+      ntlead->Draw(Form("%s>>hden",effvar.Data()),genjetcut,"hist");
+      ntlead->Draw(Form("%s>>hnum",effvar.Data()),effcut,"same hist");
       //
       TGraphAsymmErrors *gEfficiency = new TGraphAsymmErrors();
       gEfficiency->SetMarkerStyle(kFullTriangleUp);
@@ -67,6 +67,10 @@ void calcEffFake(TTree * ntlead, vector<Int_t> vthresh, TH1D* hnum, TH1D* hden, 
 void plotL1Eff(char * infile = "MyEffHist_0.root")
 {
    // Top variables
+   //TString EffVar("genpt");
+   //TString EffObjTitle("gen jet");
+   TString EffVar("recpt");
+   TString EffObjTitle("calo jet");
    Int_t NBIN=30;
    Int_t MAXPT=150;
    vector<Int_t> vthresh;
@@ -86,7 +90,7 @@ void plotL1Eff(char * infile = "MyEffHist_0.root")
    hnum->SetLineColor(kRed);
    TH1D * hden = new TH1D("hden","hden",NBIN,0,MAXPT);
    hden->Sumw2();
-   TH1D * heff = new TH1D("heff",";E_{T}^{gen jet} [GeV]; Trigger Efficiency",NBIN,0,MAXPT);
+   TH1D * heff = new TH1D("heff",Form(";E_{T}^{%s} [GeV]; Trigger Efficiency",EffObjTitle.Data()),NBIN,0,MAXPT);
    heff->Sumw2();
    heff->SetMarkerStyle(kFullCircle);
    heff->SetLineColor(kGreen);
@@ -102,13 +106,13 @@ void plotL1Eff(char * infile = "MyEffHist_0.root")
 
    // === Do checks ===
    TCanvas * c2 = new TCanvas("cptl1cut","c2");
-   ntlead->Draw("genpt","genpt>0 && genpt>0");
-   ntlead->Draw("genpt","genpt>0 && l1j15==1","same");
-   ntlead->Draw("genpt","genpt>0 && l1j30==1","same");
-   ntlead->Draw("genpt","genpt>0 && l1j50==1","same");
+   ntlead->Draw(EffVar,Form("%s>0",EffVar.Data()));
+   ntlead->Draw(EffVar,Form("%s>0 && l1j15==1",EffVar.Data()),"same");
+   ntlead->Draw(EffVar,Form("%s>0 && l1j30==1",EffVar.Data()),"same");
+   ntlead->Draw(EffVar,Form("%s>0 && l1j50==1",EffVar.Data()),"same");
 
    // === Do Calculations ===
-   calcEffFake(ntlead,vthresh,hnum,hden,heff,hfake, colors);
+   calcEffFake(ntlead,vthresh,hnum,hden,heff,hfake, colors,EffVar);
 
    // Print Canvases
    printAllCanvases("./results/l1");
