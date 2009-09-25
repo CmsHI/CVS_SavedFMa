@@ -22,8 +22,8 @@ void calcEffFake(TTree * ntlead, vector<Int_t> vthresh, TH1D* hnum, TH1D* hden, 
 
    // Plot parameters
    Style_t effMarkerStyle;
-   if (effvar=="genpt") effMarkerStyle=kFullTriangleUp;
-   else if (effvar=="recpt") effMarkerStyle=kFullTriangleDown;
+   if (effvar=="genpt") effMarkerStyle=kFullCircle;
+   else if (effvar=="recpt") effMarkerStyle=kFullSquare;
 
    // Declare needed variables
    TString effcut, fakecut;
@@ -82,7 +82,7 @@ void plotL1Eff(char * infile = "MyEffHist_0.root")
    vthresh.push_back(15);
    vthresh.push_back(30);
    vthresh.push_back(50);
-   Color_t colors[4] = {kGreen-2, kBlue, kMagenta-4, kRed+2};
+   Color_t colors[4] = {kBlack, kAzure+7, kGreen-2, kRed+2};
 
    // === Get Ntuple ===
    TFile * intf = new TFile(infile);

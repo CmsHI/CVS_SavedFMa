@@ -88,7 +88,7 @@ void plotEffFake(char * infile = "MyEffHist_0.root")
    vthresh.push_back(30);
    vthresh.push_back(35);
    vthresh.push_back(50);
-   Color_t colors[4] = {kGreen-2, kBlue, kMagenta-4, kRed+2};
+   Color_t colors[4] = {kBlack, kAzure+7, kGreen-2, kRed+2};
 
    // === Get Ntuple ===
    TFile * intf = new TFile(infile);
@@ -112,7 +112,7 @@ void plotEffFake(char * infile = "MyEffHist_0.root")
    hdenFake->Sumw2();
    TH1D * hfake = new TH1D("hfake",";E_{T}^{calo jet, uncorr} [GeV]; Fake Trigger Rate",NBIN,0,MAXPT);
    hfake->Sumw2();
-   hfake->SetMarkerStyle(kOpenCircle);
+   hfake->SetMarkerStyle(kCircle);
    hfake->SetLineColor(kBlue);
 
    // === Do checks ===
