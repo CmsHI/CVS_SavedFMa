@@ -78,11 +78,12 @@ void plotL1Eff(char * infile = "MyEffHist_0.root")
    //TString EffObjTitle("calo jet uncorr");
    Int_t NBIN=15;
    Int_t MAXPT=60;
+   //Int_t MAXPT=150;
    vector<Int_t> vthresh;
    vthresh.push_back(15);
    vthresh.push_back(30);
    vthresh.push_back(50);
-   Color_t colors[4] = {kBlack, kAzure+7, kGreen-2, kRed+2};
+   Color_t colors[4] = {kBlack, kBlue, kRed, kRed+2};
 
    // === Get Ntuple ===
    TFile * intf = new TFile(infile);
@@ -120,5 +121,6 @@ void plotL1Eff(char * infile = "MyEffHist_0.root")
    calcEffFake(ntlead,vthresh,hnum,hden,heff,hfake, colors,EffVar);
 
    // Print Canvases
+   //printAllCanvases("./results/l1");
    printAllCanvases("./results/l1zoomed");
 }

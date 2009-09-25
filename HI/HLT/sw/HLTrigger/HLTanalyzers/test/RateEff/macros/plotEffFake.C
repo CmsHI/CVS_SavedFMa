@@ -33,7 +33,7 @@ void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hde
    //
    TGraphAsymmErrors *gFake = new TGraphAsymmErrors();
    gFake->SetMarkerColor(kRed);
-   gFake->SetMarkerStyle(kOpenCircle);
+   gFake->SetMarkerStyle(kFullCircle);
    gFake->SetMarkerSize(1.2);
 
    // Do calculations for each threshold
@@ -88,7 +88,7 @@ void plotEffFake(char * infile = "MyEffHist_0.root")
    vthresh.push_back(30);
    vthresh.push_back(35);
    vthresh.push_back(50);
-   Color_t colors[4] = {kBlack, kAzure+7, kGreen-2, kRed+2};
+   Color_t colors[4] = {kBlack, kBlue, kRed, kRed+2};
 
    // === Get Ntuple ===
    TFile * intf = new TFile(infile);
