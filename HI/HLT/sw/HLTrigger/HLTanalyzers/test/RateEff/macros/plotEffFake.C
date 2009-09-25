@@ -82,7 +82,7 @@ void calcEffFake(TTree * ntlead, vector<Double_t> vthresh, TH1D* hnum, TH1D* hde
 void plotEffFake(char * infile = "MyEffHist_0.root")
 {
    // Top variables
-   Int_t NBIN=30;
+   Int_t NBIN=15;
    Int_t MAXPT=150;
    vector<Double_t> vthresh;
    vthresh.push_back(30);
