@@ -97,6 +97,8 @@ void printAllCanvases(const char* folder="plots")
       TString cname(c->GetName());
       printf("Canvas: %s/%s.gif\n",folder,cname.Data());
       c->Print(Form("%s/%s.gif",folder,cname.Data()));
+      printf("Canvas: %s/%s.C\n",folder,cname.Data());
+      c->Print(Form("%s/%s.C",folder,cname.Data()));
    }
 }
 
