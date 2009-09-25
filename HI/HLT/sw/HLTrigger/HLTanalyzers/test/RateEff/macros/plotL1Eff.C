@@ -72,12 +72,12 @@ void calcEffFake(TTree * ntlead, vector<Int_t> vthresh, TH1D* hnum, TH1D* hden, 
 void plotL1Eff(char * infile = "MyEffHist_0.root")
 {
    // Top variables
-   //TString EffVar("genpt");
-   //TString EffObjTitle("gen jet");
-   TString EffVar("recpt");
-   TString EffObjTitle("calo jet uncorr");
-   Int_t NBIN=30;
-   Int_t MAXPT=150;
+   TString EffVar("genpt");
+   TString EffObjTitle("gen jet");
+   //TString EffVar("recpt");
+   //TString EffObjTitle("calo jet uncorr");
+   Int_t NBIN=15;
+   Int_t MAXPT=60;
    vector<Int_t> vthresh;
    vthresh.push_back(15);
    vthresh.push_back(30);
@@ -120,5 +120,5 @@ void plotL1Eff(char * infile = "MyEffHist_0.root")
    calcEffFake(ntlead,vthresh,hnum,hden,heff,hfake, colors,EffVar);
 
    // Print Canvases
-   printAllCanvases("./results/l1");
+   printAllCanvases("./results/l1zoomed");
 }
