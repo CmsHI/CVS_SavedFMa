@@ -20,12 +20,17 @@ void calcEffFake(TTree * ntlead, vector<Int_t> vthresh, TH1D* hnum, TH1D* hden, 
    cout << "gen jets den: " << genjetcut << endl;
    cout << "cal jets den: " << caljetcut << endl;
 
+   // Plot parameters
+   Style_t effMarkerStyle;
+   if (effvar=="genpt") effMarkerStyle=kFullTriangleUp;
+   else if (effvar=="recpt") effMarkerStyle=kFullTriangleDown;
+
    // Declare needed variables
    TString effcut, fakecut;
    //
-   TCanvas * cpt = new TCanvas("cpt","cpt");
+   TCanvas * cpt = new TCanvas("c"+effvar,"c"+effvar);
    cpt->SetLogy();
-   TCanvas * ceff = new TCanvas("ceff","ceff",500,500);
+   TCanvas * ceff = new TCanvas("ceff_"+effvar,"ceff_"+effvar,500,500);
    TLegend *legeff = new TLegend(0.55,0.24,0.87,0.37);
    legeff->SetFillColor(0);
    legeff->SetTextSize(0.035);
@@ -45,7 +50,7 @@ void calcEffFake(TTree * ntlead, vector<Int_t> vthresh, TH1D* hnum, TH1D* hden, 
       ntlead->Draw(Form("%s>>hnum",effvar.Data()),effcut,"same hist");
       //
       TGraphAsymmErrors *gEfficiency = new TGraphAsymmErrors();
-      gEfficiency->SetMarkerStyle(kFullTriangleUp);
+      gEfficiency->SetMarkerStyle(effMarkerStyle);
       gEfficiency->SetMarkerSize(1.2);
       gEfficiency->SetMarkerColor(vc[i]);
       //
@@ -70,7 +75,7 @@ void plotL1Eff(char * infile = "MyEffHist_0.root")
    //TString EffVar("genpt");
    //TString EffObjTitle("gen jet");
    TString EffVar("recpt");
-   TString EffObjTitle("calo jet");
+   TString EffObjTitle("calo jet uncorr");
    Int_t NBIN=30;
    Int_t MAXPT=150;
    vector<Int_t> vthresh;
@@ -105,7 +110,7 @@ void plotL1Eff(char * infile = "MyEffHist_0.root")
    hfake->SetLineColor(kBlue);
 
    // === Do checks ===
-   TCanvas * c2 = new TCanvas("cptl1cut","c2");
+   TCanvas * c2 = new TCanvas("cptl1cut_"+EffVar,"cptl1cut_"+EffVar);
    ntlead->Draw(EffVar,Form("%s>0",EffVar.Data()));
    ntlead->Draw(EffVar,Form("%s>0 && l1j15==1",EffVar.Data()),"same");
    ntlead->Draw(EffVar,Form("%s>0 && l1j30==1",EffVar.Data()),"same");
