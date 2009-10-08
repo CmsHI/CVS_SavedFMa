@@ -6,13 +6,17 @@
 #include <iostream>
 
 #include <TH1F.h>
+#include <TH2F.h>
 #include <TROOT.h>
 #include <TFile.h>
 #include <TSystem.h>
 
 #include "DataFormats/FWLite/interface/Handle.h"
-#include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
 #include "FWCore/FWLite/interface/AutoLibraryLoader.h"
+#include "DataFormats/JetReco/interface/GenJet.h"
+#include "DataFormats/Math/interface/deltaR.h"
+
 
 
 int main(int argc, char* argv[]) 
@@ -30,12 +34,23 @@ int main(int argc, char* argv[])
   AutoLibraryLoader::enable();
   
   // book a set of histograms
-  TH1F* muonPt_  = new TH1F("muonPt", "pt",    100,  0.,300.);
-  TH1F* muonEta_ = new TH1F("muonEta","eta",   100, -3.,  3.);
-  TH1F* muonPhi_ = new TH1F("muonPhi","phi",   100, -5.,  5.);  
+  TH1F* jetPt_  = new TH1F("jetPt", "pt",    100,  0.,150.);
+  TH1F* jetEta_ = new TH1F("jetEta","eta",   100, -3.,  3.);
+  TH1F* jetPhi_ = new TH1F("jetPhi","phi",   100, -5.,  5.);
+  TH2F* matjetDR_  = new TH2F("matjetDR", "dR",    100,   0, 6,100,0,100); 
+  TH2F* jetDR_  = new TH2F("jetDR", "dR",    100,   0, 6, 100,0,100); 
   
   // open input file (can be located on castor)
-  TFile* inFile = TFile::Open( "file:PATLayer1_Output.fromAOD_full.root" );
+  //TFile* inFile = TFile::Open( "file:PATLayer1_Output.fromAOD_full.root" );
+  char * inFileName;
+  if (argc==1) {
+    inFileName = "file:/d01/frankma/scratch/data/pat/cmssw330pre5/yetkin_RelValHydjetQ_MinBias_4TeV/edmfile_1.root";
+  }
+  else {
+    inFileName = argv[1];
+  }
+  printf("inFileName: %s\n",inFileName);
+  TFile* inFile = TFile::Open(inFileName);
 
   // ----------------------------------------------------------------------
   // Second Part: 
@@ -55,21 +70,43 @@ int main(int argc, char* argv[])
     if( iEvent==1000 ) break;
     
     // simple event counter
-    if(iEvent>0 && iEvent%1==0){
+    if(iEvent>0 && iEvent%100==0){
       std::cout << "  processing event: " << iEvent << std::endl;
     }
 
-    // fwlite::Handle to to muon collection
-    fwlite::Handle<std::vector<pat::Muon> > muons;
-    muons.getByLabel(event, "cleanLayer1Muons");
+    // fwlite::Handle to to jet collection
+    fwlite::Handle<std::vector<pat::Jet> > jets;
+    jets.getByLabel(event, "selectedLayer1Jets");
     
-    // loop muon collection and fill histograms
-    for(unsigned i=0; i<muons->size(); ++i){
-      muonPt_ ->Fill( (*muons)[i].pt()  );
-      muonEta_->Fill( (*muons)[i].eta() );
-      muonPhi_->Fill( (*muons)[i].phi() );
+    // fwlite::Handle to genjet collection
+    fwlite::Handle<std::vector<reco::GenJet> > gjets;
+    //gjets.getByLabel(event,"iterativeCone5HiGenJets");
+    gjets.getByLabel(event,"hiGenJetCleaner");
+
+    // loop jet collection and fill histograms
+    for(unsigned i=0; i<jets->size(); ++i){
+      jetPt_ ->Fill( (*jets)[i].pt()  );
+      jetEta_->Fill( (*jets)[i].eta() );
+      jetPhi_->Fill( (*jets)[i].phi() );
+
+      // If there is a matched genjet to the caljet
+      const reco::GenJet * genjet = (*jets)[i].genJet();
+      if ( genjet != NULL ) {
+	Double_t jetDR = reco::deltaR((*jets)[i],*genjet);
+	printf("caljet et|eta|phi: %f|%f|%f, genjet et|eta|phi: %f|%f|%f, dR: %f\n",
+	    (*jets)[i].pt(), (*jets)[i].eta(), (*jets)[i].phi(),
+	    genjet->pt(),genjet->eta(),genjet->phi(),jetDR);
+	matjetDR_->Fill(jetDR,genjet->pt());
+      }
+
+      // loop genjet collection
+      for (unsigned j=0; j<gjets->size(); ++j) {
+	Double_t jetDR = reco::deltaR((*jets)[i],(*gjets)[j]);
+	jetDR_->Fill(jetDR,(*gjets)[j].pt());
+      }  
     }
-  }  
+  }
+
   // close input file
   inFile->Close();
 
@@ -85,9 +122,11 @@ int main(int argc, char* argv[])
   TFile outFile( "analyzePatBasics.root", "recreate" );
   outFile.mkdir("analyzeBasicPat");
   outFile.cd("analyzeBasicPat");
-  muonPt_ ->Write( );
-  muonEta_->Write( );
-  muonPhi_->Write( );
+  jetPt_ ->Write( );
+  jetEta_->Write( );
+  jetPhi_->Write( );
+  matjetDR_->Write();
+  jetDR_->Write();
   outFile.Close();
   
   // ----------------------------------------------------------------------
@@ -97,9 +136,9 @@ int main(int argc, char* argv[])
   // ----------------------------------------------------------------------
 
   // free allocated space
-  delete muonPt_;
-  delete muonEta_;
-  delete muonPhi_;
+  delete jetPt_;
+  delete jetEta_;
+  delete jetPhi_;
   
   // that's it!
   return 0;
