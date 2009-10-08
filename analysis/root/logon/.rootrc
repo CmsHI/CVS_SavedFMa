@@ -1,0 +1,8 @@
+# This is the user Root initialization file.
+# stole from ed
+
+Rint.Logon:             /home/frankma/.rootlogon.C
+
+Rint.Canvas.ShowEventStatus:    1
+
++Plugin.TFile:       ^root:    TNetFile     Core    "TNetFile(const char*,Option_t*,const char*,Int_t,Int_t)"
