@@ -5,7 +5,7 @@ if [ $# -eq 0 ]; then
 fi
 if [ $# -eq 1 ]; then
    fileName=${1##/*/}
-   destination=$fileName
+   destination="."
 fi
 if [ $# -gt 1 ]; then
    destination=$2
