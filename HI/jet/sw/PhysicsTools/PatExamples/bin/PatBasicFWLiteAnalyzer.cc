@@ -35,11 +35,19 @@ int main(int argc, char* argv[])
   
   // book a set of histograms
   TH1F* jetPt_  = new TH1F("jetPt", "pt",    100,  0.,150.);
-  TH1F* jetEta_ = new TH1F("jetEta","eta",   100, -3.,  3.);
+  TH1F* jetEta_ = new TH1F("jetEta","eta",   100, -5.,  5.);
   TH1F* jetPhi_ = new TH1F("jetPhi","phi",   100, -5.,  5.);
   TH2F* matjetDR_  = new TH2F("matjetDR", "dR",    100,   0, 6,100,0,100); 
   TH2F* jetDR_  = new TH2F("jetDR", "dR",    100,   0, 6, 100,0,100); 
   
+  TH1F* partlPt_  = new TH1F("partlPt", "pt",    100,  0.,50.);
+  TH1F* partlEta_ = new TH1F("partlEta","eta",   100, -5.,  5.);
+  TH1F* partlPhi_ = new TH1F("partlPhi","phi",   100, -5.,  5.);
+
+  TH1F* trackPt_  = new TH1F("trackPt", "pt",    100,  0.,50.);
+  TH1F* trackEta_ = new TH1F("trackEta","eta",   100, -5.,  5.);
+  TH1F* trackPhi_ = new TH1F("trackPhi","phi",   100, -5.,  5.);
+
   // open input file (can be located on castor)
   //TFile* inFile = TFile::Open( "file:PATLayer1_Output.fromAOD_full.root" );
   char * inFileName;
@@ -105,6 +113,30 @@ int main(int argc, char* argv[])
 	jetDR_->Fill(jetDR,(*gjets)[j].pt());
       }  
     }
+
+    // fwlight::Handle to gen particles
+    fwlite::Handle<std::vector<reco::GenParticle> > particles;
+    particles.getByLabel(event, "hiGenParticles");
+    // fwlight::Handle to tracks
+    fwlite::Handle<std::vector<reco::Track> > tracks;
+    tracks.getByLabel(event, "hiSelectedTracks");
+
+    // loop particle collection and fill
+    for (unsigned ip=0; ip<particles->size(); ++ip) {
+      reco::GenParticle p = (*particles)[ip];
+      if (p.status() == 1) {
+	partlPt_ ->Fill( (*particles)[ip].pt()  );
+	partlEta_->Fill( (*particles)[ip].eta() );
+	partlPhi_->Fill( (*particles)[ip].phi() );
+      }
+    }
+
+    // loop track collection and fill
+    for (unsigned it=0; it<tracks->size(); ++it) {
+      trackPt_ ->Fill( (*tracks)[it].pt()  );
+      trackEta_->Fill( (*tracks)[it].eta() );
+      trackPhi_->Fill( (*tracks)[it].phi() );
+    }
   }
 
   // close input file
@@ -125,6 +157,12 @@ int main(int argc, char* argv[])
   jetPt_ ->Write( );
   jetEta_->Write( );
   jetPhi_->Write( );
+  partlPt_ ->Write( );
+  partlEta_->Write( );
+  partlPhi_->Write( );
+  trackPt_ ->Write( );
+  trackEta_->Write( );
+  trackPhi_->Write( );
   matjetDR_->Write();
   jetDR_->Write();
   outFile.Close();
@@ -139,6 +177,12 @@ int main(int argc, char* argv[])
   delete jetPt_;
   delete jetEta_;
   delete jetPhi_;
+  delete partlPt_;
+  delete partlEta_;
+  delete partlPhi_;
+  delete trackPt_;
+  delete trackEta_;
+  delete trackPhi_;
   
   // that's it!
   return 0;
