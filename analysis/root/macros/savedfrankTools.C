@@ -10,6 +10,7 @@
 #include "TString.h"
 #include "TRegexp.h"
 #include "TFile.h"
+#include "TSystem.h"
 // private includes
 #include "HistMath.C"
 
@@ -91,15 +92,20 @@ void printCanvas(const char* name, const char* title)//, TCanvas * c)
 //--- Print all created canvasses ---
 void printAllCanvases(const char* folder="plots")
 {
-   TSeqCollection * sc = dynamic_cast<TSeqCollection*>(gROOT->GetListOfCanvases());
-   for (int i =0; i<sc->GetSize(); ++i) {
+  char * formats[2] = {"gif","C"};
+  TSeqCollection * sc = dynamic_cast<TSeqCollection*>(gROOT->GetListOfCanvases());
+
+  for (int iform=0; iform<2; ++iform) {
+    // Prepare dir
+    gSystem->mkdir(Form("%s/%s",folder,formats[iform]),kTRUE);
+    // save each canvas
+    for (int i =0; i<sc->GetSize(); ++i) {
       TCanvas * c = dynamic_cast<TCanvas*>(sc->At(i));
       TString cname(c->GetName());
-      printf("Canvas: %s/%s.gif\n",folder,cname.Data());
-      c->Print(Form("%s/%s.gif",folder,cname.Data()));
-      printf("Canvas: %s/%s.C\n",folder,cname.Data());
-      c->Print(Form("%s/%s.C",folder,cname.Data()));
-   }
+      printf("Canvas: %s/%s/%s.%s\n",folder,formats[iform],cname.Data(),formats[iform]);
+      c->Print(Form("%s/%s/%s.%s",folder,formats[iform],cname.Data(),formats[iform]));
+    }
+  }
 }
 
 //--- Creat Histogram ---
