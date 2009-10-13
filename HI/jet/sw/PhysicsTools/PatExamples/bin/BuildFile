@@ -9,5 +9,4 @@
 <environment>
  <bin file="PatBasicFWLiteAnalyzer.cc"> </bin>
  <bin file="DiJetFWLiteAnalyzer.cc"> </bin>
-#<bin file="PatMcMatchFWLiteAnalyzer.cc"> </bin>
 </environment>
