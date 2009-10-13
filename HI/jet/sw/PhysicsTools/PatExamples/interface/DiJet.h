@@ -19,7 +19,7 @@ class DiJet
     void SetAwayJet(LorentzVector aj) {
       aj_ = aj;
       cm_ = nj_+aj_;
-      dphi_ = reco::deltaPhi(aj_.phi(), nj_.phi());
+      dphi_ = fabs( reco::deltaPhi(aj_.phi(), nj_.phi()) );
     };
 
     // Standard quantities derived from the dijet Lorentz vector
