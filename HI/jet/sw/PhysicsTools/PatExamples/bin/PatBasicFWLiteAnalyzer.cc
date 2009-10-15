@@ -12,12 +12,14 @@
 #include <TSystem.h>
 
 #include "DataFormats/FWLite/interface/Handle.h"
+#include "DataFormats/HeavyIonEvent/interface/HeavyIon.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "FWCore/FWLite/interface/AutoLibraryLoader.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/Math/interface/deltaR.h"
 
-
+#include<iostream>
+using namespace std;
 
 int main(int argc, char* argv[]) 
 {
@@ -81,6 +83,13 @@ int main(int argc, char* argv[])
     if(iEvent>0 && iEvent%100==0){
       std::cout << "  processing event: " << iEvent << std::endl;
     }
+
+    // fwlite::Handle to to HI info collections
+    fwlite::Handle<pat::HeavyIon> hievt;
+    pat::HeavyIon hievtcp = (*hievt);
+    hievt.getByLabel(event,"heavyIon");
+    cout << "HI event " << iEvent << "  gen b|npart|ncoll:"
+      << hievtcp.generatedB() << "|" << hievtcp.generatedNpart() << "|" << hievtcp.generatedNcoll() << endl;
 
     // fwlite::Handle to to jet collection
     fwlite::Handle<std::vector<pat::Jet> > jets;
