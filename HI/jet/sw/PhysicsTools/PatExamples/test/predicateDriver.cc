@@ -26,6 +26,7 @@
 #include "/home/frankma/UserCode/SavedFMa/analysis/cpp/templates/stl_helper_fuctions.h"
 
 using namespace std;
+using namespace mystd;
 
 int main(int argc, char* argv[]) 
 {
@@ -56,7 +57,7 @@ int main(int argc, char* argv[])
   lv.push_back(v4);
 
   cout << "list of 4vec's: " << endl;
-  PRINT_ELEMENTS(lv);
+  print_elements(lv);
 
   cout << "max pt vec: " << *max_element(lv.begin(),lv.end(),lessPt) << endl;
 
