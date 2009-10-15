@@ -45,18 +45,20 @@ namespace jetana
       typedef DiJet OutputItem;
       typedef std::vector<OutputItem> OutputCollection;
 
-      HiDiJetAlgorithm(double nearThresh, double awayThresh):
-	nearThreshold_(nearThresh),
-	awayThreshold_(awayThresh)
-      { /* empty */ }
+      // constructor
+      HiDiJetAlgorithm(double nearThresh, double awayThresh, double dPhiMin);
 
+      // helpers
+      bool PassNearJetCriterion(const InputItem & cand) const {return (cand.pt()>nearThreshold_);}
+      bool PassAwayJetCriterion(const InputItem & cand) const {return (cand.pt()>awayThreshold_);}
+      InputCollection::const_iterator FindPair(const InputItem & near, const InputCollection & others) const;
       /// Find di Jets from the collection of input Candidates.
-      InputCollection::iterator FindPair(const InputItem & near, const InputCollection & others) const;
       void group(InputCollection& input, OutputCollection* output);
 
     private:
       double nearThreshold_;
       double awayThreshold_;
+      double dPhiMin_;
   };
 } //jetnana
 
