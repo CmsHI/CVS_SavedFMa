@@ -9,11 +9,11 @@
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 
+typedef math::XYZTLorentzVector LorentzVector;
+
 class DiJet
 {
   public:
-    typedef math::XYZTLorentzVector LorentzVector;
-
     DiJet();
     void SetNearJet(LorentzVector nj) {nj_ = nj;};
     void SetAwayJet(LorentzVector aj) {
