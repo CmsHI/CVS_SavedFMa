@@ -40,8 +40,10 @@ namespace jetana
   class HiDiJetAlgorithm
   {
     public:
-      typedef std::list<LorentzVector> InputCollection;
       typedef LorentzVector InputItem;
+      typedef std::list<InputItem> InputCollection;
+      typedef DiJet OutputItem;
+      typedef std::vector<OutputItem> OutputCollection;
 
       HiDiJetAlgorithm(double nearThresh, double awayThresh):
 	nearThreshold_(nearThresh),
@@ -49,7 +51,8 @@ namespace jetana
       { /* empty */ }
 
       /// Find di Jets from the collection of input Candidates.
-      void group(InputCollection& input, std::vector<DiJet>* output) const;
+      InputCollection::iterator FindPair(const InputItem & near, const InputCollection & others) const;
+      void group(InputCollection& input, OutputCollection* output);
 
     private:
       double nearThreshold_;

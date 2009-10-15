@@ -13,7 +13,7 @@ namespace jetana
 {
   //  Run the algorithm
   //  ------------------
-  void HiDiJetAlgorithm::group(InputCollection& input, vector<DiJet>* output) const
+  void HiDiJetAlgorithm::group(InputCollection& input, OutputCollection* output)
   {
     if (!output) return;
   }
