@@ -9,6 +9,9 @@
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "PhysicsTools/PatExamples/interface/DiJet.h"
 
+bool lessPt(const LorentzVector & lv1, const LorentzVector & lv2);
+bool lessPolarDPhi(const LorentzVector & lv1, const LorentzVector & lv2);
+
 class HiDiJetAlgorithm
 {
   public:

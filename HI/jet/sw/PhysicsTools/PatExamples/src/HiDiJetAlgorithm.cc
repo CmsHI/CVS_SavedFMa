@@ -9,6 +9,12 @@
 using namespace std;
 using namespace reco;
 
+//  Binary Predicates
+bool lessPt(const LorentzVector & lv1, const LorentzVector & lv2)
+{
+  return (lv1.pt() < lv2.pt());
+}
+
 //  Run the algorithm
 //  ------------------
 void HiDiJetAlgorithm::group(InputCollection& input, vector<DiJet>* output) const
