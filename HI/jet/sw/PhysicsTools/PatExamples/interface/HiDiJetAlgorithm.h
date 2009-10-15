@@ -19,6 +19,7 @@ namespace jetana
     return (fabs(deltaPhi(lv1.phi(),lv2.phi())));
   }
 
+  // stl style correlation algorithm
   template <class ForwardIterator, class Correlation, class Cand>
     ForwardIterator max_correlated_element ( ForwardIterator first, ForwardIterator last,
 	Correlation corr, const Cand & c0)
@@ -28,13 +29,14 @@ namespace jetana
     double max = corr(*first,c0);
     while (++first!=last) {
       double cur=corr(*first,c0);
-      if (max < cur)    // or: if (comp(*largest,*lowest)) for the comp version
+      if (max < cur)
 	largest = first;
     }
     return largest;
   }
 
 
+  //  main class
   class HiDiJetAlgorithm
   {
     public:
