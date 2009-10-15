@@ -9,4 +9,5 @@
 
 <environment>
  <bin file="diJetDriver.cc"> </bin>
+ <bin file="predicateDriver.cc"> </bin>
 </environment>
