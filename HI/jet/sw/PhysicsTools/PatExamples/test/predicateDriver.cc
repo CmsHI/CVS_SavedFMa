@@ -27,6 +27,7 @@
 
 using namespace std;
 using namespace mystd;
+using namespace jetana;
 
 int main(int argc, char* argv[]) 
 {
@@ -43,9 +44,9 @@ int main(int argc, char* argv[])
   AutoLibraryLoader::enable();
   
   LorentzVector v1(0,2,0,2);
-  LorentzVector v2(0,-1,0,1);
+  LorentzVector v2(-1,0,0,1);
   LorentzVector v3(2,5,0,5.5);
-  LorentzVector v4(3,3,0,4.5);
+  LorentzVector v4(-3,-3,0,4.5);
 
   cout << v1 << " less pt than " << v2 << "?  " << lessPt(v1,v2) << endl;
   cout << v4 << " less pt than " << v3 << "?  " << lessPt(v4,v3) << endl;
@@ -60,6 +61,11 @@ int main(int argc, char* argv[])
   print_elements(lv);
 
   cout << "max pt vec: " << *max_element(lv.begin(),lv.end(),lessPt) << endl;
+
+  // max dphi
+  cout << v1 << " " << v2 << " dphi: " << absDPhi(v1,v2) << endl;
+  cout << v3 << " " << v4 << " dphi: " << absDPhi(v3,v4) << endl;
+  cout << "max dphi vec: " << *max_correlated_element(lv.begin(),lv.end(),absDPhi,v1) << endl;
 
   return 0;
 }

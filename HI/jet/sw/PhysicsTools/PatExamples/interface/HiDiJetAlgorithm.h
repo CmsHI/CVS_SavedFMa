@@ -9,26 +9,45 @@
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "PhysicsTools/PatExamples/interface/DiJet.h"
 
-bool lessPt(const LorentzVector & lv1, const LorentzVector & lv2);
-bool lessPolarDPhi(const LorentzVector & lv1, const LorentzVector & lv2);
-
-class HiDiJetAlgorithm
+namespace jetana
 {
-  public:
-    typedef std::list<math::XYZTLorentzVector> InputCollection;
-    typedef math::XYZTLorentzVector InputItem;
+  bool lessPt(const LorentzVector & lv1, const LorentzVector & lv2);
+  double absDPhi(const LorentzVector & lv1, const LorentzVector & lv2);
 
-    HiDiJetAlgorithm(double nearThresh, double awayThresh):
-      nearThreshold_(nearThresh),
-      awayThreshold_(awayThresh)
-    { /* empty */ }
+  template <class ForwardIterator, class Correlation, class Cand>
+    ForwardIterator max_correlated_element ( ForwardIterator first, ForwardIterator last,
+	Correlation corr, const Cand & c0)
+  {
+    ForwardIterator largest = first;
+    if (first==last) return largest;
+    double max = corr(*first,c0);
+    while (++first!=last) {
+      double cur=corr(*first,c0);
+      if (max < cur)    // or: if (comp(*largest,*lowest)) for the comp version
+	largest = first;
+    }
+    return largest;
+  }
 
-    /// Find di Jets from the collection of input Candidates.
-    void group(InputCollection& input, std::vector<DiJet>* output) const;
 
-  private:
-    double nearThreshold_;
-    double awayThreshold_;
-};
+  class HiDiJetAlgorithm
+  {
+    public:
+      typedef std::list<LorentzVector> InputCollection;
+      typedef LorentzVector InputItem;
+
+      HiDiJetAlgorithm(double nearThresh, double awayThresh):
+	nearThreshold_(nearThresh),
+	awayThreshold_(awayThresh)
+      { /* empty */ }
+
+      /// Find di Jets from the collection of input Candidates.
+      void group(InputCollection& input, std::vector<DiJet>* output) const;
+
+    private:
+      double nearThreshold_;
+      double awayThreshold_;
+  };
+} //jetnana
 
 #endif //HiJetAna_HiDiJetAlgorithm_h

@@ -9,15 +9,22 @@
 using namespace std;
 using namespace reco;
 
-//  Binary Predicates
-bool lessPt(const LorentzVector & lv1, const LorentzVector & lv2)
+namespace jetana
 {
-  return (lv1.pt() < lv2.pt());
-}
+  //  Binary Predicates
+  bool lessPt(const LorentzVector & lv1, const LorentzVector & lv2)
+  {
+    return (lv1.pt() < lv2.pt());
+  }
+  double absDPhi(const LorentzVector & lv1, const LorentzVector & lv2)
+  {
+    return (fabs(deltaPhi(lv1.phi(),lv2.phi())));
+  }
 
-//  Run the algorithm
-//  ------------------
-void HiDiJetAlgorithm::group(InputCollection& input, vector<DiJet>* output) const
-{
-  if (!output) return;
-}
+  //  Run the algorithm
+  //  ------------------
+  void HiDiJetAlgorithm::group(InputCollection& input, vector<DiJet>* output) const
+  {
+    if (!output) return;
+  }
+} //jetana
