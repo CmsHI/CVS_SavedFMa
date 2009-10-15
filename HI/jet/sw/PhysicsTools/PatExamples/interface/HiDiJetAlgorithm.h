@@ -11,8 +11,13 @@
 
 namespace jetana
 {
-  bool lessPt(const LorentzVector & lv1, const LorentzVector & lv2);
-  double absDPhi(const LorentzVector & lv1, const LorentzVector & lv2);
+  //  Binary Predicates
+  bool lessPt(const LorentzVector & lv1, const LorentzVector & lv2) {
+    return (lv1.pt() < lv2.pt());
+  }
+  double absDPhi(const LorentzVector & lv1, const LorentzVector & lv2) {
+    return (fabs(deltaPhi(lv1.phi(),lv2.phi())));
+  }
 
   template <class ForwardIterator, class Correlation, class Cand>
     ForwardIterator max_correlated_element ( ForwardIterator first, ForwardIterator last,
