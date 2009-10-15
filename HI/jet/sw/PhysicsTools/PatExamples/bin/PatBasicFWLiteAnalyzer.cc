@@ -86,8 +86,8 @@ int main(int argc, char* argv[])
 
     // fwlite::Handle to to HI info collections
     fwlite::Handle<pat::HeavyIon> hievt;
-    pat::HeavyIon hievtcp = (*hievt);
     hievt.getByLabel(event,"heavyIon");
+    pat::HeavyIon hievtcp = (*hievt);
     cout << "HI event " << iEvent << "  gen b|npart|ncoll:"
       << hievtcp.generatedB() << "|" << hievtcp.generatedNpart() << "|" << hievtcp.generatedNcoll() << endl;
 
