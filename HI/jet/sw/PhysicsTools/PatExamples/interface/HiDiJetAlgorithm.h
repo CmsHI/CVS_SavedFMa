@@ -46,6 +46,7 @@ namespace jetana
       typedef std::vector<OutputItem> OutputCollection;
 
       // constructor
+      HiDiJetAlgorithm();
       HiDiJetAlgorithm(double nearThresh, double awayThresh, double dPhiMin);
 
       // helpers

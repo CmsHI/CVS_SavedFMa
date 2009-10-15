@@ -11,7 +11,13 @@ using namespace reco;
 
 namespace jetana
 {
-  // constructor 
+  // constructors
+  HiDiJetAlgorithm::HiDiJetAlgorithm():
+    nearThreshold_(20),
+    awayThreshold_(20),
+    dPhiMin_(0.5)
+  {
+  } 
   HiDiJetAlgorithm::HiDiJetAlgorithm(double nearThresh, double awayThresh, double dPhiMin):
     nearThreshold_(nearThresh),
     awayThreshold_(awayThresh),
