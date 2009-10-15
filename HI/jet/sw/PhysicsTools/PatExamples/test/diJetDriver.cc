@@ -36,8 +36,8 @@ int main(int argc, char* argv[])
   gSystem->Load( "libFWCoreFWLite" );
   AutoLibraryLoader::enable();
   
-  math::XYZTLorentzVector v1(0,1,0,1);
-  math::XYZTLorentzVector v2(0,-1,0,1);
+  LorentzVector v1(0,1,0,1);
+  LorentzVector v2(0,-1,0,1);
 
   DiJet dj;
   dj.SetNearJet(v1);
