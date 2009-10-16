@@ -43,15 +43,15 @@ int main(int argc, char* argv[])
   gSystem->Load( "libFWCoreFWLite" );
   AutoLibraryLoader::enable();
   
-  LorentzVector v1(0,2,0,2);
-  LorentzVector v2(-1,0,0,1);
-  LorentzVector v3(2,5,0,5.5);
-  LorentzVector v4(-3,-3,0,4.5);
+  InputItem v1(0,2,0,2);
+  InputItem v2(-1,0,0,1);
+  InputItem v3(2,5,0,5.5);
+  InputItem v4(-3,-3,0,4.5);
 
   cout << v1 << " less pt than " << v2 << "?  " << lessPt(v1,v2) << endl;
   cout << v4 << " less pt than " << v3 << "?  " << lessPt(v4,v3) << endl;
 
-  list<LorentzVector> lv;
+  InputCollection lv;
   lv.push_back(v1);
   lv.push_back(v2);
   lv.push_back(v3);
