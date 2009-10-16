@@ -25,7 +25,7 @@ namespace jetana
   { /* empty */ }
 
   // helpers
-  HiDiJetAlgorithm::InputCollection::const_iterator HiDiJetAlgorithm::FindPair(const InputItem & near, const InputCollection & others) const
+  InputCollection::const_iterator HiDiJetAlgorithm::FindPair(const InputItem & near, const InputCollection & others) const
   { 
     // Note:
     // - const_iterator c/b function is const and stl::...->begin() uses 
