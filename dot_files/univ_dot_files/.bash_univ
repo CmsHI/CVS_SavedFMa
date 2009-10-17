@@ -20,6 +20,8 @@ export DAQHItest=$HIsw/DAQ/test
 export DAQHIrun=$HIrun/DAQ
 export HLTHIsw=$HIsw/HLT/sw
 export HLTHIrun=$HIrun/HLT
+export HLTppsw=$ppsw/HLT/sw
+export HLTpprun=$pprun/HLT
 # -older-
 export projects=$mit/research/projects
 export tier2=$projects/tier2
