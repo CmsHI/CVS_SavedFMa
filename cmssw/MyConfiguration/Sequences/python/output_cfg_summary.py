@@ -12,6 +12,8 @@ def output_cfg_summary(process):
 #   for i in sourcelines[:20]:
 #      print i
    print process.source.dumpPython()[:1000]
+   print "\n=== Globaltag: ==="
+   print process.GlobalTag.globaltag
 
    print "\n=== Options ==="
    try:
