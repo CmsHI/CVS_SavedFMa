@@ -70,8 +70,15 @@ namespace jetana
     // need at least 2 input items
     if (input.size()<2) return;
 
-    InputCollection::iterator imaxPt = max_element(input.begin(),input.end(),lessPt);
-    while ( input.size()>=2 && PassNearJetCriterion(*imaxPt)) {
+    // loop over the input collection as long as it has more than 2 items.
+    while (input.size()>=2) {
+      // find leading jet
+      InputCollection::iterator imaxPt = max_element(input.begin(),input.end(),lessPt);
+      // check leading jet, if does not pass near jet criterion then nothing
+      // can be done for this event
+      if (!PassNearJetCriterion(*imaxPt)) break;
+
+      // Will now run algorithm
       if (verbosity_>=2) {
 	cout << "group algo input items: " << endl;
 	mystd::print_elements(input);
@@ -87,16 +94,14 @@ namespace jetana
       // find away jet
       InputCollection::iterator iaway = FindPair(*imaxPt,input);
       // if found an away jet passing away criterion and paired to the leading
-      // jet, save to dijet
+      // jet, save to dijet and remove from list of candidates
       if (iaway!=NULL) {
 	dj.SetAwayJet(*iaway);
 	input.erase(iaway);
-	// saved paired dijet
+
+	// save paired dijet
 	output->push_back(dj);
       }
-
-      // update next leading item
-      imaxPt = max_element(input.begin(),input.end(),lessPt);
     } // end of loop over input items
   }
 

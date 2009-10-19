@@ -44,24 +44,27 @@ int main(int argc, char* argv[])
   AutoLibraryLoader::enable();
   
   // prepare inputs
-  InputItem v0(500,0,0,500);
+  double pt0=500;
+  // test no leading case:
+  //pt0=10;
+  InputItem v0(pt0,0,0,pt0);
   double a1=3.14*0.5;
-  double pt1=100;
+  double pt1=pt0*0.2;
   double x1=pt1*cos(a1);
   double y1=pt1*sin(a1);
   double a2=3.14-0.6;
-  double pt2=120;
+  double pt2=pt0*0.3;
   double x2=pt2*cos(a2);
   double y2=pt2*sin(a2);
   double a3=3.14-0.4;
-  double pt3=200;
+  double pt3=pt0*0.4;
   double x3=pt3*cos(a3);
   double y3=pt3*sin(a3);
   double a4=-1*(3.14-0.2);
-  double pt4=300;
+  double pt4=pt0*0.6;
   double x4=pt4*cos(a4);
   double y4=pt4*sin(a4);
-  double E=300;
+  double E=pt0;
   InputItem v1(x1,y1,-50,E);
   InputItem v2(x2,y2,0,E);
   InputItem v3(x3,y3,-10,E);
