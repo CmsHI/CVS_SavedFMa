@@ -56,7 +56,10 @@ namespace jetana
 	it_away = icand;
     }
 
-    if (verbosity_>=2 && it_away!=NULL) cout << "found away: " << *it_away << endl;
+    if (verbosity_>=2) {
+      if (it_away!=NULL) cout << "found away: " << *it_away << endl << endl;
+      else cout << endl;
+    }
     return it_away;
   }
   //  Run the algorithm
@@ -66,14 +69,12 @@ namespace jetana
     if (!output) return;
     // need at least 2 input items
     if (input.size()<2) return;
-    if (verbosity_>=1) {
-      cout << "group algo input items: " << endl;
-      mystd::print_elements(input);
-    }
 
     InputCollection::iterator imaxPt = max_element(input.begin(),input.end(),lessPt);
     while ( input.size()>=2 && PassNearJetCriterion(*imaxPt)) {
       if (verbosity_>=2) {
+	cout << "group algo input items: " << endl;
+	mystd::print_elements(input);
 	cout << "max pt item: " << *imaxPt << endl;
 	cout << "pass criterio? " << PassNearJetCriterion(*imaxPt) << endl;;
       }
@@ -90,12 +91,9 @@ namespace jetana
       if (iaway!=NULL) {
 	dj.SetAwayJet(*iaway);
 	input.erase(iaway);
+	// saved paired dijet
+	output->push_back(dj);
       }
-      // if no away pair found for this leading jet, check next leading jet
-      else continue;
-
-      // saved paired dijet
-      output->push_back(dj);
 
       // update next leading item
       imaxPt = max_element(input.begin(),input.end(),lessPt);

@@ -71,16 +71,16 @@ int main(int argc, char* argv[])
   lv.push_back(v1);
   lv.push_back(v2);
   lv.push_back(v3);
-//  lv.push_back(v4);
+  lv.push_back(v4);
 
   // test pair algo
   HiDiJetAlgorithm djalgo;
   djalgo.SetVerbosity(2);
   InputCollection::const_iterator result = djalgo.FindPair(v0,lv);
   if (result!=NULL)
-    cout << "given near: " << v0 << "  found away: " << *result << endl;
+    cout << "given near: " << v0 << "  found away: " << *result << endl << endl;
   else
-    cout << "no away jet that passed away side criteron found" << endl;
+    cout << "no away jet that passed away side criteron found" << endl << endl;
   
   // test group algo
   lv.push_back(v0);
