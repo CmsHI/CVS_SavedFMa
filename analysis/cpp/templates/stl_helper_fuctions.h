@@ -19,7 +19,6 @@ namespace mystd
       for (pos=coll.begin(); pos!=coll.end(); ++pos) {
 	std::cout << *pos << ' ' << std::endl;
       }
-      std::cout << std::endl;
     }
 
 } // mystl
