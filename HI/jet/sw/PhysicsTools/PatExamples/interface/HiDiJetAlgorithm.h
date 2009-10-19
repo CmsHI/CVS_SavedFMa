@@ -53,7 +53,7 @@ namespace jetana
       // helpers
       bool PassNearJetCriterion(const InputItem & cand) const {return (cand.pt()>nearThreshold_);}
       bool PassAwayJetCriterion(const InputItem & cand) const {return (cand.pt()>awayThreshold_);}
-      InputCollection::const_iterator FindPair(const InputItem & near, const InputCollection & others) const;
+      InputCollection::iterator FindPair(const InputItem & near, InputCollection & others);
       /// Find di Jets from the collection of input Candidates.
       void Group(InputCollection& input, OutputCollection* output);
 
