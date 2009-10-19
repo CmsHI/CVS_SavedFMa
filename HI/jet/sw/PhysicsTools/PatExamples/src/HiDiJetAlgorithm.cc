@@ -22,7 +22,7 @@ namespace jetana
   HiDiJetAlgorithm::HiDiJetAlgorithm():
     nearThreshold_(20),
     awayThreshold_(20),
-    dPhiMin_(0.5),
+    dPhiMin_(3.14-0.5),
     verbosity_(0)
   {
   } 
@@ -36,7 +36,7 @@ namespace jetana
   // helpers
   InputCollection::iterator HiDiJetAlgorithm::FindPair(const InputItem & near, InputCollection & others)
   { 
-    if (verbosity_>2) {
+    if (verbosity_>=2) {
       cout << "pair algo input near: " << near << endl;
       cout << "pair algo input others: " << endl;
       mystd::print_elements(others);

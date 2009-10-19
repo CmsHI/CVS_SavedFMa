@@ -69,11 +69,9 @@ int main(int argc, char* argv[])
 
   InputCollection lv;
   lv.push_back(v1);
-//  lv.push_back(v2);
-//  lv.push_back(v3);
+  lv.push_back(v2);
+  lv.push_back(v3);
 //  lv.push_back(v4);
-  cout << "list of other 4vec's: " << endl;
-  print_elements(lv);
 
   // test pair algo
   HiDiJetAlgorithm djalgo;
