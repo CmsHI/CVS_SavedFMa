@@ -8,17 +8,10 @@
 #include <vector>
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "PhysicsTools/PatExamples/interface/DiJet.h"
+#include "PhysicsTools/PatExamples/interface/HiDiJetAlgoHelper.h"
 
 namespace jetana
 {
-  //  Binary Predicates
-  bool lessPt(const LorentzVector & lv1, const LorentzVector & lv2) {
-    return (lv1.pt() < lv2.pt());
-  }
-  double absDPhi(const LorentzVector & lv1, const LorentzVector & lv2) {
-    return (fabs(deltaPhi(lv1.phi(),lv2.phi())));
-  }
-
   // stl style correlation algorithm
   template <class ForwardIterator, class Correlation, class Cand>
     ForwardIterator max_correlated_element ( ForwardIterator first, ForwardIterator last,

@@ -8,8 +8,9 @@
 #include <iostream>
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
+#include "PhysicsTools/PatExamples/interface/HiDiJetAlgoHelper.h"
 
-typedef math::XYZTLorentzVector LorentzVector;
+using namespace jetana;
 
 class DiJet
 {
