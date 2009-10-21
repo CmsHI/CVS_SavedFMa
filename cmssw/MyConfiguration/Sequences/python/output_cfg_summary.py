@@ -13,7 +13,10 @@ def output_cfg_summary(process):
 #      print i
    print process.source.dumpPython()[:1000]
    print "\n=== Globaltag: ==="
-   print process.GlobalTag.globaltag
+   try:
+     print process.GlobalTag.globaltag
+   except:
+     print "no Global tag used in cfg"
 
    print "\n=== Options ==="
    try:
