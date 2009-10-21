@@ -11,14 +11,18 @@
 #include <TFile.h>
 #include <TSystem.h>
 
+// general cmssw
 #include "DataFormats/FWLite/interface/Handle.h"
+#include "DataFormats/Candidate/interface/Candidate.h"
+
+// jet related
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "FWCore/FWLite/interface/AutoLibraryLoader.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/Math/interface/deltaR.h"
 // dijet classes
 #include "PhysicsTools/PatExamples/interface/DiJet.h"
-
+using namespace std;
 
 
 int main(int argc, char* argv[]) 
@@ -49,8 +53,6 @@ int main(int argc, char* argv[])
   TH1F* trackPt_  = new TH1F("trackPt", "pt",    100,  0.,50.);
   TH1F* trackEta_ = new TH1F("trackEta","eta",   100, -5.,  5.);
   TH1F* trackPhi_ = new TH1F("trackPhi","phi",   100, -5.,  5.);
-
-  DiJet dj;
 
   // open input file (can be located on castor)
   //TFile* inFile = TFile::Open( "file:PATLayer1_Output.fromAOD_full.root" );
@@ -85,6 +87,27 @@ int main(int argc, char* argv[])
     if(iEvent>0 && iEvent%100==0){
       std::cout << "  processing event: " << iEvent << std::endl;
     }
+
+    // fwlite::Handle to to jet collection
+    fwlite::Handle<std::vector<pat::Jet> > jets;
+    jets.getByLabel(event, "selectedLayer1Jets");
+
+    // loop jet collection and fill histograms
+    for(unsigned i=0; i<jets->size(); ++i){
+      printf("caljet et|eta|phi: %f|%f|%f\n",
+	  (*jets)[i].pt(), (*jets)[i].eta(), (*jets)[i].phi());
+      cout << (*jets)[i].p4() << endl;
+    }
+
+    // fwlite::Handle to general collection
+    //fwlite::Handle<reco::CandidateView> inputsHandle;
+    fwlite::Handle<std::vector<reco::Candidate> > inputsHandle;
+    //inputsHandle.getByLabel(event, "selectedLayer1Jets");
+//    inputsHandle.getByLabel(event, "hiSelectedTracks");
+//    for(unsigned i=0; i<inputsHandle->size(); ++i){
+//      printf("caljet et|eta|phi: %f|%f|%f\n",
+//	  (*inputsHandle)[i].pt(), (*inputsHandle)[i].eta(), (*inputsHandle)[i].phi());
+//    }
   }
 
   // close input file
