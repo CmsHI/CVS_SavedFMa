@@ -30,6 +30,8 @@ void HiJetAnaInput::LoadJets(JetType jetType)
     // - cf http://msdn.microsoft.com/en-us/library/2dzy4k6e%28VS.80%29.aspx
     //   * for example of using enum switch
     switch (jetType) {
+      // - cf instantiation in case
+      //   * http://docs.freebsd.org/info/g++FAQ/g++FAQ.info.jump_crosses_initialization.html
       case PATJET: 
 	{
 	  cout << "load patjet" << endl;
