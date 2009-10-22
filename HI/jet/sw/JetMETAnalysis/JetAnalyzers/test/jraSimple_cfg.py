@@ -25,10 +25,6 @@ ivars.parseArguments()
 #
 
 process.source = cms.Source("PoolSource",
-    inputCommands = cms.untracked.vstring('drop *',
-      'keep *HepMCProduct*_*_*_*',
-      'keep *_raw*_*_*'
-      ),
     fileNames = cms.untracked.vstring( ivars.files ),
     duplicateCheckMode = cms.untracked.string( 'noDuplicateCheck' )
     )
@@ -60,10 +56,6 @@ process.load("Configuration.StandardSequences.Services_cff")
 process.caloJetToRef = cms.EDFilter("MatchRecToGen",
     srcGen = cms.InputTag("iterativeCone5GenJets"),
     srcRec = cms.InputTag("iterativeCone5CaloJets")
-    )
-
-process.fileSaver = cms.EDFilter("JetFileSaver",
-    OutputFile = cms.untracked.string(ivars.output + '.file')
     )
 
 import JetMETAnalysis.JetAnalyzers.JRA_Defaults_cff as Defaults
@@ -104,6 +96,6 @@ process.myAna = cms.Sequence(process.recoevent+process.genevent)
 # Output file
 #
 process.pana = cms.Path(
-    #process.myAna +
+    process.myAna +
     process.jetAna
 )
