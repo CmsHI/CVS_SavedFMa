@@ -1,6 +1,9 @@
+<!-- For linking against fwlite formats -->
 <use name=DataFormats/FWLite>
 <use name=FWCore/FWLite>
+<!-- For linking against root -->
 <use name=root>
+<!-- For linking against other cmssw classes -->
 <use name=DataFormats/Candidate>
 <use name=DataFormats/HeavyIonEvent>
 <use name=DataFormats/Common>
