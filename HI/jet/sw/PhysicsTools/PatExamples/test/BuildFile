@@ -11,4 +11,5 @@
  <bin file="diJetDriver.cc"> </bin>
  <bin file="predicateDriver.cc"> </bin>
  <bin file="hiDiJetAlgoDriver.cc"> </bin>
+ <bin file="hiJetAnaInput.cc"> </bin>
 </environment>

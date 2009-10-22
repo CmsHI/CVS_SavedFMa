@@ -1,19 +1,46 @@
+// pat
+#include "DataFormats/FWLite/interface/Handle.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
+#include "FWCore/FWLite/interface/AutoLibraryLoader.h"
 // ana
 #include "PhysicsTools/PatExamples/interface/HiJetAnaInput.h"
-// stl
-#include <map>
+// root
+#include <TSystem.h>
 
 using namespace jetana;
 using namespace std;
 
-void HiJetAnaInput::LoadJets(TString anatype)
+void HiJetAnaInput::LoadJets(JetType jetType)
 {
-  map<TString,int> typecode;
-  typecode["patjet"]=0;
+  gSystem->Load( "libFWCoreFWLite" );
+  AutoLibraryLoader::enable();
 
-  switch (typecode[anatype]) {
-    case 0:
-      cout << anatype << endl;
-      break;
+  unsigned int iEvent=0;
+  for(event_.toBegin(); !event_.atEnd(); ++event_, ++iEvent){
+    // break loop after end of file is reached 
+    // or after 1000 events have been processed
+    if( iEvent==1000 ) break;
+
+    // simple event counter
+    if(iEvent>0 && iEvent%100==0){
+      std::cout << "  processing event: " << iEvent << std::endl;
+    }
+
+    fwlite::Handle<std::vector<pat::Jet> > jets;
+    // - cf http://msdn.microsoft.com/en-us/library/2dzy4k6e%28VS.80%29.aspx
+    //   * for example of using enum switch
+    switch (jetType) {
+      case PATJET: 
+	{
+	  cout << "load patjet" << endl;
+	  //      jets.getByLabel(event_, "selectedLayer1Jets");
+	  //      for(unsigned i=0; i<jets->size(); ++i){
+	  //	cout << (*jets)[i].p4() << endl;
+	  //      }
+	  break;
+	}
+      default:
+	cout << "jet type: " << jetType  << endl;
+    }
   }
 }
