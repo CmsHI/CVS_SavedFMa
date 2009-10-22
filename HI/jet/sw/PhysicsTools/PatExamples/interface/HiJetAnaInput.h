@@ -12,6 +12,8 @@
 
 namespace jetana
 {
+  enum JetType { PARTON, GENJET, SEGENJET, PATJET };
+
   class HiJetAnaInput
   {
     public:
@@ -19,7 +21,7 @@ namespace jetana
       HiJetAnaInput(TFile * f) : event_(f) {/*emtpy*/}
 
       // member functions
-      void LoadJets(TString type);
+      void LoadJets(JetType jetType);
 
       // data members
       InputCollection jets_; 
