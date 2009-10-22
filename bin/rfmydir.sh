@@ -1,5 +1,6 @@
 #!/bin/bash -
-datadir=/castor/cern.ch/user/f/frankma/data
+#datadir=/castor/cern.ch/user/f/frankma/data
+datadir=/castor/cern.ch/cms
 
 if [ $# -eq 0 ]; then
    echo Usage
