@@ -33,10 +33,10 @@ void HiJetAnaInput::LoadJets(JetType jetType)
       case PATJET: 
 	{
 	  cout << "load patjet" << endl;
-	  //      jets.getByLabel(event_, "selectedLayer1Jets");
-	  //      for(unsigned i=0; i<jets->size(); ++i){
-	  //	cout << (*jets)[i].p4() << endl;
-	  //      }
+	  jets.getByLabel(event_, "selectedLayer1Jets");
+	  for(unsigned i=0; i<jets->size(); ++i){
+	    cout << (*jets)[i].p4() << endl;
+	  }
 	  break;
 	}
       default:

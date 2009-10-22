@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 
   // ----------------------------------------------------------------------
   HiJetAnaInput jetinput(inFile);
-  //jetinput.LoadJets(PATJET);
+  jetinput.LoadJets(PATJET);
 
   // that's it!
   return 0;
