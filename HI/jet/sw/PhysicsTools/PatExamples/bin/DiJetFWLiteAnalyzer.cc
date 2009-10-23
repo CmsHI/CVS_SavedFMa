@@ -20,8 +20,11 @@
 #include "FWCore/FWLite/interface/AutoLibraryLoader.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/Math/interface/deltaR.h"
-// dijet classes
+// ana classes
 #include "PhysicsTools/PatExamples/interface/DiJet.h"
+#include "PhysicsTools/PatExamples/interface/HiJetAnaInput.h"
+#include "PhysicsTools/PatExamples/interface/HiDiJetAlgorithm.h"
+
 using namespace std;
 
 
@@ -88,27 +91,18 @@ int main(int argc, char* argv[])
       std::cout << "  processing event: " << iEvent << std::endl;
     }
 
-    // fwlite::Handle to to jet collection
-    fwlite::Handle<std::vector<pat::Jet> > jets;
-    jets.getByLabel(event, "selectedLayer1Jets");
+    // get input collection in event
+    HiJetAnaInput jetinput(&event);
+    jetinput.LoadJets(PATJET);
 
-    // loop jet collection and fill histograms
-    for(unsigned i=0; i<jets->size(); ++i){
-      printf("caljet et|eta|phi: %f|%f|%f\n",
-	  (*jets)[i].pt(), (*jets)[i].eta(), (*jets)[i].phi());
-      cout << (*jets)[i].p4() << endl;
-    }
+    // prepare output
+    OutputCollection output;
 
-    // fwlite::Handle to general collection
-    //fwlite::Handle<reco::CandidateView> inputsHandle;
-    fwlite::Handle<std::vector<reco::Candidate> > inputsHandle;
-    //inputsHandle.getByLabel(event, "selectedLayer1Jets");
-//    inputsHandle.getByLabel(event, "hiSelectedTracks");
-//    for(unsigned i=0; i<inputsHandle->size(); ++i){
-//      printf("caljet et|eta|phi: %f|%f|%f\n",
-//	  (*inputsHandle)[i].pt(), (*inputsHandle)[i].eta(), (*inputsHandle)[i].phi());
-//    }
-  }
+    // run dijet algo on input/output
+    HiDiJetAlgorithm djalgo;
+    djalgo.SetVerbosity(1);
+    djalgo.Group(jetinput.jets_,&output);
+  } // event loop
 
   // close input file
   inFile->Close();

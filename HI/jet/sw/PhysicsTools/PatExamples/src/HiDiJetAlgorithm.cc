@@ -103,6 +103,12 @@ namespace jetana
 	output->push_back(dj);
       }
     } // end of loop over input items
+
+    // done. print out result if wanted
+    if (verbosity_>=1) {
+      cout << "Found dijets" << endl;
+      mystd::print_elements(*output);
+    }
   }
 
 } //jetana

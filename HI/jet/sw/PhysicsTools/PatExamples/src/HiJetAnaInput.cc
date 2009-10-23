@@ -26,7 +26,8 @@ void HiJetAnaInput::LoadJets(JetType jetType)
 	  cout << "load patjet" << endl;
 	  jets.getByLabel(*event_, "selectedLayer1Jets");
 	  for(unsigned i=0; i<jets->size(); ++i){
-	    cout << (*jets)[i].p4() << endl;
+	    jets_.push_back((*jets)[i].p4());
+	    cout << jets_.back() << endl;
 	  }
 	  break;
 	}
