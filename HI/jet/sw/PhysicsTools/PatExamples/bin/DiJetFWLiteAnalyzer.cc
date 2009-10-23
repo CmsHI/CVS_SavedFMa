@@ -69,8 +69,8 @@ int main(int argc, char* argv[])
   TH2D* dijetAwayNearEt  = new TH2D("dijetAwayNearEt", "dijet away et vs near et",    100,   0, 100, 100,0,100); 
   TH2D* ldijetDPhi  = new TH2D("ldijetDPhi", "ldijet dphi",    100,   0, TMath::Pi(), 100,0,1.5); 
   TH2D* ldijetAwayNearEt  = new TH2D("ldijetAwayNearEt", "ldijet away et vs near et",    100,   0, 100, 100,0,100); 
-  TH1D* hldjAwayJetMul = new TH1D("hldjAwayJetMul","lead di away side jet multiplicity",10,0.,10.);
-  TH1D* hevtJetMul = new TH1D("hevtJetMul","event jet multiplicity",50,0.,50.);
+  TH1D* hldjAwayJetMul = new TH1D("hldjAwayJetMul","lead di away side jet multiplicity",24,-2.,10.);
+  TH1D* hevtJetMul = new TH1D("hevtJetMul","event jet multiplicity",104,-2.,50.);
 
   
   // ----------------------------------------------------------------------
@@ -98,6 +98,8 @@ int main(int argc, char* argv[])
     // get input collection in event
     HiJetAnaInput jetinput(&event);
     jetinput.LoadJets(PATJET);
+    //   fill some info of the input collection
+    hevtJetMul->Fill(jetinput.jets_.size());
 
     // prepare output
     OutputCollection output;
@@ -105,9 +107,9 @@ int main(int argc, char* argv[])
     // run dijet algo on input/output
     HiDiJetAlgorithm djalgo;
     djalgo.SetVerbosity(0);
-    djalgo.hldjAwayJetMul_=hldjAwayJetMul;
-    djalgo.hevtJetMul_=hevtJetMul;
-    djalgo.Group(jetinput.jets_,&output);
+    int ldjAwayJetMul = djalgo.Group(jetinput.jets_,&output);
+    //   fill some details of the algo
+    hldjAwayJetMul->Fill(ldjAwayJetMul);
 
     // test output
     cout << "Dijets: " << endl;

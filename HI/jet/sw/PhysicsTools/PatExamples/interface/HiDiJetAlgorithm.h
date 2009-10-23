@@ -48,7 +48,7 @@ namespace jetana
       bool PassAwayJetCriterion(const InputItem & cand) const {return (cand.pt()>awayThreshold_);}
       InputCollection::iterator FindPair(const InputItem & near, InputCollection & others);
       /// Find di Jets from the collection of input Candidates.
-      void Group(InputCollection& input, OutputCollection* output);
+      int Group(InputCollection& input, OutputCollection* output);
 
       // checks
       void SetVerbosity(int level) {verbosity_ = level;}
@@ -58,6 +58,8 @@ namespace jetana
       double awayThreshold_;
       double dPhiMin_;
       // checks
+      unsigned int evtJetMul_;
+      int ldjAwayJetMul_;
       int verbosity_;
   };
 } //jetnana

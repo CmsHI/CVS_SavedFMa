@@ -23,15 +23,22 @@ namespace jetana
     nearThreshold_(20),
     awayThreshold_(20),
     dPhiMin_(3.14-0.5),
+    evtJetMul_(0),
+    ldjAwayJetMul_(0),
     verbosity_(0)
   {
+    // emtpy
   } 
   HiDiJetAlgorithm::HiDiJetAlgorithm(double nearThresh, double awayThresh, double dPhiMin):
     nearThreshold_(nearThresh),
     awayThreshold_(awayThresh),
     dPhiMin_(dPhiMin),
+    evtJetMul_(0),
+    ldjAwayJetMul_(0),
     verbosity_(0)
-  { /* empty */ }
+  { 
+    // empty
+  }
 
   // helpers
   InputCollection::iterator HiDiJetAlgorithm::FindPair(const InputItem & near, InputCollection & others)
@@ -52,10 +59,15 @@ namespace jetana
       if (!PassAwayJetCriterion(*icand))
 	continue;
       double dphi=absDPhi(near,*icand);
+      // check away side jet mul within dphi strip for the first iteration
+      if (others.size()==(evtJetMul_-1) && dphi>dPhiMin_)
+	++ldjAwayJetMul_;
+      // find best away jet
       if (dphi>dPhiMin_ && max<dphi)
 	it_away = icand;
     }
 
+    // done print some info
     if (verbosity_>=2) {
       if (it_away!=NULL) cout << "found away: " << *it_away << endl << endl;
       else cout << endl;
@@ -64,11 +76,13 @@ namespace jetana
   }
   //  Run the algorithm
   //  ------------------
-  void HiDiJetAlgorithm::Group(InputCollection& input, OutputCollection* output)
+  int HiDiJetAlgorithm::Group(InputCollection& input, OutputCollection* output)
   {
-    if (!output) return;
+    if (!output) return -1;
+    // record jet event mul
+    evtJetMul_=input.size();
     // need at least 2 input items
-    if (input.size()<2) return;
+    if (input.size()<2) return -1;
 
     // loop over the input collection as long as it has more than 2 items.
     while (input.size()>=2) {
@@ -93,6 +107,7 @@ namespace jetana
 
       // find away jet
       InputCollection::iterator iaway = FindPair(*imaxPt,input);
+
       // if found an away jet passing away criterion and paired to the leading
       // jet, save to dijet and remove from list of candidates
       if (iaway!=NULL) {
@@ -104,11 +119,13 @@ namespace jetana
       }
     } // end of loop over input items
 
-    // done. print out result if wanted
+    // done. print out details if wanted
     if (verbosity_>=1) {
       cout << "Found dijets" << endl;
+      cout << "lead dijet awayside mul: " << ldjAwayJetMul_ << endl;
       mystd::print_elements(*output);
     }
+    return ldjAwayJetMul_;
   }
 
 } //jetana
