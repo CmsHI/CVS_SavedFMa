@@ -65,9 +65,10 @@ int main(int argc, char* argv[])
   // lazy way to write histos to file book a set of histograms
   TH2D* matjetDR_  = new TH2D("matjetDR", "dR",    100,   0, 6,100,0,100); 
   TH2D* jetDR_  = new TH2D("jetDR", "dR",    100,   0, 6, 100,0,100); 
-  TH2D* dijetDPhi  = new TH2D("dijetDPhi", "dijet dphi",    100,   0, TMath::Pi(), 100,0,1.5); 
+  TH2D* dijetDPhi  = new TH2D("dijetDPhi", "dijet dphi vs dijet et ratio",    100,   0, TMath::Pi(), 100,0,1.5); 
   TH2D* dijetAwayNearEt  = new TH2D("dijetAwayNearEt", "dijet away et vs near et",    100,   0, 100, 100,0,100); 
-  TH2D* ldijetDPhi  = new TH2D("ldijetDPhi", "ldijet dphi",    100,   0, TMath::Pi(), 100,0,1.5); 
+  TH2D* ldijetDPhi  = new TH2D("ldijetDPhi", "ldijet dphi vs dijet et ratio",    100,   0, TMath::Pi(), 100,0,1.5); 
+  TH2D* ldijetDPhiMul  = new TH2D("ldijetDPhiMul", "dijet dphi vs lead jet away multiplicity",    100,   0, TMath::Pi(), 24,-2,10.); 
   TH2D* ldijetAwayNearEt  = new TH2D("ldijetAwayNearEt", "ldijet away et vs near et",    100,   0, 100, 100,0,100); 
   TH1D* hldjAwayJetMul = new TH1D("hldjAwayJetMul","lead di away side jet multiplicity",24,-2.,10.);
   TH1D* hevtJetMul = new TH1D("hevtJetMul","event jet multiplicity",104,-2.,50.);
@@ -106,7 +107,7 @@ int main(int argc, char* argv[])
 
     // run dijet algo on input/output
     HiDiJetAlgorithm djalgo;
-    djalgo.SetVerbosity(0);
+    djalgo.SetVerbosity(1);
     int ldjAwayJetMul = djalgo.Group(jetinput.jets_,&output);
     //   fill some details of the algo
     hldjAwayJetMul->Fill(ldjAwayJetMul);
@@ -114,11 +115,12 @@ int main(int argc, char* argv[])
     // test output
     cout << "Dijets: " << endl;
     for (OutputCollection::iterator itdj=output.begin(); itdj!=output.end(); ++itdj) {
-      cout << *itdj << endl;
+      cout << *itdj << "  lead away mul: " << ldjAwayJetMul << endl;
       dijetDPhi->Fill((*itdj).dphi_,(*itdj).aj_.pt()/(*itdj).nj_.pt());
       dijetAwayNearEt->Fill((*itdj).nj_.pt(),(*itdj).aj_.pt());
       if (itdj==output.begin()) {
 	ldijetDPhi->Fill((*itdj).dphi_,(*itdj).aj_.pt()/(*itdj).nj_.pt());
+	ldijetDPhiMul->Fill((*itdj).dphi_,ldjAwayJetMul);
 	ldijetAwayNearEt->Fill((*itdj).nj_.pt(),(*itdj).aj_.pt());
       }
     }
