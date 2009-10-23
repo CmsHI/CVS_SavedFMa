@@ -66,6 +66,9 @@ int main(int argc, char* argv[])
   TH2F* matjetDR_  = new TH2F("matjetDR", "dR",    100,   0, 6,100,0,100); 
   TH2F* jetDR_  = new TH2F("jetDR", "dR",    100,   0, 6, 100,0,100); 
   TH2F* dijetDPhi  = new TH2F("dijetDPhi", "dijet dphi",    100,   0, TMath::Pi(), 100,0,1.5); 
+  TH2F* dijetAwayNearEt  = new TH2F("dijetAwayNearEt", "dijet away et vs near et",    100,   0, 100, 100,0,100); 
+  TH2F* ldijetDPhi  = new TH2F("ldijetDPhi", "ldijet dphi",    100,   0, TMath::Pi(), 100,0,1.5); 
+  TH2F* ldijetAwayNearEt  = new TH2F("ldijetAwayNearEt", "ldijet away et vs near et",    100,   0, 100, 100,0,100); 
   
   // ----------------------------------------------------------------------
   // Second Part: 
@@ -106,6 +109,11 @@ int main(int argc, char* argv[])
     for (OutputCollection::iterator itdj=output.begin(); itdj!=output.end(); ++itdj) {
       cout << *itdj << endl;
       dijetDPhi->Fill((*itdj).dphi_,(*itdj).aj_.pt()/(*itdj).nj_.pt());
+      dijetAwayNearEt->Fill((*itdj).nj_.pt(),(*itdj).aj_.pt());
+      if (itdj==output.begin()) {
+	ldijetDPhi->Fill((*itdj).dphi_,(*itdj).aj_.pt()/(*itdj).nj_.pt());
+	ldijetAwayNearEt->Fill((*itdj).nj_.pt(),(*itdj).aj_.pt());
+      }
     }
   } // event loop
 
