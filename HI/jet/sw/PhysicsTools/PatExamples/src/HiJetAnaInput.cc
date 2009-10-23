@@ -32,6 +32,15 @@ bool HiJetAnaInput::isParton(const reco::GenParticle & p)
 
   return result;
 }
+
+bool HiJetAnaInput::passBasicKin(const InputItem & cand)
+{
+  if (cand.pt()<5) return false;
+  if (fabs(cand.eta())>3.0) return false;
+
+  return true;
+}
+
 void HiJetAnaInput::LoadJets(JetType jetType)
 {
   gSystem->Load( "libFWCoreFWLite" );
@@ -49,7 +58,8 @@ void HiJetAnaInput::LoadJets(JetType jetType)
 	  jets.getByLabel(*event_, "selectedLayer1Jets");
 	  for(unsigned i=0; i<jets->size(); ++i){
 	    // select jets
-	    jets_.push_back((*jets)[i].p4());
+	    if ( passBasicKin((*jets)[i].p4()) )
+	      jets_.push_back((*jets)[i].p4());
 	  }
 	  break;
 	}
@@ -62,7 +72,7 @@ void HiJetAnaInput::LoadJets(JetType jetType)
 	  for (unsigned ip=0; ip<particles->size(); ++ip) {
 	    int abseta = fabs((*particles)[ip].eta());
 	    // select partons
-	    if ( isParton((*particles)[ip]) && abseta<3.)
+	    if ( isParton((*particles)[ip]) && passBasicKin((*particles)[ip].p4()) )
 	      jets_.push_back((*particles)[ip].p4());
 	  }
 	}
