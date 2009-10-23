@@ -38,18 +38,13 @@ int main(int argc, char* argv[])
   //  * book the histograms of interest 
   //  * open the input file
   // ----------------------------------------------------------------------
+  TH1F* jetPt_  = new TH1F("jetPt", "pt",    100,  0.,150.);
+  TH1F* jetEta_ = new TH1F("jetEta","eta",   100, -5.,  5.);
+  TH1F* jetPhi_ = new TH1F("jetPhi","phi",   100, -5.,  5.);
 
   // load framework libraries
   gSystem->Load( "libFWCoreFWLite" );
   AutoLibraryLoader::enable();
-  
-  // book a set of histograms
-  TH1F* jetPt_  = new TH1F("jetPt", "pt",    100,  0.,150.);
-  TH1F* jetEta_ = new TH1F("jetEta","eta",   100, -5.,  5.);
-  TH1F* jetPhi_ = new TH1F("jetPhi","phi",   100, -5.,  5.);
-  TH2F* matjetDR_  = new TH2F("matjetDR", "dR",    100,   0, 6,100,0,100); 
-  TH2F* jetDR_  = new TH2F("jetDR", "dR",    100,   0, 6, 100,0,100); 
-  TH2F* dijetDPhi  = new TH2F("dijetDPhi", "dijet dphi",    100,   0, TMath::Pi(), 100,0,100); 
   
   // open input file (can be located on castor)
   //TFile* inFile = TFile::Open( "file:PATLayer1_Output.fromAOD_full.root" );
@@ -63,6 +58,15 @@ int main(int argc, char* argv[])
   printf("inFileName: %s\n",inFileName);
   TFile* inFile = TFile::Open(inFileName);
 
+  // open output file
+  TFile outFile( "analyzePatBasics.root", "recreate" );
+  outFile.mkdir("analyzeBasicPat");
+  outFile.cd("analyzeBasicPat");
+  // lazy way to write histos to file book a set of histograms
+  TH2F* matjetDR_  = new TH2F("matjetDR", "dR",    100,   0, 6,100,0,100); 
+  TH2F* jetDR_  = new TH2F("jetDR", "dR",    100,   0, 6, 100,0,100); 
+  TH2F* dijetDPhi  = new TH2F("dijetDPhi", "dijet dphi",    100,   0, TMath::Pi(), 100,0,1.5); 
+  
   // ----------------------------------------------------------------------
   // Second Part: 
   //
@@ -101,7 +105,7 @@ int main(int argc, char* argv[])
     cout << "Dijets: " << endl;
     for (OutputCollection::iterator itdj=output.begin(); itdj!=output.end(); ++itdj) {
       cout << *itdj << endl;
-      dijetDPhi->Fill((*itdj).dphi_,(*itdj).aj_.pt());
+      dijetDPhi->Fill((*itdj).dphi_,(*itdj).aj_.pt()/(*itdj).nj_.pt());
     }
   } // event loop
 
@@ -116,16 +120,10 @@ int main(int argc, char* argv[])
   //  * close the output file
   // ----------------------------------------------------------------------
   
-  //open output file
-  TFile outFile( "analyzePatBasics.root", "recreate" );
-  outFile.mkdir("analyzeBasicPat");
-  outFile.cd("analyzeBasicPat");
   jetPt_ ->Write( );
   jetEta_->Write( );
   jetPhi_->Write( );
-  matjetDR_->Write();
-  jetDR_->Write();
-  dijetDPhi->Write();
+  outFile.Write();
   outFile.Close();
   
   // ----------------------------------------------------------------------
@@ -138,6 +136,7 @@ int main(int argc, char* argv[])
   delete jetPt_;
   delete jetEta_;
   delete jetPhi_;
+  // 
   
   // that's it!
   return 0;
