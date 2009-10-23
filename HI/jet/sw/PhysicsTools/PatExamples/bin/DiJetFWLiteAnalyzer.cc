@@ -5,8 +5,8 @@
 #include <fstream>
 #include <iostream>
 
-#include <TH1F.h>
-#include <TH2F.h>
+#include <TH1D.h>
+#include <TH2D.h>
 #include <TROOT.h>
 #include <TFile.h>
 #include <TSystem.h>
@@ -38,9 +38,9 @@ int main(int argc, char* argv[])
   //  * book the histograms of interest 
   //  * open the input file
   // ----------------------------------------------------------------------
-  TH1F* jetPt_  = new TH1F("jetPt", "pt",    100,  0.,150.);
-  TH1F* jetEta_ = new TH1F("jetEta","eta",   100, -5.,  5.);
-  TH1F* jetPhi_ = new TH1F("jetPhi","phi",   100, -5.,  5.);
+  TH1D* jetPt_  = new TH1D("jetPt", "pt",    100,  0.,150.);
+  TH1D* jetEta_ = new TH1D("jetEta","eta",   100, -5.,  5.);
+  TH1D* jetPhi_ = new TH1D("jetPhi","phi",   100, -5.,  5.);
 
   // load framework libraries
   gSystem->Load( "libFWCoreFWLite" );
@@ -63,12 +63,15 @@ int main(int argc, char* argv[])
   outFile.mkdir("analyzeBasicPat");
   outFile.cd("analyzeBasicPat");
   // lazy way to write histos to file book a set of histograms
-  TH2F* matjetDR_  = new TH2F("matjetDR", "dR",    100,   0, 6,100,0,100); 
-  TH2F* jetDR_  = new TH2F("jetDR", "dR",    100,   0, 6, 100,0,100); 
-  TH2F* dijetDPhi  = new TH2F("dijetDPhi", "dijet dphi",    100,   0, TMath::Pi(), 100,0,1.5); 
-  TH2F* dijetAwayNearEt  = new TH2F("dijetAwayNearEt", "dijet away et vs near et",    100,   0, 100, 100,0,100); 
-  TH2F* ldijetDPhi  = new TH2F("ldijetDPhi", "ldijet dphi",    100,   0, TMath::Pi(), 100,0,1.5); 
-  TH2F* ldijetAwayNearEt  = new TH2F("ldijetAwayNearEt", "ldijet away et vs near et",    100,   0, 100, 100,0,100); 
+  TH2D* matjetDR_  = new TH2D("matjetDR", "dR",    100,   0, 6,100,0,100); 
+  TH2D* jetDR_  = new TH2D("jetDR", "dR",    100,   0, 6, 100,0,100); 
+  TH2D* dijetDPhi  = new TH2D("dijetDPhi", "dijet dphi",    100,   0, TMath::Pi(), 100,0,1.5); 
+  TH2D* dijetAwayNearEt  = new TH2D("dijetAwayNearEt", "dijet away et vs near et",    100,   0, 100, 100,0,100); 
+  TH2D* ldijetDPhi  = new TH2D("ldijetDPhi", "ldijet dphi",    100,   0, TMath::Pi(), 100,0,1.5); 
+  TH2D* ldijetAwayNearEt  = new TH2D("ldijetAwayNearEt", "ldijet away et vs near et",    100,   0, 100, 100,0,100); 
+  TH1D* hldjAwayJetMul = new TH1D("hldjAwayJetMul","lead di away side jet multiplicity",10,0.,10.);
+  TH1D* hevtJetMul = new TH1D("hevtJetMul","event jet multiplicity",50,0.,50.);
+
   
   // ----------------------------------------------------------------------
   // Second Part: 
@@ -102,6 +105,8 @@ int main(int argc, char* argv[])
     // run dijet algo on input/output
     HiDiJetAlgorithm djalgo;
     djalgo.SetVerbosity(0);
+    djalgo.hldjAwayJetMul_=hldjAwayJetMul;
+    djalgo.hevtJetMul_=hevtJetMul;
     djalgo.Group(jetinput.jets_,&output);
 
     // test output
