@@ -126,8 +126,7 @@ namespace jetana
 
     // done. print out details if wanted
     if (verbosity_>=1) {
-      cout << "Found dijets" << endl;
-      cout << "lead dijet awayside mul: " << ldjAwayJetMul_ << endl;
+      if (output->size()>0) cout << "lead dijet awayside mul: " << ldjAwayJetMul_ << endl;
       mystd::print_elements(*output);
     }
     return ldjAwayJetMul_;
