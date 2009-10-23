@@ -15,17 +15,6 @@ void HiJetAnaInput::LoadJets(JetType jetType)
   gSystem->Load( "libFWCoreFWLite" );
   AutoLibraryLoader::enable();
 
-  unsigned int iEvent=0;
-  for(event_.toBegin(); !event_.atEnd(); ++event_, ++iEvent){
-    // break loop after end of file is reached 
-    // or after 1000 events have been processed
-    if( iEvent==1000 ) break;
-
-    // simple event counter
-    if(iEvent>0 && iEvent%100==0){
-      std::cout << "  processing event: " << iEvent << std::endl;
-    }
-
     fwlite::Handle<std::vector<pat::Jet> > jets;
     // - cf http://msdn.microsoft.com/en-us/library/2dzy4k6e%28VS.80%29.aspx
     //   * for example of using enum switch
@@ -35,7 +24,7 @@ void HiJetAnaInput::LoadJets(JetType jetType)
       case PATJET: 
 	{
 	  cout << "load patjet" << endl;
-	  jets.getByLabel(event_, "selectedLayer1Jets");
+	  jets.getByLabel(*event_, "selectedLayer1Jets");
 	  for(unsigned i=0; i<jets->size(); ++i){
 	    cout << (*jets)[i].p4() << endl;
 	  }
@@ -44,5 +33,4 @@ void HiJetAnaInput::LoadJets(JetType jetType)
       default:
 	cout << "jet type: " << jetType  << endl;
     }
-  }
 }

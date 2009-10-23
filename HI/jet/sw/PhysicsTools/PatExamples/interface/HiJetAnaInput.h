@@ -18,7 +18,7 @@ namespace jetana
   {
     public:
       // constructor
-      HiJetAnaInput(TFile * f) : event_(f) {/*emtpy*/}
+      HiJetAnaInput(fwlite::Event * e) {event_=e;}
 
       // member functions
       void LoadJets(JetType jetType);
@@ -27,7 +27,7 @@ namespace jetana
       InputCollection jets_; 
 
     private:
-      fwlite::Event event_;
+      fwlite::Event * event_;
   };
 } // jetana namespace
 

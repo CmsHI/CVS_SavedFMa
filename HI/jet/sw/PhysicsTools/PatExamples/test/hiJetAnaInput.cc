@@ -52,9 +52,22 @@ int main(int argc, char* argv[])
   TFile* inFile = TFile::Open(inFileName);
 
   // ----------------------------------------------------------------------
-  HiJetAnaInput jetinput(inFile);
-  jetinput.LoadJets(PATJET);
+  unsigned int iEvent=0;
+  fwlite::Event event(inFile);
+  for(event.toBegin(); !event.atEnd(); ++event, ++iEvent){
+    // break loop after end of file is reached 
+    // or after 1000 events have been processed
+    if( iEvent==1000 ) break;
 
+    // simple event counter
+    if(iEvent>0 && iEvent%100==0){
+      std::cout << "  processing event: " << iEvent << std::endl;
+    }
+
+    // get input collection in event
+    HiJetAnaInput jetinput(&event);
+    jetinput.LoadJets(PATJET);
+  } // event loop
   // that's it!
   return 0;
 }
