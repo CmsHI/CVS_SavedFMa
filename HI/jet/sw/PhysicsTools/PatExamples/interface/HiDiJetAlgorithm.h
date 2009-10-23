@@ -60,6 +60,7 @@ namespace jetana
       // checks
       unsigned int evtJetMul_;
       int ldjAwayJetMul_;
+      bool foundDijet_;
       int verbosity_;
   };
 } //jetnana

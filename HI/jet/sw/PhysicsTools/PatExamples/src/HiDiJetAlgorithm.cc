@@ -25,6 +25,7 @@ namespace jetana
     dPhiMin_(3.14-0.5),
     evtJetMul_(0),
     ldjAwayJetMul_(0),
+    foundDijet_(false),
     verbosity_(0)
   {
     // emtpy
@@ -35,6 +36,7 @@ namespace jetana
     dPhiMin_(dPhiMin),
     evtJetMul_(0),
     ldjAwayJetMul_(0),
+    foundDijet_(false),
     verbosity_(0)
   { 
     // empty
@@ -59,10 +61,10 @@ namespace jetana
       if (!PassAwayJetCriterion(*icand))
 	continue;
       double dphi=absDPhi(near,*icand);
-      // check away side jet mul within dphi strip for the first iteration
-      if (others.size()==(evtJetMul_-1) && dphi>dPhiMin_) {
+      // check away side jet mul within dphi strip for the first time away sides candidates are available
+      if (!foundDijet_ && dphi>dPhiMin_) {
 	++ldjAwayJetMul_;
-	if (verbosity_>=3) cout << "within dphi (" << dPhiMin_ << ") of lead jet. ldjAwayJetMul_ is now: " << ldjAwayJetMul_ << endl;
+	if (verbosity_>=3) cout << "first away jet within dphi (" << dPhiMin_ << ") of now lead jet. ldjAwayJetMul_ is now: " << ldjAwayJetMul_ << endl;
       }
       // find best away jet
       if (dphi>dPhiMin_ && max<dphi)
@@ -115,6 +117,7 @@ namespace jetana
       if (iaway!=NULL) {
 	dj.SetAwayJet(*iaway);
 	input.erase(iaway);
+	foundDijet_=true;
 
 	// save paired dijet
 	output->push_back(dj);
