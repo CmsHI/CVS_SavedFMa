@@ -23,6 +23,15 @@ class DiJet
       dphi_ = fabs( reco::deltaPhi(aj_.phi(), nj_.phi()) );
     };
 
+    // Public data members
+    // Near jet
+    LorentzVector nj_;
+    // Away jet
+    LorentzVector aj_;
+    // dijet properties
+    double dphi_;
+    LorentzVector cm_;
+
     // Standard quantities derived from the dijet Lorentz vector
     /** Returns the modulus of the momentum of the dijet */
     double p() const {return cm_.P();}
@@ -41,16 +50,6 @@ class DiJet
 
     // Freind Functions
     friend std::ostream& operator <<(std::ostream& outs, const DiJet& dj);
-
-
-  private:
-    // Near jet
-    LorentzVector nj_;
-    // Away jet
-    LorentzVector aj_;
-    // dijet properties
-    double dphi_;
-    LorentzVector cm_;
 };
 
 #endif //HiJetAna_DiJet_h
