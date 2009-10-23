@@ -47,19 +47,20 @@ int main(int argc, char* argv[])
   AutoLibraryLoader::enable();
   
   // open input file (can be located on castor)
-  //TFile* inFile = TFile::Open( "file:PATLayer1_Output.fromAOD_full.root" );
-  char * inFileName;
-  if (argc==1) {
-    inFileName = "file:/d01/frankma/scratch/data/pat/cmssw330pre5/yetkin_RelValHydjetQ_MinBias_4TeV/edmfile_1.root";
-  }
-  else {
+  // set defaults
+  char * inFileName = "file:/d01/frankma/scratch/data/pat/cmssw330pre5/yetkin_RelValHydjetQ_MinBias_4TeV/edmfile_1.root";
+  JetType jetType=PATJET;
+  if (argc>=2) {
     inFileName = argv[1];
+  }
+  if (argc>=3) {
+    jetType=(JetType)(TString(argv[2]).Atoi());
   }
   printf("inFileName: %s\n",inFileName);
   TFile* inFile = TFile::Open(inFileName);
 
   // open output file
-  TFile outFile( "analyzePatBasics.root", "recreate" );
+  TFile outFile( Form("analyzeDiJetsType%d.root",jetType), "recreate" );
   outFile.mkdir("analyzeBasicPat");
   outFile.cd("analyzeBasicPat");
   // lazy way to write histos to file book a set of histograms
@@ -92,13 +93,13 @@ int main(int argc, char* argv[])
     if( iEvent==1000 ) break;
     
     // simple event counter
-    if(iEvent>0 && iEvent%100==0){
+    if(iEvent>0 && iEvent%1==0){
       std::cout << "  processing event: " << iEvent << std::endl;
     }
 
     // get input collection in event
     HiJetAnaInput jetinput(&event);
-    jetinput.LoadJets(PATJET);
+    jetinput.LoadJets(jetType);
     //   fill some info of the input collection
     hevtJetMul->Fill(jetinput.jets_.size());
 
@@ -107,7 +108,7 @@ int main(int argc, char* argv[])
 
     // run dijet algo on input/output
     HiDiJetAlgorithm djalgo;
-    djalgo.SetVerbosity(1);
+    djalgo.SetVerbosity(3);
     int ldjAwayJetMul = djalgo.Group(jetinput.jets_,&output);
     //   fill some details of the algo
     hldjAwayJetMul->Fill(ldjAwayJetMul);

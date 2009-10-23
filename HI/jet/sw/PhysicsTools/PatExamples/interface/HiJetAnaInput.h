@@ -22,6 +22,7 @@ namespace jetana
 
       // member functions
       void LoadJets(JetType jetType);
+      bool isParton(const reco::GenParticle & p);
 
       // data members
       InputCollection jets_; 

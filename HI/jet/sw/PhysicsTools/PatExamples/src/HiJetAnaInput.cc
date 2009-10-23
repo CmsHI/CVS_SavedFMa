@@ -10,6 +10,28 @@
 using namespace jetana;
 using namespace std;
 
+bool HiJetAnaInput::isParton(const reco::GenParticle & p)
+{
+  // cf PhysicsTools/JetMCAlgos/plugins/PartonSelector.cc
+  bool result=false;
+
+  // check status
+  int status = p.status();
+  if (status!=3) return false;
+
+  // check pdg id
+  int flavor = abs(p.pdgId());
+  if(flavor == 1 ||
+      flavor == 2 ||
+      flavor == 3 ||
+      flavor == 4 ||
+      flavor == 5 ||  
+      flavor == 6 ||
+      flavor == 21 )
+    result = true;
+
+  return result;
+}
 void HiJetAnaInput::LoadJets(JetType jetType)
 {
   gSystem->Load( "libFWCoreFWLite" );
@@ -26,11 +48,25 @@ void HiJetAnaInput::LoadJets(JetType jetType)
 	  cout << "load patjet" << endl;
 	  jets.getByLabel(*event_, "selectedLayer1Jets");
 	  for(unsigned i=0; i<jets->size(); ++i){
+	    // select jets
 	    jets_.push_back((*jets)[i].p4());
-	    cout << jets_.back() << endl;
 	  }
 	  break;
 	}
+      case PARTON:
+	{
+	  cout << "load parton" << endl;
+	  // fwlight::Handle to gen particles
+	  fwlite::Handle<std::vector<reco::GenParticle> > particles;
+	  particles.getByLabel(*event_, "hiGenParticles");
+	  for (unsigned ip=0; ip<particles->size(); ++ip) {
+	    int abseta = fabs((*particles)[ip].eta());
+	    // select partons
+	    if ( isParton((*particles)[ip]) && abseta<3.)
+	      jets_.push_back((*particles)[ip].p4());
+	  }
+	}
+	break;
       default:
 	cout << "jet type: " << jetType  << endl;
     }
