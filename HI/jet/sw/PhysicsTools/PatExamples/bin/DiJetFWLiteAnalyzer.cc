@@ -10,6 +10,7 @@
 #include <TROOT.h>
 #include <TFile.h>
 #include <TSystem.h>
+#include "TMath.h"
 
 // general cmssw
 #include "DataFormats/FWLite/interface/Handle.h"
@@ -48,15 +49,8 @@ int main(int argc, char* argv[])
   TH1F* jetPhi_ = new TH1F("jetPhi","phi",   100, -5.,  5.);
   TH2F* matjetDR_  = new TH2F("matjetDR", "dR",    100,   0, 6,100,0,100); 
   TH2F* jetDR_  = new TH2F("jetDR", "dR",    100,   0, 6, 100,0,100); 
+  TH2F* dijetDPhi  = new TH2F("dijetDPhi", "dijet dphi",    100,   0, TMath::Pi(), 100,0,100); 
   
-  TH1F* partlPt_  = new TH1F("partlPt", "pt",    100,  0.,50.);
-  TH1F* partlEta_ = new TH1F("partlEta","eta",   100, -5.,  5.);
-  TH1F* partlPhi_ = new TH1F("partlPhi","phi",   100, -5.,  5.);
-
-  TH1F* trackPt_  = new TH1F("trackPt", "pt",    100,  0.,50.);
-  TH1F* trackEta_ = new TH1F("trackEta","eta",   100, -5.,  5.);
-  TH1F* trackPhi_ = new TH1F("trackPhi","phi",   100, -5.,  5.);
-
   // open input file (can be located on castor)
   //TFile* inFile = TFile::Open( "file:PATLayer1_Output.fromAOD_full.root" );
   char * inFileName;
@@ -100,8 +94,15 @@ int main(int argc, char* argv[])
 
     // run dijet algo on input/output
     HiDiJetAlgorithm djalgo;
-    djalgo.SetVerbosity(1);
+    djalgo.SetVerbosity(0);
     djalgo.Group(jetinput.jets_,&output);
+
+    // test output
+    cout << "Dijets: " << endl;
+    for (OutputCollection::iterator itdj=output.begin(); itdj!=output.end(); ++itdj) {
+      cout << *itdj << endl;
+      dijetDPhi->Fill((*itdj).dphi_,(*itdj).aj_.pt());
+    }
   } // event loop
 
   // close input file
@@ -122,14 +123,9 @@ int main(int argc, char* argv[])
   jetPt_ ->Write( );
   jetEta_->Write( );
   jetPhi_->Write( );
-  partlPt_ ->Write( );
-  partlEta_->Write( );
-  partlPhi_->Write( );
-  trackPt_ ->Write( );
-  trackEta_->Write( );
-  trackPhi_->Write( );
   matjetDR_->Write();
   jetDR_->Write();
+  dijetDPhi->Write();
   outFile.Close();
   
   // ----------------------------------------------------------------------
@@ -142,12 +138,6 @@ int main(int argc, char* argv[])
   delete jetPt_;
   delete jetEta_;
   delete jetPhi_;
-  delete partlPt_;
-  delete partlEta_;
-  delete partlPhi_;
-  delete trackPt_;
-  delete trackEta_;
-  delete trackPhi_;
   
   // that's it!
   return 0;
