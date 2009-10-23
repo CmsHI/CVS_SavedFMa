@@ -54,14 +54,16 @@ namespace jetana
 
     double max = 0;
     for (InputCollection::iterator icand=others.begin(); icand!=others.end(); ++icand) {
-      if (verbosity_>3)
+      if (verbosity_>=3)
 	cout << "processing: " << *icand << endl;
       if (!PassAwayJetCriterion(*icand))
 	continue;
       double dphi=absDPhi(near,*icand);
       // check away side jet mul within dphi strip for the first iteration
-      if (others.size()==(evtJetMul_-1) && dphi>dPhiMin_)
+      if (others.size()==(evtJetMul_-1) && dphi>dPhiMin_) {
 	++ldjAwayJetMul_;
+	if (verbosity_>=3) cout << "within dphi (" << dPhiMin_ << ") of lead jet. ldjAwayJetMul_ is now: " << ldjAwayJetMul_ << endl;
+      }
       // find best away jet
       if (dphi>dPhiMin_ && max<dphi)
 	it_away = icand;
