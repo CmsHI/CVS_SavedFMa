@@ -12,7 +12,7 @@
 
 namespace jetana
 {
-  enum JetType { PARTON, GENJET, SEGENJET, PATJET };
+  enum JetType { PARTON, GENJET, PATJET };
 
   class HiJetAnaInput
   {
