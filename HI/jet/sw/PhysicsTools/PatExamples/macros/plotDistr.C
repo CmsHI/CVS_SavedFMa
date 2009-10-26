@@ -9,7 +9,7 @@ void plotDistr (const char* infname="analyzePatBasics.root")
   drawNormHist(infile,"analyzeBasicPat/jetPhi","","","calo jet Phi","#",1.,0);
   drawNormHist(infile,"analyzeBasicPat/jetDR","box","calo/gen jet dR","dR","pt",1.,0);
   drawNormHist(infile,"analyzeBasicPat/matjetDR","box","matched calo/genjet dR","dR","pt",1.,0);
-  drawNormHist(infile,"analyzeBasicPat/jetPtCorrel","","","calo vs gen jet Pt [GeV]","#",1.,0);
+  drawNormHist(infile,"analyzeBasicPat/jetPtCorrel","colz","","calo vs gen jet Pt [GeV]","#",1.,0);
 
   drawNormHist(infile,"analyzeBasicPat/partlPt","","","gen partl Pt [GeV]","#",1.,1);
   drawNormHist(infile,"analyzeBasicPat/partlEta","","","gen partl Eta","#",1.,0);
