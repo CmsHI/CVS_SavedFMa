@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
   TH1D* jetPhi_ = new TH1D("jetPhi","phi",   100, -5.,  5.);
   TH2D* matjetDR_  = new TH2D("matjetDR", "dR",    100,   0, 6,100,0,100); 
   TH2D* jetDR_  = new TH2D("jetDR", "dR",    100,   0, 6, 100,0,100); 
+  TH2D* jetPtCorrel_  = new TH2D("jetPtCorrel", "pt gen vs calo",    100,  0.,150., 100,0,150);
   
   TH1D* partlPt_  = new TH1D("partlPt", "pt",    100,  0.,50.);
   TH1D* partlEta_ = new TH1D("partlEta","eta",   100, -5.,  5.);
@@ -109,6 +110,7 @@ int main(int argc, char* argv[])
 	    (*jets)[i].pt(), (*jets)[i].eta(), (*jets)[i].phi(),
 	    genjet->pt(),genjet->eta(),genjet->phi(),jetDR);
 	matjetDR_->Fill(jetDR,genjet->pt());
+	jetPtCorrel_->Fill((*jets)[i].pt(),genjet->pt());
       }
 
       // loop genjet collection
@@ -169,6 +171,7 @@ int main(int argc, char* argv[])
   trackPhi_->Write( );
   matjetDR_->Write();
   jetDR_->Write();
+  jetPtCorrel_->Write();
   outFile.Close();
   
   // ----------------------------------------------------------------------
