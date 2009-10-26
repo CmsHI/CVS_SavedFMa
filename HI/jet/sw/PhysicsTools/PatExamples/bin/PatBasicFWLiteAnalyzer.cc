@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
     if( iEvent==1000 ) break;
     
     // simple event counter
-    if(iEvent>0 && iEvent%100==0){
+    if(iEvent>0 && iEvent%1==0){
       std::cout << "  processing event: " << iEvent << std::endl;
     }
 
@@ -94,11 +94,13 @@ int main(int argc, char* argv[])
     // fwlite::Handle to to jet collection
     fwlite::Handle<std::vector<pat::Jet> > jets;
     jets.getByLabel(event, "selectedLayer1Jets");
+    cout << "got pat jets: " << jets->size() << endl;
     
     // fwlite::Handle to genjet collection
     fwlite::Handle<std::vector<reco::GenJet> > gjets;
-    //gjets.getByLabel(event,"iterativeCone5HiGenJets");
-    gjets.getByLabel(event,"hiGenJetCleaner");
+    gjets.getByLabel(event,"iterativeCone5HiGenJets");
+    //gjets.getByLabel(event,"hiGenJetCleaner");
+    cout << "got gen jets: " << gjets->size() << endl;
 
     // loop jet collection and fill histograms
     for(unsigned i=0; i<jets->size(); ++i){
