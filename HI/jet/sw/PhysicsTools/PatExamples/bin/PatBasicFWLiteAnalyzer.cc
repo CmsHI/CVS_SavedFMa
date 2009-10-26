@@ -5,8 +5,8 @@
 #include <fstream>
 #include <iostream>
 
-#include <TH1F.h>
-#include <TH2F.h>
+#include <TH1D.h>
+#include <TH2D.h>
 #include <TROOT.h>
 #include <TFile.h>
 #include <TSystem.h>
@@ -36,19 +36,19 @@ int main(int argc, char* argv[])
   AutoLibraryLoader::enable();
   
   // book a set of histograms
-  TH1F* jetPt_  = new TH1F("jetPt", "pt",    100,  0.,150.);
-  TH1F* jetEta_ = new TH1F("jetEta","eta",   100, -5.,  5.);
-  TH1F* jetPhi_ = new TH1F("jetPhi","phi",   100, -5.,  5.);
-  TH2F* matjetDR_  = new TH2F("matjetDR", "dR",    100,   0, 6,100,0,100); 
-  TH2F* jetDR_  = new TH2F("jetDR", "dR",    100,   0, 6, 100,0,100); 
+  TH1D* jetPt_  = new TH1D("jetPt", "pt",    100,  0.,150.);
+  TH1D* jetEta_ = new TH1D("jetEta","eta",   100, -5.,  5.);
+  TH1D* jetPhi_ = new TH1D("jetPhi","phi",   100, -5.,  5.);
+  TH2D* matjetDR_  = new TH2D("matjetDR", "dR",    100,   0, 6,100,0,100); 
+  TH2D* jetDR_  = new TH2D("jetDR", "dR",    100,   0, 6, 100,0,100); 
   
-  TH1F* partlPt_  = new TH1F("partlPt", "pt",    100,  0.,50.);
-  TH1F* partlEta_ = new TH1F("partlEta","eta",   100, -5.,  5.);
-  TH1F* partlPhi_ = new TH1F("partlPhi","phi",   100, -5.,  5.);
+  TH1D* partlPt_  = new TH1D("partlPt", "pt",    100,  0.,50.);
+  TH1D* partlEta_ = new TH1D("partlEta","eta",   100, -5.,  5.);
+  TH1D* partlPhi_ = new TH1D("partlPhi","phi",   100, -5.,  5.);
 
-  TH1F* trackPt_  = new TH1F("trackPt", "pt",    100,  0.,50.);
-  TH1F* trackEta_ = new TH1F("trackEta","eta",   100, -5.,  5.);
-  TH1F* trackPhi_ = new TH1F("trackPhi","phi",   100, -5.,  5.);
+  TH1D* trackPt_  = new TH1D("trackPt", "pt",    100,  0.,50.);
+  TH1D* trackEta_ = new TH1D("trackEta","eta",   100, -5.,  5.);
+  TH1D* trackPhi_ = new TH1D("trackPhi","phi",   100, -5.,  5.);
 
   // open input file (can be located on castor)
   //TFile* inFile = TFile::Open( "file:PATLayer1_Output.fromAOD_full.root" );
