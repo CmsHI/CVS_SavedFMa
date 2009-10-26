@@ -70,7 +70,7 @@ void HiJetAnaInput::LoadJets(JetType jetType)
 	  fwlite::Handle<std::vector<reco::GenParticle> > particles;
 	  particles.getByLabel(*event_, "hiGenParticles");
 	  for (unsigned ip=0; ip<particles->size(); ++ip) {
-	    int abseta = fabs((*particles)[ip].eta());
+	    double abseta = fabs((*particles)[ip].eta());
 	    // select partons
 	    if ( isParton((*particles)[ip]) && passBasicKin((*particles)[ip].p4()) )
 	      jets_.push_back((*particles)[ip].p4());
