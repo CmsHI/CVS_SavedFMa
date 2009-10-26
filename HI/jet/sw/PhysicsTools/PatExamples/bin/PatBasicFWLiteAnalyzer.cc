@@ -84,13 +84,6 @@ int main(int argc, char* argv[])
       std::cout << "  processing event: " << iEvent << std::endl;
     }
 
-    // fwlite::Handle to to HI info collections
-    fwlite::Handle<pat::HeavyIon> hievt;
-    hievt.getByLabel(event,"heavyIon");
-    pat::HeavyIon hievtcp = (*hievt);
-    cout << "HI event " << iEvent << "  gen b|npart|ncoll:"
-      << hievtcp.generatedB() << "|" << hievtcp.generatedNpart() << "|" << hievtcp.generatedNcoll() << endl;
-
     // fwlite::Handle to to jet collection
     fwlite::Handle<std::vector<pat::Jet> > jets;
     jets.getByLabel(event, "selectedLayer1Jets");
