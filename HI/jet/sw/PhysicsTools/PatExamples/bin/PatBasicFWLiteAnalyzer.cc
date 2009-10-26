@@ -18,6 +18,10 @@
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/Math/interface/deltaR.h"
 
+// helper tools
+#include "/home/frankma/work/HI/jet/sw/pat/patanaCMSSW_3_3_1/src/PhysicsTools/PatExamples/macros/fwlite_file_tools.h"
+#include "/home/frankma/UserCode/SavedFMa/analysis/cpp/templates/stl_helper_fuctions.h"
+
 #include<iostream>
 using namespace std;
 
@@ -52,16 +56,19 @@ int main(int argc, char* argv[])
   TH1D* trackPhi_ = new TH1D("trackPhi","phi",   100, -5.,  5.);
 
   // open input file (can be located on castor)
-  //TFile* inFile = TFile::Open( "file:PATLayer1_Output.fromAOD_full.root" );
   char * inFileName;
+  char * inFileList;
+  vector<string> files;
   if (argc==1) {
-    inFileName = "file:/d01/frankma/scratch/data/pat/cmssw330pre5/yetkin_RelValHydjetQ_MinBias_4TeV/edmfile_1.root";
+    inFileList = "/home/frankma/work/HI/jet/sw/pat/patanaCMSSW_3_3_1/src/PhysicsTools/PatExamples/test/flist.txt";
   }
   else {
-    inFileName = argv[1];
+    inFileList = argv[1];
   }
-  printf("inFileName: %s\n",inFileName);
-  TFile* inFile = TFile::Open(inFileName);
+  printf("inFileList: %s\n",inFileList);
+  MakeInFileList(files,inFileList);
+  mystd::print_elements(files);
+  //TFile* inFile = TFile::Open(inFileName);
 
   // ----------------------------------------------------------------------
   // Second Part: 
@@ -74,7 +81,8 @@ int main(int argc, char* argv[])
 
   // loop the events
   unsigned int iEvent=0;
-  fwlite::Event event(inFile);
+  //fwlite::Event event(inFile);
+  fwlite::ChainEvent event(files);
   for(event.toBegin(); !event.atEnd(); ++event, ++iEvent){
     // break loop after end of file is reached 
     // or after 1000 events have been processed
@@ -146,7 +154,7 @@ int main(int argc, char* argv[])
   }
 
   // close input file
-  inFile->Close();
+  //inFile->Close();
 
   // ----------------------------------------------------------------------
   // Third Part: 
