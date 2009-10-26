@@ -5,8 +5,11 @@
 <use name=rootcintex>
 <use name=root> 
 <use name=PhysicsTools/PatExamples>
+<!-- For linking against fwlite tools -->
+<use name=PhysicsTools/FWLite>
 
 <environment>
  <bin file="PatBasicFWLiteAnalyzer.cc"> </bin>
  <bin file="DiJetFWLiteAnalyzer.cc"> </bin>
+ <bin file="HiPatBasicFWLiteAnalyzer.cc"> </bin>
 </environment>
