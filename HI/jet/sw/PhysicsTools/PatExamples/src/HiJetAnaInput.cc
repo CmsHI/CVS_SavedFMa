@@ -52,17 +52,6 @@ void HiJetAnaInput::LoadJets(JetType jetType)
     switch (jetType) {
       // - cf instantiation in case
       //   * http://docs.freebsd.org/info/g++FAQ/g++FAQ.info.jump_crosses_initialization.html
-      case PATJET: 
-	{
-	  cout << "load patjet" << endl;
-	  jets.getByLabel(*eventCont_, "selectedLayer1Jets");
-	  for(unsigned i=0; i<jets->size(); ++i){
-	    // select jets
-	    if ( passBasicKin((*jets)[i].p4()) )
-	      jets_.push_back((*jets)[i].p4());
-	  }
-	  break;
-	}
       case PARTON:
 	{
 	  cout << "load parton" << endl;
@@ -74,8 +63,32 @@ void HiJetAnaInput::LoadJets(JetType jetType)
 	    if ( isParton((*particles)[ip]) && passBasicKin((*particles)[ip].p4()) )
 	      jets_.push_back((*particles)[ip].p4());
 	  }
+	  break;
 	}
-	break;
+      case GENJET:
+	{
+	  cout << "load genjet" << endl;
+	  // fwlite::Handle to genjet collection
+	  fwlite::Handle<std::vector<reco::GenJet> > gjets;
+	  gjets.getByLabel(*eventCont_,"iterativeCone5HiGenJets");
+	  // loop genjet collection
+	  for (unsigned j=0; j<gjets->size(); ++j) {
+	    if ( passBasicKin((*gjets)[j].p4()) )
+	      jets_.push_back((*gjets)[j].p4());
+	  }
+	  break;
+	}
+      case PATJET: 
+	{
+	  cout << "load patjet" << endl;
+	  jets.getByLabel(*eventCont_, "selectedLayer1Jets");
+	  for(unsigned j=0; j<jets->size(); ++j){
+	    // select jets
+	    if ( passBasicKin((*jets)[j].p4()) )
+	      jets_.push_back((*jets)[j].p4());
+	  }
+	  break;
+	}
       default:
 	cout << "jet type: " << jetType  << endl;
     }
