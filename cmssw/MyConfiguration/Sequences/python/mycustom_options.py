@@ -22,21 +22,25 @@ options.parseArguments()
 
 # now define the customization
 def mycustomise(process):
-   try:
-      process.options.wantSummary = cms.untracked.bool(True)
-   except:
-      process.options = cms.untracked.PSet(
-	 wantSummary = cms.untracked.bool(True)
+  # process.options
+  process.options = cms.untracked.PSet(
+      wantSummary = cms.untracked.bool(True)
       )
-   if (options.files[0] != 'input0.root'):
-      process.source.fileNames = options.files
-   process.maxEvents.input = options.maxEvents
-   try:
-      if ('default_output' not in options.output):
-	 process.output.fileName = options.output
-   except:
-      print "no output module with the given name"
-   return(process)
+  # process.source
+  if (options.files[0] != 'input0.root'):
+    process.source.fileNames = cms.untracked.vstring(options.files)
+  # process.maxEvents
+  process.maxEvents = cms.untracked.PSet(
+      input = cms.untracked.int32(options.maxEvents)
+      )
+  # process.output
+  try:
+    if ('default_output' not in options.output):
+      process.output.fileName = cms.untracked.string(options.output)
+  except:
+    print "no output module with the given name"
+  # done
+  return(process)
 
 # redefine process
 process=mycustomise(process)
