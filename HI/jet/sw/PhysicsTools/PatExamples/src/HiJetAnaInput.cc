@@ -55,7 +55,7 @@ void HiJetAnaInput::LoadJets(JetType jetType)
       case PATJET: 
 	{
 	  cout << "load patjet" << endl;
-	  jets.getByLabel(*event_, "selectedLayer1Jets");
+	  jets.getByLabel(*eventCont_, "selectedLayer1Jets");
 	  for(unsigned i=0; i<jets->size(); ++i){
 	    // select jets
 	    if ( passBasicKin((*jets)[i].p4()) )
@@ -68,9 +68,8 @@ void HiJetAnaInput::LoadJets(JetType jetType)
 	  cout << "load parton" << endl;
 	  // fwlight::Handle to gen particles
 	  fwlite::Handle<std::vector<reco::GenParticle> > particles;
-	  particles.getByLabel(*event_, "hiGenParticles");
+	  particles.getByLabel(*eventCont_, "hiGenParticles");
 	  for (unsigned ip=0; ip<particles->size(); ++ip) {
-	    double abseta = fabs((*particles)[ip].eta());
 	    // select partons
 	    if ( isParton((*particles)[ip]) && passBasicKin((*particles)[ip].p4()) )
 	      jets_.push_back((*particles)[ip].p4());

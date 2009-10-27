@@ -1,6 +1,8 @@
 #ifndef HiJetAna_HiJetAnaInput_h
 #define HiJetAna_HiJetAnaInput_h
 
+// fwlite tools
+#include "PhysicsTools/FWLite/interface/EventContainer.h"
 // pat
 #include "DataFormats/FWLite/interface/Handle.h"
 // ana
@@ -18,7 +20,7 @@ namespace jetana
   {
     public:
       // constructor
-      HiJetAnaInput(fwlite::Event * e) {event_=e;}
+      HiJetAnaInput(fwlite::EventContainer * ec) {eventCont_=ec;}
 
       // member functions
       void LoadJets(JetType jetType);
@@ -29,7 +31,7 @@ namespace jetana
       InputCollection jets_; 
 
     private:
-      fwlite::Event * event_;
+      fwlite::EventContainer * eventCont_;
   };
 } // jetana namespace
 
