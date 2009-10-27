@@ -56,7 +56,6 @@ int main(int argc, char* argv[])
   TH1D* trackPhi_ = new TH1D("trackPhi","phi",   100, -5.,  5.);
 
   // open input file (can be located on castor)
-  char * inFileName;
   char * inFileList;
   vector<string> files;
   if (argc==1) {
