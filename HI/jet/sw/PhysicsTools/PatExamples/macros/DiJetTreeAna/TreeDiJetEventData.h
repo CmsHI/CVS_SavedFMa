@@ -115,6 +115,7 @@ namespace jetana
 	 void SetDefaults();
 	 TreeDiJetEventData();
 	 TreeDiJetEventData(TTree * tree);
+	 void SetTree(TTree * t) { tree_=t; }
 	 void SetBranches();
 	 void ClearCounters();
 

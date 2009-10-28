@@ -10,9 +10,12 @@ int main(int argc, char* argv[])
 {
    TFile f("dijetanadata.root","RECREATE","dijet ana data");
 
-   TTree * evtt = new TTree("dijetTree","dijet tree");
+   TTree * djt = new TTree("dijetTree","dijet tree");
 
-   TreeDiJetEventData td(evtt);
+   //TreeDiJetEventData td(djt);
+   TreeDiJetEventData td;
+   td.SetTree(djt);
+
    printf("initial\n");
    printf("nljet_: %f\n",td.nljet_);
    printf("nljCone5Et_: %f\n",td.nljCone5Et_);
@@ -84,7 +87,7 @@ int main(int argc, char* argv[])
    }
    td.evtnp_ = evtnp;
 
-   evtt->Fill();
+   djt->Fill();
    td.ClearCounters();
 
    // save
