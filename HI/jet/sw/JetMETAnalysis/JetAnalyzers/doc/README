@@ -1,0 +1,21 @@
+=== Setup ===
+- https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideJetResponseAnalyzer#Install_Run
+
+=== Run JRA on pp sample ===
+--sample specific--
+- scripts/runjra.sh ppjra_tree.root
+  * input: a jra tree with only pp jet collections
+  * output: jra histograms
+- script/runjrahi.sh hijra_tree.root
+  * input: a jra tree with both pp and hi collections
+  * output: jra histograms
+- Notes
+  * We apply weights at this time when go from tree to histograms
+  * The histograms can then be merged b/c no calculations have been done yet, only just turning from tree to histos
+
+--jra standard--
+- At this point all data are in jra histograms, we work with these, no matter where they came from
+- scripts/plotRspRes.sh
+  * input: jra hisotgrams
+  * output: tgraphs of relative jet reponse and relative resolution as a function of pt
+
