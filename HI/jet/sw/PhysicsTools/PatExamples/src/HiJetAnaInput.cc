@@ -41,7 +41,7 @@ bool HiJetAnaInput::passBasicKin(const InputItem & cand)
   return true;
 }
 
-void HiJetAnaInput::LoadJets(JetType jetType)
+void HiJetAnaInput::LoadJets(JetType jetType, bool corrected)
 {
   gSystem->Load( "libFWCoreFWLite" );
   AutoLibraryLoader::enable();
@@ -84,8 +84,11 @@ void HiJetAnaInput::LoadJets(JetType jetType)
 	  jets.getByLabel(*eventCont_, "selectedLayer1Jets");
 	  for(unsigned j=0; j<jets->size(); ++j){
 	    // select jets
-	    if ( passBasicKin((*jets)[j].p4()) )
-	      jets_.push_back((*jets)[j].p4());
+	    if ( passBasicKin((*jets)[j].p4()) ) {
+	      if (!corrected)
+		jets_.push_back((*jets)[j].p4());
+	      // implement else!
+	    }
 	  }
 	  break;
 	}

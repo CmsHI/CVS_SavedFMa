@@ -53,6 +53,7 @@ int main(int argc, char* argv[])
   // configure jetType
   parser.addOption ("jetType", optutl::CommandLineParser::kInteger, 
       "Parton(0), Genjet(1), CaloJet(2)", 2);
+  // for later: configure whether jet corrected
   // Parse the command line arguments
   parser.parseArguments (argc, argv);
   JetType jetType=(JetType)parser.integerValue("jetType");

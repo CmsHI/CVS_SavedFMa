@@ -23,7 +23,7 @@ namespace jetana
       HiJetAnaInput(fwlite::EventContainer * ec) {eventCont_=ec;}
 
       // member functions
-      void LoadJets(JetType jetType);
+      void LoadJets(JetType jetType, bool corrected=false);
       bool isParton(const reco::GenParticle & p);
       bool passBasicKin(const InputItem & cand);
 
