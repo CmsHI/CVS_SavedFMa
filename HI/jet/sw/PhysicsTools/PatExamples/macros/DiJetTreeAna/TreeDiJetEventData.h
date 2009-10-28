@@ -9,7 +9,7 @@
 #include <vector>
 #include "TTree.h"
 
-namespace DiJetAna
+namespace jetana
 {
    const Int_t MAXNPARTICLES = 10000;
    //

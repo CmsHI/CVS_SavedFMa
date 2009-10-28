@@ -4,13 +4,13 @@
 #include <vector>
 // ana tree
 #include "PhysicsTools/PatExamples/macros/DiJetTreeAna/TreeDiJetEventData.h"
-using namespace DiJetAna;
+using namespace jetana;
 
 int main(int argc, char* argv[])
 {
-   TFile f("eventdata.root","RECREATE","dijet event data");
+   TFile f("dijetanadata.root","RECREATE","dijet ana data");
 
-   TTree * evtt = new TTree("evtTree","dijet event data tree");
+   TTree * evtt = new TTree("dijetTree","dijet tree");
 
    TreeDiJetEventData td(evtt);
    printf("initial\n");
