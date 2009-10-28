@@ -14,4 +14,5 @@
  <bin file="hiJetAnaInput.cc"> </bin>
  <bin file="fwlite_file_driver.cc"> </bin>
  <bin file="treeDiJetEventData_driver.cc"> </bin>
+ <bin file="hiDiJetAnalysis_driver.cc"> </bin>
 </environment>
