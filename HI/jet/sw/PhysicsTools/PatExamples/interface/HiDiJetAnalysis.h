@@ -24,6 +24,7 @@ namespace jetana
     public:
       // constructor
       HiDiJetAnalysis();
+      ~HiDiJetAnalysis() { delete tree_; }
 
       // analysis methods
       void CalcJetVars(const AnaDiJetCollection & dijets);
