@@ -10,6 +10,6 @@ namespace jetana
   HiDiJetAnalysis::HiDiJetAnalysis()
   {
     TTree * tree_ = new TTree("dijetTree","dijet tree");
-    jd_ = TreeDiJetEventData(tree_);
+    jd_.SetTree(tree_);
   }
 } // jetana namespace
