@@ -28,6 +28,7 @@
 #include "PhysicsTools/PatExamples/interface/DiJet.h"
 #include "PhysicsTools/PatExamples/interface/HiJetAnaInput.h"
 #include "PhysicsTools/PatExamples/interface/HiDiJetAlgorithm.h"
+#include "PhysicsTools/PatExamples/interface/HiDiJetAnalysis.h"
 
 #include<iostream>
 using namespace std;
@@ -82,6 +83,7 @@ int main(int argc, char* argv[])
   eventCont.add( new TH2D("ldijetAwayNearEt", "ldijet away et vs near et",    100,   0, 100, 100,0,100) ); 
   eventCont.add( new TH1D("hldjAwayJetMul","lead di away side jet multiplicity",24,-2.,10.) );
   eventCont.add( new TH1D("hevtJetMul","event jet multiplicity",104,-2.,50.) );
+  // dijet ana tree data
 
   // ----------------------------------------------------------------------
   // Second Part: 
