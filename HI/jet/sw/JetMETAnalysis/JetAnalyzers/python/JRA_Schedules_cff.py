@@ -6,6 +6,13 @@ from JetMETAnalysis.JetAnalyzers.JPTReconstruction_cff import *
 from JetMETAnalysis.JetAnalyzers.JetCorrection_cff import *
 
 
+# HI
+JRAHiCaloJetsSchedule = cms.Schedule(jraHiCaloJets)
+JRAHiCaloL2L3JetsSchedule = cms.Schedule(
+    correctHiCaloJets,
+    jraHiCaloL2L3Jets
+    )
+
 JRAStandardCaloJetsSchedule = cms.Schedule(
     #recoStandardGenJets,
     #recoStandardCaloJets,

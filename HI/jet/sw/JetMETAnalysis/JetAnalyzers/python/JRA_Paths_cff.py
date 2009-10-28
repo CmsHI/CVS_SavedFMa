@@ -180,3 +180,8 @@ jraExtraPFL2L3Jets=cms.Path(ak7pfl2l3JRA+
                             ca5pfl2l3JRA+
                             ca6pfl2l3JRA+
                             ca7pfl2l3JRA)
+# HI
+jraHiCaloJets=cms.Path(ic5caloJRA)
+jraHiCaloL2L3Jets=cms.Path(ic5calol2l3JRA)
+
+

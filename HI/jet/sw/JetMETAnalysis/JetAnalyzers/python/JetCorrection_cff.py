@@ -12,6 +12,7 @@ correctStandardCaloJets = cms.Path(L2L3CorJetAK5Calo+
                                    L2L3CorJetSC7Calo+
                                    L2L3CorJetIC5Calo
                                    )
+correctHiCaloJets = cms.Path(L2L3CorJetIC5Calo)
 
 correctStandardPFJets = cms.Path(L2L3CorJetAK5PF+
                                  L2L3CorJetKT4PF+
