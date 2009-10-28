@@ -11,5 +11,8 @@ namespace jetana
   {
     TTree * tree_ = new TTree("dijetTree","dijet tree");
     jd_.SetTree(tree_);
+
+    // set branches of tree to jd_'s vars
+    jd_.SetBranches();
   }
 } // jetana namespace
