@@ -31,7 +31,7 @@ namespace jetana
       void SetAnaOnlyLeadDijet(bool choice) {anaOnlyLeadDijet_ = choice;}
       // analysis helper methods
       void CalcJetVars (const DiJet & dijet);
-      void CalcFragVars(const DiJet & dijet, const AnaInputCollection & fragments);
+      void CalcFragVars(const DiJet & dijet, const AnaInputCollection & fragcands);
       bool isFrag(const DiJet & dijet, const AnaInputItem & track);
       // analysis main methods
       void Fill(const AnaDiJetCollection & dijets, const AnaInputCollection & tracks);

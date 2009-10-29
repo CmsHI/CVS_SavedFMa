@@ -26,6 +26,7 @@ namespace jetana
   HiDiJetAnalysis::~HiDiJetAnalysis() { delete tree_; }
 
   // helpers ======================================================
+  // dijets related
   void HiDiJetAnalysis::CalcJetVars(const DiJet & dijet)
   {
     if (verbosity_>=3)
@@ -45,18 +46,45 @@ namespace jetana
     jd_.aljphi_	     = dijet.aj_.phi();
   }
 
-  void HiDiJetAnalysis::CalcFragVars(const DiJet & dijet, const AnaInputCollection & fragments)
-  {
-    if (verbosity_>=3) {
-      cout << "calc frag - dijet: " << dijet << endl;
-      cout << "fragments: " << endl;
-      mystd::print_elements(fragments);
-    }
-  }
-
+  // fragmenation related
   bool HiDiJetAnalysis::isFrag(const DiJet & dijet, const AnaInputItem & track)
   {
     return true;
+  }
+
+  void HiDiJetAnalysis::CalcFragVars(const DiJet & dijet, const AnaInputCollection & fcands)
+  {
+    if (verbosity_>=3) {
+      cout << "calc frag - dijet: " << dijet << endl;
+      cout << "fragment candidates: " << endl;
+      mystd::print_elements(fcands);
+    }
+
+    // counter for # particles saved for each dijet pair
+    int ct = 0;
+
+    // loop over fragment candidates
+    for (unsigned int ip=0; ip<fcands.size(); ++ip) {
+      // saved only tracks associated with dijet
+      if ( !isFrag(dijet,fcands[ip]) ) continue;
+
+      // fill frag candidates info
+      jd_.ppt_[ct]	= fcands[ip].pt();
+      jd_.peta_[ct]     = fcands[ip].eta();
+      jd_.pphi_[ct]     = fcands[ip].phi();
+
+      // Relations to jet
+
+      // fragmentation variables
+      jd_.zn_[ct]	= fcands[ip].pt()/dijet.nj_.pt();
+      jd_.za_[ct]	= fcands[ip].pt()/dijet.aj_.pt();
+
+      // saved one frag candidate, update counter
+      ++ct;
+    } // end of loop over fragment candidates
+
+    // save counter
+    jd_.evtnp_		= ct;
   }
 
   // main methods ==================================================

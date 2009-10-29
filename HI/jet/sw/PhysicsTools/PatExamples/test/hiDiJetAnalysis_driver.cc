@@ -76,29 +76,38 @@ int main(int argc, char* argv[])
   double x4=pt4*cos(a4);
   double y4=pt4*sin(a4);
 
-  double E=pt0;
-  AnaInputItem v1(x1,y1,-50,E);
-  AnaInputItem v2(x2,y2,0,E);
-  AnaInputItem v3(x3,y3,-10,E);
-  AnaInputItem v4(x4,y4,30,E);
-  AnaInputItem va(3,0,0,5);
-  AnaInputItem vb(2,3,0,7);
-  AnaInputItem vc(1,-3,0,7);
+  double E=200;
+  AnaInputItem v1(0,100,-50,E);
+  AnaInputItem v2(0,-100,0,E);
+
+  AnaInputItem v3(100,20,-10,E);
+  AnaInputItem v4(-100,-20,30,E);
+
+  AnaInputItem t1 = v1*0.1;
+  AnaInputItem t2 = v2*0.1;
+
+  AnaInputItem t3 = v3*0.1;
+  AnaInputItem t4 = v4*0.1;
+
+  AnaInputItem t5 = v1*0.2;
 
   DiJet dj1;
   dj1.SetNearJet(v1);
-  dj1.SetAwayJet(v4);
+  dj1.SetAwayJet(v2);
   DiJet dj2;
-  dj2.SetNearJet(v2);
-  dj2.SetAwayJet(v3);
+  dj2.SetNearJet(v3);
+  dj2.SetAwayJet(v4);
 
   AnaDiJetCollection dijets;
   dijets.push_back(dj1);
   dijets.push_back(dj2);
 
   AnaInputCollection tracks;
-  tracks.push_back(va);
-  tracks.push_back(vb);
+  tracks.push_back(t1);
+  tracks.push_back(t2);
+  tracks.push_back(t3);
+  tracks.push_back(t4);
+  tracks.push_back(t5);
 
   // dijet ana tree data
   HiDiJetAnalysis ana;
