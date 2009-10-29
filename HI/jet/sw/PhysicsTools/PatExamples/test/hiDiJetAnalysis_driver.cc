@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
 
   // save
   TFile outf("dijetanadata_driver.root","RECREATE","dijet ana data");
-  //ana.tree_->Write();
+  ana.tree_->Write();
   outf.Close();
   // that's it!
   return 0;

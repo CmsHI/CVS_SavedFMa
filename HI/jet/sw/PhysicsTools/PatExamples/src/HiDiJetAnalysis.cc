@@ -29,7 +29,7 @@ namespace jetana
   void HiDiJetAnalysis::CalcJetVars(const DiJet & dijet)
   {
     if (verbosity_>=3)
-      cout << "dijet: " << dijet << endl;
+      cout << "cal jet - dijet: " << dijet << endl;
 
     // fill jet info
     jd_.mass_ = dijet.m();
@@ -38,7 +38,7 @@ namespace jetana
   void HiDiJetAnalysis::CalcFragVars(const DiJet & dijet, const AnaInputCollection & fragments)
   {
     if (verbosity_>=3) {
-      cout << "dijet: " << dijet << endl;
+      cout << "calc frag - dijet: " << dijet << endl;
       cout << "fragments: " << endl;
       mystd::print_elements(fragments);
     }
@@ -68,8 +68,8 @@ namespace jetana
       // fill dijet by dijet
       // - note
       //   * should take care only the particles counted as frag should be filled
-      cout << "tree address: " << tree_ << endl;
-      //tree_->Fill();
+      //cout << "tree address: " << tree_ << endl;
+      tree_->Fill();
     }
   }
 } // jetana namespace
