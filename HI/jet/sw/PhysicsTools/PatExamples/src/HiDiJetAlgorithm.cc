@@ -54,7 +54,10 @@ namespace jetana
     InputCollection::iterator it_away=NULL;
     if (others.size() == 0) return it_away;
 
+    // initialize counters/records
     double max = 0;
+
+    // loop over away candidates
     for (InputCollection::iterator icand=others.begin(); icand!=others.end(); ++icand) {
       if (verbosity_>=3)
 	cout << "processing: " << *icand << endl;
@@ -124,7 +127,8 @@ namespace jetana
 	input.erase(iaway);
 	foundDijet_=true;
 
-	// save paired dijet
+	// save paired dijet with some quality info
+	dj.leadAwayMul_= ldjAwayJetMul_;
 	output->push_back(dj);
       }
     } // end of loop over input items
