@@ -24,7 +24,7 @@ namespace jetana
     public:
       // constructor
       HiDiJetAnalysis();
-      ~HiDiJetAnalysis() { delete tree_; }
+      ~HiDiJetAnalysis();
 
       // settings
       void SetVerbosity(int v) { verbosity_ = v;}
