@@ -8,7 +8,7 @@
 #include "/home/frankma/UserCode/SavedFMa/analysis/cpp/templates/stl_helper_fuctions.h"
 
 using namespace std;
-using namespace ROOT::Math::VectorUtil;
+using namespace ROOT::Math;
 
 namespace jetana
 {
@@ -54,7 +54,7 @@ namespace jetana
   bool HiDiJetAnalysis::isFrag(const DiJet & dijet, const AnaInputItem & track)
   {
     bool result = false;
-    if ( DeltaR(dijet.nj_,track)<fragDRMax_ || DeltaR(dijet.aj_,track)<fragDRMax_) {
+    if ( VectorUtil::DeltaR(dijet.nj_,track)<fragDRMax_ || VectorUtil::DeltaR(dijet.aj_,track)<fragDRMax_) {
       result = true;
     }
     return result;
@@ -76,12 +76,19 @@ namespace jetana
       // saved only tracks associated with dijet
       if ( !isFrag(dijet,fcands[ip]) ) continue;
 
-      // fill frag candidates info
+      // fill frag candidates basic info
       jd_.ppt_[ct]	= fcands[ip].pt();
       jd_.peta_[ct]     = fcands[ip].eta();
       jd_.pphi_[ct]     = fcands[ip].phi();
 
       // Relations to jet
+      jd_.pndphi_[ct]	= VectorUtil::DeltaPhi(fcands[ip],dijet.nj_);
+      jd_.pndeta_[ct]	= fcands[ip].eta() - dijet.nj_.eta();
+      jd_.pndr_[ct]	= VectorUtil::DeltaR(fcands[ip],dijet.nj_);
+
+      jd_.padphi_[ct]	= VectorUtil::DeltaPhi(fcands[ip],dijet.aj_);
+      jd_.padeta_[ct]	= fcands[ip].eta() - dijet.aj_.eta();
+      jd_.padr_[ct]	= VectorUtil::DeltaR(fcands[ip],dijet.aj_);
 
       // fragmentation variables
       jd_.zn_[ct]	= fcands[ip].pt()/dijet.nj_.pt();
