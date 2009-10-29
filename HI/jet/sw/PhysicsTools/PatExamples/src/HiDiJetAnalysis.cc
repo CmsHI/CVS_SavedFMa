@@ -45,6 +45,7 @@ namespace jetana
     // dijet qualities
     jd_.leadAwayMul_ = dijet.leadAwayMul_;
 
+    // near/away info
     jd_.nljet_	     = dijet.nj_.pt();
     jd_.nljeta_	     = dijet.nj_.eta();
     jd_.nljphi_	     = dijet.nj_.phi();
