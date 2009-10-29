@@ -11,7 +11,7 @@ flist=$2
 n=$3
 pref=$4
 
-ncol=2
+ncol=10
 
 # run
 for i in `seq 1 $ncol $n`; do
@@ -24,4 +24,6 @@ for i in `seq 1 $ncol $n`; do
 done
 
 if [ ! -e final ]; then mkdir final; fi
-hadd final/${tag}.root ${tag}_*.root
+finalcmd="hadd final/${tag}.root ${tag}_*.root"
+echo $finalcmd
+eval $finalcmd
