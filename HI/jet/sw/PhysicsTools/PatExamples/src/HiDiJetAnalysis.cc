@@ -9,17 +9,23 @@ using namespace std;
 
 namespace jetana
 {
+  //  constructor/destructor =======================================
   HiDiJetAnalysis::HiDiJetAnalysis() :
     anaOnlyLeadDijet_(true),
     verbosity_(0)
   {
-    TTree * tree_ = new TTree("dijetTree","dijet tree");
-    jd_.SetTree(tree_);
+    // allocate memory for tree
+    tree_ = new TTree("dijetTree","dijet tree");
+    //cout << "initialize HiDiJetAnalysis instance with tree: " << tree_ << endl;
 
-    // set branches of tree to jd_'s vars
+    // set tree address and branches to jet ana data
+    jd_.SetTree(tree_);
     jd_.SetBranches();
   }
 
+  HiDiJetAnalysis::~HiDiJetAnalysis() { delete tree_; }
+
+  // helpers ======================================================
   void HiDiJetAnalysis::CalcJetVars(const DiJet & dijet)
   {
     if (verbosity_>=3)
@@ -43,6 +49,7 @@ namespace jetana
     return true;
   }
 
+  // main methods ==================================================
   void HiDiJetAnalysis::Fill(const AnaDiJetCollection & dijets, const AnaInputCollection & tracks)
   {
     if (verbosity_>=2) {
