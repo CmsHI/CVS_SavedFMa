@@ -60,18 +60,22 @@ int main(int argc, char* argv[])
   double pt1=pt0*0.2;
   double x1=pt1*cos(a1);
   double y1=pt1*sin(a1);
+
   double a2=3.14-0.6;
   double pt2=pt0*0.3;
   double x2=pt2*cos(a2);
   double y2=pt2*sin(a2);
+
   double a3=3.14-0.4;
   double pt3=pt0*0.4;
   double x3=pt3*cos(a3);
   double y3=pt3*sin(a3);
+
   double a4=-1*(3.14-0.2);
   double pt4=pt0*0.6;
   double x4=pt4*cos(a4);
   double y4=pt4*sin(a4);
+
   double E=pt0;
   AnaInputItem v1(x1,y1,-50,E);
   AnaInputItem v2(x2,y2,0,E);
@@ -98,6 +102,7 @@ int main(int argc, char* argv[])
 
   // dijet ana tree data
   HiDiJetAnalysis ana;
+  ana.SetAnaOnlyLeadDijet(false);
   ana.SetVerbosity(3);
 
   // test helpers

@@ -31,8 +31,18 @@ namespace jetana
     if (verbosity_>=3)
       cout << "cal jet - dijet: " << dijet << endl;
 
-    // fill jet info
-    jd_.mass_ = dijet.m();
+    // fill dijet info
+    jd_.mass_	     = dijet.m();
+    jd_.cmeta_	     = dijet.eta();
+    jd_.jdphi_	     = dijet.dphi_;
+
+    jd_.nljet_	     = dijet.nj_.pt();
+    jd_.nljeta_	     = dijet.nj_.eta();
+    jd_.nljphi_	     = dijet.nj_.phi();
+
+    jd_.aljet_	     = dijet.aj_.pt();
+    jd_.aljeta_	     = dijet.aj_.eta();
+    jd_.aljphi_	     = dijet.aj_.phi();
   }
 
   void HiDiJetAnalysis::CalcFragVars(const DiJet & dijet, const AnaInputCollection & fragments)
