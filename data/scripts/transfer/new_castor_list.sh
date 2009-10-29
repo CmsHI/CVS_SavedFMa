@@ -1,7 +1,7 @@
 #!/bin/bash -
 if [ $# -lt 1 ]; then
    echo "Usage"
-   echo "  get_castor.sh <castor_dir> <flistname> [tag] [outputdir]"
+   echo "  get_castor.sh <castor_dir> <flistname> [tag]"
    exit 1
 fi
 
@@ -9,11 +9,9 @@ fi
 castordir=$1
 flist=$2
 tag=root
-outputdir=.
 
 if [ $# -gt 2 ]; then
   tag=$3
-  outputdir=$4
 fi
 
 # check
