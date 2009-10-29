@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
   // Parse the command line arguments
   parser.parseArguments (argc, argv);
   JetType jetType=(JetType)parser.integerValue("jetType");
-  parser.stringValue ("outputFile") = Form("hipat_dijetana_jetType%d",jetType); // .root added automatically
+  parser.stringValue ("outputFile") = Form("djana_jType%d",jetType); // .root added automatically
 
   //////////////////////////////////
   // //////////////////////////// //
@@ -83,7 +83,12 @@ int main(int argc, char* argv[])
   eventCont.add( new TH2D("ldijetAwayNearEt", "ldijet away et vs near et",    100,   0, 100, 100,0,100) ); 
   eventCont.add( new TH1D("hldjAwayJetMul","lead di away side jet multiplicity",24,-2.,10.) );
   eventCont.add( new TH1D("hevtJetMul","event jet multiplicity",104,-2.,50.) );
-  // dijet ana tree data
+
+  // allocates memory for dijet ana tree data
+  HiDiJetAnalysis ana;
+  ana.SetAnaOnlyLeadDijet(true);
+  ana.SetAnaFF(false);
+  ana.SetVerbosity(2);
 
   // ----------------------------------------------------------------------
   // Second Part: 
@@ -107,34 +112,44 @@ int main(int argc, char* argv[])
     //////////////////////////////////
 
     // get input collection in event
-    HiJetAnaInput jetinput(&eventCont);
-    jetinput.LoadJets(jetType);
+    HiJetAnaInput anaInput(&eventCont);
+    anaInput.LoadJets(jetType);
     //   fill some info of the input collection
-    eventCont.hist("hevtJetMul")->Fill(jetinput.jets_.size());
+    eventCont.hist("hevtJetMul")->Fill(anaInput.jets_.size());
 
     // prepare output
-    OutputCollection output;
+    OutputCollection dijets;
 
     // run dijet algo on input/output
     HiDiJetAlgorithm djalgo;
-    djalgo.SetVerbosity(3);
-    int ldjAwayJetMul = djalgo.Group(jetinput.jets_,&output);
-    //   fill some details of the algo
-    eventCont.hist("hldjAwayJetMul")->Fill(ldjAwayJetMul);
+    djalgo.SetVerbosity(1);
+    int ldjAwayJetMul = djalgo.Group(anaInput.jets_,&dijets);
 
-    // test output
+    //   fill histo for some details of the algo
+    eventCont.hist("hldjAwayJetMul")->Fill(ldjAwayJetMul);
+    //   fill histo for basic jet/tracks info
     cout << "Dijets: " << endl;
-    for (OutputCollection::iterator itdj=output.begin(); itdj!=output.end(); ++itdj) {
+    for (OutputCollection::iterator itdj=dijets.begin(); itdj!=dijets.end(); ++itdj) {
       cout << *itdj << "  lead away mul: " << ldjAwayJetMul << endl;
       eventCont.hist("dijetDPhi")->Fill((*itdj).dphi_,(*itdj).aj_.pt()/(*itdj).nj_.pt());
       eventCont.hist("dijetAwayNearEt")->Fill((*itdj).nj_.pt(),(*itdj).aj_.pt());
-      if (itdj==output.begin()) {
+      if (itdj==dijets.begin()) {
 	eventCont.hist("ldijetDPhi")->Fill((*itdj).dphi_,(*itdj).aj_.pt()/(*itdj).nj_.pt());
 	eventCont.hist("ldijetDPhiMul")->Fill((*itdj).dphi_,ldjAwayJetMul);
 	eventCont.hist("ldijetAwayNearEt")->Fill((*itdj).nj_.pt(),(*itdj).aj_.pt());
       }
     }
+
+    AnaInputCollection tracks;
+    // run ana
+    ana.Fill(dijets,tracks);
+
   } // event loop
+
+  // save ana tree
+  TFile outf(Form("tree_%s",parser.stringValue("outputfile").c_str()),"RECREATE","dijet ana data");
+  ana.tree_->Write();
+  outf.Close();
 
   // that's it!
   return 0;

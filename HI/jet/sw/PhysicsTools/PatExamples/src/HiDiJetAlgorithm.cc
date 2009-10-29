@@ -87,6 +87,11 @@ namespace jetana
     evtJetMul_=input.size();
     // need at least 2 input items
     if (input.size()<2) return -1;
+    // print out of entire input
+    if (verbosity_==1) {
+      cout << "group algo input items: " << endl;
+      mystd::print_elements(input);
+    }
 
     // loop over the input collection as long as it has more than 2 items.
     while (input.size()>=2) {
