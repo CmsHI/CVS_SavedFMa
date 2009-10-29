@@ -78,10 +78,10 @@ int main(int argc, char* argv[])
 
   double E=200;
   AnaInputItem v1(0,100,-50,E);
-  AnaInputItem v2(0,-100,0,E);
+  AnaInputItem v2(0,-99,0,E);
 
   AnaInputItem v3(100,20,-10,E);
-  AnaInputItem v4(-100,-20,30,E);
+  AnaInputItem v4(-99,-20,30,E);
 
   AnaInputItem t1 = v1*0.1;
   AnaInputItem t2 = v2*0.1;
