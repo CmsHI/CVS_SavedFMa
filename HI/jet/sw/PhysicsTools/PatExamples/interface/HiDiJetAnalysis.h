@@ -41,7 +41,12 @@ namespace jetana
 
     private:
       TreeDiJetEventData jd_;
+
+      // ana configuration
       bool anaOnlyLeadDijet_;
+      float fragDRMax_;
+
+      // settings
       int verbosity_;
   };
 } // jetana namespace

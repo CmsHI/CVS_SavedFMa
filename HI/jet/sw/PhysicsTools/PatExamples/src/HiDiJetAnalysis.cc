@@ -2,16 +2,20 @@
 // root
 #include "TFile.h"
 #include "TTree.h"
+// ROOT Mathematical Libraries
+#include "Math/GenVector/VectorUtil.h"
 // helpers
 #include "/home/frankma/UserCode/SavedFMa/analysis/cpp/templates/stl_helper_fuctions.h"
 
 using namespace std;
+using namespace ROOT::Math::VectorUtil;
 
 namespace jetana
 {
   //  constructor/destructor =======================================
   HiDiJetAnalysis::HiDiJetAnalysis() :
     anaOnlyLeadDijet_(true),
+    fragDRMax_(1.),
     verbosity_(0)
   {
     // allocate memory for tree
@@ -49,7 +53,11 @@ namespace jetana
   // fragmenation related
   bool HiDiJetAnalysis::isFrag(const DiJet & dijet, const AnaInputItem & track)
   {
-    return true;
+    bool result = false;
+    if ( DeltaR(dijet.nj_,track)<fragDRMax_ || DeltaR(dijet.aj_,track)<fragDRMax_) {
+      result = true;
+    }
+    return result;
   }
 
   void HiDiJetAnalysis::CalcFragVars(const DiJet & dijet, const AnaInputCollection & fcands)
