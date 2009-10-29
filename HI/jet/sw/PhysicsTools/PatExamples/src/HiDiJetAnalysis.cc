@@ -42,6 +42,9 @@ namespace jetana
     jd_.cmeta_	     = dijet.eta();
     jd_.jdphi_	     = dijet.dphi_;
 
+    // dijet qualities
+    jd_.leadAwayMul_ = dijet.leadAwayMul_;
+
     jd_.nljet_	     = dijet.nj_.pt();
     jd_.nljeta_	     = dijet.nj_.eta();
     jd_.nljphi_	     = dijet.nj_.phi();
