@@ -128,9 +128,9 @@ int main(int argc, char* argv[])
     //   fill histo for some details of the algo
     eventCont.hist("hldjAwayJetMul")->Fill(ldjAwayJetMul);
     //   fill histo for basic jet/tracks info
-    cout << "Dijets: " << endl;
+    //cout << "Dijets: " << endl;
     for (OutputCollection::iterator itdj=dijets.begin(); itdj!=dijets.end(); ++itdj) {
-      cout << *itdj << "  lead away mul: " << ldjAwayJetMul << endl;
+      //cout << *itdj << "  lead away mul: " << ldjAwayJetMul << endl;
       eventCont.hist("dijetDPhi")->Fill((*itdj).dphi_,(*itdj).aj_.pt()/(*itdj).nj_.pt());
       eventCont.hist("dijetAwayNearEt")->Fill((*itdj).nj_.pt(),(*itdj).aj_.pt());
       if (itdj==dijets.begin()) {
