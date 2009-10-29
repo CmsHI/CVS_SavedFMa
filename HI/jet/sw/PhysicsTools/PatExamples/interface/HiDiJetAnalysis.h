@@ -29,6 +29,7 @@ namespace jetana
       // settings
       void SetVerbosity(int v) { verbosity_ = v;}
       void SetAnaOnlyLeadDijet(bool choice) {anaOnlyLeadDijet_ = choice;}
+      void SetAnaFF(bool choice) {anaFF_ = choice;}
       // analysis helper methods
       void CalcJetVars (const DiJet & dijet);
       void CalcFragVars(const DiJet & dijet, const AnaInputCollection & fragcands);
@@ -44,6 +45,7 @@ namespace jetana
 
       // ana configuration
       bool anaOnlyLeadDijet_;
+      bool anaFF_;
       float fragDRMax_;
 
       // settings

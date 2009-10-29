@@ -15,6 +15,7 @@ namespace jetana
   //  constructor/destructor =======================================
   HiDiJetAnalysis::HiDiJetAnalysis() :
     anaOnlyLeadDijet_(true),
+    anaFF_(false),
     fragDRMax_(1.),
     verbosity_(0)
   {
@@ -117,7 +118,7 @@ namespace jetana
       if (anaOnlyLeadDijet_ && idj==1) break;
 
       CalcJetVars(dijets[idj]);
-      CalcFragVars(dijets[idj],tracks);
+      if (anaFF_) CalcFragVars(dijets[idj],tracks);
       // fill dijet by dijet
       // - note
       //   * should take care only the particles counted as frag should be filled

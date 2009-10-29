@@ -112,6 +112,7 @@ int main(int argc, char* argv[])
   // dijet ana tree data
   HiDiJetAnalysis ana;
   ana.SetAnaOnlyLeadDijet(false);
+  ana.SetAnaFF(false);
   ana.SetVerbosity(3);
 
   // test helpers
