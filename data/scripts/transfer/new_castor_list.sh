@@ -1,5 +1,5 @@
 #!/bin/bash -
-if [ $# -lt 1 ]; then
+if [ $# -lt 2 ]; then
    echo "Usage"
    echo "  get_castor.sh <castor_dir> <flistname> [tag]"
    exit 1
