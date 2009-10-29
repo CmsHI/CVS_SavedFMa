@@ -26,13 +26,23 @@ namespace jetana
       HiDiJetAnalysis();
       ~HiDiJetAnalysis() { delete tree_; }
 
-      // analysis methods
-      void CalcJetVars(const AnaDiJetCollection & dijets);
-      void CalcTrackVars(const AnaInputCollection & tracks);
+      // settings
+      void SetVerbosity(int v) { verbosity_ = v;}
+      void SetAnaOnlyLeadDijet(bool choice) {anaOnlyLeadDijet_ = choice;}
+      // analysis helper methods
+      void CalcJetVars (const DiJet & dijet);
+      void CalcFragVars(const DiJet & dijet, const AnaInputCollection & fragments);
+      bool isFrag(const DiJet & dijet, const AnaInputItem & track);
+      // analysis main methods
+      void Fill(const AnaDiJetCollection & dijets, const AnaInputCollection & tracks);
+
+      // public data members
+      TTree * tree_;
 
     private:
-      TTree * tree_;
       TreeDiJetEventData jd_;
+      bool anaOnlyLeadDijet_;
+      int verbosity_;
   };
 } // jetana namespace
 

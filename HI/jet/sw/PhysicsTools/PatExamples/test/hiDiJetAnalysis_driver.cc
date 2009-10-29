@@ -77,6 +77,9 @@ int main(int argc, char* argv[])
   AnaInputItem v2(x2,y2,0,E);
   AnaInputItem v3(x3,y3,-10,E);
   AnaInputItem v4(x4,y4,30,E);
+  AnaInputItem va(3,0,0,5);
+  AnaInputItem vb(2,3,0,7);
+  AnaInputItem vc(1,-3,0,7);
 
   DiJet dj1;
   dj1.SetNearJet(v1);
@@ -89,10 +92,28 @@ int main(int argc, char* argv[])
   dijets.push_back(dj1);
   dijets.push_back(dj2);
 
+  AnaInputCollection tracks;
+  tracks.push_back(va);
+  tracks.push_back(vb);
+
   // dijet ana tree data
   HiDiJetAnalysis ana;
+  ana.SetVerbosity(3);
 
+  // test helpers
+  cout << "===test dijet calc===" << endl;
+  ana.CalcJetVars(dj1);
+  cout << endl << "===test frag calc===" << endl;
+  ana.CalcFragVars(dj1,tracks);
 
+  // test main methods
+  cout << endl << "===test fill ===" << endl;
+  ana.Fill(dijets,tracks);
+
+  // save
+  TFile outf("dijetanadata_driver.root","RECREATE","dijet ana data");
+  //ana.tree_->Write();
+  outf.Close();
   // that's it!
   return 0;
 }
