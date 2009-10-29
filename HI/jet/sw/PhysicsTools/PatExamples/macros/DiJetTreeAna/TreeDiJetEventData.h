@@ -57,6 +57,9 @@ namespace jetana
 
 	 Double_t		    jdphi_;
 
+	 //  -- dijet qualities --
+	 Int_t			    leadAwayMul_;
+
 	 // -- particle info --
 	 Int_t			    evtnp_;
 	 Int_t		  	    ppid_[MAXNPARTICLES];
@@ -213,6 +216,9 @@ namespace jetana
       tree_->Branch("aljnp", &(this->aljnp_), "aljnp/I");
 
       tree_->Branch("jdphi", &(this->jdphi_), "jdphi/D");
+
+      // -- dijet qualities
+      tree_->Branch("lajmul", &(this->leadAwayMul_), "lajmul/I");
 
       // -- particle info --
       tree_->Branch("evtnp",&(this->evtnp_),"evtnp/I");
