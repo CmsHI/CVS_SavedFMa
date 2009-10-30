@@ -33,6 +33,14 @@ bool HiJetAnaInput::isParton(const reco::GenParticle & p)
   return result;
 }
 
+bool HiJetAnaInput::isTrack(const reco::GenParticle & p)
+{
+  if (p.status()!=1) return false;
+  if (p.charge()==0) return false;
+
+  return true;
+}
+
 bool HiJetAnaInput::passBasicJetKin(const InputItem & cand)
 {
   if (cand.pt()<20) return false;
@@ -117,13 +125,24 @@ void HiJetAnaInput::LoadTracks(TrackType trackType)
 	particles.getByLabel(*eventCont_, "hiGenParticles");
 	for (unsigned ip=0; ip<particles->size(); ++ip) {
 	  // select particles
-	  //if ( isParton((*particles)[ip]) && passBasicJetKin((*particles)[ip].p4()) )
+	  if ( isTrack((*particles)[ip]) && passBasicTrackKin((*particles)[ip].p4()) )
+	    tracks_.push_back((*particles)[ip].p4());
 	}
 	break;
       }
     case TRACK:
       {
 	fwlite::Handle<std::vector<reco::Track> > tracks;
+	tracks.getByLabel(*eventCont_, "hiSelectedTracks");
+	for (unsigned it=0; it<tracks->size(); ++it) {
+	  AnaInputItem anatrack((*tracks)[it].px(),
+		                (*tracks)[it].py(),
+				(*tracks)[it].pz(),
+				(*tracks)[it].p()
+				);
+	  if ( passBasicTrackKin(anatrack) )
+	    tracks_.push_back(anatrack);
+	}
 	break;
       }
     default:
