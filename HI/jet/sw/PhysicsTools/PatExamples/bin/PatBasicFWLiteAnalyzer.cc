@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
   char * inFileList;
   vector<string> files;
   if (argc==1) {
-    inFileList = "/home/frankma/work/HI/jet/sw/pat/patanaCMSSW_3_3_1/src/PhysicsTools/PatExamples/test/flist.txt";
+    inFileList = "/home/frankma/work/HI/jet/sw/pat/patanaCMSSW_3_3_1/src/PhysicsTools/PatExamples/data/flist.txt";
   }
   else {
     inFileList = argv[1];
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
     // loop particle collection and fill
     for (unsigned ip=0; ip<particles->size(); ++ip) {
       reco::GenParticle p = (*particles)[ip];
-      if (p.status() == 1) {
+      if (p.status() == 1 && p.charge()!=0 && p.pt()>1) {
 	partlPt_ ->Fill( (*particles)[ip].pt()  );
 	partlEta_->Fill( (*particles)[ip].eta() );
 	partlPhi_->Fill( (*particles)[ip].phi() );
