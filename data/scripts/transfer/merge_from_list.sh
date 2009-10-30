@@ -27,3 +27,5 @@ if [ ! -e final ]; then mkdir final; fi
 finalcmd="hadd final/${tag}.root ${tag}_*.root"
 echo $finalcmd
 eval $finalcmd
+
+rfcp final/${tag}.root /castor/cern.ch/user/f/frankma/data/HI/jet/pat/cmssw331/
