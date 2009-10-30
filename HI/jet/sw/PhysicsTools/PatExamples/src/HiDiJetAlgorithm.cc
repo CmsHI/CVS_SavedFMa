@@ -20,8 +20,8 @@ namespace jetana
 {
   // constructors
   HiDiJetAlgorithm::HiDiJetAlgorithm():
-    nearThreshold_(20),
-    awayThreshold_(20),
+    nearThreshold_(30),
+    awayThreshold_(25),
     dPhiMin_(3.14-0.5),
     evtJetMul_(0),
     ldjAwayJetMul_(0),

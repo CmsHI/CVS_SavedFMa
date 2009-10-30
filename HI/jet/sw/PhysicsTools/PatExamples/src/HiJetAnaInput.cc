@@ -54,14 +54,16 @@ bool HiJetAnaInput::isTrack(const reco::GenParticle & p)
 
 bool HiJetAnaInput::passBasicJetKin(const InputItem & cand)
 {
-  if (cand.pt()<20) return false;
-  if (fabs(cand.eta())>3.0) return false;
+  if (cand.pt()<25) return false;
+  // cms HB+HE calo eta limit is 3.0
+  // but to accommodate for tracker keep to 2 for FF ana
+  if (fabs(cand.eta())>2.0) return false;
 
   return true;
 }
 bool HiJetAnaInput::passBasicTrackKin(const AnaInputItem & cand)
 {
-  if (cand.pt()<1.0) return false;
+  if (cand.pt()<1.2) return false;
   if (fabs(cand.eta())>2.5) return false;
 
   return true;
