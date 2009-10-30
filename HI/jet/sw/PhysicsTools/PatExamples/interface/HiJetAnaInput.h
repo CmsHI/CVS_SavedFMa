@@ -24,10 +24,14 @@ namespace jetana
 
     public:
       // constructor
-      HiJetAnaInput(fwlite::EventContainer * ec) {eventCont_=ec;}
+      HiJetAnaInput(fwlite::EventContainer * ec);
+
+      // settings
+      void SetVerbosity(int level) { verbosity_=level; }
 
       // helper methods
       bool isParton(const reco::GenParticle & p);
+      bool isTrack(const reco::GenParticle & p);
       bool passBasicJetKin(const InputItem & cand);
       bool passBasicTrackKin(const AnaInputItem & cand);
 
@@ -41,6 +45,7 @@ namespace jetana
 
     private:
       fwlite::EventContainer * eventCont_;
+      int verbosity_;
   };
 } // jetana namespace
 

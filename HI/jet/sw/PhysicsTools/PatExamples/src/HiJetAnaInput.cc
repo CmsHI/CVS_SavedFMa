@@ -6,10 +6,21 @@
 #include "PhysicsTools/PatExamples/interface/HiJetAnaInput.h"
 // root
 #include <TSystem.h>
+// helpers
+#include "/home/frankma/UserCode/SavedFMa/analysis/cpp/templates/stl_helper_fuctions.h"
 
 using namespace jetana;
 using namespace std;
 
+// Constructor =========================================
+HiJetAnaInput::HiJetAnaInput(fwlite::EventContainer * ec) :
+  verbosity_(0)
+{
+  eventCont_=ec;
+}
+
+
+// Helpers methods =====================================
 bool HiJetAnaInput::isParton(const reco::GenParticle & p)
 {
   // cf PhysicsTools/JetMCAlgos/plugins/PartonSelector.cc
@@ -66,7 +77,7 @@ void HiJetAnaInput::LoadJets(JetType jetType, bool corrected)
     //   * http://docs.freebsd.org/info/g++FAQ/g++FAQ.info.jump_crosses_initialization.html
     case PARTON:
       {
-	cout << "load parton" << endl;
+	if (verbosity_>=1) cout << "load parton" << endl;
 	// fwlight::Handle to gen particles
 	fwlite::Handle<std::vector<reco::GenParticle> > particles;
 	particles.getByLabel(*eventCont_, "hiGenParticles");
@@ -79,7 +90,7 @@ void HiJetAnaInput::LoadJets(JetType jetType, bool corrected)
       }
     case GENJET:
       {
-	cout << "load genjet" << endl;
+	if (verbosity_>=1) cout << "load genjet" << endl;
 	// fwlite::Handle to genjet collection
 	fwlite::Handle<std::vector<reco::GenJet> > gjets;
 	gjets.getByLabel(*eventCont_,"iterativeCone5HiGenJets");
@@ -92,7 +103,7 @@ void HiJetAnaInput::LoadJets(JetType jetType, bool corrected)
       }
     case PATJET: 
       {
-	cout << "load patjet" << endl;
+	if (verbosity_>=1) cout << "load patjet" << endl;
 	fwlite::Handle<std::vector<pat::Jet> > jets;
 	jets.getByLabel(*eventCont_, "selectedLayer1Jets");
 	for(unsigned j=0; j<jets->size(); ++j){
@@ -119,7 +130,7 @@ void HiJetAnaInput::LoadTracks(TrackType trackType)
     //   * http://docs.freebsd.org/info/g++FAQ/g++FAQ.info.jump_crosses_initialization.html
     case PARTICLE:
       {
-	cout << "load track" << endl;
+	if (verbosity_>=1) cout << "load particles" << endl;
 	// fwlight::Handle to gen particles
 	fwlite::Handle<std::vector<reco::GenParticle> > particles;
 	particles.getByLabel(*eventCont_, "hiGenParticles");
@@ -132,6 +143,7 @@ void HiJetAnaInput::LoadTracks(TrackType trackType)
       }
     case TRACK:
       {
+	if (verbosity_>=1) cout << "load track" << endl;
 	fwlite::Handle<std::vector<reco::Track> > tracks;
 	tracks.getByLabel(*eventCont_, "hiSelectedTracks");
 	for (unsigned it=0; it<tracks->size(); ++it) {
@@ -148,4 +160,8 @@ void HiJetAnaInput::LoadTracks(TrackType trackType)
     default:
       cout << "bad track type: " << trackType  << endl;
   }
+
+  // done
+  if (verbosity_>=2)
+    mystd::print_elements(tracks_);
 }

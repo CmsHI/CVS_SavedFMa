@@ -58,6 +58,7 @@ int main(int argc, char* argv[])
   // Parse the command line arguments
   parser.parseArguments (argc, argv);
   JetType jetType=(JetType)parser.integerValue("jetType");
+  TrackType trackType = TRACK;
   parser.stringValue ("outputFile") = Form("djana_jType%d",jetType); // .root added automatically
 
   //////////////////////////////////
@@ -113,14 +114,19 @@ int main(int argc, char* argv[])
 
     // get input collection in event
     HiJetAnaInput anaInput(&eventCont);
+    anaInput.SetVerbosity(2);
+
     anaInput.LoadJets(jetType);
-    //   fill some info of the input collection
+    //   fill some info of the input jet collection
     eventCont.hist("hevtJetMul")->Fill(anaInput.jets_.size());
 
-    // prepare output
-    OutputCollection dijets;
+    // if no jets found, skip this event
+    if ( anaInput.jets_.size()==0 ) continue;
+
+    anaInput.LoadTracks(trackType);
 
     // run dijet algo on input/output
+    OutputCollection dijets;
     HiDiJetAlgorithm djalgo;
     djalgo.SetVerbosity(1);
     int ldjAwayJetMul = djalgo.Group(anaInput.jets_,&dijets);
