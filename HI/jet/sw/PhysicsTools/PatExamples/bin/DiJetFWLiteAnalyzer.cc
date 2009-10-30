@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
   // allocates memory for dijet ana tree data
   HiDiJetAnalysis ana;
   ana.SetAnaOnlyLeadDijet(true);
-  ana.SetAnaFF(false);
+  ana.SetAnaFF(true);
   ana.SetVerbosity(2);
 
   // ----------------------------------------------------------------------
@@ -146,9 +146,8 @@ int main(int argc, char* argv[])
       }
     }
 
-    AnaInputCollection tracks;
     // run ana
-    ana.Fill(dijets,tracks);
+    ana.Fill(dijets,anaInput.tracks_);
 
   } // event loop
 
