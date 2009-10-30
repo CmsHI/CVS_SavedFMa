@@ -28,7 +28,7 @@ namespace jetana
 
       // helper methods
       bool isParton(const reco::GenParticle & p);
-      bool passBasicJetKin(const AnaInputItem & cand);
+      bool passBasicJetKin(const InputItem & cand);
       bool passBasicTrackKin(const AnaInputItem & cand);
 
       // main methods
