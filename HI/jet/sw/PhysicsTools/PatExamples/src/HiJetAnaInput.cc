@@ -33,9 +33,9 @@ bool HiJetAnaInput::isParton(const reco::GenParticle & p)
   return result;
 }
 
-bool HiJetAnaInput::passBasicKin(const InputItem & cand)
+bool HiJetAnaInput::passBasicJetKin(const AnaInputItem & cand)
 {
-  if (cand.pt()<5) return false;
+  if (cand.pt()<20) return false;
   if (fabs(cand.eta())>3.0) return false;
 
   return true;
@@ -60,7 +60,7 @@ void HiJetAnaInput::LoadJets(JetType jetType, bool corrected)
 	  particles.getByLabel(*eventCont_, "hiGenParticles");
 	  for (unsigned ip=0; ip<particles->size(); ++ip) {
 	    // select partons
-	    if ( isParton((*particles)[ip]) && passBasicKin((*particles)[ip].p4()) )
+	    if ( isParton((*particles)[ip]) && passBasicJetKin((*particles)[ip].p4()) )
 	      jets_.push_back((*particles)[ip].p4());
 	  }
 	  break;
@@ -73,7 +73,7 @@ void HiJetAnaInput::LoadJets(JetType jetType, bool corrected)
 	  gjets.getByLabel(*eventCont_,"iterativeCone5HiGenJets");
 	  // loop genjet collection
 	  for (unsigned j=0; j<gjets->size(); ++j) {
-	    if ( passBasicKin((*gjets)[j].p4()) )
+	    if ( passBasicJetKin((*gjets)[j].p4()) )
 	      jets_.push_back((*gjets)[j].p4());
 	  }
 	  break;
@@ -84,7 +84,7 @@ void HiJetAnaInput::LoadJets(JetType jetType, bool corrected)
 	  jets.getByLabel(*eventCont_, "selectedLayer1Jets");
 	  for(unsigned j=0; j<jets->size(); ++j){
 	    // select jets
-	    if ( passBasicKin((*jets)[j].p4()) ) {
+	    if ( passBasicJetKin((*jets)[j].p4()) ) {
 	      if (!corrected)
 		jets_.push_back((*jets)[j].p4());
 	      // implement else!

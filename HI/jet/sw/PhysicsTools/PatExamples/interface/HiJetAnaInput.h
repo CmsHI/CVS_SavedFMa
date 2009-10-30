@@ -15,20 +15,29 @@
 namespace jetana
 {
   enum JetType { PARTON, GENJET, PATJET };
+  enum TrackType { PARTICLE, TRACK };
 
   class HiJetAnaInput
   {
+    typedef LorentzVector AnaInputItem;
+    typedef std::vector<AnaInputItem> AnaInputCollection;
+
     public:
       // constructor
       HiJetAnaInput(fwlite::EventContainer * ec) {eventCont_=ec;}
 
-      // member functions
-      void LoadJets(JetType jetType, bool corrected=false);
+      // helper methods
       bool isParton(const reco::GenParticle & p);
-      bool passBasicKin(const InputItem & cand);
+      bool passBasicJetKin(const AnaInputItem & cand);
+      bool passBasicTrackKin(const AnaInputItem & cand);
+
+      // main methods
+      void LoadJets(JetType jetType, bool corrected=false);
+      void LoadTracks(TrackType trackType);
 
       // data members
       InputCollection jets_; 
+      AnaInputCollection tracks_;
 
     private:
       fwlite::EventContainer * eventCont_;
