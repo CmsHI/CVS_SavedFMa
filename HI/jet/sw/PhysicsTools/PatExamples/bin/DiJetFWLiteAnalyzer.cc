@@ -51,15 +51,17 @@ int main(int argc, char* argv[])
   // Tell people what this analysis code does and setup default options.
   optutl::CommandLineParser parser ("HI DiJet Analysis");
   // note input file (can be located on castor)
-  // configure jetType
+  // configure ana types
   parser.addOption ("jetType", optutl::CommandLineParser::kInteger, 
       "Parton(0), Genjet(1), CaloJet(2)", 2);
+  parser.addOption ("trackType", optutl::CommandLineParser::kInteger, 
+      "Particle(0), Track(1)", 1);
   // for later: configure whether jet corrected
   // Parse the command line arguments
   parser.parseArguments (argc, argv);
   JetType jetType=(JetType)parser.integerValue("jetType");
-  TrackType trackType = TRACK;
-  parser.stringValue ("outputFile") = Form("djana_jType%d",jetType); // .root added automatically
+  TrackType trackType=(TrackType)parser.integerValue("trackType");
+  parser.stringValue ("outputFile") = Form("djana_j%d_t%d",jetType,trackType); // .root added automatically
 
   //////////////////////////////////
   // //////////////////////////// //
