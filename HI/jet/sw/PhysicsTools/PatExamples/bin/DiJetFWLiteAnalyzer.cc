@@ -61,16 +61,15 @@ int main(int argc, char* argv[])
   // for later: configure whether jet corrected
   // Parse the command line arguments
   parser.parseArguments (argc, argv);
+  // Config Analysis
   JetType jetType=(JetType)parser.integerValue("jetType");
   TrackType trackType=(TrackType)parser.integerValue("trackType");
-  bool doJES = parser.boolValue("jetCorrec");
-  parser.stringValue ("outputFile") = Form("djana_j%d_%d_t%d",jetType,doJES,trackType); // .root added automatically
-  // Config Analysis
   HiDiJetAnaConfig anacfg;
   anacfg.jetEtMin_ = 25;
   anacfg.JECFactor_ = 1.6; // JEC factor for Uncorrector threshold
   anacfg.awayEtFrac_ = 0.8; // away Et frac for dijet algo threshold
-  anacfg.doJEC_ = true;
+  anacfg.doJEC_ = parser.boolValue("jetCorrec");
+  parser.stringValue ("outputFile") = Form("djana_j%d_%d_t%d",jetType,anacfg.doJEC_,trackType); // .root added automatically
 
   //////////////////////////////////
   // //////////////////////////// //
