@@ -18,13 +18,18 @@ namespace jetana
    class TreeDiJetEventData
    {
       public:
-	 // --- DiJet Event variables ---
-	 //  --event level--
+	 //  --- event level ---
 	 ULong_t		    run_;
 	 ULong_t		    event_;
 	 Double_t		    mass_;
 	 Double_t		    cmeta_;
 
+	 // -- HI Event variables --
+	 Double_t		    b_;
+	 Int_t			    npart_;
+	 Int_t			    ncoll_;
+
+	 // --- DiJet variables ---
 	 //  -- parton info --
 	 Int_t	  		    nlpid_;
 	 Int_t	  		    nlpstat_;
@@ -184,6 +189,10 @@ namespace jetana
       tree_->Branch("event", &(this->event_), "event/l");
       tree_->Branch("mass", &(this->mass_), "mass/D");
       tree_->Branch("cmeta", &(this->cmeta_), "cmeta/D");
+      // -- hi event var's --
+      tree_->Branch("b", &(this->b_), "b/D");
+      tree_->Branch("npart", &(this->npart_), "npart/I");
+      tree_->Branch("ncoll", &(this->ncoll_), "ncoll/I");
 
       // --parton info--
       tree_->Branch("nlpid", &(this->nlpid_), "nlpid/I");

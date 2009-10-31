@@ -159,8 +159,15 @@ int main(int argc, char* argv[])
       }
     }
 
+    // if no dijets found, skip this event
+    if ( dijets.size()==0 ) continue;
+
+    // get hi event info
+    fwlite::Handle<pat::HeavyIon> hievt;
+    hievt.getByLabel(eventCont,"heavyIon");
+
     // run ana
-    ana.Fill(dijets,anaInput.tracks_);
+    ana.Fill(dijets,anaInput.tracks_,&hievt);
 
   } // event loop
 

@@ -31,6 +31,15 @@ namespace jetana
   HiDiJetAnalysis::~HiDiJetAnalysis() { delete tree_; }
 
   // helpers ======================================================
+  // hi event vars
+  void HiDiJetAnalysis::StoreHiEventVars(fwlite::Handle<pat::HeavyIon> * hievt)
+  {
+    pat::HeavyIon hievtcp = *(*hievt);
+    jd_.b_	     = hievtcp.generatedB();
+    jd_.npart_	     = hievtcp.generatedNpart();
+    jd_.ncoll_	     = hievtcp.generatedNcoll();
+  }
+
   // dijets related
   void HiDiJetAnalysis::CalcJetVars(const DiJet & dijet)
   {
@@ -108,7 +117,7 @@ namespace jetana
   }
 
   // main methods ==================================================
-  void HiDiJetAnalysis::Fill(const AnaDiJetCollection & dijets, const AnaInputCollection & tracks)
+  void HiDiJetAnalysis::Fill(const AnaDiJetCollection & dijets, const AnaInputCollection & tracks, fwlite::Handle<pat::HeavyIon> * hievt)
   {
     if (verbosity_>=2) {
       cout << "dijets: " << endl;
@@ -121,8 +130,13 @@ namespace jetana
       // in the beginning we'll only look at the lead dijet in the event
       if (anaOnlyLeadDijet_ && idj==1) break;
 
+      // load hi event info
+      if (hievt!=NULL) StoreHiEventVars(hievt);
+
+      // calc jet vars
       CalcJetVars(dijets[idj]);
       if (anaFF_) CalcFragVars(dijets[idj],tracks);
+
       // fill dijet by dijet
       // - note
       //   * should take care only the particles counted as frag should be filled

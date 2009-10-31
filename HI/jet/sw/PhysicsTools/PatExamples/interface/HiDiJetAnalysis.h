@@ -5,9 +5,11 @@
 #include<vector>
 // root
 #include "TTree.h"
-// dataformats
+// pat
+#include "DataFormats/FWLite/interface/Handle.h"
+#include "DataFormats/HeavyIonEvent/interface/HeavyIon.h"
+// ana
 #include "PhysicsTools/PatExamples/interface/HiDiJetAlgorithm.h"
-
 // ana tree
 #include "PhysicsTools/PatExamples/macros/DiJetTreeAna/TreeDiJetEventData.h"
 
@@ -31,11 +33,12 @@ namespace jetana
       void SetAnaOnlyLeadDijet(bool choice) {anaOnlyLeadDijet_ = choice;}
       void SetAnaFF(bool choice) {anaFF_ = choice;}
       // analysis helper methods
+      void StoreHiEventVars(fwlite::Handle<pat::HeavyIon> * hievt);
       void CalcJetVars (const DiJet & dijet);
       void CalcFragVars(const DiJet & dijet, const AnaInputCollection & fragcands);
       bool isFrag(const DiJet & dijet, const AnaInputItem & track);
       // analysis main methods
-      void Fill(const AnaDiJetCollection & dijets, const AnaInputCollection & tracks);
+      void Fill(const AnaDiJetCollection & dijets, const AnaInputCollection & tracks, fwlite::Handle<pat::HeavyIon> * hievent = NULL);
 
       // public data members
       TTree * tree_;
