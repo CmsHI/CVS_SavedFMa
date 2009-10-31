@@ -108,13 +108,18 @@ int main(int argc, char* argv[])
       jetPt_ ->Fill( (*jets)[i].pt()  );
       jetEta_->Fill( (*jets)[i].eta() );
       jetPhi_->Fill( (*jets)[i].phi() );
+      printf("cor caljet et|eta|phi: %f|%f|%f\n",
+	  (*jets)[i].pt(), (*jets)[i].eta(), (*jets)[i].phi());
+      printf("raw caljet et|eta|phi: %f|%f|%f\n",
+	  (*jets)[i].correctedJet("raw").pt(),
+	  (*jets)[i].correctedJet("raw").eta(),
+	  (*jets)[i].correctedJet("raw").phi());
 
       // If there is a matched genjet to the caljet
       const reco::GenJet * genjet = (*jets)[i].genJet();
       if ( genjet != NULL ) {
 	Double_t jetDR = reco::deltaR((*jets)[i],*genjet);
-	printf("caljet et|eta|phi: %f|%f|%f, genjet et|eta|phi: %f|%f|%f, dR: %f\n",
-	    (*jets)[i].pt(), (*jets)[i].eta(), (*jets)[i].phi(),
+	printf("genjet et|eta|phi: %f|%f|%f, dR: %f\n",
 	    genjet->pt(),genjet->eta(),genjet->phi(),jetDR);
 	matjetDR_->Fill(jetDR,genjet->pt());
 	jetPtCorrel_->Fill((*jets)[i].pt(),genjet->pt());
