@@ -19,30 +19,26 @@ using namespace reco;
 namespace jetana
 {
   // constructors
-  HiDiJetAlgorithm::HiDiJetAlgorithm():
-    nearThreshold_(30),
-    awayThreshold_(25),
-    dPhiMin_(3.14-0.5),
+  HiDiJetAlgorithm::HiDiJetAlgorithm(HiDiJetAnaConfig * anacfg):
     evtJetMul_(0),
     ldjAwayJetMul_(0),
     foundDijet_(false),
     verbosity_(0)
   {
-    // emtpy
+    anacfg_ = anacfg;
   } 
-  HiDiJetAlgorithm::HiDiJetAlgorithm(double nearThresh, double awayThresh, double dPhiMin):
-    nearThreshold_(nearThresh),
-    awayThreshold_(awayThresh),
-    dPhiMin_(dPhiMin),
-    evtJetMul_(0),
-    ldjAwayJetMul_(0),
-    foundDijet_(false),
-    verbosity_(0)
-  { 
-    // empty
-  }
 
   // helpers
+  bool HiDiJetAlgorithm::PassNearJetCriterion(const InputItem & cand) const {
+    float etThresh = (anacfg_->doJEC_) ? anacfg_->jetEtMin_/anacfg_->awayEtFrac_ : anacfg_->jetEtUMin_/anacfg_->awayEtFrac_ ;
+    return (cand.pt()>etThresh);
+  }
+
+  bool HiDiJetAlgorithm::PassAwayJetCriterion(const InputItem & cand) const {
+    float etThresh = (anacfg_->doJEC_) ? anacfg_->jetEtMin_: anacfg_->jetEtUMin_;
+    return (cand.pt()>etThresh);
+  }
+
   InputCollection::iterator HiDiJetAlgorithm::FindPair(const InputItem & near, InputCollection & others)
   { 
     if (verbosity_>=2) {
@@ -65,12 +61,12 @@ namespace jetana
 	continue;
       double dphi=absDPhi(near,*icand);
       // check away side jet mul within dphi strip for the first time away sides candidates are available
-      if (!foundDijet_ && dphi>dPhiMin_) {
+      if (!foundDijet_ && dphi>anacfg_->djDPhiMin_) {
 	++ldjAwayJetMul_;
-	if (verbosity_>=3) cout << "first away jet within dphi (" << dPhiMin_ << ") of now lead jet. ldjAwayJetMul_ is now: " << ldjAwayJetMul_ << endl;
+	if (verbosity_>=3) cout << "first away jet within dphi (" << anacfg_->djDPhiMin_ << ") of now lead jet. ldjAwayJetMul_ is now: " << ldjAwayJetMul_ << endl;
       }
       // find best away jet
-      if (dphi>dPhiMin_ && max<dphi)
+      if (dphi>anacfg_->djDPhiMin_ && max<dphi)
 	it_away = icand;
     }
 

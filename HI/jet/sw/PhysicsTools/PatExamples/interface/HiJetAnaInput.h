@@ -8,6 +8,7 @@
 // ana
 #include "PhysicsTools/PatExamples/interface/HiDiJetAlgoHelper.h"
 #include "PhysicsTools/PatExamples/interface/HiDiJetAlgorithm.h"
+#include "PhysicsTools/PatExamples/interface/HiDiJetAnaHelpers.h"
 // root
 #include "TFile.h"
 #include "TString.h"
@@ -24,7 +25,7 @@ namespace jetana
 
     public:
       // constructor
-      HiJetAnaInput(fwlite::EventContainer * ec);
+      HiJetAnaInput(fwlite::EventContainer * ec, HiDiJetAnaConfig * anacfg);
 
       // settings
       void SetVerbosity(int level) { verbosity_=level; }
@@ -36,7 +37,7 @@ namespace jetana
       bool passBasicTrackKin(const AnaInputItem & cand);
 
       // main methods
-      void LoadJets(JetType jetType, bool corrected=true);
+      void LoadJets(JetType jetType);
       void LoadTracks(TrackType trackType);
 
       // data members
@@ -45,6 +46,7 @@ namespace jetana
 
     private:
       fwlite::EventContainer * eventCont_;
+      HiDiJetAnaConfig * anacfg_;
       int verbosity_;
   };
 } // jetana namespace

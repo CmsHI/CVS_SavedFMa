@@ -13,10 +13,11 @@ using namespace jetana;
 using namespace std;
 
 // Constructor =========================================
-HiJetAnaInput::HiJetAnaInput(fwlite::EventContainer * ec) :
+HiJetAnaInput::HiJetAnaInput(fwlite::EventContainer * ec, HiDiJetAnaConfig * anacfg) :
   verbosity_(0)
 {
   eventCont_=ec;
+  anacfg_=anacfg;
 }
 
 
@@ -54,7 +55,8 @@ bool HiJetAnaInput::isTrack(const reco::GenParticle & p)
 
 bool HiJetAnaInput::passBasicJetKin(const InputItem & cand)
 {
-  if (cand.pt()<25) return false;
+  float jEtMin= (anacfg_->doJEC_)? anacfg_->jetEtMin_ : anacfg_->jetEtUMin_;
+  if (cand.pt()<jEtMin) return false;
   // cms HB+HE calo eta limit is 3.0
   // but to accommodate for tracker keep to 2 for FF ana
   if (fabs(cand.eta())>2.0) return false;
@@ -70,7 +72,7 @@ bool HiJetAnaInput::passBasicTrackKin(const AnaInputItem & cand)
 }
 
 // Main Methods ============================================
-void HiJetAnaInput::LoadJets(JetType jetType, bool corrected)
+void HiJetAnaInput::LoadJets(JetType jetType)
 {
   // - cf http://msdn.microsoft.com/en-us/library/2dzy4k6e%28VS.80%29.aspx
   //   * for example of using enum switch
@@ -108,11 +110,11 @@ void HiJetAnaInput::LoadJets(JetType jetType, bool corrected)
 	if (verbosity_>=1) cout << "load patjet" << endl;
 	fwlite::Handle<std::vector<pat::Jet> > jets;
 	jets.getByLabel(*eventCont_, "selectedLayer1Jets");
-	//cout << "do jet correction?: " << corrected << endl;
+	//cout << "do jet correction?: " << doJEC_ << endl;
 	for(unsigned j=0; j<jets->size(); ++j){
 	  // select jets
 	  if ( passBasicJetKin((*jets)[j].p4()) ) {
-	    if (corrected)
+	    if (anacfg_->doJEC_)
 	      jets_.push_back((*jets)[j].p4());
 	    else {
 	      jets_.push_back((*jets)[j].correctedP4("raw"));

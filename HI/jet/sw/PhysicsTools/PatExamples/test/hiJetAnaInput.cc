@@ -92,7 +92,8 @@ int main(int argc, char* argv[])
     //////////////////////////////////
 
     // get input collection in event
-    HiJetAnaInput jetinput(&eventCont);
+    HiDiJetAnaConfig anacfg;
+    HiJetAnaInput jetinput(&eventCont,&anacfg);
     jetinput.LoadJets(jetType);
     mystd::print_elements(jetinput.jets_);
   } // event loop

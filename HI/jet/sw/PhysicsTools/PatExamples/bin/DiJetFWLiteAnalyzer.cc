@@ -65,6 +65,12 @@ int main(int argc, char* argv[])
   TrackType trackType=(TrackType)parser.integerValue("trackType");
   bool doJES = parser.boolValue("jetCorrec");
   parser.stringValue ("outputFile") = Form("djana_j%d_%d_t%d",jetType,doJES,trackType); // .root added automatically
+  // Config Analysis
+  HiDiJetAnaConfig anacfg;
+  anacfg.jetEtMin_ = 25;
+  anacfg.JECFactor_ = 1.6; // JEC factor for Uncorrector threshold
+  anacfg.awayEtFrac_ = 0.8; // away Et frac for dijet algo threshold
+  anacfg.doJEC_ = true;
 
   //////////////////////////////////
   // //////////////////////////// //
@@ -118,10 +124,10 @@ int main(int argc, char* argv[])
     //////////////////////////////////
 
     // get input collection in event
-    HiJetAnaInput anaInput(&eventCont);
+    HiJetAnaInput anaInput(&eventCont,&anacfg);
     anaInput.SetVerbosity(1);
 
-    anaInput.LoadJets(jetType,doJES);
+    anaInput.LoadJets(jetType);
     //   fill some info of the input jet collection
     eventCont.hist("hevtJetMul")->Fill(anaInput.jets_.size());
 
@@ -132,8 +138,8 @@ int main(int argc, char* argv[])
 
     // run dijet algo on input/output
     OutputCollection dijets;
-    HiDiJetAlgorithm djalgo;
-    djalgo.SetVerbosity(2);
+    HiDiJetAlgorithm djalgo(&anacfg);
+    djalgo.SetVerbosity(1);
     int ldjAwayJetMul = djalgo.Group(anaInput.jets_,&dijets);
 
     //   fill histo for some details of the algo

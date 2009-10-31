@@ -77,7 +77,8 @@ int main(int argc, char* argv[])
   lv.push_back(v4);
 
   // test pair algo
-  HiDiJetAlgorithm djalgo;
+  HiDiJetAnaConfig anacfg;
+  HiDiJetAlgorithm djalgo(&anacfg);
   djalgo.SetVerbosity(2);
   InputCollection::const_iterator result = djalgo.FindPair(v0,lv);
   if (result!=NULL)

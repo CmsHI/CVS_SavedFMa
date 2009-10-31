@@ -9,6 +9,7 @@
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "PhysicsTools/PatExamples/interface/DiJet.h"
 #include "PhysicsTools/PatExamples/interface/HiDiJetAlgoHelper.h"
+#include "PhysicsTools/PatExamples/interface/HiDiJetAnaHelpers.h"
 
 namespace jetana
 {
@@ -40,12 +41,11 @@ namespace jetana
   {
     public:
       // constructor
-      HiDiJetAlgorithm();
-      HiDiJetAlgorithm(double nearThresh, double awayThresh, double dPhiMin);
+      HiDiJetAlgorithm(HiDiJetAnaConfig * anacfg);
 
       // helpers
-      bool PassNearJetCriterion(const InputItem & cand) const {return (cand.pt()>nearThreshold_);}
-      bool PassAwayJetCriterion(const InputItem & cand) const {return (cand.pt()>awayThreshold_);}
+      bool PassNearJetCriterion(const InputItem & cand) const;
+      bool PassAwayJetCriterion(const InputItem & cand) const;
       InputCollection::iterator FindPair(const InputItem & near, InputCollection & others);
       /// Find di Jets from the collection of input Candidates.
       int Group(InputCollection& input, OutputCollection* output);
@@ -54,9 +54,7 @@ namespace jetana
       void SetVerbosity(int level) {verbosity_ = level;}
 
     private:
-      double nearThreshold_;
-      double awayThreshold_;
-      double dPhiMin_;
+      HiDiJetAnaConfig * anacfg_;
       // checks
       unsigned int evtJetMul_;
       int ldjAwayJetMul_;
