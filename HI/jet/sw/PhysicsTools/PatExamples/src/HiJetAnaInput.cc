@@ -59,14 +59,14 @@ bool HiJetAnaInput::passBasicJetKin(const InputItem & cand)
   if (cand.pt()<jEtMin) return false;
   // cms HB+HE calo eta limit is 3.0
   // but to accommodate for tracker keep to 2 for FF ana
-  if (fabs(cand.eta())>2.0) return false;
+  if (fabs(cand.eta())>anacfg_->jetEtaMax_) return false;
 
   return true;
 }
 bool HiJetAnaInput::passBasicTrackKin(const AnaInputItem & cand)
 {
   if (cand.pt()<anacfg_->trackPtMin_) return false;
-  if (fabs(cand.eta())>2.5) return false;
+  if (fabs(cand.eta())>anacfg_->trackEtaMax_) return false;
 
   return true;
 }
