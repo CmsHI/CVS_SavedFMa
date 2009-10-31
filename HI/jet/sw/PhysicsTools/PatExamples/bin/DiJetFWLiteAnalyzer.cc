@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
   HiDiJetAnalysis ana;
   ana.SetAnaOnlyLeadDijet(true);
   ana.SetAnaFF(true);
-  ana.SetVerbosity(2);
+  ana.SetVerbosity(1);
 
   // ----------------------------------------------------------------------
   // Second Part: 
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 
     // get input collection in event
     HiJetAnaInput anaInput(&eventCont);
-    anaInput.SetVerbosity(2);
+    anaInput.SetVerbosity(1);
 
     anaInput.LoadJets(jetType);
     //   fill some info of the input jet collection
