@@ -65,7 +65,7 @@ bool HiJetAnaInput::passBasicJetKin(const InputItem & cand)
 }
 bool HiJetAnaInput::passBasicTrackKin(const AnaInputItem & cand)
 {
-  if (cand.pt()<1.2) return false;
+  if (cand.pt()<anacfg_->trackPtMin_) return false;
   if (fabs(cand.eta())>2.5) return false;
 
   return true;
@@ -110,7 +110,7 @@ void HiJetAnaInput::LoadJets(JetType jetType)
 	if (verbosity_>=1) cout << "load patjet" << endl;
 	fwlite::Handle<std::vector<pat::Jet> > jets;
 	jets.getByLabel(*eventCont_, "selectedLayer1Jets");
-	//cout << "do jet correction?: " << doJEC_ << endl;
+	//cout << "do jet correction?: " << anacfg_->doJEC_ << endl;
 	for(unsigned j=0; j<jets->size(); ++j){
 	  // select jets
 	  if ( passBasicJetKin((*jets)[j].p4()) ) {

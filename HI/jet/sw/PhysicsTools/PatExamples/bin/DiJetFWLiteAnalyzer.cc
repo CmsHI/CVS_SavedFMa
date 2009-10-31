@@ -69,6 +69,7 @@ int main(int argc, char* argv[])
   anacfg.JECFactor_ = 1.6; // JEC factor for Uncorrector threshold
   anacfg.awayEtFrac_ = 0.8; // away Et frac for dijet algo threshold
   anacfg.doJEC_ = parser.boolValue("jetCorrec");
+  anacfg.trackPtMin_ = 1.2;
   parser.stringValue ("outputFile") = Form("djana_j%d_%d_t%d",jetType,anacfg.doJEC_,trackType); // .root added automatically
 
   //////////////////////////////////
