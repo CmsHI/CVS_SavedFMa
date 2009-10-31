@@ -10,8 +10,9 @@ anatag=$1
 jetType=$2
 trackType=$3
 jetCorrec=$4
-input=/d01/frankma/scratch/data/pat/cmssw331/hydjetNoCollElossFix02/merged/all_50.root
+#input=/d01/frankma/scratch/data/pat/cmssw331/hydjetNoCollElossFix02/merged/all_50.root
 #input=rfio:/castor/cern.ch/user/f/frankma/data/HI/jet/pat/cmssw331/all_300.root
+input=rfio:/castor/cern.ch/user/f/frankma/data/pat/CMSSW_3_3_1_fix03/Hydjet_MinBias_noColl_4TeV/RECO_runs1to40.root
 
 infname=${input##*/}
 inname=${infname%.root}
