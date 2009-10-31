@@ -36,7 +36,7 @@ namespace jetana
       bool passBasicTrackKin(const AnaInputItem & cand);
 
       // main methods
-      void LoadJets(JetType jetType, bool corrected=false);
+      void LoadJets(JetType jetType, bool corrected=true);
       void LoadTracks(TrackType trackType);
 
       // data members

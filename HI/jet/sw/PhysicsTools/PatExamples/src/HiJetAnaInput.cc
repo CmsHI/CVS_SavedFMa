@@ -108,12 +108,16 @@ void HiJetAnaInput::LoadJets(JetType jetType, bool corrected)
 	if (verbosity_>=1) cout << "load patjet" << endl;
 	fwlite::Handle<std::vector<pat::Jet> > jets;
 	jets.getByLabel(*eventCont_, "selectedLayer1Jets");
+	//cout << "do jet correction?: " << corrected << endl;
 	for(unsigned j=0; j<jets->size(); ++j){
 	  // select jets
 	  if ( passBasicJetKin((*jets)[j].p4()) ) {
-	    if (!corrected)
+	    if (corrected)
 	      jets_.push_back((*jets)[j].p4());
-	    // implement else!
+	    else {
+	      jets_.push_back((*jets)[j].correctedP4("raw"));
+	      //cout << "uncorr jet: " << jets_.back() << endl;
+	    }
 	  }
 	}
 	break;

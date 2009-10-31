@@ -56,12 +56,15 @@ int main(int argc, char* argv[])
       "Parton(0), Genjet(1), CaloJet(2)", 2);
   parser.addOption ("trackType", optutl::CommandLineParser::kInteger, 
       "Particle(0), Track(1)", 1);
+  parser.addOption ("jetCorrec", optutl::CommandLineParser::kBool,
+      "use correted jet energy?",true); 
   // for later: configure whether jet corrected
   // Parse the command line arguments
   parser.parseArguments (argc, argv);
   JetType jetType=(JetType)parser.integerValue("jetType");
   TrackType trackType=(TrackType)parser.integerValue("trackType");
-  parser.stringValue ("outputFile") = Form("djana_j%d_t%d",jetType,trackType); // .root added automatically
+  bool doJES = parser.boolValue("jetCorrec");
+  parser.stringValue ("outputFile") = Form("djana_j%d_%d_t%d",jetType,doJES,trackType); // .root added automatically
 
   //////////////////////////////////
   // //////////////////////////// //
@@ -118,7 +121,7 @@ int main(int argc, char* argv[])
     HiJetAnaInput anaInput(&eventCont);
     anaInput.SetVerbosity(1);
 
-    anaInput.LoadJets(jetType);
+    anaInput.LoadJets(jetType,doJES);
     //   fill some info of the input jet collection
     eventCont.hist("hevtJetMul")->Fill(anaInput.jets_.size());
 
@@ -130,7 +133,7 @@ int main(int argc, char* argv[])
     // run dijet algo on input/output
     OutputCollection dijets;
     HiDiJetAlgorithm djalgo;
-    djalgo.SetVerbosity(1);
+    djalgo.SetVerbosity(2);
     int ldjAwayJetMul = djalgo.Group(anaInput.jets_,&dijets);
 
     //   fill histo for some details of the algo
