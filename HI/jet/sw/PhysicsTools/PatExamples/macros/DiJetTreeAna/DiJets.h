@@ -38,7 +38,11 @@ namespace jetana {
    const char * drdbFFE="E1 same";
    Int_t HJETETBINS = 100;
    Double_t HJETETMIN = 0;
-   Double_t HJETETMAX = 200;
+   Double_t HJETETMAX = 120;
+   // for HI Event
+   Int_t HBBINS = 40;
+   Double_t HBMIN = 0;
+   Double_t HBMAX = 14;
 
    // Dijets class definition
    class DiJets
@@ -118,8 +122,8 @@ namespace jetana {
    // === DiJet calculations ===
    void DiJets::CalcNumDiJets()
    {
-      Int_t jn = jetTree_->Draw(td_.tNJEt_,  cut_.GetDiJetCut().Data());
       Int_t pn = jetTree_->Draw(td_.tNPtnEt_,cut_.GetDiJetCut().Data());
+      Int_t jn = jetTree_->Draw(td_.tNJEt_,  cut_.GetDiJetCut().Data());
       if (jn!=pn) {
 	 printf("Normalization error: dijetn != partonN.\n");
 	 printf("dijetn: %d, partonN: %d\n",jn,pn);
