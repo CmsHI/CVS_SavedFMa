@@ -199,6 +199,8 @@ void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, co
 {
    //--- Print some info ---
    if (!TString(opt).Contains("same")) printf("\n");
+   // -- define draw command --
+   TString drawcmd(Form("%s>>%s",draw,name));
    printf("%s, tree: %x. Draw: %s\n", name, nt, draw);
 //   nt->Print();
 
@@ -209,7 +211,7 @@ void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, co
    //--- Draw ---
    TCanvas * c = makeCanvas(name,title,false,opt);
    if (!TString(opt).Contains("same") && log) c->SetLogz();
-   nt->Draw(draw, cut, opt);
+   nt->Draw(drawcmd, cut, opt);
    printf("%s has: %f entries\n",name,h->GetEntries());
 }
 
