@@ -167,15 +167,21 @@ TCanvas * makeCanvas(const char* name, const char* title, bool log=false, const 
 }
 
 //=============================== Main Functions =====================================
+// draw tree helpers
+Int_t drawTreeBasic(TTree* tr,const char* draw, const char * cut, const char* opt,const char* hname)
+{
+   // -- define draw command --
+   TString drawcmd(Form("%s>>%s",draw,hname));
+   Double_t n = tr->Draw(drawcmd, cut, opt);
+   return n;
+}
+
 //--- function to draw 1D histograms from TTree ---
 TH1D * drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nbin, const double min, const double max, bool log=false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz =0, const Style_t mst =0, double norm=-1.,const double ymax=0)
 {
    //--- Print some info ---
    if (!TString(opt).Contains("same")) printf("\n");
-   // -- define draw command --
-   TString drawcmd(Form("%s>>%s",draw,name));
-   printf("%s, tree: %x. Draw: %s. Norm: %f\n", name, nt, drawcmd.Data(), norm);
-//   nt->Print();
+   printf("%s, tree: %x. Draw: %s. Norm: %f\n", name, nt, draw, norm);
 
    //--- Make/set histogram ---
    printf("hist: %s %d %f %f, c: %d\n",name,nbin,min,max,lc);
@@ -183,7 +189,7 @@ TH1D * drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, c
 
    //--- Draw Hist, get entries past cut ---
    TCanvas * c = makeCanvas(name,title,log,opt);
-   Double_t n = nt->Draw(drawcmd, cut, opt);
+   Double_t n = drawTreeBasic(nt,draw, cut, opt,name);
    printf("%s has: %f entries\n",name,h->GetEntries());
 
    //--- Set Hist ---
@@ -194,15 +200,13 @@ TH1D * drawTree(TTree* nt, const char* draw, const char* cut, const char* opt, c
 
    return h;
 }
+
 //--- function to draw 2D histograms from TTree ---
 void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, const char* name, const char* title, const int nxbin, const double xmin, const double xmax, const int nybin, const double ymin, const double ymax,  UInt_t log=0)
 {
    //--- Print some info ---
    if (!TString(opt).Contains("same")) printf("\n");
-   // -- define draw command --
-   TString drawcmd(Form("%s>>%s",draw,name));
    printf("%s, tree: %x. Draw: %s\n", name, nt, draw);
-//   nt->Print();
 
    //--- Make/set histogram ---
    printf("hist: %s %d %f %f %d %f %f\n",name,nxbin,xmin,xmax,nybin,ymin,ymax);
@@ -211,7 +215,7 @@ void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, co
    //--- Draw ---
    TCanvas * c = makeCanvas(name,title,false,opt);
    if (!TString(opt).Contains("same") && log) c->SetLogz();
-   nt->Draw(drawcmd, cut, opt);
+   Double_t n = drawTreeBasic(nt,draw, cut, opt,name);
    printf("%s has: %f entries\n",name,h->GetEntries());
 }
 
