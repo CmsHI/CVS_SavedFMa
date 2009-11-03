@@ -38,6 +38,7 @@ void plotFF(//char * infname1 = "/d01/frankma/scratch/HI/jet/pat/patanaCmssw331/
   djTree->Add(infname1);
 
   //---output---
+  gSystem->mkdir(plotdir,kTRUE);
   TFile * outfile = new TFile(Form("%s/FFHistos.root",plotdir),"RECREATE");
 
   // === setup cuts ===
