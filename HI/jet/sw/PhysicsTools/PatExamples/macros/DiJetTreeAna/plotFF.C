@@ -20,7 +20,7 @@ void plotFF(//char * infname1 = "/d01/frankma/scratch/HI/jet/pat/patanaCmssw331/
     Double_t NJetEtMax = 200,
     Double_t AJetEtMin = 30,
     Double_t JDPhiMin = 3.14-0.5,
-    char * plotdir = "plots",
+    char * plotdir = "plots1",
     const Int_t NXIBIN = 30,
     const Double_t XIMAX = 6,
     const Double_t XIYMAX = 10,
@@ -61,7 +61,7 @@ void plotFF(//char * infname1 = "/d01/frankma/scratch/HI/jet/pat/patanaCmssw331/
     vgen[ig]->cut_.AndJetParticlesCut("lajmul",1,"equ");
     // output
     vgen[ig]->SetVerbosity(2);
-    cout << *(vgen[ig]) << endl;
+    //cout << *(vgen[ig]) << endl;
 
     // -norm-
     printf("now jet cut: \n  %s\n",vgen[ig]->GetCut().GetDiJetCut().Data());
@@ -113,10 +113,10 @@ void plotFF(//char * infname1 = "/d01/frankma/scratch/HI/jet/pat/patanaCmssw331/
 
   // ratio
   drawTree2(djTree, "aljet:nljet","","colz","hUncutNJetEtvsAJetEt",";near Jet E_{t} [GeV];away Jet E_{t} [GeV]",HJETETBINS,HJETETMIN,HJETETMAX,HJETETBINS,HJETETMIN,HJETETMAX,1);
-  drawTree2(djTree, "aljet:nljet",treeana.GetCut().GetDiJetCut().Data(),"colz","hNJetEtvsAJetEt",";Jet Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,HJETETBINS,HJETETMIN,HJETETMAX,1);
+  drawTree2(djTree, "aljet:nljet",treeana.GetCut().GetDiJetCut().Data(),"colz","hNJetEtvsAJetEt",";near Jet E_{t} [GeV];away Jet E_{t} [GeV]",HJETETBINS,HJETETMIN,HJETETMAX,HJETETBINS,HJETETMIN,HJETETMAX,1);
   // rato vs b
-  drawTree2(djTree, "aljet/nljet:b","","colz","hUncutANRatVsB",";b [fm];",HBBINS,HBMIN,HBMAX,HJETETBINS,0,1,1);
-  drawTree2(djTree, "aljet/nljet:b",treeana.GetCut().GetDiJetCut().Data(),"colz","hANRatVsB",";b [fm];",HBBINS,HBMIN,HBMAX,HJETETBINS,0,1,1);
+  drawTree2(djTree, "aljet/nljet:b","","colz","hUncutANRatVsB",";b [fm];E_{t}^{away jet}/E_{t}^{near jet}",HBBINS,HBMIN,HBMAX,HJETETBINS,0,1,1);
+  drawTree2(djTree, "aljet/nljet:b",treeana.GetCut().GetDiJetCut().Data(),"colz","hANRatVsB",";b [fm];E_{t}^{away jet}/E_{t}^{near jet}",HBBINS,HBMIN,HBMAX,HJETETBINS,0,1,1);
 
   //=== Finally: plot fragmentation properties ===
   float nJetNorm = treeana.GetDiJetsNorm();
@@ -125,11 +125,13 @@ void plotFF(//char * infname1 = "/d01/frankma/scratch/HI/jet/pat/patanaCmssw331/
 
   printf("\n===================== Plot FF =======================\n");
   int log=0;
-  printf("  - with jet particle cut: \n  %s\n",vgen[0]->GetCut().GetDiJetCut().Data());
+  printf("  - with jet cut: \n  %s\n", vgen[0]->GetCut().GetDiJetCut().Data());
+  printf("  - and jet particle cut:\n  %s\n  %s\n",vgen[0]->GetCut().GetNJetPartlCut().Data(),
+      vgen[0]->GetCut().GetAJetPartlCut().Data());
   // -near-
-  drawTree(djTree, "log(1/zn)",treeana.GetCut().GetNJetPartlCut().Data(),drsgFF,"hXiNearJet",";(near) #xi=ln(E_{t}^{Jet}/E_{t}^{Particle});#frac{1}{N_{jet}} #frac{dN}{d#xi}",NXIBIN,0,XIMAX,log,nrColor,nrStyle,3,2,kFullDotLarge,nJetNorm,XIYMAX);
+  drawTree(djTree, "log(1/zn)",treeana.GetCut().GetNJetPartlCut().Data(),drsgFF,"hXiNearJet",";#xi=ln(E_{t}^{Jet}/E_{t}^{Particle});#frac{1}{N_{jet}} #frac{dN}{d#xi}",NXIBIN,0,XIMAX,log,nrColor,nrStyle,3,2,kFullDotLarge,nJetNorm,XIYMAX);
   // -away-
-  drawTree(djTree, "log(1/za)",treeana.GetCut().GetAJetPartlCut().Data(),drdbFF,"hXiAwayJet",";(away) #xi=ln(E_{t}^{Jet}/E_{t}^{Particle});#frac{1}{N_{jet}} #frac{dN}{d#xi}",NXIBIN,0,XIMAX,log,awColor,awStyle,3,2,kCircle,nJetNorm,XIYMAX);
+  drawTree(djTree, "log(1/za)",treeana.GetCut().GetAJetPartlCut().Data(),drdbFF,"hXiAwayJet",";#xi=ln(E_{t}^{Jet}/E_{t}^{Particle});#frac{1}{N_{jet}} #frac{dN}{d#xi}",NXIBIN,0,XIMAX,log,awColor,awStyle,3,2,kCircle,nJetNorm,XIYMAX);
 
   //=== Save and exit ===
   printAllCanvases(plotdir);
