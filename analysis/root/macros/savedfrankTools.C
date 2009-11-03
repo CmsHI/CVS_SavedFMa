@@ -92,10 +92,12 @@ void printCanvas(const char* name, const char* title)//, TCanvas * c)
 //--- Print all created canvasses ---
 void printAllCanvases(const char* folder="plots")
 {
-  char * formats[2] = {"gif","C"};
+  const int n=1;
+  //char * formats[n] = {"gif","C"};
+  char * formats[n] = {"gif"};
   TSeqCollection * sc = dynamic_cast<TSeqCollection*>(gROOT->GetListOfCanvases());
 
-  for (int iform=0; iform<2; ++iform) {
+  for (int iform=0; iform<n; ++iform) {
     // Prepare dir
     gSystem->mkdir(Form("%s/%s",folder,formats[iform]),kTRUE);
     // save each canvas
