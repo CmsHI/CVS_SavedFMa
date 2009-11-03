@@ -18,6 +18,10 @@ void plotHiDistr (const char* infname="hipat_hievent.root")
   drawNormHist(infile,"matjetDR","box","matched calo/genjet dR","dR","pt",1.,0);
   drawNormHist(infile,"jetPtCorrel","colz","","calo vs gen jet Pt [GeV]","#",1.,0);
 
+  drawNormHist(infile,"partonPt","","","parton Pt [GeV]","#",1.,1);
+  drawNormHist(infile,"partonEta","","","parton Eta","#",1.,0);
+  drawNormHist(infile,"partonPhi","","","parton Phi","#",1.,0);
+
   drawNormHist(infile,"partlPt","","","gen partl Pt [GeV]","#",1.,1);
   drawNormHist(infile,"partlEta","","","gen partl Eta","#",1.,0);
   drawNormHist(infile,"partlPhi","","","gen partl Phi","#",1.,0);

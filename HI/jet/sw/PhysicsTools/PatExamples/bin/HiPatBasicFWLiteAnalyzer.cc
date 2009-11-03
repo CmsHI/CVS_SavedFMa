@@ -26,6 +26,8 @@
 // fwlite tools
 #include "PhysicsTools/FWLite/interface/EventContainer.h"
 #include "PhysicsTools/FWLite/interface/CommandLineParser.h"
+// ana classes
+#include "PhysicsTools/PatExamples/interface/HiJetAnaInput.h"
 
 #include<iostream>
 using namespace std;
@@ -50,6 +52,11 @@ int main(int argc, char* argv[])
   // Parse the command line arguments
   parser.parseArguments (argc, argv);
 
+  // setup come ana cuts
+  HiDiJetAnaConfig anacfg;
+  anacfg.trackEtaMax_ = 2.5;
+  anacfg.trackPtMin_ = 0.5;
+
   //////////////////////////////////
   // //////////////////////////// //
   // // Create Event Container // //
@@ -72,6 +79,10 @@ int main(int argc, char* argv[])
   eventCont.add( new TH2D("jetDR", "dR",    100,   0, 6, 100,0,100) ); 
   eventCont.add( new TH2D("jetPtCorrel", "pt gen vs calo",    100,  0.,150., 100,0,150) );
   
+  eventCont.add( new TH1D("partonPt", "pt",    100,  0.,150.) );
+  eventCont.add( new TH1D("partonEta","eta",   100, -5.,  5.) );
+  eventCont.add( new TH1D("partonPhi","phi",   100, -5.,  5.) );
+
   eventCont.add( new TH1D("partlPt", "pt",    100,  0.,50.) );
   eventCont.add( new TH1D("partlEta","eta",   100, -5.,  5.) );
   eventCont.add( new TH1D("partlPhi","phi",   100, -5.,  5.) );
@@ -102,6 +113,9 @@ int main(int argc, char* argv[])
   unsigned int iEvent=0;
   for (eventCont.toBegin(); ! eventCont.atEnd(); ++eventCont, ++iEvent) 
   {
+    // we'll use some functionalities of HiJetAnaInput
+    HiJetAnaInput anain(&eventCont,&anacfg);
+
     //////////////////////////////////
     // Take What We Need From Event //
     //////////////////////////////////
@@ -165,7 +179,16 @@ int main(int argc, char* argv[])
     // loop particle collection and fill
     for (unsigned ip=0; ip<particles->size(); ++ip) {
       reco::GenParticle p = (*particles)[ip];
-      if (p.status() == 1 && p.charge()!=0 && p.pt()>1) {
+
+      // check partons
+      if (anain.isParton(p)) {
+	printf("parton et|eta|phi: %f|%f|%f\n",p.et(),p.eta(),p.phi());
+	eventCont.hist("partonPt")->Fill( p.pt()  );
+	eventCont.hist("partonEta")->Fill( p.eta() );
+	eventCont.hist("partonPhi")->Fill( p.phi() );
+      }
+
+      if (p.status() == 1 && p.charge()!=0 && anain.passBasicTrackKin(p.p4())) {
 	eventCont.hist("partlPt") ->Fill( (*particles)[ip].pt()  );
 	eventCont.hist("partlEta")->Fill( (*particles)[ip].eta() );
 	eventCont.hist("partlPhi")->Fill( (*particles)[ip].phi() );
