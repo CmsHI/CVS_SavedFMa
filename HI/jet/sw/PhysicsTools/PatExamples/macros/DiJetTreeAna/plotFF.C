@@ -14,7 +14,7 @@ using namespace std;
 
 void plotFF(//char * infname1 = "/d01/frankma/scratch/HI/jet/pat/patanaCmssw331/hydjetNoCollElossFix03/tree_djana_j2_1_t1_RECO_runs1to40_sw43.root",
     //char * infname1 = "/d01/frankma/scratch/data/ana/hydjet_noColl_dijet_2009_10_1/merged/back/tree_djana_j2_1_t1_RECO_all40k_sw44.root",
-    char * infname1 = "tree_djana_j2_1_t1_RECO_*to*_sw44.root",
+    char * infname1 = "/d01/frankma/scratch/data/ana/hydjet_noColl_dijet_2009_10_1/tree_djana_j2_1_t1_RECO_*to*_sw44.root",
     // -pythia-
     Double_t NJetEtMin = 65,
     Double_t NJetEtMax = 200,
@@ -35,8 +35,7 @@ void plotFF(//char * infname1 = "/d01/frankma/scratch/HI/jet/pat/patanaCmssw331/
   //TFile * infile = findFile(infname1);
   //TTree * djTree = findTree(infile,"dijetTree");
   TChain * djTree = new TChain("dijetTree");
-  TString inputdir = "/d01/frankma/scratch/data/ana/hydjet_noColl_dijet_2009_10_1/";
-  djTree->Add(inputdir + infname1);
+  djTree->Add(infname1);
 
   //---output---
   TFile * outfile = new TFile(Form("%s/FFHistos.root",plotdir),"RECREATE");
@@ -98,8 +97,8 @@ void plotFF(//char * infname1 = "/d01/frankma/scratch/HI/jet/pat/patanaCmssw331/
   drawTree(djTree, "b",treeana.GetCut().GetDiJetCut().Data(),drdbFF,"hB",";b [fm];",HBBINS,HBMIN,HBMAX,0,kBlack,1,3,1,8);
 
   //=== Particles ===
-  drawTree(djTree, "ppt","pndr<0.5",drsgFF,"hNPPt","Pt of near/away particles",100,0,10,true,nrColor,nrStyle,3);
-  drawTree(djTree, "ppt","padr<0.5",drdbFF,"hAPPt","Pt of away particles",100,0,10,true,awColor,awStyle,3);
+  drawTree(djTree, "ppt","pndr<0.5",drsgFF,"hNPPt",";Pt of near/away particles [GeV];",100,0,10,true,nrColor,nrStyle,3);
+  drawTree(djTree, "ppt","padr<0.5",drdbFF,"hAPPt",";Pt of away particles [GeV];",100,0,10,true,awColor,awStyle,3);
 
   // === jet selection ===
   drawTree(djTree, "nljet","",drsgFF,"hUncutNJetEt",";Jet Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,nrColor,nrStyle,1,1,8);
@@ -108,13 +107,16 @@ void plotFF(//char * infname1 = "/d01/frankma/scratch/HI/jet/pat/patanaCmssw331/
   drawTree(djTree, "nljet",treeana.GetCut().GetDiJetCut().Data(),drdbFF,"hNJetEt",";Jet Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,nrColor,nrStyle,3,1,8);
   drawTree(djTree, "aljet",treeana.GetCut().GetDiJetCut().Data(),drdbFF,"hAJetEt",";Jet Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,true,awColor,awStyle,3,1,4);
 
-  // Dijet near vs away
+  // Dijets
+  drawTree(djTree, "jdphi","",drsgFF,"hUncutJDPhi",";Dijet d#phi;",40,3.14/2,3.14,0,nrColor,nrStyle,1,1,8);
+  drawTree(djTree, "jdphi","",drsgFF,"hJDPhi",";Dijet d#phi;",40,3.14/2,3.14,0,nrColor,nrStyle,1,1,8);
+
   // ratio
-  drawTree2(djTree, "aljet:nljet","","colz","hUncutNJetEtvsAJetEt",";Jet Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,HJETETBINS,HJETETMIN,HJETETMAX,1);
+  drawTree2(djTree, "aljet:nljet","","colz","hUncutNJetEtvsAJetEt",";near Jet E_{t} [GeV];away Jet E_{t} [GeV]",HJETETBINS,HJETETMIN,HJETETMAX,HJETETBINS,HJETETMIN,HJETETMAX,1);
   drawTree2(djTree, "aljet:nljet",treeana.GetCut().GetDiJetCut().Data(),"colz","hNJetEtvsAJetEt",";Jet Et [GeV];",HJETETBINS,HJETETMIN,HJETETMAX,HJETETBINS,HJETETMIN,HJETETMAX,1);
   // rato vs b
-  drawTree2(djTree, "aljet/nljet:b","","colz","hUncutANRatVsB",";Jet Et [GeV];",HBBINS,HBMIN,HBMAX,HJETETBINS,0,1,1);
-  drawTree2(djTree, "aljet/nljet:b",treeana.GetCut().GetDiJetCut().Data(),"colz","hANRatVsB",";Jet Et [GeV];",HBBINS,HBMIN,HBMAX,HJETETBINS,0,1,1);
+  drawTree2(djTree, "aljet/nljet:b","","colz","hUncutANRatVsB",";b [fm];",HBBINS,HBMIN,HBMAX,HJETETBINS,0,1,1);
+  drawTree2(djTree, "aljet/nljet:b",treeana.GetCut().GetDiJetCut().Data(),"colz","hANRatVsB",";b [fm];",HBBINS,HBMIN,HBMAX,HJETETBINS,0,1,1);
 
   //=== Finally: plot fragmentation properties ===
   float nJetNorm = treeana.GetDiJetsNorm();
