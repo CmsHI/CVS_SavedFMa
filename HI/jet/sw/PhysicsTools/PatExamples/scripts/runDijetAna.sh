@@ -24,6 +24,7 @@ infname=${input##*/}
 inname=${infname%.root}
 tag=${inname}_${anatag}
 
+if [ ! -e log ]; then mkdir log; fi
 cmd="DiJetFWLiteAnalyzer inputFiles=$input jetType=$jetType jetCorrec=$jetCorrec trackType=$trackType tag=$tag outputevery=1 >& log/${tag}_j${jetType}_${jetCorrec}_t${trackType}.txt"
 
 echo $cmd
