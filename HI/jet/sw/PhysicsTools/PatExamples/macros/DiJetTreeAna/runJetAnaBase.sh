@@ -34,7 +34,9 @@ ana=jet_${AnaNJetEtMin}_${AnaNJetEtMax}_${AnaAJetEtMin}_jdphi_${JDPhiMin}_${tag}
 #./runJetAnaBase.sh
 plotanabase=$plotbase/$type/$ana
 plotjFF=$plotanabase/jFF
-echo $plotjFF
 cmd='root -b -q plotFF.C+\(\"'$indir/$infnames'\",'$AnaNJetEtMin,$AnaNJetEtMax,$AnaAJetEtMin,$JDPhiMin,'\"'$plotjFF'\"',$NXIBIN,$XIMAX,$XIYMAX,$doCheck'\)'
 echo $cmd
 eval $cmd
+cmd1='root -b -q plotFinalFF.C+\(\"'$plotjFF'/FFHistos.root\",\"'$plotanabase'\"\)'
+echo $cmd1
+eval $cmd1
