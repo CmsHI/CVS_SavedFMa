@@ -21,6 +21,7 @@ namespace jetana
   {
     // allocate memory for tree
     tree_ = new TTree("dijetTree","dijet tree");
+    tree_->SetDirectory(0);
     //cout << "initialize HiDiJetAnalysis instance with tree: " << tree_ << endl;
 
     // set tree address and branches to jet ana data
