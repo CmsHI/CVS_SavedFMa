@@ -36,6 +36,7 @@ void plotFF(//char * infname1 = "/d01/frankma/scratch/HI/jet/pat/patanaCmssw331/
   //TTree * djTree = findTree(infile,"dijetTree");
   TChain * djTree = new TChain("dijetTree");
   djTree->Add(infname1);
+  printf("Total # events in chain: %d\n",djTree->GetEntries());
 
   //---output---
   gSystem->mkdir(plotdir,kTRUE);
