@@ -21,7 +21,9 @@ echo
 echo ============= macros ====================
 cp -v $cmssw_base/src/PhysicsTools/PatExamples/macros/*.C macros
 cp -v $cmssw_base/src/PhysicsTools/PatExamples/macros/*.h macros
-cp -v -r $cmssw_base/src/PhysicsTools/PatExamples/macros/DiJetTreeAna macros/
+cp -v -r $cmssw_base/src/PhysicsTools/PatExamples/macros/DiJetTreeAna/*.C macros/DiJetTreeAna/
+cp -v -r $cmssw_base/src/PhysicsTools/PatExamples/macros/DiJetTreeAna/*.h macros/DiJetTreeAna/
+cp -v -r $cmssw_base/src/PhysicsTools/PatExamples/macros/DiJetTreeAna/*.sh macros/DiJetTreeAna/
 echo
 
 # scripts
