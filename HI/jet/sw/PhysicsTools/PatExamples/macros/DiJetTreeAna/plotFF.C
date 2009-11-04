@@ -131,9 +131,9 @@ void plotFF(//char * infname1 = "/d01/frankma/scratch/HI/jet/pat/patanaCmssw331/
   printf("  - and jet particle cut:\n  %s\n  %s\n",vgen[0]->GetCut().GetNJetPartlCut().Data(),
       vgen[0]->GetCut().GetAJetPartlCut().Data());
   // -near-
-  drawTree(djTree, "log(1/zn)",treeana.GetCut().GetNJetPartlCut().Data(),drsgFF,"hXiNearJet",";#xi=ln(E_{t}^{Jet}/E_{t}^{Particle});#frac{1}{N_{jet}} #frac{dN}{d#xi}",NXIBIN,0,XIMAX,log,nrColor,nrStyle,3,2,kFullDotLarge,nJetNorm,XIYMAX);
+  drawTree(djTree, "log(1/zn)",treeana.GetCut().GetNJetPartlCut().Data(),drsgFFE,"hXiNearJet",";#xi=ln(E_{t}^{Jet}/E_{t}^{Particle});#frac{1}{N_{jet}} #frac{dN}{d#xi}",NXIBIN,0,XIMAX,log,nrColor,nrStyle,3,2,kFullDotLarge,nJetNorm,XIYMAX);
   // -away-
-  drawTree(djTree, "log(1/za)",treeana.GetCut().GetAJetPartlCut().Data(),drdbFF,"hXiAwayJet",";#xi=ln(E_{t}^{Jet}/E_{t}^{Particle});#frac{1}{N_{jet}} #frac{dN}{d#xi}",NXIBIN,0,XIMAX,log,awColor,awStyle,3,2,kCircle,nJetNorm,XIYMAX);
+  drawTree(djTree, "log(1/za)",treeana.GetCut().GetAJetPartlCut().Data(),drdbFFE,"hXiAwayJet",";#xi=ln(E_{t}^{Jet}/E_{t}^{Particle});#frac{1}{N_{jet}} #frac{dN}{d#xi}",NXIBIN,0,XIMAX,log,awColor,awStyle,3,2,kCircle,nJetNorm,XIYMAX);
 
   //=== Save and exit ===
   printAllCanvases(plotdir);
