@@ -68,26 +68,28 @@ int main(int argc, char* argv[])
   fwlite::EventContainer eventCont (parser);
 
   // book histograms for basic objects
-  eventCont.add( new TH1D("genjetPt", "pt",    100,  0.,150.) );
+  const double PARTLPTMAX=100;
+  const double JETETMAX=250;
+  eventCont.add( new TH1D("genjetPt", "pt",    100,  0.,JETETMAX) );
   eventCont.add( new TH1D("genjetEta","eta",   100, -5.,  5.) );
   eventCont.add( new TH1D("genjetPhi","phi",   100, -5.,  5.) );
-  eventCont.add( new TH1D("rawjetPt", "pt",    100,  0.,150.) );
-  eventCont.add( new TH1D("jetPt", "pt",    100,  0.,150.) );
+  eventCont.add( new TH1D("rawjetPt", "pt",    100,  0.,JETETMAX*0.8) );
+  eventCont.add( new TH1D("jetPt", "pt",    100,  0.,JETETMAX) );
   eventCont.add( new TH1D("jetEta","eta",   100, -5.,  5.) );
   eventCont.add( new TH1D("jetPhi","phi",   100, -5.,  5.) );
-  eventCont.add( new TH2D("matjetDR", "dR",    100,   0, 6,100,0,100) ); 
-  eventCont.add( new TH2D("jetDR", "dR",    100,   0, 6, 100,0,100) ); 
-  eventCont.add( new TH2D("jetPtCorrel", "pt gen vs calo",    100,  0.,150., 100,0,150) );
+  eventCont.add( new TH2D("matjetDR", "dR",    100,   0, 6,100,0,JETETMAX) ); 
+  eventCont.add( new TH2D("jetDR", "dR",    100,   0, 6, 100,0,JETETMAX) ); 
+  eventCont.add( new TH2D("jetPtCorrel", "pt gen vs calo",    100,  0.,JETETMAX, 100,0,JETETMAX) );
   
-  eventCont.add( new TH1D("partonPt", "pt",    100,  0.,150.) );
+  eventCont.add( new TH1D("partonPt", "pt",    100,  0.,JETETMAX) );
   eventCont.add( new TH1D("partonEta","eta",   100, -5.,  5.) );
   eventCont.add( new TH1D("partonPhi","phi",   100, -5.,  5.) );
 
-  eventCont.add( new TH1D("partlPt", "pt",    100,  0.,50.) );
+  eventCont.add( new TH1D("partlPt", "pt",    100,  0.,PARTLPTMAX) );
   eventCont.add( new TH1D("partlEta","eta",   100, -5.,  5.) );
   eventCont.add( new TH1D("partlPhi","phi",   100, -5.,  5.) );
 
-  eventCont.add( new TH1D("trackPt", "pt",    100,  0.,50.) );
+  eventCont.add( new TH1D("trackPt", "pt",    100,  0.,PARTLPTMAX) );
   eventCont.add( new TH1D("trackEta","eta",   100, -5.,  5.) );
   eventCont.add( new TH1D("trackPhi","phi",   100, -5.,  5.) );
   // Book those histograms for HI Event
