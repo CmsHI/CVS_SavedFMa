@@ -38,11 +38,11 @@ namespace jetana {
    const char * drdbFFE="E1 same";
    Int_t HJETETBINS = 100;
    Double_t HJETETMIN = 0;
-   Double_t HJETETMAX = 120;
+   Double_t HJETETMAX = 200;
    // for HI Event
    Int_t HBBINS = 40;
    Double_t HBMIN = 0;
-   Double_t HBMAX = 14;
+   Double_t HBMAX = 18;
 
    // Dijets class definition
    class DiJets
