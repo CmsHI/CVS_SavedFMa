@@ -66,8 +66,8 @@ int main(int argc, char* argv[])
   TrackType trackType=(TrackType)parser.integerValue("trackType");
   HiDiJetAnaConfig anacfg;
   anacfg.jetEtaMax_ = 2.;
-  anacfg.jetEtMin_ = 25;
-  anacfg.JECFactor_ = 1.6; // JEC factor for Uncorrector threshold
+  anacfg.jetEtMin_ = 50;
+  anacfg.JECFactor_ = 1.5; // JEC factor for Uncorrector threshold
   anacfg.awayEtFrac_ = 0.8; // away Et frac for dijet algo threshold
   anacfg.doJEC_ = parser.boolValue("jetCorrec");
   anacfg.trackEtaMax_ = 2.5;
