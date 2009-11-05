@@ -5,7 +5,7 @@ if [ $# -eq 0 ]; then
    echo "Usage: "
    echo "  $0 <infile_names> <nljetmin> <nljetmax> <aljetmin> <jdphimin> <tag_name> [indir]"
    echo "Eg:"
-   echo "  ./runJetAnaBase.sh tree_djana_j2_0_t1_RECO_*to*_sw44.root 35 300 30 2.8 testana"
+   echo "  ./runJetAnaBase.sh tree_djana_j2_0_t1_RECO_*to*_sw44.root 35 300 30 2.8 testana /d01/frankma/scratch/data/ana/hydjet_noColl_dijet_2009_10_1"
    exit 1;
 fi
 
