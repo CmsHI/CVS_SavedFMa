@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
   // Tell people what this analysis code does and setup default options.
   optutl::CommandLineParser parser ("Plots HI Event info");
   parser.stringValue ("outputFile") = "hipat_hievent.root"; // .root added automatically
-  parser.addOption ("evtType", optutl::CommandLineParser::kInteger, 
+  parser.addOption ("genType", optutl::CommandLineParser::kInteger, 
       "pp(0), HI(1)", 1);
   // Parse the command line arguments
   parser.parseArguments (argc, argv);
@@ -226,7 +226,7 @@ int main(int argc, char* argv[])
     }
 
     // if pp event
-    if (parser.integerValue("evtType") == 0) {
+    if (parser.integerValue("genType") == 0) {
       // fwlight::Handle to tracks
       fwlite::Handle<std::vector<reco::Track> > pptracks;
       pptracks.getByLabel(eventCont, "generalTracks");
