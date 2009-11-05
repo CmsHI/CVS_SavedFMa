@@ -49,6 +49,8 @@ int main(int argc, char* argv[])
   // Tell people what this analysis code does and setup default options.
   optutl::CommandLineParser parser ("Plots HI Event info");
   parser.stringValue ("outputFile") = "hipat_hievent.root"; // .root added automatically
+  parser.addOption ("evtType", optutl::CommandLineParser::kInteger, 
+      "pp(0), HI(1)", 1);
   // Parse the command line arguments
   parser.parseArguments (argc, argv);
 
@@ -70,6 +72,11 @@ int main(int argc, char* argv[])
   // book histograms for basic objects
   const double PARTLPTMAX=100;
   const double JETETMAX=250;
+  // Book those histograms for HI Event
+  eventCont.add( new TH1F( "genb", "genb", 50, 0, 20) );
+  eventCont.add( new TH1F( "gennpart", "gennpart", 100, 0, 300) );
+  eventCont.add( new TH1F( "genncoll", "genncoll", 100, 0, 600) );
+
   eventCont.add( new TH1D("genjetPt", "pt",    100,  0.,JETETMAX) );
   eventCont.add( new TH1D("genjetEta","eta",   100, -5.,  5.) );
   eventCont.add( new TH1D("genjetPhi","phi",   100, -5.,  5.) );
@@ -92,10 +99,11 @@ int main(int argc, char* argv[])
   eventCont.add( new TH1D("trackPt", "pt",    100,  0.,PARTLPTMAX) );
   eventCont.add( new TH1D("trackEta","eta",   100, -5.,  5.) );
   eventCont.add( new TH1D("trackPhi","phi",   100, -5.,  5.) );
-  // Book those histograms for HI Event
-  eventCont.add( new TH1F( "genb", "genb", 50, 0, 20) );
-  eventCont.add( new TH1F( "gennpart", "gennpart", 100, 0, 300) );
-  eventCont.add( new TH1F( "genncoll", "genncoll", 100, 0, 600) );
+
+  // pp specific
+  eventCont.add( new TH1D("pptrackPt", "pt",    100,  0.,PARTLPTMAX) );
+  eventCont.add( new TH1D("pptrackEta","eta",   100, -5.,  5.) );
+  eventCont.add( new TH1D("pptrackPhi","phi",   100, -5.,  5.) );
 
   // ----------------------------------------------------------------------
   // Second Part: 
@@ -122,11 +130,23 @@ int main(int argc, char* argv[])
     // Take What We Need From Event //
     //////////////////////////////////
 
+    // === Event level Info ===
+    // fwlite::Handle to to HI info collections
+    fwlite::Handle<pat::HeavyIon> hievt;
+    hievt.getByLabel(eventCont,"heavyIon");
+    pat::HeavyIon hievtcp = (*hievt);
+    cout << "HI event " << iEvent << "  gen b|npart|ncoll:"
+      << hievtcp.generatedB() << "|" << hievtcp.generatedNpart() << "|" << hievtcp.generatedNcoll() << endl;
+    eventCont.hist("genb")->Fill(hievtcp.generatedB());
+    eventCont.hist("gennpart")->Fill(hievtcp.generatedNpart());
+    eventCont.hist("genncoll")->Fill(hievtcp.generatedNcoll());
+
     // fwlite::Handle to to jet collection
     fwlite::Handle<std::vector<pat::Jet> > jets;
     jets.getByLabel(eventCont, "selectedLayer1Jets");
     cout << "got pat jets: " << jets->size() << endl;
     
+    // === jet info ===
     // fwlite::Handle to genjet collection
     fwlite::Handle<std::vector<reco::GenJet> > gjets;
     gjets.getByLabel(eventCont,"iterativeCone5HiGenJets");
@@ -134,7 +154,7 @@ int main(int argc, char* argv[])
     cout << "got gen jets: " << gjets->size() << endl;
 
     // loop jet collection and fill histograms
-    for(unsigned i=0; i<jets->size(); ++i){
+    for(unsigned int i=0; i<jets->size(); ++i){
       eventCont.hist("rawjetPt")->Fill( (*jets)[i].correctedJet("raw").pt()  );
       eventCont.hist("jetPt")->Fill( (*jets)[i].pt()  );
       eventCont.hist("jetEta")->Fill( (*jets)[i].eta() );
@@ -157,20 +177,21 @@ int main(int argc, char* argv[])
       }
 
       // loop genjet collection
-      for (unsigned j=0; j<gjets->size(); ++j) {
+      for (unsigned int j=0; j<gjets->size(); ++j) {
 	Double_t jetDR = reco::deltaR((*jets)[i],(*gjets)[j]);
 	eventCont.hist("jetDR")->Fill(jetDR,(*gjets)[j].pt());
       }  
     }
 
     // loop over gen jets
-    for (unsigned j=0; j<gjets->size(); ++j) {
+    for (unsigned int j=0; j<gjets->size(); ++j) {
       eventCont.hist("genjetPt")->Fill( (*gjets)[j].pt()  );
       eventCont.hist("genjetEta")->Fill( (*gjets)[j].eta() );
       eventCont.hist("genjetPhi")->Fill( (*gjets)[j].phi() );
     }  
     
 
+    // === particle level info ===
     // fwlight::Handle to gen particles
     fwlite::Handle<std::vector<reco::GenParticle> > particles;
     particles.getByLabel(eventCont, "hiGenParticles");
@@ -179,7 +200,7 @@ int main(int argc, char* argv[])
     tracks.getByLabel(eventCont, "hiSelectedTracks");
 
     // loop particle collection and fill
-    for (unsigned ip=0; ip<particles->size(); ++ip) {
+    for (unsigned int ip=0; ip<particles->size(); ++ip) {
       reco::GenParticle p = (*particles)[ip];
 
       // check partons
@@ -198,20 +219,23 @@ int main(int argc, char* argv[])
     }
 
     // loop track collection and fill
-    for (unsigned it=0; it<tracks->size(); ++it) {
+    for (unsigned int it=0; it<tracks->size(); ++it) {
       eventCont.hist("trackPt") ->Fill( (*tracks)[it].pt()  );
       eventCont.hist("trackEta")->Fill( (*tracks)[it].eta() );
       eventCont.hist("trackPhi")->Fill( (*tracks)[it].phi() );
     }
-    // fwlite::Handle to to HI info collections
-    fwlite::Handle<pat::HeavyIon> hievt;
-    hievt.getByLabel(eventCont,"heavyIon");
-    pat::HeavyIon hievtcp = (*hievt);
-    cout << "HI event " << iEvent << "  gen b|npart|ncoll:"
-      << hievtcp.generatedB() << "|" << hievtcp.generatedNpart() << "|" << hievtcp.generatedNcoll() << endl;
-    eventCont.hist("genb")->Fill(hievtcp.generatedB());
-    eventCont.hist("gennpart")->Fill(hievtcp.generatedNpart());
-    eventCont.hist("genncoll")->Fill(hievtcp.generatedNcoll());
+
+    // if pp event
+    if (parser.integerValue("evtType") == 0) {
+      // fwlight::Handle to tracks
+      fwlite::Handle<std::vector<reco::Track> > pptracks;
+      pptracks.getByLabel(eventCont, "generalTracks");
+      for (unsigned int it=0; it<pptracks->size(); ++it) {
+	eventCont.hist("pptrackPt") ->Fill( (*pptracks)[it].pt()  );
+	eventCont.hist("pptrackEta")->Fill( (*pptracks)[it].eta() );
+	eventCont.hist("pptrackPhi")->Fill( (*pptracks)[it].phi() );
+      }
+    }
   }
 
   // that's it!
