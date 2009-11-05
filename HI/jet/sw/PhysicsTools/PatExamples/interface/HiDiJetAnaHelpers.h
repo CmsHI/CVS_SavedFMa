@@ -15,7 +15,9 @@ namespace jetana
       doJEC_(true),
       // tracks
       trackEtaMax_(2.5),
-      trackPtMin_(1.)
+      trackPtMin_(1.),
+      // event gen: pp(0), HI(1)
+      genType_(1)
     {
       jetEtUMin_=jetEtMin_/JECFactor_;
     }
@@ -32,6 +34,9 @@ namespace jetana
     // tracks
     float trackEtaMax_;
     float trackPtMin_;
+
+    // gen type
+    int genType_;
   };
 }
 #endif //

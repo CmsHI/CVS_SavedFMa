@@ -58,6 +58,8 @@ int main(int argc, char* argv[])
       "Particle(0), Track(1)", 1);
   parser.addOption ("jetCorrec", optutl::CommandLineParser::kBool,
       "use correted jet energy?",true); 
+  parser.addOption ("genType", optutl::CommandLineParser::kInteger, 
+      "pp(0), HI(1)", 1);
   // for later: configure whether jet corrected
   // Parse the command line arguments
   parser.parseArguments (argc, argv);
@@ -65,6 +67,7 @@ int main(int argc, char* argv[])
   JetType jetType=(JetType)parser.integerValue("jetType");
   TrackType trackType=(TrackType)parser.integerValue("trackType");
   HiDiJetAnaConfig anacfg;
+  anacfg.genType_ = parser.integerValue("genType"); 
   anacfg.jetEtaMax_ = 2.;
   anacfg.jetEtMin_ = 50;
   anacfg.JECFactor_ = 1.5; // JEC factor for Uncorrector threshold
@@ -121,6 +124,10 @@ int main(int argc, char* argv[])
 
   unsigned int iEvent=0;
   for (eventCont.toBegin(); ! eventCont.atEnd(); ++eventCont, ++iEvent) {
+    // break loop after end of file is reached 
+    // or after 1500 events have been processed
+    if( iEvent==1500 ) break;
+
     //////////////////////////////////
     // Use What We Need From Event //
     //////////////////////////////////

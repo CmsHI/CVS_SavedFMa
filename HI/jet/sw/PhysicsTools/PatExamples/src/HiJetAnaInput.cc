@@ -153,7 +153,10 @@ void HiJetAnaInput::LoadTracks(TrackType trackType)
       {
 	if (verbosity_>=1) cout << "load track" << endl;
 	fwlite::Handle<std::vector<reco::Track> > tracks;
-	tracks.getByLabel(*eventCont_, "hiSelectedTracks");
+	// determine what track collection to get
+	if (anacfg_->genType_==0) tracks.getByLabel(*eventCont_, "generalTracks");
+	else if (anacfg_->genType_==1) tracks.getByLabel(*eventCont_, "hiSelectedTracks");
+	// now read the tracks
 	for (unsigned it=0; it<tracks->size(); ++it) {
 	  AnaInputItem anatrack((*tracks)[it].px(),
 		                (*tracks)[it].py(),
