@@ -154,7 +154,7 @@ void combineFinalPlots()
     hrat2->Draw("same");
 
     //  - legend -
-    TLegend *lXiQUnQRat = new TLegend(0.5,0.65,0.8,0.85);
+    TLegend *lXiQUnQRat = new TLegend(0.5,0.6,0.8,0.8);
     lXiQUnQRat->AddEntry(hrat1,"Near Jet","p");
     lXiQUnQRat->AddEntry(hrat2,"Away Jet","p");
     lXiQUnQRat->SetTextSize(0.03);
