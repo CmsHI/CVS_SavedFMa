@@ -30,6 +30,10 @@ void plotHiDistr (const char* infname="hipat_hievent.root")
   drawNormHist(infile,"trackEta","","","track Eta","#",1.,0);
   drawNormHist(infile,"trackPhi","","","track Phi","#",1.,0);
 
+  drawNormHist(infile,"pptrackPt","","","pptrack Pt [GeV]","#",1.,1);
+  drawNormHist(infile,"pptrackEta","","","pptrack Eta","#",1.,0);
+  drawNormHist(infile,"pptrackPhi","","","pptrack Phi","#",1.,0);
+
   drawNormHist(infile,"genb","","","gen b","",1.,0);
   drawNormHist(infile,"gennpart","","","gen npart","",1.,0);
   drawNormHist(infile,"genncoll","","","gen ncoll","",1.,0);
