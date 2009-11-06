@@ -4,6 +4,7 @@
 #include "TTree.h"
 // ROOT Mathematical Libraries
 #include "Math/GenVector/VectorUtil.h"
+#include "TMath.h"
 // helpers
 #include "/home/frankma/UserCode/SavedFMa/analysis/cpp/templates/stl_helper_fuctions.h"
 
@@ -104,6 +105,10 @@ namespace jetana
       jd_.padphi_[ct]	= VectorUtil::DeltaPhi(fcands[ip],dijet.aj_);
       jd_.padeta_[ct]	= fcands[ip].eta() - dijet.aj_.eta();
       jd_.padr_[ct]	= VectorUtil::DeltaR(fcands[ip],dijet.aj_);
+
+      //  - background variables-
+      jd_.pndrbg_[ct]	= VectorUtil::DeltaR(fcands[ip].Vect(), VectorUtil::RotateZ(dijet.nj_.Vect(),TMath::Pi()/2.) );
+      jd_.padrbg_[ct]	= VectorUtil::DeltaR(fcands[ip].Vect(), VectorUtil::RotateZ(dijet.aj_.Vect(),TMath::Pi()/2.) );
 
       // fragmentation variables
       jd_.zn_[ct]	= fcands[ip].pt()/dijet.nj_.pt();
