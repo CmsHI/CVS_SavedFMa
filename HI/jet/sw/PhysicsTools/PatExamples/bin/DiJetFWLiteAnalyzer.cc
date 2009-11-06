@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
   anacfg.awayEtFrac_ = 0.8; // away Et frac for dijet algo threshold
   anacfg.doJEC_ = parser.boolValue("jetCorrec");
   anacfg.trackEtaMax_ = 2.5;
-  anacfg.trackPtMin_ = 1.2;
+  anacfg.trackPtMin_ = 1.;
   parser.stringValue ("outputFile") = Form("djana_j%d_%d_t%d",jetType,anacfg.doJEC_,trackType); // .root added automatically
 
   //////////////////////////////////
