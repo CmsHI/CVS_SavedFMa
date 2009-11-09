@@ -18,9 +18,8 @@ char * drdb = "hist same";
 char * drsgE = "E1";
 char * drdbE = "E1 same";
 
-void combineFinalPlots()
+void combineFinalPlots(char* tag = "sw48")
 {
-  TCanvas * ctest = new TCanvas("ctest","ctest",1200,600);
   // set inputs
   char * indir = "/home/frankma/work/HI/jet/sw/pat/patanaCMSSW_3_3_1/src/PhysicsTools/PatExamples/macros/DiJetTreeAna/plots/CMSSW_3_3_1_fix03/Hydjet_MinBias_noColl_4TeV";
   vector<TString> gen;
@@ -31,19 +30,19 @@ void combineFinalPlots()
   anatype.push_back("j2_0_t1");
   anatype.push_back("j1_1_t0");
   anatype.push_back("j0_1_t0");
-  char * tag = "sw47_2";
 
   vector<TFile*> infiles;
   for (int igen=0; igen<gen.size(); ++igen) {
     for (int itype=0; itype<anatype.size(); ++itype) {
-      infiles.push_back(new TFile(Form("%s/%s/%s/jet_135_300_100_jdphi_2.85_%s_%s/jFF/FFHistos.root",
+      infiles.push_back(new TFile(Form("%s/%s/%s/jet_125_300_100_jdphi_2.85_%s_%s/jFF/FFHistos.root",
 	      indir,gen[igen].Data(),tag,tag,anatype[itype].Data())));
       infiles.back()->Print();
     }
   }
 
   // outout
-  char * plotdir = Form("%s/%s/combinedPlots",indir,tag);
+  char plotdir[1000];
+  sprintf(plotdir,"%s/%s/combinedPlots",indir,tag);
 
   // ============ start to plot ===================
   // final styles
@@ -110,61 +109,6 @@ void combineFinalPlots()
     lB->Draw();
   }
 
-  // === FF ===
-  TCanvas * chFF = new TCanvas("chFF","FF",1200,600);
-  chFF->Divide(anatype.size(),gen.size());
-  for (int i=0; i<infiles.size(); ++i) {
-    chFF->cd(i+1);
-    TH1D * hXiNearJet = dynamic_cast<TH1D*>(drawNormHist(infiles[i],"hXiNearJet",drsgE,"","","",-1,0,0,0,0,mksz,mkstNear,0,plotmode));
-    TH1D * hXiAwayJet = dynamic_cast<TH1D*>(drawNormHist(infiles[i],"hXiAwayJet",drdbE,"","","",-1,0,0,0,0,mksz,mkstAway,0,plotmode));
-    //  - legend -
-    TLegend *lXi = new TLegend(0.2,0.6,0.5,0.80);
-    lXi->AddEntry(hXiNearJet,"Near Jet","L");
-    lXi->AddEntry(hXiAwayJet,"Away Jet","L");
-    lXi->SetTextSize(0.03);
-    lXi->Draw();
-  }
-
-  // === FF ratios ===
-  // -- Q/UnQ
-  TCanvas * chXiQUnQRat = new TCanvas("chXiQUnQRat","FF",1600,400);
-  chXiQUnQRat->Divide(anatype.size());
-  Double_t ratmax=2.5;
-  for (int i=0; i<anatype.size(); ++i) {
-    // - Near -
-    TH1D * h1;
-    infiles[i]->GetObject("hXiNearJet",h1);
-    TH1D * h2;
-    infiles[anatype.size()+i]->GetObject("hXiNearJet",h2);
-    TH1D * hrat1 = (TH1D*)h1->Clone();
-    // set hist properties
-    hrat1->Divide(h1,h2);
-    hrat1->SetYTitle("#xi(RadQuench)/#xi(UnQuenched)");
-    hrat1->SetAxisRange(0,ratmax,"Y");
-    hrat1->SetMarkerSize(mksz);
-    chXiQUnQRat->cd(i+1);
-    hrat1->Draw();
-
-    // - Away -
-    TH1D * h3;
-    infiles[i]->GetObject("hXiAwayJet",h3);
-    TH1D * h4;
-    infiles[anatype.size()+i]->GetObject("hXiAwayJet",h4);
-    TH1D * hrat2 = (TH1D*)h3->Clone();
-    // set hist properties
-    hrat2->Divide(h3,h4);
-    hrat2->SetYTitle("#xi(RadQuench)/#xi(UnQuenched)");
-    hrat2->SetAxisRange(0,ratmax,"Y");
-    hrat2->Draw("same");
-
-    //  - legend -
-    TLegend *lXiQUnQRat = new TLegend(0.5,0.6,0.8,0.8);
-    lXiQUnQRat->AddEntry(hrat1,"Near Jet","p");
-    lXiQUnQRat->AddEntry(hrat2,"Away Jet","p");
-    lXiQUnQRat->SetTextSize(0.03);
-    hrat2->SetMarkerSize(mksz);
-    lXiQUnQRat->Draw();
-  }
   // print canvas and save histograms
 
   printAllCanvases(plotdir);
