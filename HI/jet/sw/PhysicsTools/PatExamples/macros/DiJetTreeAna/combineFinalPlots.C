@@ -21,7 +21,10 @@ char * drdbE = "E1 same";
 void combineFinalPlots(char* tag = "sw48")
 {
   // set inputs
-  char * indir = "/home/frankma/work/HI/jet/sw/pat/patanaCMSSW_3_3_1/src/PhysicsTools/PatExamples/macros/DiJetTreeAna/plots/CMSSW_3_3_1_fix03/Hydjet_MinBias_noColl_4TeV";
+  vector<TString> jobs;
+  jobs.push_back("/home/frankma/work/HI/jet/sw/pat/patanaCMSSW_3_3_1/src/PhysicsTools/PatExamples/macros/DiJetTreeAna/plots/CMSSW_3_3_1_fix03/Hydjet_MinBias_noColl_4TeV");
+  jobs.push_back("/home/frankma/work/HI/jet/sw/pat/patanaCMSSW_3_3_1/src/PhysicsTools/PatExamples/macros/DiJetTreeAna/plots/CMSSW_3_3_1_fix04/SignalOnly/Hydjet_MinBias_noColl_4TeV");
+
   vector<TString> gen;
   gen.push_back("pyquen_quendijet_nocoll_pt120to170_d20091024");
   gen.push_back("pyquen_unquendijet_nocoll_pt120to170_d20091025");
@@ -32,17 +35,19 @@ void combineFinalPlots(char* tag = "sw48")
   anatype.push_back("j0_1_t0");
 
   vector<TFile*> infiles;
-  for (int igen=0; igen<gen.size(); ++igen) {
-    for (int itype=0; itype<anatype.size(); ++itype) {
-      infiles.push_back(new TFile(Form("%s/%s/%s/jet_125_300_100_jdphi_2.85_%s_%s/jFF/FFHistos.root",
-	      indir,gen[igen].Data(),tag,tag,anatype[itype].Data())));
-      infiles.back()->Print();
+  for (int j=0; j<jobs.size(); ++j) {
+    for (int igen=0; igen<gen.size(); ++igen) {
+      for (int itype=0; itype<anatype.size(); ++itype) {
+	infiles.push_back(new TFile(Form("%s/%s/%s/jet_125_300_100_jdphi_2.85_%s_%s/jFF/FFHistos.root",
+		jobs[j].Data(),gen[igen].Data(),tag,tag,anatype[itype].Data())));
+	infiles.back()->Print();
+      }
     }
   }
 
   // outout
   char plotdir[1000];
-  sprintf(plotdir,"%s/%s/combinedPlots",indir,tag);
+  sprintf(plotdir,"plots/%s/combinedPlots",tag);
 
   // ============ start to plot ===================
   // final styles
@@ -57,11 +62,13 @@ void combineFinalPlots(char* tag = "sw48")
   int plotmode=1;
   Int_t padxsize=400;
   Int_t padysize=400;
+  Int_t ncol = anatype.size();
+  Int_t nrow = gen.size()*jobs.size();
 
   // === dijet properties ===
   // -- dphi --
-  TCanvas * chJDPhi = new TCanvas("chJDPhi","chJDPhi",1200,600);
-  chJDPhi->Divide(anatype.size(),gen.size());
+  TCanvas * chJDPhi = new TCanvas("chJDPhi","chJDPhi",padxsize*ncol,padysize*nrow);
+  chJDPhi->Divide(anatype.size(),gen.size()*jobs.size());
   for (int i=0; i<infiles.size(); ++i) {
     chJDPhi->cd(i+1);
     gPad->SetLogy();
@@ -69,8 +76,8 @@ void combineFinalPlots(char* tag = "sw48")
   }
 
   // -- near vs away uncut --
-  TCanvas * chUncutNJetEtvsAJetEt = new TCanvas("chUncutNJetEtvsAJetEt","chUncutNJetEtvsAJetEt",1200,600);
-  chUncutNJetEtvsAJetEt->Divide(anatype.size(),gen.size());
+  TCanvas * chUncutNJetEtvsAJetEt = new TCanvas("chUncutNJetEtvsAJetEt","chUncutNJetEtvsAJetEt",padxsize*ncol,padysize*nrow);
+  chUncutNJetEtvsAJetEt->Divide(anatype.size(),gen.size()*jobs.size());
   for (int i=0; i<infiles.size(); ++i) {
     chUncutNJetEtvsAJetEt->cd(i+1);
     gPad->SetLogz();
@@ -78,8 +85,8 @@ void combineFinalPlots(char* tag = "sw48")
   }
 
   // -- near vs away --
-  TCanvas * chNJetEtvsAJetEt = new TCanvas("chNJetEtvsAJetEt","chNJetEtvsAJetEt",1200,600);
-  chNJetEtvsAJetEt->Divide(anatype.size(),gen.size());
+  TCanvas * chNJetEtvsAJetEt = new TCanvas("chNJetEtvsAJetEt","chNJetEtvsAJetEt",padxsize*ncol,padysize*nrow);
+  chNJetEtvsAJetEt->Divide(anatype.size(),gen.size()*jobs.size());
   for (int i=0; i<infiles.size(); ++i) {
     chNJetEtvsAJetEt->cd(i+1);
     gPad->SetLogz();
@@ -87,8 +94,8 @@ void combineFinalPlots(char* tag = "sw48")
   }
 
   // -- near/away et ratio --
-  TCanvas * chANRatVsB = new TCanvas("chANRatVsB","chANRatVsB",1200,600);
-  chANRatVsB->Divide(anatype.size(),gen.size());
+  TCanvas * chANRatVsB = new TCanvas("chANRatVsB","chANRatVsB",padxsize*ncol,padysize*nrow);
+  chANRatVsB->Divide(anatype.size(),gen.size()*jobs.size());
   for (int i=0; i<infiles.size(); ++i) {
     chANRatVsB->cd(i+1);
     gPad->SetLogz();
@@ -96,8 +103,8 @@ void combineFinalPlots(char* tag = "sw48")
   }
 
   // Hi Event
-  TCanvas * chB = new TCanvas("chB","B",1200,600);
-  chB->Divide(anatype.size(),gen.size());
+  TCanvas * chB = new TCanvas("chB","B",padxsize*ncol,padysize*nrow);
+  chB->Divide(anatype.size(),gen.size()*jobs.size());
   for (int i=0; i<infiles.size(); ++i) {
     chB->cd(i+1);
     TH1D * hUncutB = dynamic_cast<TH1D*>(drawNormHist(infiles[i],"hUncutB",drsg,"","","",-1,0,0,0,0,mksz,0,0,plotmode));
