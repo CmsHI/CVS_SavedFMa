@@ -20,6 +20,7 @@ char * drdbE = "E1 same";
 
 void combineFinalPlots()
 {
+  TCanvas * ctest = new TCanvas("ctest","ctest",1200,600);
   // set inputs
   char * indir = "/home/frankma/work/HI/jet/sw/pat/patanaCMSSW_3_3_1/src/PhysicsTools/PatExamples/macros/DiJetTreeAna/plots/CMSSW_3_3_1_fix03/Hydjet_MinBias_noColl_4TeV";
   vector<TString> gen;
@@ -30,19 +31,19 @@ void combineFinalPlots()
   anatype.push_back("j2_0_t1");
   anatype.push_back("j1_1_t0");
   anatype.push_back("j0_1_t0");
-  char * tag = "sw46_2";
+  char * tag = "sw47_2";
 
   vector<TFile*> infiles;
   for (int igen=0; igen<gen.size(); ++igen) {
     for (int itype=0; itype<anatype.size(); ++itype) {
-      infiles.push_back(new TFile(Form("%s/%s/%s/jet_100_300_80_jdphi_2.85_sw46_2_%s/jFF/FFHistos.root",
-	      indir,gen[igen].Data(),tag,anatype[itype].Data())));
+      infiles.push_back(new TFile(Form("%s/%s/%s/jet_135_300_100_jdphi_2.85_%s_%s/jFF/FFHistos.root",
+	      indir,gen[igen].Data(),tag,tag,anatype[itype].Data())));
       infiles.back()->Print();
     }
   }
 
   // outout
-  char * plotdir = Form("%s/combinedPlots",indir);
+  char * plotdir = Form("%s/%s/combinedPlots",indir,tag);
 
   // ============ start to plot ===================
   // final styles
@@ -54,6 +55,9 @@ void combineFinalPlots()
   Color_t lcAway = kBlue;
   Width_t lwUncut = 1;
   Width_t lw=3;
+  int plotmode=1;
+  Int_t padxsize=400;
+  Int_t padysize=400;
 
   // === dijet properties ===
   // -- dphi --
@@ -62,7 +66,7 @@ void combineFinalPlots()
   for (int i=0; i<infiles.size(); ++i) {
     chJDPhi->cd(i+1);
     gPad->SetLogy();
-    TH2D * hJDPhi = dynamic_cast<TH2D*>(drawNormHist(infiles[i],"hJDPhi",drsg,"","","",-1,0,0,0,0,mksz,0,0));
+    TH2D * hJDPhi = dynamic_cast<TH2D*>(drawNormHist(infiles[i],"hJDPhi",drsg,"","","",-1,0,0,0,0,mksz,0,0,plotmode));
   }
 
   // -- near vs away uncut --
@@ -71,7 +75,7 @@ void combineFinalPlots()
   for (int i=0; i<infiles.size(); ++i) {
     chUncutNJetEtvsAJetEt->cd(i+1);
     gPad->SetLogz();
-    TH2D * hUncutNJetEtvsAJetEt = dynamic_cast<TH2D*>(drawNormHist(infiles[i],"hUncutNJetEtvsAJetEt","colz","","","",-1,0,0,0,0,mksz,0,0));
+    TH2D * hUncutNJetEtvsAJetEt = dynamic_cast<TH2D*>(drawNormHist(infiles[i],"hUncutNJetEtvsAJetEt","colz","","","",-1,0,0,0,0,mksz,0,0,plotmode));
   }
 
   // -- near vs away --
@@ -80,7 +84,7 @@ void combineFinalPlots()
   for (int i=0; i<infiles.size(); ++i) {
     chNJetEtvsAJetEt->cd(i+1);
     gPad->SetLogz();
-    TH2D * hNJetEtvsAJetEt = dynamic_cast<TH2D*>(drawNormHist(infiles[i],"hNJetEtvsAJetEt","colz","","","",-1,0,0,0,0,mksz,0,0));
+    TH2D * hNJetEtvsAJetEt = dynamic_cast<TH2D*>(drawNormHist(infiles[i],"hNJetEtvsAJetEt","colz","","","",-1,0,0,0,0,mksz,0,0,plotmode));
   }
 
   // -- near/away et ratio --
@@ -89,7 +93,7 @@ void combineFinalPlots()
   for (int i=0; i<infiles.size(); ++i) {
     chANRatVsB->cd(i+1);
     gPad->SetLogz();
-    TH2D * hANRatVsB = dynamic_cast<TH2D*>(drawNormHist(infiles[i],"hANRatVsB","colz","","","",-1,0,0,0,0,mksz,0,0));
+    TH2D * hANRatVsB = dynamic_cast<TH2D*>(drawNormHist(infiles[i],"hANRatVsB","colz","","","",-1,0,0,0,0,mksz,0,0,plotmode));
   }
 
   // Hi Event
@@ -97,8 +101,8 @@ void combineFinalPlots()
   chB->Divide(anatype.size(),gen.size());
   for (int i=0; i<infiles.size(); ++i) {
     chB->cd(i+1);
-    TH1D * hUncutB = dynamic_cast<TH1D*>(drawNormHist(infiles[i],"hUncutB",drsg,"","","",-1,0,0,0,0,mksz,0,0));
-    TH1D * hB = dynamic_cast<TH1D*>(drawNormHist(infiles[i],"hB",drdb,"","","",-1,0,0,0,0,mksz,0,0));
+    TH1D * hUncutB = dynamic_cast<TH1D*>(drawNormHist(infiles[i],"hUncutB",drsg,"","","",-1,0,0,0,0,mksz,0,0,plotmode));
+    TH1D * hB = dynamic_cast<TH1D*>(drawNormHist(infiles[i],"hB",drdb,"","","",-1,0,0,0,0,mksz,0,0,plotmode));
     TLegend *lB = new TLegend(0.2,0.6,0.5,0.80);
     lB->AddEntry(hUncutB,"Before Jet Et cut","L");
     lB->AddEntry(hB,"After Jet Et cut","L");
@@ -111,8 +115,8 @@ void combineFinalPlots()
   chFF->Divide(anatype.size(),gen.size());
   for (int i=0; i<infiles.size(); ++i) {
     chFF->cd(i+1);
-    TH1D * hXiNearJet = dynamic_cast<TH1D*>(drawNormHist(infiles[i],"hXiNearJet",drsgE,"","","",-1,0,0,0,0,mksz,mkstNear,0));
-    TH1D * hXiAwayJet = dynamic_cast<TH1D*>(drawNormHist(infiles[i],"hXiAwayJet",drdbE,"","","",-1,0,0,0,0,mksz,mkstAway,0));
+    TH1D * hXiNearJet = dynamic_cast<TH1D*>(drawNormHist(infiles[i],"hXiNearJet",drsgE,"","","",-1,0,0,0,0,mksz,mkstNear,0,plotmode));
+    TH1D * hXiAwayJet = dynamic_cast<TH1D*>(drawNormHist(infiles[i],"hXiAwayJet",drdbE,"","","",-1,0,0,0,0,mksz,mkstAway,0,plotmode));
     //  - legend -
     TLegend *lXi = new TLegend(0.2,0.6,0.5,0.80);
     lXi->AddEntry(hXiNearJet,"Near Jet","L");
@@ -162,5 +166,6 @@ void combineFinalPlots()
     lXiQUnQRat->Draw();
   }
   // print canvas and save histograms
+
   printAllCanvases(plotdir);
 }
