@@ -33,6 +33,14 @@ namespace jetana
 	 TString GetDiJetCut() const { return dijetCut_; }
 	 TString GetNJetPartlCut() const { return nearJetPartlsCut_; }
 	 TString GetAJetPartlCut() const { return awayJetPartlsCut_; }
+	 TString GetNewNJetPartlCut(char *oldcut, char * newcut) const { 
+	   TString source = nearJetPartlsCut_;
+	   return source.ReplaceAll(oldcut,newcut);
+	 }
+	 TString GetNewAJetPartlCut(char *oldcut, char * newcut) const {
+	   TString source = awayJetPartlsCut_;
+	   return source.ReplaceAll(oldcut,newcut);
+	 }
 	 // cut with weights
 	 TString GetNJetPartlCutW() const { return AddWeight(nearJetPartlsWt_,nearJetPartlsCut_); }
 	 TString GetAJetPartlCutW() const { return AddWeight(awayJetPartlsWt_,awayJetPartlsCut_); }
