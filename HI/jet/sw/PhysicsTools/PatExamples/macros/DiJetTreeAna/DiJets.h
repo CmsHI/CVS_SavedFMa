@@ -17,8 +17,8 @@ namespace jetana {
    const Float_t PHIMIN=-3.14;
    const Float_t PHIMAX=3.14;
    const Int_t ETANBIN=50;
-   const Float_t ETAMIN=-2.8;
-   const Float_t ETAMAX=2.8;
+   const Float_t ETAMIN=-2.5;
+   const Float_t ETAMAX=2.5;
    // for jets
    const UInt_t NBIN=100;
    const char * drsgE="E1";
@@ -39,6 +39,9 @@ namespace jetana {
    Int_t HJETETBINS = 100;
    Double_t HJETETMIN = 0;
    Double_t HJETETMAX = 200;
+   Int_t HXIETBINS = 100;
+   Double_t HXIETMIN = 0.01;
+   Double_t HXIETMAX = 200;
    // for HI Event
    Int_t HBBINS = 40;
    Double_t HBMIN = 0;
