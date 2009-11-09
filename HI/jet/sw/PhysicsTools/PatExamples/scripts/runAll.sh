@@ -1,6 +1,6 @@
-#signal=pyquen_unquendijet_nocoll_pt120to170_d20091025
-#signal=pyquen_quendijet_nocoll_pt120to170_d20091024
-tag=sw47_2
+#!/bin/bash -
+
+tag=sw48
 n=2
 for signal in pyquen_quendijet_nocoll_pt120to170_d20091024 pyquen_unquendijet_nocoll_pt120to170_d20091025; do
   indir=/castor/cern.ch/user/f/frankma/data/pat/CMSSW_3_3_1_fix03/Hydjet_MinBias_noColl_4TeV/$signal
