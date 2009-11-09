@@ -15,7 +15,7 @@ fileName=$5
 indir=$6
 
 # genType: pp(0), HI(1)
-genType=0
+genType=1
 
 # HI pat files
 #input=/d01/frankma/scratch/data/pat/cmssw331/hydjetNoCollElossFix02/merged/all_50.root
