@@ -104,6 +104,7 @@ void printAllCanvases(const char* folder="plots")
     for (int i =0; i<sc->GetSize(); ++i) {
       TCanvas * c = dynamic_cast<TCanvas*>(sc->At(i));
       TString cname(c->GetName());
+      //printf("save folder: %s\n",folder);
       printf("Canvas: %s/%s/%s.%s\n",folder,formats[iform],cname.Data(),formats[iform]);
       c->Print(Form("%s/%s/%s.%s",folder,formats[iform],cname.Data(),formats[iform]));
     }
@@ -222,7 +223,7 @@ void drawTree2(TTree* nt, const char* draw, const char* cut, const char* opt, co
 }
 
 //--- function to divide histograms then draw---
-void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* name, const char* title, const int nbin, const double min, const double max, bool log=false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz=0, const Style_t mst=0, const double ymax=0)
+void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* name, const char* title, const int nbin, const double min, const double max, bool log=false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz=0, const Style_t mst=0, const double ymax=0, int mode=0)
 {
    // find input histos
    if (!TString(opt).Contains("same")) printf("\n");
@@ -251,20 +252,19 @@ void drawDivHist(const char* hn1, const char* hn2, const char* opt, const char* 
 
    //--- Draw ---
    if (ymax) h->SetAxisRange(0,ymax,"Y");
-   h->SetStats(0);
-   TCanvas * c = makeCanvas(name,title,log,opt);
+   if (mode==0) TCanvas * c = makeCanvas(name,title,log,opt);
    h->Draw(opt);
 }
 
 //--- function to draw histograms ---
-void drawNormHist(TH1* h, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz=0, const Style_t mst=0, const double ymax=0)
+void drawNormHist(TH1* h, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz=0, const Style_t mst=0, const double ymax=0, int mode=0)
 {
    setHist(h,lc,ls,lw,msz,mst,norm,xtitle,ytitle,ymax);
    //printf("---------------draw: %s\n",h->GetName());
-   makeCanvas(Form("normalized_%s",h->GetName()),title, log,opt);
+   if (mode==0) makeCanvas(Form("normalized_%s",h->GetName()),title, log,opt);
    h->Draw(opt);
 }
-void drawNormHist(const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz=0, const Style_t mst=0, const double ymax=0)
+void drawNormHist(const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz=0, const Style_t mst=0, const double ymax=0, int mode=0)
 {
    TH1 * h;
    if (gROOT->FindObject(hn))
@@ -273,9 +273,9 @@ void drawNormHist(const char* hn, const char* opt="", const char* title="", cons
       printf("**%s is not found, please check the histogram name\n", hn);
       return;
    }
-   drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst,ymax);
+   drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst,ymax,mode);
 }
-TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz=0, const Style_t mst=0, const double ymax=0)
+TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* title="", const char* xtitle = "", const char* ytitle = "", const double norm = -1, bool log = false, const Color_t lc=0, const Style_t ls=0, const Width_t lw=0, const Size_t msz=0, const Style_t mst=0, const double ymax=0, int mode=0)
 {
    TH1 * h;
    if (f->Get(hn))
@@ -285,7 +285,7 @@ TH1 * drawNormHist(TFile * f, const char* hn, const char* opt="", const char* ti
       return 0;
    }
    printf("retrieved: %s\n", h->GetName());
-   drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst,ymax);
+   drawNormHist(h,opt,title,xtitle,ytitle,norm,log,lc,ls,lw,msz,mst,ymax,mode);
    return h;
 }
 
