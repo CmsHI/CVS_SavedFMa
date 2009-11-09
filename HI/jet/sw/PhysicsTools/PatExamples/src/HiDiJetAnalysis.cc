@@ -76,6 +76,7 @@ namespace jetana
     return result;
   }
 
+  // === calculate fragmentation related variables ===
   void HiDiJetAnalysis::CalcFragVars(const DiJet & dijet, const AnaInputCollection & fcands)
   {
     if (verbosity_>=3) {
@@ -90,7 +91,8 @@ namespace jetana
     // loop over fragment candidates
     for (unsigned int ip=0; ip<fcands.size(); ++ip) {
       // saved only tracks associated with dijet
-      if ( !isFrag(dijet,fcands[ip]) ) continue;
+      // - remove for now, b/c want also bg particles
+      //if ( !isFrag(dijet,fcands[ip]) ) continue;
 
       // fill frag candidates basic info
       jd_.ppt_[ct]	= fcands[ip].pt();
