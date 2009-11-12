@@ -25,6 +25,8 @@ export HLTpprun=$pprun/HLT
 #  - dNdEta related -
 export dNdEtasw=$ppsw/dNdEta/sw
 export dNdEtarun=$pprun/dNdEta
+#  - prod related -
+export prod=$work/prod 
 # -older-
 export projects=$mit/research/projects
 export tier2=$projects/tier2
