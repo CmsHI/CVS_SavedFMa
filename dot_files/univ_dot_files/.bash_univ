@@ -22,6 +22,9 @@ export HLTHIsw=$HIsw/HLT/sw
 export HLTHIrun=$HIrun/HLT
 export HLTppsw=$ppsw/HLT/sw
 export HLTpprun=$pprun/HLT
+#  - dNdEta related -
+export dNdEtasw=$ppsw/dNdEta/sw
+export dNdEtarun=$pprun/dNdEta
 # -older-
 export projects=$mit/research/projects
 export tier2=$projects/tier2
