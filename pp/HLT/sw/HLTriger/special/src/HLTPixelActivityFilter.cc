@@ -56,7 +56,8 @@ bool HLTPixelActivityFilter::filter(edm::Event& iEvent, const edm::EventSetup& i
 
    bool accept = false;
    unsigned int clusterSize = clusterColl.product()->size();
-   if(clusterSize > min_clusters_)
+   //cout << "clusterSize: " << clusterSize << endl;
+   if(clusterSize >= min_clusters_)
      accept = true ;
 
 
