@@ -17,5 +17,5 @@ cp -v /d01/frankma/scratch/pp/HLT/activityTrigCMSSW_3_3_2/*.py test/
 
 # scripts
 cp -v /d01/frankma/scratch/pp/HLT/activityTrigCMSSW_3_3_2/*.sh scripts/
-cp -v /d01/frankma/scratch/pp/HLT/activityTrigCMSSW_3_3_2/CRAFT09-v1/activity/*.sh scripts/
+cp -v /d01/frankma/scratch/pp/HLT/activityTrigCMSSW_3_3_2/CRAFT09-v1/activity_hfmask1/*.sh scripts/
 

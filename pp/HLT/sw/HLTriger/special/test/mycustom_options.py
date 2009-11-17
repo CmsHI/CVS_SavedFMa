@@ -65,6 +65,7 @@ def mycustomise(process):
   process.hltPixelActivityFilter.minClusters = options.PixClustMin
   print "===== Activity trigger thresholds ====="
   print "HLTHcalSimpleRecHitFilter.threshold: ", process.HLTHcalSimpleRecHitFilter.threshold
+  print "  * HLTHcalSimpleRecHitFilter masked channels:", process.HLTHcalSimpleRecHitFilter.maskedChannels
   print "Ecal Activity crystal threshold: ", process.hltHI1jet35U.MinPt
   print "Pixel Cluster min: ", process.hltPixelActivityFilter.minClusters
   # done
