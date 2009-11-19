@@ -23,6 +23,7 @@ export HLTHIrun=$HIrun/HLT
 export HLTppsw=$ppsw/HLT/sw
 export HLTpprun=$pprun/HLT
 #  - dNdEta related -
+export dNdEta=$ppsw/dNdEta
 export dNdEtasw=$ppsw/dNdEta/sw
 export dNdEtarun=$pprun/dNdEta
 #  - prod related -
