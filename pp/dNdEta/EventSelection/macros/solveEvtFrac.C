@@ -13,7 +13,7 @@
 #include "SelectionData.h"
 using namespace std;
 
-void readInputs(const char * infname)
+void readInputs(const char * infname, SelectionData * sdata)
 {
   ifstream inFile(infname);
   // check
@@ -22,9 +22,20 @@ void readInputs(const char * infname)
     exit(1);
   }
   // read
-  TString s;
-  while (inFile>>s) {
-    cout << s << endl;
+  TString trigName;
+  Double_t effAll;
+  Double_t effSD;
+  Double_t effDD;
+  Double_t effNSD;
+  Double_t effND;
+  while (inFile>>trigName &&
+	 inFile>>effAll &&
+	 inFile>>effSD &&
+	 inFile>>effDD &&
+	 inFile>>effNSD &&
+	 inFile>>effND
+	 ) {
+    cout << trigName << ": " << effAll << " " << effSD << " " << effDD << " " << effNSD << " " << effND << endl;
   }
   inFile.close();
 }
@@ -67,7 +78,10 @@ int solveEvtFrac( )
   gSystem->Load("libMatrix");
 #endif
 
+  // delcare selection data
+  SelectionData sdata;
+
   // read in trigger info
-  readInputs("../data/trig_eff.txt");
+  readInputs("../data/trig_eff.txt",&sdata);
   return 0;
 }
