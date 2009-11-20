@@ -7,12 +7,30 @@ class SelectionData
   public:
     // trigger info
     // size: N
-    std::vector<TString> trigName;
-    std::vector<std::vector<Double_t> > trigEff;
+    std::vector<TString> trig_;
+    std::vector<std::vector<Double_t> > eff_;
 
     // equations
     // size: N choose s
-    std::vector<TMatrixD> coeff;
-    std::vector<TMatrixD> rhs;
-    std::vector<TMatrixD> sol;
+    std::vector<TMatrixD> coeff_;
+    std::vector<TMatrixD> rhs_;
+    std::vector<TMatrixD> sol_;
+
+    // --- Friend Functions ---
+    friend ostream& operator <<(ostream& outs, const SelectionData& sd);
 };
+
+// -------------------- Implementations -----------------------
+// === Friend Functions ===
+ostream& operator <<(ostream& os, const SelectionData& sd)
+{
+  using namespace std;
+  for (UInt_t i=0; i<sd.eff_.size(); ++i) {
+    os << sd.trig_[i] << ": ";
+    for (UInt_t j=0; i<sd.eff_[i].size(); ++j) {
+      os << sd.eff_[i][j] << " ";
+    }
+    cout << endl;
+  }
+}
+

@@ -13,7 +13,7 @@
 #include "SelectionData.h"
 using namespace std;
 
-void readInputs(const char * infname, SelectionData * sdata)
+void readInputs(const char * infname, SelectionData & sdata)
 {
   ifstream inFile(infname);
   // check
@@ -36,6 +36,14 @@ void readInputs(const char * infname, SelectionData * sdata)
 	 inFile>>effND
 	 ) {
     cout << trigName << ": " << effAll << " " << effSD << " " << effDD << " " << effNSD << " " << effND << endl;
+    sdata.trig_.push_back(trigName);
+    vector<Double_t> veff;
+    veff.push_back(effAll);
+    veff.push_back(effSD);
+    veff.push_back(effDD);
+    veff.push_back(effNSD);
+    veff.push_back(effND);
+    sdata.eff_.push_back(veff);
   }
   inFile.close();
 }
@@ -82,6 +90,6 @@ int solveEvtFrac( )
   SelectionData sdata;
 
   // read in trigger info
-  readInputs("../data/trig_eff.txt",&sdata);
+  readInputs("../data/trig_eff.txt",sdata);
   return 0;
 }
