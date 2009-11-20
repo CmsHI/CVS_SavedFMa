@@ -6,18 +6,31 @@
 #else
 #endif
 
-#include<vector>
-using namespace std
+#include <iostream>
+#include <fstream>
+#include <vector>
 
-void readEff(const char * infile)
+#include "SelectionData.h"
+using namespace std;
+
+void readInputs(const char * infname)
 {
+  ifstream inFile(infname);
+  // check
+  if (!inFile) {
+    cerr << "Unable to open " << infname << endl;
+    exit(1);
+  }
+  // read
+  TString s;
+  while (inFile>>s) {
+    cout << s << endl;
+  }
+  inFile.close();
 }
 
-void solveEvtFrac( ) {
-
-#ifdef __CINT__
-  gSystem->Load("libMatrix");
-#endif
+// solve function
+void solveLin( ) {
 
   // Matrix of coeffs.
   TMatrixD coeff(2,2);
@@ -45,4 +58,16 @@ void solveEvtFrac( ) {
   TMatrixD sol(2,1);
   sol.Mult(coeffIN, rhs);
   sol.Print();
+}
+
+// ===== Main function =====
+int solveEvtFrac( )
+{
+#ifdef __CINT__
+  gSystem->Load("libMatrix");
+#endif
+
+  // read in trigger info
+  readInputs("../data/trig_eff.txt");
+  return 0;
 }
