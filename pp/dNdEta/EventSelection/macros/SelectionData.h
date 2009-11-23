@@ -1,3 +1,6 @@
+#ifndef SELECTION_DATA
+#define SELECTION_DATA
+
 #include <TMatrixD.h>
 #include "TString.h"
 #include <vector>
@@ -39,3 +42,47 @@ ostream& operator <<(ostream& os, const SelectionData& sd)
   return os;
 }
 
+void readInputs(const char * infname, SelectionData & sdata)
+{
+  ifstream inFile(infname);
+  // check
+  if (!inFile) {
+    cerr << "Unable to open " << infname << endl;
+    exit(1);
+  }
+  // read
+  TString trigName;
+  Double_t effAll;
+  Double_t effSD;
+  Double_t effDD;
+  Double_t effNSD;
+  Double_t effND;
+  while (inFile>>trigName &&
+	 inFile>>effAll &&
+	 inFile>>effSD &&
+	 inFile>>effDD &&
+	 inFile>>effNSD &&
+	 inFile>>effND
+	 ) {
+    //cout << trigName << ": " << effAll << " " << effSD << " " << effDD << " " << effNSD << " " << effND << endl;
+    sdata.trig_.push_back(trigName);
+    vector<Double_t> veff;
+    if (effAll>1) {
+      effAll=effAll*0.01;
+      effSD=effSD*0.01;
+      effDD=effDD*0.01;
+      effNSD=effNSD*0.01;
+      effND=effND*0.01;
+    }
+    veff.push_back(effAll);
+    veff.push_back(effSD);
+    veff.push_back(effDD);
+    veff.push_back(effNSD);
+    veff.push_back(effND);
+    sdata.eff_.push_back(veff);
+  }
+  cout << sdata << endl;
+  inFile.close();
+}
+
+#endif // SELECTION_DATA

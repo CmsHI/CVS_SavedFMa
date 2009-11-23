@@ -13,42 +13,6 @@
 #include "SelectionData.h"
 using namespace std;
 
-void readInputs(const char * infname, SelectionData & sdata)
-{
-  ifstream inFile(infname);
-  // check
-  if (!inFile) {
-    cerr << "Unable to open " << infname << endl;
-    exit(1);
-  }
-  // read
-  TString trigName;
-  Double_t effAll;
-  Double_t effSD;
-  Double_t effDD;
-  Double_t effNSD;
-  Double_t effND;
-  while (inFile>>trigName &&
-	 inFile>>effAll &&
-	 inFile>>effSD &&
-	 inFile>>effDD &&
-	 inFile>>effNSD &&
-	 inFile>>effND
-	 ) {
-    //cout << trigName << ": " << effAll << " " << effSD << " " << effDD << " " << effNSD << " " << effND << endl;
-    sdata.trig_.push_back(trigName);
-    vector<Double_t> veff;
-    veff.push_back(effAll);
-    veff.push_back(effSD);
-    veff.push_back(effDD);
-    veff.push_back(effNSD);
-    veff.push_back(effND);
-    sdata.eff_.push_back(veff);
-  }
-  cout << sdata << endl;
-  inFile.close();
-}
-
 // solve function
 void solveLin( ) {
 
