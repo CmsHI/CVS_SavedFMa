@@ -1,0 +1,10 @@
+HLT_MinBiasHcal	   1.953     0.063     0.069	  2.503     2.959
+HLT_MinBiasHcalNew   5.168  0.320	 0.459  6.578  7.725
+HLT_MinBiasEcal	  28.392    19.011    18.785	 31.118    33.429
+HLT_MinBiasPixel  75.748    41.872    44.780	 85.595    93.244
+HLT_MinBiasPixel1Trk	83.383    53.433	  62.420    92.089    97.650
+HLT_MinBiasBscTh1    68.865	  17.885    42.995    83.683	 91.309
+HLT_MinBiasBscTh2    55.928	  8.963  22.231	 69.580    78.453
+HLT_MinBiasBscOr  93.306    76.111    90.190	 98.304    99.825
+HLT_MinBiasForJet2   3.960  0.027	 0.030  5.103  6.054
+HLT_BscHighMult	  0.006  0.000  0.000	0.008  0.009
