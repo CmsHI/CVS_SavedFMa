@@ -1,6 +1,10 @@
 #include <TMatrixD.h>
 #include "TString.h"
 #include <vector>
+#include <iostream>
+
+const Int_t NTYPES = 2;
+const Int_t NTRIG = 4;
 
 class SelectionData
 {
@@ -27,10 +31,11 @@ ostream& operator <<(ostream& os, const SelectionData& sd)
   using namespace std;
   for (UInt_t i=0; i<sd.eff_.size(); ++i) {
     os << sd.trig_[i] << ": ";
-    for (UInt_t j=0; i<sd.eff_[i].size(); ++j) {
+    for (UInt_t j=0; j<sd.eff_[i].size(); ++j) {
       os << sd.eff_[i][j] << " ";
     }
-    cout << endl;
+    os << std::endl;
   }
+  return os;
 }
 
