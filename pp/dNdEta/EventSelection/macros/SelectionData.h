@@ -81,7 +81,7 @@ void readInputs(const char * infname, SelectionData & sdata)
     veff.push_back(effND);
     sdata.eff_.push_back(veff);
   }
-  cout << sdata << endl;
+  //cout << sdata << endl;
   inFile.close();
 }
 
