@@ -35,7 +35,7 @@ void readInputs(const char * infname, SelectionData & sdata)
 	 inFile>>effNSD &&
 	 inFile>>effND
 	 ) {
-    cout << trigName << ": " << effAll << " " << effSD << " " << effDD << " " << effNSD << " " << effND << endl;
+    //cout << trigName << ": " << effAll << " " << effSD << " " << effDD << " " << effNSD << " " << effND << endl;
     sdata.trig_.push_back(trigName);
     vector<Double_t> veff;
     veff.push_back(effAll);
@@ -45,6 +45,7 @@ void readInputs(const char * infname, SelectionData & sdata)
     veff.push_back(effND);
     sdata.eff_.push_back(veff);
   }
+  cout << sdata << endl;
   inFile.close();
 }
 
