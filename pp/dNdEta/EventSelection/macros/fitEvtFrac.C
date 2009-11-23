@@ -44,13 +44,14 @@ void minuitFunction(int& nDim, double* gout, double& result, double par[], int f
 }
 
 // ===== Main function =====
-int fitEvtFrac( )
+int fitEvtFrac(const char* inData="../data/trig_eff_900_900.txt")
 {
   // read in trigger info
-  readInputs("../data/trig_eff.txt",sdata);
+  readInputs(inData,sdata);
 
-  cout << "# of trigs: " << sdata.eff_.size() << endl;;
-  cout << sdata << endl;
+  cout << "total # of trigs: " << sdata.eff_.size() << endl;;
+  //cout << sdata << endl;
+  cout << "using for now: " << endl;
   for (UInt_t i=2; i<sdata.eff_.size()-2; ++i) {
     cout << sdata.trig_[i] << " effsd: " << sdata.eff_[i][1] << " effnsd: " << sdata.eff_[i][3] << " effall: " << sdata.eff_[i][0] << endl;
   }
