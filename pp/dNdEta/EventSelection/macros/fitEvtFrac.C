@@ -17,10 +17,10 @@ using namespace std;
 // delcare selection data
 SelectionData sdata;
 
-double trig_chi(double effsd, double fsd, double effnsd, double fnsd, double effall)
+double trig_chi(double effsd, double fsd, double effnsd, double fnsd, double effall, double sigma2)
 {
   double A = effsd*fsd + effnsd*fnsd - effall;
-  return A*A;
+  return A*A/sigma2;
 }
 
 double full_chi(double fsd, double fnsd)
@@ -33,7 +33,10 @@ double full_chi(double fsd, double fnsd)
   double sum=0;
   //for (UInt_t i=2; i<sdata.eff_.size()-2; ++i) {
   for (UInt_t i=3; i<7; ++i) {
-    sum+= trig_chi(sdata.eff_[i][1],fsd,sdata.eff_[i][3],fnsd,sdata.eff_[i][0]);
+    double t =trig_chi(sdata.eff_[i][1],fsd,sdata.eff_[i][3],fnsd,sdata.eff_[i][0],sdata.effSig2_(i,0));
+    //double t =trig_chi(sdata.eff_[i][1],fsd,sdata.eff_[i][3],fnsd,sdata.eff_[i][0],1);
+    //cout << "trigger " << i << ", sub-chi2: " << t << endl;
+    sum+=t;
   }
   return sum;
 }
@@ -58,7 +61,8 @@ int fitEvtFrac(const char* inData="../data/trig_eff_900_900.txt")
 
   // load input data
   sdata.loadInput("../data/trig_eff_900_900.txt",sdata.effTable0_);
-  sdata.loadInput("../data/trig_eff_2.2_900.txt",sdata.effTable1_);
+  //sdata.loadInput("../data/trig_eff_2.2_900.txt",sdata.effTable1_);
+  sdata.loadInput("../data/trig_eff_7_900.txt",sdata.effTable1_);
   sdata.calcEffSigma();
   // run minuit macro
   FitData fit0;
