@@ -50,6 +50,7 @@ namespace jetana
 
     // helpers
     std::map<InputItem*,int> partonSEMap_;
+    std::map<InputItem*,int> particleSEMap_;
   };
 }
 #endif //

@@ -149,6 +149,7 @@ void HiJetAnaInput::LoadTracks(TrackType trackType)
 	  // select particles
 	  if ( isTrack((*particles)[ip]) && passBasicTrackKin((*particles)[ip].p4()) )
 	    tracks_.push_back((*particles)[ip].p4());
+	    anacfg_->particleSEMap_[&(tracks_.back())] = (*particles)[ip].collisionId();
 	}
 	break;
       }
