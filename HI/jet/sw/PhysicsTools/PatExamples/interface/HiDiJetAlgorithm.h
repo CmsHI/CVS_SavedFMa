@@ -30,12 +30,6 @@ namespace jetana
   }
 
 
-  //  jet analysis interface types
-  typedef LorentzVector InputItem;
-  typedef std::list<InputItem> InputCollection;
-  typedef DiJet OutputItem;
-  typedef std::vector<OutputItem> OutputCollection;
-
   //  main class
   class HiDiJetAlgorithm
   {
