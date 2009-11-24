@@ -40,7 +40,7 @@ class SelectionData
     //std::vector<TMatrixD> effTable0_;
     TMatrixD effTable0_;
     TMatrixD effTable1_;
-    TMatrixD effSig_;
+    TMatrixD effSig2_;
 
     // public functions
     void loadInput(const char * infile, TMatrixD & mat);
@@ -78,6 +78,13 @@ void SelectionData::loadInput(const char * infname, TMatrixD & mat)
 	 inFile>>effNSD &&
 	 inFile>>effND
 	 ) {
+    if (effAll>1) {
+      effAll=effAll*0.01;
+      effSD=effSD*0.01;
+      effDD=effDD*0.01;
+      effNSD=effNSD*0.01;
+      effND=effND*0.01;
+    }
     mat(irow,0)=effAll;
     mat(irow,1)=effSD;
     mat(irow,2)=effDD;
@@ -92,6 +99,16 @@ void SelectionData::calcEffSigma()
 {
   effTable0_.Print();
   effTable1_.Print();
+
+  effSig2_.ResizeTo(effTable0_.GetNrows(),1);
+  TMatrixD errorM = effTable0_-effTable1_;
+  cout << "Eff error table: " << endl;
+  errorM.Print();
+  for (Int_t i=0; i<errorM.GetNrows(); ++i) {
+    effSig2_(i,0) = errorM(i,1)*errorM(i,1) + errorM(i,3)*errorM(i,3);
+  }
+  cout << "Eff sigma^2: " << endl;
+  effSig2_.Print();
 }
 
 // === Friend Functions ===
