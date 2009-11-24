@@ -53,13 +53,41 @@ class SelectionData
 // -------------------- Implementations -----------------------
 void SelectionData::loadInput(const char * infname, TMatrixD & mat)
 {
+  int ncol = 5;
+  int nrow = 10;
+  mat.ResizeTo(nrow,ncol);
+
   ifstream inFile(infname);
   // check
   if (!inFile) {
     cerr << "Unable to open " << infname << endl;
     exit(1);
   }
+  // read
+  TString trigName;
+  Double_t effAll;
+  Double_t effSD;
+  Double_t effDD;
+  Double_t effNSD;
+  Double_t effND;
+  int irow=0;
+  while (inFile>>trigName &&
+	 inFile>>effAll &&
+	 inFile>>effSD &&
+	 inFile>>effDD &&
+	 inFile>>effNSD &&
+	 inFile>>effND
+	 ) {
+    mat(irow,0)=effAll;
+    mat(irow,1)=effSD;
+    mat(irow,2)=effDD;
+    mat(irow,3)=effNSD;
+    mat(irow,4)=effND;
+    ++irow;
+  }
+  //mat.Print();
 }
+
 void SelectionData::calcEffSigma()
 {
   effTable0_.Print();

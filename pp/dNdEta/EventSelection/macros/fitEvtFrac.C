@@ -58,7 +58,7 @@ int fitEvtFrac(const char* inData="../data/trig_eff_900_900.txt")
 
   // load input data
   sdata.loadInput("../data/trig_eff_900_900.txt",sdata.effTable0_);
-  sdata.loadInput("../data/trig_eff_900_900.txt",sdata.effTable1_);
+  sdata.loadInput("../data/trig_eff_2.2_900.txt",sdata.effTable1_);
   sdata.calcEffSigma();
   // run minuit macro
   FitData fit0;
