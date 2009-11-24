@@ -27,11 +27,11 @@ void minuit(FitData & ft){
   minimizer->ExecuteCommand("SIMPLEX",0,0);
   minimizer->ExecuteCommand("MIGRAD",0,0);
 
-  double bestSD = minimizer->GetParameter(0);
-  double errorSD = minimizer->GetParError(0);
-  double bestNSD = minimizer->GetParameter(1);
-  double errorNSD = minimizer->GetParError(1);
+  ft.bestX_ = minimizer->GetParameter(0);
+  ft.errorX_ = minimizer->GetParError(0);
+  ft.bestY_ = minimizer->GetParameter(1);
+  ft.errorY_ = minimizer->GetParError(1);
 
-  cout<<"SD = "<<bestSD<< " error: " << errorSD << endl;
-  cout<<"NSD = "<<bestNSD<< " error: " << errorNSD << endl;
+  cout<<"SD = "<<ft.bestX_<< " error: " << ft.errorX_ << endl;
+  cout<<"NSD = "<<ft.bestY_<< " error: " << ft.errorY_ << endl;
 }
