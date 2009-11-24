@@ -89,7 +89,8 @@ void HiJetAnaInput::LoadJets(JetType jetType)
 	  // select partons
 	  if ( isParton((*particles)[ip]) && passBasicJetKin((*particles)[ip].p4()) ) {
 	    jets_.push_back((*particles)[ip].p4());
-	    partonSEMap_[&(jets_.back())] = (*particles)[ip].collisionId();
+	    anacfg_->partonSEMap_[&(jets_.back())] = (*particles)[ip].collisionId();
+	    cout << "ana input - parton subevent: " << anacfg_->partonSEMap_[&(jets_.back())] << endl;
 	  }
 	}
 	break;

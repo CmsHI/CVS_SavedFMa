@@ -1,8 +1,18 @@
 #ifndef HiJetAna_HiDiJetAnaHelpers_h
 #define HiJetAna_HiDiJetAnaHelpers_h
 
+//stl
+#include <map>
+
 namespace jetana
 {
+  //  jet analysis interface types
+  typedef LorentzVector InputItem;
+  typedef std::list<InputItem> InputCollection;
+  typedef DiJet OutputItem;
+  typedef std::vector<OutputItem> OutputCollection;
+
+  // jet ana setup helper data
   struct HiDiJetAnaConfig
   {
     HiDiJetAnaConfig() :
@@ -37,6 +47,9 @@ namespace jetana
 
     // gen type
     int genType_;
+
+    // helpers
+    std::map<InputItem*,int> partonSEMap_;
   };
 }
 #endif //
