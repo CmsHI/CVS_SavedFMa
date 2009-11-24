@@ -8,6 +8,8 @@
 #include "SelectionData.h"
 using namespace std;
 
+double trig_chi(double effsd, double fsd, double effnsd, double fnsd, double effall);
+double full_chi(double fsd, double fnsd);
 void minuitFunction(int& nDim, double* gout, double& result, double par[], int flg);
 
 void minuit(FitData & ft)
@@ -43,4 +45,21 @@ void scanUncert(FitData & ft)
   double p1 = -1;
   minimizer_->ExecuteCommand("SET PRINTOUT",&p1,1);
 
+  // Scan the X parameter to find its uncertainty
+  double errX;
+  double dChi2Max=0.1;
+  for (errX=0; ft.bestX_+errX<1; errX+=0.01) {
+    minimizer_->SetParameter(0,"X",ft.bestX_+errX,0,0,0);
+    minimizer_->SetParameter(1,"Y",ft.bestY_,ft.searchDist_,0,0);
+    minimizer_->ExecuteCommand("MIGRAD",0,0);
+    double t = full_chi(minimizer_->GetParameter(0),
+			minimizer_->GetParameter(1));
+    //cout << "t: " << t << endl;
+    if (t-full_chi(ft.bestX_,ft.bestY_) > dChi2Max) {
+      cout << "reached deltaChi2 > "<< dChi2Max << endl;
+      break;
+    }
+  }
+  ft.errorX_ = errX;
+  cout << " errorX: " << errX << endl;;
 }

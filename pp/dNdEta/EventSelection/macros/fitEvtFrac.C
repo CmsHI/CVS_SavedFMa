@@ -59,5 +59,6 @@ int fitEvtFrac(const char* inData="../data/trig_eff_900_900.txt")
   // run minuit macro
   FitData fit0;
   minuit(fit0);
+  scanUncert(fit0);
   return 0;
 }
