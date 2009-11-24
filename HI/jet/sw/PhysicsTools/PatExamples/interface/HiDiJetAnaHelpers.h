@@ -3,14 +3,23 @@
 
 //stl
 #include <map>
+#include <list>
+#include <vector>
+//ana
+#include "PhysicsTools/PatExamples/interface/DiJet.h"
 
 namespace jetana
 {
-  //  jet analysis interface types
+  //  jet algo interface types
   typedef LorentzVector InputItem;
   typedef std::list<InputItem> InputCollection;
   typedef DiJet OutputItem;
   typedef std::vector<OutputItem> OutputCollection;
+
+  // analysis formats
+  typedef std::vector<DiJet> AnaDiJetCollection;
+  typedef LorentzVector AnaInputItem;
+  typedef std::vector<AnaInputItem> AnaInputCollection;
 
   // jet ana setup helper data
   struct HiDiJetAnaConfig
@@ -50,7 +59,7 @@ namespace jetana
 
     // helpers
     std::map<InputItem*,int> partonSEMap_;
-    std::map<InputItem*,int> particleSEMap_;
+    std::map<AnaInputItem*,int> particleSEMap_;
   };
 }
 #endif //
