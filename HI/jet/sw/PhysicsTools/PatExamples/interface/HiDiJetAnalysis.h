@@ -32,6 +32,7 @@ namespace jetana
       void SetVerbosity(int v) { verbosity_ = v;}
       void SetAnaOnlyLeadDijet(bool choice) {anaOnlyLeadDijet_ = choice;}
       void SetAnaFF(bool choice) {anaFF_ = choice;}
+      void SetAnaCfg(HiDiJetAnaConfig * cfg) { anacfg_=cfg; }
       // analysis helper methods
       void StoreHiEventVars(fwlite::Handle<pat::HeavyIon> * hievt);
       void CalcJetVars (const DiJet & dijet);
@@ -50,6 +51,7 @@ namespace jetana
       bool anaOnlyLeadDijet_;
       bool anaFF_;
       float fragDRMax_;
+      HiDiJetAnaConfig * anacfg_;
 
       // settings
       int verbosity_;

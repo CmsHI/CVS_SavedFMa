@@ -103,6 +103,7 @@ int main(int argc, char* argv[])
 
   // allocates memory for dijet ana tree data
   HiDiJetAnalysis ana;
+  ana.SetAnaCfg(&anacfg);
   ana.SetAnaOnlyLeadDijet(true);
   ana.SetAnaFF(true);
   ana.SetVerbosity(1);
