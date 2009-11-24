@@ -15,11 +15,6 @@
 
 namespace jetana
 {
-  // analysis formats
-  typedef std::vector<DiJet> AnaDiJetCollection;
-  typedef LorentzVector AnaInputItem;
-  typedef std::vector<AnaInputItem> AnaInputCollection;
-
   // class definition
   class HiDiJetAnalysis
   {
@@ -36,10 +31,10 @@ namespace jetana
       // analysis helper methods
       void StoreHiEventVars(fwlite::Handle<pat::HeavyIon> * hievt);
       void CalcJetVars (const DiJet & dijet);
-      void CalcFragVars(const DiJet & dijet, const AnaInputCollection & fragcands);
-      bool isFrag(const DiJet & dijet, const AnaInputItem & track);
+      void CalcFragVars(const DiJet & dijet, AnaInputCollection & fragcands);
+      bool isFrag(const DiJet & dijet, AnaInputItem * track);
       // analysis main methods
-      void Fill(const AnaDiJetCollection & dijets, const AnaInputCollection & tracks, fwlite::Handle<pat::HeavyIon> * hievent = NULL);
+      void Fill(const AnaDiJetCollection & dijets, AnaInputCollection & tracks, fwlite::Handle<pat::HeavyIon> * hievent = NULL);
 
       // public data members
       TTree * tree_;

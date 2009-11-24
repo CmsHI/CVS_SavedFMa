@@ -150,6 +150,7 @@ void HiJetAnaInput::LoadTracks(TrackType trackType)
 	  if ( isTrack((*particles)[ip]) && passBasicTrackKin((*particles)[ip].p4()) )
 	    tracks_.push_back((*particles)[ip].p4());
 	    anacfg_->particleSEMap_[&(tracks_.back())] = (*particles)[ip].collisionId();
+	    //cout << "input particle se: " << anacfg_->particleSEMap_[&(tracks_.back())] << endl;
 	}
 	break;
       }

@@ -67,14 +67,15 @@ namespace jetana
   }
 
   // fragmenation related
-  bool HiDiJetAnalysis::isFrag(const DiJet & dijet, const AnaInputItem & track)
+  bool HiDiJetAnalysis::isFrag(const DiJet & dijet, AnaInputItem * track)
   {
-    bool result = false;
-//    if (anacfg_->partonSEMap_.size()>0) {
-//      cout << "lead dj near jet subevent: " << anacfg_->partonSEMap_[dijet.nj_] << endl;
-//      cout << "lead dj away jet subevent: " << anacfg_->partonSEMap_[dijet.aj_] << endl;
-//    }
-    // - remove for now, b/c want also bg particles
+    //bool result = false;
+    if (anacfg_->partonSEMap_.size()>0 && anacfg_->particleSEMap_.size()>0) {
+      int trackse = (anacfg_->particleSEMap_)[track];
+      if ( trackse != dijet.sube_ ) return false;
+    }
+
+    // - jet correlation selection, remove for now, b/c want also bg particles
 //    if ( VectorUtil::DeltaR(dijet.nj_,track)<fragDRMax_ || VectorUtil::DeltaR(dijet.aj_,track)<fragDRMax_) {
 //      result = true;
 //    }
@@ -82,7 +83,7 @@ namespace jetana
   }
 
   // === calculate fragmentation related variables ===
-  void HiDiJetAnalysis::CalcFragVars(const DiJet & dijet, const AnaInputCollection & fcands)
+  void HiDiJetAnalysis::CalcFragVars(const DiJet & dijet, AnaInputCollection & fcands)
   {
     if (verbosity_>=3) {
       cout << "calc frag - dijet: " << dijet << endl;
@@ -96,7 +97,8 @@ namespace jetana
     // loop over fragment candidates
     for (unsigned int ip=0; ip<fcands.size(); ++ip) {
       // saved only tracks associated with dijet
-      if ( !isFrag(dijet,fcands[ip]) ) continue;
+      if ( !isFrag(dijet,&(fcands[ip])) ) continue;
+      cout << "  frag can se: " << (anacfg_->particleSEMap_)[&(fcands[ip])] << endl;
 
       // fill frag candidates basic info
       jd_.ppt_[ct]	= fcands[ip].pt();
@@ -129,7 +131,7 @@ namespace jetana
   }
 
   // main methods ==================================================
-  void HiDiJetAnalysis::Fill(const AnaDiJetCollection & dijets, const AnaInputCollection & tracks, fwlite::Handle<pat::HeavyIon> * hievt)
+  void HiDiJetAnalysis::Fill(const AnaDiJetCollection & dijets, AnaInputCollection & tracks, fwlite::Handle<pat::HeavyIon> * hievt)
   {
     if (verbosity_>=2) {
       cout << "dijets: " << endl;
