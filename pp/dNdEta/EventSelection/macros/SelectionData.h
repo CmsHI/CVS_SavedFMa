@@ -5,6 +5,7 @@
 #include "TString.h"
 #include <vector>
 #include <iostream>
+#include "TFitter.h"
 
 const Int_t NTYPES = 2;
 const Int_t NTRIG = 4;
@@ -17,6 +18,8 @@ class FitData
     double searchDist_;
     double errorX_;
     double errorY_;
+    TFitter * minimizer_;
+
     FitData() :
       bestX_(0.22),
       bestY_(0.775),
