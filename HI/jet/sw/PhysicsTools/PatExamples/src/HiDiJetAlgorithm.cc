@@ -111,6 +111,11 @@ namespace jetana
       // save and remove leading jet from input list
       OutputItem dj;
       dj.SetNearJet(*imaxPt);
+      //  -- store mc truth if present --
+      if (anacfg_->partonSEMap_.size()>0) {
+	dj.sube_ = (anacfg_->partonSEMap_)[&(*imaxPt)];
+	cout << "lead dijet subevent: " << dj.sube_ << endl;
+      }
       input.erase(imaxPt);
 
       // find away jet

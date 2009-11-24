@@ -4,7 +4,8 @@ using namespace std;
 
 DiJet::DiJet() :
   dphi_(-1),
-  leadAwayMul_(-1)
+  leadAwayMul_(-1),
+  sube_(-1)
 {
   // empty
 }

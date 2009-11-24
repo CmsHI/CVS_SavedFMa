@@ -70,10 +70,15 @@ namespace jetana
   bool HiDiJetAnalysis::isFrag(const DiJet & dijet, const AnaInputItem & track)
   {
     bool result = false;
-    if ( VectorUtil::DeltaR(dijet.nj_,track)<fragDRMax_ || VectorUtil::DeltaR(dijet.aj_,track)<fragDRMax_) {
-      result = true;
-    }
-    return result;
+//    if (anacfg_->partonSEMap_.size()>0) {
+//      cout << "lead dj near jet subevent: " << anacfg_->partonSEMap_[dijet.nj_] << endl;
+//      cout << "lead dj away jet subevent: " << anacfg_->partonSEMap_[dijet.aj_] << endl;
+//    }
+    // - remove for now, b/c want also bg particles
+//    if ( VectorUtil::DeltaR(dijet.nj_,track)<fragDRMax_ || VectorUtil::DeltaR(dijet.aj_,track)<fragDRMax_) {
+//      result = true;
+//    }
+    return true;
   }
 
   // === calculate fragmentation related variables ===
@@ -91,8 +96,7 @@ namespace jetana
     // loop over fragment candidates
     for (unsigned int ip=0; ip<fcands.size(); ++ip) {
       // saved only tracks associated with dijet
-      // - remove for now, b/c want also bg particles
-      //if ( !isFrag(dijet,fcands[ip]) ) continue;
+      if ( !isFrag(dijet,fcands[ip]) ) continue;
 
       // fill frag candidates basic info
       jd_.ppt_[ct]	= fcands[ip].pt();

@@ -33,6 +33,8 @@ class DiJet
     LorentzVector cm_;
     // dijet qualities
     int leadAwayMul_;
+    // mc truth info
+    int sube_;
 
     // Standard quantities derived from the dijet Lorentz vector
     /** Returns the modulus of the momentum of the dijet */
