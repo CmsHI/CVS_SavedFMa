@@ -97,11 +97,11 @@ void SelectionData::loadInput(const char * infname, TMatrixD & mat)
 
 void SelectionData::calcEffSigma()
 {
-  effTable0_.Print();
-  effTable1_.Print();
+  //effTable0_.Print();
+  //effTable1_.Print();
 
   effSig2_.ResizeTo(effTable0_.GetNrows(),1);
-  TMatrixD errorM = effTable0_-effTable1_;
+  TMatrixD errorM = effTable1_-effTable0_;
   cout << "Eff error table: " << endl;
   errorM.Print();
   for (Int_t i=0; i<errorM.GetNrows(); ++i) {
