@@ -56,6 +56,10 @@ int fitEvtFrac(const char* inData="../data/trig_eff_900_900.txt")
     cout << sdata.trig_[i] << " effsd: " << sdata.eff_[i][1] << " effnsd: " << sdata.eff_[i][3] << " effall: " << sdata.eff_[i][0] << endl;
   }
 
+  // load input data
+  sdata.loadInput("../data/trig_eff_900_900.txt",sdata.effTable0_);
+  sdata.loadInput("../data/trig_eff_900_900.txt",sdata.effTable1_);
+  sdata.calcEffSigma();
   // run minuit macro
   FitData fit0;
   minuit(fit0);

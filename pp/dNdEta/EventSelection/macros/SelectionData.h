@@ -37,17 +37,35 @@ class SelectionData
     std::vector<TString> trig_;
     std::vector<std::vector<Double_t> > eff_;
 
-    // equations
-    // size: N choose s
-    std::vector<TMatrixD> coeff_;
-    std::vector<TMatrixD> rhs_;
-    std::vector<TMatrixD> sol_;
+    //std::vector<TMatrixD> effTable0_;
+    TMatrixD effTable0_;
+    TMatrixD effTable1_;
+    TMatrixD effSig_;
+
+    // public functions
+    void loadInput(const char * infile, TMatrixD & mat);
+    void calcEffSigma();
 
     // --- Friend Functions ---
     friend ostream& operator <<(ostream& outs, const SelectionData& sd);
 };
 
 // -------------------- Implementations -----------------------
+void SelectionData::loadInput(const char * infname, TMatrixD & mat)
+{
+  ifstream inFile(infname);
+  // check
+  if (!inFile) {
+    cerr << "Unable to open " << infname << endl;
+    exit(1);
+  }
+}
+void SelectionData::calcEffSigma()
+{
+  effTable0_.Print();
+  effTable1_.Print();
+}
+
 // === Friend Functions ===
 ostream& operator <<(ostream& os, const SelectionData& sd)
 {
