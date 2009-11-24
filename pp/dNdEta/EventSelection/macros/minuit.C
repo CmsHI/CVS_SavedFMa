@@ -41,13 +41,14 @@ void scanUncert(FitData & ft)
 {
   // make it quiet
   TFitter* minimizer_ = new TFitter(NTYPES);
-  cout << "allocated minimizer" << endl;
+  cout << "======== Will now look for uncertainty =======" << endl;
   double p1 = -1;
   minimizer_->ExecuteCommand("SET PRINTOUT",&p1,1);
 
+  double dChi2Max=0.1;
+
   // Scan the X parameter to find its uncertainty
   double errX;
-  double dChi2Max=0.1;
   for (errX=0; ft.bestX_+errX<1; errX+=0.01) {
     minimizer_->SetParameter(0,"X",ft.bestX_+errX,0,0,0);
     minimizer_->SetParameter(1,"Y",ft.bestY_,ft.searchDist_,0,0);
@@ -62,4 +63,21 @@ void scanUncert(FitData & ft)
   }
   ft.errorX_ = errX;
   cout << " errorX: " << errX << endl;;
+
+  // Scan the Y parameter to find its uncertainty
+  double errY;
+  for (errY=0; ft.bestY_+errY<1; errY+=0.01) {
+    minimizer_->SetParameter(0,"X",ft.bestX_+errY,0,0,0);
+    minimizer_->SetParameter(1,"Y",ft.bestY_,ft.searchDist_,0,0);
+    minimizer_->ExecuteCommand("MIGRAD",0,0);
+    double t = full_chi(minimizer_->GetParameter(0),
+			minimizer_->GetParameter(1));
+    //cout << "t: " << t << endl;
+    if (t-full_chi(ft.bestY_,ft.bestY_) > dChi2Max) {
+      cout << "reached deltaChi2 > "<< dChi2Max << endl;
+      break;
+    }
+  }
+  ft.errorY_ = errY;
+  cout << " errorY: " << errY << endl;;
 }
