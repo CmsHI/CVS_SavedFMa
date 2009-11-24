@@ -9,6 +9,19 @@
 const Int_t NTYPES = 2;
 const Int_t NTRIG = 4;
 
+class FitData
+{
+  public:
+    double bestX_;
+    double bestY_;
+    double searchDist_;
+    FitData() :
+      bestX_(0.22),
+      bestY_(0.775),
+      searchDist_(0.2)
+    {/*empty*/}
+};
+
 class SelectionData
 {
   public:
