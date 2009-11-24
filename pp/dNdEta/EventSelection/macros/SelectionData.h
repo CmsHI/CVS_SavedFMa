@@ -23,7 +23,7 @@ class FitData
     FitData() :
       bestX_(0.22),
       bestY_(0.775),
-      searchDist_(0.2),
+      searchDist_(0.3),
       errorX_(searchDist_),
       errorY_(searchDist_)
     {/*empty*/}
