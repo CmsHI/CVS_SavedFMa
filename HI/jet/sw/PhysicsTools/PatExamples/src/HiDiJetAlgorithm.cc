@@ -57,6 +57,7 @@ namespace jetana
     for (InputCollection::iterator icand=others.begin(); icand!=others.end(); ++icand) {
       if (verbosity_>=3)
 	cout << "processing: " << *icand << endl;
+      // check kin cuts
       if (!PassAwayJetCriterion(*icand))
 	continue;
       double dphi=absDPhi(near,*icand);
@@ -120,6 +121,13 @@ namespace jetana
 
       // find away jet
       InputCollection::iterator iaway = FindPair(*imaxPt,input);
+
+      // check mc truth if presetn
+      if (anacfg_->partonSEMap_.size()>0 && dj.sube_>=0) {
+	int asube = (anacfg_->partonSEMap_)[&(*iaway)];
+	cout << "away dijet subevent: " << asube << endl;
+	if (asube!=dj.sube_) break;
+      }
 
       // if found an away jet passing away criterion and paired to the leading
       // jet, save to dijet and remove from list of candidates
