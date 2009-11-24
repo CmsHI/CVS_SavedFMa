@@ -87,8 +87,10 @@ void HiJetAnaInput::LoadJets(JetType jetType)
 	particles.getByLabel(*eventCont_, "hiGenParticles");
 	for (unsigned ip=0; ip<particles->size(); ++ip) {
 	  // select partons
-	  if ( isParton((*particles)[ip]) && passBasicJetKin((*particles)[ip].p4()) )
+	  if ( isParton((*particles)[ip]) && passBasicJetKin((*particles)[ip].p4()) ) {
 	    jets_.push_back((*particles)[ip].p4());
+	    partonSEMap_[&(jets_.back())] = (*particles)[ip].collisionId();
+	  }
 	}
 	break;
       }

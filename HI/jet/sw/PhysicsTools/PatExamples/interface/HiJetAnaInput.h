@@ -1,6 +1,8 @@
 #ifndef HiJetAna_HiJetAnaInput_h
 #define HiJetAna_HiJetAnaInput_h
 
+//stl
+#include <map>
 // fwlite tools
 #include "PhysicsTools/FWLite/interface/EventContainer.h"
 // pat
@@ -43,6 +45,7 @@ namespace jetana
       // data members
       InputCollection jets_; 
       AnaInputCollection tracks_;
+      std::map<InputItem*,int> partonSEMap_;
 
     private:
       fwlite::EventContainer * eventCont_;
