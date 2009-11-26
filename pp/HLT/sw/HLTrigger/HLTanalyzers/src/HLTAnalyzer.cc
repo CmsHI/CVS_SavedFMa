@@ -28,7 +28,14 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   // If your module takes parameters, here is where you would define
   // their names and types, and access them to initialize internal
   // variables. Example as follows:
-  std::cout << " Beginning HLTAnalyzer Analysis " << std::endl;
+  edm::ParameterSet myHltParams = conf.getParameter<edm::ParameterSet>("RunParameters") ;
+  vector<std::string> parameterNames = myHltParams.getParameterNames() ;
+  
+  for ( vector<std::string>::iterator iParam = parameterNames.begin();
+        iParam != parameterNames.end(); iParam++ ){
+    if ( (*iParam) == "Debug" ) _Debug =  myHltParams.getParameter<bool>( *iParam );
+  }
+  if (_Debug) std::cout << " Beginning HLTAnalyzer Analysis " << std::endl;
 
   recjets_          = conf.getParameter<edm::InputTag> ("recjets");
   reccorjets_       = conf.getParameter<edm::InputTag> ("reccorjets");
@@ -96,7 +103,7 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
 
 // Boiler-plate "analyze" method declaration for an analyzer module.
 void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup) {
-  cout <<"HLTAnalyzer Start!"<<endl;
+  if (_Debug) cout <<"HLTAnalyzer Start!"<<endl;
 
   // To get information from the event setup, you must request the "Record"
   // which contains it and then extract the object you need
@@ -149,7 +156,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<reco::RecoEcalCandidateIsolationMap>  TrackNonIsolMap;
 
 
-  cout <<"HLTAnalyzer Setup!"<<endl;
+  if (_Debug) cout <<"HLTAnalyzer Setup!"<<endl;
   edm::ESHandle<MagneticField>                theMagField;
   iSetup.get<IdealMagneticFieldRecord>().get(theMagField);
 
@@ -171,7 +178,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     
   // extract the collections from the event, check their validity and log which are missing
   std::vector<MissingCollectionInfo> missing;
-  cout <<"BeamSpot"<<endl;
+  if (_Debug) cout <<"BeamSpot"<<endl;
 /*
   //get the BeamSpot
   getCollection( iEvent, missing, recoBeamSpotHandle,       BSProducer_ ,          "Beam Spot handle");
@@ -193,7 +200,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   getCollection( iEvent, missing, l1GtOMRec,       gtObjectMap_,       kL1GtOMRec );
   getCollection( iEvent, missing, gctBitCounts,     gctBitCounts_,      kL1GctBitCounts );
   getCollection( iEvent, missing, gctRingSums,      gctRingSums_,       kL1GctRingSums );
-cout <<"L1 loaded!!!"<<endl;
+  if (_Debug) cout <<"L1 loaded!!!"<<endl;
 
   getCollection( iEvent, missing, mctruth,         mctruth_,           kMctruth );
   getCollection( iEvent, missing, simTracks,       simhits_,           kSimhit );
@@ -206,9 +213,9 @@ cout <<"L1 loaded!!!"<<endl;
   if (genEventInfo.isValid()) {ptHat=genEventInfo->qScale();}
 
 
-  cout <<"HLTAnalyzer Missing collections!"<<endl;
+  if (_Debug) cout <<"HLTAnalyzer Missing collections!"<<endl;
     // print missing collections
-  if (not missing.empty() and (errCnt < errMax())) {
+  if (not missing.empty() and (errCnt < errMax()) and _Debug) {
     errCnt++;
     std::stringstream out;       
     out <<  "OpenHLT analyser - missing collections:";
@@ -220,7 +227,7 @@ cout <<"L1 loaded!!!"<<endl;
   }
 
   // run the analysis, passing required event fragments
-cout <<"=========Analysis!!!============"<<endl;
+if (_Debug) cout <<"=========Analysis!!!============"<<endl;
   hlt_analysis_.analyze(
     hltresults,
     l1extemi,
@@ -236,18 +243,16 @@ cout <<"=========Analysis!!!============"<<endl;
     gctBitCounts,
     gctRingSums,
     HltTree);
-cout <<"header!!!"<<endl;
+  if (_Debug) cout <<"header!!!"<<endl;
   evt_header_.analyze(iEvent, HltTree);
 
-cout <<"goodgood!!!"<<endl;
   // std::cout << " Ending Event Analysis" << std::endl;
   // After analysis, fill the variables tree
-cout <<"goodgood!!!"<<endl;
   if (m_file)
     m_file->cd();
-cout <<"fill!!!"<<endl;
+  if (_Debug) cout <<"fill!!!"<<endl;
   HltTree->Fill();
-cout <<"filled!!!"<<endl;
+  if (_Debug) cout <<"filled!!!"<<endl;
 }
 
 // "endJob" is an inherited method that you may implement to do post-EOF processing and produce final output.
