@@ -39,7 +39,7 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   calotowers_       = conf.getParameter<edm::InputTag> ("calotowers");
   muon_             = conf.getParameter<edm::InputTag> ("muon");
   mctruth_          = conf.getParameter<edm::InputTag> ("mctruth");
-  genEventScale_    = conf.getParameter<edm::InputTag> ("genEventScale");
+  //genEventInfo_     = conf.getParameter<edm::InputTag> ("genEventInfo");
   simhits_          = conf.getParameter<edm::InputTag> ("simhits");
 
   // keep this separate from l1extramc_ as needed by FastSim:
@@ -71,56 +71,7 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   MuIsolTag2_       = conf.getParameter<edm::InputTag> ("MuIsolTag2");
   MuCandTag3_       = conf.getParameter<edm::InputTag> ("MuCandTag3");
   MuIsolTag3_       = conf.getParameter<edm::InputTag> ("MuIsolTag3");
-  //  MuLinkTag_        = conf.getParameter<edm::InputTag> ("MuLinkTag");
   HLTTau_           = conf.getParameter<edm::InputTag> ("HLTTau");
-
-  // btag OpenHLT input collections
-  m_rawBJets                = conf.getParameter<edm::InputTag>("CommonBJetsL2");
-  m_correctedBJets          = conf.getParameter<edm::InputTag>("CorrectedBJetsL2");
-  m_lifetimeBJetsL25        = conf.getParameter<edm::InputTag>("LifetimeBJetsL25");
-  m_lifetimeBJetsL3         = conf.getParameter<edm::InputTag>("LifetimeBJetsL3");
-  m_lifetimeBJetsL25Relaxed = conf.getParameter<edm::InputTag>("LifetimeBJetsL25Relaxed");
-  m_lifetimeBJetsL3Relaxed  = conf.getParameter<edm::InputTag>("LifetimeBJetsL3Relaxed");
-  m_softmuonBJetsL25        = conf.getParameter<edm::InputTag>("SoftmuonBJetsL25");
-  m_softmuonBJetsL3         = conf.getParameter<edm::InputTag>("SoftmuonBJetsL3");
-  m_performanceBJetsL25     = conf.getParameter<edm::InputTag>("PerformanceBJetsL25");
-  m_performanceBJetsL3      = conf.getParameter<edm::InputTag>("PerformanceBJetsL3");
-
-  // egamma OpenHLT input collections
-  Electron_                 = conf.getParameter<edm::InputTag> ("Electron");
-  Photon_                   = conf.getParameter<edm::InputTag> ("Photon");
-  CandIso_                  = conf.getParameter<edm::InputTag> ("CandIso");
-  CandNonIso_               = conf.getParameter<edm::InputTag> ("CandNonIso");
-  EcalIso_                  = conf.getParameter<edm::InputTag> ("EcalIso");
-  EcalNonIso_               = conf.getParameter<edm::InputTag> ("EcalNonIso");
-  HcalIsoPho_               = conf.getParameter<edm::InputTag> ("HcalIsoPho");
-  HcalNonIsoPho_            = conf.getParameter<edm::InputTag> ("HcalNonIsoPho");
-  IsoPhoTrackIsol_          = conf.getParameter<edm::InputTag> ("IsoPhoTrackIsol");
-  NonIsoPhoTrackIsol_       = conf.getParameter<edm::InputTag> ("NonIsoPhoTrackIsol");
-  IsoElectron_              = conf.getParameter<edm::InputTag> ("IsoElectrons");
-  NonIsoElectron_           = conf.getParameter<edm::InputTag> ("NonIsoElectrons");
-  IsoEleHcal_               = conf.getParameter<edm::InputTag> ("HcalIsoEle");
-  NonIsoEleHcal_            = conf.getParameter<edm::InputTag> ("HcalNonIsoEle");
-  IsoEleTrackIsol_          = conf.getParameter<edm::InputTag> ("IsoEleTrackIsol");
-  NonIsoEleTrackIsol_       = conf.getParameter<edm::InputTag> ("NonIsoEleTrackIsol");
-  IsoElectronLW_            = conf.getParameter<edm::InputTag> ("IsoElectronsLargeWindows");
-  NonIsoElectronLW_         = conf.getParameter<edm::InputTag> ("NonIsoElectronsLargeWindows");
-  IsoEleTrackIsolLW_        = conf.getParameter<edm::InputTag> ("IsoEleTrackIsolLargeWindows");
-  NonIsoEleTrackIsolLW_     = conf.getParameter<edm::InputTag> ("NonIsoEleTrackIsolLargeWindows");
-  L1IsoPixelSeeds_          = conf.getParameter<edm::InputTag> ("PixelSeedL1Iso");
-  L1NonIsoPixelSeeds_       = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIso");
-  L1IsoPixelSeedsLW_        = conf.getParameter<edm::InputTag> ("PixelSeedL1IsoLargeWindows");
-  L1NonIsoPixelSeedsLW_     = conf.getParameter<edm::InputTag> ("PixelSeedL1NonIsoLargeWindows");
-
-  // AlCa OpenHLT input collections  
-  EERecHitTag_              = conf.getParameter<edm::InputTag> ("EERecHits"); 
-  EBRecHitTag_              = conf.getParameter<edm::InputTag> ("EBRecHits"); 
-  pi0EBRecHitTag_           = conf.getParameter<edm::InputTag> ("pi0EBRecHits");  
-  pi0EERecHitTag_           = conf.getParameter<edm::InputTag> ("pi0EERecHits");  
-  HBHERecHitTag_            = conf.getParameter<edm::InputTag> ("HBHERecHits");  
-  HORecHitTag_              = conf.getParameter<edm::InputTag> ("HORecHits");  
-  HFRecHitTag_              = conf.getParameter<edm::InputTag> ("HFRecHits");  
-  IsoPixelTrackTagL3_       = conf.getParameter<edm::InputTag> ("IsoPixelTracksL3"); 
 
   m_file = 0;   // set to null
   errCnt = 0;
@@ -139,20 +90,13 @@ HLTAnalyzer::HLTAnalyzer(edm::ParameterSet const& conf) {
   // Initialize the tree
   HltTree = new TTree("HltTree", "");
 
-  // Setup the different analysis
-  jet_analysis_.setup(conf, HltTree);
-  bjet_analysis_.setup(conf, HltTree);
-  elm_analysis_.setup(conf, HltTree);
-  muon_analysis_.setup(conf, HltTree);
-  alca_analysis_.setup(conf, HltTree); 
-  track_analysis_.setup(conf, HltTree);
-  mct_analysis_.setup(conf, HltTree);
   hlt_analysis_.setup(conf, HltTree);
   evt_header_.setup(HltTree);
 }
 
 // Boiler-plate "analyze" method declaration for an analyzer module.
 void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup) {
+  cout <<"HLTAnalyzer Start!"<<endl;
 
   // To get information from the event setup, you must request the "Record"
   // which contains it and then extract the object you need
@@ -161,6 +105,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
 
   // These declarations create handles to the types of records that you want
   // to retrieve from event "iEvent".
+
   edm::Handle<CaloJetCollection>                    recjets;
   edm::Handle<CaloJetCollection>                    reccorjets;
   edm::Handle<GenJetCollection>                     genjets;
@@ -169,7 +114,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<GenMETCollection>                     genmet;
   edm::Handle<METCollection>                        ht;
   edm::Handle<CandidateView>                        mctruth;
-  edm::Handle<double>                               genEventScale;
+  edm::Handle<GenEventInfoProduct>                  genEventInfo;
   edm::Handle<std::vector<SimTrack> >               simTracks;
   edm::Handle<std::vector<SimVertex> >              simVertices;
   edm::Handle<MuonCollection>                       muon;
@@ -186,36 +131,12 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
 
   edm::Handle<RecoChargedCandidateCollection>       mucands2, mucands3;
   edm::Handle<edm::ValueMap<bool> >                 isoMap2,  isoMap3;
-  //  edm::Handle<MuonTrackLinksCollection>             mulinks;
-  edm::Handle<reco::HLTTauCollection>               taus;
 
   // btag OpenHLT input collections
   edm::Handle<edm::View<reco::Jet> >                hRawBJets;
   edm::Handle<edm::View<reco::Jet> >                hCorrectedBJets;
-  edm::Handle<reco::JetTagCollection>               hLifetimeBJetsL25;
-  edm::Handle<reco::JetTagCollection>               hLifetimeBJetsL3;
-  edm::Handle<reco::JetTagCollection>               hLifetimeBJetsL25Relaxed;
-  edm::Handle<reco::JetTagCollection>               hLifetimeBJetsL3Relaxed;
-  edm::Handle<reco::JetTagCollection>               hSoftmuonBJetsL25;
-  edm::Handle<reco::JetTagCollection>               hSoftmuonBJetsL3;
-  edm::Handle<reco::JetTagCollection>               hPerformanceBJetsL25;
-  edm::Handle<reco::JetTagCollection>               hPerformanceBJetsL3;
 
   // egamma OpenHLT input collections
-  edm::Handle<GsfElectronCollection>                electrons;
-  edm::Handle<PhotonCollection>                     photons;
-  edm::Handle<reco::ElectronCollection>             electronIsoHandle;
-  edm::Handle<reco::ElectronCollection>             electronIsoHandleLW;
-  edm::Handle<reco::ElectronCollection>             electronNonIsoHandle;
-  edm::Handle<reco::ElectronCollection>             electronNonIsoHandleLW;
-  edm::Handle<reco::ElectronIsolationMap>           NonIsoTrackEleIsolMap;
-  edm::Handle<reco::ElectronIsolationMap>           NonIsoTrackEleIsolMapLW;
-  edm::Handle<reco::ElectronIsolationMap>           TrackEleIsolMap;
-  edm::Handle<reco::ElectronIsolationMap>           TrackEleIsolMapLW;
-  edm::Handle<reco::ElectronSeedCollection>         L1IsoPixelSeedsMap;
-  edm::Handle<reco::ElectronSeedCollection>         L1IsoPixelSeedsMapLW;
-  edm::Handle<reco::ElectronSeedCollection>         L1NonIsoPixelSeedsMap;
-  edm::Handle<reco::ElectronSeedCollection>         L1NonIsoPixelSeedsMapLW;
   edm::Handle<reco::RecoEcalCandidateCollection>    recoIsolecalcands;
   edm::Handle<reco::RecoEcalCandidateCollection>    recoNonIsolecalcands;
   edm::Handle<reco::RecoEcalCandidateIsolationMap>  EcalIsolMap;
@@ -227,21 +148,8 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   edm::Handle<reco::RecoEcalCandidateIsolationMap>  TrackIsolMap;
   edm::Handle<reco::RecoEcalCandidateIsolationMap>  TrackNonIsolMap;
 
-  // AlCa OpenHLT input collections   
-  edm::Handle<EBRecHitCollection>             ebrechits;  
-  edm::Handle<EERecHitCollection>             eerechits;   
-  edm::Handle<EBRecHitCollection>             pi0ebrechits;   
-  edm::Handle<EERecHitCollection>             pi0eerechits;    
-  edm::Handle<HBHERecHitCollection>           hbherechits;   
-  edm::Handle<HORecHitCollection>             horechits;   
-  edm::Handle<HFRecHitCollection>             hfrechits;   
-  edm::Handle<reco::IsolatedPixelTrackCandidateCollection> isopixeltracksL3; 
 
-  // new stuff for the egamma EleId
-   edm::InputTag ecalRechitEBTag (string("hltEcalRegionalEgammaRecHit:EcalRecHitsEB"));
-   edm::InputTag ecalRechitEETag (string("hltEcalRegionalEgammaRecHit:EcalRecHitsEE"));
-   EcalClusterLazyTools lazyTools( iEvent, iSetup, ecalRechitEBTag, ecalRechitEETag);
-
+  cout <<"HLTAnalyzer Setup!"<<endl;
   edm::ESHandle<MagneticField>                theMagField;
   iSetup.get<IdealMagneticFieldRecord>().get(theMagField);
 
@@ -263,22 +171,15 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     
   // extract the collections from the event, check their validity and log which are missing
   std::vector<MissingCollectionInfo> missing;
-
+  cout <<"BeamSpot"<<endl;
+/*
   //get the BeamSpot
   getCollection( iEvent, missing, recoBeamSpotHandle,       BSProducer_ ,          "Beam Spot handle");
   // gets its position
   reco::BeamSpot::Point BSPosition(0,0,0);
   BSPosition = recoBeamSpotHandle->position();
 
-  getCollection( iEvent, missing, recjets,         recjets_,           kRecjets );
-  getCollection( iEvent, missing, reccorjets,      reccorjets_,        kRecCorjets );
-  getCollection( iEvent, missing, genjets,         genjets_,           kGenjets );
-  getCollection( iEvent, missing, recmet,          recmet_,            kRecmet );
-  getCollection( iEvent, missing, genmet,          genmet_,            kGenmet );
-  getCollection( iEvent, missing, caloTowers,      calotowers_,        kCaloTowers );
-  getCollection( iEvent, missing, ht,              ht_,                kHt );
-  getCollection( iEvent, missing, muon,            muon_,              kMuon );
-  getCollection( iEvent, missing, taus,            HLTTau_,            kTaus );
+*/
   getCollection( iEvent, missing, hltresults,      hltresults_,        kHltresults );
   getCollection( iEvent, missing, l1extemi,        m_l1extraemi,       kL1extemi );
   getCollection( iEvent, missing, l1extemn,        m_l1extraemn,       kL1extemn );
@@ -292,72 +193,21 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   getCollection( iEvent, missing, l1GtOMRec,       gtObjectMap_,       kL1GtOMRec );
   getCollection( iEvent, missing, gctBitCounts,     gctBitCounts_,      kL1GctBitCounts );
   getCollection( iEvent, missing, gctRingSums,      gctRingSums_,       kL1GctRingSums );
+cout <<"L1 loaded!!!"<<endl;
+
   getCollection( iEvent, missing, mctruth,         mctruth_,           kMctruth );
   getCollection( iEvent, missing, simTracks,       simhits_,           kSimhit );
   getCollection( iEvent, missing, simVertices,     simhits_,           kSimhit );
-  getCollection( iEvent, missing, genEventScale,   genEventScale_,     kGenEventScale );
-  getCollection( iEvent, missing, mucands2,        MuCandTag2_,        kMucands2 );
-  getCollection( iEvent, missing, mucands3,        MuCandTag3_,        kMucands3 );
-  getCollection( iEvent, missing, isoMap2,         MuIsolTag2_,        kIsoMap2 );
-  getCollection( iEvent, missing, isoMap3,         MuIsolTag3_,        kIsoMap3 );
-  //  getCollection( iEvent, missing, mulinks,         MuLinkTag_,         kMulinks );
-  getCollection( iEvent, missing, hRawBJets,                m_rawBJets,                 kBTagJets );
-  getCollection( iEvent, missing, hCorrectedBJets,          m_correctedBJets,           kBTagCorrectedJets );
-  getCollection( iEvent, missing, hLifetimeBJetsL25,        m_lifetimeBJetsL25,         kBTagLifetimeBJetsL25 );
-  getCollection( iEvent, missing, hLifetimeBJetsL3,         m_lifetimeBJetsL3,          kBTagLifetimeBJetsL3 );
-  getCollection( iEvent, missing, hLifetimeBJetsL25Relaxed, m_lifetimeBJetsL25Relaxed,  kBTagLifetimeBJetsL25Relaxed );
-  getCollection( iEvent, missing, hLifetimeBJetsL3Relaxed,  m_lifetimeBJetsL3Relaxed,   kBTagLifetimeBJetsL3Relaxed );
-  getCollection( iEvent, missing, hSoftmuonBJetsL25,        m_softmuonBJetsL25,         kBTagSoftmuonBJetsL25 );
-  getCollection( iEvent, missing, hSoftmuonBJetsL3,         m_softmuonBJetsL3,          kBTagSoftmuonBJetsL3 );
-  getCollection( iEvent, missing, hPerformanceBJetsL25,     m_performanceBJetsL25,      kBTagPerformanceBJetsL25 );
-  getCollection( iEvent, missing, hPerformanceBJetsL3,      m_performanceBJetsL3,       kBTagPerformanceBJetsL3 );
-  getCollection( iEvent, missing, electrons,                Electron_,                  kElectrons );
-  getCollection( iEvent, missing, photons,                  Photon_,                    kPhotons );
-
+//  getCollection( iEvent, missing, genEventInfo,    genEventInfo_,      kGenEventInfo );
   //Read offline eleID results
   std::vector<edm::Handle<edm::ValueMap<float> > > eIDValueMap(4); 
-//   edm::InputTag electronLabelRobustTight_(string("eidRobustTight"));
-//   edm::InputTag electronLabelTight_(string("eidTight"));
-//   edm::InputTag electronLabelRobustLoose_(string("eidRobustLoose"));
-//   edm::InputTag electronLabelLoose_(string("eidLoose"));
-//   getCollection( iEvent, missing, eIDValueMap[0],   electronLabelRobustLoose_      ,       "EleId Robust-Loose");
-//   getCollection( iEvent, missing, eIDValueMap[1],   electronLabelRobustTight_      ,       "EleId Robust-Tight");
-//   getCollection( iEvent, missing, eIDValueMap[2],   electronLabelLoose_      ,       "EleId Loose");
-//   getCollection( iEvent, missing, eIDValueMap[3],   electronLabelTight_      ,       "EleId Tight");
 
-  //read all the OpenHLT egamma collections
-  getCollection( iEvent, missing, recoIsolecalcands,        CandIso_,                   kCandIso);
-  getCollection( iEvent, missing, recoNonIsolecalcands,     CandNonIso_,                kCandNonIso);
-  getCollection( iEvent, missing, EcalIsolMap,              EcalIso_,                   kEcalIso);
-  getCollection( iEvent, missing, EcalNonIsolMap,           EcalNonIso_,                kEcalNonIso);
-  getCollection( iEvent, missing, HcalIsolMap,              HcalIsoPho_,                kHcalIsoPho);
-  getCollection( iEvent, missing, HcalNonIsolMap,           HcalNonIsoPho_,             kHcalNonIsoPho);
-  getCollection( iEvent, missing, electronIsoHandleLW,      IsoElectronLW_,             kIsoElectron);
-  getCollection( iEvent, missing, electronIsoHandle,        IsoElectron_,               kIsoElectron);
-  getCollection( iEvent, missing, HcalEleIsolMap,           IsoEleHcal_,                kIsoEleHcal);
-  getCollection( iEvent, missing, TrackEleIsolMapLW,        IsoEleTrackIsolLW_,         kIsoEleTrackIsol);
-  getCollection( iEvent, missing, L1IsoPixelSeedsMapLW,     L1IsoPixelSeedsLW_,         kL1IsoPixelSeeds);
-  getCollection( iEvent, missing, L1IsoPixelSeedsMap,       L1IsoPixelSeeds_,           kL1IsoPixelSeeds);
-  getCollection( iEvent, missing, L1NonIsoPixelSeedsMapLW,  L1NonIsoPixelSeedsLW_,      kL1NonIsoPixelSeeds);
-  getCollection( iEvent, missing, L1NonIsoPixelSeedsMap,    L1NonIsoPixelSeeds_,        kL1NonIsoPixelSeeds);
-  getCollection( iEvent, missing, electronNonIsoHandleLW,   NonIsoElectronLW_,          kNonIsoElectron);
-  getCollection( iEvent, missing, electronNonIsoHandle,     NonIsoElectron_,            kNonIsoElectron);
-  getCollection( iEvent, missing, HcalEleNonIsolMap,        NonIsoEleHcal_,             kIsoEleHcal);
-  getCollection( iEvent, missing, NonIsoTrackEleIsolMapLW,  NonIsoEleTrackIsolLW_,      kNonIsoEleTrackIsol);
-  getCollection( iEvent, missing, NonIsoTrackEleIsolMap,    NonIsoEleTrackIsol_,        kNonIsoEleTrackIsol);
-  getCollection( iEvent, missing, TrackNonIsolMap,          NonIsoPhoTrackIsol_,        kNonIsoPhoTrackIsol);
-  getCollection( iEvent, missing, TrackEleIsolMap,          IsoEleTrackIsol_,           kIsoEleTrackIsol);
-  getCollection( iEvent, missing, TrackIsolMap,             IsoPhoTrackIsol_,           kIsoPhoTrackIsol);
-  getCollection( iEvent, missing, eerechits,                EERecHitTag_,               kEErechits ); 
-  getCollection( iEvent, missing, ebrechits,                EBRecHitTag_,               kEBrechits );  
-  getCollection( iEvent, missing, pi0eerechits,             pi0EERecHitTag_,            kpi0EErechits );  
-  getCollection( iEvent, missing, pi0ebrechits,             pi0EBRecHitTag_,            kpi0EBrechits );   
-  getCollection( iEvent, missing, hbherechits,              HBHERecHitTag_,             kHBHErechits );   
-  getCollection( iEvent, missing, horechits,                HORecHitTag_,               kHOrechits );   
-  getCollection( iEvent, missing, hfrechits,                HFRecHitTag_,               kHFrechits );   
-  getCollection( iEvent, missing, isopixeltracksL3,         IsoPixelTrackTagL3_,        kIsoPixelTracksL3 ); 
+  double ptHat=-1.;
+  if (genEventInfo.isValid()) {ptHat=genEventInfo->qScale();}
 
-  // print missing collections
+
+  cout <<"HLTAnalyzer Missing collections!"<<endl;
+    // print missing collections
   if (not missing.empty() and (errCnt < errMax())) {
     errCnt++;
     std::stringstream out;       
@@ -370,87 +220,7 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
   }
 
   // run the analysis, passing required event fragments
-  jet_analysis_.analyze(
-    recjets,
-    reccorjets,
-    genjets,
-    recmet,
-    genmet,
-    ht,
-    taus,
-    caloTowers,
-    HltTree);
-  
-  muon_analysis_.analyze(
-    muon,
-    mucands2,
-    isoMap2,
-    mucands3,
-    isoMap3,
-    //    mulinks,
-    HltTree);
-  
-   elm_analysis_.analyze(
-     electrons,
-     photons,
-     electronIsoHandle,
-     electronIsoHandleLW,
-     electronNonIsoHandle,
-     electronNonIsoHandleLW,
-     NonIsoTrackEleIsolMap,
-     NonIsoTrackEleIsolMapLW,
-     TrackEleIsolMap,
-     TrackEleIsolMapLW,
-     L1IsoPixelSeedsMap,
-     L1IsoPixelSeedsMapLW,
-     L1NonIsoPixelSeedsMap,
-     L1NonIsoPixelSeedsMapLW,
-     recoIsolecalcands,
-     recoNonIsolecalcands,
-     EcalIsolMap,
-     EcalNonIsolMap,
-     HcalEleIsolMap,
-     HcalEleNonIsolMap,
-     HcalIsolMap,
-     HcalNonIsolMap,
-     TrackIsolMap,
-     TrackNonIsolMap,
-     lazyTools,
-     theMagField,
-     BSPosition,
-     eIDValueMap,
-     HltTree);
-
-  mct_analysis_.analyze(
-    mctruth,
-    genEventScale,
-    simTracks,
-    simVertices,
-    HltTree);
-  
-  alca_analysis_.analyze(  
-    ebrechits,  
-    eerechits,  
-    hbherechits,  
-    horechits,  
-    hfrechits,  
-    pi0ebrechits,
-    pi0eerechits,
-    l1extemi, 
-    l1extemn,
-    l1extjetc, 
-    l1extjetf, 
-    l1exttaujet,
-    ecalmapping, 
-    geoHandle, 
-    pTopology, 
-    l1CaloGeom,
-    HltTree);  
-
-  track_analysis_.analyze( 
-    isopixeltracksL3, 
-    HltTree); 
-
+cout <<"=========Analysis!!!============"<<endl;
   hlt_analysis_.analyze(
     hltresults,
     l1extemi,
@@ -466,27 +236,18 @@ void HLTAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetu
     gctBitCounts,
     gctRingSums,
     HltTree);
-  
-  bjet_analysis_.analyze(
-    hRawBJets, 
-    hCorrectedBJets,
-    hLifetimeBJetsL25,
-    hLifetimeBJetsL3,
-    hLifetimeBJetsL25Relaxed,
-    hLifetimeBJetsL3Relaxed,
-    hSoftmuonBJetsL25,
-    hSoftmuonBJetsL3,
-    hPerformanceBJetsL25,
-    hPerformanceBJetsL3,
-    HltTree);
-
+cout <<"header!!!"<<endl;
   evt_header_.analyze(iEvent, HltTree);
 
+cout <<"goodgood!!!"<<endl;
   // std::cout << " Ending Event Analysis" << std::endl;
   // After analysis, fill the variables tree
+cout <<"goodgood!!!"<<endl;
   if (m_file)
     m_file->cd();
+cout <<"fill!!!"<<endl;
   HltTree->Fill();
+cout <<"filled!!!"<<endl;
 }
 
 // "endJob" is an inherited method that you may implement to do post-EOF processing and produce final output.
