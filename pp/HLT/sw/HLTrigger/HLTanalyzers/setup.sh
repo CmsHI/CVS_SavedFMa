@@ -7,5 +7,6 @@ cvs co $cvsdir
 cp $cvsdir/src/HLTAnalyzer.cc $local/src
 cp $cvsdir/interface/HLTAnalyzer.h $local/interface
 cp $cvsdir/python/HLTAnalyser_cfi.py $local/python
+cp $cvsdir/test/HLTAna.py $local/test
 scramv1 b
 
