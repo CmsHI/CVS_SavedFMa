@@ -66,7 +66,7 @@ def mycustomise(process):
   # process.output
   try:
     if ('default_output' not in options.output):
-      process.output.fileName = cms.untracked.string(options.output)
+      process.hltanalysis.RunParameters.HistogramFile = cms.untracked.string(options.output)
   except:
     print "no output module with the given name"
   # done
