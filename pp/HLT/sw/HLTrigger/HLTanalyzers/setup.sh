@@ -4,9 +4,9 @@ cd $CMSSW_BASE/src
 eval `scramv1 runtime -sh`
 cvs co -r CMSSW_3_3_4 HLTrigger/HLTanalyzers
 cvs co $cvsdir
-cp $cvsdir/src/HLTAnalyzer.cc $local/src
-cp $cvsdir/interface/HLTAnalyzer.h $local/interface
-cp $cvsdir/python/HLTAnalyser_cfi.py $local/python
-cp $cvsdir/test/HLTAna.py $local/test
+cp $cvsdir/src/HLTAnalyzer.cc $localdir/src
+cp $cvsdir/interface/HLTAnalyzer.h $localdir/interface
+cp $cvsdir/python/HLTAnalyser_cfi.py $localdir/python
+cp $cvsdir/test/HLTAna.py $localdir/test
 scramv1 b
 

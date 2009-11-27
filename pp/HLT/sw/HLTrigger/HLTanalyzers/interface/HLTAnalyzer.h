@@ -1,3 +1,5 @@
+// $Id:$
+
 #include <iostream>
 
 #include "HLTrigger/HLTanalyzers/interface/HLTEgamma.h"
