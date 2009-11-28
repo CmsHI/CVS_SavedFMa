@@ -22,11 +22,6 @@ options.parseArguments()
 
 # now define the customization
 def mycustomise(process):
-  # === event setup ===
-  # GR09_E_V6 for runs 121324+
-  process.GlobalTag.globaltag = "GR09_E_V6::All"
-  if 'Level1MenuOverride' in process.__dict__:
-    process.Level1MenuOverride.connect  = 'frontier://FrontierProd/CMS_COND_31X_L1T'
   # === report ===
   from L1Trigger.GlobalTriggerAnalyzer.l1GtTrigReport_cfi import l1GtTrigReport
   process.hltL1GtTrigReport = l1GtTrigReport
@@ -34,21 +29,21 @@ def mycustomise(process):
   process.L1AnalyzerEndpath = cms.EndPath( process.hltL1GtTrigReport )
 
   # Define the analyzer modules
-  process.load("HLTrigger.HLTanalyzers.HLTAnalyser_cfi")
-  process.analyzeThis = cms.EndPath( process.hltanalysis )
-  process.hltanalysis.l1GtObjectMapRecord="hltL1GtObjectMap::"+process.name_()
-  process.hltanalysis.l1GtReadoutRecord="hltGtDigis::"+process.name_()
-  process.hltanalysis.hltresults="TriggerResults::"+process.name_()
-  process.hltanalysis.RunParameters.Debug = False
+  process.load("HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi")
+  process.analyzeThis = cms.EndPath( process.hltbitanalysis )
+  process.hltbitanalysis.l1GtObjectMapRecord="hltL1GtObjectMap::"+process.name_()
+  process.hltbitanalysis.l1GtReadoutRecord="hltGtDigis::"+process.name_()
+  process.hltbitanalysis.hltresults="TriggerResults::"+process.name_()
+  #process.hltbitanalysis.RunParameters.Debug = False
 
   # delete unwanted parts
   del process.PrescaleService
-  del process.DQMOutput
   del process.HLTOutputBnotT0
   del process.HLTOutputB
   del process.HLTOutput
   del process.ESOutput
   del process.AlCaOutput
+  del process.DQMOutput
   del process.MONOutput
 
   # === custom job options ===
