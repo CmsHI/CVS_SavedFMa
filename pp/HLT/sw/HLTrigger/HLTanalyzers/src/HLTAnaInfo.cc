@@ -6,41 +6,37 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "HLTrigger/HLTanalyzers/interface/EventHeader.h"
+#include "DataFormats/Common/interface/Handle.h"
+#include "HLTrigger/HLTanalyzers/interface/HLTAnaInfo.h"
+#include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
+#include "HepMC/GenEvent.h"
 
-EventHeader::EventHeader() {
+HLTAnaInfo::HLTAnaInfo() {
 
   //set parameter defaults 
-  _Debug=false;
+  _Debug=true;
 }
 
-EventHeader::~EventHeader() {
+HLTAnaInfo::~HLTAnaInfo() {
 
 }
 
 /*  Setup the analysis to put the branch-variables into the tree. */
-void EventHeader::setup(TTree* HltTree) {
-
-	fRun = -1;
-	fEvent = -1;
-
-  HltTree->Branch("Run",&fRun,"Run/I");
-  HltTree->Branch("Event",&fEvent,"Event/I");
-  HltTree->Branch("LumiBlock",&fLumiBlock,"LumiBlock/I"); 
+void HLTAnaInfo::setup(TTree* HltTree) {
+  HltTree->Branch("evtType",&fEvtType,"evtType/I");
 }
 
 /* **Analyze the event** */
-void EventHeader::analyze(edm::Event const& iEvent, TTree* HltTree) {
-					
-		fRun 		= iEvent.id().run();
-		fEvent 	= iEvent.id().event();
-		fLumiBlock = iEvent.luminosityBlock();
+void HLTAnaInfo::analyze(edm::Event const& iEvent, TTree* HltTree) {
+  using namespace edm;
+  edm::Handle<HepMCProduct> mc;
+  iEvent.getByLabel("generator",mc);
+  const HepMC::GenEvent* evt = mc->GetEvent();
 
-    if (_Debug) {
-		
-			std::cout << "EventHeader -- run   = " << fRun << std::endl;
-			std::cout << "EventHeader -- event = " << fEvent << std::endl;
-			std::cout << "EventHeader -- lumisection = " << fLumiBlock << std::endl; 
-		}
+  fEvtType = evt->signal_process_id();
+
+  if (_Debug) {
+    std::cout << "HLTAnaInfo -- evtType   = " << fEvtType << std::endl;
+  }
 
 }

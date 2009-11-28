@@ -1,20 +1,17 @@
-#ifndef EVTHDR_H
-#define EVTHDR_H
+#ifndef HLTAnaInfo_H
+#define HLTAnaInfo_H
 
 #include "FWCore/Framework/interface/Event.h"
 #include "TChain.h"
 
 
-/** \class EventHeader
+/** \class HLTAnaInfo
   *  
-  * $Date: November 2006
-  * $Revision: 
-  * \author V. Rekovic - UMinn
   */
-class EventHeader {
+class HLTAnaInfo {
 public:
-  EventHeader(); 
-	~EventHeader();
+  HLTAnaInfo(); 
+	~HLTAnaInfo();
 
   void setup(TTree* tree);
 
@@ -24,9 +21,7 @@ public:
 private:
 
   // Tree variables
-	int fRun;
-	int fEvent;
-	int fLumiBlock;
+  int fEvtType;
 
   // input variables
   bool _Debug;
