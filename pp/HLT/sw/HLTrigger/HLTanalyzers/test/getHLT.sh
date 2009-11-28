@@ -1,6 +1,6 @@
 getsc=$CMSSW_BASE/src/HLTrigger/Configuration/test/getHLT.py
-menu=/cdaq/special/CirculatingBeam09/v2.0/HLT/V7
+menu=/online/collisions/week49/HLT/V2
 processName=HLTANA
-cmd="$getsc --globaltag GR09_E_V6::All --data orcoff:$menu $processName"
+cmd="$getsc --globaltag STARTUP3X_V8D::All --mc $menu $processName"
 echo $cmd
 eval $cmd
