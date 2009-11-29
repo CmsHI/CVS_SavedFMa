@@ -1,4 +1,4 @@
-# $Id:$
+# $Id: HLTAna.py,v 1.2 2009/11/27 11:27:51 loizides Exp $
 
 import FWCore.ParameterSet.Config as cms
 
@@ -59,8 +59,12 @@ process.load("Configuration.StandardSequences.L1Emulator_cff")
 #process.load("HLTrigger.HLTanalyzers.HLTopenCosmics_cff")
 
 # Define the analyzer modules
-process.load("HLTrigger.HLTanalyzers.HLTAnalyser_cfi")
-process.analyzeThis = cms.Path( process.hltanalysis )
+process.load("HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi")
+process.analyzeThis = cms.EndPath( process.hltbitanalysis )
+process.hltbitanalysis.l1GtObjectMapRecord="hltL1GtObjectMap::"+process.name_()
+process.hltbitanalysis.l1GtReadoutRecord="hltGtDigis::"+process.name_()
+process.hltbitanalysis.hltresults="TriggerResults::"+process.name_()
+process.analyzeThis = cms.Path( process.hltbitanalysis )
 
 # Schedule the whole thing
 process.schedule = cms.Schedule( 
