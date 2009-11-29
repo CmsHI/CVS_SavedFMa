@@ -22,6 +22,13 @@ options.parseArguments()
 
 # now define the customization
 def mycustomise(process):
+  # === if MC ===
+  isMC = True
+  if (isMC):
+    process.hltL1sL1BPTX = cms.EDFilter( "HLTBool",
+      result = cms.bool( True )
+    )
+
   # === report ===
   from L1Trigger.GlobalTriggerAnalyzer.l1GtTrigReport_cfi import l1GtTrigReport
   process.hltL1GtTrigReport = l1GtTrigReport
