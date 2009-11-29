@@ -68,6 +68,7 @@ HLTBitAnalyzer::HLTBitAnalyzer(edm::ParameterSet const& conf) {
   // Setup the different analysis
   hlt_analysis_.setup(conf, HltTree);
   evt_header_.setup(HltTree);
+  hlt_anainfo_.setup(HltTree);
 }
 
 // Boiler-plate "analyze" method declaration for an analyzer module.
@@ -132,6 +133,7 @@ void HLTBitAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iS
     HltTree);
 
   evt_header_.analyze(iEvent, HltTree);
+  hlt_anainfo_.analyze(iEvent, HltTree);
 
   // std::cout << " Ending Event Analysis" << std::endl;
   // After analysis, fill the variables tree

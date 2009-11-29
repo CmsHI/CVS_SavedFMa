@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "HLTrigger/HLTanalyzers/interface/EventHeader.h"
+#include "HLTrigger/HLTanalyzers/interface/HLTAnaInfo.h"
 #include "HLTrigger/HLTanalyzers/interface/HLTInfo.h"
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -44,6 +45,7 @@ private:
   ///Default analyses
 
   EventHeader evt_header_;
+  HLTAnaInfo  hlt_anainfo_;
   HLTInfo     hlt_analysis_;
 
   edm::InputTag hltresults_,genEventInfo_;
