@@ -1,4 +1,4 @@
-# $Id: HLTAna.py,v 1.2 2009/11/27 11:27:51 loizides Exp $
+# $Id: HLTAna.py,v 1.3 2009/11/29 20:27:30 frankma Exp $
 
 import FWCore.ParameterSet.Config as cms
 
@@ -60,10 +60,14 @@ process.load("Configuration.StandardSequences.L1Emulator_cff")
 
 # Define the analyzer modules
 process.load("HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi")
-process.analyzeThis = cms.EndPath( process.hltbitanalysis )
+
+# These are the three main input tags to be changed
+# to suit the sample at hand
 process.hltbitanalysis.l1GtObjectMapRecord="hltL1GtObjectMap::"+process.name_()
 process.hltbitanalysis.l1GtReadoutRecord="hltGtDigis::"+process.name_()
 process.hltbitanalysis.hltresults="TriggerResults::"+process.name_()
+
+# path definition
 process.analyzeThis = cms.Path( process.hltbitanalysis )
 
 # Schedule the whole thing
