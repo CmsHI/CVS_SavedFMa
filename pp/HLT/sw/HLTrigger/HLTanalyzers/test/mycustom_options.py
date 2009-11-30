@@ -23,7 +23,7 @@ options.parseArguments()
 # now define the customization
 def mycustomise(process):
   # === if MC ===
-  isMC = True
+  isMC = False
   if (isMC):
     process.hltL1sL1BPTX = cms.EDFilter( "HLTBool",
       result = cms.bool( True )
@@ -32,8 +32,8 @@ def mycustomise(process):
   # === report ===
   from L1Trigger.GlobalTriggerAnalyzer.l1GtTrigReport_cfi import l1GtTrigReport
   process.hltL1GtTrigReport = l1GtTrigReport
-  process.hltL1GtTrigReport.L1GtRecordInputTag = cms.InputTag( 'hltGtDigis' )
-  process.L1AnalyzerEndpath = cms.EndPath( process.hltL1GtTrigReport )
+  process.hltL1GtTrigReport.L1GtRecordInputTag = cms.InputTag( 'hltGtDigis',"",process.name_() )
+  #process.L1AnalyzerEndpath = cms.EndPath( process.hltL1GtTrigReport )
 
   # Define the analyzer modules
   process.load("HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi")
@@ -41,7 +41,9 @@ def mycustomise(process):
   process.hltbitanalysis.l1GtObjectMapRecord="hltL1GtObjectMap::"+process.name_()
   process.hltbitanalysis.l1GtReadoutRecord="hltGtDigis::"+process.name_()
   process.hltbitanalysis.hltresults="TriggerResults::"+process.name_()
-  #process.hltbitanalysis.RunParameters.Debug = False
+  # ana modes
+  process.hltbitanalysis.RunParameters.Monte = cms.bool(isMC)
+  process.hltbitanalysis.RunParameters.Debug = cms.bool(False)
 
   # delete unwanted parts
   del process.PrescaleService
