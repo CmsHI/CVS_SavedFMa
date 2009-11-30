@@ -16,5 +16,5 @@ cp $cvsdir/src/HLTBitAnalyzer.cc $localdir/src
 cp $cvsdir/interface/HLTBitAnalyzer.h $localdir/interface
 cp $cvsdir/python/HLTBitAnalyser_cfi.py $localdir/python
 cp $cvsdir/test/HLTAna.py $localdir/test
-scramv1 b
+#scramv1 b
 
