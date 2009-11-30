@@ -198,8 +198,11 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
 	pureRateErr[j] += OHltRateCounter::effErr((float)rcs[i]->pureCount[j],scaleddeno); 
 	cout << "N(passing " << menu->GetTriggerName(j) << ") = " << (float)rcs[i]->iCount[j] << endl;
 
-        for (int k=0;k<ntrig;k++){ 
+	//cout << "========= for each proc " << menu->GetTriggerName(j) << " ===========" << endl;
+	for (int k=0;k<ntrig;k++){ 
           coMa[j][k] += ((float)rcs[i]->overlapCount[j][k]);
+	  //cout << menu->GetTriggerName(j) << "," << menu->GetTriggerName(k) << " " << (float)rcs[i]->overlapCount[j][k]
+	    //<< "  den: " << (float)rcs[i]->iCount[j] << endl;
         } 
         coDen[j] += ((float)rcs[i]->iCount[j]); // ovelap denominator 
       }
@@ -228,9 +231,14 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
     pureRateErr[i] = sqrt(pureRateErr[i]);
     //cout<<menu->GetTriggerName(i)<<" "<<Rate[i]<<" +- "<<RateErr[i]<<endl;
 
+    /*
+    cout << endl << "========= All proc: " << menu->GetTriggerName(i) << "  ===========" << endl;
     for (int j=0;j<ntrig;j++){
+      cout << menu->GetTriggerName(i) << "," << menu->GetTriggerName(j) << " " << coMa[i][j]
+	   << "  den: " << coDen[i] << endl;
       coMa[i][j] = coMa[i][j]/coDen[i]; 
     }
+    */
   }
   
   rprint->SetupAll(Rate,RateErr,spureRate,spureRateErr,pureRate,pureRateErr,coMa);
@@ -323,10 +331,18 @@ void calcEff(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
     }
   }
 
+  // final calc
   for (int i=0;i<ntrig;i++) {
+    //cout << menu->GetTriggerName(i) << " ";
+    cout << endl << "========= All proc: " << menu->GetTriggerName(i) << "  ===========" << endl;
     for (int j=0;j<ntrig;j++){
+      cout << menu->GetTriggerName(i) << "," << menu->GetTriggerName(j) << " " << coMa[i][j]
+	   << "  den: " << coDen[i] << endl;
+      coMa[i][j] = coMa[i][j]/coDen[i]; 
       coMa[i][j] = coMa[i][j]/coDen[i];
+      cout << coMa[i][j] << " ";
     }
+    cout << endl;
   }
   
 
