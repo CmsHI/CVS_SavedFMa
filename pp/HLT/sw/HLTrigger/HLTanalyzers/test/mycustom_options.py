@@ -14,7 +14,6 @@ print "cmssw command line arguements:",sys.argv
 import FWCore.ParameterSet.VarParsing as VarParsing
 options = VarParsing.VarParsing ('standard')
 # set default values
-#options.files = ''
 options.maxEvents = -1
 options.output = 'default_output.root'
 # get and parse the command line arguments
@@ -66,8 +65,7 @@ def mycustomise(process):
     if ("files" in i) or("files_load" in i):
       runInput=True
       break
-  print "Want job input from command project"
-  if ( runInput ):
+  if (runInput):
     process.source.fileNames = cms.untracked.vstring(options.files)
   # process.maxEvents
   process.maxEvents = cms.untracked.PSet(
