@@ -69,4 +69,6 @@ private:
   double _EtaMin,_EtaMax;
   TFile* m_file; // pointer to Histogram file
 
+  // input variables
+  bool _Monte,_Debug;
 };

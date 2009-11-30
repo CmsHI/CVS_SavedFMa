@@ -23,11 +23,24 @@ bool getCollection(const edm::Event & event, std::vector<MissingCollectionInfo> 
 }
 
 // Boiler-plate constructor definition of an analyzer module:
-HLTBitAnalyzer::HLTBitAnalyzer(edm::ParameterSet const& conf) {
+HLTBitAnalyzer::HLTBitAnalyzer(edm::ParameterSet const& conf) :
+  _Monte(false),
+  _Debug(false)
+{
+  // ana options
+  edm::ParameterSet myRunParams = conf.getParameter<edm::ParameterSet>("RunParameters") ;
+  vector<std::string> parameterNames = myRunParams.getParameterNames() ;
+  
+  for ( vector<std::string>::iterator iParam = parameterNames.begin();
+	iParam != parameterNames.end(); iParam++ ){
+    if  ( (*iParam) == "Monte" ) _Monte =  myRunParams.getParameter<bool>( *iParam );
+    else if ( (*iParam) == "Debug" ) _Debug =  myRunParams.getParameter<bool>( *iParam );
+  }
 
   // If your module takes parameters, here is where you would define
   // their names and types, and access them to initialize internal
   // variables. Example as follows:
+
   std::cout << " Beginning HLTBitAnalyzer Analysis " << std::endl;
 
   l1extramu_        = conf.getParameter<std::string>   ("l1extramu");
@@ -68,7 +81,7 @@ HLTBitAnalyzer::HLTBitAnalyzer(edm::ParameterSet const& conf) {
   // Setup the different analysis
   hlt_analysis_.setup(conf, HltTree);
   evt_header_.setup(HltTree);
-  hlt_anainfo_.setup(HltTree);
+  if (_Monte) hlt_anainfo_.setup(HltTree);
 }
 
 // Boiler-plate "analyze" method declaration for an analyzer module.
@@ -133,7 +146,7 @@ void HLTBitAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iS
     HltTree);
 
   evt_header_.analyze(iEvent, HltTree);
-  hlt_anainfo_.analyze(iEvent, HltTree);
+  if (_Monte) hlt_anainfo_.analyze(iEvent, HltTree);
 
   // std::cout << " Ending Event Analysis" << std::endl;
   // After analysis, fill the variables tree
