@@ -1,4 +1,4 @@
-# $Id: HLTAna.py,v 1.3 2009/11/29 20:27:30 frankma Exp $
+# $Id: HLTAna.py,v 1.4 2009/11/29 20:32:37 frankma Exp $
 
 import FWCore.ParameterSet.Config as cms
 
@@ -66,6 +66,10 @@ process.load("HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi")
 process.hltbitanalysis.l1GtObjectMapRecord="hltL1GtObjectMap::"+process.name_()
 process.hltbitanalysis.l1GtReadoutRecord="hltGtDigis::"+process.name_()
 process.hltbitanalysis.hltresults="TriggerResults::"+process.name_()
+
+# Ana modes
+process.hltbitanalysis.RunParameters.Monte = False
+process.hltbitanalysis.RunParameters.Debug = cms.bool(False)
 
 # path definition
 process.analyzeThis = cms.Path( process.hltbitanalysis )
