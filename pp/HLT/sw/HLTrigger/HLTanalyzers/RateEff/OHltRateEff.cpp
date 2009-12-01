@@ -68,6 +68,7 @@ int main(int argc, char *argv[]){
   }
   OHltRatePrinter* rprint = new OHltRatePrinter();
   calcRates(ocfg,omenu,procs,rcs,rprint,hltDatasets);
+  cout << endl << "finished calcRates" << endl;
 
   /* **** */
   // Get Seed prescales
@@ -81,6 +82,7 @@ int main(int argc, char *argv[]){
     rprint->printRatesTwiki(ocfg,omenu);     
     rprint->printPrescalesCfg(ocfg,omenu);
     rprint->writeHistos(ocfg,omenu);
+    cout << endl << "finished writeHistos" << endl;
     char sLumi[10],sEnergy[10];
     sprintf(sEnergy,"%1.0f",ocfg->cmsEnergy);
     sprintf(sLumi,"%1.1e",ocfg->iLumi);
@@ -90,10 +92,11 @@ int main(int argc, char *argv[]){
 							  ocfg->alcaCondition + TString("_") +
 							  ocfg->versionTag;
 // 		printf("About to call printHLTDatasets\n"); //RR
-    rprint->printHLTDatasets(ocfg,omenu,hltDatasets,hltTableFileName,3);
+    //rprint->printHLTDatasets(ocfg,omenu,hltDatasets,hltTableFileName,3);
   }
   /* **** */
   // Calculate Efficiencies
+  /*
   vector<OHltRateCounter*> ecs; ecs.clear();
   for (unsigned int i=0;i<procs.size();i++) {
     ecs.push_back(new OHltRateCounter(omenu->GetTriggerSize()));
@@ -102,10 +105,11 @@ int main(int argc, char *argv[]){
 // 	printf("About to call calcEff\n");
   OHltEffPrinter* eprint = new OHltEffPrinter();
   float DenEff=0;
-  calcEff(ocfg,omenu,procs,ecs,eprint,DenEff,hltDatasets);
+  //calcEff(ocfg,omenu,procs,ecs,eprint,DenEff,hltDatasets);
 // 	printf("calcEff just executed. About to call printEffASCII\n");
-  if(DenEff != 0)
-    eprint->printEffASCII(ocfg,omenu);
+  //if(DenEff != 0)
+    //eprint->printEffASCII(ocfg,omenu);
+    */
   
   //
   return 0;
@@ -225,20 +229,19 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
     }
   }
 
+  cout << "========= All Proc: ==========" << endl;
   for (int i=0;i<ntrig;i++) {
     RateErr[i] = sqrt(RateErr[i]);
     spureRateErr[i] = sqrt(spureRateErr[i]);
     pureRateErr[i] = sqrt(pureRateErr[i]);
     //cout<<menu->GetTriggerName(i)<<" "<<Rate[i]<<" +- "<<RateErr[i]<<endl;
 
-    /*
-    cout << endl << "========= All proc: " << menu->GetTriggerName(i) << "  ===========" << endl;
+    cout << endl << "===== " << i << ") " << menu->GetTriggerName(i) << "  =====" << endl;
     for (int j=0;j<ntrig;j++){
-      cout << menu->GetTriggerName(i) << "," << menu->GetTriggerName(j) << " " << coMa[i][j]
-	   << "  den: " << coDen[i] << endl;
+      cout << j << " " << menu->GetTriggerName(i) << "," << menu->GetTriggerName(j) << " " << coMa[i][j] << "  den: " << coDen[i];
       coMa[i][j] = coMa[i][j]/coDen[i]; 
+      cout << " rat: " << coMa[i][j] << endl;
     }
-    */
   }
   
   rprint->SetupAll(Rate,RateErr,spureRate,spureRateErr,pureRate,pureRateErr,coMa);
@@ -331,6 +334,7 @@ void calcEff(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
     }
   }
 
+  cout << endl << "final " << endl;
   // final calc
   for (int i=0;i<ntrig;i++) {
     //cout << menu->GetTriggerName(i) << " ";
