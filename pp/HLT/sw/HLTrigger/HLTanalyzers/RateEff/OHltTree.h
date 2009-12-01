@@ -530,7 +530,7 @@ public :
   Int_t           HLT_L1_BPTX; 
   Int_t           HLT_L1_BSC; 
   Int_t           HLT_L1_HFtech; 
-  Int_t           HLT_HFThreshold; 
+  Int_t           HLT_HFThreshold3; 
   Int_t           HLT_Physics;
   Int_t           HLT_PhysicsNoMuon;
   Int_t           HLT_Calibration; 
@@ -1082,7 +1082,7 @@ public :
   TBranch        *b_HLT_L1_BPTX;   //!  
   TBranch        *b_HLT_L1_BSC;   //!  
   TBranch        *b_HLT_L1_HFtech;   //!  
-  TBranch        *b_HLT_HFThreshold;   //!  
+  TBranch        *b_HLT_HFThreshold3;   //!  
   TBranch        *b_HLT_Physics;   //!  
   TBranch        *b_HLT_PhysicsNoMuon;   //!  
   TBranch        *b_HLT_Calibration;   //!  
@@ -1814,7 +1814,7 @@ void OHltTree::Init(TTree *tree)
   fChain->SetBranchAddress("HLT_L1_BPTX", &HLT_L1_BPTX, &b_HLT_L1_BPTX);  
   fChain->SetBranchAddress("HLT_L1_BSC", &HLT_L1_BSC, &b_HLT_L1_BSC);  
   fChain->SetBranchAddress("HLT_L1_HFtech", &HLT_L1_HFtech, &b_HLT_L1_HFtech);  
-  fChain->SetBranchAddress("HLT_HFThreshold", &HLT_HFThreshold, &b_HLT_HFThreshold);  
+  fChain->SetBranchAddress("HLT_HFThreshold3", &HLT_HFThreshold3, &b_HLT_HFThreshold3);  
   fChain->SetBranchAddress("HLT_Physics", &HLT_Physics, &b_HLT_Physics);  
   fChain->SetBranchAddress("HLT_PhysicsNoMuon", &HLT_PhysicsNoMuon, &b_HLT_PhysicsNoMuon);  
   fChain->SetBranchAddress("HLT_Calibration", &HLT_Calibration, &b_HLT_Calibration);  
@@ -2075,7 +2075,7 @@ void OHltTree::Init(TTree *tree)
   fChain->SetBranchAddress("HLT_L1_BPTX", &map_BitOfStandardHLTPath["HLT_L1_BPTX"], &b_HLT_L1_BPTX);   
   fChain->SetBranchAddress("HLT_L1_BSC", &map_BitOfStandardHLTPath["HLT_L1_BSC"], &b_HLT_L1_BSC);   
   fChain->SetBranchAddress("HLT_L1_HFtech", &map_BitOfStandardHLTPath["HLT_L1_HFtech"], &b_HLT_L1_HFtech);   
-  fChain->SetBranchAddress("HLT_HFThreshold", &map_BitOfStandardHLTPath["HLT_HFThreshold"], &b_HLT_HFThreshold);   
+  fChain->SetBranchAddress("HLT_HFThreshold3", &map_BitOfStandardHLTPath["HLT_HFThreshold3"], &b_HLT_HFThreshold3);   
   fChain->SetBranchAddress("HLT_Physics", &map_BitOfStandardHLTPath["HLT_Physics"], &b_HLT_Physics);   
   fChain->SetBranchAddress("HLT_PhysicsNoMuon", &map_BitOfStandardHLTPath["HLT_PhysicsNoMuon"], &b_HLT_PhysicsNoMuon);   
   fChain->SetBranchAddress("HLT_Calibration", &map_BitOfStandardHLTPath["HLT_Calibration"], &b_HLT_Calibration);   
