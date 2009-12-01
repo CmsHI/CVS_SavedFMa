@@ -9,7 +9,7 @@ hltbitanalysis = cms.EDAnalyzer("HLTBitAnalyzer",
 
     l1extramc                       = cms.string('hltL1extraParticles'),
     l1extramu                       = cms.string('hltL1extraParticles'),
-    hltresults                      = cms.InputTag("TriggerResults"),
+    hltresults                      = cms.InputTag("TriggerResults::HLT"),
 
     ### Run parameters
     RunParameters = cms.PSet(
