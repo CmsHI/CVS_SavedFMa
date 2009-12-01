@@ -239,7 +239,10 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
     cout << endl << "===== " << i << ") " << menu->GetTriggerName(i) << "  =====" << endl;
     for (int j=0;j<ntrig;j++){
       cout << j << " " << menu->GetTriggerName(i) << "," << menu->GetTriggerName(j) << " " << coMa[i][j] << "  den: " << coDen[i];
-      coMa[i][j] = coMa[i][j]/coDen[i]; 
+      if (coDen[i]!=0)
+	coMa[i][j] = coMa[i][j]/coDen[i]; 
+      else
+	coMa[i][j] = -1;
       cout << " rat: " << coMa[i][j] << endl;
     }
   }
