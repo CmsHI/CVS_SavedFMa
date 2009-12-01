@@ -117,7 +117,7 @@ void HLTBitAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iS
 
 
   // print missing collections
-  if (not missing.empty() and (errCnt < errMax())) {
+  if (_Debug and (not missing.empty()) and (errCnt < errMax())) {
     errCnt++;
     std::stringstream out;       
     out <<  "OpenHLT analyser - missing collections:";
