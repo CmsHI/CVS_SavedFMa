@@ -7,7 +7,7 @@ localdir=HLTrigger/HLTanalyzers
 
 # check-out code
 cvs co -r HEAD HLTrigger/HLTanalyzers
-cvs co $cvsdir
+cvs co -r HA004 $cvsdir
 
 # cp the private code into HLTrigger/HLTanalyzers
 cp $cvsdir/src/HLTAnaInfo.cc $localdir/src
