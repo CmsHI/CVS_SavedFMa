@@ -2,8 +2,8 @@ cvsdir=UserCode/SavedFMa/pp/HLT/sw/HLTrigger/HLTanalyzers
 localdir=HLTrigger/HLTanalyzers
 
 # setup project area
-cd $CMSSW_BASE/src
-eval `scramv1 runtime -sh`
+#cd $CMSSW_BASE/src
+#eval `scramv1 runtime -sh`
 
 # check-out code
 cvs co -r HEAD HLTrigger/HLTanalyzers
