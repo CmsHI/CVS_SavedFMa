@@ -1,3 +1,5 @@
+# $Id:$
+
 cvsdir=UserCode/SavedFMa/pp/HLT/sw/HLTrigger/HLTanalyzers
 localdir=HLTrigger/HLTanalyzers
 
@@ -17,5 +19,6 @@ cp $cvsdir/interface/HLTBitAnalyzer.h $localdir/interface
 cp $cvsdir/python/HLTBitAnalyser_cfi.py $localdir/python
 cp $cvsdir/test/HLTBitAnalysis_cfg.py $localdir/test
 touch HLTrigger/HLTanalyzers/BuildFile
+rename HLTrigger/HLTanalyzers/python/HLTopen_cff.py HLTrigger/HLTanalyzers/python/HLTopen_cff.py.keep
 #scramv1 b
 
