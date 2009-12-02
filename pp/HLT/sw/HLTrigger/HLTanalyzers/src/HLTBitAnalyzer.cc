@@ -71,9 +71,8 @@ HLTBitAnalyzer::HLTBitAnalyzer(edm::ParameterSet const& conf) :
   _HistName = runParameters.getUntrackedParameter<std::string>("HistogramFile", "test.root");
 
   // open the tree file
-  m_file = new TFile(_HistName.c_str(), "RECREATE");
-  if (m_file)
-    m_file->cd();
+  m_file = new TFile(_HistName.c_str(), "RECREATE", "", 6);
+  TDirectory::TContext context(m_file);
 
   // Initialize the tree
   HltTree = new TTree("HltTree", "");
@@ -150,16 +149,14 @@ void HLTBitAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iS
 
   // std::cout << " Ending Event Analysis" << std::endl;
   // After analysis, fill the variables tree
-  if (m_file)
-    m_file->cd();
+  TDirectory::TContext context(m_file);
   HltTree->Fill();
 }
 
 // "endJob" is an inherited method that you may implement to do post-EOF processing and produce final output.
 void HLTBitAnalyzer::endJob() {
 
-  if (m_file)
-    m_file->cd();
+  TDirectory::TContext context(m_file);
   
   HltTree->Write();
   delete HltTree;

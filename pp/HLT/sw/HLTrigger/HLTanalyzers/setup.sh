@@ -16,5 +16,6 @@ cp $cvsdir/src/HLTBitAnalyzer.cc $localdir/src
 cp $cvsdir/interface/HLTBitAnalyzer.h $localdir/interface
 cp $cvsdir/python/HLTBitAnalyser_cfi.py $localdir/python
 cp $cvsdir/test/HLTBitAnalysis_cfg.py $localdir/test
+touch HLTrigger/HLTanalyzers/BuildFile
 #scramv1 b
 
