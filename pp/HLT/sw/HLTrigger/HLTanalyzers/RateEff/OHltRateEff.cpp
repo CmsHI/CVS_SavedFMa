@@ -66,7 +66,8 @@ int main(int argc, char *argv[]){
   for (unsigned int i=0;i<procs.size();i++) {
     rcs.push_back(new OHltRateCounter(omenu->GetTriggerSize()));
   }
-  OHltRatePrinter* rprint = new OHltRatePrinter();
+  // use construction with new TFile
+  OHltRatePrinter* rprint = new OHltRatePrinter(ocfg,omenu);
   calcRates(ocfg,omenu,procs,rcs,rprint,hltDatasets);
   cout << endl << "finished calcRates" << endl;
 
