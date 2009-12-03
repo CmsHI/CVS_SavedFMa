@@ -41,7 +41,7 @@ HLTBitAnalyzer::HLTBitAnalyzer(edm::ParameterSet const& conf) :
   // their names and types, and access them to initialize internal
   // variables. Example as follows:
 
-  std::cout << " Beginning HLTBitAnalyzer Analysis " << std::endl;
+  //std::cout << " Beginning HLTBitAnalyzer Analysis " << std::endl;
 
   l1extramu_        = conf.getParameter<std::string>   ("l1extramu");
   m_l1extramu       = edm::InputTag(l1extramu_, "");
