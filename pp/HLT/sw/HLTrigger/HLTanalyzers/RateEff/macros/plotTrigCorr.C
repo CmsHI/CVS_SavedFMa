@@ -1,5 +1,5 @@
-void plotTrigCorr(const char * fname = "hltmenu_1TeV_1.0e10_startup_collisionsv2_lucaBSCPixelSkim.root",
-		  const char * tag = "PD_MinBias")
+void plotTrigCorr(const char * fname = "../hltmenu_1TeV_1.0e10_startup_pythiaD6T_ohlt_30k.root",
+		  const char * tag = "Pythia_MinBias")
 {
    TFile * f = new TFile(fname);
    f->ls();
