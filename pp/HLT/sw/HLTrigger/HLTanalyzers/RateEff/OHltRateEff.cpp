@@ -231,6 +231,10 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
   }
 
   cout << "========= All Proc: ==========" << endl;
+  // for trigger correlation and efficiency studies
+  TH2F *trigCorrNum = new TH2F("trigCorrNum","trigger correlation numerator",ntrig,1,ntrig+1,ntrig,1,ntrig+1);
+  TH1F *trigAcc = new TH1F("trigAcc","trigger accepts",ntrig,1,ntrig+1);
+  rprint->fr_->cd();
   for (int i=0;i<ntrig;i++) {
     RateErr[i] = sqrt(RateErr[i]);
     spureRateErr[i] = sqrt(spureRateErr[i]);
@@ -238,8 +242,13 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
     //cout<<menu->GetTriggerName(i)<<" "<<Rate[i]<<" +- "<<RateErr[i]<<endl;
 
     cout << endl << "===== " << i << ") " << menu->GetTriggerName(i) << "  =====" << endl;
+    trigAcc->SetBinContent(i+1,coDen[i]);
+    trigAcc->GetXaxis()->SetBinLabel(i+1,menu->GetTriggerName(i));
     for (int j=0;j<ntrig;j++){
       cout << j << " " << menu->GetTriggerName(i) << "," << menu->GetTriggerName(j) << " " << coMa[i][j] << "  den: " << coDen[i];
+      trigCorrNum->SetBinContent(i+1,j+1,coMa[i][j]);
+      trigCorrNum->GetXaxis()->SetBinLabel(i+1,menu->GetTriggerName(i));
+      trigCorrNum->GetYaxis()->SetBinLabel(j+1,menu->GetTriggerName(j));
       if (coDen[i]!=0)
 	coMa[i][j] = coMa[i][j]/coDen[i]; 
       else
@@ -248,6 +257,8 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
     }
   }
   
+  trigCorrNum->Write();
+  trigAcc->Write();
   rprint->SetupAll(Rate,RateErr,spureRate,spureRateErr,pureRate,pureRateErr,coMa);
   
 }
