@@ -1,13 +1,10 @@
-# $Id:$
+# $Id: setup.sh,v 1.12 2009/12/02 23:58:26 loizides Exp $
 
 cvsdir=UserCode/SavedFMa/pp/HLT/sw/HLTrigger/HLTanalyzers
 localdir=HLTrigger/HLTanalyzers
 
-# setup project area
-#cd $CMSSW_BASE/src
-#eval `scramv1 runtime -sh`
-
 # check-out code
+rm -rf HLTrigger/HLTanalyzers
 cvs co -r HEAD HLTrigger/HLTanalyzers
 cvs co -r HEAD $cvsdir
 
@@ -20,5 +17,5 @@ cp $cvsdir/python/HLTBitAnalyser_cfi.py $localdir/python
 cp $cvsdir/test/HLTBitAnalysis_cfg.py $localdir/test
 touch HLTrigger/HLTanalyzers/BuildFile
 rename HLTrigger/HLTanalyzers/python/HLTopen_cff.py HLTrigger/HLTanalyzers/python/HLTopen_cff.py.keep
-#scramv1 b
+
 
