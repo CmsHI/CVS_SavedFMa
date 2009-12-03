@@ -14,7 +14,7 @@
 HLTAnaInfo::HLTAnaInfo() {
 
   //set parameter defaults 
-  _Debug=true;
+  _Debug=false;
 }
 
 HLTAnaInfo::~HLTAnaInfo() {
