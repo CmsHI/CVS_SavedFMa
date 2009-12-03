@@ -232,9 +232,6 @@ void OHltRatePrinter::writeHistos(OHltConfig *cfg, OHltMenu *menu) {
   TH1F *throughput = new TH1F("throughput","throughput",nTrig,1,nTrig+1);
   TH1F *eventsize = new TH1F("eventsize","eventsize",nTrig,1,nTrig+1);
   TH2F *overlap = new TH2F("overlap","overlap",nTrig,1,nTrig+1,nTrig,1,nTrig+1);
-  // for trigger correlation and efficiency studies
-  TH2F *trigCorrNum = new TH2F("trigCorrNum","trigger correlation numerator",nTrig,1,nTrig+1,nTrig,1,nTrig+1);
-  TH1F *trigAcc = new TH1F("trigAcc","trigger accepts",nTrig,1,nTrig+1);
 
 
   float cumulRate = 0.;
