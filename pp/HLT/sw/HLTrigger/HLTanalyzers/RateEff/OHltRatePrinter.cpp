@@ -9,6 +9,14 @@
 #include "OHltRatePrinter.h"
 #include "OHltTree.h"
 
+//=== Constructor ===
+OHltRatePrinter::OHltRatePrinter(OHltConfig *cfg, OHltMenu *menu)
+{
+  TString tableFileName = GetFileName(cfg,menu); 
+  cout << "TFile created" << endl;
+  fr_ = new TFile(tableFileName+TString(".root"),"recreate");
+};
+
 void OHltRatePrinter::SetupAll(vector<float> tRate,vector<float> tRateErr,vector<float> tspureRate,
 			       vector<float> tspureRateErr,vector<float> tpureRate,
 			       vector<float> tpureRateErr,vector< vector<float> >tcoMa) {
@@ -215,8 +223,8 @@ void OHltRatePrinter::printL1RatesTwiki(OHltConfig *cfg, OHltMenu *menu) {
 void OHltRatePrinter::writeHistos(OHltConfig *cfg, OHltMenu *menu) {
   TString tableFileName = GetFileName(cfg,menu);
 
-  TFile *fr = new TFile(tableFileName+TString(".root"),"recreate");
-  fr->cd();
+  fr_->cd();
+  cout << "file as current dir" << endl;
   
   int nTrig = (int)menu->GetTriggerSize();
   TH1F *individual = new TH1F("individual","individual",nTrig,1,nTrig+1);
@@ -224,6 +232,9 @@ void OHltRatePrinter::writeHistos(OHltConfig *cfg, OHltMenu *menu) {
   TH1F *throughput = new TH1F("throughput","throughput",nTrig,1,nTrig+1);
   TH1F *eventsize = new TH1F("eventsize","eventsize",nTrig,1,nTrig+1);
   TH2F *overlap = new TH2F("overlap","overlap",nTrig,1,nTrig+1,nTrig,1,nTrig+1);
+  // for trigger correlation and efficiency studies
+  TH2F *trigCorrNum = new TH2F("trigCorrNum","trigger correlation numerator",nTrig,1,nTrig+1,nTrig,1,nTrig+1);
+  TH1F *trigAcc = new TH1F("trigAcc","trigger accepts",nTrig,1,nTrig+1);
 
 
   float cumulRate = 0.;
@@ -270,7 +281,8 @@ void OHltRatePrinter::writeHistos(OHltConfig *cfg, OHltMenu *menu) {
   eventsize->Write();
   throughput->Write();
   overlap->Write();
-  fr->Close();
+  cout << "finished writing file, will close now" << endl;
+  fr_->Close();
 }
 
 

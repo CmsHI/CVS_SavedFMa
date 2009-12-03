@@ -18,6 +18,7 @@ class OHltRatePrinter {
  public:
   
   OHltRatePrinter(){};
+  OHltRatePrinter(OHltConfig *cfg, OHltMenu *menu);
   virtual ~OHltRatePrinter(){};
 
   void SetupAll(vector<float> Rate,vector<float> RateErr,vector<float> spureRate,
@@ -49,7 +50,9 @@ class OHltRatePrinter {
   vector<float> pureRate;
   vector<float> pureRateErr;
   vector< vector<float> >coMa;
-  
+
+  // output
+  TFile * fr_;
 };
 
 #endif
