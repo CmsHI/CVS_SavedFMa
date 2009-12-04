@@ -28,8 +28,8 @@ from HLTrigger.HLTanalyzers.HLT_Startup09_data_cff import *
 def update_cfg_cases(process,isRaw,isMC):
   if (isRaw):
       # run on reco
-      DQM = cms.Service( "DQM",)
-      DQMStore = cms.Service( "DQMStore",)
+      process.DQM = cms.Service( "DQM",)
+      process.DQMStore = cms.Service( "DQMStore",)
       process.analyzeHLT_step = cms.Path(HLTBeginSequence + hltbitanalysis )
       process.hltbitanalysis.l1GtReadoutRecord = cms.InputTag( 'hltGtDigis','',process.name_() )
   if (isMC):  # replace all instances of "source" with "rawDataCollector" in InputTags

@@ -50,7 +50,7 @@ process.GlobalTag.globaltag = 'GR09_H_V6OFF::All'
 # Define the analyzer modules
 process.load("HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi")
 # Settings
-isRaw=True # * =1 use existing gtDigis on the input file, =0 extract gtDigis from the RAW data collection
+isRaw=True # * =0 use existing gtDigis on the input file, =1 extract gtDigis from the RAW data collection
 isMC=False
 from HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi import update_cfg_cases
 update_cfg_cases(process,isRaw,isMC)
