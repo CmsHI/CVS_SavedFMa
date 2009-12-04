@@ -49,13 +49,14 @@ process.GlobalTag.globaltag = 'GR09_H_V6OFF::All'
 
 # Define the analyzer modules
 process.load("HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi")
-#process.hltbitanalysis.hltresults = cms.InputTag( 'TriggerResults','','HLT' )
+# Settings
+isRaw=True # * =1 use existing gtDigis on the input file, =0 extract gtDigis from the RAW data collection
+isMC=False
+from HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi import update_cfg_cases
+update_cfg_cases(process,isRaw,isMC)
 #process.hltbitanalysis.RunParameters.Monte= cms.bool(False)
-isRaw=True
-isMC=True
-# * =1 use existing gtDigis on the input file, =0 extract gtDigis from the RAW data collection
-from HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi import update_cfg_mc
-update_cfg_mc(process,isRaw,isMC)
+#process.hltbitanalysis.hltresults = cms.InputTag( 'TriggerResults','','HLT' )
+
 process.schedule = cms.Schedule( process.analyzeHLT_step )
 
 # === Some useful customization ===

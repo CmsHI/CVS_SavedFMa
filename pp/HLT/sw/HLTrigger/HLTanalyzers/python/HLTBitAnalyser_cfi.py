@@ -25,7 +25,7 @@ analyzeHLT_step = cms.Path( hltbitanalysis )
 # import useful definitions
 from HLTrigger.HLTanalyzers.HLT_Startup09_data_cff import *
 # difference source cases
-def update_cfg_mc(process,isRaw,isMC):
+def update_cfg_cases(process,isRaw,isMC):
   if (isRaw):
       # run on reco
       DQM = cms.Service( "DQM",)
