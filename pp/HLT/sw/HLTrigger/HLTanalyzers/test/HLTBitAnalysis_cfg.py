@@ -63,15 +63,8 @@ else:
   process.hltbitanalysis.l1GtReadoutRecord = cms.InputTag( 'hltGtDigis','',process.name_() )
 
 # Default runs on data, if MC, then:
-
-if (isMC):  # replace all instances of "source" with "rawDataCollector" in InputTags
-    from FWCore.ParameterSet import Mixins
-    for module in process.__dict__.itervalues():
-        if isinstance(module, Mixins._Parameterizable):
-            for parameter in module.__dict__.itervalues():
-                if isinstance(parameter, cms.InputTag):
-                    if parameter.moduleLabel == 'source':
-                        parameter.moduleLabel = 'rawDataCollector'
+from HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi import update_cfg_mc
+update_cfg_mc(process,isMC)
 
 # === Some useful customization ===
 # Make L1 reports
