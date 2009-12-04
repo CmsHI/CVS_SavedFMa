@@ -50,10 +50,10 @@ process.GlobalTag.globaltag = 'GR09_H_V6OFF::All'
 # Define the analyzer modules
 process.load("HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi")
 #process.hltbitanalysis.hltresults = cms.InputTag( 'TriggerResults','','HLT' )
-#process.hltbitanalysis.RunParameters.Monte= cms.bool(True)
+#process.hltbitanalysis.RunParameters.Monte= cms.bool(False)
+isMC=False
 gtDigisExist=False
 # * =1 use existing gtDigis on the input file, =0 extract gtDigis from the RAW data collection
-hlt_data=True
 
 # Schedule the whole thing
 if (gtDigisExist):
@@ -61,6 +61,17 @@ if (gtDigisExist):
 else:
   process.schedule = cms.Schedule( process.analyzeHLT_fromRAW_step)
   process.hltbitanalysis.l1GtReadoutRecord = cms.InputTag( 'hltGtDigis','',process.name_() )
+
+# Default runs on data, if MC, then:
+
+if (isMC):  # replace all instances of "source" with "rawDataCollector" in InputTags
+    from FWCore.ParameterSet import Mixins
+    for module in process.__dict__.itervalues():
+        if isinstance(module, Mixins._Parameterizable):
+            for parameter in module.__dict__.itervalues():
+                if isinstance(parameter, cms.InputTag):
+                    if parameter.moduleLabel == 'source':
+                        parameter.moduleLabel = 'rawDataCollector'
 
 # === Some useful customization ===
 # Make L1 reports
