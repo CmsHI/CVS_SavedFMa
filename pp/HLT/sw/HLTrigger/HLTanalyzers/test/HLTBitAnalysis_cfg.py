@@ -54,17 +54,9 @@ process.load("HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi")
 isMC=False
 gtDigisExist=False
 # * =1 use existing gtDigis on the input file, =0 extract gtDigis from the RAW data collection
-
-# Schedule the whole thing
-if (gtDigisExist):
-  process.schedule = cms.Schedule( process.analyzeHLT_step )
-else:
-  process.schedule = cms.Schedule( process.analyzeHLT_fromRAW_step)
-  process.hltbitanalysis.l1GtReadoutRecord = cms.InputTag( 'hltGtDigis','',process.name_() )
-
-# Default runs on data, if MC, then:
 from HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi import update_cfg_mc
-update_cfg_mc(process,isMC)
+update_cfg_mc(process,gtDigisExist,isMC)
+process.schedule = cms.Schedule( process.analyzeHLT_step )
 
 # === Some useful customization ===
 # Make L1 reports

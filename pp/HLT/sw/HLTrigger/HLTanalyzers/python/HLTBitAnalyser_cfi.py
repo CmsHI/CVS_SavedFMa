@@ -19,17 +19,17 @@ hltbitanalysis = cms.EDAnalyzer("HLTBitAnalyzer",
     )
 )
 
-# run on reco
-analyzeHLT_step = cms.Path( hltbitanalysis )
-
 # run from raw
 from HLTrigger.HLTanalyzers.HLT_Startup09_data_cff import *
 DQM = cms.Service( "DQM",)
 DQMStore = cms.Service( "DQMStore",)
-analyzeHLT_fromRAW_step = cms.Path(HLTBeginSequence + hltbitanalysis )
+analyzeHLT_step = cms.Path(HLTBeginSequence + hltbitanalysis )
 
 # difference source cases
-def update_cfg_mc(process,isMC):
+def update_cfg_mc(process,isReco,isMC):
+  if (isReco):
+      # run on reco
+      process.analyzeHLT_step = cms.Path( hltbitanalysis )
   if (isMC):  # replace all instances of "source" with "rawDataCollector" in InputTags
       from FWCore.ParameterSet import Mixins
       for module in process.__dict__.itervalues():
