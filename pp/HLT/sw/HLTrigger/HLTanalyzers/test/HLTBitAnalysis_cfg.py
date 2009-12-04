@@ -1,5 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
+
 process = cms.Process("ANALYSIS")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -13,7 +14,8 @@ process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
       #'/store/express/BeamCommissioning09/OfflineMonitor/FEVTHLTALL/v2/000/122/314/F8F49C1B-60D8-DE11-AB34-001D09F28F0C.root' # file from run 122314    
     #'/store/relval/CMSSW_3_3_2/RelValZTT/GEN-SIM-DIGI-RAW-HLTDEBUG/STARTUP31X_V8-v2/0000/CC203608-59C8-DE11-B1E6-0018F3D096EA.root' # MC TTBAR
-    '/store/data/BeamCommissioning09/MinimumBias/RECO/v2/000/123/151/FA9D48E2-14DE-DE11-BB11-001D09F291D2.root'
+    #'/store/data/BeamCommissioning09/MinimumBias/RECO/v2/000/123/151/FA9D48E2-14DE-DE11-BB11-001D09F291D2.root'
+    '/store/data/BeamCommissioning09/MinimumBias/RAW/v1/000/122/314/CC89C4BC-60D8-DE11-B365-0030487D0D3A.root'
     )
 )
 
@@ -37,29 +39,44 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 #   tag names to allow append IOV, and DT cabling map corresponding to 2009 configuration (10 FEDs).
 # Meanwhile...:
 #process.GlobalTag.globaltag = 'MC_31X_V9::All'
+process.GlobalTag.globaltag = 'GR09_H_V6OFF::All'
 
 # Define the HLT reco paths
-#process.load("HLTrigger.Configuration.HLT_FULL_cff")
-process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
-process.GlobalTag.globaltag = 'GR09_H_V6OFF::All'
+# Note
+# * PrescaleService is automatically stripped in cff mode of getHLT.py
+#process.load("HLTrigger.HLTanalyzers.HLT_Startup09_data_cff")
+# To load the HLT menu, somehow cmsRun asks for DQM service ...
 
 # Define the analyzer modules
 process.load("HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi")
 #process.hltbitanalysis.hltresults = cms.InputTag( 'TriggerResults','','HLT' )
-process.analyzeThis = cms.Path( process.hltbitanalysis )
+
+gtDigisExist=0  
+# * =1 use existing gtDigis on the input file, =0 extract gtDigis from the RAW data collection
+if (gtDigisExist):
+  process.analyzeThis = cms.Path( process.hltbitanalysis )
+else:
+  process.load("HLTrigger.HLTanalyzers.HLT_Startup09_data_cff")
+  process.DQM = cms.Service( "DQM",)
+  process.DQMStore = cms.Service( "DQMStore",)
+  process.analyzeThis = cms.Path(process.HLTBeginSequence + process.hltbitanalysis )
+  process.hltbitanalysis.l1GtReadoutRecord = cms.InputTag( 'hltGtDigis','',process.name_() )
 
 # Schedule the whole thing
 process.schedule = cms.Schedule( 
-    process.analyzeThis )
+  process.analyzeThis )
 
 # === Some useful customization ===
 # Make L1 reports
 process.load('L1Trigger.GlobalTriggerAnalyzer.l1GtTrigReport_cfi')
-process.l1GtTrigReport.L1GtRecordInputTag = cms.InputTag( "gtDigis" )
+if (gtDigisExist):
+  process.l1GtTrigReport.L1GtRecordInputTag = cms.InputTag( "gtDigis" )
+else:
+  process.l1GtTrigReport.L1GtRecordInputTag = cms.InputTag( 'hltGtDigis','',process.name_() )
 process.MessageLogger.categories.append('L1GtTrigReport')
 # Make HLT reports
 process.hltTrigReport = cms.EDAnalyzer( 'HLTrigReport',
-    HLTriggerResults = cms.InputTag( 'TriggerResults','','HLT' )
+  HLTriggerResults = cms.InputTag( 'TriggerResults','','HLT' )
 )
 process.MessageLogger.categories.append('TriggerSummaryProducerAOD')
 process.MessageLogger.categories.append('HLTrigReport')
