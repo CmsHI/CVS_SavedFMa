@@ -55,21 +55,24 @@ gtDigisExist=False
 # * =1 use existing gtDigis on the input file, =0 extract gtDigis from the RAW data collection
 hlt_data=True
 
-if (gtDigisExist):
-  process.analyzeThis = cms.Path( process.hltbitanalysis )
-else:
-  if (hlt_data):
-    process.load("HLTrigger.HLTanalyzers.HLT_Startup09_data_cff")
-  else:
-    process.load("HLTrigger.HLTanalyzers.HLT_Startup09_mc_cff")
-  process.DQM = cms.Service( "DQM",)
-  process.DQMStore = cms.Service( "DQMStore",)
-  process.analyzeThis = cms.Path(process.HLTBeginSequence + process.hltbitanalysis )
-  process.hltbitanalysis.l1GtReadoutRecord = cms.InputTag( 'hltGtDigis','',process.name_() )
+#if (gtDigisExist):
+#  process.analyzeThis = cms.Path( process.hltbitanalysis )
+#else:
+#  if (hlt_data):
+#    process.load("HLTrigger.HLTanalyzers.HLT_Startup09_data_cff")
+#  else:
+#    process.load("HLTrigger.HLTanalyzers.HLT_Startup09_mc_cff")
+#  process.DQM = cms.Service( "DQM",)
+#  process.DQMStore = cms.Service( "DQMStore",)
+#  process.analyzeThis = cms.Path(process.HLTBeginSequence + process.hltbitanalysis )
+#  process.hltbitanalysis.l1GtReadoutRecord = cms.InputTag( 'hltGtDigis','',process.name_() )
 
 # Schedule the whole thing
-process.schedule = cms.Schedule( 
-  process.analyzeThis )
+if (gtDigisExist):
+  process.schedule = cms.Schedule( process.analyzeHLT_step )
+else:
+  process.schedule = cms.Schedule( process.analyzeHLT_fromRAW_step)
+  process.hltbitanalysis.l1GtReadoutRecord = cms.InputTag( 'hltGtDigis','',process.name_() )
 
 # === Some useful customization ===
 # Make L1 reports
