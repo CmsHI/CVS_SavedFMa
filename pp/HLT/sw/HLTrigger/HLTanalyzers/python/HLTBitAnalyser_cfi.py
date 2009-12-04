@@ -5,7 +5,7 @@ hltbitanalysis = cms.EDAnalyzer("HLTBitAnalyzer",
     l1GctHFBitCounts                = cms.InputTag("hltGctDigis"),
     l1GctHFRingSums                 = cms.InputTag("hltGctDigis"),
     l1GtObjectMapRecord             = cms.InputTag("hltL1GtObjectMap::HLT"),
-    l1GtReadoutRecord               = cms.InputTag("gtDigis"),
+    l1GtReadoutRecord               = cms.InputTag( 'gtDigis' ),
 
     l1extramc                       = cms.string('hltL1extraParticles'),
     l1extramu                       = cms.string('hltL1extraParticles'),
@@ -19,17 +19,19 @@ hltbitanalysis = cms.EDAnalyzer("HLTBitAnalyzer",
     )
 )
 
-# run from raw
-from HLTrigger.HLTanalyzers.HLT_Startup09_data_cff import *
-DQM = cms.Service( "DQM",)
-DQMStore = cms.Service( "DQMStore",)
-analyzeHLT_step = cms.Path(HLTBeginSequence + hltbitanalysis )
+# define paths
+analyzeHLT_step = cms.Path( hltbitanalysis )
 
+# import useful definitions
+from HLTrigger.HLTanalyzers.HLT_Startup09_data_cff import *
 # difference source cases
-def update_cfg_mc(process,isReco,isMC):
-  if (isReco):
+def update_cfg_mc(process,isRaw,isMC):
+  if (isRaw):
       # run on reco
-      process.analyzeHLT_step = cms.Path( hltbitanalysis )
+      DQM = cms.Service( "DQM",)
+      DQMStore = cms.Service( "DQMStore",)
+      process.analyzeHLT_step = cms.Path(HLTBeginSequence + hltbitanalysis )
+      process.hltbitanalysis.l1GtReadoutRecord = cms.InputTag( 'hltGtDigis','',process.name_() )
   if (isMC):  # replace all instances of "source" with "rawDataCollector" in InputTags
       from FWCore.ParameterSet import Mixins
       for module in process.__dict__.itervalues():

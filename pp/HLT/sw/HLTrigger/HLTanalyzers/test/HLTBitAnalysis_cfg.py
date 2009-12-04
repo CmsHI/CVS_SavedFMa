@@ -51,20 +51,20 @@ process.GlobalTag.globaltag = 'GR09_H_V6OFF::All'
 process.load("HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi")
 #process.hltbitanalysis.hltresults = cms.InputTag( 'TriggerResults','','HLT' )
 #process.hltbitanalysis.RunParameters.Monte= cms.bool(False)
-isMC=False
-gtDigisExist=False
+isRaw=True
+isMC=True
 # * =1 use existing gtDigis on the input file, =0 extract gtDigis from the RAW data collection
 from HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi import update_cfg_mc
-update_cfg_mc(process,gtDigisExist,isMC)
+update_cfg_mc(process,isRaw,isMC)
 process.schedule = cms.Schedule( process.analyzeHLT_step )
 
 # === Some useful customization ===
 # Make L1 reports
 process.load('L1Trigger.GlobalTriggerAnalyzer.l1GtTrigReport_cfi')
-if (gtDigisExist):
-  process.l1GtTrigReport.L1GtRecordInputTag = cms.InputTag( "gtDigis" )
-else:
+if (isRaw):
   process.l1GtTrigReport.L1GtRecordInputTag = cms.InputTag( 'hltGtDigis','',process.name_() )
+else:
+  process.l1GtTrigReport.L1GtRecordInputTag = cms.InputTag( "gtDigis" )
 process.MessageLogger.categories.append('L1GtTrigReport')
 # Make HLT reports
 process.hltTrigReport = cms.EDAnalyzer( 'HLTrigReport',
