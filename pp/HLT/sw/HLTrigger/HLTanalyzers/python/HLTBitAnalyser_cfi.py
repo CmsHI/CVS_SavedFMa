@@ -24,12 +24,12 @@ analyzeHLT_step = cms.Path( hltbitanalysis )
 
 # import useful definitions
 from HLTrigger.HLTanalyzers.HLT_Startup09_data_cff import *
+DQM = cms.Service( "DQM",)
+DQMStore = cms.Service( "DQMStore",)
 # difference source cases
 def update_cfg_cases(process,isRaw,isMC):
   if (isRaw):
       # run on reco
-      process.DQM = cms.Service( "DQM",)
-      process.DQMStore = cms.Service( "DQMStore",)
       process.analyzeHLT_step = cms.Path(HLTBeginSequence + hltbitanalysis )
       process.hltbitanalysis.l1GtReadoutRecord = cms.InputTag( 'hltGtDigis','',process.name_() )
   if (isMC):  # replace all instances of "source" with "rawDataCollector" in InputTags
