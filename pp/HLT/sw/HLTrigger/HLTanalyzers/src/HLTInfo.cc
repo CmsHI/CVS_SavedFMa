@@ -45,6 +45,8 @@ void HLTInfo::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   const int kMaxL1Flag = 10000;
   l1flag = new int[kMaxL1Flag];
   l1flag5Bx = new int[kMaxTrigFlag];
+  l1techflag = new int[kMaxL1Flag];
+  l1techflag5Bx = new int[kMaxTrigFlag];
   const int kMaxHLTPart = 10000;
   hltppt = new float[kMaxHLTPart];
   hltpeta = new float[kMaxHLTPart];
@@ -83,6 +85,9 @@ void HLTInfo::setup(const edm::ParameterSet& pSet, TTree* HltTree) {
   l1exttaue = new float[kMaxL1ExtTau];
   l1exttaueta = new float[kMaxL1ExtTau];
   l1exttauphi = new float[kMaxL1ExtTau];
+
+  algoBitToName = new TString[128];
+  techBitToName = new TString[128];
 
   HltTree->Branch("NL1IsolEm",&nl1extiem,"NL1IsolEm/I");
   HltTree->Branch("L1IsolEmEt",l1extiemet,"L1IsolEmEt[NL1IsolEm]/F");
@@ -383,22 +388,26 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
   }
 
   // Trigger names from Menu
+  //  algo bits
   edm::ESHandle<L1GtTriggerMenu> menuRcd;
   eventSetup.get<L1GtTriggerMenuRcd>().get(menuRcd) ;
   const L1GtTriggerMenu* menu = menuRcd.product();
+  //  tech bits
 
-  TString algoBitToName[128];
   // 1st event : Book as many branches as trigger paths provided in the input...
   if (L1GTRR.isValid() and L1GTOMRec.isValid()) {  
     DecisionWord gtDecisionWord = L1GTRR->decisionWord();
     const unsigned int numberTriggerBits(gtDecisionWord.size());
     const TechnicalTriggerWord&  technicalTriggerWordBeforeMask = L1GTRR->technicalTriggerWord();
     const unsigned int numberTechnicalTriggerBits(technicalTriggerWordBeforeMask.size());
+
+    //DecisionWord gtTechDecisionWord = L1GTRR->gtTechnical
+
+    // 1st event : Book as many branches as trigger paths provided in the input...
     if (L1EvtCnt==0){
-      // 1st event : Book as many branches as trigger paths provided in the input...
       // get L1 menu from event setup
       for (CItAlgo algo = menu->gtAlgorithmMap().begin(); algo!=menu->gtAlgorithmMap().end(); ++algo) {
-	if (_Debug && L1EvtCnt==0) std::cout << "Name: " << (algo->second).algoName() << " Alias: " << (algo->second).algoAlias() << std::endl;
+	if (_Debug) std::cout << "Name: " << (algo->second).algoName() << " Alias: " << (algo->second).algoAlias() << std::endl;
         int itrig = (algo->second).algoBitNumber();
         algoBitToName[itrig] = TString( (algo->second).algoName() );
         HltTree->Branch(algoBitToName[itrig],l1flag+itrig,algoBitToName[itrig]+"/I");
@@ -408,6 +417,15 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       // Book a branch for the technical trigger bits
       techtriggerbits_ = new std::vector<int>();
       HltTree->Branch("L1TechnicalTriggerBits", "vector<int>", &(techtriggerbits_), 32000, 1);
+
+      // Book branches for tech bits
+      for (CItAlgo techTrig = menu->gtTechnicalTriggerMap().begin(); techTrig != menu->gtTechnicalTriggerMap().end(); ++techTrig) {
+        int itrig = (techTrig->second).algoBitNumber();
+	techBitToName[itrig] = TString( (techTrig->second).algoName() );
+	if (_Debug) std::cout << "tech bit " << itrig << ": " << techBitToName[itrig] << " " << std::endl;
+	HltTree->Branch(techBitToName[itrig],l1techflag+itrig,techBitToName[itrig]+"/I");
+	HltTree->Branch(techBitToName[itrig]+"_5bxOr",l1techflag5Bx+itrig,techBitToName[itrig]+"_5bxOr/I");
+      }
     }
 
     // look at all 5 bx window in case gt timing is off
@@ -438,6 +456,8 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       l1flag[iBit] = gtDecisionWord[iBit];
       //std::cout << "L1 TD: "<<iBit<<" "<<algoBitToName[iBit]<<" "<<gtDecisionWord[iBit]<< std::endl;
     }
+
+    // === now check tech bits ===
 
     techtriggerbits_->clear();
     for (unsigned int iBit = 0; iBit < numberTechnicalTriggerBits; ++iBit) {

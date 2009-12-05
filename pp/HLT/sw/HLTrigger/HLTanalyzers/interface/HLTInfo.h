@@ -96,12 +96,14 @@ private:
   float met, metphi, ettot;
   float mht, mhtphi, ethad;
   int L1EvtCnt,HltEvtCnt,nhltpart,nl1extiem,nl1extnem,nl1extmu,nl1extjetc,nl1extjetf,nl1extjt,nl1exttau;
-  int *trigflag, *l1flag, *l1flag5Bx, *l1extmuiso, *l1extmumip, *l1extmufor, *l1extmurpc, *l1extmuqul;
+  int *trigflag, *l1flag, *l1flag5Bx, *l1techflag, *l1techflag5Bx, *l1extmuiso, *l1extmumip, *l1extmufor, *l1extmurpc, *l1extmuqul;
   int l1hfRing1EtSumNegativeEta,l1hfRing2EtSumNegativeEta;
   int l1hfRing1EtSumPositiveEta,l1hfRing2EtSumPositiveEta;
   int l1hfTowerCountPositiveEtaRing1,l1hfTowerCountNegativeEtaRing1;
   int l1hfTowerCountPositiveEtaRing2,l1hfTowerCountNegativeEtaRing2;
 
+  TString * algoBitToName;
+  TString * techBitToName;
   std::vector<int> *techtriggerbits_;
 
   // input variables
