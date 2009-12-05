@@ -405,9 +405,6 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
         HltTree->Branch(algoBitToName[itrig]+"_5bxOr",l1flag5Bx+itrig,algoBitToName[itrig]+"_5bxOr/I");
       }
 
-      // get ObjectMaps from ObjectMapRecord
-      const std::vector<L1GlobalTriggerObjectMap>& objMapVec =  L1GTOMRec->gtObjectMap();
-
       // Book a branch for the technical trigger bits
       techtriggerbits_ = new std::vector<int>();
       HltTree->Branch("L1TechnicalTriggerBits", "vector<int>", &(techtriggerbits_), 32000, 1);
