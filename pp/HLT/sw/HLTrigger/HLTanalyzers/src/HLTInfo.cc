@@ -401,7 +401,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
         int itrig = (algo->second).algoBitNumber();
         algoBitToName[itrig] = TString( (algo->second).algoName() );
         HltTree->Branch(algoBitToName[itrig],l1flag+itrig,algoBitToName[itrig]+"/I");
-        HltTree->Branch(algoBitToName[itrig]+"allbxOr",l1flag5Bx+itrig,algoBitToName[itrig]+"allbxOr/I");
+        HltTree->Branch(algoBitToName[itrig]+"_5bxOr",l1flag5Bx+itrig,algoBitToName[itrig]+"_5bxOr/I");
       }
 
       // get ObjectMaps from ObjectMapRecord
@@ -415,7 +415,6 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
         //algoBitToName[itrig] = TString( (*itMap).algoName() );
         //HltTree->Branch(algoBitToName[itrig],l1flag+itrig,algoBitToName[itrig]+"/I");
       }
-      L1EvtCnt++;
 
       // Book a branch for the technical trigger bits
       techtriggerbits_ = new std::vector<int>();
@@ -435,14 +434,14 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     }
     for (int iBit = 0; iBit < numberTriggerBits; ++iBit) {     
       // ...Fill the corresponding accepts in branch-variables
-      if (_Debug && L1EvtCnt==0) std::cout << std::endl << " L1 TD: "<<iBit<<" "<<algoBitToName[iBit]<<" ";
+      if (_Debug) std::cout << std::endl << " L1 TD: "<<iBit<<" "<<algoBitToName[iBit]<<" ";
       bool result=0;
       for (unsigned int jbx=0; jbx<m_gtDecisionWord5Bx.size(); ++jbx) {
-	if (_Debug && L1EvtCnt==0) std::cout << m_gtDecisionWord5Bx[jbx][iBit]<< " ";
+	if (_Debug) std::cout << m_gtDecisionWord5Bx[jbx][iBit]<< " ";
 	if (m_gtDecisionWord5Bx[jbx][iBit]) 
 	  result=1;
       }
-      if (_Debug && L1EvtCnt==0) std::cout << "5BxOr=" << result << std::endl;
+      if (_Debug) std::cout << "5BxOr=" << result << std::endl;
       l1flag5Bx[iBit] = result;
     }
 
@@ -457,6 +456,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       int techTrigger = (int) technicalTriggerWordBeforeMask.at(iBit);
       techtriggerbits_->push_back(techTrigger);
     }
+    L1EvtCnt++;
   }
   else {
     if (_Debug) std::cout << "%HLTInfo -- No L1 GT ReadoutRecord or ObjectMapRecord" << std::endl;
