@@ -386,10 +386,6 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
   eventSetup.get<L1GtTriggerMenuRcd>().get(menuRcd) ;
   const L1GtTriggerMenu* menu = menuRcd.product();
 
-  for (CItAlgo algo = menu->gtAlgorithmMap().begin(); algo!=menu->gtAlgorithmMap().end(); ++algo) {
-    std::cout << "Name: " << (algo->second).algoName() << " Alias: " << (algo->second).algoAlias() << std::endl;
-  }
-
   TString algoBitToName[128];
   // 1st event : Book as many branches as trigger paths provided in the input...
   if (L1GTRR.isValid() and L1GTOMRec.isValid()) {  
@@ -398,34 +394,30 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     const TechnicalTriggerWord&  technicalTriggerWordBeforeMask = L1GTRR->technicalTriggerWord();
     const unsigned int numberTechnicalTriggerBits(technicalTriggerWordBeforeMask.size());
     if (L1EvtCnt==0){
+      // get L1 menu from event setup
+      for (CItAlgo algo = menu->gtAlgorithmMap().begin(); algo!=menu->gtAlgorithmMap().end(); ++algo) {
+	std::cout << "Name: " << (algo->second).algoName() << " Alias: " << (algo->second).algoAlias() << std::endl;
+        int itrig = (algo->second).algoBitNumber();
+        algoBitToName[itrig] = TString( (algo->second).algoName() );
+        HltTree->Branch(algoBitToName[itrig],l1flag+itrig,algoBitToName[itrig]+"/I");
+      }
+
       // get ObjectMaps from ObjectMapRecord
       const std::vector<L1GlobalTriggerObjectMap>& objMapVec =  L1GTOMRec->gtObjectMap();
       // 1st event : Book as many branches as trigger paths provided in the input...
       for (std::vector<L1GlobalTriggerObjectMap>::const_iterator itMap = objMapVec.begin();
            itMap != objMapVec.end(); ++itMap) {
         // Get trigger bits
-        int itrig = (*itMap).algoBitNumber();
+        //int itrig = (*itMap).algoBitNumber();
         // Get trigger names
-        algoBitToName[itrig] = TString( (*itMap).algoName() );
-        HltTree->Branch(algoBitToName[itrig],l1flag+itrig,algoBitToName[itrig]+"/I");
+        //algoBitToName[itrig] = TString( (*itMap).algoName() );
+        //HltTree->Branch(algoBitToName[itrig],l1flag+itrig,algoBitToName[itrig]+"/I");
       }
       L1EvtCnt++;
-
-      // temporary fix for the new bptx l1 bits
-      algoBitToName[80] = "L1_BptxMinus";
-      algoBitToName[81] = "L1_BptxPlus";
-      algoBitToName[82] = "L1_BptxPlusORMinus";
-      algoBitToName[124] = "L1_BscMinBiasOR_BptxPlusORMinus";
-      HltTree->Branch("L1_BptxMinus",l1flag+80,"L1_BptxMinus/I");
-      HltTree->Branch("L1_BptxPlus",l1flag+81,"L1_BptxPlus/I");
-      HltTree->Branch("L1_BptxPlusORMinus",l1flag+82,"L1_BptxPlusORMinus/I");
-      HltTree->Branch("L1_BscMinBiasOR_BptxPlusORMinus",l1flag+124,"L1_BscMinBiasOR_BptxPlusORMinus/I");
-
 
       // Book a branch for the technical trigger bits
       techtriggerbits_ = new std::vector<int>();
       HltTree->Branch("L1TechnicalTriggerBits", "vector<int>", &(techtriggerbits_), 32000, 1);
-
     }
 
     // look at all 5 bx window in case gt timing is off
