@@ -387,12 +387,10 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     if (_Debug) std::cout << "%HLTInfo -- No L1 MHT object" << std::endl;
   }
 
-  // Trigger names from Menu
-  //  algo bits
+  // L1 Triggers from Menu
   edm::ESHandle<L1GtTriggerMenu> menuRcd;
   eventSetup.get<L1GtTriggerMenuRcd>().get(menuRcd) ;
   const L1GtTriggerMenu* menu = menuRcd.product();
-  //  tech bits
 
   // 1st event : Book as many branches as trigger paths provided in the input...
   if (L1GTRR.isValid() and L1GTOMRec.isValid()) {  
@@ -431,14 +429,16 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     // look at all 5 bx window in case gt timing is off
     // get Field Decision Logic
     vector<DecisionWord> m_gtDecisionWord5Bx;
+    vector<TechnicalTriggerWord> m_gtTechDecisionWord5Bx;
     const std::vector<L1GtFdlWord> &m_gtFdlWord(L1GTRR->gtFdlVector());
     for (std::vector<L1GtFdlWord>::const_iterator itBx = m_gtFdlWord.begin();
 	itBx != m_gtFdlWord.end(); ++itBx) {
       int ibxn = (*itBx).bxInEvent();
       if (_Debug && L1EvtCnt==0) cout << "bx: " << ibxn << " ";
-      //DecisionWord gtDecisionWord5Bx = (*itBx).gtDecisionWord();
       m_gtDecisionWord5Bx.push_back((*itBx).gtDecisionWord());
+      m_gtTechDecisionWord5Bx.push_back((*itBx).gtTechnicalTriggerWord());
     }
+    // --- Fill algo bits ---
     for (int iBit = 0; iBit < numberTriggerBits; ++iBit) {     
       // ...Fill the corresponding accepts in branch-variables
       if (_Debug) std::cout << std::endl << " L1 TD: "<<iBit<<" "<<algoBitToName[iBit]<<" ";
@@ -457,12 +457,24 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       //std::cout << "L1 TD: "<<iBit<<" "<<algoBitToName[iBit]<<" "<<gtDecisionWord[iBit]<< std::endl;
     }
 
-    // === now check tech bits ===
+    // --- Fill tech bits ---
+    for (int iBit = 0; iBit < m_gtTechDecisionWord5Bx[2].size(); ++iBit) {     
+      // ...Fill the corresponding accepts in branch-variables
+      if (_Debug) std::cout << std::endl << " L1 TD: "<<iBit<<" "<<techBitToName[iBit]<<" ";
+      int result=0;
+      for (unsigned int jbx=0; jbx<m_gtTechDecisionWord5Bx.size(); ++jbx) {
+	if (_Debug) std::cout << m_gtTechDecisionWord5Bx[jbx][iBit]<< " ";
+	result += m_gtTechDecisionWord5Bx[jbx][iBit];
+      }
+      if (_Debug) std::cout << "5BxOr=" << result << std::endl;
+      l1techflag5Bx[iBit] = result;
+    }
 
     techtriggerbits_->clear();
     for (unsigned int iBit = 0; iBit < numberTechnicalTriggerBits; ++iBit) {
       int techTrigger = (int) technicalTriggerWordBeforeMask.at(iBit);
       techtriggerbits_->push_back(techTrigger);
+      l1techflag[iBit] = (int) technicalTriggerWordBeforeMask.at(iBit);
     }
     L1EvtCnt++;
   }
