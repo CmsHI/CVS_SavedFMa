@@ -39,7 +39,7 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 #   tag names to allow append IOV, and DT cabling map corresponding to 2009 configuration (10 FEDs).
 # Meanwhile...:
 #process.GlobalTag.globaltag = 'MC_31X_V9::All'
-process.GlobalTag.globaltag = 'GR09_H_V6OFF::All'
+process.GlobalTag.globaltag = 'GR09_H_V7OFF::All'
 
 # Define the HLT reco paths
 # Note
