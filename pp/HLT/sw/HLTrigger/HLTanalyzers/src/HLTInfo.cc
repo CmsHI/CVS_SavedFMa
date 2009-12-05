@@ -11,6 +11,16 @@
 
 #include "HLTrigger/HLTanalyzers/interface/HLTInfo.h"
 
+// L1 related
+#include "L1Trigger/GlobalTriggerAnalyzer/interface/L1GtUtils.h"
+#include "CondFormats/L1TObjects/interface/L1GtTriggerMenu.h"
+#include "CondFormats/L1TObjects/interface/L1GtTriggerMenuFwd.h"
+#include "CondFormats/DataRecord/interface/L1GtTriggerMenuRcd.h"
+#include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutSetupFwd.h"
+#include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutSetup.h"
+#include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
+
+
 HLTInfo::HLTInfo() {
 
   //set parameter defaults 
@@ -141,6 +151,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
                       const edm::Handle<L1GlobalTriggerObjectMapRecord>      & L1GTOMRec,
 		      const edm::Handle<L1GctHFBitCountsCollection>          & gctBitCounts,
 		      const edm::Handle<L1GctHFRingEtSumsCollection>         & gctRingSums,
+		      edm::EventSetup const& eventSetup,
                       TTree* HltTree) {
 
 //   std::cout << " Beginning HLTInfo " << std::endl;
@@ -162,6 +173,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       HltEvtCnt++;
     }
     // ...Fill the corresponding accepts in branch-variables
+    float SD_discr_0=0;
     for (int itrig = 0; itrig != ntrigs; ++itrig){
 
       string trigName=triggerNames_.triggerName(itrig);
@@ -175,6 +187,9 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
         std::cout << "%HLTInfo --  HLTTrigger(" << itrig << "): " << trigName << " = " << accept << std::endl;
       }
 
+      // SD discrimination
+      if (trigName=="HLT_MinBiasBSC")SD_discr_0+=0.827*accept;
+      if (trigName=="HLT_MinBiasBSC_OR")SD_discr_0+=0.827*accept;
     }
   }
   else { if (_Debug) std::cout << "%HLTInfo -- No Trigger Result" << std::endl;}
@@ -366,6 +381,15 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     if (_Debug) std::cout << "%HLTInfo -- No L1 MHT object" << std::endl;
   }
 
+  // Trigger names from Menu
+  edm::ESHandle<L1GtTriggerMenu> menuRcd;
+  eventSetup.get<L1GtTriggerMenuRcd>().get(menuRcd) ;
+  const L1GtTriggerMenu* menu = menuRcd.product();
+
+  for (CItAlgo algo = menu->gtAlgorithmMap().begin(); algo!=menu->gtAlgorithmMap().end(); ++algo) {
+    std::cout << "Name: " << (algo->second).algoName() << " Alias: " << (algo->second).algoAlias() << std::endl;
+  }
+
   TString algoBitToName[128];
   // 1st event : Book as many branches as trigger paths provided in the input...
   if (L1GTRR.isValid() and L1GTOMRec.isValid()) {  
@@ -397,11 +421,34 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       HltTree->Branch("L1_BptxPlusORMinus",l1flag+82,"L1_BptxPlusORMinus/I");
       HltTree->Branch("L1_BscMinBiasOR_BptxPlusORMinus",l1flag+124,"L1_BscMinBiasOR_BptxPlusORMinus/I");
 
+
       // Book a branch for the technical trigger bits
       techtriggerbits_ = new std::vector<int>();
       HltTree->Branch("L1TechnicalTriggerBits", "vector<int>", &(techtriggerbits_), 32000, 1);
 
     }
+
+    // look at all 5 bx window in case gt timing is off
+    // get Field Decision Logic
+    vector<DecisionWord> m_gtDecisionWord5Bx;
+    const std::vector<L1GtFdlWord> &m_gtFdlWord(L1GTRR->gtFdlVector());
+    for (std::vector<L1GtFdlWord>::const_iterator itBx = m_gtFdlWord.begin();
+	itBx != m_gtFdlWord.end(); ++itBx) {
+      int ibxn = (*itBx).bxInEvent();
+      cout << "bx: " << ibxn << " ";
+      //DecisionWord gtDecisionWord5Bx = (*itBx).gtDecisionWord();
+      m_gtDecisionWord5Bx.push_back((*itBx).gtDecisionWord());
+    }
+    for (int iBit = 0; iBit < numberTriggerBits; ++iBit) {     
+      // ...Fill the corresponding accepts in branch-variables
+      std::cout << std::endl << " L1 TD: "<<iBit<<" "<<algoBitToName[iBit]<<" ";
+      for (unsigned int jbx=0; jbx<m_gtDecisionWord5Bx.size(); ++jbx) {
+	std::cout << m_gtDecisionWord5Bx[jbx][iBit]<< " ";
+      }
+      std::cout << std::endl;
+    }
+
+
     for (unsigned int iBit = 0; iBit < numberTriggerBits; ++iBit) {     
       // ...Fill the corresponding accepts in branch-variables
       l1flag[iBit] = gtDecisionWord[iBit];

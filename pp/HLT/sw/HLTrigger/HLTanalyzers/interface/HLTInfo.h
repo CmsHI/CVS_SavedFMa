@@ -80,6 +80,7 @@ public:
 	       const edm::Handle<L1GlobalTriggerObjectMapRecord>      & l1GTOMRec,
 	       const edm::Handle<L1GctHFBitCountsCollection>          & gctBitCounts,
 	       const edm::Handle<L1GctHFRingEtSumsCollection>         & gctRingSums,	       
+	       edm::EventSetup const& eventSetup,
 	       TTree* tree);
 
 private:

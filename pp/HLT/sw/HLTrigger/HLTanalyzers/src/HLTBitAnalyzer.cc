@@ -142,6 +142,7 @@ void HLTBitAnalyzer::analyze(edm::Event const& iEvent, edm::EventSetup const& iS
     l1GtOMRec,
     gctBitCounts,
     gctRingSums,
+    iSetup,
     HltTree);
 
   evt_header_.analyze(iEvent, HltTree);
