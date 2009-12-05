@@ -387,6 +387,16 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       }
       L1EvtCnt++;
 
+      // temporary fix for the new bptx l1 bits
+      algoBitToName[80] = "L1_BptxMinus";
+      algoBitToName[81] = "L1_BptxPlus";
+      algoBitToName[82] = "L1_BptxPlusORMinus";
+      algoBitToName[124] = "L1_BscMinBiasOR_BptxPlusORMinus";
+      HltTree->Branch("L1_BptxMinus",l1flag+80,"L1_BptxMinus/I");
+      HltTree->Branch("L1_BptxPlus",l1flag+81,"L1_BptxPlus/I");
+      HltTree->Branch("L1_BptxPlusORMinus",l1flag+82,"L1_BptxPlusORMinus/I");
+      HltTree->Branch("L1_BscMinBiasOR_BptxPlusORMinus",l1flag+124,"L1_BscMinBiasOR_BptxPlusORMinus/I");
+
       // Book a branch for the technical trigger bits
       techtriggerbits_ = new std::vector<int>();
       HltTree->Branch("L1TechnicalTriggerBits", "vector<int>", &(techtriggerbits_), 32000, 1);
