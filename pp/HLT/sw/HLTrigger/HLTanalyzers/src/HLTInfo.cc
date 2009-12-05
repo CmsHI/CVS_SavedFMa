@@ -395,6 +395,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     const TechnicalTriggerWord&  technicalTriggerWordBeforeMask = L1GTRR->technicalTriggerWord();
     const unsigned int numberTechnicalTriggerBits(technicalTriggerWordBeforeMask.size());
     if (L1EvtCnt==0){
+      // 1st event : Book as many branches as trigger paths provided in the input...
       // get L1 menu from event setup
       for (CItAlgo algo = menu->gtAlgorithmMap().begin(); algo!=menu->gtAlgorithmMap().end(); ++algo) {
 	if (_Debug && L1EvtCnt==0) std::cout << "Name: " << (algo->second).algoName() << " Alias: " << (algo->second).algoAlias() << std::endl;
@@ -406,15 +407,6 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
 
       // get ObjectMaps from ObjectMapRecord
       const std::vector<L1GlobalTriggerObjectMap>& objMapVec =  L1GTOMRec->gtObjectMap();
-      // 1st event : Book as many branches as trigger paths provided in the input...
-      for (std::vector<L1GlobalTriggerObjectMap>::const_iterator itMap = objMapVec.begin();
-           itMap != objMapVec.end(); ++itMap) {
-        // Get trigger bits
-        //int itrig = (*itMap).algoBitNumber();
-        // Get trigger names
-        //algoBitToName[itrig] = TString( (*itMap).algoName() );
-        //HltTree->Branch(algoBitToName[itrig],l1flag+itrig,algoBitToName[itrig]+"/I");
-      }
 
       // Book a branch for the technical trigger bits
       techtriggerbits_ = new std::vector<int>();
@@ -435,11 +427,10 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     for (int iBit = 0; iBit < numberTriggerBits; ++iBit) {     
       // ...Fill the corresponding accepts in branch-variables
       if (_Debug) std::cout << std::endl << " L1 TD: "<<iBit<<" "<<algoBitToName[iBit]<<" ";
-      bool result=0;
+      int result=0;
       for (unsigned int jbx=0; jbx<m_gtDecisionWord5Bx.size(); ++jbx) {
 	if (_Debug) std::cout << m_gtDecisionWord5Bx[jbx][iBit]<< " ";
-	if (m_gtDecisionWord5Bx[jbx][iBit]) 
-	  result=1;
+	result += m_gtDecisionWord5Bx[jbx][iBit];
       }
       if (_Debug) std::cout << "5BxOr=" << result << std::endl;
       l1flag5Bx[iBit] = result;
