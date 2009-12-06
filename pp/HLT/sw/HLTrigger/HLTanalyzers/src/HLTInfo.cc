@@ -439,7 +439,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       m_gtTechDecisionWord5Bx.push_back((*itBx).gtTechnicalTriggerWord());
     }
     // --- Fill algo bits ---
-    for (int iBit = 0; iBit < numberTriggerBits; ++iBit) {     
+    for (unsigned int iBit = 0; iBit < numberTriggerBits; ++iBit) {     
       // ...Fill the corresponding accepts in branch-variables
       if (_Debug) std::cout << std::endl << " L1 TD: "<<iBit<<" "<<algoBitToName[iBit]<<" ";
       int result=0;
@@ -458,7 +458,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     }
 
     // --- Fill tech bits ---
-    for (int iBit = 0; iBit < m_gtTechDecisionWord5Bx[2].size(); ++iBit) {     
+    for (unsigned int iBit = 0; iBit < m_gtTechDecisionWord5Bx[2].size(); ++iBit) {     
       // ...Fill the corresponding accepts in branch-variables
       if (_Debug) std::cout << std::endl << " L1 TD: "<<iBit<<" "<<techBitToName[iBit]<<" ";
       int result=0;
