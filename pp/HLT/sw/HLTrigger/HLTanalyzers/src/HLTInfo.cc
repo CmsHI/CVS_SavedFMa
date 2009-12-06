@@ -14,7 +14,6 @@
 // L1 related
 #include "L1Trigger/GlobalTriggerAnalyzer/interface/L1GtUtils.h"
 #include "CondFormats/L1TObjects/interface/L1GtTriggerMenu.h"
-#include "CondFormats/L1TObjects/interface/L1GtTriggerMenuFwd.h"
 #include "CondFormats/DataRecord/interface/L1GtTriggerMenuRcd.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutSetupFwd.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutSetup.h"
@@ -179,7 +178,6 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       HltEvtCnt++;
     }
     // ...Fill the corresponding accepts in branch-variables
-    float SD_discr_0=0;
     for (int itrig = 0; itrig != ntrigs; ++itrig){
 
       string trigName=triggerNames_.triggerName(itrig);
@@ -192,10 +190,6 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
         if (_Debug) std::cout << "%HLTInfo --  Number of HLT Triggers: " << ntrigs << std::endl;
         std::cout << "%HLTInfo --  HLTTrigger(" << itrig << "): " << trigName << " = " << accept << std::endl;
       }
-
-      // SD discrimination
-      if (trigName=="HLT_MinBiasBSC")SD_discr_0+=0.827*accept;
-      if (trigName=="HLT_MinBiasBSC_OR")SD_discr_0+=0.827*accept;
     }
   }
   else { if (_Debug) std::cout << "%HLTInfo -- No Trigger Result" << std::endl;}
@@ -399,8 +393,6 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     const TechnicalTriggerWord&  technicalTriggerWordBeforeMask = L1GTRR->technicalTriggerWord();
     const unsigned int numberTechnicalTriggerBits(technicalTriggerWordBeforeMask.size());
 
-    //DecisionWord gtTechDecisionWord = L1GTRR->gtTechnical
-
     // 1st event : Book as many branches as trigger paths provided in the input...
     if (L1EvtCnt==0){
       // get L1 menu from event setup
@@ -439,7 +431,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       m_gtTechDecisionWord5Bx.push_back((*itBx).gtTechnicalTriggerWord());
     }
     // --- Fill algo bits ---
-    for (unsigned int iBit = 0; iBit < numberTriggerBits; ++iBit) {     
+    for (int iBit = 0; iBit < numberTriggerBits; ++iBit) {     
       // ...Fill the corresponding accepts in branch-variables
       if (_Debug) std::cout << std::endl << " L1 TD: "<<iBit<<" "<<algoBitToName[iBit]<<" ";
       int result=0;
@@ -458,7 +450,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     }
 
     // --- Fill tech bits ---
-    for (unsigned int iBit = 0; iBit < m_gtTechDecisionWord5Bx[2].size(); ++iBit) {     
+    for (int iBit = 0; iBit < m_gtTechDecisionWord5Bx[2].size(); ++iBit) {     
       // ...Fill the corresponding accepts in branch-variables
       if (_Debug) std::cout << std::endl << " L1 TD: "<<iBit<<" "<<techBitToName[iBit]<<" ";
       int result=0;
