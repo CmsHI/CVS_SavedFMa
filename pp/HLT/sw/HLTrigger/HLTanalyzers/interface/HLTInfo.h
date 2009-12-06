@@ -77,7 +77,6 @@ public:
 	       const edm::Handle<l1extra::L1EtMissParticleCollection> & l1extmht,
 //	       const edm::Handle<l1extra::L1ParticleMapCollection>    & l1mapcoll,
 	       const edm::Handle<L1GlobalTriggerReadoutRecord>        & l1GTRR,
-	       const edm::Handle<L1GlobalTriggerObjectMapRecord>      & l1GTOMRec,
 	       const edm::Handle<L1GctHFBitCountsCollection>          & gctBitCounts,
 	       const edm::Handle<L1GctHFRingEtSumsCollection>         & gctRingSums,	       
 	       edm::EventSetup const& eventSetup,
@@ -104,7 +103,6 @@ private:
 
   TString * algoBitToName;
   TString * techBitToName;
-  std::vector<int> *techtriggerbits_;
 
   // input variables
   bool _Debug;

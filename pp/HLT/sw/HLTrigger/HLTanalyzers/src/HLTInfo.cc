@@ -153,7 +153,6 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
                       const edm::Handle<l1extra::L1EtMissParticleCollection> & L1ExtMet,
                       const edm::Handle<l1extra::L1EtMissParticleCollection> & L1ExtMht,
                       const edm::Handle<L1GlobalTriggerReadoutRecord>        & L1GTRR,
-                      const edm::Handle<L1GlobalTriggerObjectMapRecord>      & L1GTOMRec,
 		      const edm::Handle<L1GctHFBitCountsCollection>          & gctBitCounts,
 		      const edm::Handle<L1GctHFRingEtSumsCollection>         & gctRingSums,
 		      edm::EventSetup const& eventSetup,
@@ -387,7 +386,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
   const L1GtTriggerMenu* menu = menuRcd.product();
 
   // 1st event : Book as many branches as trigger paths provided in the input...
-  if (L1GTRR.isValid() and L1GTOMRec.isValid()) {  
+  if (L1GTRR.isValid()) {  
     DecisionWord gtDecisionWord = L1GTRR->decisionWord();
     const unsigned int numberTriggerBits(gtDecisionWord.size());
     const TechnicalTriggerWord&  technicalTriggerWordBeforeMask = L1GTRR->technicalTriggerWord();
@@ -403,10 +402,6 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
         HltTree->Branch(algoBitToName[itrig],l1flag+itrig,algoBitToName[itrig]+"/I");
         HltTree->Branch(algoBitToName[itrig]+"_5bxOr",l1flag5Bx+itrig,algoBitToName[itrig]+"_5bxOr/I");
       }
-
-      // Book a branch for the technical trigger bits
-      techtriggerbits_ = new std::vector<int>();
-      HltTree->Branch("L1TechnicalTriggerBits", "vector<int>", &(techtriggerbits_), 32000, 1);
 
       // Book branches for tech bits
       for (CItAlgo techTrig = menu->gtTechnicalTriggerMap().begin(); techTrig != menu->gtTechnicalTriggerMap().end(); ++techTrig) {
@@ -431,7 +426,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       m_gtTechDecisionWord5Bx.push_back((*itBx).gtTechnicalTriggerWord());
     }
     // --- Fill algo bits ---
-    for (int iBit = 0; iBit < numberTriggerBits; ++iBit) {     
+    for (unsigned int iBit = 0; iBit < numberTriggerBits; ++iBit) {     
       // ...Fill the corresponding accepts in branch-variables
       if (_Debug) std::cout << std::endl << " L1 TD: "<<iBit<<" "<<algoBitToName[iBit]<<" ";
       int result=0;
@@ -450,7 +445,7 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
     }
 
     // --- Fill tech bits ---
-    for (int iBit = 0; iBit < m_gtTechDecisionWord5Bx[2].size(); ++iBit) {     
+    for (unsigned int iBit = 0; iBit < m_gtTechDecisionWord5Bx[2].size(); ++iBit) {     
       // ...Fill the corresponding accepts in branch-variables
       if (_Debug) std::cout << std::endl << " L1 TD: "<<iBit<<" "<<techBitToName[iBit]<<" ";
       int result=0;
@@ -462,16 +457,13 @@ void HLTInfo::analyze(const edm::Handle<edm::TriggerResults>                 & h
       l1techflag5Bx[iBit] = result;
     }
 
-    techtriggerbits_->clear();
     for (unsigned int iBit = 0; iBit < numberTechnicalTriggerBits; ++iBit) {
-      int techTrigger = (int) technicalTriggerWordBeforeMask.at(iBit);
-      techtriggerbits_->push_back(techTrigger);
       l1techflag[iBit] = (int) technicalTriggerWordBeforeMask.at(iBit);
     }
     L1EvtCnt++;
   }
   else {
-    if (_Debug) std::cout << "%HLTInfo -- No L1 GT ReadoutRecord or ObjectMapRecord" << std::endl;
+    if (_Debug) std::cout << "%HLTInfo -- No L1 GT ReadoutRecord " << std::endl;
   }
 
   //
