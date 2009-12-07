@@ -27,6 +27,7 @@
 #include "TH1.h"
 #include "TH2.h"
 
+
 class OHltTree {
 public :
   TTree          *fChain;   //!pointer to the analyzed TTree or TChain
@@ -538,8 +539,6 @@ public :
   Int_t           HLT_PixelFEDSize; 
   Int_t           HLT_GlobalRunHPDNoise; 
 
-
-
   
   // HLT paths for the 2009 Circulating Beam menu 
   Int_t  HLT_L2Mu0_NoVertex;
@@ -552,6 +551,12 @@ public :
   Int_t  HLT_TechTrigHCALNoise;
   Int_t  HLT_HcalNZS_8E29;
   Int_t  HLT_HcalPhiSym;
+
+  // HLT paths for the 2009 Collision Beam menu 
+  Int_t           HLT_L1Tech_HCAL_HF_coincidence_PM;
+  TBranch        *b_HLT_L1Tech_HCAL_HF_coincidence_PM;   //!
+  Int_t           HLT_L1_BscMinBiasOR_BptxPlusORMinus;
+  TBranch        *b_HLT_L1_BscMinBiasOR_BptxPlusORMinus;   //!
 
   //CCLA Add technical bits (2009Nov28)
   vector<int>    *L1TechnicalBits; //!
@@ -596,8 +601,6 @@ public :
   TBranch        *b_HLT_MinBiasBSC;   //!
   TBranch        *b_HLT_MinBiasBSC_OR;   //!
   TBranch        *b_HLT_HighMultiplicityBSC;   //!
-
-
   
   // List of branches
   TBranch        *b_NrecoJetCal;   //!
@@ -2131,6 +2134,13 @@ void OHltTree::Init(TTree *tree)
   fChain->SetBranchAddress("HLT_MinBiasBSC", &map_BitOfStandardHLTPath["HLT_MinBiasBSC"], &b_HLT_MinBiasBSC);
   fChain->SetBranchAddress("HLT_MinBiasBSC_OR", &map_BitOfStandardHLTPath["HLT_MinBiasBSC_OR"], &b_HLT_MinBiasBSC_OR);
   fChain->SetBranchAddress("HLT_HighMultiplicityBSC", &map_BitOfStandardHLTPath["HLT_HighMultiplicityBSC"], &b_HLT_HighMultiplicityBSC);
+
+
+  // HLT paths for the 2009 Collision Beam menu 
+  fChain->SetBranchAddress("HLT_L1Tech_HCAL_HF_coincidence_PM", &HLT_L1Tech_HCAL_HF_coincidence_PM, &b_HLT_L1Tech_HCAL_HF_coincidence_PM);
+  fChain->SetBranchAddress("HLT_L1Tech_HCAL_HF_coincidence_PM", &map_BitOfStandardHLTPath["HLT_L1Tech_HCAL_HF_coincidence_PM"], &b_HLT_L1Tech_HCAL_HF_coincidence_PM);
+  fChain->SetBranchAddress("HLT_L1_BscMinBiasOR_BptxPlusORMinus", &HLT_L1_BscMinBiasOR_BptxPlusORMinus, &b_HLT_L1_BscMinBiasOR_BptxPlusORMinus);
+  fChain->SetBranchAddress("HLT_L1_BscMinBiasOR_BptxPlusORMinus", &map_BitOfStandardHLTPath["HLT_L1_BscMinBiasOR_BptxPlusORMinus"], &b_HLT_L1_BscMinBiasOR_BptxPlusORMinus);
   
   Notify();
 }
