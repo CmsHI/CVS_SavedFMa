@@ -13,7 +13,7 @@ hltbitanalysis = cms.EDAnalyzer("HLTBitAnalyzer",
 
     ### Run parameters
     RunParameters = cms.PSet(
-      HistogramFile = cms.untracked.string('hltbitanalysis.root'),
+      HistogramFile = cms.untracked.string('openhlt.root'),
       Monte = cms.bool(False),
       Debug = cms.bool(False)
     )
