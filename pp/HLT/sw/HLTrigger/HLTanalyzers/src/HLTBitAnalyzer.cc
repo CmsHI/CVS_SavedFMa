@@ -79,7 +79,7 @@ HLTBitAnalyzer::HLTBitAnalyzer(edm::ParameterSet const& conf) :
 
   // Setup the different analysis
   hlt_analysis_.setup(conf, HltTree);
-  evt_header_.setup(HltTree);
+  evt_header_.setup(conf,HltTree);
   if (_Monte) hlt_anainfo_.setup(HltTree);
 }
 

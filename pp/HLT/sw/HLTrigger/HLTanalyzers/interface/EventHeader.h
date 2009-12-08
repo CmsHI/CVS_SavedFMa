@@ -16,7 +16,7 @@ public:
   EventHeader(); 
 	~EventHeader();
 
-  void setup(TTree* tree);
+  void setup(const edm::ParameterSet& pSet, TTree* tree);
 
   /** Analyze the Data */
   void analyze(edm::Event const& iEvent, TTree* tree);
@@ -27,6 +27,9 @@ private:
 	int fRun;
 	int fEvent;
 	int fLumiBlock;
+	int fOrbitNumber;
+	int fBunchCrossing;
+	int fIsRealData;
 
   // input variables
   bool _Debug;
