@@ -44,6 +44,7 @@ echo $run
 echo   At `date` >> log/$outf
 
 if [ $check == false ]; then
+   ./create_custom_python_cfg.sh
    echo run!
    eval $run
 fi
