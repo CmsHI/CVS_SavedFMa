@@ -6,11 +6,14 @@ if [ $# -lt 1 ]; then
 fi
 
 flist=$1
+n=100000
 if [ $2 ]; then n=$2; fi
 
 for i in `cat $flist | head -n $n`; do
   if [ ! -e ${i##/*/} ]; then
-    rfcp $i .
+    cmd="rfcp $i ."
+    echo $cmd
+    eval $cmd
   fi
 done
 
