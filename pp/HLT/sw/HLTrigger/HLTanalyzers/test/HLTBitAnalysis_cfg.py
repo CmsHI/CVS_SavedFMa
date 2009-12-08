@@ -15,12 +15,13 @@ process.source = cms.Source("PoolSource",
       #'/store/express/BeamCommissioning09/OfflineMonitor/FEVTHLTALL/v2/000/122/314/F8F49C1B-60D8-DE11-AB34-001D09F28F0C.root' # file from run 122314    
     #'/store/relval/CMSSW_3_3_2/RelValZTT/GEN-SIM-DIGI-RAW-HLTDEBUG/STARTUP31X_V8-v2/0000/CC203608-59C8-DE11-B1E6-0018F3D096EA.root' # MC TTBAR
     #'/store/data/BeamCommissioning09/MinimumBias/RECO/v2/000/123/151/FA9D48E2-14DE-DE11-BB11-001D09F291D2.root'
-    '/store/data/BeamCommissioning09/MinimumBias/RAW/v1/000/122/314/CC89C4BC-60D8-DE11-B365-0030487D0D3A.root'
+    #'/store/data/BeamCommissioning09/MinimumBias/RAW/v1/000/122/314/CC89C4BC-60D8-DE11-B365-0030487D0D3A.root'
+    '/store/data/BeamCommissioning09/MinimumBias/RECO/v2/000/123/596/F67BCF17-48E2-DE11-98B1-000423D94534.root'
     )
 )
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32( 100 ),
+    input = cms.untracked.int32( 1000 ),
     skipBadFiles = cms.bool(True)
     )
 
@@ -50,7 +51,7 @@ process.GlobalTag.globaltag = 'GR09_P_V7::All'
 # Define the analyzer modules
 process.load("HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi")
 # Settings
-isRaw=True # * =0 use existing gtDigis on the input file, =1 extract gtDigis from the RAW data collection
+isRaw=False # * =0 use existing gtDigis on the input file, =1 extract gtDigis from the RAW data collection
 isMC=False
 from HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi import update_cfg_cases
 update_cfg_cases(process,isRaw,isMC)
