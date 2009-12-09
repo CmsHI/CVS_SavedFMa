@@ -15,8 +15,8 @@
  *
  * \author: Vasile Mihai Ghete - HEPHY Vienna
  *
- * $Date: 2009/05/25 14:12:28 $
- * $Revision: 1.2 $
+ * $Date: 2009/12/02 16:13:04 $
+ * $Revision: 1.3 $
  *
  */
 
@@ -495,6 +495,7 @@ void L1GtLogicParser::buildOperandTokenVector()
 
         opNumber++;
     }
+
 
 }
 
@@ -1617,6 +1618,10 @@ bool L1GtLogicParser::setLogicalExpression(const std::string& logicalExpressionV
     //<< "\nL1GtLogicParser::setLogicalExpression - "
     //<< "\nLogical expression = '" << m_logicalExpression << "'\n"
     //<< std::endl;
+
+    // build operand token vector
+    // dummy tokenNumber; tokenResult false
+    buildOperandTokenVector();
 
     return true;
 

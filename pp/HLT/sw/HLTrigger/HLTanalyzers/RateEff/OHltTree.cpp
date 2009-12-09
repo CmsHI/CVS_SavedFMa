@@ -33,9 +33,10 @@ void OHltTree::Loop(OHltRateCounter *rc,OHltConfig *cfg,OHltMenu *menu,int procI
     fChain->SetBranchStatus("*",kFALSE);
     fChain->SetBranchStatus("MCmu*",kTRUE); // for ppMuX
     fChain->SetBranchStatus("MCel*",kTRUE); // for ppEleX
-    fChain->SetBranchStatus("L1TechnicalTriggerBits",kTRUE);
+    // fChain->SetBranchStatus("L1TechnicalTriggerBits",kTRUE);
     if (cfg->selectBranchL1) {
       fChain->SetBranchStatus("L1_*",kTRUE);
+      fChain->SetBranchStatus("L1Tech_*",kTRUE);
     }
     if (cfg->selectBranchHLT) {
       fChain->SetBranchStatus("HLT_*",kTRUE);
@@ -59,6 +60,7 @@ void OHltTree::Loop(OHltRateCounter *rc,OHltConfig *cfg,OHltMenu *menu,int procI
     fChain->SetBranchStatus("*",kTRUE);
   }
 
+  
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     Long64_t ientry = LoadTree(jentry);
     if (ientry < 0) break;
@@ -66,9 +68,6 @@ void OHltTree::Loop(OHltRateCounter *rc,OHltConfig *cfg,OHltMenu *menu,int procI
 
     if (jentry%cfg->nPrintStatusEvery == 0)
       cout<<"Processing entry "<<jentry<<"/"<<nentries<<"\r"<<flush<<endl;
-
-    if ( cfg->pdomucuts[procID] && MCmu3!=0 ) continue;
-    if ( cfg->pdoecuts[procID] && MCel3!=0 ) continue;
 
     // When running on real data, keep track of how many LumiSections have been 
     // used. Note: this assumes LumiSections are contiguous, and that the user 
@@ -81,20 +80,19 @@ void OHltTree::Loop(OHltRateCounter *rc,OHltConfig *cfg,OHltMenu *menu,int procI
 	}
 	
 	currentLumiSection = LumiBlock;
-	if(currentLumiSection != previousLumiSection)
-	  nLumiSections++;
+	if(currentLumiSection != previousLumiSection) {
+	  
+	  cout<<"Run, LS: "<<Run<<" "<<LumiBlock<<endl;
+	  if (rc->isNewRunLS(Run,LumiBlock)) { // check against double counting
+	    rc->addRunLS(Run,LumiBlock);
+	    nLumiSections++;
+	  }
+	}
 
 	previousLumiSection = currentLumiSection;	
       }
  
     SetOpenL1Bits(); 
-
-    //ccla example to extact technical bits
-    if (b_L1TechnicalBits){
-      //cout << "Size: " << L1TechnicalBits->size() << endl;
-      bool techTrigger0 = (bool) L1TechnicalBits->at(0);
-      //cout << "techTrigger0: " << techTrigger0 << endl;
-    }
 
     RemoveEGOverlaps();
    
@@ -108,7 +106,17 @@ void OHltTree::Loop(OHltRateCounter *rc,OHltConfig *cfg,OHltMenu *menu,int procI
     //SetMapL1BitOfStandardHLTPath(menu);
     SetMapL1BitOfStandardHLTPathUsingLogicParser(menu,(int)jentry);
     SetL1MuonQuality();
-	  
+
+
+    // Apply prefilter based on bits
+    if (!passPreFilterLogicParser(cfg->preFilterLogicString,(int)jentry)) {
+      //cout<<"Event rejected due to prefilter!!!"<<endl;
+      continue;
+    }
+
+    if ( cfg->pdomucuts[procID] && MCmu3!=0 ) continue;
+    if ( cfg->pdoecuts[procID] && MCel3!=0 ) continue;
+
     //////////////////////////////////////////////////////////////////
     // Get Denominator (normalization and acc. definition) for efficiency evaluation
     //////////////////////////////////////////////////////////////////
@@ -182,6 +190,7 @@ void OHltTree::Loop(OHltRateCounter *rc,OHltConfig *cfg,OHltMenu *menu,int procI
       //cout << "Final results: " << menu->GetTriggerName(it) << " " << triggerBit[it] << endl;
       if (triggerBit[it]) {
 	rc->iCount[it]++;
+	rc->incrRunLSCount(Run,LumiBlock,it); // for per LS rates!
 	for (int it2 = 0; it2 < nTrig; it2++){
 	  if (triggerBit[it2]) {
 	    rc->overlapCount[it][it2] += 1;
@@ -191,8 +200,10 @@ void OHltTree::Loop(OHltRateCounter *rc,OHltConfig *cfg,OHltMenu *menu,int procI
 	      allOtherBitsFired[it] = true;
 	  }
 	}
-	if (not previousBitsFired[it])
+	if (not previousBitsFired[it]) {
 	  rc->sPureCount[it]++;
+	  rc->incrRunLSTotCount(Run,LumiBlock); // for per LS rates!	  
+	}
 	if (not allOtherBitsFired[it])
 	  rc->pureCount[it]++;
       }

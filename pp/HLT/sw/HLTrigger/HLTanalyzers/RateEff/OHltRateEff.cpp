@@ -139,6 +139,8 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
 	       vector<OHltRateCounter*> &rcs,OHltRatePrinter* rprint, HLTDatasets &hltDatasets) {
 
   const int ntrig = (int)menu->GetTriggerSize();
+  vector< vector< float > > RatePerLS;
+  vector<float> totalRatePerLS;
   vector<float> Rate,pureRate,spureRate;
   vector<float> RateErr,pureRateErr,spureRateErr;
   vector< vector<float> >coMa;
@@ -154,6 +156,7 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
   
   vector<float> ftmp;
   for (int i=0;i<ntrig;i++) { // Init
+    // per lumisection
     Rate.push_back(0.);pureRate.push_back(0.);spureRate.push_back(0.);ftmp.push_back(0.);
     RateErr.push_back(0.);pureRateErr.push_back(0.);spureRateErr.push_back(0.);
     coDen.push_back(0.);
@@ -163,9 +166,15 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
   for (unsigned int i=0;i<procs.size();i++) {
     procs[i]->Loop(rcs[i],cfg,menu,i,DenEff,h1,h2,h3,h4,hltDatasets[i]);
 
+    for (unsigned int iLS=0;iLS<rcs[0]->perLumiSectionCount.size();iLS++) {
+      RatePerLS.push_back(Rate);
+      totalRatePerLS.push_back(0.);
+    }
+    
     float deno = (float)cfg->nEntries;
 
     float scaleddeno = -1;
+    float scaleddenoPerLS = -1;
 
     float chainEntries = (float)procs[i]->fChain->GetEntries(); 
     if (deno <= 0. || deno > chainEntries) {
@@ -176,6 +185,7 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
       {
 	// Effective time = # of lumi sections * length of 1 lumi section / overall prescale factor of the PD being analyzed
 	scaleddeno = (float)((procs[i]->GetNLumiSections()) * (cfg->lumiSectionLength)) / ((float)(cfg->prescaleNormalization));
+	scaleddenoPerLS = (float)((cfg->lumiSectionLength)) / ((float)(cfg->prescaleNormalization));
 	cout << "N(Lumi Sections) = " << (procs[i]->GetNLumiSections()) << endl;
       }
     else if(cfg->isRealData == 1 && cfg->nL1AcceptsRun > 0) 
@@ -192,8 +202,17 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
     hltDatasets[i].computeRate(collisionRate, mu);   //SAK -- convert event counts into rates
 
 
+    for (unsigned int iLS=0;iLS<rcs[i]->perLumiSectionCount.size();iLS++) {
+      totalRatePerLS[iLS] += OHltRateCounter::eff((float)rcs[i]->perLumiSectionTotCount[iLS],scaleddenoPerLS);
+    }
+    
     for (int j=0;j<ntrig;j++) {
-      // JH - cosmics!
+
+      // per lumisection
+      for (unsigned int iLS=0;iLS<rcs[i]->perLumiSectionCount.size();iLS++) {
+	RatePerLS[iLS][j] += OHltRateCounter::eff((float)rcs[i]->perLumiSectionCount[iLS][j],scaleddenoPerLS);
+      }
+      
       if(cfg->isRealData == 1) {
 	Rate[j]    += OHltRateCounter::eff((float)rcs[i]->iCount[j],scaleddeno);   
 	RateErr[j] += OHltRateCounter::effErr((float)rcs[i]->iCount[j],scaleddeno); 
@@ -259,7 +278,8 @@ void calcRates(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,
   
   trigCorrNum->Write();
   trigAcc->Write();
-  rprint->SetupAll(Rate,RateErr,spureRate,spureRateErr,pureRate,pureRateErr,coMa);
+  rprint->SetupAll(Rate,RateErr,spureRate,spureRateErr,pureRate,pureRateErr,coMa,
+		   RatePerLS,rcs[0]->runID,rcs[0]->lumiSection,totalRatePerLS);
   
 }
 void calcEff(OHltConfig *cfg,OHltMenu *menu,vector<OHltTree*> &procs,

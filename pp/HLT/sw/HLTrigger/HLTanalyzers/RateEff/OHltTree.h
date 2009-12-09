@@ -35,6 +35,7 @@ public :
 
   // logic parser for m_l1SeedsLogicalExpression
   std::vector<L1GtLogicParser*> m_l1AlgoLogicParser;
+  L1GtLogicParser* m_preFilterLogicParser;
   void OHltTree::SetLogicParser(std::string l1SeedsLogicalExpression);
 
   // Declaration of leaf types
@@ -87,6 +88,11 @@ public :
   Float_t         ohBJetL2Pt[5000];  //[NohBJetL2]  
   Float_t         ohBJetL2Eta[5000];  //[NohBJetL2]  
   Float_t         ohBJetL2Phi[5000];  //[NohBJetL2]  
+  Int_t           NohPixelTracksL3;
+  Float_t         ohPixelTracksL3Pt[10000];   //[NohPixelTracks]
+  Float_t         ohPixelTracksL3Eta[10000];   //[NohPixelTracks]
+  Float_t         ohPixelTracksL3Phi[10000];   //[NohPixelTracks]
+  Float_t         ohPixelTracksL3Vz[10000];   //[NohPixelTracks]
   Int_t           NohBJetLife;
   Float_t         ohBJetLifeL2E[1000];   //[NohBJetLife]
   Float_t         ohBJetLifeL2ET[1000];   //[NohBJetLife]
@@ -375,6 +381,80 @@ public :
   Int_t           L1_SingleTauJet80; 
   Int_t           L1_TripleJet30; 
 
+  // ccla - L1 Technical bits (06Dec09)
+  Int_t           L1Tech_BPTX_minus_v0;
+  Int_t           L1Tech_BPTX_minus_v0_5bxOr;
+  Int_t           L1Tech_BPTX_minus_AND_not_plus_v0;
+  Int_t           L1Tech_BPTX_minus_AND_not_plus_v0_5bxOr;
+  Int_t           L1Tech_BPTX_plus_v0;
+  Int_t           L1Tech_BPTX_plus_v0_5bxOr;
+  Int_t           L1Tech_BPTX_plus_AND_NOT_minus_v0;
+  Int_t           L1Tech_BPTX_plus_AND_NOT_minus_v0_5bxOr;
+  Int_t           L1Tech_BPTX_plus_AND_minus_v0;
+  Int_t           L1Tech_BPTX_plus_AND_minus_v0_5bxOr;
+  Int_t           L1Tech_BPTX_plus_AND_minus_instance1_v0;
+  Int_t           L1Tech_BPTX_plus_AND_minus_instance1_v0_5bxOr;
+  Int_t           L1Tech_BPTX_plus_OR_minus_v0;
+  Int_t           L1Tech_BPTX_plus_OR_minus_v0_5bxOr;
+  Int_t           L1Tech_BPTX_quiet_v0;
+  Int_t           L1Tech_BPTX_quiet_v0_5bxOr;
+  Int_t           L1Tech_BSC_HighMultiplicity_v0;
+  Int_t           L1Tech_BSC_HighMultiplicity_v0_5bxOr;
+  Int_t           L1Tech_BSC_halo_beam1_inner_v0;
+  Int_t           L1Tech_BSC_halo_beam1_inner_v0_5bxOr;
+  Int_t           L1Tech_BSC_halo_beam1_outer_v0;
+  Int_t           L1Tech_BSC_halo_beam1_outer_v0_5bxOr;
+  Int_t           L1Tech_BSC_halo_beam2_inner_v0;
+  Int_t           L1Tech_BSC_halo_beam2_inner_v0_5bxOr;
+  Int_t           L1Tech_BSC_halo_beam2_outer_v0;
+  Int_t           L1Tech_BSC_halo_beam2_outer_v0_5bxOr;
+  Int_t           L1Tech_BSC_minBias_OR_v0;
+  Int_t           L1Tech_BSC_minBias_OR_v0_5bxOr;
+  Int_t           L1Tech_BSC_minBias_inner_threshold1_v0;
+  Int_t           L1Tech_BSC_minBias_inner_threshold1_v0_5bxOr;
+  Int_t           L1Tech_BSC_minBias_inner_threshold2_v0;
+  Int_t           L1Tech_BSC_minBias_inner_threshold2_v0_5bxOr;
+  Int_t           L1Tech_BSC_minBias_threshold1_v0;
+  Int_t           L1Tech_BSC_minBias_threshold1_v0_5bxOr;
+  Int_t           L1Tech_BSC_minBias_threshold2_v0;
+  Int_t           L1Tech_BSC_minBias_threshold2_v0_5bxOr;
+  Int_t           L1Tech_BSC_splash_beam1_v0;
+  Int_t           L1Tech_BSC_splash_beam1_v0_5bxOr;
+  Int_t           L1Tech_BSC_splash_beam2_v0;
+  Int_t           L1Tech_BSC_splash_beam2_v0_5bxOr;
+  Int_t           L1Tech_HCAL_HBHE_totalOR_v0;
+  Int_t           L1Tech_HCAL_HBHE_totalOR_v0_5bxOr;
+  Int_t           L1Tech_HCAL_HF_totalOR_coincidenceHFM_v0;
+  Int_t           L1Tech_HCAL_HF_totalOR_coincidenceHFM_v0_5bxOr;
+  Int_t           L1Tech_HCAL_HF_totalOR_coincidenceHFP_v0;
+  Int_t           L1Tech_HCAL_HF_totalOR_coincidenceHFP_v0_5bxOr;
+  Int_t           L1Tech_HCAL_HF_totalOR_minBias_v0;
+  Int_t           L1Tech_HCAL_HF_totalOR_minBias_v0_5bxOr;
+  Int_t           L1Tech_HCAL_HO_totalOR_v0;
+  Int_t           L1Tech_HCAL_HO_totalOR_v0_5bxOr;
+  Int_t           L1Tech_RPC_TTU_RB0_Cosmics_v0;
+  Int_t           L1Tech_RPC_TTU_RB0_Cosmics_v0_5bxOr;
+  Int_t           L1Tech_RPC_TTU_RBminus1_Cosmics_v0;
+  Int_t           L1Tech_RPC_TTU_RBminus1_Cosmics_v0_5bxOr;
+  Int_t           L1Tech_RPC_TTU_RBminus2_Cosmics_v0;
+  Int_t           L1Tech_RPC_TTU_RBminus2_Cosmics_v0_5bxOr;
+  Int_t           L1Tech_RPC_TTU_RBplus1_Cosmics_v0;
+  Int_t           L1Tech_RPC_TTU_RBplus1_Cosmics_v0_5bxOr;
+  Int_t           L1Tech_RPC_TTU_RBplus2_Cosmics_v0;
+  Int_t           L1Tech_RPC_TTU_RBplus2_Cosmics_v0_5bxOr;
+  Int_t           L1Tech_RPC_TTU_barrel_Cosmics_v0;
+  Int_t           L1Tech_RPC_TTU_barrel_Cosmics_v0_5bxOr;
+  Int_t           L1Tech_RPC_TTU_pointing_Cosmics_v0;
+  Int_t           L1Tech_RPC_TTU_pointing_Cosmics_v0_5bxOr;
+  Int_t           L1Tech_ZDC_loose_vertex_v0;
+  Int_t           L1Tech_ZDC_loose_vertex_v0_5bxOr;
+  Int_t           L1Tech_ZDC_minus_over_threshold_v0;
+  Int_t           L1Tech_ZDC_minus_over_threshold_v0_5bxOr;
+  Int_t           L1Tech_ZDC_plus_over_threshold_v0;
+  Int_t           L1Tech_ZDC_plus_over_threshold_v0_5bxOr;
+  Int_t           L1Tech_ZDC_tight_vertex_v0;
+  Int_t           L1Tech_ZDC_tight_vertex_v0_5bxOr;
+
 
   // Here we declare any emulated L1 bits 
   Int_t           OpenL1_ZeroBias;
@@ -580,8 +660,6 @@ public :
   Int_t           HLT_MinBiasBSC_OR;
   Int_t           HLT_HighMultiplicityBSC;
 
-  //CCLA Add technical bits (2009Nov28)
-  TBranch         *b_L1TechnicalBits; //!
 
   // Add-ons for Circulation beam v2 (2009Nov18)
   TBranch        *b_HLT_DTErrors;   //!
@@ -601,7 +679,12 @@ public :
   TBranch        *b_HLT_MinBiasBSC;   //!
   TBranch        *b_HLT_MinBiasBSC_OR;   //!
   TBranch        *b_HLT_HighMultiplicityBSC;   //!
-  
+  TBranch        *b_NohPixelTracksL3;   //!
+  TBranch        *b_ohPixelTracksL3Pt;    //!
+  TBranch        *b_ohPixelTracksL3Eta;   //!
+  TBranch        *b_ohPixelTracksL3Phi;    //!
+  TBranch        *b_ohPixelTracksL3Vz;    //!
+
   // List of branches
   TBranch        *b_NrecoJetCal;   //!
   TBranch        *b_NrecoJetGen;   //!
@@ -936,6 +1019,80 @@ public :
   TBranch        *b_L1_SingleTauJet80;   //! 
   TBranch        *b_L1_TripleJet30;   //! 
 
+  // ccla - L1 Technical bits  (06Dec09)
+  TBranch        *b_L1Tech_BPTX_minus_v0;   //!
+  TBranch        *b_L1Tech_BPTX_minus_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BPTX_minus_AND_not_plus_v0;   //!
+  TBranch        *b_L1Tech_BPTX_minus_AND_not_plus_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BPTX_plus_v0;   //!
+  TBranch        *b_L1Tech_BPTX_plus_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BPTX_plus_AND_NOT_minus_v0;   //!
+  TBranch        *b_L1Tech_BPTX_plus_AND_NOT_minus_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BPTX_plus_AND_minus_v0;   //!
+  TBranch        *b_L1Tech_BPTX_plus_AND_minus_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BPTX_plus_AND_minus_instance1_v0;   //!
+  TBranch        *b_L1Tech_BPTX_plus_AND_minus_instance1_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BPTX_plus_OR_minus_v0;   //!
+  TBranch        *b_L1Tech_BPTX_plus_OR_minus_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BPTX_quiet_v0;   //!
+  TBranch        *b_L1Tech_BPTX_quiet_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BSC_HighMultiplicity_v0;   //!
+  TBranch        *b_L1Tech_BSC_HighMultiplicity_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BSC_halo_beam1_inner_v0;   //!
+  TBranch        *b_L1Tech_BSC_halo_beam1_inner_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BSC_halo_beam1_outer_v0;   //!
+  TBranch        *b_L1Tech_BSC_halo_beam1_outer_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BSC_halo_beam2_inner_v0;   //!
+  TBranch        *b_L1Tech_BSC_halo_beam2_inner_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BSC_halo_beam2_outer_v0;   //!
+  TBranch        *b_L1Tech_BSC_halo_beam2_outer_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BSC_minBias_OR_v0;   //!
+  TBranch        *b_L1Tech_BSC_minBias_OR_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BSC_minBias_inner_threshold1_v0;   //!
+  TBranch        *b_L1Tech_BSC_minBias_inner_threshold1_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BSC_minBias_inner_threshold2_v0;   //!
+  TBranch        *b_L1Tech_BSC_minBias_inner_threshold2_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BSC_minBias_threshold1_v0;   //!
+  TBranch        *b_L1Tech_BSC_minBias_threshold1_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BSC_minBias_threshold2_v0;   //!
+  TBranch        *b_L1Tech_BSC_minBias_threshold2_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BSC_splash_beam1_v0;   //!
+  TBranch        *b_L1Tech_BSC_splash_beam1_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_BSC_splash_beam2_v0;   //!
+  TBranch        *b_L1Tech_BSC_splash_beam2_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_HCAL_HBHE_totalOR_v0;   //!
+  TBranch        *b_L1Tech_HCAL_HBHE_totalOR_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_HCAL_HF_totalOR_coincidenceHFM_v0;   //!
+  TBranch        *b_L1Tech_HCAL_HF_totalOR_coincidenceHFM_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_HCAL_HF_totalOR_coincidenceHFP_v0;   //!
+  TBranch        *b_L1Tech_HCAL_HF_totalOR_coincidenceHFP_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_HCAL_HF_totalOR_minBias_v0;   //!
+  TBranch        *b_L1Tech_HCAL_HF_totalOR_minBias_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_HCAL_HO_totalOR_v0;   //!
+  TBranch        *b_L1Tech_HCAL_HO_totalOR_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_RPC_TTU_RB0_Cosmics_v0;   //!
+  TBranch        *b_L1Tech_RPC_TTU_RB0_Cosmics_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_RPC_TTU_RBminus1_Cosmics_v0;   //!
+  TBranch        *b_L1Tech_RPC_TTU_RBminus1_Cosmics_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_RPC_TTU_RBminus2_Cosmics_v0;   //!
+  TBranch        *b_L1Tech_RPC_TTU_RBminus2_Cosmics_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_RPC_TTU_RBplus1_Cosmics_v0;   //!
+  TBranch        *b_L1Tech_RPC_TTU_RBplus1_Cosmics_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_RPC_TTU_RBplus2_Cosmics_v0;   //!
+  TBranch        *b_L1Tech_RPC_TTU_RBplus2_Cosmics_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_RPC_TTU_barrel_Cosmics_v0;   //!
+  TBranch        *b_L1Tech_RPC_TTU_barrel_Cosmics_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_RPC_TTU_pointing_Cosmics_v0;   //!
+  TBranch        *b_L1Tech_RPC_TTU_pointing_Cosmics_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_ZDC_loose_vertex_v0;   //!
+  TBranch        *b_L1Tech_ZDC_loose_vertex_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_ZDC_minus_over_threshold_v0;   //!
+  TBranch        *b_L1Tech_ZDC_minus_over_threshold_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_ZDC_plus_over_threshold_v0;   //!
+  TBranch        *b_L1Tech_ZDC_plus_over_threshold_v0_5bxOr;   //!
+  TBranch        *b_L1Tech_ZDC_tight_vertex_v0;   //!
+  TBranch        *b_L1Tech_ZDC_tight_vertex_v0_5bxOr;   //!
+
   // JH - 1E31 MC menu
   TBranch        *b_HLT_L1Jet15;   //!  
   TBranch        *b_HLT_Jet30;   //! 
@@ -1156,6 +1313,7 @@ public :
   inline void RemoveEGOverlaps();
   inline void SetL1MuonQuality();
   inline void SetOpenL1Bits();
+  bool passPreFilterLogicParser(TString, int);
 
   void Loop(OHltRateCounter *rc,OHltConfig *cfg,OHltMenu *menu,int pID
 						,float &Den,TH1F* &h1,TH1F* &h2,TH1F* &h3,TH1F* &h4
@@ -1196,6 +1354,7 @@ public :
   int OpenHltJRMuonPassed(double ptl1,double ptl2,double ptl3,double dr,int iso,double ptl3hi);
   int OHltTree::OpenHltSumHTPassed(double sumHTthreshold, double jetthreshold) ;
   int OHltTree::OpenHltMHT(double MHTthreshold, double jetthreshold) ;
+  int OHltTree::OpenHlt1PixelTrackPassed(float minpt, float minsep, float miniso);
 
   std::map<TString, std::vector<TString> >&
     GetL1SeedsOfHLTPathMap() { return map_L1SeedsOfStandardHLTPath; }; // mapping to all seeds
@@ -1505,6 +1664,12 @@ void OHltTree::Init(TTree *tree)
   fChain->SetBranchAddress("ohAlcapi0etaClusAll", ohAlcapi0etaClusAll, &b_ohAlcapi0etaClusAll); 
   fChain->SetBranchAddress("ohAlcapi0phiClusAll", ohAlcapi0phiClusAll, &b_ohAlcapi0phiClusAll); 
   fChain->SetBranchAddress("ohAlcapi0s4s9ClusAll", ohAlcapi0s4s9ClusAll, &b_ohAlcapi0s4s9ClusAll); 
+  fChain->SetBranchAddress("NohPixelTracksL3", &NohPixelTracksL3, &b_NohPixelTracksL3);
+  fChain->SetBranchAddress("ohPixelTracksL3Pt", ohPixelTracksL3Pt, &b_ohPixelTracksL3Pt);
+  fChain->SetBranchAddress("ohPixelTracksL3Eta", ohPixelTracksL3Eta, &b_ohPixelTracksL3Eta);
+  fChain->SetBranchAddress("ohPixelTracksL3Phi", ohPixelTracksL3Phi, &b_ohPixelTracksL3Phi); 
+  fChain->SetBranchAddress("ohPixelTracksL3Vz", ohPixelTracksL3Vz, &b_ohPixelTracksL3Vz);
+
   fChain->SetBranchAddress("NMCpart", &NMCpart, &b_NMCpart);
   fChain->SetBranchAddress("MCpid", MCpid, &b_MCpid);
   fChain->SetBranchAddress("MCstatus", MCstatus, &b_MCstatus);
@@ -1587,9 +1752,6 @@ void OHltTree::Init(TTree *tree)
   fChain->SetBranchAddress("L1_SingleTauJet20", &L1_SingleTauJet20, &b_L1_SingleTauJet20); 
   fChain->SetBranchAddress("L1_SingleTauJet50", &L1_SingleTauJet50, &b_L1_SingleTauJet50); 
   fChain->SetBranchAddress("L1_DoubleJet30", &L1_DoubleJet30, &b_L1_DoubleJet30);   
-
-  fChain->SetBranchAddress("L1TechnicalTriggerBits", &L1TechnicalBits, &b_L1TechnicalBits);
-
   
   //L1's
   fChain->SetBranchAddress("L1_TripleJet14", &L1_TripleJet14, &b_L1_TripleJet14);  
@@ -1667,6 +1829,80 @@ void OHltTree::Init(TTree *tree)
   fChain->SetBranchAddress("L1_SingleTauJet60", &L1_SingleTauJet60, &b_L1_SingleTauJet60); 
   fChain->SetBranchAddress("L1_SingleTauJet80", &L1_SingleTauJet80, &b_L1_SingleTauJet80); 
   fChain->SetBranchAddress("L1_TripleJet30", &L1_TripleJet30, &b_L1_TripleJet30); 
+
+  // ccla - L1 Technical bits  (06Dec09)
+  fChain->SetBranchAddress("L1Tech_BPTX_minus.v0", &L1Tech_BPTX_minus_v0, &b_L1Tech_BPTX_minus_v0);
+  fChain->SetBranchAddress("L1Tech_BPTX_minus.v0_5bxOr", &L1Tech_BPTX_minus_v0_5bxOr, &b_L1Tech_BPTX_minus_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BPTX_minus_AND_not_plus.v0", &L1Tech_BPTX_minus_AND_not_plus_v0, &b_L1Tech_BPTX_minus_AND_not_plus_v0);
+  fChain->SetBranchAddress("L1Tech_BPTX_minus_AND_not_plus.v0_5bxOr", &L1Tech_BPTX_minus_AND_not_plus_v0_5bxOr, &b_L1Tech_BPTX_minus_AND_not_plus_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BPTX_plus.v0", &L1Tech_BPTX_plus_v0, &b_L1Tech_BPTX_plus_v0);
+  fChain->SetBranchAddress("L1Tech_BPTX_plus.v0_5bxOr", &L1Tech_BPTX_plus_v0_5bxOr, &b_L1Tech_BPTX_plus_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BPTX_plus_AND_NOT_minus.v0", &L1Tech_BPTX_plus_AND_NOT_minus_v0, &b_L1Tech_BPTX_plus_AND_NOT_minus_v0);
+  fChain->SetBranchAddress("L1Tech_BPTX_plus_AND_NOT_minus.v0_5bxOr", &L1Tech_BPTX_plus_AND_NOT_minus_v0_5bxOr, &b_L1Tech_BPTX_plus_AND_NOT_minus_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BPTX_plus_AND_minus.v0", &L1Tech_BPTX_plus_AND_minus_v0, &b_L1Tech_BPTX_plus_AND_minus_v0);
+  fChain->SetBranchAddress("L1Tech_BPTX_plus_AND_minus.v0_5bxOr", &L1Tech_BPTX_plus_AND_minus_v0_5bxOr, &b_L1Tech_BPTX_plus_AND_minus_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BPTX_plus_AND_minus_instance1.v0", &L1Tech_BPTX_plus_AND_minus_instance1_v0, &b_L1Tech_BPTX_plus_AND_minus_instance1_v0);
+  fChain->SetBranchAddress("L1Tech_BPTX_plus_AND_minus_instance1.v0_5bxOr", &L1Tech_BPTX_plus_AND_minus_instance1_v0_5bxOr, &b_L1Tech_BPTX_plus_AND_minus_instance1_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BPTX_plus_OR_minus.v0", &L1Tech_BPTX_plus_OR_minus_v0, &b_L1Tech_BPTX_plus_OR_minus_v0);
+  fChain->SetBranchAddress("L1Tech_BPTX_plus_OR_minus.v0_5bxOr", &L1Tech_BPTX_plus_OR_minus_v0_5bxOr, &b_L1Tech_BPTX_plus_OR_minus_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BPTX_quiet.v0", &L1Tech_BPTX_quiet_v0, &b_L1Tech_BPTX_quiet_v0);
+  fChain->SetBranchAddress("L1Tech_BPTX_quiet.v0_5bxOr", &L1Tech_BPTX_quiet_v0_5bxOr, &b_L1Tech_BPTX_quiet_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BSC_HighMultiplicity.v0", &L1Tech_BSC_HighMultiplicity_v0, &b_L1Tech_BSC_HighMultiplicity_v0);
+  fChain->SetBranchAddress("L1Tech_BSC_HighMultiplicity.v0_5bxOr", &L1Tech_BSC_HighMultiplicity_v0_5bxOr, &b_L1Tech_BSC_HighMultiplicity_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BSC_halo_beam1_inner.v0", &L1Tech_BSC_halo_beam1_inner_v0, &b_L1Tech_BSC_halo_beam1_inner_v0);
+  fChain->SetBranchAddress("L1Tech_BSC_halo_beam1_inner.v0_5bxOr", &L1Tech_BSC_halo_beam1_inner_v0_5bxOr, &b_L1Tech_BSC_halo_beam1_inner_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BSC_halo_beam1_outer.v0", &L1Tech_BSC_halo_beam1_outer_v0, &b_L1Tech_BSC_halo_beam1_outer_v0);
+  fChain->SetBranchAddress("L1Tech_BSC_halo_beam1_outer.v0_5bxOr", &L1Tech_BSC_halo_beam1_outer_v0_5bxOr, &b_L1Tech_BSC_halo_beam1_outer_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BSC_halo_beam2_inner.v0", &L1Tech_BSC_halo_beam2_inner_v0, &b_L1Tech_BSC_halo_beam2_inner_v0);
+  fChain->SetBranchAddress("L1Tech_BSC_halo_beam2_inner.v0_5bxOr", &L1Tech_BSC_halo_beam2_inner_v0_5bxOr, &b_L1Tech_BSC_halo_beam2_inner_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BSC_halo_beam2_outer.v0", &L1Tech_BSC_halo_beam2_outer_v0, &b_L1Tech_BSC_halo_beam2_outer_v0);
+  fChain->SetBranchAddress("L1Tech_BSC_halo_beam2_outer.v0_5bxOr", &L1Tech_BSC_halo_beam2_outer_v0_5bxOr, &b_L1Tech_BSC_halo_beam2_outer_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BSC_minBias_OR.v0", &L1Tech_BSC_minBias_OR_v0, &b_L1Tech_BSC_minBias_OR_v0);
+  fChain->SetBranchAddress("L1Tech_BSC_minBias_OR.v0_5bxOr", &L1Tech_BSC_minBias_OR_v0_5bxOr, &b_L1Tech_BSC_minBias_OR_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BSC_minBias_inner_threshold1.v0", &L1Tech_BSC_minBias_inner_threshold1_v0, &b_L1Tech_BSC_minBias_inner_threshold1_v0);
+  fChain->SetBranchAddress("L1Tech_BSC_minBias_inner_threshold1.v0_5bxOr", &L1Tech_BSC_minBias_inner_threshold1_v0_5bxOr, &b_L1Tech_BSC_minBias_inner_threshold1_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BSC_minBias_inner_threshold2.v0", &L1Tech_BSC_minBias_inner_threshold2_v0, &b_L1Tech_BSC_minBias_inner_threshold2_v0);
+  fChain->SetBranchAddress("L1Tech_BSC_minBias_inner_threshold2.v0_5bxOr", &L1Tech_BSC_minBias_inner_threshold2_v0_5bxOr, &b_L1Tech_BSC_minBias_inner_threshold2_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BSC_minBias_threshold1.v0", &L1Tech_BSC_minBias_threshold1_v0, &b_L1Tech_BSC_minBias_threshold1_v0);
+  fChain->SetBranchAddress("L1Tech_BSC_minBias_threshold1.v0_5bxOr", &L1Tech_BSC_minBias_threshold1_v0_5bxOr, &b_L1Tech_BSC_minBias_threshold1_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BSC_minBias_threshold2.v0", &L1Tech_BSC_minBias_threshold2_v0, &b_L1Tech_BSC_minBias_threshold2_v0);
+  fChain->SetBranchAddress("L1Tech_BSC_minBias_threshold2.v0_5bxOr", &L1Tech_BSC_minBias_threshold2_v0_5bxOr, &b_L1Tech_BSC_minBias_threshold2_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BSC_splash_beam1.v0", &L1Tech_BSC_splash_beam1_v0, &b_L1Tech_BSC_splash_beam1_v0);
+  fChain->SetBranchAddress("L1Tech_BSC_splash_beam1.v0_5bxOr", &L1Tech_BSC_splash_beam1_v0_5bxOr, &b_L1Tech_BSC_splash_beam1_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_BSC_splash_beam2.v0", &L1Tech_BSC_splash_beam2_v0, &b_L1Tech_BSC_splash_beam2_v0);
+  fChain->SetBranchAddress("L1Tech_BSC_splash_beam2.v0_5bxOr", &L1Tech_BSC_splash_beam2_v0_5bxOr, &b_L1Tech_BSC_splash_beam2_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_HCAL_HBHE_totalOR.v0", &L1Tech_HCAL_HBHE_totalOR_v0, &b_L1Tech_HCAL_HBHE_totalOR_v0);
+  fChain->SetBranchAddress("L1Tech_HCAL_HBHE_totalOR.v0_5bxOr", &L1Tech_HCAL_HBHE_totalOR_v0_5bxOr, &b_L1Tech_HCAL_HBHE_totalOR_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_HCAL_HF_totalOR_coincidenceHFM.v0", &L1Tech_HCAL_HF_totalOR_coincidenceHFM_v0, &b_L1Tech_HCAL_HF_totalOR_coincidenceHFM_v0);
+  fChain->SetBranchAddress("L1Tech_HCAL_HF_totalOR_coincidenceHFM.v0_5bxOr", &L1Tech_HCAL_HF_totalOR_coincidenceHFM_v0_5bxOr, &b_L1Tech_HCAL_HF_totalOR_coincidenceHFM_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_HCAL_HF_totalOR_coincidenceHFP.v0", &L1Tech_HCAL_HF_totalOR_coincidenceHFP_v0, &b_L1Tech_HCAL_HF_totalOR_coincidenceHFP_v0);
+  fChain->SetBranchAddress("L1Tech_HCAL_HF_totalOR_coincidenceHFP.v0_5bxOr", &L1Tech_HCAL_HF_totalOR_coincidenceHFP_v0_5bxOr, &b_L1Tech_HCAL_HF_totalOR_coincidenceHFP_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_HCAL_HF_totalOR_minBias.v0", &L1Tech_HCAL_HF_totalOR_minBias_v0, &b_L1Tech_HCAL_HF_totalOR_minBias_v0);
+  fChain->SetBranchAddress("L1Tech_HCAL_HF_totalOR_minBias.v0_5bxOr", &L1Tech_HCAL_HF_totalOR_minBias_v0_5bxOr, &b_L1Tech_HCAL_HF_totalOR_minBias_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_HCAL_HO_totalOR.v0", &L1Tech_HCAL_HO_totalOR_v0, &b_L1Tech_HCAL_HO_totalOR_v0);
+  fChain->SetBranchAddress("L1Tech_HCAL_HO_totalOR.v0_5bxOr", &L1Tech_HCAL_HO_totalOR_v0_5bxOr, &b_L1Tech_HCAL_HO_totalOR_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_RB0_Cosmics.v0", &L1Tech_RPC_TTU_RB0_Cosmics_v0, &b_L1Tech_RPC_TTU_RB0_Cosmics_v0);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_RB0_Cosmics.v0_5bxOr", &L1Tech_RPC_TTU_RB0_Cosmics_v0_5bxOr, &b_L1Tech_RPC_TTU_RB0_Cosmics_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_RBminus1_Cosmics.v0", &L1Tech_RPC_TTU_RBminus1_Cosmics_v0, &b_L1Tech_RPC_TTU_RBminus1_Cosmics_v0);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_RBminus1_Cosmics.v0_5bxOr", &L1Tech_RPC_TTU_RBminus1_Cosmics_v0_5bxOr, &b_L1Tech_RPC_TTU_RBminus1_Cosmics_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_RBminus2_Cosmics.v0", &L1Tech_RPC_TTU_RBminus2_Cosmics_v0, &b_L1Tech_RPC_TTU_RBminus2_Cosmics_v0);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_RBminus2_Cosmics.v0_5bxOr", &L1Tech_RPC_TTU_RBminus2_Cosmics_v0_5bxOr, &b_L1Tech_RPC_TTU_RBminus2_Cosmics_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_RBplus1_Cosmics.v0", &L1Tech_RPC_TTU_RBplus1_Cosmics_v0, &b_L1Tech_RPC_TTU_RBplus1_Cosmics_v0);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_RBplus1_Cosmics.v0_5bxOr", &L1Tech_RPC_TTU_RBplus1_Cosmics_v0_5bxOr, &b_L1Tech_RPC_TTU_RBplus1_Cosmics_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_RBplus2_Cosmics.v0", &L1Tech_RPC_TTU_RBplus2_Cosmics_v0, &b_L1Tech_RPC_TTU_RBplus2_Cosmics_v0);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_RBplus2_Cosmics.v0_5bxOr", &L1Tech_RPC_TTU_RBplus2_Cosmics_v0_5bxOr, &b_L1Tech_RPC_TTU_RBplus2_Cosmics_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_barrel_Cosmics.v0", &L1Tech_RPC_TTU_barrel_Cosmics_v0, &b_L1Tech_RPC_TTU_barrel_Cosmics_v0);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_barrel_Cosmics.v0_5bxOr", &L1Tech_RPC_TTU_barrel_Cosmics_v0_5bxOr, &b_L1Tech_RPC_TTU_barrel_Cosmics_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_pointing_Cosmics.v0", &L1Tech_RPC_TTU_pointing_Cosmics_v0, &b_L1Tech_RPC_TTU_pointing_Cosmics_v0);
+  fChain->SetBranchAddress("L1Tech_RPC_TTU_pointing_Cosmics.v0_5bxOr", &L1Tech_RPC_TTU_pointing_Cosmics_v0_5bxOr, &b_L1Tech_RPC_TTU_pointing_Cosmics_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_ZDC_loose_vertex.v0", &L1Tech_ZDC_loose_vertex_v0, &b_L1Tech_ZDC_loose_vertex_v0);
+  fChain->SetBranchAddress("L1Tech_ZDC_loose_vertex.v0_5bxOr", &L1Tech_ZDC_loose_vertex_v0_5bxOr, &b_L1Tech_ZDC_loose_vertex_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_ZDC_minus_over_threshold.v0", &L1Tech_ZDC_minus_over_threshold_v0, &b_L1Tech_ZDC_minus_over_threshold_v0);
+  fChain->SetBranchAddress("L1Tech_ZDC_minus_over_threshold.v0_5bxOr", &L1Tech_ZDC_minus_over_threshold_v0_5bxOr, &b_L1Tech_ZDC_minus_over_threshold_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_ZDC_plus_over_threshold.v0", &L1Tech_ZDC_plus_over_threshold_v0, &b_L1Tech_ZDC_plus_over_threshold_v0);
+  fChain->SetBranchAddress("L1Tech_ZDC_plus_over_threshold.v0_5bxOr", &L1Tech_ZDC_plus_over_threshold_v0_5bxOr, &b_L1Tech_ZDC_plus_over_threshold_v0_5bxOr);
+  fChain->SetBranchAddress("L1Tech_ZDC_tight_vertex.v0", &L1Tech_ZDC_tight_vertex_v0, &b_L1Tech_ZDC_tight_vertex_v0);
+  fChain->SetBranchAddress("L1Tech_ZDC_tight_vertex.v0_5bxOr", &L1Tech_ZDC_tight_vertex_v0_5bxOr, &b_L1Tech_ZDC_tight_vertex_v0_5bxOr);
 
   // JH - 1E31 MC menu
   fChain->SetBranchAddress("HLT_L1Jet15", &HLT_L1Jet15, &b_HLT_L1Jet15); 
@@ -2446,6 +2682,7 @@ void OHltTree::SetMapL1BitOfStandardHLTPathUsingLogicParser(OHltMenu *menu, int 
       }
       
       bool seedsResult = (m_l1AlgoLogicParser[i])->expressionResult();
+      //std::cout << "Expression result: " << seedsResult << std::endl;
      
       if (seedsResult)
 	map_L1BitOfStandardHLTPath[st] = 1;
@@ -2453,6 +2690,43 @@ void OHltTree::SetMapL1BitOfStandardHLTPathUsingLogicParser(OHltMenu *menu, int 
 	map_L1BitOfStandardHLTPath[st] = 0;
     }
   }
+  
+}
+
+bool OHltTree::passPreFilterLogicParser(TString str, int nentry) {
+
+  if (str == "") return true;
+  
+  if (nentry == 0) { // do this only for first event - speed up code!
+    m_preFilterLogicParser = new L1GtLogicParser((std::string)str);
+  }
+
+  //cout<<  map_BitOfStandardHLTPath["HLT_Activity_L1A"]<<endl;
+  
+  //std::cout << "Token string: " << (std::string)str << std::endl;
+  
+  std::vector<L1GtLogicParser::OperandToken>& prefOpTokenVector =
+    m_preFilterLogicParser->operandTokenVector();
+  
+  //std::cout << "Token size: " << prefOpTokenVector.size() << std::endl;
+  for (size_t k = 0; k < prefOpTokenVector.size(); ++k) {
+    bool iResult = false;
+    //std::cout << "Token name: " << (prefOpTokenVector[k]).tokenName << std::endl;
+    if (map_BitOfStandardHLTPath.find((prefOpTokenVector[k]).tokenName)->second==1)
+      iResult = true;
+    else
+      iResult = false;
+    //std::cout << "Token result: " << iResult << std::endl;
+    
+    (prefOpTokenVector[k]).tokenResult = iResult;
+  }
+  bool expResult = m_preFilterLogicParser->expressionResult();
+  //bool expResult = true;
+  
+  if (expResult)
+    return true;
+  else
+    return false;
   
 }
 
