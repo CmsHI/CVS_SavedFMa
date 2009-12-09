@@ -39,6 +39,10 @@ export cvsWorking=$SavedFMa/cmssw/cmssw_2_1_X
 export EvFrun=$SavedFMa/pp/DAQ/EvF/run
 # --cmssw helpers--
 export mySeqPython=$SavedFMa/cmssw/MyConfiguration/Sequences/python
+# --casotr--
+export castorCaf=/castor/cern.ch/cms/store/caf/user/frankma
+export castorCms=/castor/cern.ch/cms
+export castorFrank=/castor/cern.ch/user/f/frankma/data
 
 #---My shortcuts---
 alias ema='emacs -nw'
