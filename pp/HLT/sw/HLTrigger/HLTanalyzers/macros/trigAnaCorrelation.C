@@ -65,8 +65,9 @@ void printEff(TTree* HltTree,char *cut,char *title, char *projectTitle)
    effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_OR.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_OR.v0==1",cut)));
    effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_inner_threshold1.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_inner_threshold1.v0==1",cut)));
    effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_inner_threshold2.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_inner_threshold2.v0==1",cut)));
-   effs.push_back(calcEff(HltTree,"L1Tech_BSC_splash_beam1.v0",nEvt,Form("(%s)&&L1Tech_BSC_splash_beam1.v0==1",cut)));
-   effs.push_back(calcEff(HltTree,"L1Tech_BSC_splash_beam2.v0",nEvt,Form("(%s)&&L1Tech_BSC_splash_beam2.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_HCAL_HF_coincidence_PM.v0",nEvt,Form("(%s)&&L1Tech_HCAL_HF_coincidence_PM.v0==1",cut)));
+   //effs.push_back(calcEff(HltTree,"L1Tech_BSC_splash_beam1.v0",nEvt,Form("(%s)&&L1Tech_BSC_splash_beam1.v0==1",cut)));
+   //effs.push_back(calcEff(HltTree,"L1Tech_BSC_splash_beam2.v0",nEvt,Form("(%s)&&L1Tech_BSC_splash_beam2.v0==1",cut)));
    //effs.push_back(calcEff(HltTree,"All",nEvt,Form("(%s)&&(L1Tech_BSC_minBias_threshold1.v0||L1Tech_BSC_minBias_threshold2.v0||L1Tech_BSC_minBias_OR.v0||L1Tech_BSC_minBias_inner_threshold1.v0||L1Tech_BSC_minBias_inner_threshold2.v0||L1Tech_BSC_splash_beam1.v0||L1Tech_BSC_splash_beam2.v0)",cut)));
    results->push_back(effs);
 
@@ -151,15 +152,15 @@ void trigAnaCorrelation(char *infile="openhlt-900GeV.root",char *projectTitle = 
    printEff(HltTree,"evtType!=92&&evtType!=93","Non_Single_Diffractive",projectTitle);
    printEff(HltTree,"evtType!=92&&evtType!=93&&evtType!=94","Non_Diffractive",projectTitle);
 
-   string evtType[5];
-   evtType[0]="All";
-   evtType[1]="SD";
-   evtType[2]="DD";
-   evtType[3]="NSD";
-   evtType[4]="ND";
+   vector<string> evtType;
+   evtType.push_back("All");
+   evtType.push_back("SD");
+   evtType.push_back("DD");
+   evtType.push_back("NSD");
+   evtType.push_back("ND");
    
    cout <<" | "<<setw(20)<<" ";
-   for (int i=0;i<5;i++) {
+   for (int i=0;i<evtType.size();i++) {
       cout <<" | "<<setw(8)<<evtType[i];
    }
    
