@@ -60,16 +60,14 @@ void printEff(TTree* HltTree,char *cut,char *title, char *projectTitle)
    vector <double*> effs;
    
    // calculate the efficiency //   
-   effs.push_back(calcEff(HltTree,"HLT_MinBiasBSC",nEvt,Form("(%s)&&HLT_MinBiasBSC==1",cut)));
-   effs.push_back(calcEff(HltTree,"HLT_MinBiasBSC_OR",nEvt,Form("(%s)&&HLT_MinBiasBSC_OR==1",cut)));
-   effs.push_back(calcEff(HltTree,"HLT_MinBiasHcal",nEvt,Form("(%s)&&HLT_MinBiasHcal==1",cut)));
-   effs.push_back(calcEff(HltTree,"HLT_MinBiasEcal",nEvt,Form("(%s)&&HLT_MinBiasEcal==1",cut)));
-   effs.push_back(calcEff(HltTree,"HLT_MinBiasPixel_SingleTrack",nEvt,Form("(%s)&&HLT_MinBiasPixel_SingleTrack==1",cut)));
-   effs.push_back(calcEff(HltTree,"HLT_MinBiasPixel_DoubleTrack",nEvt,Form("(%s)&&HLT_MinBiasPixel_DoubleTrack==1",cut)));
-   effs.push_back(calcEff(HltTree,"HLT_HFThreshold3",nEvt,Form("(%s)&&HLT_HFThreshold3==1",cut)));
-   effs.push_back(calcEff(HltTree,"HLT_Activity_EcalREM",nEvt,Form("(%s)&&HLT_Activity_EcalREM==1",cut)));
-   effs.push_back(calcEff(HltTree,"HLT_Activity_PixelClusters",nEvt,Form("(%s)&&HLT_Activity_PixelClusters==1",cut)));
-   effs.push_back(calcEff(HltTree,"All",nEvt,Form("(%s)&&(HLT_MinBiasBSC||HLT_MinBiasBSC_OR||HLT_MinBiasHcal||HLT_MinBiasEcal||HLT_MinBiasPixel_SingleTrack||HLT_MinBiasPixel_DoubleTrack||HLT_HFThreshold3||HLT_Activity_EcalREM||HLT_Activity_PixelClusters)",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_threshold1.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_threshold1.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_threshold2.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_threshold2.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_OR.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_OR.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_inner_threshold1.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_inner_threshold1.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_inner_threshold2.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_inner_threshold2.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_splash_beam1.v0",nEvt,Form("(%s)&&L1Tech_BSC_splash_beam1.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_splash_beam2.v0",nEvt,Form("(%s)&&L1Tech_BSC_splash_beam2.v0==1",cut)));
+   //effs.push_back(calcEff(HltTree,"All",nEvt,Form("(%s)&&(L1Tech_BSC_minBias_threshold1.v0||L1Tech_BSC_minBias_threshold2.v0||L1Tech_BSC_minBias_OR.v0||L1Tech_BSC_minBias_inner_threshold1.v0||L1Tech_BSC_minBias_inner_threshold2.v0||L1Tech_BSC_splash_beam1.v0||L1Tech_BSC_splash_beam2.v0)",cut)));
    results->push_back(effs);
 
    cout <<"      * Correlation Matrix:"<<endl;
@@ -78,14 +76,14 @@ void printEff(TTree* HltTree,char *cut,char *title, char *projectTitle)
  
    for (int i=tsize-1;i>=0;i--){
       int nEvtAfterCut = HltTree->GetEntries((*triggerCuts)[i].c_str());
+      h->GetXaxis()->SetBinLabel(i+1,(*triggers)[i].c_str());
+      h->GetYaxis()->SetBinLabel(i+1,(*triggers)[i].c_str());
       for (int j=0;j<tsize;j++){
          string cut ="("+(*triggerCuts)[i]+")&&("+(*triggerCuts)[j]+")";
          double* eff = calcEff(HltTree,"",nEvtAfterCut,Form("%s",cut.c_str()),0);
 	 if (nEvtAfterCut==0) eff[0]=0;
-	 h->SetBinContent(j+1,i+1,int(eff[0]*100000)/1000.);
-         h->GetXaxis()->SetBinLabel(j+1,(*triggers)[j].c_str());
+	 h->SetBinContent(i+1,j+1,int(eff[0]*100000)/1000.);
       }
-      h->GetYaxis()->SetBinLabel(i+1,(*triggers)[i].c_str());
    }
    
    TCanvas *c1 = new TCanvas(Form("c%s",title), Form("c_%s",title),800,600);
