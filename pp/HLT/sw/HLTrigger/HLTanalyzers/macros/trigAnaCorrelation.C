@@ -124,7 +124,7 @@ void printEff(TTree* HltTree,char *cut,char *title, char *projectTitle)
    cout <<"<img src=\"%ATTACHURLPATH%/"<<fname<<"\" alt=\""<<fname<<"\" width='671'   height='478' />"<<endl;   
 }
 
-void trigAnaCorrelation(char *infile="openhlt-900GeV.root",char *projectTitle = "900GeV")
+void trigAnaCorrelation(char *infile="openhlt-900GeV.root",char *projectTitle = "900GeV",string source="mc")
 {
    TFile *inf = new TFile(infile);
    
@@ -147,20 +147,23 @@ void trigAnaCorrelation(char *infile="openhlt-900GeV.root",char *projectTitle = 
    
 
    printEff(HltTree,"1==1","All",projectTitle);
-   printEff(HltTree,"(evtType==92||evtType==93)","Single_Diffractive",projectTitle);
-   printEff(HltTree,"evtType==94","Double_Diffractive",projectTitle);
-   printEff(HltTree,"evtType!=92&&evtType!=93","Non_Single_Diffractive",projectTitle);
-   printEff(HltTree,"evtType!=92&&evtType!=93&&evtType!=94","Non_Diffractive",projectTitle);
 
    vector<string> evtType;
    evtType.push_back("All");
-   evtType.push_back("SD");
-   evtType.push_back("DD");
-   evtType.push_back("NSD");
-   evtType.push_back("ND");
+
+   if (source==string("mc")) {
+     printEff(HltTree,"(evtType==92||evtType==93)","Single_Diffractive",projectTitle);
+     printEff(HltTree,"evtType==94","Double_Diffractive",projectTitle);
+     printEff(HltTree,"evtType!=92&&evtType!=93","Non_Single_Diffractive",projectTitle);
+     printEff(HltTree,"evtType!=92&&evtType!=93&&evtType!=94","Non_Diffractive",projectTitle);
+     evtType.push_back("SD");
+     evtType.push_back("DD");
+     evtType.push_back("NSD");
+     evtType.push_back("ND");
+   }
    
    cout <<" | "<<setw(20)<<" ";
-   for (int i=0;i<evtType.size();i++) {
+   for (unsigned int i=0;i<evtType.size();i++) {
       cout <<" | "<<setw(8)<<evtType[i];
    }
    
