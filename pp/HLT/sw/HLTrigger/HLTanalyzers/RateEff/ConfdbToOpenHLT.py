@@ -20,7 +20,8 @@ def main(argv):
     input_notech = 0
     input_fakel1 = 0
 
-    input_config = "/online/beamhalo/week47/HLT/V4"
+    #input_config = "/online/collisions/week49/HLT/V15"
+    input_config = "/cdaq/physics/firstCollisions09/v1.3/HLT/V1"
 
     opts, args = getopt.getopt(sys.argv[1:], "c:v:d:u:s:o:n:fh", ["config=","verbose=","dbname=","user=","password=","dbtype=","hostname=","notechnicaltriggers=","fakel1seeds="])
 
