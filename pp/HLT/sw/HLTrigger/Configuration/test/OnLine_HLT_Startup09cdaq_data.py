@@ -1,11 +1,11 @@
-# /cdaq/physics/firstCollisions09/v1.4/HLT/V2 (CMSSW_3_3_3_HLT8)
+# /cdaq/physics/firstCollisions09/v1.5/HLT/V1 (CMSSW_3_3_3_HLT8)
 
 import FWCore.ParameterSet.Config as cms
 
 process = cms.Process( "HLT" )
 
 process.HLTConfigVersion = cms.PSet(
-  tableName = cms.string('/cdaq/physics/firstCollisions09/v1.4/HLT/V2')
+  tableName = cms.string('/cdaq/physics/firstCollisions09/v1.5/HLT/V1')
 )
 
 process.options = cms.untracked.PSet(  Rethrow = cms.untracked.vstring( 'ProductNotFound',
@@ -6165,6 +6165,7 @@ process.hltL1sMinBiasBSC = cms.EDFilter( "HLTLevel1GTSeed",
     L1MuonCollectionTag = cms.InputTag( "hltL1extraParticles" )
 )
 process.hltPreMinBiasBSC = cms.EDFilter( "HLTPrescaler" )
+process.hltPreMinBiasBSCNoBPTX = cms.EDFilter( "HLTPrescaler" )
 process.hltL1sMinBiasBSCOR = cms.EDFilter( "HLTLevel1GTSeed",
     L1UseL1TriggerObjectMaps = cms.bool( True ),
     L1NrBxInEvent = cms.int32( 5 ),
@@ -6413,6 +6414,7 @@ process.hltL1sL1BscMinBiasORBptxPlusORMinus = cms.EDFilter( "HLTLevel1GTSeed",
     L1MuonCollectionTag = cms.InputTag( "hltL1extraParticles" )
 )
 process.hltPreL1BscMinBiasORBptxPlusORMinus = cms.EDFilter( "HLTPrescaler" )
+process.hltPreL1BscMinBiasORBptxPlusORMinusNoBptx = cms.EDFilter( "HLTPrescaler" )
 process.hltL1sRPCBarrelCosmics = cms.EDFilter( "HLTLevel1GTSeed",
     L1UseL1TriggerObjectMaps = cms.bool( True ),
     L1NrBxInEvent = cms.int32( 5 ),
@@ -7579,6 +7581,7 @@ process.hltOutputA = cms.OutputModule( "PoolOutputModule",
   'HLT_L1_BPTX_PlusOnly',
   'HLT_L1_BSC',
   'HLT_L1_BscMinBiasOR_BptxPlusORMinus',
+  'HLT_L1_BscMinBiasOR_BptxPlusORMinus_NoBPTX',
   'HLT_L1_HFtech',
   'HLT_L2Mu0_NoVertex',
   'HLT_L2Mu11',
@@ -7587,6 +7590,7 @@ process.hltOutputA = cms.OutputModule( "PoolOutputModule",
   'HLT_MET45',
   'HLT_MinBias',
   'HLT_MinBiasBSC',
+  'HLT_MinBiasBSC_NoBPTX',
   'HLT_MinBiasBSC_OR',
   'HLT_MinBiasEcal',
   'HLT_MinBiasHcal',
@@ -7646,7 +7650,8 @@ process.hltPreExpressSmart = cms.EDFilter( "HLTHighLevelDev",
     throw = cms.bool( True ),
     eventSetupPathsKey = cms.string( "" ),
     HLTOverallPrescale = cms.uint32( 1 ),
-    HLTPaths = cms.vstring( 'HLT_Activity_DT',
+    HLTPaths = cms.vstring( 'HLT_MinBiasBSC_NoBPTX',
+      'HLT_Activity_DT',
       'HLT_Activity_Ecal',
       'HLT_Activity_EcalREM',
       'HLT_Activity_L1A',
@@ -7730,7 +7735,7 @@ process.hltPreExpressSmart = cms.EDFilter( "HLTHighLevelDev",
       'HLT_SplashEcalSumET',
       'HLT_ZeroBias',
       'HLT_ZeroBiasPixel_SingleTrack' ),
-    HLTPathsPrescales = cms.vuint32( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 10, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 10, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 1 )
+    HLTPathsPrescales = cms.vuint32( 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 10, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 10, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 1 )
 )
 process.hltOutputExpress = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "outputExpress.root" ),
@@ -7799,6 +7804,7 @@ process.hltOutputExpress = cms.OutputModule( "PoolOutputModule",
   'HLT_MET45',
   'HLT_MinBias',
   'HLT_MinBiasBSC',
+  'HLT_MinBiasBSC_NoBPTX',
   'HLT_MinBiasEcal',
   'HLT_MinBiasHcal',
   'HLT_MinBiasPixel_DoubleIsoTrack5',
@@ -7910,7 +7916,10 @@ process.hltPreHLTDQMSmart = cms.EDFilter( "HLTHighLevelDev",
     throw = cms.bool( True ),
     eventSetupPathsKey = cms.string( "" ),
     HLTOverallPrescale = cms.uint32( 1 ),
-    HLTPaths = cms.vstring( 'AlCa_EcalEta_8E29',
+    HLTPaths = cms.vstring( 'HLT_L1_BscMinBiasOR_BptxPlusORMinus_NoBPTX',
+      'HLT_MinBiasBSC_NoBPTX',
+      'HLT_L1SingleEG1',
+      'AlCa_EcalEta_8E29',
       'AlCa_EcalPhiSym',
       'AlCa_EcalPi0_8E29',
       'HLT_Activity_DT',
@@ -8017,7 +8026,7 @@ process.hltPreHLTDQMSmart = cms.EDFilter( "HLTHighLevelDev",
       'HLT_TrackerCosmics',
       'HLT_ZeroBias',
       'HLT_ZeroBiasPixel_SingleTrack' ),
-    HLTPathsPrescales = cms.vuint32( 1, 100, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 100, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 100, 1 )
+    HLTPathsPrescales = cms.vuint32( 1, 1, 1, 1, 100, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 100, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 100, 1 )
 )
 process.hltOutputHLTDQM = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "outputHLTDQM.root" ),
@@ -8094,6 +8103,7 @@ process.hltOutputHLTDQM = cms.OutputModule( "PoolOutputModule",
   'HLT_L1_BPTX_PlusOnly',
   'HLT_L1_BSC',
   'HLT_L1_BscMinBiasOR_BptxPlusORMinus',
+  'HLT_L1_BscMinBiasOR_BptxPlusORMinus_NoBPTX',
   'HLT_L1_HFtech',
   'HLT_L2Mu0_NoVertex',
   'HLT_L2Mu11',
@@ -8102,6 +8112,7 @@ process.hltOutputHLTDQM = cms.OutputModule( "PoolOutputModule",
   'HLT_MET45',
   'HLT_MinBias',
   'HLT_MinBiasBSC',
+  'HLT_MinBiasBSC_NoBPTX',
   'HLT_MinBiasBSC_OR',
   'HLT_MinBiasEcal',
   'HLT_MinBiasHcal',
@@ -8223,7 +8234,9 @@ process.hltPreDQMSmart = cms.EDFilter( "HLTHighLevelDev",
     throw = cms.bool( True ),
     eventSetupPathsKey = cms.string( "" ),
     HLTOverallPrescale = cms.uint32( 1 ),
-    HLTPaths = cms.vstring( 'HLT_Activity_DT',
+    HLTPaths = cms.vstring( 'HLT_L1_BscMinBiasOR_BptxPlusORMinus_NoBPTX',
+      'HLT_MinBiasBSC_NoBPTX',
+      'HLT_Activity_DT',
       'HLT_Activity_Ecal',
       'HLT_Activity_EcalREM',
       'HLT_Activity_L1A',
@@ -8329,7 +8342,7 @@ process.hltPreDQMSmart = cms.EDFilter( "HLTHighLevelDev",
       'HLT_TrackerCosmics',
       'HLT_ZeroBias',
       'HLT_ZeroBiasPixel_SingleTrack' ),
-    HLTPathsPrescales = cms.vuint32( 1, 10, 10, 0, 1, 0, 0, 1, 1, 1, 1, 1, 10, 10, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 100, 1, 10, 1, 1, 1, 1, 1, 0, 0, 0, 10, 1, 1, 1, 1, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1000, 10, 0, 10, 0, 1, 1, 1, 0, 10, 10, 10, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 10, 100, 100, 100, 1, 1, 0, 1 )
+    HLTPathsPrescales = cms.vuint32( 1, 1, 1, 10, 10, 0, 1, 0, 0, 1, 1, 1, 1, 1, 10, 10, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 100, 1, 10, 1, 1, 1, 1, 1, 0, 0, 0, 10, 1, 1, 1, 1, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1000, 10, 0, 10, 0, 1, 1, 1, 0, 10, 10, 10, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 10, 100, 100, 100, 1, 1, 0, 1 )
 )
 process.hltOutputDQM = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "outputDQM.root" ),
@@ -8404,6 +8417,7 @@ process.hltOutputDQM = cms.OutputModule( "PoolOutputModule",
   'HLT_L1_BPTX_PlusOnly',
   'HLT_L1_BSC',
   'HLT_L1_BscMinBiasOR_BptxPlusORMinus',
+  'HLT_L1_BscMinBiasOR_BptxPlusORMinus_NoBPTX',
   'HLT_L1_HFtech',
   'HLT_L2Mu0_NoVertex',
   'HLT_L2Mu11',
@@ -8412,6 +8426,7 @@ process.hltOutputDQM = cms.OutputModule( "PoolOutputModule",
   'HLT_MET45',
   'HLT_MinBias',
   'HLT_MinBiasBSC',
+  'HLT_MinBiasBSC_NoBPTX',
   'HLT_MinBiasBSC_OR',
   'HLT_MinBiasEcal',
   'HLT_MinBiasHcal',
@@ -8458,7 +8473,8 @@ process.hltPreHLTMONSmart = cms.EDFilter( "HLTHighLevelDev",
     throw = cms.bool( True ),
     eventSetupPathsKey = cms.string( "" ),
     HLTOverallPrescale = cms.uint32( 1 ),
-    HLTPaths = cms.vstring( 'AlCa_EcalEta_8E29',
+    HLTPaths = cms.vstring( 'HLT_MinBiasBSC_NoBPTX',
+      'AlCa_EcalEta_8E29',
       'AlCa_EcalPhiSym',
       'AlCa_EcalPi0_8E29',
       'HLT_Activity_Ecal',
@@ -8563,7 +8579,7 @@ process.hltPreHLTMONSmart = cms.EDFilter( "HLTHighLevelDev",
       'HLT_L1_BPTX',
       'HLT_L1_BPTX_MinusOnly',
       'HLT_L1_BPTX_PlusOnly' ),
-    HLTPathsPrescales = cms.vuint32( 10000, 10000, 10000, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 1000, 1000, 1000, 1000 )
+    HLTPathsPrescales = cms.vuint32( 40, 10000, 10000, 10000, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 1000, 1000, 1000, 1000 )
 )
 process.hltOutputHLTMON = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "outputHLTMON.root" ),
@@ -8646,6 +8662,7 @@ process.hltOutputHLTMON = cms.OutputModule( "PoolOutputModule",
   'HLT_MET45',
   'HLT_MinBias',
   'HLT_MinBiasBSC',
+  'HLT_MinBiasBSC_NoBPTX',
   'HLT_MinBiasBSC_OR',
   'HLT_MinBiasEcal',
   'HLT_MinBiasHcal',
@@ -8916,6 +8933,7 @@ process.HLT_ZeroBias = cms.Path( process.HLTBeginSequence + process.hltL1sZeroBi
 process.HLT_ZeroBias1kHz = cms.Path( process.HLTBeginSequence + process.hltL1sZeroBias + process.hltPreZeroBias1kHz + process.HLTEndSequence )
 process.HLT_MinBias = cms.Path( process.HLTBeginSequenceBPTX + process.hltL1sMinBias + process.hltPreMinBias + process.HLTEndSequence )
 process.HLT_MinBiasBSC = cms.Path( process.HLTBeginSequenceBPTX + process.hltL1sMinBiasBSC + process.hltPreMinBiasBSC + process.HLTEndSequence )
+process.HLT_MinBiasBSC_NoBPTX = cms.Path( process.HLTBeginSequence + process.hltL1sMinBiasBSC + process.hltPreMinBiasBSCNoBPTX + process.HLTEndSequence )
 process.HLT_MinBiasBSC_OR = cms.Path( process.HLTBeginSequenceBPTX + process.hltL1sMinBiasBSCOR + process.hltPreMinBiasBSCOR + process.HLTEndSequence )
 process.HLT_MinBiasHcal = cms.Path( process.HLTBeginSequenceBPTX + process.hltL1sMinBiasHcal + process.hltPreMinBiasHcal + process.HLTEndSequence )
 process.HLT_MinBiasEcal = cms.Path( process.HLTBeginSequenceBPTX + process.hltL1sMinBiasEcal + process.hltPreMinBiasEcal + process.HLTEndSequence )
@@ -8933,6 +8951,7 @@ process.HLT_HighMultiplicityBSC = cms.Path( process.HLTBeginSequenceBPTX + proce
 process.HLT_SplashBSC = cms.Path( process.HLTBeginSequenceBPTX + process.hltL1sSplashBSC + process.hltPreSplashBSC + process.HLTEndSequence )
 process.HLT_L1_BSC = cms.Path( process.HLTBeginSequenceBPTX + process.hltL1sL1BSC + process.hltPreL1BSC + process.HLTEndSequence )
 process.HLT_L1_BscMinBiasOR_BptxPlusORMinus = cms.Path( process.HLTBeginSequenceBPTX + process.hltL1sL1BscMinBiasORBptxPlusORMinus + process.hltPreL1BscMinBiasORBptxPlusORMinus + process.HLTEndSequence )
+process.HLT_L1_BscMinBiasOR_BptxPlusORMinus_NoBPTX = cms.Path( process.HLTBeginSequence + process.hltL1sL1BscMinBiasORBptxPlusORMinus + process.hltPreL1BscMinBiasORBptxPlusORMinusNoBptx + process.HLTEndSequence )
 process.HLT_RPCBarrelCosmics = cms.Path( process.HLTBeginSequence + process.hltL1sRPCBarrelCosmics + process.hltPreRPCBarrelCosmics + process.HLTEndSequence )
 process.HLT_TrackerCosmics = cms.Path( process.HLTBeginSequence + process.hltL1sTrackerCosmics + process.hltPreTrackerCosmics + process.HLTEndSequence )
 process.HLT_L1Tech_RPC_TTU_RBst1_collisions = cms.Path( process.HLTBeginSequenceBPTX + process.hltL1sL1TechRPCTTURBst1collisions + process.hltPreL1TechRPCTTURBst1collisions + process.HLTEndSequence )
@@ -8974,7 +8993,7 @@ process.HLTDQMOutput = cms.EndPath( process.hltPreHLTDQM + process.hltPreHLTDQMS
 process.DQMOutput = cms.EndPath( process.hltPreDQM + process.hltDQML1Scalers + process.hltDQMHLTScalers + process.hltPreDQMSmart + process.hltOutputDQM )
 process.MONOutput = cms.EndPath( process.hltPreHLTMON + process.hltPreHLTMONSmart + process.hltOutputHLTMON )
 
-process.setName_('HLTStartup09cdaqv1.4_data')
+process.setName_('HLTStartup09cdaqv1.5_data')
 
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32( 100 )
