@@ -33,6 +33,10 @@ Implementation:
 #include "DataFormats/L1GlobalTrigger/interface/L1GtTechnicalTrigger.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GtTechnicalTriggerRecord.h"
 #include "FWCore/ParameterSet/interface/InputTag.h"
+
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "FWCore/Utilities/interface/RandomNumberGenerator.h"
+#include "CLHEP/Random/RandomEngine.h"
 //
 // class declaration
 //
@@ -59,6 +63,8 @@ private:
   int theNouter_;      
   int nevt_;
   edm::InputTag TheHits_tag_;
+  // random engine
+  CLHEP::HepRandomEngine* _bscRandomEng;
 };
 
 //
@@ -82,6 +88,9 @@ BSCTrigger::BSCTrigger(const edm::ParameterSet& iConfig)
   TheHits_tag_= iConfig.getParameter<edm::InputTag>("theHits");
   produces<L1GtTechnicalTriggerRecord>();  
   nevt_=0;
+
+  edm::Service<edm::RandomNumberGenerator> rng;
+  _bscRandomEng = &(rng->getEngine());
 }
 
 
@@ -101,6 +110,7 @@ BSCTrigger::~BSCTrigger()
 // ------------ method called to produce the data  ------------
 void BSCTrigger::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
+  std::cout << "=== bsc l1 sim ===" << std::endl;
   std::vector<L1GtTechnicalTrigger> ttVec(ttBits_.size());
   std::vector<float>EnergyBX(32);
   std::vector<float>EnergyBXMinusDt(32);
@@ -145,10 +155,14 @@ void BSCTrigger::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     // count number of segments hit in inner/outer and +z, -z ---------------------------------------------------------------------------------------------
+    double bsceff = 0.95;
     for ( unsigned int ipad = 0 ; ipad<32; ipad++) {
+      double effrand = _bscRandomEng->flat();
+      bool passEff = (effrand<bsceff);
+      std::cout << "random: " << effrand << ", in " << bsceff << "eff? " << passEff << std::endl;
       if ( edm::isDebugEnabled() ) LogTrace("BSCTrig")<<" EnergyBX["<<ipad<<"]="<<EnergyBX[ipad];
       // hits after the bunch crossing
-      if ( EnergyBX[ipad] > theThreshold ) {
+      if ( EnergyBX[ipad] > theThreshold && passEff) {
 	if ( isZplus(ipad)) {
 	  if ( isInner(ipad) ) ZPinnerBX++;
 	  else ZPouterBX++;
@@ -158,7 +172,7 @@ void BSCTrigger::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 	}
       } 
       // hits before the bunch crossing
-      if ( EnergyBXMinusDt[ipad] > theThreshold ) {
+      if ( EnergyBXMinusDt[ipad] > theThreshold && passEff) {
 	if ( isZplus(ipad)) {
 	  if ( isInner(ipad) ) ZPinnerBXMinusDt++;
 	  else ZPouterBXMinusDt++;
