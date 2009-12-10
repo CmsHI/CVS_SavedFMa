@@ -22,7 +22,7 @@ double calcEffErr(double nEvt,double nAcc)
    return sqrt(eff*(1-eff)/nEvt);
 }
 
-double* calcEff(TTree* HltTree, char *title, double nEvt,char *cut,int flag=1)
+double* calcEff(TTree* HltTree, const char *title, double nEvt,const char *cut,int flag=1)
 {
    double nAcc = HltTree->GetEntries(cut);
    double effErr = calcEffErr(nEvt,nAcc);
@@ -44,7 +44,7 @@ double* calcEff(TTree* HltTree, char *title, double nEvt,char *cut,int flag=1)
    return result;
 }
 
-void printEff(TTree* HltTree,char *cut,char *title, char *projectTitle)
+void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTitle)
 {
    cout <<"   * "<<title<<":"<<endl;
    cout <<"      * Efficiencies:"<<endl;
@@ -127,41 +127,36 @@ void printEff(TTree* HltTree,char *cut,char *title, char *projectTitle)
 void trigAnaCorrelation(char *infile="openhlt-900GeV.root",char *projectTitle = "900GeV",string source="mc")
 {
    TFile *inf = new TFile(infile);
-   
    TTree *HltTree =  (TTree*) inf->FindObjectAny("HltTree");
-   
-   int nEvent = HltTree->GetEntries();
-   int nSD = HltTree->GetEntries("evtType==92||evtType==93");
-   int nDD = HltTree->GetEntries("evtType==94");
-   int nND = nEvent-nSD-nDD;
-   int nNSD = nEvent-nSD;
-
-
-   cout <<"<pre>"<<endl;
-   cout <<std::right<<std::setw(20)<<"Event: "<<nEvent<<endl;
-   cout <<std::right<<std::setw(20)<<"SD Event: "<<nSD<<endl;
-   cout <<std::right<<std::setw(20)<<"DD Event: "<<nDD<<endl;
-   cout <<std::right<<std::setw(20)<<"ND Event: "<<nND<<endl;
-   cout <<std::right<<std::setw(20)<<"NSD Event: "<<nNSD<<endl;
-   cout <<"</pre>"<<endl;
-   
-
-   printEff(HltTree,"1==1","All",projectTitle);
 
    vector<string> evtType;
-   evtType.push_back("All");
+   vector<string> evtTypeCut;
 
-   if (source==string("mc")) {
-     printEff(HltTree,"(evtType==92||evtType==93)","Single_Diffractive",projectTitle);
-     printEff(HltTree,"evtType==94","Double_Diffractive",projectTitle);
-     printEff(HltTree,"evtType!=92&&evtType!=93","Non_Single_Diffractive",projectTitle);
-     printEff(HltTree,"evtType!=92&&evtType!=93&&evtType!=94","Non_Diffractive",projectTitle);
-     evtType.push_back("SD");
-     evtType.push_back("DD");
-     evtType.push_back("NSD");
-     evtType.push_back("ND");
+   evtType.push_back("All"); evtTypeCut.push_back("1==1");
+   if (source=="mc") {
+     evtType.push_back("Single-Diffr"); evtTypeCut.push_back("(evtType==92||evtType==93)");
+     evtType.push_back("Double-Diffr"); evtTypeCut.push_back("(evtType==94)");
+     evtType.push_back("Non-Single-Diffr"); evtTypeCut.push_back("(evtType!=92 && evtType!=93)");
+     evtType.push_back("Non-Diffr"); evtTypeCut.push_back("(evtType!=92 && evtType!=93 && evtType!=94)");
    }
-   
+   else if (source=="data") {
+     evtType.push_back("filled-filled"); evtTypeCut.push_back("(BunchCrossing==51||BunchCrossing==2724)");
+     evtType.push_back("parasitic"); evtTypeCut.push_back("(BunchCrossing==1830||BunchCrossing==1833)");
+     evtType.push_back("single-beam"); evtTypeCut.push_back("(BunchCrossing==3170||BunchCrossing==2276)");
+     evtType.push_back("L1_ZeroBias_Ext"); evtTypeCut.push_back("(L1_ZeroBias)");
+   }
+
+   cout <<"<pre>"<<endl;
+   for (unsigned int i=0; i<evtType.size(); ++i) {
+     int nSel = HltTree->GetEntries(evtTypeCut[i].c_str());
+     cout <<std::right<<std::setw(20)<<evtType[i] << ": " <<nSel<<endl;
+   }
+   cout <<"</pre>"<<endl;
+
+   for (unsigned int i=0; i<evtType.size(); ++i) {
+     printEff(HltTree,evtTypeCut[i].c_str(),evtType[i].c_str(),projectTitle);
+   }
+
    cout <<" | "<<setw(20)<<" ";
    for (unsigned int i=0;i<evtType.size();i++) {
       cout <<" | "<<setw(8)<<evtType[i];
