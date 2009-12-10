@@ -75,16 +75,20 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
    cout <<"      * Correlation Matrix:"<<endl;
    int tsize = (int)triggers->size();
    TH2D *h = new TH2D(Form("h%s",title),"",tsize,0,tsize,tsize,0,tsize);
+   TH2D *hct = new TH2D(Form("h%s_ct",title),"",tsize,0,tsize,tsize,0,tsize);
  
    for (int i=tsize-1;i>=0;i--){
       int nEvtAfterCut = HltTree->GetEntries((*triggerCuts)[i].c_str());
       h->GetXaxis()->SetBinLabel(i+1,(*triggers)[i].c_str());
       h->GetYaxis()->SetBinLabel(i+1,(*triggers)[i].c_str());
+      hct->GetXaxis()->SetBinLabel(i+1,(*triggers)[i].c_str());
+      hct->GetYaxis()->SetBinLabel(i+1,(*triggers)[i].c_str());
       for (int j=0;j<tsize;j++){
          string cut ="("+(*triggerCuts)[i]+")&&("+(*triggerCuts)[j]+")";
          double* eff = calcEff(HltTree,"",nEvtAfterCut,Form("%s",cut.c_str()),0);
 	 if (nEvtAfterCut==0) eff[0]=0;
 	 h->SetBinContent(i+1,j+1,int(eff[0]*100000)/1000.);
+	 hct->SetBinContent(i+1,j+1,HltTree->GetEntries(cut.c_str()));
       }
    }
    
@@ -130,22 +134,22 @@ void trigAnaCorrelation(char *infile="openhlt-900GeV.root",char *projectTitle = 
    // Load input
    TFile *inf = new TFile(infile);
    TTree *HltTree =  (TTree*) inf->FindObjectAny("HltTree");
-   TFile *outf = new TFile(Form("%s_hist.root"),"RECREATE");
+   TFile *outf = new TFile(Form("%s_hist.root",projectTitle),"RECREATE");
 
    // define event types
    vector<string> evtType;
    vector<string> evtTypeCut;
    evtType.push_back("All"); evtTypeCut.push_back("1==1");
    if (source=="mc") {
-     evtType.push_back("Single-Diffr"); evtTypeCut.push_back("(evtType==92||evtType==93)");
-     evtType.push_back("Double-Diffr"); evtTypeCut.push_back("(evtType==94)");
-     evtType.push_back("Non-Single-Diffr"); evtTypeCut.push_back("(evtType!=92 && evtType!=93)");
-     evtType.push_back("Non-Diffr"); evtTypeCut.push_back("(evtType!=92 && evtType!=93 && evtType!=94)");
+     evtType.push_back("Single_Diffr"); evtTypeCut.push_back("(evtType==92||evtType==93)");
+     evtType.push_back("Double_Diffr"); evtTypeCut.push_back("(evtType==94)");
+     evtType.push_back("Non_Single_Diffr"); evtTypeCut.push_back("(evtType!=92 && evtType!=93)");
+     evtType.push_back("Non_Diffr"); evtTypeCut.push_back("(evtType!=92 && evtType!=93 && evtType!=94)");
    }
    else if (source=="data") {
-     evtType.push_back("filled-filled"); evtTypeCut.push_back("(BunchCrossing==51||BunchCrossing==2724)");
+     evtType.push_back("filled_filled"); evtTypeCut.push_back("(BunchCrossing==51||BunchCrossing==2724)");
      evtType.push_back("parasitic"); evtTypeCut.push_back("(BunchCrossing==1830||BunchCrossing==1833)");
-     evtType.push_back("single-beam"); evtTypeCut.push_back("(BunchCrossing==3170||BunchCrossing==2276)");
+     evtType.push_back("single_beam"); evtTypeCut.push_back("(BunchCrossing==3170||BunchCrossing==2276)");
      evtType.push_back("L1_ZeroBias_Ext"); evtTypeCut.push_back("(L1_ZeroBias_Ext)");
    }
 
@@ -179,4 +183,7 @@ void trigAnaCorrelation(char *infile="openhlt-900GeV.root",char *projectTitle = 
       }
       cout <<" | "<<endl;
    }   
+
+   // save
+   outf->Write();
 }
