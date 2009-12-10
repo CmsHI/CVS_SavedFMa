@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Muriel VANDER DONCKT *:0
 //         Created:  Wed Jul 16 16:11:05 CEST 2008
-// $Id: BSCTrigger.cc,v 1.6 2009/11/19 10:36:36 yjlee Exp $
+// $Id: BSCTrigger.cc,v 1.2 2009/12/10 21:17:06 frankma Exp $
 //
 //
 
@@ -65,6 +65,7 @@ private:
   edm::InputTag TheHits_tag_;
   // random engine
   CLHEP::HepRandomEngine* _bscRandomEng;
+  double segmentEff_;
 };
 
 //
@@ -86,6 +87,7 @@ BSCTrigger::BSCTrigger(const edm::ParameterSet& iConfig)
   theCoincidence_= iConfig.getParameter<double>("coincidence");
   theResolution_= iConfig.getParameter<double>("resolution");
   TheHits_tag_= iConfig.getParameter<edm::InputTag>("theHits");
+  segmentEff_ = iConfig.getParameter<double>("segmentEfficiency");
   produces<L1GtTechnicalTriggerRecord>();  
   nevt_=0;
 
@@ -158,8 +160,8 @@ void BSCTrigger::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     double bsceff = 0.95;
     for ( unsigned int ipad = 0 ; ipad<32; ipad++) {
       double effrand = _bscRandomEng->flat();
-      bool passEff = (effrand<bsceff);
-      std::cout << "random: " << effrand << ", in " << bsceff << "eff? " << passEff << std::endl;
+      bool passEff = (effrand<segmentEff_);
+      if (!passEff) std::cout << "random: " << effrand << ", in " << segmentEff_ << "eff? " << passEff << std::endl;
       if ( edm::isDebugEnabled() ) LogTrace("BSCTrig")<<" EnergyBX["<<ipad<<"]="<<EnergyBX[ipad];
       // hits after the bunch crossing
       if ( EnergyBX[ipad] > theThreshold && passEff) {
