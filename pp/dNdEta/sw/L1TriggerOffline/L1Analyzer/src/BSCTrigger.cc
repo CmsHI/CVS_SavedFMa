@@ -112,7 +112,6 @@ BSCTrigger::~BSCTrigger()
 // ------------ method called to produce the data  ------------
 void BSCTrigger::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-  std::cout << "=== bsc l1 sim ===" << std::endl;
   std::vector<L1GtTechnicalTrigger> ttVec(ttBits_.size());
   std::vector<float>EnergyBX(32);
   std::vector<float>EnergyBXMinusDt(32);
@@ -157,11 +156,10 @@ void BSCTrigger::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     // count number of segments hit in inner/outer and +z, -z ---------------------------------------------------------------------------------------------
-    double bsceff = 0.95;
     for ( unsigned int ipad = 0 ; ipad<32; ipad++) {
       double effrand = _bscRandomEng->flat();
       bool passEff = (effrand<segmentEff_);
-      if (!passEff) std::cout << "random: " << effrand << ", in " << segmentEff_ << "eff? " << passEff << std::endl;
+      //if (!passEff) std::cout << "random: " << effrand << ", in " << segmentEff_ << "eff? " << passEff << std::endl;
       if ( edm::isDebugEnabled() ) LogTrace("BSCTrig")<<" EnergyBX["<<ipad<<"]="<<EnergyBX[ipad];
       // hits after the bunch crossing
       if ( EnergyBX[ipad] > theThreshold && passEff) {
