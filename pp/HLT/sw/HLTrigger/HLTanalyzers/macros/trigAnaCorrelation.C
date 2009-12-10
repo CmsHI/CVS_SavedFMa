@@ -60,12 +60,13 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
    vector <double*> effs;
    
    // calculate the efficiency //   
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_OR.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_OR.v0==1",cut)));
    effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_threshold1.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_threshold1.v0==1",cut)));
    effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_threshold2.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_threshold2.v0==1",cut)));
-   effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_OR.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_OR.v0==1",cut)));
    effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_inner_threshold1.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_inner_threshold1.v0==1",cut)));
    effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_inner_threshold2.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_inner_threshold2.v0==1",cut)));
    effs.push_back(calcEff(HltTree,"L1Tech_HCAL_HF_coincidence_PM.v0",nEvt,Form("(%s)&&L1Tech_HCAL_HF_coincidence_PM.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"HLT_MinBiasPixel_SingleTrack",nEvt,Form("(%s)&&HLT_MinBiasPixel_SingleTrack==1",cut)));
    //effs.push_back(calcEff(HltTree,"L1Tech_BSC_splash_beam1.v0",nEvt,Form("(%s)&&L1Tech_BSC_splash_beam1.v0==1",cut)));
    //effs.push_back(calcEff(HltTree,"L1Tech_BSC_splash_beam2.v0",nEvt,Form("(%s)&&L1Tech_BSC_splash_beam2.v0==1",cut)));
    //effs.push_back(calcEff(HltTree,"All",nEvt,Form("(%s)&&(L1Tech_BSC_minBias_threshold1.v0||L1Tech_BSC_minBias_threshold2.v0||L1Tech_BSC_minBias_OR.v0||L1Tech_BSC_minBias_inner_threshold1.v0||L1Tech_BSC_minBias_inner_threshold2.v0||L1Tech_BSC_splash_beam1.v0||L1Tech_BSC_splash_beam2.v0)",cut)));
@@ -126,12 +127,14 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
 
 void trigAnaCorrelation(char *infile="openhlt-900GeV.root",char *projectTitle = "900GeV",string source="mc")
 {
+   // Load input
    TFile *inf = new TFile(infile);
    TTree *HltTree =  (TTree*) inf->FindObjectAny("HltTree");
+   TFile *outf = new TFile(Form("%s_hist.root"),"RECREATE");
 
+   // define event types
    vector<string> evtType;
    vector<string> evtTypeCut;
-
    evtType.push_back("All"); evtTypeCut.push_back("1==1");
    if (source=="mc") {
      evtType.push_back("Single-Diffr"); evtTypeCut.push_back("(evtType==92||evtType==93)");
@@ -143,9 +146,10 @@ void trigAnaCorrelation(char *infile="openhlt-900GeV.root",char *projectTitle = 
      evtType.push_back("filled-filled"); evtTypeCut.push_back("(BunchCrossing==51||BunchCrossing==2724)");
      evtType.push_back("parasitic"); evtTypeCut.push_back("(BunchCrossing==1830||BunchCrossing==1833)");
      evtType.push_back("single-beam"); evtTypeCut.push_back("(BunchCrossing==3170||BunchCrossing==2276)");
-     evtType.push_back("L1_ZeroBias_Ext"); evtTypeCut.push_back("(L1_ZeroBias)");
+     evtType.push_back("L1_ZeroBias_Ext"); evtTypeCut.push_back("(L1_ZeroBias_Ext)");
    }
 
+   // Print out event type fractions
    cout <<"<pre>"<<endl;
    for (unsigned int i=0; i<evtType.size(); ++i) {
      int nSel = HltTree->GetEntries(evtTypeCut[i].c_str());
@@ -153,15 +157,16 @@ void trigAnaCorrelation(char *infile="openhlt-900GeV.root",char *projectTitle = 
    }
    cout <<"</pre>"<<endl;
 
+   // Calc Efficiencies
    for (unsigned int i=0; i<evtType.size(); ++i) {
      printEff(HltTree,evtTypeCut[i].c_str(),evtType[i].c_str(),projectTitle);
    }
 
+   // Print efficiency results
    cout <<" | "<<setw(20)<<" ";
    for (unsigned int i=0;i<evtType.size();i++) {
       cout <<" | "<<setw(8)<<evtType[i];
    }
-   
    cout <<" | " <<endl;
 
    for (int i=0;i<(int)triggers->size();i++){
