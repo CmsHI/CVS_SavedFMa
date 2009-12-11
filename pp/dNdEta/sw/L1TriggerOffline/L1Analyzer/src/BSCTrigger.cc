@@ -37,6 +37,12 @@ Implementation:
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "FWCore/Utilities/interface/RandomNumberGenerator.h"
 #include "CLHEP/Random/RandomEngine.h"
+
+#include "PhysicsTools/UtilAlgos/interface/TFileService.h"
+// root include file
+#include "TFile.h"
+#include "TNtuple.h"
+
 //
 // class declaration
 //
@@ -66,6 +72,9 @@ private:
   // random engine
   CLHEP::HepRandomEngine* _bscRandomEng;
   double segmentEff_;
+
+  TNtuple *ntBsc_;
+  edm::Service<TFileService> outf_;
 };
 
 //
@@ -184,6 +193,11 @@ void BSCTrigger::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     if ( edm::isDebugEnabled() ) LogTrace("BSCTrig")<<" Zplus I="<<ZPinnerBX<<" Zminus I="<<ZMinnerBX<<" Zplus O="<<ZPouterBX<<"  Zminus O="<<ZMouterBX;
+    // fill hit mult to ntuple
+    int nzp=ZPinnerBX+ZPouterBX;
+    int nzm=ZMinnerBX+ZMouterBX;
+    int nhit=nzp+nzm;
+    ntBsc_->Fill(nhit,nzp,nzm,ZPinnerBX,ZPouterBX,ZMinnerBX,ZMouterBX);
 
     // minimum bias technical triggers that are also connected to 'external condition' triggers -----------------
     bool bit32=false;    // min bias inner >=1
@@ -249,6 +263,7 @@ void BSCTrigger::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 // ------------ method called once each job just before starting event loop  ------------
 void BSCTrigger::beginJob(const edm::EventSetup&)
 {
+  ntBsc_ = outf_->make<TNtuple>("ntBsc","BSC Analysis","nhit:nzp:nzm:nzpin:nzpout:nzmin:nzmout");
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
