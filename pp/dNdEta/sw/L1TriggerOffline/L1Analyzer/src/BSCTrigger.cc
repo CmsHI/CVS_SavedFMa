@@ -39,6 +39,8 @@ Implementation:
 #include "CLHEP/Random/RandomEngine.h"
 
 #include "PhysicsTools/UtilAlgos/interface/TFileService.h"
+#include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
+
 // root include file
 #include "TFile.h"
 #include "TNtuple.h"
@@ -193,11 +195,17 @@ void BSCTrigger::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     if ( edm::isDebugEnabled() ) LogTrace("BSCTrig")<<" Zplus I="<<ZPinnerBX<<" Zminus I="<<ZMinnerBX<<" Zplus O="<<ZPouterBX<<"  Zminus O="<<ZMouterBX;
+    // now fill ntuple
+    // get event type
+    edm::Handle<edm::HepMCProduct> mc;
+    iEvent.getByLabel("generator",mc);
+    const HepMC::GenEvent* evt = mc->GetEvent();
+    int evtType = evt->signal_process_id();
     // fill hit mult to ntuple
     int nzp=ZPinnerBX+ZPouterBX;
     int nzm=ZMinnerBX+ZMouterBX;
     int nhit=nzp+nzm;
-    ntBsc_->Fill(nhit,nzp,nzm,ZPinnerBX,ZPouterBX,ZMinnerBX,ZMouterBX);
+    ntBsc_->Fill(nhit,nzp,nzm,ZPinnerBX,ZPouterBX,ZMinnerBX,ZMouterBX,evtType);
 
     // minimum bias technical triggers that are also connected to 'external condition' triggers -----------------
     bool bit32=false;    // min bias inner >=1
@@ -263,7 +271,7 @@ void BSCTrigger::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 // ------------ method called once each job just before starting event loop  ------------
 void BSCTrigger::beginJob(const edm::EventSetup&)
 {
-  ntBsc_ = outf_->make<TNtuple>("ntBsc","BSC Analysis","nhit:nzp:nzm:nzpin:nzpout:nzmin:nzmout");
+  ntBsc_ = outf_->make<TNtuple>("ntBsc","BSC Analysis","nhit:nzp:nzm:nzpin:nzpout:nzmin:nzmout:evtType");
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
