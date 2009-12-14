@@ -1,7 +1,7 @@
 #!/bin/bash -
 if [ $# -lt 2 ]; then
    echo "Usage"
-   echo "  get_castor.sh <castor_dir> <flistname> [tag]"
+   echo "  new_castor_list.sh <castor_dir> <flistname> [tag]"
    exit 1
 fi
 
@@ -28,3 +28,6 @@ for i in $files; do
 done
 echo $flist created
 
+# get
+echo Will begin to copy
+get_castor_from_list.sh $flist >& ${flist%.*}.log &
