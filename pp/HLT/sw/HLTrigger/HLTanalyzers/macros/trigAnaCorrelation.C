@@ -60,13 +60,13 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
    vector <double*> effs;
    
    // calculate the efficiency //   
-   effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_OR.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_OR.v0==1",cut)));
-   effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_threshold1.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_threshold1.v0==1",cut)));
-   effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_threshold2.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_threshold2.v0==1",cut)));
-   effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_inner_threshold1.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_inner_threshold1.v0==1",cut)));
-   effs.push_back(calcEff(HltTree,"L1Tech_BSC_minBias_inner_threshold2.v0",nEvt,Form("(%s)&&L1Tech_BSC_minBias_inner_threshold2.v0==1",cut)));
-   effs.push_back(calcEff(HltTree,"L1Tech_HCAL_HF_coincidence_PM.v0",nEvt,Form("(%s)&&L1Tech_HCAL_HF_coincidence_PM.v0==1",cut)));
-   effs.push_back(calcEff(HltTree,"HLT_MinBiasPixel_SingleTrack",nEvt,Form("(%s)&&HLT_MinBiasPixel_SingleTrack==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_OR",nEvt,Form("(%s)&&L1Tech_BSC_minBias_OR.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_thr1",nEvt,Form("(%s)&&L1Tech_BSC_minBias_threshold1.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_thr2",nEvt,Form("(%s)&&L1Tech_BSC_minBias_threshold2.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_inner_thr1",nEvt,Form("(%s)&&L1Tech_BSC_minBias_inner_threshold1.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_BSC_inner_thr2",nEvt,Form("(%s)&&L1Tech_BSC_minBias_inner_threshold2.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"L1Tech_HF_coinc_PM",nEvt,Form("(%s)&&L1Tech_HCAL_HF_coincidence_PM.v0==1",cut)));
+   effs.push_back(calcEff(HltTree,"HLT_MBPixel_1Track",nEvt,Form("(%s)&&HLT_MinBiasPixel_SingleTrack==1",cut)));
    //effs.push_back(calcEff(HltTree,"L1Tech_BSC_splash_beam1.v0",nEvt,Form("(%s)&&L1Tech_BSC_splash_beam1.v0==1",cut)));
    //effs.push_back(calcEff(HltTree,"L1Tech_BSC_splash_beam2.v0",nEvt,Form("(%s)&&L1Tech_BSC_splash_beam2.v0==1",cut)));
    //effs.push_back(calcEff(HltTree,"All",nEvt,Form("(%s)&&(L1Tech_BSC_minBias_threshold1.v0||L1Tech_BSC_minBias_threshold2.v0||L1Tech_BSC_minBias_OR.v0||L1Tech_BSC_minBias_inner_threshold1.v0||L1Tech_BSC_minBias_inner_threshold2.v0||L1Tech_BSC_splash_beam1.v0||L1Tech_BSC_splash_beam2.v0)",cut)));
@@ -91,6 +91,8 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
 	 hct->SetBinContent(i+1,j+1,HltTree->GetEntries(cut.c_str()));
       }
    }
+   h->GetXaxis()->LabelsOption("v");
+   hct->GetXaxis()->LabelsOption("v");
    
    TCanvas *c1 = new TCanvas(Form("c%s",title), Form("c_%s",title),800,600);
    c1->Range(-3.609756,-1.910995,12.7561,10.60209);
@@ -99,10 +101,10 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
    c1->SetBorderSize(0);
    c1->SetTickx();
    c1->SetTicky();
-   c1->SetLeftMargin(0.2205663);
+   c1->SetLeftMargin(0.25);
    c1->SetRightMargin(0.1684054);
-   c1->SetTopMargin(0.04811715);
-   c1->SetBottomMargin(0.1527197);
+   c1->SetTopMargin(0.02);
+   c1->SetBottomMargin(0.3);
    c1->SetFrameLineColor(0);
    c1->SetFrameBorderMode(0);
    c1->SetFrameLineColor(0);
