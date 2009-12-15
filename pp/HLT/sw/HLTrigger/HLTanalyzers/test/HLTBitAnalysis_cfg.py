@@ -39,7 +39,7 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 # * CRAFT_31X_V1P, CRAFT_31X_V1H - initial conditions for 2009 cosmic data taking - as CRAFT08_31X_V1 but with different
 #   tag names to allow append IOV, and DT cabling map corresponding to 2009 configuration (10 FEDs).
 # Meanwhile...:
-#process.GlobalTag.globaltag = 'MC_31X_V9::All'
+#process.GlobalTag.globaltag = 'STARTUP3X_V8I::All'
 process.GlobalTag.globaltag = 'GR09_P_V7::All'
 
 # Define the HLT reco paths
@@ -55,7 +55,7 @@ isRaw=False # * =0 use existing gtDigis on the input file, =1 extract gtDigis fr
 isMC=False
 from HLTrigger.HLTanalyzers.HLTBitAnalyser_cfi import update_cfg_cases
 update_cfg_cases(process,isRaw,isMC)
-#process.hltbitanalysis.RunParameters.Monte= cms.bool(False)
+process.hltbitanalysis.RunParameters.Monte= cms.bool(isMC)
 #process.hltbitanalysis.hltresults = cms.InputTag( 'TriggerResults','','HLT' )
 
 process.schedule = cms.Schedule( process.analyzeHLT_step )
