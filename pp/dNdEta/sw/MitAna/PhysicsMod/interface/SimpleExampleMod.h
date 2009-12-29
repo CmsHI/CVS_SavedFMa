@@ -40,6 +40,7 @@ namespace mithep
       const char              *GetTowerName()              const { return fTowerName; }
       const char              *GetMCEvtName()              const { return fMCEvtName; }
       void                     SetPartName(const char *n)       { fPartName=n; }
+      void		       SetUseHfOnly(bool choice)        { fHfOnly=choice; }
       bool                     GoodTower(const CaloTower * ct);
 
     protected:
@@ -60,6 +61,7 @@ namespace mithep
       TH1D                    *fPtHist;     //!pt histogram
       TH1D                    *fEtaHist;    //!eta histogram
       // diffractive study
+      bool                     fHfOnly;
       TH1D                    *fhEUncut;     //!energy histogram
       TH1D                    *fhE;     //!energy histogram
       TH1D                    *fhEp;    //!pz

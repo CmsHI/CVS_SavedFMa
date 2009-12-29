@@ -24,6 +24,7 @@ ClassImp(mithep::SimpleExampleMod)
     fTowers(0),
     fPtHist(0),
     fEtaHist(0),
+    fHfOnly(false),
     fEvtNum(0)
 {
   // Constructor.
@@ -54,8 +55,12 @@ void SimpleExampleMod::EndRun()
 bool SimpleExampleMod::GoodTower(const CaloTower * ct)
 {
   bool result=false;
-  if (ct->E()>3)
-    result=true;
+  if (ct->E()>3) {
+    if (fHfOnly)
+      result=true;
+    else if (fabs(ct->Eta())>3.)
+      result=true;
+  }
   return result;
 }
 
@@ -77,7 +82,11 @@ void SimpleExampleMod::Process()
   Double_t SumEsubEpNeg = 0;
   Double_t SumEaddEpNeg = 0;
 
-  printf("Evt %d, evtType: %d\n",fEvtNum,fMCEvt->ProcessId());
+  // get Event info
+  Int_t evtType = fMCEvt->ProcessId();
+  bool isND = (evtType!=92 && evtType!=93 && evtType!=94);
+  printf("Evt %d, evtType: %d. Is ND? %d\n",fEvtNum,evtType,isND);
+
   for(Int_t i=0;i<ents;++i) {
     const CaloTower *ct = fTowers->At(i);
     fPtHist->Fill(ct->Pt());
@@ -96,7 +105,7 @@ void SimpleExampleMod::Process()
       fhEp->Fill(Ep);
       fhEsubEp->Fill(E-Ep);
       fhEaddEp->Fill(E+Ep);
-      if (fEvtNum%100==0) {
+      if (fEvtNum%200==0) {
 	printf("  E: %f, Ep: %f, E-Ep: %f, E+Ep: %f, 0.5ln((E+Ep)/(E-Ep)): %f, Eta: %f\n",E,Ep,E-Ep,E+Ep,0.5*log((E+Ep)/(E-Ep)),ct->Eta());
       }
 
@@ -124,7 +133,24 @@ void SimpleExampleMod::Process()
 
   // fill event level vars
   Double_t evtEta = 0.5*log(SumEaddEp/SumEsubEp);
-  if (fEvtNum%100==0)
+
+  // Print interesting events
+  if (isND && fabs(evtEta)>3.) {
+    printf("*** Non-diffractive and large event Eta ***\n");
+    for(Int_t i=0;i<ents;++i) {
+      const CaloTower *ct = fTowers->At(i);
+      if (GoodTower(ct)) {
+	// calc vars
+	Double_t E=ct->E();
+	Double_t Ep=ct->E()*cos(ct->Theta());
+	printf("  E: %f, Ep: %f, E-Ep: %f, E+Ep: %f, 0.5ln((E+Ep)/(E-Ep)): %f, Eta: %f\n",E,Ep,E-Ep,E+Ep,0.5*log((E+Ep)/(E-Ep)),ct->Eta());
+      }
+    }
+    printf("  Sum(E-Ep): %f, Sum(E+Ep): %f, 0.5ln((E+Ep)/(E-Ep)): %f\n",SumEsubEp,SumEaddEp,evtEta);
+  } // end if is ND && large Eta
+
+  // Sampling Printout
+  if (fEvtNum%200==0)
     printf("  Sum(E-Ep): %f, Sum(E+Ep): %f, 0.5ln((E+Ep)/(E-Ep)): %f\n",SumEsubEp,SumEaddEp,evtEta);
   fntDiffrac->Fill(fEvtNum,fMCEvt->ProcessId(),
       SumEaddEp,SumEsubEp,SumEaddEpPos,SumEsubEpPos,SumEaddEpNeg,SumEsubEpNeg,
@@ -174,7 +200,12 @@ void SimpleExampleMod::SlaveBegin()
   AddTH1(fhSumEsubEpNeg,"hSumEsubEpNeg",";#Sigma E-Ez (-z) [GeV]; #",610,-10,600);
   AddTH1(fhSumEaddEpNeg,"hSumEaddEpNeg",";#Sigma E+Ez (-z) [GeV]; #",610,-10,600);
 
-  fout = new TFile("diffracAna.root","RECREATE");
+  TString outname="diffracAna";
+  if (fHfOnly)
+    outname+="_HfOnly";
+  else
+    outname+="_AllCalo";
+  fout = new TFile(Form("%s.root",outname.Data()),"RECREATE");
   fntDiffrac = new TNtuple("ntDif","ntuple for diffraction ana",
       "evt:evtType:sumAdd:sumSub:sumAddPos:sumSubPos:sumAddNeg:sumSubNeg:Eta");
 }
