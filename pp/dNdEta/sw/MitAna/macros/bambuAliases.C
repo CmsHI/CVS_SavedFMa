@@ -119,6 +119,13 @@ void bambuAliases(Int_t type=0){
   ev->SetAlias("ctEaddEp","ct.E()+ctEp");
   ev->SetAlias("ctSumEsubEp","Sum$(ctEsubEp)");
   ev->SetAlias("ctSumEaddEp","Sum$(ctEsubEp)");
+  // Christof's tips
+  ev->SetAlias("Epzn","Sum$((ct.E()-ct.Mom().Pz())*(ct.E()>3&&ct.Eta()<-3))");
+  ev->SetAlias("Epzp","Sum$((ct.E()+ct.Mom().Pz())*(ct.E()>3&&ct.Eta()>3))");
+  ev->SetAlias("hltHF3","hlt.TestBit(106)");
+  ev->SetAlias("hltTrk1","hlt.TestBit(73)");
+  ev.Draw("ct.E()-ct.Mom().Pz()","hltTrk1&&l1t34");
+  ev.Draw("Epzn:Epzp","hltTrk1&&l1t34","box");
 
   // MC event info
   ev->SetAlias("pid","MCEventInfo.fProcessId");
