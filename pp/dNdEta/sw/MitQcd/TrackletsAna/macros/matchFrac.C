@@ -4,8 +4,10 @@
 #include "TCanvas.h"
 #include "TString.h"
 #include "TF1.h"
+#include "TLegend.h"
 #include <iostream>
 #include <vector>
+#include "../selectionCut.h"
 using namespace std;
 
 // === helpers ===
@@ -58,7 +60,7 @@ Double_t histDiffrChi2(
     hMC->SetMarkerStyle(0);
     hMC->SetLineWidth(1);
     hMC->SetLineStyle(7);
-    hData->SetMaximum(0.03);
+    hData->SetMaximum(0.035);
     hData->Draw("E");
     h3->Draw("hist same");
     h1->SetLineColor(kBlue);
@@ -71,6 +73,15 @@ Double_t histDiffrChi2(
     h2->SetMarkerColor(kRed-1);
     h1->SetLineColor(kRed-1);
     h2->Draw("same");
+    //  - add legend -
+    TLegend *leg2 = new TLegend(0.53356,0.7657,0.9513,0.9178,NULL,"brNDC");
+    leg2->SetFillColor(0);
+    leg2->SetBorderSize(0);
+    leg2->AddEntry(hData,"Data","p");
+    leg2->AddEntry(h1,"MC - Best Fit SD","p");
+    leg2->AddEntry(h2,"MC - Best Fit NSD","p");
+    leg2->AddEntry(h3,"MC - Best Fit All","l");
+    leg2->Draw();
   }
   else {
     //cout << "SDRelFrac: " << SDRelFrac << "  Raw hist chi2: " << result << endl;
@@ -95,12 +106,21 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
   TTree * treeData; dataFile->GetObject("PixelTree",treeData);
   TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
 
+  // trigger
+  selectionCut mcSel(1);
+  TCut SDCut = "evtType==92 || evtType==93";
+  TCut NSDCut = "evtType!=92 && evtType!=93";
+  //TCut mcSelSD = mcSel.Cut && SDCut;
+  //TCut mcSelNSD = mcSel.Cut && NSDCut;
+  TCut mcSelSD = SDCut;
+  TCut mcSelNSD = NSDCut;
+
   // get truth info
   Double_t dataTotalN = treeData->GetEntries();
-  Double_t dataSD = treeData->GetEntries("evtType==92 || evtType==93");
+  Double_t dataSD = treeData->GetEntries(mcSelSD);
   Double_t dataSDFrac = dataSD/dataTotalN;
   Double_t McTotalN = treeMC->GetEntries();
-  Double_t McSD = treeMC->GetEntries("evtType==92 || evtType==93");
+  Double_t McSD = treeMC->GetEntries(mcSelSD);
   Double_t McSDFrac = McSD/McTotalN;
   Double_t RelSDFracTruth = dataSDFrac/McSDFrac;
   printf("\"Data\" SD frac: %f, MC SD frac: %f. Ratio: %f\n",dataSDFrac,McSDFrac,RelSDFracTruth);
@@ -144,8 +164,8 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
 
   TCanvas * c1 = new TCanvas("c1","c1",500,500);
   treeMC->Draw("SumEaddEp>>hEaddEp_pythia","","E");
-  treeMC->Draw("SumEaddEp>>hEaddEp_pythia_SD","evtType==92 || evtType==93","same");
-  treeMC->Draw("SumEaddEp>>hEaddEp_pythia_NSD","evtType!=92 && evtType!=93","same");
+  treeMC->Draw("SumEaddEp>>hEaddEp_pythia_SD",mcSelSD,"same");
+  treeMC->Draw("SumEaddEp>>hEaddEp_pythia_NSD",mcSelNSD,"same");
   treeData->Draw("SumEaddEp>>hEaddEp_data","","same E");
 
   // calc chi2
