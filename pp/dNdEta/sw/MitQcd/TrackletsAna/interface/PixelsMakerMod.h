@@ -47,8 +47,9 @@ namespace mithig
       void                       SetFileName(const char *n)     { fFileName     = n;         }
       void                       SetPixelHitName(const char *n) { fPixelHitName = n;         }
       void                       SetIsMC(Bool_t b)              { fIsMC         = b;         }
-      void		         SetUseHfOnly(bool choice)        { fHfOnly=choice; }
+      void		         SetUseHfOnly(bool choice)      { fHfOnly=choice;	     }
       bool                       GoodTower(const CaloTower * ct);
+      void			 SetSDRelFrac(Float_t f)        { fSDRelFrac     = f;         }
 
     protected:
       void                       Process();
@@ -132,7 +133,7 @@ namespace mithig
           Float_t phi[MAXPARTICLES];
 
           Int_t pdg[MAXPARTICLES];
-	Int_t mother[MAXPARTICLES];
+	  Int_t mother[MAXPARTICLES];
 
           Int_t chg[MAXPARTICLES];
           Int_t evtType;
@@ -175,6 +176,7 @@ namespace mithig
 
       // diffractive study
       bool                     fHfOnly;
+      Float_t		       fSDRelFrac;
 
       ClassDef(PixelsMakerMod, 1) // Pixels maker
   };

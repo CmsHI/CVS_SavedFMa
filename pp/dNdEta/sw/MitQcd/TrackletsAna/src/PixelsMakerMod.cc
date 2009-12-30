@@ -9,6 +9,7 @@
 #include "MitAna/DataTree/interface/VertexCol.h"
 #include <TNtuple.h>
 #include <TFile.h>
+#include "TRandom3.h"
 
 using namespace std;
 using namespace mithig;
@@ -126,7 +127,8 @@ PixelsMakerMod::PixelsMakerMod(const char *name, const char *title, unsigned int
   fMCEvtInfo(0),
   fTree(0),
   fFile(0),
-  fHfOnly(true)
+  fHfOnly(true),
+  fSDRelFrac(1.)
 {
   // Constructor.
 }
@@ -149,6 +151,24 @@ void PixelsMakerMod::Process()
 {
   // Process entries of the tree. For this module, we just load the branches and
   // fill the histograms.
+
+  // === first of all check evtType if it's MC ===
+  if (fIsMC) {
+    LoadBranch(fMCEvtInfoName);
+    if (fMCEvtInfo) {
+      Int_t pid = fMCEvtInfo->ProcessId();
+      printf("Event %d, evtType %d\n",fPE.nEv,pid);
+      // -- re-adjust SD fraction --
+      if (pid==92 || pid==93) {
+	TRandom3 r(0);
+	if (r.Rndm()>fSDRelFrac) {
+	  printf("##Throw away event in re-adjusted SD fraction\n");
+	  return;
+	}
+      }
+    }
+  }
+  //==============================================
 
   fPE.Clear();
 
@@ -189,14 +209,6 @@ void PixelsMakerMod::Process()
   fPE.SumEaddEpPos = 0;
   fPE.SumEsubEpNeg = 0;
   fPE.SumEaddEpNeg = 0;
-  if (fIsMC) {
-    LoadBranch(fMCEvtInfoName);
-    if (fMCEvtInfo) {
-      Int_t pid = fMCEvtInfo->ProcessId();
-      if (fPE.nEv%200==0)
-	printf("Event %d, evtType %d\n",fPE.nEv,pid);
-    }
-  }
   for (UInt_t i = 0; i < caloTowerEnts; ++i) {
     const CaloTower *ct = fCaloTowerCol->At(i);
     if (ct->Eta()<-3 && ct->E()>3) fPE.nHFn++;
@@ -206,7 +218,7 @@ void PixelsMakerMod::Process()
       // calc vars
       Double_t E=ct->E();
       Double_t Ep=ct->E()*cos(ct->Theta());
-      if (fPE.nEv%200==0)
+      if (fPE.nEv%1==0)
 	printf("  E: %f, Ep: %f, E-Ep: %f, E+Ep: %f, 0.5ln((E+Ep)/(E-Ep)): %f, Eta: %f\n",E,Ep,E-Ep,E+Ep,0.5*log((E+Ep)/(E-Ep)),ct->Eta());
       fPE.SumEsubEp+=E-Ep;
       fPE.SumEaddEp+=E+Ep;
