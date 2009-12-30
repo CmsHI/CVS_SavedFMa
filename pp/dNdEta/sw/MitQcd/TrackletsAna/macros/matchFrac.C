@@ -54,10 +54,12 @@ Double_t histDiffrChi2(
   // if draw
   if (draw) {
     cout << "Draw: trial SDFrac: " << testSDFrac << "  Raw hist chi2: " << result << endl;
-    hMC->Draw("h");
-    hMC->SetLineWidth(2);
+    //hMC->Draw("h");
+    hMC->SetMarkerStyle(0);
+    hMC->SetLineWidth(1);
     hMC->SetLineStyle(7);
-    hData->Draw("E same");
+    hData->SetMaximum(0.03);
+    hData->Draw("E");
     h3->Draw("hist same");
     h1->SetLineColor(kBlue);
     h1->SetLineStyle(7);
