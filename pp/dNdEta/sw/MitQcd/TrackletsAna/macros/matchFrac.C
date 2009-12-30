@@ -108,18 +108,19 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
 
   // trigger
   selectionCut mcSel(1);
+  //TCut mcSelCut = mcSel.Cut();
+  TCut dataSelCut = "1==1";
+  TCut mcSelCut = "1==1";
   TCut SDCut = "evtType==92 || evtType==93";
   TCut NSDCut = "evtType!=92 && evtType!=93";
-  //TCut mcSelSD = mcSel.Cut && SDCut;
-  //TCut mcSelNSD = mcSel.Cut && NSDCut;
-  TCut mcSelSD = SDCut;
-  TCut mcSelNSD = NSDCut;
+  TCut mcSelSD = mcSelCut && SDCut;
+  TCut mcSelNSD = mcSelCut && NSDCut;
 
   // get truth info
-  Double_t dataTotalN = treeData->GetEntries();
+  Double_t dataTotalN = treeData->GetEntries(mcSelCut);
   Double_t dataSD = treeData->GetEntries(mcSelSD);
   Double_t dataSDFrac = dataSD/dataTotalN;
-  Double_t McTotalN = treeMC->GetEntries();
+  Double_t McTotalN = treeMC->GetEntries(mcSelCut);
   Double_t McSD = treeMC->GetEntries(mcSelSD);
   Double_t McSDFrac = McSD/McTotalN;
   Double_t RelSDFracTruth = dataSDFrac/McSDFrac;
@@ -163,10 +164,10 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
   treeData->Draw("evtEta>>hEvtEta_data","","same");
 
   TCanvas * c1 = new TCanvas("c1","c1",500,500);
-  treeMC->Draw("SumEaddEp>>hEaddEp_pythia","","E");
+  treeMC->Draw("SumEaddEp>>hEaddEp_pythia",mcSelCut,"E");
   treeMC->Draw("SumEaddEp>>hEaddEp_pythia_SD",mcSelSD,"same");
   treeMC->Draw("SumEaddEp>>hEaddEp_pythia_NSD",mcSelNSD,"same");
-  treeData->Draw("SumEaddEp>>hEaddEp_data","","same E");
+  treeData->Draw("SumEaddEp>>hEaddEp_data",dataSelCut,"same E");
 
   // calc chi2
   Int_t N=50;
