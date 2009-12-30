@@ -55,7 +55,7 @@
    gStyle->SetStatColor(0);
    gStyle->SetStatBorderSize(1);
    gStyle->SetOptTitle(0);
-   //gStyle->SetOptStat(0);
+   gStyle->SetOptStat(0);
    gStyle->SetPadLeftMargin(0.17);
    gStyle->SetPadBottomMargin(0.15);
    gStyle->SetPadTopMargin(0.05);
