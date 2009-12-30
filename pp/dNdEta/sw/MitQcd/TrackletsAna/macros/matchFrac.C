@@ -1,0 +1,138 @@
+#include "TFile.h"
+#include "TH1D.h"
+#include "TTree.h"
+#include "TCanvas.h"
+#include "TString.h"
+#include "TF1.h"
+#include <iostream>
+#include <vector>
+using namespace std;
+
+// === helpers ===
+Double_t histChi2(TH1 * h1, TH1 *h2)
+{
+  Double_t sum=0;
+  for (UInt_t i=1; i<=h1->GetNbinsX(); ++i) {
+    Double_t binDiff = h2->GetBinContent(i)-h1->GetBinContent(i);
+    Double_t binChi2 = binDiff*binDiff;
+    sum+=binChi2;
+  }
+  return sum;
+}
+
+Double_t histDiffrChi2(Double_t SDRelFrac=0.5625,
+    char * nameData  = "hEaddEp_data",
+    char * nameMC    = "hEaddEp_pythia",
+    char * nameSD    = "hEaddEp_pythia_SD",
+    char * nameNSD   = "hEaddEp_pythia_NSD")
+{
+  TH1D * hData = (TH1D*)(gDirectory->FindObject(nameData)->Clone("hData"));
+  TH1D * hMC = (TH1D*)(gDirectory->FindObject(nameMC)->Clone("hMC"));
+  TH1D * h1 = (TH1D*)(gDirectory->FindObject(nameSD)->Clone("h1"));
+  TH1D * h2 = (TH1D*)(gDirectory->FindObject(nameNSD)->Clone("h2"));
+  h1->Scale(1./hMC->GetEntries());
+  h2->Scale(1./hMC->GetEntries());
+  hMC->Scale(1./hMC->GetEntries());
+  hData->Scale(1./hData->GetEntries());
+
+  // add MC components
+  TH1D * h3 = (TH1D*)h2->Clone("h3");
+  h3->SetMarkerColor(kGreen-1);
+  h3->SetLineColor(kGreen-1);
+  h3->SetMarkerStyle(kOpenSquare);
+  h3->Add(h1,SDRelFrac);
+//  TCanvas * c2 = new TCanvas("c2","c2",500,500);
+//  hMC->Draw("h");
+//  hData->Draw("E same");
+//  h3->Draw("E same");
+
+  Double_t result = histChi2(hData,h3);
+  hData->Delete();
+  hMC->Delete();
+  h1->Delete();
+  h2->Delete();
+  h3->Delete();
+  return result;
+}
+
+// === Main function ===
+void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac0.5.root",
+    const char * mcfname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210.root")
+{
+  // get trees
+  TFile * dataFile = new TFile(datafname);
+  TFile * mcFile = new TFile(mcfname);
+  TTree * treeData; dataFile->GetObject("PixelTree",treeData);
+  TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
+
+  // get truth info
+  Double_t dataTotalN = treeData->GetEntries();
+  Double_t dataSD = treeData->GetEntries("evtType==92 || evtType==93");
+  Double_t dataSDFrac = dataSD/dataTotalN;
+  Double_t McTotalN = treeMC->GetEntries();
+  Double_t McSD = treeMC->GetEntries("evtType==92 || evtType==93");
+  Double_t McSDFrac = McSD/McTotalN;
+  Double_t RelSDFracTruth = dataSDFrac/McSDFrac;
+  printf("\"Data\" SD frac: %f, MC SD frac: %f. Ratio: %f\n",dataSDFrac,McSDFrac,RelSDFracTruth);
+
+  // declare histograms
+  vector<TString> source;
+  source.push_back("data");
+  source.push_back("pythia");
+  vector<Color_t> color;
+  color.push_back(kBlack);
+  color.push_back(kRed);
+  for (UInt_t i=0; i<source.size(); ++i) {
+    TH1D * hEvtEta = new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;#",100,-5,5);
+    hEvtEta->SetLineColor(color[i]);
+    hEvtEta->SetMarkerColor(color[i]);
+    hEvtEta->Sumw2();
+    TH1D * hEaddEp = new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;#",100,0,500);
+    hEaddEp->SetLineColor(color[i]);
+    hEaddEp->SetMarkerColor(color[i]);
+    hEaddEp->Sumw2();
+    if (source[i]=="pythia") {
+      TH1D * hEaddEpSD = new TH1D(Form("hEaddEp_%s_SD",source[i].Data()),";#Sigma E+Pz;#",100,0,500);
+      hEaddEpSD->SetLineColor(color[i]);
+      hEaddEpSD->SetMarkerColor(color[i]);
+      hEaddEpSD->SetLineWidth(2);
+      hEaddEpSD->SetLineStyle(7);
+      hEaddEpSD->Sumw2();
+      TH1D * hEaddEpNSD = new TH1D(Form("hEaddEp_%s_NSD",source[i].Data()),";#Sigma E+Pz;#",100,0,500);
+      hEaddEpNSD->SetLineColor(color[i]);
+      hEaddEpNSD->SetMarkerColor(color[i]);
+      hEaddEpNSD->SetLineWidth(2);
+      hEaddEpNSD->SetLineStyle(9);
+      hEaddEpNSD->Sumw2();
+    }
+  }
+
+  // take a look
+  TCanvas * c0 = new TCanvas("c0","c0",500,500);
+  treeMC->Draw("evtEta>>hEvtEta_pythia");
+  treeData->Draw("evtEta>>hEvtEta_data","","same");
+
+  TCanvas * c1 = new TCanvas("c1","c1",500,500);
+  treeMC->Draw("SumEaddEp>>hEaddEp_pythia","","E");
+  treeMC->Draw("SumEaddEp>>hEaddEp_pythia_SD","evtType==92 || evtType==93","same");
+  treeMC->Draw("SumEaddEp>>hEaddEp_pythia_NSD","evtType!=92 && evtType!=93","same");
+  treeData->Draw("SumEaddEp>>hEaddEp_data","","same E");
+
+  // calc chi2
+  Int_t N=50;
+  TH1D * hChi2 = new TH1D("hChi2",";#chi^{2};",N,0,1);
+  Float_t step = 1./(Float_t)N;
+  for (Int_t i=1; i<=N; ++i) {
+    Double_t sdFrac = i*step;
+    Double_t relSDFrac=sdFrac/McSDFrac;
+    Double_t chi2 = histDiffrChi2(relSDFrac); 
+    //cout << "SDRelFrac: " << relSDFrac << "  Raw hist chi2: " << chi2 << endl;
+    hChi2->SetBinContent(i,chi2);
+  }
+
+  TCanvas * cChi2 = new TCanvas("cChi2","cChi2",600,600);
+  hChi2->Draw();
+  TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
+  myfun->SetParameters(0.6,0.01,0);
+  hChi2->Fit("myfun","LL");
+}
