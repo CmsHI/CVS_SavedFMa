@@ -20,38 +20,53 @@ Double_t histChi2(TH1 * h1, TH1 *h2)
   return sum;
 }
 
-Double_t histDiffrChi2(Double_t SDRelFrac=0.5625,
-    char * nameData  = "hEaddEp_data",
-    char * nameMC    = "hEaddEp_pythia",
-    char * nameSD    = "hEaddEp_pythia_SD",
-    char * nameNSD   = "hEaddEp_pythia_NSD")
+Double_t histDiffrChi2(
+    Double_t testSDFrac   = 0.11,
+    Double_t MCSDFrac     = 0.227,
+    char * nameData       = "hEaddEp_data",
+    char * nameMC         = "hEaddEp_pythia",
+    char * nameSD         = "hEaddEp_pythia_SD",
+    char * nameNSD        = "hEaddEp_pythia_NSD",
+    Int_t draw            = 0)
 {
   TH1D * hData = (TH1D*)(gDirectory->FindObject(nameData)->Clone("hData"));
   TH1D * hMC = (TH1D*)(gDirectory->FindObject(nameMC)->Clone("hMC"));
   TH1D * h1 = (TH1D*)(gDirectory->FindObject(nameSD)->Clone("h1"));
   TH1D * h2 = (TH1D*)(gDirectory->FindObject(nameNSD)->Clone("h2"));
-  h1->Scale(1./hMC->GetEntries());
-  h2->Scale(1./hMC->GetEntries());
-  hMC->Scale(1./hMC->GetEntries());
-  hData->Scale(1./hData->GetEntries());
+  // scale
+  h1->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
+  h2->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
+  hMC->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
+  hData->Scale(1./hData->GetEntries()/h1->GetBinWidth(1));
 
-  // add MC components
+  // combine different processes in MC with given weights
+  Double_t SDRelFrac = testSDFrac/MCSDFrac;
   TH1D * h3 = (TH1D*)h2->Clone("h3");
   h3->SetMarkerColor(kGreen-1);
   h3->SetLineColor(kGreen-1);
   h3->SetMarkerStyle(kOpenSquare);
   h3->Add(h1,SDRelFrac);
-//  TCanvas * c2 = new TCanvas("c2","c2",500,500);
-//  hMC->Draw("h");
-//  hData->Draw("E same");
-//  h3->Draw("E same");
 
+  // Result
   Double_t result = histChi2(hData,h3);
-  hData->Delete();
-  hMC->Delete();
-  h1->Delete();
-  h2->Delete();
-  h3->Delete();
+
+  // if draw
+  if (draw) {
+    cout << "SDRelFrac: " << SDRelFrac << "  Raw hist chi2: " << result << endl;
+    hMC->Draw("h");
+    hData->Draw("E same");
+    h3->Draw("E same");
+  }
+  else {
+    //cout << "SDRelFrac: " << SDRelFrac << "  Raw hist chi2: " << result << endl;
+    hData->Delete();
+    hMC->Delete();
+    h1->Delete();
+    h2->Delete();
+    h3->Delete();
+  }
+
+  // done
   return result;
 }
 
@@ -83,22 +98,22 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
   color.push_back(kBlack);
   color.push_back(kRed);
   for (UInt_t i=0; i<source.size(); ++i) {
-    TH1D * hEvtEta = new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;#",100,-5,5);
+    TH1D * hEvtEta = new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5);
     hEvtEta->SetLineColor(color[i]);
     hEvtEta->SetMarkerColor(color[i]);
     hEvtEta->Sumw2();
-    TH1D * hEaddEp = new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;#",100,0,500);
+    TH1D * hEaddEp = new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",100,0,500);
     hEaddEp->SetLineColor(color[i]);
     hEaddEp->SetMarkerColor(color[i]);
     hEaddEp->Sumw2();
     if (source[i]=="pythia") {
-      TH1D * hEaddEpSD = new TH1D(Form("hEaddEp_%s_SD",source[i].Data()),";#Sigma E+Pz;#",100,0,500);
+      TH1D * hEaddEpSD = new TH1D(Form("hEaddEp_%s_SD",source[i].Data()),";#Sigma E+Pz;",100,0,500);
       hEaddEpSD->SetLineColor(color[i]);
       hEaddEpSD->SetMarkerColor(color[i]);
       hEaddEpSD->SetLineWidth(2);
       hEaddEpSD->SetLineStyle(7);
       hEaddEpSD->Sumw2();
-      TH1D * hEaddEpNSD = new TH1D(Form("hEaddEp_%s_NSD",source[i].Data()),";#Sigma E+Pz;#",100,0,500);
+      TH1D * hEaddEpNSD = new TH1D(Form("hEaddEp_%s_NSD",source[i].Data()),";#Sigma E+Pz;",100,0,500);
       hEaddEpNSD->SetLineColor(color[i]);
       hEaddEpNSD->SetMarkerColor(color[i]);
       hEaddEpNSD->SetLineWidth(2);
@@ -124,9 +139,13 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
   Float_t step = 1./(Float_t)N;
   for (Int_t i=1; i<=N; ++i) {
     Double_t sdFrac = i*step;
-    Double_t relSDFrac=sdFrac/McSDFrac;
-    Double_t chi2 = histDiffrChi2(relSDFrac); 
-    //cout << "SDRelFrac: " << relSDFrac << "  Raw hist chi2: " << chi2 << endl;
+    Double_t chi2 = histDiffrChi2(
+	sdFrac,
+	McSDFrac,
+	"hEaddEp_data",
+	"hEaddEp_pythia",
+	"hEaddEp_pythia_SD",
+	"hEaddEp_pythia_NSD"); 
     hChi2->SetBinContent(i,chi2);
   }
 
@@ -135,4 +154,15 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
   TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
   myfun->SetParameters(0.6,0.01,0);
   hChi2->Fit("myfun","LL");
+
+  // draw distributions
+  TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
+  histDiffrChi2(
+      0.21699,
+      McSDFrac,
+      "hEaddEp_data",
+      "hEaddEp_pythia",
+      "hEaddEp_pythia_SD",
+      "hEaddEp_pythia_NSD",
+      1);
 }
