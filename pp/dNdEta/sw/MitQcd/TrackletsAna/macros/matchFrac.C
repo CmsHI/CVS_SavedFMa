@@ -42,8 +42,9 @@ Double_t histDiffrChi2(
   // combine different processes in MC with given weights
   Double_t SDRelFrac = testSDFrac/MCSDFrac;
   TH1D * h3 = (TH1D*)h2->Clone("h3");
-  h3->SetMarkerColor(kGreen-1);
-  h3->SetLineColor(kGreen-1);
+  h3->SetLineColor(kRed);
+  h3->SetLineStyle(1);
+  h3->SetMarkerColor(kRed);
   h3->SetMarkerStyle(kOpenSquare);
   h3->Add(h1,SDRelFrac);
 
@@ -52,10 +53,22 @@ Double_t histDiffrChi2(
 
   // if draw
   if (draw) {
-    cout << "SDRelFrac: " << SDRelFrac << "  Raw hist chi2: " << result << endl;
+    cout << "Draw: trial SDFrac: " << testSDFrac << "  Raw hist chi2: " << result << endl;
     hMC->Draw("h");
+    hMC->SetLineWidth(2);
+    hMC->SetLineStyle(7);
     hData->Draw("E same");
-    h3->Draw("E same");
+    h3->Draw("hist same");
+    h1->SetLineColor(kBlue);
+    h1->SetLineStyle(7);
+    h1->SetMarkerStyle(kOpenStar);
+    h1->SetMarkerColor(kBlue);
+    h1->Draw("same");
+    h2->SetLineStyle(3);
+    h2->SetMarkerStyle(kOpenSquare);
+    h2->SetMarkerColor(kRed-1);
+    h1->SetLineColor(kRed-1);
+    h2->Draw("same");
   }
   else {
     //cout << "SDRelFrac: " << SDRelFrac << "  Raw hist chi2: " << result << endl;
@@ -154,11 +167,13 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
   TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
   myfun->SetParameters(0.6,0.01,0);
   hChi2->Fit("myfun","LL");
+  cout << "Best SD fraction: " << myfun->GetParameter(0) << endl;
 
   // draw distributions
   TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
+  cEaddPz->SetLogx();
   histDiffrChi2(
-      0.21699,
+      myfun->GetParameter(0),
       McSDFrac,
       "hEaddEp_data",
       "hEaddEp_pythia",
