@@ -15,7 +15,7 @@ using namespace std;
 Double_t histChi2(TH1 * h1, TH1 *h2)
 {
   Double_t sum=0;
-  for (UInt_t i=1; i<=h1->GetNbinsX(); ++i) {
+  for (Int_t i=1; i<=h1->GetNbinsX(); ++i) {
     Double_t binDiff = h2->GetBinContent(i)-h1->GetBinContent(i);
     Double_t binChi2 = binDiff*binDiff;
     sum+=binChi2;
@@ -83,7 +83,7 @@ Double_t histDiffrChi2(
     h1->SetLineColor(kRed-1);
     h2->Draw("E same");
     //  - add legend -
-    TLegend *leg2 = new TLegend(0.53356,0.7657,0.9513,0.9178,NULL,"brNDC");
+    TLegend *leg2 = new TLegend(0.651,0.776,0.953,0.928,NULL,"brNDC");
     leg2->SetFillColor(0);
     leg2->SetBorderSize(0);
     leg2->AddEntry(hData,"Data","p");
@@ -117,10 +117,10 @@ void matchFrac(bool testMC = true, int doSel = 1,
   TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
 
   // trigger
-  selectionCut mcSel(1);
-  selectionCut dataSel(0);
+  selectionCut mcSel(1,doSel);
+  selectionCut dataSel(0,doSel);
   TCut mcSelCut = mcSel.Cut;
-  if (!doSel) mcSelCut = "1==1";
+  //if (!doSel) mcSelCut = "1==1";
   TCut dataSelCut = dataSel.Cut;
   TCut SDCut = "evtType==92 || evtType==93";
   TCut NSDCut = "evtType!=92 && evtType!=93";
@@ -203,9 +203,9 @@ void matchFrac(bool testMC = true, int doSel = 1,
 
   // calc chi2
   printf("\n=========== Chi2 clac ================\n");
-  Double_t maxSDFrac=0.4;
+  Double_t maxSDFrac=0.3;
   Int_t N=50;
-  TH1D * hChi2 = new TH1D("hChi2",";SD Fraction;#chi^{2}",N,0,0.4);
+  TH1D * hChi2 = new TH1D("hChi2",";SD Fraction;#chi^{2}",N,0,maxSDFrac);
   Double_t step = maxSDFrac/(Float_t)N;
   for (Int_t i=1; i<=N; ++i) {
     Double_t sdFrac = i*step;
