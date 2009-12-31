@@ -5,6 +5,7 @@
 #include "TString.h"
 #include "TF1.h"
 #include "TLegend.h"
+#include "TLine.h"
 #include <iostream>
 #include <vector>
 #include "../selectionCut.h"
@@ -36,10 +37,12 @@ Double_t histDiffrChi2(
   TH1D * h1 = (TH1D*)(gDirectory->FindObject(nameSD)->Clone("h1"));
   TH1D * h2 = (TH1D*)(gDirectory->FindObject(nameNSD)->Clone("h2"));
   // calc rel frac
-  Double_t MCSDFrac = (Double_t)h1->Integral()/(Double_t)hMC->Integral();
-  Double_t MCNSDFrac = (Double_t)h2->Integral()/(Double_t)hMC->Integral();
+  Double_t testNSDFrac = 1-testSDFrac;
+  Double_t MCSDFrac = (Double_t)h1->GetEntries()/(Double_t)hMC->GetEntries();
+  Double_t MCNSDFrac = (Double_t)h2->GetEntries()/(Double_t)hMC->GetEntries();
   Double_t SDRelFrac = testSDFrac/MCSDFrac;
-  Double_t NSDRelFrac = (1-testSDFrac)/MCNSDFrac;
+  Double_t NSDRelFrac = testNSDFrac/MCNSDFrac;
+  //printf("histDiffrChi2 - trial MC SD Frac(rel): %f(%f), trial NSD Frac(rel): %f(%f)\n",testSDFrac,SDRelFrac,testNSDFrac,NSDRelFrac);
   // scale
   h1->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
   h2->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
@@ -103,7 +106,7 @@ Double_t histDiffrChi2(
 }
 
 // === Main function ===
-void matchFrac(bool testMC = true,
+void matchFrac(bool testMC = true, int doSel = 1,
     const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac0.5.root",
     const char * mcfname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210.root")
 {
@@ -117,11 +120,17 @@ void matchFrac(bool testMC = true,
   selectionCut mcSel(1);
   selectionCut dataSel(0);
   TCut mcSelCut = mcSel.Cut;
+  if (!doSel) mcSelCut = "1==1";
   TCut dataSelCut = dataSel.Cut;
   TCut SDCut = "evtType==92 || evtType==93";
   TCut NSDCut = "evtType!=92 && evtType!=93";
   TCut mcSelSD = mcSelCut && SDCut;
   TCut mcSelNSD = mcSelCut && NSDCut;
+  printf("\n===== Triggering =====\n");
+  cout << "Data: " << TString(dataSelCut) << endl;
+  cout << "MC: " << TString(mcSelCut) << endl;
+  cout << "MC SD: " << TString(mcSelSD) << endl;
+  cout << "MC NSD: " << TString(mcSelNSD) << endl;
 
   // get truth info
   Double_t McTotalN = treeMC->GetEntries();
@@ -130,6 +139,7 @@ void matchFrac(bool testMC = true,
   Double_t McSelTotalN = treeMC->GetEntries(mcSelCut);
   Double_t McSelSD = treeMC->GetEntries(mcSelSD);
   Double_t McSelSDFrac = McSelSD/McSelTotalN;
+  printf("\n===== MC Input =====\n");
   printf("MC input SD frac:%f, after selection MC SD frac: %f.\n",McSDFrac,McSelSDFrac);
   if (testMC) {
     dataSelCut=mcSelCut;
@@ -192,9 +202,11 @@ void matchFrac(bool testMC = true,
   treeData->Draw("SumEaddEp>>hEaddEp_data",dataSelCut,"same E");
 
   // calc chi2
+  printf("\n=========== Chi2 clac ================\n");
+  Double_t maxSDFrac=0.4;
   Int_t N=50;
-  TH1D * hChi2 = new TH1D("hChi2",";#chi^{2};",N,0,1);
-  Float_t step = 1./(Float_t)N;
+  TH1D * hChi2 = new TH1D("hChi2",";SD Fraction;#chi^{2}",N,0,0.4);
+  Double_t step = maxSDFrac/(Float_t)N;
   for (Int_t i=1; i<=N; ++i) {
     Double_t sdFrac = i*step;
     Double_t chi2 = histDiffrChi2(
@@ -212,6 +224,15 @@ void matchFrac(bool testMC = true,
   myfun->SetParameters(0.2,0.01,0);
   hChi2->Fit("myfun","LL");
   cout << "Best SD fraction: " << myfun->GetParameter(0) << endl;
+  if (testMC) {
+    Double_t DataSelTotalN = treeData->GetEntries(mcSelCut);
+    Double_t DataSelSD = treeData->GetEntries(mcSelSD);
+    Double_t DataSelSDFrac = DataSelSD/DataSelTotalN;
+    TLine * l = new TLine(DataSelSDFrac,hChi2->GetMinimum(),DataSelSDFrac,hChi2->GetMaximum());
+    l->SetLineColor(2);
+    l->Draw("same");
+  }
+  cChi2->Print(Form("plots/%s_cChi2_Sel%d.gif",datafname,doSel));
 
   // draw distributions
   TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
@@ -223,6 +244,7 @@ void matchFrac(bool testMC = true,
       "hEaddEp_pythia_NSD",
       1,
       0.035);
+  cEaddPz->Print(Form("plots/%s_cEaddPz_Sel%d.gif",datafname,doSel));
   TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
   histDiffrChi2(
       myfun->GetParameter(0),
@@ -232,4 +254,5 @@ void matchFrac(bool testMC = true,
       "hEvtEta_pythia_NSD",
       1,
       1);
+  cEvtEta->Print(Form("plots/%s_cEvtEta_Sel%d.gif",datafname,doSel));
 }
