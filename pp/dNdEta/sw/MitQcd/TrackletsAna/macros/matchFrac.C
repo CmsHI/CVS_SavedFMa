@@ -29,7 +29,8 @@ Double_t histDiffrChi2(
     char * nameMC         = "hEaddEp_pythia",
     char * nameSD         = "hEaddEp_pythia_SD",
     char * nameNSD        = "hEaddEp_pythia_NSD",
-    Int_t draw            = 0)
+    Int_t draw            = 0,
+    Double_t ymax         = 0.025)
 {
   TH1D * hData = (TH1D*)(gDirectory->FindObject(nameData)->Clone("hData"));
   TH1D * hMC = (TH1D*)(gDirectory->FindObject(nameMC)->Clone("hMC"));
@@ -43,11 +44,14 @@ Double_t histDiffrChi2(
 
   // combine different processes in MC with given weights
   Double_t SDRelFrac = testSDFrac/MCSDFrac;
+  Double_t NSDRelFrac = (1-testSDFrac)/(1-MCSDFrac);
   TH1D * h3 = (TH1D*)h2->Clone("h3");
   h3->SetLineColor(kRed);
   h3->SetLineStyle(1);
   h3->SetMarkerColor(kRed);
   h3->SetMarkerStyle(kOpenSquare);
+
+  h3->Scale(NSDRelFrac);
   h3->Add(h1,SDRelFrac);
 
   // Result
@@ -60,19 +64,19 @@ Double_t histDiffrChi2(
     hMC->SetMarkerStyle(0);
     hMC->SetLineWidth(1);
     hMC->SetLineStyle(7);
-    hData->SetMaximum(0.025);
+    hData->SetMaximum(ymax);
     hData->Draw("E");
     h3->Draw("hist same");
     h1->SetLineColor(kBlue);
     h1->SetLineStyle(7);
     h1->SetMarkerStyle(kOpenStar);
     h1->SetMarkerColor(kBlue);
-    h1->Draw("same");
+    h1->Draw("E same");
     h2->SetLineStyle(3);
     h2->SetMarkerStyle(kOpenSquare);
     h2->SetMarkerColor(kRed-1);
     h1->SetLineColor(kRed-1);
-    h2->Draw("same");
+    h2->Draw("E same");
     //  - add legend -
     TLegend *leg2 = new TLegend(0.53356,0.7657,0.9513,0.9178,NULL,"brNDC");
     leg2->SetFillColor(0);
@@ -97,7 +101,8 @@ Double_t histDiffrChi2(
 }
 
 // === Main function ===
-void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac0.5.root",
+void matchFrac(bool testMC = true,
+    const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac0.5.root",
     const char * mcfname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210.root")
 {
   // get trees
@@ -107,26 +112,33 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
   TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
 
   // trigger
-  bool testMC = true;
   selectionCut mcSel(1);
   selectionCut dataSel(0);
   TCut mcSelCut = mcSel.Cut;
   TCut dataSelCut = dataSel.Cut;
-  if (testMC) dataSelCut = mcSelCut;
   TCut SDCut = "evtType==92 || evtType==93";
   TCut NSDCut = "evtType!=92 && evtType!=93";
   TCut mcSelSD = mcSelCut && SDCut;
   TCut mcSelNSD = mcSelCut && NSDCut;
 
   // get truth info
-  Double_t dataTotalN = treeData->GetEntries(mcSelCut);
-  Double_t dataSD = treeData->GetEntries(mcSelSD);
-  Double_t dataSDFrac = dataSD/dataTotalN;
-  Double_t McTotalN = treeMC->GetEntries(mcSelCut);
-  Double_t McSD = treeMC->GetEntries(mcSelSD);
+  Double_t McTotalN = treeMC->GetEntries();
+  Double_t McSD = treeMC->GetEntries(SDCut);
   Double_t McSDFrac = McSD/McTotalN;
-  Double_t RelSDFracTruth = dataSDFrac/McSDFrac;
-  printf("\"Data\" SD frac: %f, MC SD frac: %f. Ratio: %f\n",dataSDFrac,McSDFrac,RelSDFracTruth);
+  Double_t McSelTotalN = treeMC->GetEntries(mcSelCut);
+  Double_t McSelSD = treeMC->GetEntries(mcSelSD);
+  Double_t McSelSDFrac = McSelSD/McSelTotalN;
+  printf("MC input SD frac:%f, after selection MC SD frac: %f.\n",McSDFrac,McSelSDFrac);
+  if (testMC) {
+    dataSelCut=mcSelCut;
+    Double_t DataTotalN = treeData->GetEntries();
+    Double_t DataSD = treeData->GetEntries(SDCut);
+    Double_t DataSDFrac = DataSD/DataTotalN;
+    Double_t DataSelTotalN = treeData->GetEntries(mcSelCut);
+    Double_t DataSelSD = treeData->GetEntries(mcSelSD);
+    Double_t DataSelSDFrac = DataSelSD/DataSelTotalN;
+    printf("\"Data\" input SD frac:%f, after selection \"Data\" SD frac: %f.\n",DataSDFrac,DataSelSDFrac);
+  }
 
   // declare histograms
   vector<TString> source;
@@ -145,6 +157,10 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
     hEaddEp->SetMarkerColor(color[i]);
     hEaddEp->Sumw2();
     if (source[i]=="pythia") {
+      TH1D * hEvtEta_SD = new TH1D(Form("hEvtEta_%s_SD",source[i].Data()),";Event #eta;",100,-5,5);
+      hEvtEta_SD->Sumw2();
+      TH1D * hEvtEta_NSD = new TH1D(Form("hEvtEta_%s_NSD",source[i].Data()),";Event #eta;",100,-5,5);
+      hEvtEta_NSD->Sumw2();
       TH1D * hEaddEpSD = new TH1D(Form("hEaddEp_%s_SD",source[i].Data()),";#Sigma E+Pz;",100,0,500);
       hEaddEpSD->SetLineColor(color[i]);
       hEaddEpSD->SetMarkerColor(color[i]);
@@ -162,8 +178,10 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
 
   // take a look
   TCanvas * c0 = new TCanvas("c0","c0",500,500);
-  treeMC->Draw("evtEta>>hEvtEta_pythia");
-  treeData->Draw("evtEta>>hEvtEta_data","","same");
+  treeMC->Draw("evtEta>>hEvtEta_pythia",mcSelCut);
+  treeMC->Draw("evtEta>>hEvtEta_pythia_SD",mcSelSD,"same");
+  treeMC->Draw("evtEta>>hEvtEta_pythia_NSD",mcSelNSD,"same");
+  treeData->Draw("evtEta>>hEvtEta_data",dataSelCut,"same");
 
   TCanvas * c1 = new TCanvas("c1","c1",500,500);
   treeMC->Draw("SumEaddEp>>hEaddEp_pythia",mcSelCut,"E");
@@ -179,7 +197,7 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
     Double_t sdFrac = i*step;
     Double_t chi2 = histDiffrChi2(
 	sdFrac,
-	McSDFrac,
+	McSelSDFrac,
 	"hEaddEp_data",
 	"hEaddEp_pythia",
 	"hEaddEp_pythia_SD",
@@ -196,7 +214,6 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
 
   // draw distributions
   TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
-  cEaddPz->SetLogx();
   histDiffrChi2(
       myfun->GetParameter(0),
       McSDFrac,
@@ -204,5 +221,16 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
       "hEaddEp_pythia",
       "hEaddEp_pythia_SD",
       "hEaddEp_pythia_NSD",
+      1,
+      0.035);
+  TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
+  histDiffrChi2(
+      myfun->GetParameter(0),
+      McSDFrac,
+      "hEvtEta_data",
+      "hEvtEta_pythia",
+      "hEvtEta_pythia_SD",
+      "hEvtEta_pythia_NSD",
+      1,
       1);
 }
