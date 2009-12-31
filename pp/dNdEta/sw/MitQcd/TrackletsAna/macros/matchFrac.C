@@ -60,7 +60,7 @@ Double_t histDiffrChi2(
     hMC->SetMarkerStyle(0);
     hMC->SetLineWidth(1);
     hMC->SetLineStyle(7);
-    hData->SetMaximum(0.035);
+    hData->SetMaximum(0.025);
     hData->Draw("E");
     h3->Draw("hist same");
     h1->SetLineColor(kBlue);
@@ -107,9 +107,12 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
   TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
 
   // trigger
+  bool testMC = true;
   selectionCut mcSel(1);
+  selectionCut dataSel(0);
   TCut mcSelCut = mcSel.Cut;
-  TCut dataSelCut = mcSelCut;
+  TCut dataSelCut = dataSel.Cut;
+  if (testMC) dataSelCut = mcSelCut;
   TCut SDCut = "evtType==92 || evtType==93";
   TCut NSDCut = "evtType!=92 && evtType!=93";
   TCut mcSelSD = mcSelCut && SDCut;
