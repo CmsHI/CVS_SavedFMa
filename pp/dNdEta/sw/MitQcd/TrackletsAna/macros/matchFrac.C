@@ -24,7 +24,6 @@ Double_t histChi2(TH1 * h1, TH1 *h2)
 
 Double_t histDiffrChi2(
     Double_t testSDFrac   = 0.11,
-    Double_t MCSDFrac     = 0.227,
     char * nameData       = "hEaddEp_data",
     char * nameMC         = "hEaddEp_pythia",
     char * nameSD         = "hEaddEp_pythia_SD",
@@ -36,6 +35,11 @@ Double_t histDiffrChi2(
   TH1D * hMC = (TH1D*)(gDirectory->FindObject(nameMC)->Clone("hMC"));
   TH1D * h1 = (TH1D*)(gDirectory->FindObject(nameSD)->Clone("h1"));
   TH1D * h2 = (TH1D*)(gDirectory->FindObject(nameNSD)->Clone("h2"));
+  // calc rel frac
+  Double_t MCSDFrac = (Double_t)h1->Integral()/(Double_t)hMC->Integral();
+  Double_t MCNSDFrac = (Double_t)h2->Integral()/(Double_t)hMC->Integral();
+  Double_t SDRelFrac = testSDFrac/MCSDFrac;
+  Double_t NSDRelFrac = (1-testSDFrac)/MCNSDFrac;
   // scale
   h1->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
   h2->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
@@ -43,8 +47,6 @@ Double_t histDiffrChi2(
   hData->Scale(1./hData->GetEntries()/h1->GetBinWidth(1));
 
   // combine different processes in MC with given weights
-  Double_t SDRelFrac = testSDFrac/MCSDFrac;
-  Double_t NSDRelFrac = (1-testSDFrac)/(1-MCSDFrac);
   TH1D * h3 = (TH1D*)h2->Clone("h3");
   h3->SetLineColor(kRed);
   h3->SetLineStyle(1);
@@ -197,7 +199,6 @@ void matchFrac(bool testMC = true,
     Double_t sdFrac = i*step;
     Double_t chi2 = histDiffrChi2(
 	sdFrac,
-	McSelSDFrac,
 	"hEaddEp_data",
 	"hEaddEp_pythia",
 	"hEaddEp_pythia_SD",
@@ -216,7 +217,6 @@ void matchFrac(bool testMC = true,
   TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
   histDiffrChi2(
       myfun->GetParameter(0),
-      McSDFrac,
       "hEaddEp_data",
       "hEaddEp_pythia",
       "hEaddEp_pythia_SD",
@@ -226,7 +226,6 @@ void matchFrac(bool testMC = true,
   TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
   histDiffrChi2(
       myfun->GetParameter(0),
-      McSDFrac,
       "hEvtEta_data",
       "hEvtEta_pythia",
       "hEvtEta_pythia_SD",
