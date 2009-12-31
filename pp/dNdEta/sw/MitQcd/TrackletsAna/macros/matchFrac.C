@@ -108,9 +108,8 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
 
   // trigger
   selectionCut mcSel(1);
-  //TCut mcSelCut = mcSel.Cut();
-  TCut dataSelCut = "1==1";
-  TCut mcSelCut = "1==1";
+  TCut mcSelCut = mcSel.Cut;
+  TCut dataSelCut = mcSelCut;
   TCut SDCut = "evtType==92 || evtType==93";
   TCut NSDCut = "evtType!=92 && evtType!=93";
   TCut mcSelSD = mcSelCut && SDCut;
@@ -188,7 +187,7 @@ void matchFrac(const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBi
   TCanvas * cChi2 = new TCanvas("cChi2","cChi2",600,600);
   hChi2->Draw();
   TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
-  myfun->SetParameters(0.6,0.01,0);
+  myfun->SetParameters(0.2,0.01,0);
   hChi2->Fit("myfun","LL");
   cout << "Best SD fraction: " << myfun->GetParameter(0) << endl;
 
