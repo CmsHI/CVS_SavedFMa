@@ -120,7 +120,6 @@ void matchFrac(bool testMC = true, int doSel = 1,
   selectionCut mcSel(1,doSel);
   selectionCut dataSel(0,doSel);
   TCut mcSelCut = mcSel.Cut;
-  //if (!doSel) mcSelCut = "1==1";
   TCut dataSelCut = dataSel.Cut;
   TCut SDCut = "evtType==92 || evtType==93";
   TCut NSDCut = "evtType!=92 && evtType!=93";
@@ -152,40 +151,58 @@ void matchFrac(bool testMC = true, int doSel = 1,
     printf("\"Data\" input SD frac:%f, after selection \"Data\" SD frac: %f.\n",DataSDFrac,DataSelSDFrac);
   }
 
-  // declare histograms
+  // configuation
+  // sources
   vector<TString> source;
   source.push_back("data");
   source.push_back("pythia");
+  // colors
   vector<Color_t> color;
-  color.push_back(kBlack);
   color.push_back(kRed);
-  for (UInt_t i=0; i<source.size(); ++i) {
-    TH1D * hEvtEta = new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5);
-    hEvtEta->SetLineColor(color[i]);
-    hEvtEta->SetMarkerColor(color[i]);
-    hEvtEta->Sumw2();
-    TH1D * hEaddEp = new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",100,0,500);
-    hEaddEp->SetLineColor(color[i]);
-    hEaddEp->SetMarkerColor(color[i]);
-    hEaddEp->Sumw2();
+  color.push_back(kBlue);
+  color.push_back(kGreen-1);
+  // observables
+  vector<TString> obs;
+  obs.push_back("EvtEta");
+  obs.push_back("EaddEp");
+  obs.push_back("EsubEp");
+  // event types
+  vector<TString> etype;
+  etype.push_back("All");
+  etype.push_back("SD");
+  etype.push_back("NSD");
+  etype.push_back("DF");
+  etype.push_back("ND");
+  // container for all declared histograms
+  vector<TString> vh1;
+
+  //
+  // declare histograms
+  printf("now declare hists\n");
+  for (Int_t i=0; i<source.size(); ++i) {
+    TH1D * h = new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5);
+    vh1.push_back(h->GetName());
+    h = new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",100,0,500);
+    vh1.push_back(h->GetName());
+    h = new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",100,0,500);
+    vh1.push_back(h->GetName());
     if (source[i]=="pythia") {
-      TH1D * hEvtEta_SD = new TH1D(Form("hEvtEta_%s_SD",source[i].Data()),";Event #eta;",100,-5,5);
-      hEvtEta_SD->Sumw2();
-      TH1D * hEvtEta_NSD = new TH1D(Form("hEvtEta_%s_NSD",source[i].Data()),";Event #eta;",100,-5,5);
-      hEvtEta_NSD->Sumw2();
-      TH1D * hEaddEpSD = new TH1D(Form("hEaddEp_%s_SD",source[i].Data()),";#Sigma E+Pz;",100,0,500);
-      hEaddEpSD->SetLineColor(color[i]);
-      hEaddEpSD->SetMarkerColor(color[i]);
-      hEaddEpSD->SetLineWidth(2);
-      hEaddEpSD->SetLineStyle(7);
-      hEaddEpSD->Sumw2();
-      TH1D * hEaddEpNSD = new TH1D(Form("hEaddEp_%s_NSD",source[i].Data()),";#Sigma E+Pz;",100,0,500);
-      hEaddEpNSD->SetLineColor(color[i]);
-      hEaddEpNSD->SetMarkerColor(color[i]);
-      hEaddEpNSD->SetLineWidth(2);
-      hEaddEpNSD->SetLineStyle(9);
-      hEaddEpNSD->Sumw2();
+      for (Int_t j=0; j<etype.size(); ++j) {
+	h = new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";Event #eta;",100,-5,5);
+	vh1.push_back(h->GetName());
+	h = new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",100,0,500);
+	vh1.push_back(h->GetName());
+	h = new TH1D(Form("hEsubEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz;",100,0,500);
+	vh1.push_back(h->GetName());
+      }
     }
+  }
+  // set histograms
+  printf("Total # of hist's declared: %d\n",vh1.size());
+  for (Int_t ih1=0; ih1<vh1.size(); ++ih1) {
+    TH1D * h = (TH1D*)gDirectory->FindObject(vh1[ih1]);
+    h->Sumw2();
+    cout << "hist: " << vh1[ih1] << " title: " << h->GetXaxis()->GetTitle() << endl;
   }
 
   // take a look
@@ -221,7 +238,7 @@ void matchFrac(bool testMC = true, int doSel = 1,
   TCanvas * cChi2 = new TCanvas("cChi2","cChi2",600,600);
   hChi2->Draw();
   TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
-  myfun->SetParameters(0.2,0.01,0);
+  myfun->SetParameters(0.1,0.001,0);
   hChi2->Fit("myfun","LL");
   cout << "Best SD fraction: " << myfun->GetParameter(0) << endl;
   if (testMC) {
