@@ -138,9 +138,11 @@ bool PixelsMakerMod::GoodTower(const CaloTower * ct)
 {
   bool result=false;
   if (ct->E()>3) {
-    if (fHfOnly)
-      result=true;
-    else if (fabs(ct->Eta())>3.)
+    if (fHfOnly) { 
+      if ( fabs(ct->Eta())>3. ) 
+	result=true;
+    }
+    else
       result=true;
   }
   return result;
