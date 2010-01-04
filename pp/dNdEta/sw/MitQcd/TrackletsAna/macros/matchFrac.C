@@ -105,6 +105,26 @@ Double_t histDiffrChi2(
   return result;
 }
 
+void fillHist(const char* var,const char* hname,
+    TTree * treeData, TTree * treeMC, TCut dataSel, TCut mcSel,
+    const vector<TString> & etype, const vector<TCut> & etypeCut, vector<TString> & outHists)
+{
+  TCanvas * c = new TCanvas(Form("c%s",hname),Form("c%s",hname),500,500);
+
+  TString hData = TString(hname)+"_data";
+  printf("%s>>%s,%s\n",var,hData.Data(),TString(dataSel).Data());
+  treeData->Draw(Form("%s>>%s",var,hData.Data()),dataSel);
+  outHists.push_back(hData);
+
+  for (Int_t i=0; i<etype.size(); ++i) {
+    TString hMC = TString(hname)+"_pythia_"+etype[i];
+    TCut mcCut = mcSel&&etypeCut[i];
+    printf("%s>>%s,%s\n",var,hMC.Data(),TString(mcCut).Data());
+    treeMC->Draw(Form("%s>>%s",var,hMC.Data()),mcCut,"same");
+    outHists.push_back(hMC);
+  }
+}
+
 // === Main function ===
 void matchFrac(bool testMC = true, int doSel = 1,
     const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac0.5.root",
@@ -185,11 +205,12 @@ void matchFrac(bool testMC = true, int doSel = 1,
   obs.push_back("EsubEp");
   // event types
   vector<TString> etype;
-  etype.push_back("All");
-  etype.push_back("SD");
-  etype.push_back("NSD");
-  etype.push_back("DF");
-  etype.push_back("ND");
+  vector<TCut> etypeCut;
+  etype.push_back("All"); etypeCut.push_back("1==1");
+  etype.push_back("SD"); etypeCut.push_back("evtType==92 || evtType==93");
+  etype.push_back("NSD"); etypeCut.push_back("evtType!=92 && evtType!=93");
+  etype.push_back("DF"); etypeCut.push_back("evtType==92 || evtType==93 || evtType==94");
+  etype.push_back("ND"); etypeCut.push_back("evtType!=92 && evtType!=93 && evtType!=94");
   // container for all declared histograms
   vector<TH1D*> vh1;
 
@@ -215,22 +236,11 @@ void matchFrac(bool testMC = true, int doSel = 1,
     vh1[ih1]->Sumw2();
   }
 
-  // take a look
-  TCanvas * c0 = new TCanvas("c0","c0",500,500);
-  treeMC->Draw("evtEta>>hEvtEta_pythia",mcSelCut);
-  treeMC->Draw("evtEta>>hEvtEta_pythia_SD",mcSelSD,"same");
-  treeMC->Draw("evtEta>>hEvtEta_pythia_NSD",mcSelNSD,"same");
-  treeMC->Draw("evtEta>>hEvtEta_pythia_DF",mcSelDF,"same");
-  treeMC->Draw("evtEta>>hEvtEta_pythia_ND",mcSelND,"same");
-  treeData->Draw("evtEta>>hEvtEta_data",dataSelCut,"same");
-
-  TCanvas * c1 = new TCanvas("c1","c1",500,500);
-  treeMC->Draw("SumEaddEp>>hEaddEp_pythia",mcSelCut,"E");
-  treeMC->Draw("SumEaddEp>>hEaddEp_pythia_SD",mcSelSD,"same");
-  treeMC->Draw("SumEaddEp>>hEaddEp_pythia_NSD",mcSelNSD,"same");
-  treeMC->Draw("SumEaddEp>>hEaddEp_pythia_DF",mcSelDF,"same");
-  treeMC->Draw("SumEaddEp>>hEaddEp_pythia_ND",mcSelND,"same");
-  treeData->Draw("SumEaddEp>>hEaddEp_data",dataSelCut,"same E");
+  // Fill histos
+  vector<TString> evtEtaHists;
+  fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,evtEtaHists);
+  vector<TString> EaddEpHists;
+  fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpHists);
 
   // calc chi2
   printf("\n=========== Chi2 clac ================\n");
@@ -243,7 +253,7 @@ void matchFrac(bool testMC = true, int doSel = 1,
     Double_t chi2 = histDiffrChi2(
 	sdFrac,
 	"hEaddEp_data",
-	"hEaddEp_pythia",
+	"hEaddEp_pythia_All",
 	"hEaddEp_pythia_DF",
 	"hEaddEp_pythia_ND"); 
     hChi2->SetBinContent(i,chi2);
@@ -270,7 +280,7 @@ void matchFrac(bool testMC = true, int doSel = 1,
   histDiffrChi2(
       myfun->GetParameter(0),
       "hEaddEp_data",
-      "hEaddEp_pythia",
+      "hEaddEp_pythia_All",
       "hEaddEp_pythia_DF",
       "hEaddEp_pythia_ND",
       1,
@@ -280,7 +290,7 @@ void matchFrac(bool testMC = true, int doSel = 1,
   histDiffrChi2(
       myfun->GetParameter(0),
       "hEvtEta_data",
-      "hEvtEta_pythia",
+      "hEvtEta_pythia_All",
       "hEvtEta_pythia_DF",
       "hEvtEta_pythia_ND",
       0,
