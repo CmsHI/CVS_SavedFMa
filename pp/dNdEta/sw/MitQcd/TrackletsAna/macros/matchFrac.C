@@ -122,33 +122,50 @@ void matchFrac(bool testMC = true, int doSel = 1,
   TCut mcSelCut = mcSel.Cut;
   TCut dataSelCut = dataSel.Cut;
   TCut SDCut = "evtType==92 || evtType==93";
-  TCut NSDCut = "evtType!=92 && evtType!=93";
+  TCut DDCut = "evtType==94";
+  TCut DFCut = SDCut || DDCut;
+  TCut NSDCut = !SDCut;
+  TCut NDCut = !DFCut;
   TCut mcSelSD = mcSelCut && SDCut;
   TCut mcSelNSD = mcSelCut && NSDCut;
+  TCut mcSelDF = mcSelCut && DFCut;
+  TCut mcSelND = mcSelCut && NDCut;
   printf("\n===== Triggering =====\n");
   cout << "Data: " << TString(dataSelCut) << endl;
   cout << "MC: " << TString(mcSelCut) << endl;
   cout << "MC SD: " << TString(mcSelSD) << endl;
   cout << "MC NSD: " << TString(mcSelNSD) << endl;
+  cout << "MC DF: " << TString(mcSelDF) << endl;
+  cout << "MC ND: " << TString(mcSelND) << endl;
 
   // get truth info
   Double_t McTotalN = treeMC->GetEntries();
   Double_t McSD = treeMC->GetEntries(SDCut);
   Double_t McSDFrac = McSD/McTotalN;
+  Double_t McDF = treeMC->GetEntries(DFCut);
+  Double_t McDFFrac = McDF/McTotalN;
   Double_t McSelTotalN = treeMC->GetEntries(mcSelCut);
   Double_t McSelSD = treeMC->GetEntries(mcSelSD);
   Double_t McSelSDFrac = McSelSD/McSelTotalN;
+  Double_t McSelDF = treeMC->GetEntries(mcSelDF);
+  Double_t McSelDFFrac = McSelDF/McSelTotalN;
   printf("\n===== MC Input =====\n");
   printf("MC input SD frac:%f, after selection MC SD frac: %f.\n",McSDFrac,McSelSDFrac);
+  printf("MC input DF frac:%f, after selection MC DF frac: %f.\n",McDFFrac,McSelDFFrac);
   if (testMC) {
     dataSelCut=mcSelCut;
     Double_t DataTotalN = treeData->GetEntries();
     Double_t DataSD = treeData->GetEntries(SDCut);
     Double_t DataSDFrac = DataSD/DataTotalN;
+    Double_t DataDF = treeData->GetEntries(DFCut);
+    Double_t DataDFFrac = DataDF/DataTotalN;
     Double_t DataSelTotalN = treeData->GetEntries(mcSelCut);
     Double_t DataSelSD = treeData->GetEntries(mcSelSD);
     Double_t DataSelSDFrac = DataSelSD/DataSelTotalN;
+    Double_t DataSelDF = treeData->GetEntries(mcSelDF);
+    Double_t DataSelDFFrac = DataSelDF/DataSelTotalN;
     printf("\"Data\" input SD frac:%f, after selection \"Data\" SD frac: %f.\n",DataSDFrac,DataSelSDFrac);
+    printf("\"Data\" input DF frac:%f, after selection \"Data\" DF frac: %f.\n",DataDFFrac,DataSelDFFrac);
   }
 
   // configuation
@@ -174,35 +191,28 @@ void matchFrac(bool testMC = true, int doSel = 1,
   etype.push_back("DF");
   etype.push_back("ND");
   // container for all declared histograms
-  vector<TString> vh1;
+  vector<TH1D*> vh1;
 
   //
   // declare histograms
   printf("now declare hists\n");
+  const Double_t EPzMax=200;
   for (Int_t i=0; i<source.size(); ++i) {
-    TH1D * h = new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5);
-    vh1.push_back(h->GetName());
-    h = new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",100,0,500);
-    vh1.push_back(h->GetName());
-    h = new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",100,0,500);
-    vh1.push_back(h->GetName());
+    vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
+    vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",100,0,EPzMax));
+    vh1.push_back(new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",100,0,EPzMax));
     if (source[i]=="pythia") {
       for (Int_t j=0; j<etype.size(); ++j) {
-	h = new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";Event #eta;",100,-5,5);
-	vh1.push_back(h->GetName());
-	h = new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",100,0,500);
-	vh1.push_back(h->GetName());
-	h = new TH1D(Form("hEsubEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz;",100,0,500);
-	vh1.push_back(h->GetName());
+	vh1.push_back(new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";Event #eta;",100,-5,5));
+	vh1.push_back(new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",100,0,EPzMax));
+	vh1.push_back(new TH1D(Form("hEsubEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz;",100,0,EPzMax));
       }
     }
   }
   // set histograms
-  printf("Total # of hist's declared: %d\n",vh1.size());
   for (Int_t ih1=0; ih1<vh1.size(); ++ih1) {
-    TH1D * h = (TH1D*)gDirectory->FindObject(vh1[ih1]);
-    h->Sumw2();
-    cout << "hist: " << vh1[ih1] << " title: " << h->GetXaxis()->GetTitle() << endl;
+    //cout << "hist: " << vh1[ih1]->GetName() << " title: " << vh1[ih1]->GetXaxis()->GetTitle() << endl;
+    vh1[ih1]->Sumw2();
   }
 
   // take a look
@@ -210,17 +220,21 @@ void matchFrac(bool testMC = true, int doSel = 1,
   treeMC->Draw("evtEta>>hEvtEta_pythia",mcSelCut);
   treeMC->Draw("evtEta>>hEvtEta_pythia_SD",mcSelSD,"same");
   treeMC->Draw("evtEta>>hEvtEta_pythia_NSD",mcSelNSD,"same");
+  treeMC->Draw("evtEta>>hEvtEta_pythia_DF",mcSelDF,"same");
+  treeMC->Draw("evtEta>>hEvtEta_pythia_ND",mcSelND,"same");
   treeData->Draw("evtEta>>hEvtEta_data",dataSelCut,"same");
 
   TCanvas * c1 = new TCanvas("c1","c1",500,500);
   treeMC->Draw("SumEaddEp>>hEaddEp_pythia",mcSelCut,"E");
   treeMC->Draw("SumEaddEp>>hEaddEp_pythia_SD",mcSelSD,"same");
   treeMC->Draw("SumEaddEp>>hEaddEp_pythia_NSD",mcSelNSD,"same");
+  treeMC->Draw("SumEaddEp>>hEaddEp_pythia_DF",mcSelDF,"same");
+  treeMC->Draw("SumEaddEp>>hEaddEp_pythia_ND",mcSelND,"same");
   treeData->Draw("SumEaddEp>>hEaddEp_data",dataSelCut,"same E");
 
   // calc chi2
   printf("\n=========== Chi2 clac ================\n");
-  Double_t maxSDFrac=0.3;
+  Double_t maxSDFrac=0.5;
   Int_t N=50;
   TH1D * hChi2 = new TH1D("hChi2",";SD Fraction;#chi^{2}",N,0,maxSDFrac);
   Double_t step = maxSDFrac/(Float_t)N;
@@ -230,8 +244,8 @@ void matchFrac(bool testMC = true, int doSel = 1,
 	sdFrac,
 	"hEaddEp_data",
 	"hEaddEp_pythia",
-	"hEaddEp_pythia_SD",
-	"hEaddEp_pythia_NSD"); 
+	"hEaddEp_pythia_DF",
+	"hEaddEp_pythia_ND"); 
     hChi2->SetBinContent(i,chi2);
   }
 
@@ -243,9 +257,9 @@ void matchFrac(bool testMC = true, int doSel = 1,
   cout << "Best SD fraction: " << myfun->GetParameter(0) << endl;
   if (testMC) {
     Double_t DataSelTotalN = treeData->GetEntries(mcSelCut);
-    Double_t DataSelSD = treeData->GetEntries(mcSelSD);
-    Double_t DataSelSDFrac = DataSelSD/DataSelTotalN;
-    TLine * l = new TLine(DataSelSDFrac,hChi2->GetMinimum(),DataSelSDFrac,hChi2->GetMaximum());
+    Double_t DataSelDF = treeData->GetEntries(mcSelDF);
+    Double_t DataSelDFFrac = DataSelDF/DataSelTotalN;
+    TLine * l = new TLine(DataSelDFFrac,hChi2->GetMinimum(),DataSelDFFrac,hChi2->GetMaximum());
     l->SetLineColor(2);
     l->Draw("same");
   }
@@ -257,8 +271,8 @@ void matchFrac(bool testMC = true, int doSel = 1,
       myfun->GetParameter(0),
       "hEaddEp_data",
       "hEaddEp_pythia",
-      "hEaddEp_pythia_SD",
-      "hEaddEp_pythia_NSD",
+      "hEaddEp_pythia_DF",
+      "hEaddEp_pythia_ND",
       1,
       0.035);
   cEaddPz->Print(Form("plots/%s_cEaddPz_Sel%d.gif",datafname,doSel));
@@ -267,9 +281,9 @@ void matchFrac(bool testMC = true, int doSel = 1,
       myfun->GetParameter(0),
       "hEvtEta_data",
       "hEvtEta_pythia",
-      "hEvtEta_pythia_SD",
-      "hEvtEta_pythia_NSD",
-      1,
+      "hEvtEta_pythia_DF",
+      "hEvtEta_pythia_ND",
+      0,
       1);
   cEvtEta->Print(Form("plots/%s_cEvtEta_Sel%d.gif",datafname,doSel));
 }
