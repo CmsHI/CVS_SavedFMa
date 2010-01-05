@@ -24,25 +24,33 @@ Double_t histChi2(TH1 * h1, TH1 *h2)
 }
 
 Double_t histDiffrChi2(
-    Double_t testSDFrac   = 0.11,
-    char * nameData       = "hEaddEp_data",
-    char * nameMC         = "hEaddEp_pythia",
-    char * nameSD         = "hEaddEp_pythia_SD",
-    char * nameNSD        = "hEaddEp_pythia_NSD",
+    const vector<TString> & hists,
+    const vector<TString> & etype,
+    Double_t testWantedFrac   = 0.11,
     Int_t draw            = 0,
     Double_t ymax         = 0.025)
 {
-  TH1D * hData = (TH1D*)(gDirectory->FindObject(nameData)->Clone("hData"));
-  TH1D * hMC = (TH1D*)(gDirectory->FindObject(nameMC)->Clone("hMC"));
-  TH1D * h1 = (TH1D*)(gDirectory->FindObject(nameSD)->Clone("h1"));
-  TH1D * h2 = (TH1D*)(gDirectory->FindObject(nameNSD)->Clone("h2"));
+  if (draw) {
+    for (Int_t i=0; i<hists.size(); ++i) {
+      if (i<2 || (i==4||i==5)) cout << "use: " << hists[i] << endl;
+    }
+  }
+  TString wanted="DF";
+  TString Nwanted="ND";
+  TH1D * hData = (TH1D*)(gDirectory->FindObject(hists[0])->Clone("hData"));
+  TH1D * hMC = (TH1D*)(gDirectory->FindObject(hists[1])->Clone("hMC"));
+//  TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[2])->Clone("h1"));
+//  TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[3])->Clone("h2"));
+  TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[4])->Clone("h1"));
+  TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[5])->Clone("h2"));
+
   // calc rel frac
-  Double_t testNSDFrac = 1-testSDFrac;
+  Double_t testNSDFrac = 1-testWantedFrac;
   Double_t MCSDFrac = (Double_t)h1->GetEntries()/(Double_t)hMC->GetEntries();
   Double_t MCNSDFrac = (Double_t)h2->GetEntries()/(Double_t)hMC->GetEntries();
-  Double_t SDRelFrac = testSDFrac/MCSDFrac;
+  Double_t SDRelFrac = testWantedFrac/MCSDFrac;
   Double_t NSDRelFrac = testNSDFrac/MCNSDFrac;
-  //printf("histDiffrChi2 - trial MC SD Frac(rel): %f(%f), trial NSD Frac(rel): %f(%f)\n",testSDFrac,SDRelFrac,testNSDFrac,NSDRelFrac);
+  //printf("histDiffrChi2 - trial MC SD Frac(rel): %f(%f), trial NSD Frac(rel): %f(%f)\n",testWantedFrac,SDRelFrac,testNSDFrac,NSDRelFrac);
   // scale
   h1->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
   h2->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
@@ -64,7 +72,7 @@ Double_t histDiffrChi2(
 
   // if draw
   if (draw) {
-    cout << "Draw: trial SDFrac: " << testSDFrac << "  Raw hist chi2: " << result << endl;
+    cout << "Draw: trial " << wanted << "frac: " << testWantedFrac << "  Raw hist chi2: " << result << endl;
     //hMC->Draw("h");
     hMC->SetMarkerStyle(0);
     hMC->SetLineWidth(1);
@@ -87,8 +95,8 @@ Double_t histDiffrChi2(
     leg2->SetFillColor(0);
     leg2->SetBorderSize(0);
     leg2->AddEntry(hData,"Data","p");
-    leg2->AddEntry(h1,"MC - Best Fit SD","p");
-    leg2->AddEntry(h2,"MC - Best Fit NSD","p");
+    leg2->AddEntry(h1,Form("MC - Best Fit %s",wanted.Data()),"p");
+    leg2->AddEntry(h2,Form("MC - Best Fit %s",Nwanted.Data()),"p");
     leg2->AddEntry(h3,"MC - Best Fit All","l");
     leg2->Draw();
   }
@@ -211,15 +219,16 @@ void matchFrac(bool testMC = true, int doSel = 1,
   // declare histograms
   printf("now declare hists\n");
   const Double_t EPzMax=200;
+  const Int_t EPzNBINS=EPzMax/5;
   for (Int_t i=0; i<source.size(); ++i) {
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
-    vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",100,0,EPzMax));
-    vh1.push_back(new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",100,0,EPzMax));
+    vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,0,EPzMax));
+    vh1.push_back(new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",EPzNBINS,0,EPzMax));
     if (source[i]=="pythia") {
       for (Int_t j=0; j<etype.size(); ++j) {
 	vh1.push_back(new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";Event #eta;",100,-5,5));
-	vh1.push_back(new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",100,0,EPzMax));
-	vh1.push_back(new TH1D(Form("hEsubEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz;",100,0,EPzMax));
+	vh1.push_back(new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",EPzNBINS,0,EPzMax));
+	vh1.push_back(new TH1D(Form("hEsubEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz;",EPzNBINS,0,EPzMax));
       }
     }
   }
@@ -253,11 +262,9 @@ void matchFrac(bool testMC = true, int doSel = 1,
   for (Int_t i=1; i<=N; ++i) {
     Double_t sdFrac = i*step;
     Double_t chi2 = histDiffrChi2(
-	sdFrac,
-	"hEaddEp_data",
-	"hEaddEp_pythia_All",
-	"hEaddEp_pythia_DF",
-	"hEaddEp_pythia_ND"); 
+	EaddEpHists,
+	etype,
+	sdFrac);
     hChi2->SetBinContent(i,chi2);
   }
 
@@ -277,22 +284,18 @@ void matchFrac(bool testMC = true, int doSel = 1,
   // draw distributions
   TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
   histDiffrChi2(
+      EaddEpHists,
+      etype,
       myfun->GetParameter(0),
-      "hEaddEp_data",
-      "hEaddEp_pythia_All",
-      "hEaddEp_pythia_DF",
-      "hEaddEp_pythia_ND",
       1,
       0.035);
   cEaddPz->Print(Form("plots/%s_cEaddPz_Sel%d.gif",datafname,doSel));
   TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
   histDiffrChi2(
+      evtEtaHists,
+      etype,
       myfun->GetParameter(0),
-      "hEvtEta_data",
-      "hEvtEta_pythia_All",
-      "hEvtEta_pythia_DF",
-      "hEvtEta_pythia_ND",
-      0,
+      1,
       1);
   cEvtEta->Print(Form("plots/%s_cEvtEta_Sel%d.gif",datafname,doSel));
 }
