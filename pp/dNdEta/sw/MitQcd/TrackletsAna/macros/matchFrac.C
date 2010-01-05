@@ -170,24 +170,9 @@ void matchFrac(bool testMC = true, int doSel = 1,
   // trigger
   selectionCut mcSel(1,doSel);
   selectionCut dataSel(0,doSel);
-  TCut mcSelCut = mcSel.Cut;
-  TCut dataSelCut = dataSel.Cut;
-  TCut SDCut = "evtType==92 || evtType==93";
-  TCut DDCut = "evtType==94";
-  TCut DFCut = SDCut || DDCut;
-  TCut NSDCut = !SDCut;
-  TCut NDCut = !DFCut;
-  TCut mcSelSD = mcSelCut && SDCut;
-  TCut mcSelNSD = mcSelCut && NSDCut;
-  TCut mcSelDF = mcSelCut && DFCut;
-  TCut mcSelND = mcSelCut && NDCut;
   printf("\n===== Triggering =====\n");
-  cout << "Data: " << TString(dataSelCut) << endl;
-  cout << "MC: " << TString(mcSelCut) << endl;
-  cout << "MC SD: " << TString(mcSelSD) << endl;
-  cout << "MC NSD: " << TString(mcSelNSD) << endl;
-  cout << "MC DF: " << TString(mcSelDF) << endl;
-  cout << "MC ND: " << TString(mcSelND) << endl;
+  cout << "Data: " << TString(dataSel.Cut) << endl;
+  cout << "MC: " << TString(mcSel.Cut) << endl;
 
   // configuation
   // sources
@@ -260,11 +245,11 @@ void matchFrac(bool testMC = true, int doSel = 1,
   TH1D * hChi2 = new TH1D("hChi2",";SD Fraction;#chi^{2}",N,0,maxSDFrac);
   Double_t step = maxSDFrac/(Float_t)N;
   for (Int_t i=1; i<=N; ++i) {
-    Double_t sdFrac = i*step;
+    Double_t trialFrac = i*step;
     Double_t chi2 = histDiffrChi2(
 	EaddEpHists,
 	etype,
-	sdFrac);
+	trialFrac);
     hChi2->SetBinContent(i,chi2);
   }
 
@@ -273,7 +258,7 @@ void matchFrac(bool testMC = true, int doSel = 1,
   TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
   myfun->SetParameters(0.1,0.001,0);
   hChi2->Fit("myfun","LL");
-  cout << "Best SD fraction: " << myfun->GetParameter(0) << endl;
+  cout << "Best fit fraction: " << myfun->GetParameter(0) << endl;
   if (testMC) {
     TLine * l = new TLine(truthFrac,hChi2->GetMinimum(),truthFrac,hChi2->GetMaximum());
     l->SetLineColor(2);
