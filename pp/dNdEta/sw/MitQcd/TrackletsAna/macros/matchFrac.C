@@ -1,5 +1,6 @@
 #include "TFile.h"
 #include "TH1D.h"
+#include "TH2D.h"
 #include "TTree.h"
 #include "TCanvas.h"
 #include "TString.h"
@@ -11,8 +12,10 @@
 #include "../selectionCut.h"
 using namespace std;
 
-TString wanted0("SD");
-TString wanted1("NSD");
+//TString wanted0("SD");
+//TString wanted1("NSD");
+TString wanted0("DF");
+TString wanted1("ND");
 
 // === helpers ===
 Double_t histChi2(TH1 * h1, TH1 *h2)
@@ -22,6 +25,18 @@ Double_t histChi2(TH1 * h1, TH1 *h2)
     Double_t binDiff = h2->GetBinContent(i)-h1->GetBinContent(i);
     Double_t binChi2 = binDiff*binDiff;
     sum+=binChi2;
+  }
+  return sum;
+}
+Double_t hist2Chi2(TH2 * h1, TH2 *h2)
+{
+  Double_t sum=0;
+  for (Int_t i=1; i<=h1->GetNbinsX(); ++i) {
+    for (Int_t j=1; j<=h1->GetNbinsY(); ++j) {
+      Double_t binDiff = h2->GetBinContent(i,j)-h1->GetBinContent(i,j);
+      Double_t binChi2 = binDiff*binDiff;
+      sum+=binChi2;
+    }
   }
   return sum;
 }
@@ -35,18 +50,18 @@ Double_t histDiffrChi2(
 {
   if (draw) {
     for (Int_t i=0; i<hists.size(); ++i) {
-      if (i<2 || (i==2||i==3)) cout << "use: " << hists[i] << endl;
+      if (i<2 || (i==4||i==5)) cout << "use: " << hists[i] << endl;
     }
   }
   TH1D * hData = (TH1D*)(gDirectory->FindObject(hists[0])->Clone("hData"));
   TH1D * hMC = (TH1D*)(gDirectory->FindObject(hists[1])->Clone("hMC"));
 
+  /*
   TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[2])->Clone("h1"));
   TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[3])->Clone("h2"));
-  /*
+  */
   TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[4])->Clone("h1"));
   TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[5])->Clone("h2"));
-  */
 
   // calc rel frac
   Double_t testNSDFrac = 1-testWantedFrac;
@@ -100,7 +115,7 @@ Double_t histDiffrChi2(
     leg2->SetBorderSize(0);
     leg2->AddEntry(hData,"Data","p");
     leg2->AddEntry(h1,Form("MC - Best Fit %s",wanted0.Data()),"p");
-    leg2->AddEntry(h1,Form("MC - Best Fit %s",wanted1.Data()),"p");
+    leg2->AddEntry(h2,Form("MC - Best Fit %s",wanted1.Data()),"p");
     leg2->AddEntry(h3,"MC - Best Fit All","l");
     leg2->Draw();
   }
@@ -143,8 +158,8 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
   Double_t ans=-1;
   Double_t den, num, frac, selDen, selNum, selFrac;
 
-  den = treeMC->GetEntries();
-  selDen = treeMC->GetEntries(mcSel);
+  den = treeMC->GetEntries(etypeCut[0]);
+  selDen = treeMC->GetEntries(mcSel&&etypeCut[0]);
   for (Int_t i=0; i<etype.size(); ++i) {
     num = treeMC->GetEntries(etypeCut[i]); 
     frac = num/den;
@@ -152,7 +167,8 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
     selNum = treeMC->GetEntries(mcCut);
     selFrac = selNum/selDen;
     TString t = etype[i];
-    printf("MC input %s frac:%f, after selection MC %s frac: %f.\n",t.Data(),frac,t.Data(),selFrac);
+    printf("MC input %s frac: %f, after selection MC %s frac: %f.\n",t.Data(),frac,t.Data(),selFrac);
+    printf("- numbers: before sel: %f/%f, after sel: %f/%f\n",num,den,selNum,selDen);
     if (t==want)
       ans=selFrac;
   }
@@ -161,7 +177,7 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
 }
 
 // === Main function ===
-void matchFrac(bool testMC = true, int doSel = 1,
+void matchFrac(int testMC = 0, int doSel = 1,
     const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac0.5.root",
     const char * mcfname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210.root")
 {
@@ -196,13 +212,21 @@ void matchFrac(bool testMC = true, int doSel = 1,
   // event types
   vector<TString> etype;
   vector<TCut> etypeCut;
+  vector<TCut> etypePhojCut;
   etype.push_back("All"); etypeCut.push_back("1==1");
   etype.push_back("SD"); etypeCut.push_back("evtType==92 || evtType==93");
   etype.push_back("NSD"); etypeCut.push_back("evtType!=92 && evtType!=93");
   etype.push_back("DF"); etypeCut.push_back("evtType==92 || evtType==93 || evtType==94");
   etype.push_back("ND"); etypeCut.push_back("evtType!=92 && evtType!=93 && evtType!=94");
+  if (testMC==2) {
+    etypePhojCut.push_back("evtType==1 || evtType==5 || evtType==6 || evtType==7");
+    etypePhojCut.push_back("evtType==5 || evtType==6");
+    etypePhojCut.push_back("evtType==1 || evtType==7");
+    etypePhojCut.push_back("evtType==5 || evtType==6 || evtType==7");
+    etypePhojCut.push_back("evtType==1");
+  }
   // container for all declared histograms
-  vector<TH1D*> vh1;
+  vector<TH1*> vh1;
 
   //
   // declare histograms
@@ -213,11 +237,13 @@ void matchFrac(bool testMC = true, int doSel = 1,
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
     vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,0,EPzMax));
     vh1.push_back(new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",EPzNBINS,0,EPzMax));
+    vh1.push_back(new TH2D(Form("hEPz_%s",source[i].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,0,EPzMax,EPzNBINS,0,EPzMax));
     if (source[i]=="pythia") {
       for (Int_t j=0; j<etype.size(); ++j) {
 	vh1.push_back(new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";Event #eta;",100,-5,5));
 	vh1.push_back(new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",EPzNBINS,0,EPzMax));
 	vh1.push_back(new TH1D(Form("hEsubEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz;",EPzNBINS,0,EPzMax));
+	vh1.push_back(new TH2D(Form("hEPz_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,0,EPzMax,EPzNBINS,0,EPzMax));
       }
     }
   }
@@ -232,13 +258,19 @@ void matchFrac(bool testMC = true, int doSel = 1,
   fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,evtEtaHists);
   vector<TString> EaddEpHists;
   fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpHists);
+  vector<TString> EPzHists;
+  fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EPzHists);
   // calc cuts
   printf("\n===== MC Input =====\n");
   calcFrac(treeMC,mcSel.Cut,etype,etypeCut);
   Double_t truthFrac=-1;
-  if (testMC) {
+  if (testMC==1) {
     printf("\n===== \"Data\" Input =====\n");
     truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypeCut,wanted0);
+  }
+  else if (testMC==2) {
+    printf("\n===== \"Data\" Input =====\n");
+    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypePhojCut,wanted0);
   }
 
 
@@ -263,7 +295,7 @@ void matchFrac(bool testMC = true, int doSel = 1,
   myfun->SetParameters(0.1,0.001,0);
   hChi2->Fit("myfun","LL");
   printf("\n\n   Best %s fit fraction: %f\n\n",wanted0.Data(),myfun->GetParameter(0));
-  if (testMC) {
+  if (testMC>0) {
     TLine * l = new TLine(truthFrac,hChi2->GetMinimum(),truthFrac,hChi2->GetMaximum());
     l->SetLineColor(2);
     l->Draw("same");
