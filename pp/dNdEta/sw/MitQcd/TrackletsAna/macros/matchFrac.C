@@ -11,6 +11,10 @@
 #include "../selectionCut.h"
 using namespace std;
 
+// top configs
+TString wanted="SD";
+TString Nwanted="NSD";
+
 // === helpers ===
 Double_t histChi2(TH1 * h1, TH1 *h2)
 {
@@ -32,17 +36,19 @@ Double_t histDiffrChi2(
 {
   if (draw) {
     for (Int_t i=0; i<hists.size(); ++i) {
-      if (i<2 || (i==4||i==5)) cout << "use: " << hists[i] << endl;
+      if (i<2 || (i==2||i==3)) cout << "use: " << hists[i] << endl;
     }
   }
-  TString wanted="DF";
-  TString Nwanted="ND";
   TH1D * hData = (TH1D*)(gDirectory->FindObject(hists[0])->Clone("hData"));
   TH1D * hMC = (TH1D*)(gDirectory->FindObject(hists[1])->Clone("hMC"));
-//  TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[2])->Clone("h1"));
-//  TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[3])->Clone("h2"));
+  TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[2])->Clone("h1"));
+  TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[3])->Clone("h2"));
+  /*
+  TString wanted="DF";
+  TString Nwanted="ND";
   TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[4])->Clone("h1"));
   TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[5])->Clone("h2"));
+  */
 
   // calc rel frac
   Double_t testNSDFrac = 1-testWantedFrac;
@@ -134,7 +140,7 @@ void fillHist(const char* var,const char* hname,
 }
 Double_t calcFrac(TTree * treeMC, TCut mcSel,
     const vector<TString> & etype, const vector<TCut> & etypeCut,
-    char * want="none")
+    TString want="none")
 {
   Double_t ans=-1;
   Double_t den, num, frac, selDen, selNum, selFrac;
@@ -234,7 +240,7 @@ void matchFrac(bool testMC = true, int doSel = 1,
   Double_t truthFrac=-1;
   if (testMC) {
     printf("\n===== \"Data\" Input =====\n");
-    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypeCut,"DF");
+    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypeCut,wanted);
   }
 
 
@@ -258,7 +264,7 @@ void matchFrac(bool testMC = true, int doSel = 1,
   TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
   myfun->SetParameters(0.1,0.001,0);
   hChi2->Fit("myfun","LL");
-  cout << "Best fit fraction: " << myfun->GetParameter(0) << endl;
+  printf("\n\n   Best %s fit fraction: %f\n\n",wanted.Data(),myfun->GetParameter(0));
   if (testMC) {
     TLine * l = new TLine(truthFrac,hChi2->GetMinimum(),truthFrac,hChi2->GetMaximum());
     l->SetLineColor(2);
