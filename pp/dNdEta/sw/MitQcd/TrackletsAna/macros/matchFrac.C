@@ -124,6 +124,29 @@ void fillHist(const char* var,const char* hname,
     outHists.push_back(hMC);
   }
 }
+Double_t calcFrac(TTree * treeMC, TCut mcSel,
+    const vector<TString> & etype, const vector<TCut> & etypeCut,
+    char * want="none")
+{
+  Double_t ans=-1;
+  Double_t den, num, frac, selDen, selNum, selFrac;
+
+  den = treeMC->GetEntries();
+  selDen = treeMC->GetEntries(mcSel);
+  for (Int_t i=0; i<etype.size(); ++i) {
+    num = treeMC->GetEntries(etypeCut[i]); 
+    frac = num/den;
+    TCut mcCut = mcSel&&etypeCut[i];
+    selNum = treeMC->GetEntries(mcCut);
+    selFrac = selNum/selDen;
+    TString t = etype[i];
+    printf("MC input %s frac:%f, after selection MC %s frac: %f.\n",t.Data(),frac,t.Data(),selFrac);
+    if (t==want)
+      ans=selFrac;
+  }
+  cout << "answer: " << ans << endl;
+  return ans;
+}
 
 // === Main function ===
 void matchFrac(bool testMC = true, int doSel = 1,
@@ -157,36 +180,6 @@ void matchFrac(bool testMC = true, int doSel = 1,
   cout << "MC NSD: " << TString(mcSelNSD) << endl;
   cout << "MC DF: " << TString(mcSelDF) << endl;
   cout << "MC ND: " << TString(mcSelND) << endl;
-
-  // get truth info
-  Double_t McTotalN = treeMC->GetEntries();
-  Double_t McSD = treeMC->GetEntries(SDCut);
-  Double_t McSDFrac = McSD/McTotalN;
-  Double_t McDF = treeMC->GetEntries(DFCut);
-  Double_t McDFFrac = McDF/McTotalN;
-  Double_t McSelTotalN = treeMC->GetEntries(mcSelCut);
-  Double_t McSelSD = treeMC->GetEntries(mcSelSD);
-  Double_t McSelSDFrac = McSelSD/McSelTotalN;
-  Double_t McSelDF = treeMC->GetEntries(mcSelDF);
-  Double_t McSelDFFrac = McSelDF/McSelTotalN;
-  printf("\n===== MC Input =====\n");
-  printf("MC input SD frac:%f, after selection MC SD frac: %f.\n",McSDFrac,McSelSDFrac);
-  printf("MC input DF frac:%f, after selection MC DF frac: %f.\n",McDFFrac,McSelDFFrac);
-  if (testMC) {
-    dataSelCut=mcSelCut;
-    Double_t DataTotalN = treeData->GetEntries();
-    Double_t DataSD = treeData->GetEntries(SDCut);
-    Double_t DataSDFrac = DataSD/DataTotalN;
-    Double_t DataDF = treeData->GetEntries(DFCut);
-    Double_t DataDFFrac = DataDF/DataTotalN;
-    Double_t DataSelTotalN = treeData->GetEntries(mcSelCut);
-    Double_t DataSelSD = treeData->GetEntries(mcSelSD);
-    Double_t DataSelSDFrac = DataSelSD/DataSelTotalN;
-    Double_t DataSelDF = treeData->GetEntries(mcSelDF);
-    Double_t DataSelDFFrac = DataSelDF/DataSelTotalN;
-    printf("\"Data\" input SD frac:%f, after selection \"Data\" SD frac: %f.\n",DataSDFrac,DataSelSDFrac);
-    printf("\"Data\" input DF frac:%f, after selection \"Data\" DF frac: %f.\n",DataDFFrac,DataSelDFFrac);
-  }
 
   // configuation
   // sources
@@ -241,6 +234,15 @@ void matchFrac(bool testMC = true, int doSel = 1,
   fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,evtEtaHists);
   vector<TString> EaddEpHists;
   fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpHists);
+  // calc cuts
+  printf("\n===== MC Input =====\n");
+  calcFrac(treeMC,mcSel.Cut,etype,etypeCut);
+  Double_t truthFrac=-1;
+  if (testMC) {
+    printf("\n===== \"Data\" Input =====\n");
+    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypeCut,"DF");
+  }
+
 
   // calc chi2
   printf("\n=========== Chi2 clac ================\n");
@@ -266,10 +268,7 @@ void matchFrac(bool testMC = true, int doSel = 1,
   hChi2->Fit("myfun","LL");
   cout << "Best SD fraction: " << myfun->GetParameter(0) << endl;
   if (testMC) {
-    Double_t DataSelTotalN = treeData->GetEntries(mcSelCut);
-    Double_t DataSelDF = treeData->GetEntries(mcSelDF);
-    Double_t DataSelDFFrac = DataSelDF/DataSelTotalN;
-    TLine * l = new TLine(DataSelDFFrac,hChi2->GetMinimum(),DataSelDFFrac,hChi2->GetMaximum());
+    TLine * l = new TLine(truthFrac,hChi2->GetMinimum(),truthFrac,hChi2->GetMaximum());
     l->SetLineColor(2);
     l->Draw("same");
   }
