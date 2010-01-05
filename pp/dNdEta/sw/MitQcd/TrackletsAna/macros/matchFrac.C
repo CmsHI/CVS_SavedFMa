@@ -11,9 +11,8 @@
 #include "../selectionCut.h"
 using namespace std;
 
-// top configs
-TString wanted="SD";
-TString Nwanted="NSD";
+TString wanted0("SD");
+TString wanted1("NSD");
 
 // === helpers ===
 Double_t histChi2(TH1 * h1, TH1 *h2)
@@ -41,11 +40,10 @@ Double_t histDiffrChi2(
   }
   TH1D * hData = (TH1D*)(gDirectory->FindObject(hists[0])->Clone("hData"));
   TH1D * hMC = (TH1D*)(gDirectory->FindObject(hists[1])->Clone("hMC"));
+
   TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[2])->Clone("h1"));
   TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[3])->Clone("h2"));
   /*
-  TString wanted="DF";
-  TString Nwanted="ND";
   TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[4])->Clone("h1"));
   TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[5])->Clone("h2"));
   */
@@ -78,7 +76,7 @@ Double_t histDiffrChi2(
 
   // if draw
   if (draw) {
-    cout << "Draw: trial " << wanted << "frac: " << testWantedFrac << "  Raw hist chi2: " << result << endl;
+    cout << "Draw: trial " << wanted0 << "frac: " << testWantedFrac << "  Raw hist chi2: " << result << endl;
     //hMC->Draw("h");
     hMC->SetMarkerStyle(0);
     hMC->SetLineWidth(1);
@@ -101,8 +99,8 @@ Double_t histDiffrChi2(
     leg2->SetFillColor(0);
     leg2->SetBorderSize(0);
     leg2->AddEntry(hData,"Data","p");
-    leg2->AddEntry(h1,Form("MC - Best Fit %s",wanted.Data()),"p");
-    leg2->AddEntry(h2,Form("MC - Best Fit %s",Nwanted.Data()),"p");
+    leg2->AddEntry(h1,Form("MC - Best Fit %s",wanted0.Data()),"p");
+    leg2->AddEntry(h1,Form("MC - Best Fit %s",wanted1.Data()),"p");
     leg2->AddEntry(h3,"MC - Best Fit All","l");
     leg2->Draw();
   }
@@ -240,7 +238,7 @@ void matchFrac(bool testMC = true, int doSel = 1,
   Double_t truthFrac=-1;
   if (testMC) {
     printf("\n===== \"Data\" Input =====\n");
-    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypeCut,wanted);
+    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypeCut,wanted0);
   }
 
 
@@ -264,7 +262,7 @@ void matchFrac(bool testMC = true, int doSel = 1,
   TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
   myfun->SetParameters(0.1,0.001,0);
   hChi2->Fit("myfun","LL");
-  printf("\n\n   Best %s fit fraction: %f\n\n",wanted.Data(),myfun->GetParameter(0));
+  printf("\n\n   Best %s fit fraction: %f\n\n",wanted0.Data(),myfun->GetParameter(0));
   if (testMC) {
     TLine * l = new TLine(truthFrac,hChi2->GetMinimum(),truthFrac,hChi2->GetMaximum());
     l->SetLineColor(2);
