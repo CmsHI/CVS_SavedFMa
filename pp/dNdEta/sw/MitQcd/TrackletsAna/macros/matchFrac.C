@@ -278,7 +278,7 @@ void matchFrac(int testMC = 0, int doSel = 1,
   printf("\n=========== Chi2 clac ================\n");
   Double_t maxSDFrac=0.5;
   Int_t N=50;
-  TH1D * hChi2 = new TH1D("hChi2",";SD Fraction;#chi^{2}",N,0,maxSDFrac);
+  TH1D * hChi2 = new TH1D("hChi2",Form(";%s Fraction;#chi^{2}",wanted0.Data()),N,0,maxSDFrac);
   Double_t step = maxSDFrac/(Float_t)N;
   for (Int_t i=1; i<=N; ++i) {
     Double_t trialFrac = i*step;
@@ -299,6 +299,12 @@ void matchFrac(int testMC = 0, int doSel = 1,
     TLine * l = new TLine(truthFrac,hChi2->GetMinimum(),truthFrac,hChi2->GetMaximum());
     l->SetLineColor(2);
     l->Draw("same");
+    TLegend *leg2 = new TLegend(0.1879,0.839,0.39,0.942,NULL,"brNDC");
+    leg2->SetFillColor(0);
+    leg2->SetBorderSize(0);
+    leg2->AddEntry(l,"MC truth:","l");
+    leg2->AddEntry("",Form("%.4f",truthFrac),"");
+    leg2->Draw();
   }
   cChi2->Print(Form("plots/%s_cChi2_Sel%d.gif",datafname,doSel));
 

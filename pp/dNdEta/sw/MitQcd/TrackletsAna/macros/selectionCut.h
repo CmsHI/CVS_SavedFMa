@@ -30,7 +30,7 @@ selectionCut::selectionCut(bool isMC, int sel, int nLumiL, int nLumiH) :
 
    // define selections here
    // basic: loosest, just veto on halo
-   if (selType==0)
+   if (selType==0 || selType==5)
      evtSelection      = ("L1T[36]!=1&&L1T[37]!=1&&L1T[38]!=1&&L1T[39]!=1");
    // halo veto + bit 34
    else if (selType==1)
@@ -43,7 +43,7 @@ selectionCut::selectionCut(bool isMC, int sel, int nLumiL, int nLumiH) :
      evtSelection      = ("L1T[41]>0&&L1T[36]!=1&&L1T[37]!=1&&L1T[38]!=1&&L1T[39]!=1");
    // halo veto + Hf tower count
    else if (selType==4)
-     evtSelection      = ("nHFp>1&&nHFn>1&&L1T[36]!=1&&L1T[37]!=1&&L1T[38]!=1&&L1T[39]!=1");
+     evtSelection      = ("nHFp>=1&&nHFn>=1&&L1T[36]!=1&&L1T[37]!=1&&L1T[38]!=1&&L1T[39]!=1");
 
    if (!isMC) evtSelection += Form("&&nLumi>=%d&&nLumi<=%d&&L1A[0]==1&&L1A[82]==1",nLumiL,nLumiH);
 
