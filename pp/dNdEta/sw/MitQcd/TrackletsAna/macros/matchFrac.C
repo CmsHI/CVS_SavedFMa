@@ -57,9 +57,9 @@ Double_t histDiffrChi2(
     const vector<TString> & hists,
     Int_t mode            = 0,
     Double_t testWantedFrac   = 0.11,
+    Double_t testWantedFrac2  = -1,
     Int_t draw            = 0,
-    Double_t ymax         = 0.025,
-    Double_t testWantedFrac2  = -1)
+    Double_t ymax         = 0.025)
 {
   Int_t index1=-1,index2=-1,index3=-1;
   //2=SD, 3=NSD, 4=D, 5=NSD, 6=DD
@@ -303,18 +303,33 @@ void matchFrac(int testMC = 0, int doSel = 1,
 
   // calc chi2
   printf("\n=========== Chi2 clac ================\n");
-  Double_t maxSDFrac=0.5;
+  Double_t maxTestFrac=0.5;
   Int_t N=50;
-  TH1D * hChi2 = new TH1D("hChi2",Form(";%s Fraction;#chi^{2}",wanted0.Data()),N,0,maxSDFrac);
-  Double_t step = maxSDFrac/(Float_t)N;
-  for (Int_t i=1; i<=N; ++i) {
-    Double_t trialFrac = i*step;
-    Double_t chi2 = histDiffrChi2(
-	//EaddEpHists,
-	evtEtaHists,
-	anaMode,
-	trialFrac);
-    hChi2->SetBinContent(i,chi2);
+  TH1D * hChi2 = new TH1D("hChi2",Form(";%s Fraction;#chi^{2}",wanted0.Data()),N,0,maxTestFrac);
+  Double_t step = maxTestFrac/(Float_t)N;
+  if (anaMode==0 || anaMode==1) {
+    for (Int_t i=1; i<=N; ++i) {
+      Double_t trialFrac = i*step;
+      Double_t chi2 = histDiffrChi2(
+	  evtEtaHists,
+	  anaMode,
+	  trialFrac);
+      hChi2->SetBinContent(i,chi2);
+    }
+  }
+  if (anaMode==2) {
+    for (Int_t i=1; i<=N; ++i) {
+      Double_t trialFrac = i*step;
+      for (Int_t j=1; j<=N;++j) {
+	Double_t trialFrac2 = j*step;
+	Double_t chi2 = histDiffrChi2(
+	    evtEtaHists,
+	    anaMode,
+	    trialFrac,
+	    trialFrac2);
+	hChi2->SetBinContent(i,chi2);
+      }
+    }
   }
 
   TCanvas * cChi2 = new TCanvas("cChi2","cChi2",600,600);
@@ -359,6 +374,7 @@ void matchFrac(int testMC = 0, int doSel = 1,
       EaddEpHists,
       anaMode,
       myfun->GetParameter(0),
+      -1,
       1,
       0.05);
   cEaddPz->Print(Form("plots/%s_cEaddPz_Sel%d.gif",datafname,doSel));
@@ -367,6 +383,7 @@ void matchFrac(int testMC = 0, int doSel = 1,
       evtEtaHists,
       anaMode,
       myfun->GetParameter(0),
+      -1,
       1,
       1);
   cEvtEta->Print(Form("plots/%s_cEvtEta_Sel%d.gif",datafname,doSel));
