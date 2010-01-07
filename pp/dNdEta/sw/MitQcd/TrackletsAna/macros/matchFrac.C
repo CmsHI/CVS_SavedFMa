@@ -24,7 +24,9 @@ Double_t histChi2(TH1 * h1, TH1 *h2)
   for (Int_t i=1; i<=h1->GetNbinsX(); ++i) {
     Double_t binDiff = h2->GetBinContent(i)-h1->GetBinContent(i);
     Double_t binE1 = h1->GetBinError(i);
+    if (binE1==0) binE1=1;
     Double_t binE2 = h2->GetBinError(i);
+    if (binE2==0) binE2=1;
     Double_t binChi2 = binDiff*binDiff/(binE1*binE1+binE2*binE2);
     sum+=binChi2;
   }
@@ -67,27 +69,20 @@ Double_t histDiffrChi2(
   TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[5])->Clone("h2"));
 
   // calc rel frac
-  Double_t testNSDFrac = 1-testWantedFrac;
-  Double_t MCSDFrac = (Double_t)h1->GetEntries()/(Double_t)hMC->GetEntries();
-  Double_t MCNSDFrac = (Double_t)h2->GetEntries()/(Double_t)hMC->GetEntries();
-  Double_t SDRelFrac = testWantedFrac/MCSDFrac;
-  Double_t NSDRelFrac = testNSDFrac/MCNSDFrac;
-  //printf("histDiffrChi2 - trial MC SD Frac(rel): %f(%f), trial NSD Frac(rel): %f(%f)\n",testWantedFrac,SDRelFrac,testNSDFrac,NSDRelFrac);
   // scale
-  h1->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
-  h2->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
+  h1->Scale(1./h1->GetEntries()/h1->GetBinWidth(1)*testWantedFrac);
+  h2->Scale(1./h2->GetEntries()/h1->GetBinWidth(1)*(1-testWantedFrac));
   hMC->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
   hData->Scale(1./hData->GetEntries()/h1->GetBinWidth(1));
 
   // combine different processes in MC with given weights
-  TH1D * h3 = (TH1D*)h2->Clone("h3");
+  TH1D * h3 = (TH1D*)h2->Clone("hMC");
   h3->SetLineColor(kRed);
   h3->SetLineStyle(1);
   h3->SetMarkerColor(kRed);
   h3->SetMarkerStyle(kOpenSquare);
 
-  h3->Scale(NSDRelFrac);
-  h3->Add(h1,SDRelFrac);
+  h3->Add(h1,h2);
 
   // Result
   Double_t result = histChi2(hData,h3);
@@ -244,8 +239,8 @@ void matchFrac(int testMC = 0, int doSel = 1,
   //
   // declare histograms
   printf("now declare hists\n");
-  const Double_t EPzMax=200;
-  const Int_t EPzNBINS=EPzMax/5;
+  const Double_t EPzMax=50;
+  const Int_t EPzNBINS=EPzMax/2;
   for (Int_t i=0; i<source.size(); ++i) {
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
     vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,0,EPzMax));
@@ -349,7 +344,7 @@ void matchFrac(int testMC = 0, int doSel = 1,
       etype,
       myfun->GetParameter(0),
       1,
-      0.035);
+      0.05);
   cEaddPz->Print(Form("plots/%s_cEaddPz_Sel%d.gif",datafname,doSel));
   TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
   histDiffrChi2(
