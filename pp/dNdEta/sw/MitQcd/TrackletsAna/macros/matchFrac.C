@@ -91,16 +91,16 @@ Double_t histDiffrChi2(
   hData->Scale(1./hData->GetEntries()/h1->GetBinWidth(1));
 
   // combine different processes in MC with given weights
-  TH1D * h3 = (TH1D*)h2->Clone("hMC");
-  h3->SetLineColor(kRed);
-  h3->SetLineStyle(1);
-  h3->SetMarkerColor(kRed);
-  h3->SetMarkerStyle(kOpenSquare);
+  TH1D * hFit = (TH1D*)h2->Clone("hMC");
+  hFit->SetLineColor(kRed);
+  hFit->SetLineStyle(1);
+  hFit->SetMarkerColor(kRed);
+  hFit->SetMarkerStyle(kOpenSquare);
 
-  h3->Add(h1,h2);
+  hFit->Add(h1,h2);
 
   // Result
-  Double_t result = histChi2(hData,h3);
+  Double_t result = histChi2(hData,hFit);
 
   // if draw
   if (draw) {
@@ -111,7 +111,7 @@ Double_t histDiffrChi2(
     hMC->SetLineStyle(7);
     hData->SetMaximum(ymax);
     hData->Draw("E");
-    h3->Draw("hist same");
+    hFit->Draw("hist same");
     h1->SetLineColor(kBlue);
     h1->SetLineStyle(7);
     h1->SetMarkerStyle(kOpenStar);
@@ -129,7 +129,7 @@ Double_t histDiffrChi2(
     leg2->AddEntry(hData,"Data","p");
     leg2->AddEntry(h1,Form("MC - Best Fit %s",wanted0.Data()),"p");
     leg2->AddEntry(h2,Form("MC - Best Fit %s",wanted1.Data()),"p");
-    leg2->AddEntry(h3,"MC - Best Fit All","l");
+    leg2->AddEntry(hFit,"MC - Best Fit All","l");
     leg2->Draw();
   }
   else {
@@ -138,7 +138,7 @@ Double_t histDiffrChi2(
     hMC->Delete();
     h1->Delete();
     h2->Delete();
-    h3->Delete();
+    hFit->Delete();
   }
 
   // done
