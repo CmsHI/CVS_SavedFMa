@@ -23,9 +23,12 @@ Double_t histChi2(TH1 * h1, TH1 *h2)
   Double_t sum=0;
   for (Int_t i=1; i<=h1->GetNbinsX(); ++i) {
     Double_t binDiff = h2->GetBinContent(i)-h1->GetBinContent(i);
-    Double_t binChi2 = binDiff*binDiff;
+    Double_t binE1 = h1->GetBinError(i);
+    Double_t binE2 = h2->GetBinError(i);
+    Double_t binChi2 = binDiff*binDiff/(binE1*binE1+binE2*binE2);
     sum+=binChi2;
   }
+  sum=sum/h1->GetNbinsX();
   return sum;
 }
 Double_t hist2Chi2(TH2 * h1, TH2 *h2)
@@ -299,11 +302,27 @@ void matchFrac(int testMC = 0, int doSel = 1,
   }
 
   TCanvas * cChi2 = new TCanvas("cChi2","cChi2",600,600);
+  hChi2->SetMinimum(0);
   hChi2->Draw();
+  // fit chi2
+  Double_t chi2Min = hChi2->GetBinCenter(hChi2->GetMinimumBin());
   TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
-  myfun->SetParameters(0.1,0.001,0);
-  hChi2->Fit("myfun","LL");
+  myfun->SetParameters(chi2Min,100,1);
+  hChi2->Fit("myfun","emw","",chi2Min-0.1,chi2Min+0.1);
+  // get error
+  Double_t a = myfun->GetParameter(0);
+  Double_t b = myfun->GetParameter(1);
+  Double_t c = myfun->GetParameter(2);
+  Double_t equRoot = sqrt(1./b*(c));
+  Double_t chiELow = a-equRoot;
+  Double_t chiEHigh = a+equRoot;
   printf("\n\n   Best %s fit fraction: %f\n\n",wanted0.Data(),myfun->GetParameter(0));
+  printf("       Error: (%f,%f)\n",chiELow,chiEHigh);
+  TLine * lELow = new TLine(chiELow,hChi2->GetMinimum(),chiELow,hChi2->GetMaximum());
+  lELow->Draw("same");
+  TLine * lEHigh = new TLine(chiEHigh,hChi2->GetMinimum(),chiEHigh,hChi2->GetMaximum());
+  lEHigh->Draw("same");
+  // mc truth if using mc
   if (testMC>0) {
     TLine * l = new TLine(truthFrac,hChi2->GetMinimum(),truthFrac,hChi2->GetMaximum());
     l->SetLineColor(2);
