@@ -195,6 +195,9 @@ void matchFrac(int testMC = 0, int doSel = 1,
   TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
   TTree * treeDataBg; databgFile->GetObject("PixelTree",treeDataBg);
 
+  // Now define output
+  TFile * fout = new TFile(TString("histAna/")+TString(datafname).ReplaceAll("pixelTree","histo"),"RECREATE");
+
   // trigger
   selectionCut mcSel(1,doSel);
   selectionCut dataSel(0,doSel);
@@ -310,16 +313,17 @@ void matchFrac(int testMC = 0, int doSel = 1,
   Double_t chi2Min = hChi2->GetBinCenter(hChi2->GetMinimumBin());
   TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
   myfun->SetParameters(chi2Min,100,1);
-  hChi2->Fit("myfun","emw","",chi2Min-0.1,chi2Min+0.1);
+  hChi2->Fit("myfun","emw M","",chi2Min-0.05,chi2Min+0.05);
   // get error
   Double_t a = myfun->GetParameter(0);
   Double_t b = myfun->GetParameter(1);
   Double_t c = myfun->GetParameter(2);
-  Double_t equRoot = sqrt(1./b*(c));
+  Double_t equRoot = sqrt(1./b*(1));
   Double_t chiELow = a-equRoot;
   Double_t chiEHigh = a+equRoot;
-  printf("\n\n   Best %s fit fraction: %f\n\n",wanted0.Data(),myfun->GetParameter(0));
-  printf("       Error: (%f,%f)\n",chiELow,chiEHigh);
+  Double_t bestX = myfun->GetParameter(0);
+  printf("\n\n   Best %s fit fraction: %f\n",wanted0.Data(),bestX);
+  printf("       Error: (%f,%f)\n\n",bestX-chiELow,chiEHigh-bestX);
   TLine * lELow = new TLine(chiELow,hChi2->GetMinimum(),chiELow,hChi2->GetMaximum());
   lELow->Draw("same");
   TLine * lEHigh = new TLine(chiEHigh,hChi2->GetMinimum(),chiEHigh,hChi2->GetMaximum());
@@ -355,4 +359,8 @@ void matchFrac(int testMC = 0, int doSel = 1,
       1,
       1);
   cEvtEta->Print(Form("plots/%s_cEvtEta_Sel%d.gif",datafname,doSel));
+
+  // save
+  fout->Write();
+  //fout->Close();
 }
