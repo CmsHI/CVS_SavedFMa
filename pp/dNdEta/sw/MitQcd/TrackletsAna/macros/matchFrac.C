@@ -12,10 +12,17 @@
 #include "../selectionCut.h"
 using namespace std;
 
-//TString wanted0("SD");
-//TString wanted1("NSD");
-TString wanted0("DF");
-TString wanted1("ND");
+Int_t anaMode=1; // 0 for D vs ND, 1 for SD vs NSD, 2 for SD, DD, ND
+
+//TString wanted0("DF");
+//TString wanted1("ND");
+
+TString wanted0("SD");
+TString wanted1("NSD");
+
+//TString wanted0("DF");
+//TString wanted1("ND");
+//TString wanted2("DD");
 
 // === helpers ===
 Double_t histChi2(TH1 * h1, TH1 *h2)
@@ -48,25 +55,33 @@ Double_t hist2Chi2(TH2 * h1, TH2 *h2)
 
 Double_t histDiffrChi2(
     const vector<TString> & hists,
-    const vector<TString> & etype,
+    Int_t mode            = 0,
     Double_t testWantedFrac   = 0.11,
     Int_t draw            = 0,
-    Double_t ymax         = 0.025)
+    Double_t ymax         = 0.025,
+    Double_t testWantedFrac2  = -1)
 {
+  Int_t index1=-1,index2=-1,index3=-1;
+  //2=SD, 3=NSD, 4=D, 5=NSD, 6=DD
+  if ( mode==0) {
+    index1=4; index2=5;
+  } else if (mode==1) {
+    index1=2; index2=3;
+  } else if (mode==2) {
+    index1=2; index2=3; index3=6;
+  }
+
   if (draw) {
     for (Int_t i=0; i<hists.size(); ++i) {
-      if (i<2 || (i==4||i==5)) cout << "use: " << hists[i] << endl;
+      if (i<2 || (i==index1||i==index2)) cout << "use: " << hists[i] << endl;
+      if (mode==2 && i==index3) cout << "use: " << hists[i] << endl;
     }
   }
   TH1D * hData = (TH1D*)(gDirectory->FindObject(hists[0])->Clone("hData"));
   TH1D * hMC = (TH1D*)(gDirectory->FindObject(hists[1])->Clone("hMC"));
 
-  /*
-  TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[2])->Clone("h1"));
-  TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[3])->Clone("h2"));
-  */
-  TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[4])->Clone("h1"));
-  TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[5])->Clone("h2"));
+  TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[index1])->Clone("h1"));
+  TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[index2])->Clone("h2"));
 
   // calc rel frac
   // scale
@@ -295,8 +310,9 @@ void matchFrac(int testMC = 0, int doSel = 1,
   for (Int_t i=1; i<=N; ++i) {
     Double_t trialFrac = i*step;
     Double_t chi2 = histDiffrChi2(
-	EaddEpHists,
-	etype,
+	//EaddEpHists,
+	evtEtaHists,
+	anaMode,
 	trialFrac);
     hChi2->SetBinContent(i,chi2);
   }
@@ -341,7 +357,7 @@ void matchFrac(int testMC = 0, int doSel = 1,
   TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
   histDiffrChi2(
       EaddEpHists,
-      etype,
+      anaMode,
       myfun->GetParameter(0),
       1,
       0.05);
@@ -349,7 +365,7 @@ void matchFrac(int testMC = 0, int doSel = 1,
   TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
   histDiffrChi2(
       evtEtaHists,
-      etype,
+      anaMode,
       myfun->GetParameter(0),
       1,
       1);
