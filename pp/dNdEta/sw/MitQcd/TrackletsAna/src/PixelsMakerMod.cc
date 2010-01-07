@@ -170,6 +170,9 @@ void PixelsMakerMod::Process()
       }
     }
   }
+  else {
+    printf("Event %d\n",fPE.nEv);
+  }
   //==============================================
 
   fPE.Clear();

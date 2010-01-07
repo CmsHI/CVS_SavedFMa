@@ -160,6 +160,7 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
 
   den = treeMC->GetEntries(etypeCut[0]);
   selDen = treeMC->GetEntries(mcSel&&etypeCut[0]);
+  cout << "-- Base Cut: " << TString(mcSel&&etypeCut[0]) << endl;
   for (Int_t i=0; i<etype.size(); ++i) {
     num = treeMC->GetEntries(etypeCut[i]); 
     frac = num/den;
@@ -168,6 +169,7 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
     selFrac = selNum/selDen;
     TString t = etype[i];
     printf("MC input %s frac: %f, after selection MC %s frac: %f.\n",t.Data(),frac,t.Data(),selFrac);
+    cout << "- " << mcCut << endl;
     printf("- numbers: before sel: %f/%f, after sel: %f/%f\n",num,den,selNum,selDen);
     if (t==want)
       ans=selFrac;
@@ -179,13 +181,16 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
 // === Main function ===
 void matchFrac(int testMC = 0, int doSel = 1,
     const char * datafname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac0.5.root",
-    const char * mcfname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210.root")
+    const char * mcfname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210.root",
+    const char * databgfname="pixelTree_123596v5-emptytarget_SDRelFrac1.0.root")
 {
   // get trees
   TFile * dataFile = new TFile(datafname);
   TFile * mcFile = new TFile(mcfname);
+  TFile * databgFile = new TFile(databgfname);
   TTree * treeData; dataFile->GetObject("PixelTree",treeData);
   TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
+  TTree * treeDataBg; databgFile->GetObject("PixelTree",treeDataBg);
 
   // trigger
   selectionCut mcSel(1,doSel);
@@ -264,6 +269,10 @@ void matchFrac(int testMC = 0, int doSel = 1,
   printf("\n===== MC Input =====\n");
   calcFrac(treeMC,mcSel.Cut,etype,etypeCut);
   Double_t truthFrac=-1;
+  if (testMC==0) {
+    printf("\n===== Data Input =====\n");
+    printf("%d passed cut\n",treeData->GetEntries(dataSel.Cut));
+  }
   if (testMC==1) {
     printf("\n===== \"Data\" Input =====\n");
     truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypeCut,wanted0);
