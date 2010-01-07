@@ -226,12 +226,14 @@ void matchFrac(int testMC = 0, int doSel = 1,
   etype.push_back("NSD"); etypeCut.push_back("evtType!=92 && evtType!=93");
   etype.push_back("DF"); etypeCut.push_back("evtType==92 || evtType==93 || evtType==94");
   etype.push_back("ND"); etypeCut.push_back("evtType!=92 && evtType!=93 && evtType!=94");
+  etype.push_back("DD"); etypeCut.push_back("evtType==94");
   if (testMC==2) {
-    etypePhojCut.push_back("evtType==1 || evtType==5 || evtType==6 || evtType==7");
+    etypePhojCut.push_back("evtType==1 || evtType==5 || evtType==6 || evtType==7 || evtType==4");
     etypePhojCut.push_back("evtType==5 || evtType==6");
-    etypePhojCut.push_back("evtType==1 || evtType==7");
-    etypePhojCut.push_back("evtType==5 || evtType==6 || evtType==7");
+    etypePhojCut.push_back("evtType==1 || evtType==7 || evtType==4");
+    etypePhojCut.push_back("evtType==5 || evtType==6 || evtType==7 || evtType==4");
     etypePhojCut.push_back("evtType==1");
+    etypePhojCut.push_back("evtType==7 || evtType==4");
   }
   // container for all declared histograms
   vector<TH1*> vh1;
