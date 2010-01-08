@@ -112,6 +112,7 @@ Double_t histDiffrChi2(
     hMC->SetLineWidth(1);
     hMC->SetLineStyle(7);
     // data
+    hData->SetMinimum(0);
     hData->SetMaximum(ymax);
     hData->Draw("E");
     // Fit
@@ -310,7 +311,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //
   // declare histograms
   printf("now declare hists\n");
-  const Double_t EPzMax=50;
+  const Double_t EPzMax=100;
   const Int_t EPzNBINS=EPzMax/2;
   for (Int_t i=0; i<source.size(); ++i) {
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
@@ -420,7 +421,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
 	bestX,
 	-1,
 	1,
-	0.05);
+	0.1);
     cEaddPz->Print(Form("plots/%s_use_%s_cEaddPz_Sel%d_Mode%d.gif",DataSource.Data(),MCSource.Data(),doSel,mode));
     TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
     histDiffrChi2(
