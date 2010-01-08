@@ -311,19 +311,20 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //
   // declare histograms
   printf("now declare hists\n");
-  const Double_t EPzMax=100;
-  const Int_t EPzNBINS=EPzMax/2;
+  const Double_t EPzMin=10;
+  const Double_t EPzMax=150;
+  const Int_t EPzNBINS=EPzMax/5;
   for (Int_t i=0; i<source.size(); ++i) {
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
-    vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,0,EPzMax));
-    vh1.push_back(new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",EPzNBINS,0,EPzMax));
-    vh1.push_back(new TH2D(Form("hEPz_%s",source[i].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,0,EPzMax,EPzNBINS,0,EPzMax));
+    vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
+    vh1.push_back(new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",EPzNBINS,EPzMin,EPzMax));
+    vh1.push_back(new TH2D(Form("hEPz_%s",source[i].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
     if (source[i]=="pythia") {
       for (Int_t j=0; j<etype.size(); ++j) {
 	vh1.push_back(new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";Event #eta;",100,-5,5));
-	vh1.push_back(new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",EPzNBINS,0,EPzMax));
-	vh1.push_back(new TH1D(Form("hEsubEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz;",EPzNBINS,0,EPzMax));
-	vh1.push_back(new TH2D(Form("hEPz_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,0,EPzMax,EPzNBINS,0,EPzMax));
+	vh1.push_back(new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
+	vh1.push_back(new TH1D(Form("hEsubEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz;",EPzNBINS,EPzMin,EPzMax));
+	vh1.push_back(new TH2D(Form("hEPz_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
       }
     }
   }
@@ -374,7 +375,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
     for (Int_t i=1; i<=N; ++i) {
       Double_t trialFrac = i*step;
       Double_t chi2 = histDiffrChi2(
-	  evtEtaHists,
+	  EaddEpHists,
 	  anaMode,
 	  trialFrac);
       hChi2->SetBinContent(i,chi2);
@@ -421,7 +422,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
 	bestX,
 	-1,
 	1,
-	0.1);
+	0.01);
     cEaddPz->Print(Form("plots/%s_use_%s_cEaddPz_Sel%d_Mode%d.gif",DataSource.Data(),MCSource.Data(),doSel,mode));
     TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
     histDiffrChi2(
