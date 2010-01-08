@@ -17,6 +17,8 @@ Int_t anaMode; // 0 for D vs ND, 1 for SD vs NSD, 2 for SD, DD, ND
 TString wanted0;
 TString wanted1;
 TString wanted2;
+TString dataHistLabel="data";
+TString mcHistLabel="mc";
 
 // === helpers ===
 Double_t histChi2(TH1 * h1, TH1 *h2)
@@ -176,13 +178,13 @@ void fillHist(const char* var,const char* hname,
 {
   TCanvas * c = new TCanvas(Form("c%s",hname),Form("c%s",hname),500,500);
 
-  TString hData = TString(hname)+"_data";
+  TString hData = TString(hname)+"_"+dataHistLabel;
   printf("%s>>%s,%s\n",var,hData.Data(),TString(dataSel).Data());
   treeData->Draw(Form("%s>>%s",var,hData.Data()),dataSel);
   outHists.push_back(hData);
 
   for (Int_t i=0; i<etype.size(); ++i) {
-    TString hMC = TString(hname)+"_pythia_"+etype[i];
+    TString hMC = TString(hname)+"_"+mcHistLabel+"_"+etype[i];
     TCut mcCut = mcSel&&etypeCut[i];
     printf("%s>>%s,%s\n",var,hMC.Data(),TString(mcCut).Data());
     treeMC->Draw(Form("%s>>%s",var,hMC.Data()),mcCut,"same");
@@ -275,8 +277,8 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   // configuation
   // sources
   vector<TString> source;
-  source.push_back("data");
-  source.push_back("pythia");
+  source.push_back(dataHistLabel);
+  source.push_back(mcHistLabel);
   // colors
   vector<Color_t> color;
   color.push_back(kRed);
@@ -319,7 +321,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
     vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH2D(Form("hEPz_%s",source[i].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
-    if (source[i]=="pythia") {
+    if (source[i]==mcHistLabel) {
       for (Int_t j=0; j<etype.size(); ++j) {
 	vh1.push_back(new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";Event #eta;",100,-5,5));
 	vh1.push_back(new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
@@ -336,11 +338,18 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
 
   // Fill histos
   vector<TString> evtEtaHists;
-  fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,evtEtaHists);
   vector<TString> EaddEpHists;
-  fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpHists);
   vector<TString> EPzHists;
-  fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EPzHists);
+  if (MCSource=="pythia") {
+    fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,evtEtaHists);
+    fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpHists);
+    fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EPzHists);
+  }
+  if (MCSource=="phojet") {
+    fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,evtEtaHists);
+    fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpHists);
+    fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EPzHists);
+  }
   // calc cuts
   printf("\n===== MC Input =====\n");
   calcFrac(treeMC,mcSel.Cut,etype,etypeCut);
