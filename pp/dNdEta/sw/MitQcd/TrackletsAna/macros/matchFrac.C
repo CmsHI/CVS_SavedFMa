@@ -12,17 +12,17 @@
 #include "../selectionCut.h"
 using namespace std;
 
-Int_t anaMode=1; // 0 for D vs ND, 1 for SD vs NSD, 2 for SD, DD, ND
+Int_t anaMode=2; // 0 for D vs ND, 1 for SD vs NSD, 2 for SD, DD, ND
 
 //TString wanted0("DF");
 //TString wanted1("ND");
+
+//TString wanted0("SD");
+//TString wanted1("NSD");
 
 TString wanted0("SD");
-TString wanted1("NSD");
-
-//TString wanted0("DF");
-//TString wanted1("ND");
-//TString wanted2("DD");
+TString wanted1("DD");
+TString wanted2("ND");
 
 // === helpers ===
 Double_t histChi2(TH1 * h1, TH1 *h2)
@@ -56,19 +56,19 @@ Double_t hist2Chi2(TH2 * h1, TH2 *h2)
 Double_t histDiffrChi2(
     const vector<TString> & hists,
     Int_t mode            = 0,
-    Double_t testWantedFrac   = 0.11,
-    Double_t testWantedFrac2  = -1,
+    Double_t testWantedFrac0   = 0.11,
+    Double_t testWantedFrac1  = -1,
     Int_t draw            = 0,
     Double_t ymax         = 0.025)
 {
-  Int_t index1=-1,index2=-1,index3=-1;
-  //2=SD, 3=NSD, 4=D, 5=NSD, 6=DD
+  Int_t index1=-1,index2=-1,index3=6;
+  //2=SD, 3=NSD, 4=D, 5=ND, 6=DD
   if ( mode==0) {
     index1=4; index2=5;
   } else if (mode==1) {
     index1=2; index2=3;
   } else if (mode==2) {
-    index1=2; index2=3; index3=6;
+    index1=2; index2=6; index3=5;
   }
 
   if (draw) {
@@ -82,46 +82,69 @@ Double_t histDiffrChi2(
 
   TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[index1])->Clone("h1"));
   TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[index2])->Clone("h2"));
+  TH1D * h3 = (TH1D*)(gDirectory->FindObject(hists[index3])->Clone("h3"));
 
   // calc rel frac
   // scale
-  h1->Scale(1./h1->GetEntries()/h1->GetBinWidth(1)*testWantedFrac);
-  h2->Scale(1./h2->GetEntries()/h1->GetBinWidth(1)*(1-testWantedFrac));
+  if (mode==0||mode==1) {
+    h1->Scale(1./h1->GetEntries()/h1->GetBinWidth(1)*testWantedFrac0);
+    h2->Scale(1./h2->GetEntries()/h2->GetBinWidth(1)*(1-testWantedFrac0));
+  }
+  else if (mode==2) {
+    h1->Scale(1./h1->GetEntries()/h1->GetBinWidth(1)*testWantedFrac0);
+    h2->Scale(1./h2->GetEntries()/h2->GetBinWidth(1)*(testWantedFrac1));
+    h3->Scale(1./h3->GetEntries()/h3->GetBinWidth(1)*(1-testWantedFrac0-testWantedFrac1));
+  }
   hMC->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
   hData->Scale(1./hData->GetEntries()/h1->GetBinWidth(1));
 
-  // combine different processes in MC with given weights
+  // combine
   TH1D * hFit = (TH1D*)h2->Clone("hMC");
-  hFit->SetLineColor(kRed);
-  hFit->SetLineStyle(1);
-  hFit->SetMarkerColor(kRed);
-  hFit->SetMarkerStyle(kOpenSquare);
-
   hFit->Add(h1,h2);
+  if (mode==2) hFit->Add(h3);
 
   // Result
   Double_t result = histChi2(hData,hFit);
+  //cout << "Draw: trial " << wanted0 << ", " << wanted1 << "frac: " << testWantedFrac0 << ", " << testWantedFrac1<< "  Raw hist chi2: " << result << endl;
 
   // if draw
   if (draw) {
-    cout << "Draw: trial " << wanted0 << "frac: " << testWantedFrac << "  Raw hist chi2: " << result << endl;
+    if (mode<2)
+      cout << "Draw: trial " << wanted0 << "frac: " << testWantedFrac0 << "  Raw hist chi2: " << result << endl;
+    else if (mode==2)
+      cout << "Draw: trial " << wanted0 << ", " << wanted1 << "frac: " << testWantedFrac0 << ", " << testWantedFrac1<< "  Raw hist chi2: " << result << endl;
     //hMC->Draw("h");
     hMC->SetMarkerStyle(0);
     hMC->SetLineWidth(1);
     hMC->SetLineStyle(7);
+    // data
     hData->SetMaximum(ymax);
     hData->Draw("E");
+    // Fit
+    hFit->SetLineColor(kRed);
+    hFit->SetLineStyle(1);
+    hFit->SetMarkerColor(kRed);
     hFit->Draw("hist same");
+    // h1
     h1->SetLineColor(kBlue);
-    h1->SetLineStyle(7);
     h1->SetMarkerStyle(kOpenStar);
     h1->SetMarkerColor(kBlue);
     h1->Draw("E same");
+    // h2
     h2->SetLineStyle(3);
     h2->SetMarkerStyle(kOpenSquare);
     h2->SetMarkerColor(kRed-1);
-    h1->SetLineColor(kRed-1);
+    h2->SetLineColor(kRed-1);
     h2->Draw("E same");
+    if (mode==2) {
+      // h3
+      h3->SetLineStyle(3);
+      h3->SetMarkerStyle(kOpenCircle);
+      h3->SetMarkerColor(kGreen-1);
+      h3->SetLineColor(kGreen-1);
+      h3->Draw("E same");
+    }
+
     //  - add legend -
     TLegend *leg2 = new TLegend(0.651,0.776,0.953,0.928,NULL,"brNDC");
     leg2->SetFillColor(0);
@@ -129,6 +152,7 @@ Double_t histDiffrChi2(
     leg2->AddEntry(hData,"Data","p");
     leg2->AddEntry(h1,Form("MC - Best Fit %s",wanted0.Data()),"p");
     leg2->AddEntry(h2,Form("MC - Best Fit %s",wanted1.Data()),"p");
+    if (mode==2) leg2->AddEntry(h3,Form("MC - Best Fit %s",wanted2.Data()),"p");
     leg2->AddEntry(hFit,"MC - Best Fit All","l");
     leg2->Draw();
   }
@@ -138,6 +162,7 @@ Double_t histDiffrChi2(
     hMC->Delete();
     h1->Delete();
     h2->Delete();
+    h3->Delete();
     hFit->Delete();
   }
 
@@ -303,9 +328,15 @@ void matchFrac(int testMC = 0, int doSel = 1,
 
   // calc chi2
   printf("\n=========== Chi2 clac ================\n");
+  Int_t N=100;
   Double_t maxTestFrac=0.5;
-  Int_t N=50;
+  TCanvas * cChi2 = new TCanvas("cChi2","cChi2",600,600);
   TH1D * hChi2 = new TH1D("hChi2",Form(";%s Fraction;#chi^{2}",wanted0.Data()),N,0,maxTestFrac);
+  hChi2->SetMinimum(0);
+  TH2D * h2Chi2 = new TH2D("h2Chi2",Form(";%s Fraction;%s Fraction",wanted0.Data(),wanted1.Data()),N,0,maxTestFrac,N,0,maxTestFrac);
+  h2Chi2->SetMinimum(0);
+
+  Double_t bestX=0, bestY=0, bestZ=0;
   Double_t step = maxTestFrac/(Float_t)N;
   if (anaMode==0 || anaMode==1) {
     for (Int_t i=1; i<=N; ++i) {
@@ -316,8 +347,64 @@ void matchFrac(int testMC = 0, int doSel = 1,
 	  trialFrac);
       hChi2->SetBinContent(i,chi2);
     }
-  }
+    hChi2->Draw();
+    // fit chi2
+    Double_t chi2Min = hChi2->GetBinCenter(hChi2->GetMinimumBin());
+    TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
+    myfun->SetParameters(chi2Min,100,1);
+    hChi2->Fit("myfun","emw M","",chi2Min-0.05,chi2Min+0.05);
+    // get error
+    Double_t a = myfun->GetParameter(0);
+    Double_t b = myfun->GetParameter(1);
+    Double_t c = myfun->GetParameter(2);
+    Double_t equRoot = sqrt(1./b*(1));
+    Double_t chiELow = a-equRoot;
+    Double_t chiEHigh = a+equRoot;
+    Double_t bestX = myfun->GetParameter(0);
+    printf("\n\n   Best %s fit fraction: %f\n",wanted0.Data(),bestX);
+    printf("       Error: (%f,%f)\n\n",bestX-chiELow,chiEHigh-bestX);
+    TLine * lELow = new TLine(chiELow,hChi2->GetMinimum(),chiELow,hChi2->GetMaximum());
+    lELow->Draw("same");
+    TLine * lEHigh = new TLine(chiEHigh,hChi2->GetMinimum(),chiEHigh,hChi2->GetMaximum());
+    lEHigh->Draw("same");
+    // mc truth if using mc
+    if (testMC>0) {
+      TLine * l = new TLine(truthFrac,hChi2->GetMinimum(),truthFrac,hChi2->GetMaximum());
+      l->SetLineColor(2);
+      l->Draw("same");
+      TLegend *leg2 = new TLegend(0.1879,0.839,0.39,0.942,NULL,"brNDC");
+      leg2->SetFillColor(0);
+      leg2->SetBorderSize(0);
+      leg2->AddEntry(l,"MC truth:","l");
+      leg2->AddEntry("",Form("%.4f",truthFrac),"");
+      leg2->Draw();
+    }
+    cChi2->Print(Form("plots/%s_cChi2_Sel%d.gif",datafname,doSel));
+
+    // draw distributions
+    TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
+    histDiffrChi2(
+	EaddEpHists,
+	anaMode,
+	bestX,
+	-1,
+	1,
+	0.05);
+    cEaddPz->Print(Form("plots/%s_cEaddPz_Sel%d.gif",datafname,doSel));
+    TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
+    histDiffrChi2(
+	evtEtaHists,
+	anaMode,
+	bestX,
+	-1,
+	1,
+	1);
+    cEvtEta->Print(Form("plots/%s_cEvtEta_Sel%d.gif",datafname,doSel));
+  } // end of anaMode<2
+
+
   if (anaMode==2) {
+    Double_t chi2Min=1000000.;
     for (Int_t i=1; i<=N; ++i) {
       Double_t trialFrac = i*step;
       for (Int_t j=1; j<=N;++j) {
@@ -327,66 +414,23 @@ void matchFrac(int testMC = 0, int doSel = 1,
 	    anaMode,
 	    trialFrac,
 	    trialFrac2);
-	hChi2->SetBinContent(i,chi2);
+	h2Chi2->SetBinContent(i,j,chi2);
+	if (chi2<chi2Min) {
+	  chi2Min=chi2;
+	  bestX=trialFrac; bestY=trialFrac2;
+	}
       }
     }
+    h2Chi2->Draw("Cont1");
+    /*
+    Int_t bestXBin,bestYBin,bestZBin;
+    h2Chi2->GetMinimumBin(bestXBin,bestYBin,bestZBin);
+    bestX=h2Chi2->GetXaxis()->GetBinCenter(bestXBin);
+    bestY=h2Chi2->GetYaxis()->GetBinCenter(bestYBin);
+    */
+    printf("\n\n   Best %s,%s fit fraction: %f,%f\n",wanted0.Data(),wanted1.Data(),bestX,bestY);
   }
 
-  TCanvas * cChi2 = new TCanvas("cChi2","cChi2",600,600);
-  hChi2->SetMinimum(0);
-  hChi2->Draw();
-  // fit chi2
-  Double_t chi2Min = hChi2->GetBinCenter(hChi2->GetMinimumBin());
-  TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
-  myfun->SetParameters(chi2Min,100,1);
-  hChi2->Fit("myfun","emw M","",chi2Min-0.05,chi2Min+0.05);
-  // get error
-  Double_t a = myfun->GetParameter(0);
-  Double_t b = myfun->GetParameter(1);
-  Double_t c = myfun->GetParameter(2);
-  Double_t equRoot = sqrt(1./b*(1));
-  Double_t chiELow = a-equRoot;
-  Double_t chiEHigh = a+equRoot;
-  Double_t bestX = myfun->GetParameter(0);
-  printf("\n\n   Best %s fit fraction: %f\n",wanted0.Data(),bestX);
-  printf("       Error: (%f,%f)\n\n",bestX-chiELow,chiEHigh-bestX);
-  TLine * lELow = new TLine(chiELow,hChi2->GetMinimum(),chiELow,hChi2->GetMaximum());
-  lELow->Draw("same");
-  TLine * lEHigh = new TLine(chiEHigh,hChi2->GetMinimum(),chiEHigh,hChi2->GetMaximum());
-  lEHigh->Draw("same");
-  // mc truth if using mc
-  if (testMC>0) {
-    TLine * l = new TLine(truthFrac,hChi2->GetMinimum(),truthFrac,hChi2->GetMaximum());
-    l->SetLineColor(2);
-    l->Draw("same");
-    TLegend *leg2 = new TLegend(0.1879,0.839,0.39,0.942,NULL,"brNDC");
-    leg2->SetFillColor(0);
-    leg2->SetBorderSize(0);
-    leg2->AddEntry(l,"MC truth:","l");
-    leg2->AddEntry("",Form("%.4f",truthFrac),"");
-    leg2->Draw();
-  }
-  cChi2->Print(Form("plots/%s_cChi2_Sel%d.gif",datafname,doSel));
-
-  // draw distributions
-  TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
-  histDiffrChi2(
-      EaddEpHists,
-      anaMode,
-      myfun->GetParameter(0),
-      -1,
-      1,
-      0.05);
-  cEaddPz->Print(Form("plots/%s_cEaddPz_Sel%d.gif",datafname,doSel));
-  TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
-  histDiffrChi2(
-      evtEtaHists,
-      anaMode,
-      myfun->GetParameter(0),
-      -1,
-      1,
-      1);
-  cEvtEta->Print(Form("plots/%s_cEvtEta_Sel%d.gif",datafname,doSel));
 
   // save
   fout->Write();
