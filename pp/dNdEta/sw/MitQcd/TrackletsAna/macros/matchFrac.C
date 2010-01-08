@@ -404,7 +404,6 @@ void matchFrac(int testMC = 0, int doSel = 1,
 
 
   if (anaMode==2) {
-    Double_t chi2Min=1000000.;
     for (Int_t i=1; i<=N; ++i) {
       Double_t trialFrac = i*step;
       for (Int_t j=1; j<=N;++j) {
@@ -415,20 +414,15 @@ void matchFrac(int testMC = 0, int doSel = 1,
 	    trialFrac,
 	    trialFrac2);
 	h2Chi2->SetBinContent(i,j,chi2);
-	if (chi2<chi2Min) {
-	  chi2Min=chi2;
-	  bestX=trialFrac; bestY=trialFrac2;
-	}
       }
     }
     h2Chi2->Draw("Cont1");
-    /*
     Int_t bestXBin,bestYBin,bestZBin;
     h2Chi2->GetMinimumBin(bestXBin,bestYBin,bestZBin);
     bestX=h2Chi2->GetXaxis()->GetBinCenter(bestXBin);
     bestY=h2Chi2->GetYaxis()->GetBinCenter(bestYBin);
-    */
     printf("\n\n   Best %s,%s fit fraction: %f,%f\n",wanted0.Data(),wanted1.Data(),bestX,bestY);
+    cChi2->Print(Form("plots/%s_c2DChi2_Sel%d.gif",datafname,doSel));
   }
 
 
