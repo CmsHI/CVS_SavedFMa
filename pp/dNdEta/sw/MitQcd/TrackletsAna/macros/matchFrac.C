@@ -346,13 +346,16 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
     fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EPzHists);
   }
   if (MCSource=="phojet") {
-    fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,evtEtaHists);
-    fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpHists);
-    fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EPzHists);
+    fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,evtEtaHists);
+    fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EaddEpHists);
+    fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EPzHists);
   }
   // calc cuts
+  // for mc
   printf("\n===== MC Input =====\n");
-  calcFrac(treeMC,mcSel.Cut,etype,etypeCut);
+  if (MCSource=="pythia") calcFrac(treeMC,mcSel.Cut,etype,etypeCut);
+  if (MCSource=="phojet") calcFrac(treeMC,mcSel.Cut,etype,etypePhojCut);
+  // for data or "data"
   Double_t truthFrac=-1;
   if (DataSource=="data") {
     printf("\n===== Data Input =====\n");
