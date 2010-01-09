@@ -13,10 +13,10 @@
 using namespace std;
 
 // === Main function ===
-void compare(int evtType = 0, int doSel = 1,
+void compare(int evtType = 0, int doSel = 4,
     const char * datafname="pixelTree_124022a3a4_MB_Christof_Christof_SDRelFrac1.0.root",
     const char * mcfname="pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210.root",
-    const char * mc2fname="pixelTree_Phojet_MinBias_900GeV_d20100104_all_SDRelFrac1.0.root")
+    const char * mc2fname="pixelTree_Phojet_MinBias_900GeV_d20100104_all14_SDRelFrac1.0.root")
 {
   // get trees
   TFile * dataFile = new TFile(datafname);
@@ -67,7 +67,7 @@ void compare(int evtType = 0, int doSel = 1,
   //
   // declare histograms
   printf("now declare hists\n");
-  const Double_t EPzMax=200;
+  const Double_t EPzMax=700;
   const Int_t EPzNBINS=EPzMax/5.;
   for (Int_t i=0; i<source.size(); ++i) {
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
@@ -105,6 +105,8 @@ void compare(int evtType = 0, int doSel = 1,
   hEaddEp_pythia->SetMarkerColor(kRed);
   hEaddEp_pythia->SetMarkerStyle(kOpenCircle);
   hEaddEp_pythia->SetLineColor(kRed);
+  hEaddEp_pythia->SetMinimum(0);
+  hEaddEp_pythia->SetMaximum(0.006);
   hEaddEp_pythia->Draw("E");
 
   TH1D * hEaddEp_phojet = (TH1D*)gDirectory->FindObject("hEaddEp_phojet");
@@ -119,4 +121,6 @@ void compare(int evtType = 0, int doSel = 1,
   printf("%s: %f entries\n",hEaddEp_data->GetName(),hEaddEp_data->GetEntries());
   hEaddEp_data->Scale(1./hEaddEp_data->GetEntries()/hEaddEp_data->GetBinWidth(1));
   if (evtType==0) hEaddEp_data->Draw("Esame");
+
+  c0->Print("plots/compare_hEaddEp.gif");
 }
