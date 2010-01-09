@@ -5,10 +5,11 @@
 class selectionCut
 {  
     public:
-    selectionCut(bool isMC, int sel, int nLumiL=0, int nLumiH=10000);
+    selectionCut(bool isMC, int sel, int runnum=-1, int nLumiL=0, int nLumiH=10000);
     ~selectionCut(){}
     
-    TCut Cut;  
+    TCut Cut; 
+    TCut runCut;
     TString evtSelection;
     TCut CutWOVtxCut;
     TString vtxCut;
@@ -19,14 +20,19 @@ class selectionCut
     int VzRangeL;
     int VzRangeH;
     int selType;
+
+    // run info
+    int runNum;
 };
 
-selectionCut::selectionCut(bool isMC, int sel, int nLumiL, int nLumiH) :
-  selType(sel)
+selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumiH) :
+  selType(sel),
+  runNum(runnum)
 {
-   VzRangeL = -20;   
+   VzRangeL = -20; 
    VzRangeH = 20;
    vtxCut = Form("vz[1]<%d&&vz[1]>%d",VzRangeH,VzRangeL);
+   runCut = Form("nRun==%d",runNum);
 
    // define selections here
    // basic: loosest, just veto on halo
@@ -45,7 +51,10 @@ selectionCut::selectionCut(bool isMC, int sel, int nLumiL, int nLumiH) :
    else if (selType==4)
      evtSelection      = ("nHFp>=1&&nHFn>=1&&L1T[36]!=1&&L1T[37]!=1&&L1T[38]!=1&&L1T[39]!=1");
 
-   if (!isMC) evtSelection += Form("&&nLumi>=%d&&nLumi<=%d&&L1A[0]==1&&L1A[82]==1",nLumiL,nLumiH);
+   if (!isMC) {
+     evtSelection += Form("&&nLumi>=%d&&nLumi<=%d&&L1A[0]==1&&L1A[82]==1",nLumiL,nLumiH);
+     evtSelection = evtSelection && runCut;
+   }
 
    CutWOVtxCut = TCut(evtSelection);
    if (selType==0)
