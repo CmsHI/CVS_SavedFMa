@@ -83,18 +83,24 @@ Double_t histDiffrChi2(
   TH1D * h3 = (TH1D*)(gDirectory->FindObject(hists[index3])->Clone("h3"));
 
   // calc rel frac
-  // scale
+  // scale mc's according to relative fractions
   if (mode==0||mode==1) {
-    h1->Scale(1./h1->Integral()/h1->GetBinWidth(1)*testWantedFrac0);
-    h2->Scale(1./h2->Integral()/h2->GetBinWidth(1)*(1-testWantedFrac0));
+    h1->Scale(1./h1->GetEntries()/h1->GetBinWidth(1)*testWantedFrac0);
+    h2->Scale(1./h2->GetEntries()/h2->GetBinWidth(1)*(1-testWantedFrac0));
   }
   else if (mode==2) {
-    h1->Scale(1./h1->Integral()/h1->GetBinWidth(1)*testWantedFrac0);
-    h2->Scale(1./h2->Integral()/h2->GetBinWidth(1)*(testWantedFrac1));
-    h3->Scale(1./h3->Integral()/h3->GetBinWidth(1)*(1-testWantedFrac0-testWantedFrac1));
+    h1->Scale(1./h1->GetEntries()/h1->GetBinWidth(1)*testWantedFrac0);
+    h2->Scale(1./h2->GetEntries()/h2->GetBinWidth(1)*(testWantedFrac1));
+    h3->Scale(1./h3->GetEntries()/h3->GetBinWidth(1)*(1-testWantedFrac0-testWantedFrac1));
   }
-  hMC->Scale(1./hMC->Integral()/h1->GetBinWidth(1));
-  hData->Scale(1./hData->Integral()/h1->GetBinWidth(1));
+  hMC->Scale(1./hMC->GetEntries()/hMC->GetBinWidth(1));
+
+  // scale to have sum area data == sum area MC
+  hData->Scale(1./hData->Integral()/hData->GetBinWidth(1));
+  h1->Scale(1./hMC->Integral()/hMC->GetBinWidth(1));
+  h2->Scale(1./hMC->Integral()/hMC->GetBinWidth(1));
+  h3->Scale(1./hMC->Integral()/hMC->GetBinWidth(1));
+  hMC->Scale(1./hMC->Integral()/hMC->GetBinWidth(1));
 
   // combine
   TH1D * hFit = (TH1D*)hMC->Clone("hFit");
@@ -333,7 +339,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //
   // declare histograms
   printf("now declare hists\n");
-  Double_t EPzMin=0, EPzMax=500, EPzYMax=0.035;
+  Double_t EPzMin=0, EPzMax=200, EPzYMax=0.035;
   if (doSel==4) {
     EPzMin=9;
     EPzYMax=0.01;
