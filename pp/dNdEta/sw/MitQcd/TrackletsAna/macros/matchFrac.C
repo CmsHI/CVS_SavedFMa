@@ -97,7 +97,7 @@ Double_t histDiffrChi2(
   hData->Scale(1./hData->GetEntries()/h1->GetBinWidth(1));
 
   // combine
-  TH1D * hFit = (TH1D*)h2->Clone("hMC");
+  TH1D * hFit = (TH1D*)hMC->Clone("hFit");
   hFit->Add(h1,h2);
   if (mode==2) hFit->Add(h3);
 
@@ -252,12 +252,12 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   if (DataSource=="pythia")
     datafname = new TString("pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac1.0.root");
   if (DataSource=="phojet")
-    datafname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100104_all_SDRelFrac1.0.root");
+    datafname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100104_all14_SDRelFrac1.0.root");
   // mc
   if (MCSource=="pythia")
     mcfname= new TString("pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac1.0.root");
   if (MCSource=="phojet")
-    mcfname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100104_all_SDRelFrac1.0.root");
+    mcfname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100104_all14_SDRelFrac1.0.root");
   databgfname= new TString("pixelTree_123596v5-emptytarget_SDRelFrac1.0.root");
 
   TFile * dataFile = new TFile(*datafname);
