@@ -247,7 +247,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
     wanted2 = "ND";
   }
 
-  // get trees
+  // ==== get trees ====
   TString * datafname;
   TString * mcfname;
   TString * databgfname;
@@ -256,15 +256,20 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
     datafname = new TString("pixelTree_124022a3a4_MB_Christof_Christof_SDRelFrac1.0.root");
   if (DataSource=="pythia")
     datafname = new TString("pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac1.0.root");
-  if (DataSource=="phojet")
+  if (DataSource=="phojet") {
     //datafname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100104_all14_SDRelFrac1.0.root");
-    datafname= new TString("/d100/mc/ana/CMSSW_3_3_5/Vertex1229/Phojet_MinBias_900GeV_d20100108/HLTv13V1/pixeltree/pixelTree_Phojet_MinBias_900GeV_d20100108_Vertex1229.root");
+    datafname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100108_Vertex1229.root");
+  }
   // mc
   if (MCSource=="pythia")
     mcfname= new TString("pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac1.0.root");
-  if (MCSource=="phojet")
-    mcfname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100104_all14_SDRelFrac1.0.root");
+  if (MCSource=="phojet") {
+    //mcfname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100104_all14_SDRelFrac1.0.root");
+    mcfname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100108_Vertex1229.root");
+  }
   databgfname= new TString("pixelTree_123596v5-emptytarget_SDRelFrac1.0.root");
+  cout << "Data: " << datafname->Data() << endl;
+  cout << "MC:   " << mcfname->Data() << endl;
 
   TFile * dataFile = new TFile(*datafname);
   TFile * mcFile = new TFile(*mcfname);
@@ -277,9 +282,14 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //TFile * fout = new TFile(TString("histAna/")+(*datafname).ReplaceAll("pixelTree","histo"),"RECREATE");
   TFile * fout = new TFile(Form("histAna/hist_%s_use_%s_Sel%d_Mode%d.root",DataSource.Data(),MCSource.Data(),doSel,mode),"RECREATE");
 
-  // trigger
-  selectionCut mcSel(1,doSel,124023,41,96);
-  selectionCut dataSel(0,doSel,124023,41,96);
+  // ===== trigger =====
+  bool isMC;
+  if (MCSource=="pythia" || MCSource=="phojet") isMC=true;
+  if (MCSource=="data") isMC=false;
+  selectionCut mcSel(isMC,doSel,124023,41,96);
+  if (DataSource=="pythia" || DataSource=="phojet") isMC=true;
+  if (DataSource=="data") isMC=false;
+  selectionCut dataSel(isMC,doSel,124023,41,96);
   printf("\n===== Triggering =====\n");
   cout << "Data: " << TString(dataSel.Cut) << endl;
   cout << "MC: " << TString(mcSel.Cut) << endl;
@@ -323,7 +333,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //
   // declare histograms
   printf("now declare hists\n");
-  Double_t EPzMin=0, EPzMax=180, EPzYMax=0.035;
+  Double_t EPzMin=0, EPzMax=500, EPzYMax=0.035;
   if (doSel==4) {
     EPzMin=9;
     EPzYMax=0.01;
