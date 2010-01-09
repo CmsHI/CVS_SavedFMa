@@ -85,16 +85,16 @@ Double_t histDiffrChi2(
   // calc rel frac
   // scale
   if (mode==0||mode==1) {
-    h1->Scale(1./h1->GetEntries()/h1->GetBinWidth(1)*testWantedFrac0);
-    h2->Scale(1./h2->GetEntries()/h2->GetBinWidth(1)*(1-testWantedFrac0));
+    h1->Scale(1./h1->Integral()/h1->GetBinWidth(1)*testWantedFrac0);
+    h2->Scale(1./h2->Integral()/h2->GetBinWidth(1)*(1-testWantedFrac0));
   }
   else if (mode==2) {
-    h1->Scale(1./h1->GetEntries()/h1->GetBinWidth(1)*testWantedFrac0);
-    h2->Scale(1./h2->GetEntries()/h2->GetBinWidth(1)*(testWantedFrac1));
-    h3->Scale(1./h3->GetEntries()/h3->GetBinWidth(1)*(1-testWantedFrac0-testWantedFrac1));
+    h1->Scale(1./h1->Integral()/h1->GetBinWidth(1)*testWantedFrac0);
+    h2->Scale(1./h2->Integral()/h2->GetBinWidth(1)*(testWantedFrac1));
+    h3->Scale(1./h3->Integral()/h3->GetBinWidth(1)*(1-testWantedFrac0-testWantedFrac1));
   }
-  hMC->Scale(1./hMC->GetEntries()/h1->GetBinWidth(1));
-  hData->Scale(1./hData->GetEntries()/h1->GetBinWidth(1));
+  hMC->Scale(1./hMC->Integral()/h1->GetBinWidth(1));
+  hData->Scale(1./hData->Integral()/h1->GetBinWidth(1));
 
   // combine
   TH1D * hFit = (TH1D*)hMC->Clone("hFit");
@@ -107,8 +107,13 @@ Double_t histDiffrChi2(
 
   // if draw
   if (draw) {
-    if (mode<2)
+    if (mode<2) {
       cout << "Draw: trial " << wanted0 << "frac: " << testWantedFrac0 << "  Raw hist chi2: " << result << endl;
+      cout << "hData area: " << hData->Integral()*hData->GetBinWidth(1) << ", Entries: " << hData->GetEntries() << endl;
+      cout << "hMC area: " << hMC->Integral()*hMC->GetBinWidth(1) << ", Entries: " << hMC->GetEntries() << endl;
+      cout << "h1 area: " << h1->Integral()*h1->GetBinWidth(1) << ", Entries: " << h1->GetEntries() << endl;
+      cout << "h2 area: " << h2->Integral()*h2->GetBinWidth(1) << ", Entries: " << h2->GetEntries() << endl;
+    }
     else if (mode==2)
       cout << "Draw: trial " << wanted0 << ", " << wanted1 << "frac: " << testWantedFrac0 << ", " << testWantedFrac1<< "  Raw hist chi2: " << result << endl;
     //hMC->Draw("h");
@@ -317,7 +322,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //
   // declare histograms
   printf("now declare hists\n");
-  const Double_t EPzMin=0;
+  const Double_t EPzMin=9;
   const Double_t EPzMax=200;
   const Int_t EPzNBINS=EPzMax/5;
   for (Int_t i=0; i<source.size(); ++i) {
@@ -343,15 +348,18 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   // Fill histos
   vector<TString> evtEtaHists;
   vector<TString> EaddEpHists;
+  vector<TString> EsubEpHists;
   vector<TString> EPzHists;
   if (MCSource=="pythia") {
     fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,evtEtaHists);
     fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpHists);
+    fillHist("SumEsubEp","hEsubEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EsubEpHists);
     fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EPzHists);
   }
   if (MCSource=="phojet") {
     fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,evtEtaHists);
     fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EaddEpHists);
+    fillHist("SumEsubEp","hEsubEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EsubEpHists);
     fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EPzHists);
   }
   // calc cuts
@@ -391,7 +399,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
     for (Int_t i=1; i<=N; ++i) {
       Double_t trialFrac = i*step;
       Double_t chi2 = histDiffrChi2(
-	  EaddEpHists,
+	  EsubEpHists,
 	  anaMode,
 	  trialFrac);
       hChi2->SetBinContent(i,chi2);
