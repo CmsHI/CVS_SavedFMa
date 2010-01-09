@@ -14,6 +14,8 @@ using namespace std;
 
 // Declare some useful global variables
 Int_t anaMode; // 0 for D vs ND, 1 for SD vs NSD, 2 for SD, DD, ND
+TString gDataSource;
+TString gMCSource;
 TString wanted0;
 TString wanted1;
 TString wanted2;
@@ -151,11 +153,11 @@ Double_t histDiffrChi2(
     TLegend *leg2 = new TLegend(0.651,0.776,0.953,0.928,NULL,"brNDC");
     leg2->SetFillColor(0);
     leg2->SetBorderSize(0);
-    leg2->AddEntry(hData,"Data","p");
-    leg2->AddEntry(h1,Form("MC - Best Fit %s",wanted0.Data()),"p");
-    leg2->AddEntry(h2,Form("MC - Best Fit %s",wanted1.Data()),"p");
-    if (mode==2) leg2->AddEntry(h3,Form("MC - Best Fit %s",wanted2.Data()),"p");
-    leg2->AddEntry(hFit,"MC - Best Fit All","l");
+    leg2->AddEntry(hData,Form("%s",gDataSource.Data()),"p");
+    leg2->AddEntry(h1,Form("%s - Best Fit %s",gMCSource.Data(),wanted0.Data()),"p");
+    leg2->AddEntry(h2,Form("%s - Best Fit %s",gMCSource.Data(),wanted1.Data()),"p");
+    if (mode==2) leg2->AddEntry(h3,Form("%s - Best Fit %s",gMCSource.Data(),wanted2.Data()),"p");
+    leg2->AddEntry(hFit,Form("%s - Best Fit All",gMCSource.Data()),"l");
     leg2->Draw();
   }
   else {
@@ -222,6 +224,8 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
 void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
     int doSel = 1, int mode=0)
 {
+  gDataSource=DataSource;
+  gMCSource=MCSource;
   // set anaMode
   anaMode=mode;
   if (mode==0) {
@@ -313,9 +317,9 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //
   // declare histograms
   printf("now declare hists\n");
-  const Double_t EPzMin=10;
-  const Double_t EPzMax=150;
-  const Int_t EPzNBINS=EPzMax/8;
+  const Double_t EPzMin=0;
+  const Double_t EPzMax=200;
+  const Int_t EPzNBINS=EPzMax/5;
   for (Int_t i=0; i<source.size(); ++i) {
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
     vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
@@ -434,6 +438,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
 	bestX,
 	-1,
 	1,
+	//0.035);
 	0.01);
     cEaddPz->Print(Form("plots/%s_use_%s_cEaddPz_Sel%d_Mode%d.gif",DataSource.Data(),MCSource.Data(),doSel,mode));
     TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
