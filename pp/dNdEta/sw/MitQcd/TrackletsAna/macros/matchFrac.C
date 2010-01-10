@@ -332,7 +332,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //
   // declare histograms
   printf("now declare hists\n");
-  Double_t EPzMin=0, EPzMax=200, EPzYMax=0.05;
+  Double_t EPzMin=18, EPzMax=200, EPzYMax=0.05;
   if (doSel==4) {
     EPzMin=0;
     EPzYMax=0.01;
