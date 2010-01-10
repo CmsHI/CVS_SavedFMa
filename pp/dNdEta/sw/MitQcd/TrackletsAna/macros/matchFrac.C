@@ -130,7 +130,7 @@ Double_t histDiffrChi2(
     hFit->SetLineColor(kRed);
     hFit->SetLineStyle(1);
     hFit->SetMarkerColor(kRed);
-    hFit->Draw("hist same");
+    hFit->Draw("hist Esame");
     // h1
     h1->SetLineColor(kBlue);
     h1->SetMarkerStyle(kOpenStar);
@@ -188,14 +188,14 @@ void fillHist(const char* var,const char* hname,
   TCanvas * c = new TCanvas(Form("c%s",hname),Form("c%s",hname),500,500);
 
   TString hData = TString(hname)+"_"+dataHistLabel;
-  printf("%s>>%s,%s\n",var,hData.Data(),TString(dataSel).Data());
+  //printf("%s>>%s,%s\n",var,hData.Data(),TString(dataSel).Data());
   treeData->Draw(Form("%s>>%s",var,hData.Data()),dataSel);
   outHists.push_back(hData);
 
   for (Int_t i=0; i<etype.size(); ++i) {
     TString hMC = TString(hname)+"_"+mcHistLabel+"_"+etype[i];
     TCut mcCut = mcSel&&etypeCut[i];
-    printf("%s>>%s,%s\n",var,hMC.Data(),TString(mcCut).Data());
+    //printf("%s>>%s,%s\n",var,hMC.Data(),TString(mcCut).Data());
     treeMC->Draw(Form("%s>>%s",var,hMC.Data()),mcCut,"same");
     outHists.push_back(hMC);
   }
@@ -218,7 +218,7 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
     selFrac = selNum/selDen;
     TString t = etype[i];
     printf("MC input %s frac: %f, after selection MC %s frac: %f.\n",t.Data(),frac,t.Data(),selFrac);
-    cout << "- " << mcCut << endl;
+    //cout << "- " << mcCut << endl;
     printf("- numbers: before sel: %f/%f, after sel: %f/%f\n",num,den,selNum,selDen);
     if (t==want)
       ans=selFrac;
@@ -334,7 +334,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   printf("now declare hists\n");
   Double_t EPzMin=0, EPzMax=200, EPzYMax=0.05;
   if (doSel==4) {
-    EPzMin=9;
+    EPzMin=0;
     EPzYMax=0.01;
   }
   const Int_t EPzNBINS=EPzMax/5;
@@ -432,7 +432,9 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
     Double_t chiEHigh = a+equRoot;
     Double_t bestX = myfun->GetParameter(0);
     printf("\n\n   Best %s fit fraction: %f\n",wanted0.Data(),bestX);
-    printf("       Error: (%f,%f)\n\n",bestX-chiELow,chiEHigh-bestX);
+    printf("       Error: (%f,%f)\n",bestX-chiELow,chiEHigh-bestX);
+    printf("       Condition: Data:%s, MC:%s, Sel%d, Mode%d, EPzMin:%f,Max:%f\n\n",
+	DataSource.Data(),MCSource.Data(),doSel,mode,EPzMin,EPzMax);
     TLine * lELow = new TLine(chiELow,hChi2->GetMinimum(),chiELow,hChi2->GetMaximum());
     //lELow->Draw("same");
     TLine * lEHigh = new TLine(chiEHigh,hChi2->GetMinimum(),chiEHigh,hChi2->GetMaximum());
