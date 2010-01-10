@@ -83,42 +83,38 @@ Double_t histDiffrChi2(
   TH1D * h3 = (TH1D*)(gDirectory->FindObject(hists[index3])->Clone("h3"));
 
   // calc rel frac
-  // scale mc's according to relative fractions
-  if (mode==0||mode==1) {
-    h1->Scale(1./h1->GetEntries()/h1->GetBinWidth(1)*testWantedFrac0);
-    h2->Scale(1./h2->GetEntries()/h2->GetBinWidth(1)*(1-testWantedFrac0));
-  }
-  else if (mode==2) {
-    h1->Scale(1./h1->GetEntries()/h1->GetBinWidth(1)*testWantedFrac0);
-    h2->Scale(1./h2->GetEntries()/h2->GetBinWidth(1)*(testWantedFrac1));
-    h3->Scale(1./h3->GetEntries()/h3->GetBinWidth(1)*(1-testWantedFrac0-testWantedFrac1));
-  }
-  hMC->Scale(1./hMC->GetEntries()/hMC->GetBinWidth(1));
+  // correction factor for limited range
+  Double_t trueFrac0=h1->GetEntries()/hMC->GetEntries();
+  Double_t trueFrac0InRange=h1->Integral()/hMC->Integral();
+  Double_t testFrac0InRange = testWantedFrac0*(trueFrac0InRange/trueFrac0);
 
-  // scale to have sum area data == sum area MC
-  hData->Scale(1./hData->Integral()/hData->GetBinWidth(1));
-  h1->Scale(1./hMC->Integral()/hMC->GetBinWidth(1));
-  h2->Scale(1./hMC->Integral()/hMC->GetBinWidth(1));
-  h3->Scale(1./hMC->Integral()/hMC->GetBinWidth(1));
+  // scale all pdf's in range to unity
+  h1->Scale(1./h1->Integral()/h1->GetBinWidth(1));
+  h2->Scale(1./h2->Integral()/h2->GetBinWidth(1));
   hMC->Scale(1./hMC->Integral()/hMC->GetBinWidth(1));
+  hData->Scale(1./hData->Integral()/hData->GetBinWidth(1));
 
   // combine
   TH1D * hFit = (TH1D*)hMC->Clone("hFit");
+  h1->Scale(testFrac0InRange);
+  h2->Scale(1-testFrac0InRange);
   hFit->Add(h1,h2);
   if (mode==2) hFit->Add(h3);
 
   // Result
   Double_t result = histChi2(hData,hFit);
-  //cout << "Draw: trial " << wanted0 << ", " << wanted1 << "frac: " << testWantedFrac0 << ", " << testWantedFrac1<< "  Raw hist chi2: " << result << endl;
 
   // if draw
   if (draw) {
     if (mode<2) {
-      cout << "Draw: trial " << wanted0 << "frac: " << testWantedFrac0 << "  Raw hist chi2: " << result << endl;
+      cout << "MC Truth frac0: " << trueFrac0 << " In range: " << trueFrac0InRange << endl;
+      cout << "Draw: trial " << wanted0 << "frac: " << testWantedFrac0
+	<< " In range: " << testFrac0InRange << "  Raw hist chi2: " << result << endl;
       cout << "hData area: " << hData->Integral()*hData->GetBinWidth(1) << ", Entries: " << hData->GetEntries() << endl;
       cout << "hMC area: " << hMC->Integral()*hMC->GetBinWidth(1) << ", Entries: " << hMC->GetEntries() << endl;
       cout << "h1 area: " << h1->Integral()*h1->GetBinWidth(1) << ", Entries: " << h1->GetEntries() << endl;
       cout << "h2 area: " << h2->Integral()*h2->GetBinWidth(1) << ", Entries: " << h2->GetEntries() << endl;
+      cout << "hFit area: " << hFit->Integral()*hFit->GetBinWidth(1) << ", Entries: " << hFit->GetEntries() << endl;
     }
     else if (mode==2)
       cout << "Draw: trial " << wanted0 << ", " << wanted1 << "frac: " << testWantedFrac0 << ", " << testWantedFrac1<< "  Raw hist chi2: " << result << endl;
@@ -259,19 +255,17 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   TString * databgfname;
   // data
   if (DataSource=="data")
-    datafname = new TString("pixelTree_124022a3a4_MB_Christof_Christof_SDRelFrac1.0.root");
+    datafname = new TString("PixelTree-124022-hfcuts.root");
   if (DataSource=="pythia")
-    datafname = new TString("pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac1.0.root");
+    datafname = new TString("pixelTree_Pythia_MinBias_D6T_900GeV_d20091229_Vertex1229.root");
   if (DataSource=="phojet") {
-    //datafname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100104_all14_SDRelFrac1.0.root");
-    datafname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100108_Vertex1229.root");
+    datafname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100108.root");
   }
   // mc
   if (MCSource=="pythia")
-    mcfname= new TString("pixelTree_merge_BSC_Tuned_v1_Pythia_MinBias_D6T_900GeV_d20091210_SDRelFrac1.0.root");
+    mcfname= new TString("pixelTree_Pythia_MinBias_D6T_900GeV_d20091229_Vertex1229.root");
   if (MCSource=="phojet") {
-    //mcfname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100104_all14_SDRelFrac1.0.root");
-    mcfname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100108_Vertex1229.root");
+    mcfname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100108.root");
   }
   databgfname= new TString("pixelTree_123596v5-emptytarget_SDRelFrac1.0.root");
   cout << "Data: " << datafname->Data() << endl;
@@ -279,13 +273,12 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
 
   TFile * dataFile = new TFile(*datafname);
   TFile * mcFile = new TFile(*mcfname);
-  TFile * databgFile = new TFile(*databgfname);
+  //TFile * databgFile = new TFile(*databgfname);
   TTree * treeData; dataFile->GetObject("PixelTree",treeData);
   TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
-  TTree * treeDataBg; databgFile->GetObject("PixelTree",treeDataBg);
+  //TTree * treeDataBg; databgFile->GetObject("PixelTree",treeDataBg);
 
   // Now define output
-  //TFile * fout = new TFile(TString("histAna/")+(*datafname).ReplaceAll("pixelTree","histo"),"RECREATE");
   TFile * fout = new TFile(Form("histAna/hist_%s_use_%s_Sel%d_Mode%d.root",DataSource.Data(),MCSource.Data(),doSel,mode),"RECREATE");
 
   // ===== trigger =====
@@ -339,7 +332,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //
   // declare histograms
   printf("now declare hists\n");
-  Double_t EPzMin=0, EPzMax=200, EPzYMax=0.035;
+  Double_t EPzMin=0, EPzMax=200, EPzYMax=0.05;
   if (doSel==4) {
     EPzMin=9;
     EPzYMax=0.01;
