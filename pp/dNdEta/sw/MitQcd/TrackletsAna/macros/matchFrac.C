@@ -332,9 +332,9 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //
   // declare histograms
   printf("now declare hists\n");
-  Double_t EPzMin=18, EPzMax=200, EPzYMax=0.05;
+  Double_t EPzMin=0, EPzMax=200, EPzYMax=0.05;
   if (doSel==4) {
-    EPzMin=0;
+    EPzMin=18;
     EPzYMax=0.01;
   }
   const Int_t EPzNBINS=EPzMax/5;
@@ -403,6 +403,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   TCanvas * cChi2 = new TCanvas("cChi2","cChi2",600,600);
   TH1D * hChi2 = new TH1D("hChi2",Form(";%s Fraction;#chi^{2}",wanted0.Data()),N,0,maxTestFrac);
   hChi2->SetMinimum(0);
+  hChi2->SetMaximum(40);
   TH2D * h2Chi2 = new TH2D("h2Chi2",Form(";%s Fraction;%s Fraction",wanted0.Data(),wanted1.Data()),N,0,maxTestFrac,N,0,maxTestFrac);
   h2Chi2->SetMinimum(0);
 
