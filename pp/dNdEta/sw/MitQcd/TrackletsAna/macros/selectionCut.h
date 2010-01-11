@@ -23,6 +23,9 @@ class selectionCut
 
     // run info
     int runNum;
+    
+    // ana info
+    TString AnaTag;
 };
 
 selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumiH) :
