@@ -23,7 +23,8 @@ echo start > $log
 for infile in `cat $files`
 do
    if [ $counter -ge $2 ] && [ $counter -le $3 ]; then
-      file=/tmp/$infile
+      if [ -e $file ]; then continue; fi
+      file=$infile
       echo $dir/$infile >> $log
       lcg-cp srm://se01.cmsaf.mit.edu:8443/$dir/$infile file:$file >> $log
       rfcp $file $destination/
