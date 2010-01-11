@@ -107,17 +107,6 @@ Double_t histDiffrChi2(
 
   // if draw
   if (draw) {
-    //  - add legend -
-    TLegend *leg2 = new TLegend(0.651,0.776,0.953,0.928,NULL,"brNDC");
-    leg2->SetFillColor(0);
-    leg2->SetBorderSize(0);
-    leg2->AddEntry(hData,Form("%s",gDataSource.Data()),"p");
-    leg2->AddEntry(h1,Form("%s - Best Fit %s",gMCSource.Data(),wanted0.Data()),"p");
-    leg2->AddEntry(h2,Form("%s - Best Fit %s",gMCSource.Data(),wanted1.Data()),"p");
-    if (mode==2) leg2->AddEntry(h3,Form("%s - Best Fit %s",gMCSource.Data(),wanted2.Data()),"p");
-    leg2->AddEntry(hFit,Form("%s - Best Fit All",gMCSource.Data()),"l");
-    leg2->Draw();
-
     if (mode<2) {
       cout << "MC Truth frac0: " << trueFrac0 << " In range: " << trueFrac0InRange << endl;
       cout << "Draw: trial " << wanted0 << "frac: " << testWantedFrac0
@@ -167,6 +156,17 @@ Double_t histDiffrChi2(
       h3->SetLineColor(kRed-1);
       h3->Draw("E same");
     }
+
+    //  - add legend -
+    TLegend *leg2 = new TLegend(0.651,0.776,0.953,0.928,NULL,"brNDC");
+    leg2->SetFillColor(0);
+    leg2->SetBorderSize(0);
+    leg2->AddEntry(hData,Form("%s",gDataSource.Data()),"p");
+    leg2->AddEntry(h1,Form("%s - Best Fit %s",gMCSource.Data(),wanted0.Data()),"p");
+    leg2->AddEntry(h2,Form("%s - Best Fit %s",gMCSource.Data(),wanted1.Data()),"p");
+    if (mode==2) leg2->AddEntry(h3,Form("%s - Best Fit %s",gMCSource.Data(),wanted2.Data()),"p");
+    leg2->AddEntry(hFit,Form("%s - Best Fit All",gMCSource.Data()),"l");
+    leg2->Draw();
   }
   else {
     //cout << "SDRelFrac: " << SDRelFrac << "  Raw hist chi2: " << result << endl;
@@ -349,7 +349,7 @@ void matchFrac(TString AnaVersion="V0",
   if (doSel==4) {
     EPzYMax=0.01;
     if (EPzBinSize<9)
-      EPzYMax=0.03;
+      EPzYMax=0.04;
   }
   const Int_t EPzNBINS=EPzMax/EPzBinSize;
   for (Int_t i=0; i<source.size(); ++i) {
