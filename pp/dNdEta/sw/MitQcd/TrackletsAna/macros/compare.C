@@ -14,11 +14,14 @@ using namespace std;
 
 // === Main function ===
 void compare(int evtType = 0, int doSel = 4,
-    const char * datafname="PixelTree-124022-hfcuts.root",
-    const char * mcfname="pixelTree_Pythia_MinBias_D6T_900GeV_d20091229_Vertex1229.root",
-    const char * mc2fname="pixelTree_Phojet_MinBias_900GeV_d20100108.root")
+    const char * datafname="PixelTree-124120-hfcuts.root",
+    const char * mcfname="pixelTree_Pythia_MinBias_D6T_2360GeV_d20091229_Vertex1224.root",
+    const char * mc2fname="pixelTree_Phojet_MinBias_2360GeV_d20100108.root")
 {
   // get trees
+  cout << "data: " << datafname << endl;
+  cout << "mc1: " << mcfname << endl;
+  cout << "mc2: " << mc2fname << endl;
   TFile * dataFile = new TFile(datafname);
   TFile * mcFile = new TFile(mcfname);
   TFile * mc2File = new TFile(mc2fname);
@@ -27,8 +30,8 @@ void compare(int evtType = 0, int doSel = 4,
   TTree * treeMC2; mc2File->GetObject("PixelTree",treeMC2);
 
   // trigger
-  selectionCut mcSel(1,doSel,124023,41,96);
-  selectionCut dataSel(0,doSel,124023,41,96);
+  selectionCut mcSel(1,doSel,124120,0,1000000);
+  selectionCut dataSel(0,doSel,124120,0,100000);
 
   // configuation
   // sources
@@ -91,9 +94,13 @@ void compare(int evtType = 0, int doSel = 4,
     vh1[ih1]->Sumw2();
     if (TString(vh1[ih1]->GetName()).Contains("pythia")) {
       vh1[ih1]->SetMarkerColor(kRed);
+      vh1[ih1]->SetLineColor(kRed);
+      vh1[ih1]->SetMarkerStyle(kOpenSquare);
     }
     if (TString(vh1[ih1]->GetName()).Contains("phojet")) {
       vh1[ih1]->SetMarkerColor(kBlue);
+      vh1[ih1]->SetLineColor(kBlue);
+      vh1[ih1]->SetMarkerStyle(kOpenStar);
     }
   }
 
@@ -102,36 +109,42 @@ void compare(int evtType = 0, int doSel = 4,
   cout << "Data: " << TString(dataSel.Cut) << endl;
   cout << "MC: " << TString(mcSel.Cut&&etypeCut[evtType]) << endl;
   cout << "MC2: " << TString(mcSel.Cut&&etypePhojCut[evtType]) << endl;
-  treeMC->Draw("SumEaddEp>>hEaddEp_pythia",mcSel.Cut&&etypeCut[evtType]);
-  treeMC2->Draw("SumEaddEp>>hEaddEp_phojet",mcSel.Cut&&TCut(etypePhojCut[evtType]),"same");
-  treeData->Draw("SumEaddEp>>hEaddEp_data",dataSel.Cut,"same");
+  cout << "draw: hEaddEp_phojet: " << treeMC2->Draw("SumEaddEp>>hEaddEp_phojet",mcSel.Cut&&TCut(etypePhojCut[evtType]),"E") << endl;;
+  cout << "draw: hEaddEp_pythia: " << treeMC->Draw("SumEaddEp>>hEaddEp_pythia",mcSel.Cut&&etypeCut[evtType],"Esame") << endl;;
+  cout << "draw: hEaddEp_data: " << treeData->Draw("SumEaddEp>>hEaddEp_data",dataSel.Cut,"Esame") << endl;;
 
   TCanvas * c0 = new TCanvas("c0","c0",500,500);
-  TH1D * hEaddEp_pythia = (TH1D*)gDirectory->FindObject("hEaddEp_pythia");
-  printf("%s: %f entries\n",hEaddEp_pythia->GetName(),hEaddEp_pythia->GetEntries());
-  hEaddEp_pythia->SetMinimum(0);
-  hEaddEp_pythia->SetMaximum(0.006);
-  hEaddEp_pythia->Draw("E");
-
-  TH1D * hEaddEp_phojet = (TH1D*)gDirectory->FindObject("hEaddEp_phojet");
-  printf("%s: %f entries\n",hEaddEp_phojet->GetName(),hEaddEp_phojet->GetEntries());
-  hEaddEp_phojet->Draw("Esame");
-
   TH1D * hEaddEp_data = (TH1D*)gDirectory->FindObject("hEaddEp_data");
   printf("%s: %f entries\n",hEaddEp_data->GetName(),hEaddEp_data->GetEntries());
-  if (evtType==0) hEaddEp_data->Draw("Esame");
+  TH1D * hEaddEp_pythia = (TH1D*)gDirectory->FindObject("hEaddEp_pythia");
+  printf("%s: %f entries\n",hEaddEp_pythia->GetName(),hEaddEp_pythia->GetEntries());
+  TH1D * hEaddEp_phojet = (TH1D*)gDirectory->FindObject("hEaddEp_phojet");
+  printf("%s: %f entries\n",hEaddEp_phojet->GetName(),hEaddEp_phojet->GetEntries());
+  // declare legend
+  TLegend *leg2 = new TLegend(0.1879,0.839,0.39,0.942,NULL,"brNDC");
+  leg2->SetFillColor(0);
+  leg2->SetBorderSize(0);
+  leg2->AddEntry(hEaddEp_data,"data","p");
+  leg2->AddEntry(hEaddEp_pythia,"pythia","p");
+  leg2->AddEntry(hEaddEp_phojet,"phojet","p");
+  leg2->Draw();
 
+  hEaddEp_phojet->Draw("E");
+  hEaddEp_data->Draw("Esame");
+  hEaddEp_pythia->Draw("Esame");
 
   TCanvas * c2 = new TCanvas("c2","c2",500,500);
-  treeMC->Draw("vz[1]>>hVz_pythia",mcSel.Cut&&etypeCut[evtType],"");
+  treeData->Draw("vz[1]>>hVz_data",dataSel.Cut,"");
+  treeMC->Draw("vz[1]>>hVz_pythia",mcSel.Cut&&etypeCut[evtType],"same");
   treeMC2->Draw("vz[1]>>hVz_phojet",mcSel.Cut&&TCut(etypePhojCut[evtType]),"same");
-  treeData->Draw("vz[1]>>hVz_data",dataSel.Cut,"same");
+  leg2->Draw();
 
   //scale
   for (Int_t ih1=0; ih1<vh1.size(); ++ih1) {
     vh1[ih1]->Scale(1./vh1[ih1]->GetEntries()/vh1[ih1]->GetBinWidth(1));
   }
-  c0->Update();
-  c2->Update();
+  c0->Draw();
+  c2->Draw();
   c0->Print("plots/inspection/compare_hEaddEp.gif");
+  c2->Print("plots/inspection/compare_hVz.gif");
 }
