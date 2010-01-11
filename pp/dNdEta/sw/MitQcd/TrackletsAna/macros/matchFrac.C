@@ -7,6 +7,7 @@
 #include "TF1.h"
 #include "TLegend.h"
 #include "TLine.h"
+#include "TSystem.h"
 #include <iostream>
 #include <vector>
 #include "../selectionCut.h"
@@ -228,11 +229,25 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
 }
 
 // === Main function ===
-void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
-    int doSel = 1, int mode=0)
+void matchFrac(TString AnaVersion="V0",
+    TString DataSource = "data", TString MCSource = "pythia",
+    int doSel = 1, int mode=0,
+    float EPzMin=0, float EPzMax=200, float EPzBinSize=5)
 {
+  // top level info
   gDataSource=DataSource;
   gMCSource=MCSource;
+  TString AnaObs = "EPz";
+  TString AnaTag = Form("ana%s_%s_Mode%d_Min%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
+      AnaVersion.Data(),AnaObs.Data(),mode,
+      EPzMin,EPzMax,EPzBinSize,
+      doSel,
+      DataSource.Data(),MCSource.Data());
+  cout << "====== Ana: " << AnaTag << endl;
+  // mkdir dir for output
+  TString outdir=Form("plots/%s/%s_Sel%d",AnaVersion.Data(),AnaObs.Data(),doSel);
+  gSystem->mkdir(Form("%s",outdir.Data()),kTRUE);
+
   // set anaMode
   anaMode=mode;
   if (mode==0) {
@@ -255,17 +270,17 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   TString * databgfname;
   // data
   if (DataSource=="data")
-    datafname = new TString("PixelTree-124022-hfcuts.root");
+    datafname = new TString("PixelTree-124120-hfcuts.root");
   if (DataSource=="pythia")
-    datafname = new TString("pixelTree_Pythia_MinBias_D6T_900GeV_d20091229_Vertex1229.root");
+    datafname = new TString("pixelTree_Pythia_MinBias_D6T_2360GeV_d20091229_Vertex1224.root");
   if (DataSource=="phojet") {
-    datafname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100108.root");
+    datafname= new TString("pixelTree_Phojet_MinBias_2360GeV_d20100108.root");
   }
   // mc
   if (MCSource=="pythia")
-    mcfname= new TString("pixelTree_Pythia_MinBias_D6T_900GeV_d20091229_Vertex1229.root");
+    mcfname= new TString("pixelTree_Pythia_MinBias_D6T_2360GeV_d20091229_Vertex1224.root");
   if (MCSource=="phojet") {
-    mcfname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100108.root");
+    mcfname= new TString("pixelTree_Phojet_MinBias_2360GeV_d20100108.root");
   }
   databgfname= new TString("pixelTree_123596v5-emptytarget_SDRelFrac1.0.root");
   cout << "Data: " << datafname->Data() << endl;
@@ -279,13 +294,14 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //TTree * treeDataBg; databgFile->GetObject("PixelTree",treeDataBg);
 
   // Now define output
-  TFile * fout = new TFile(Form("histAna/hist_%s_use_%s_Sel%d_Mode%d.root",DataSource.Data(),MCSource.Data(),doSel,mode),"RECREATE");
+  TFile * fout = new TFile(Form("%s/%s.root",outdir.Data(),AnaTag.Data()),"RECREATE");
 
   // ===== trigger =====
   bool isMC=true;
-  selectionCut mcSel(isMC,doSel,124023,41,96);
+  selectionCut mcSel(isMC,doSel,124120,0,100000);
   if (DataSource=="data") isMC=false;
-  selectionCut dataSel(isMC,doSel,124023,41,96);
+  selectionCut dataSel(isMC,doSel,124120,0,100000);
+  dataSel.AnaTag = AnaTag;
   printf("\n===== Triggering =====\n");
   cout << "Data: " << TString(dataSel.Cut) << endl;
   cout << "MC: " << TString(mcSel.Cut) << endl;
@@ -329,10 +345,11 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //
   // declare histograms
   printf("now declare hists\n");
-  Double_t EPzMin=0, EPzMax=200, EPzBinSize=10, EPzYMax=0.05, Chi2YMax=20;
+  Double_t EPzYMax=0.05, Chi2YMax=20;
   if (doSel==4) {
-    EPzMin=18;
     EPzYMax=0.01;
+    if (EPzBinSize<9)
+      EPzYMax=0.03;
   }
   const Int_t EPzNBINS=EPzMax/EPzBinSize;
   for (Int_t i=0; i<source.size(); ++i) {
@@ -431,8 +448,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
     Double_t bestX = myfun->GetParameter(0);
     printf("\n\n   Best %s fit fraction: %f\n",wanted0.Data(),bestX);
     printf("       Error: (%f,%f)\n",bestX-chiELow,chiEHigh-bestX);
-    printf("       Condition: Data:%s, MC:%s, Sel%d, Mode%d, EPzMin:%f,Max:%f,Delta:%f\n\n",
-	DataSource.Data(),MCSource.Data(),doSel,mode,EPzMin,EPzMax,EPzBinSize);
+    printf("       Analysis: %s",AnaTag.Data());
     TLine * lELow = new TLine(chiELow,hChi2->GetMinimum(),chiELow,hChi2->GetMaximum());
     //lELow->Draw("same");
     TLine * lEHigh = new TLine(chiEHigh,hChi2->GetMinimum(),chiEHigh,hChi2->GetMaximum());
@@ -449,7 +465,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
       leg2->AddEntry("",Form("%.4f",truthFrac),"");
       leg2->Draw();
     }
-    cChi2->Print(Form("plots/%s_use_%s_cChi2_Sel%d_Mode%d.gif",DataSource.Data(),MCSource.Data(),doSel,mode));
+    cChi2->Print(Form("%s/%s_cChi2.gif",outdir.Data(),AnaTag.Data()));
 
     // draw distributions
     TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
@@ -460,7 +476,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
 	-1,
 	1,
 	EPzYMax);
-    cEaddPz->Print(Form("plots/%s_use_%s_cEaddPz_Sel%d_Mode%d.gif",DataSource.Data(),MCSource.Data(),doSel,mode));
+    cEaddPz->Print(Form("%s/%s_cEaddPz.gif",outdir.Data(),AnaTag.Data()));
     TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
     histDiffrChi2(
 	evtEtaHists,
@@ -469,7 +485,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
 	-1,
 	1,
 	1);
-    cEvtEta->Print(Form("plots/%s_use_%s_cEvtEta_Sel%d_Mode%d.gif",DataSource.Data(),MCSource.Data(),doSel,mode));
+    cEvtEta->Print(Form("%s/%s_cEvtEta.gif",outdir.Data(),AnaTag.Data()));
   } // end of anaMode<2
 
 
@@ -492,7 +508,7 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
     bestX=h2Chi2->GetXaxis()->GetBinCenter(bestXBin);
     bestY=h2Chi2->GetYaxis()->GetBinCenter(bestYBin);
     printf("\n\n   Best %s,%s fit fraction: %f,%f\n",wanted0.Data(),wanted1.Data(),bestX,bestY);
-    cChi2->Print(Form("plots/%s_use_%s_c2DChi2_Sel%d_Mode%d.gif",DataSource.Data(),MCSource.Data(),doSel,mode));
+    cChi2->Print(Form("%s/%s_c2DChi2.gif",outdir.Data(),AnaTag.Data()));
     TCanvas * cEvtEta = new TCanvas("c2DEvtEta","c2DEvtEta",600,600);
     histDiffrChi2(
 	evtEtaHists,
