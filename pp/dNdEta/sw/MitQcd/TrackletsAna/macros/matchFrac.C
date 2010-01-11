@@ -282,11 +282,8 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   TFile * fout = new TFile(Form("histAna/hist_%s_use_%s_Sel%d_Mode%d.root",DataSource.Data(),MCSource.Data(),doSel,mode),"RECREATE");
 
   // ===== trigger =====
-  bool isMC;
-  if (MCSource=="pythia" || MCSource=="phojet") isMC=true;
-  if (MCSource=="data") isMC=false;
+  bool isMC=true;
   selectionCut mcSel(isMC,doSel,124023,41,96);
-  if (DataSource=="pythia" || DataSource=="phojet") isMC=true;
   if (DataSource=="data") isMC=false;
   selectionCut dataSel(isMC,doSel,124023,41,96);
   printf("\n===== Triggering =====\n");
@@ -332,12 +329,12 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
   //
   // declare histograms
   printf("now declare hists\n");
-  Double_t EPzMin=0, EPzMax=200, EPzYMax=0.05, Chi2YMax=20;
+  Double_t EPzMin=0, EPzMax=200, EPzBinSize=10, EPzYMax=0.05, Chi2YMax=20;
   if (doSel==4) {
     EPzMin=18;
     EPzYMax=0.01;
   }
-  const Int_t EPzNBINS=EPzMax/5;
+  const Int_t EPzNBINS=EPzMax/EPzBinSize;
   for (Int_t i=0; i<source.size(); ++i) {
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
     vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
@@ -434,8 +431,8 @@ void matchFrac(TString DataSource = "data", TString MCSource = "pythia",
     Double_t bestX = myfun->GetParameter(0);
     printf("\n\n   Best %s fit fraction: %f\n",wanted0.Data(),bestX);
     printf("       Error: (%f,%f)\n",bestX-chiELow,chiEHigh-bestX);
-    printf("       Condition: Data:%s, MC:%s, Sel%d, Mode%d, EPzMin:%f,Max:%f\n\n",
-	DataSource.Data(),MCSource.Data(),doSel,mode,EPzMin,EPzMax);
+    printf("       Condition: Data:%s, MC:%s, Sel%d, Mode%d, EPzMin:%f,Max:%f,Delta:%f\n\n",
+	DataSource.Data(),MCSource.Data(),doSel,mode,EPzMin,EPzMax,EPzBinSize);
     TLine * lELow = new TLine(chiELow,hChi2->GetMinimum(),chiELow,hChi2->GetMaximum());
     //lELow->Draw("same");
     TLine * lEHigh = new TLine(chiEHigh,hChi2->GetMinimum(),chiEHigh,hChi2->GetMaximum());
