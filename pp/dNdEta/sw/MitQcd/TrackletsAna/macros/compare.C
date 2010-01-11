@@ -133,5 +133,5 @@ void compare(int evtType = 0, int doSel = 4,
   }
   c0->Update();
   c2->Update();
-  c0->Print("plots/compare_hEaddEp.gif");
+  c0->Print("plots/inspection/compare_hEaddEp.gif");
 }
