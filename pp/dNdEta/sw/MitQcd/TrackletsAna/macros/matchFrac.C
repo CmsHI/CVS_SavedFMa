@@ -231,13 +231,13 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
 // === Main function ===
 void matchFrac(TString AnaVersion="V0",
     TString DataSource = "data", TString MCSource = "pythia",
+    TString AnaObs = "EaddEp", //EvtEta, EsubEp
     int doSel = 1, int mode=0,
     float EPzMin=0, float EPzMax=200, float EPzBinSize=5)
 {
   // top level info
   gDataSource=DataSource;
   gMCSource=MCSource;
-  TString AnaObs = "EPz";
   TString AnaTag = Form("ana%s_%s_Mode%d_Min%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
       AnaVersion.Data(),AnaObs.Data(),mode,
       EPzMin,EPzMax,EPzBinSize,
@@ -345,11 +345,10 @@ void matchFrac(TString AnaVersion="V0",
   //
   // declare histograms
   printf("now declare hists\n");
-  Double_t EPzYMax=0.05, Chi2YMax=20;
+  Double_t EPzYMax=0.035/(EPzMax/200), Chi2YMax=60;
   if (doSel==4) {
-    EPzYMax=0.01;
-    if (EPzBinSize<9)
-      EPzYMax=0.04;
+    EPzYMax=0.01/(EPzMax/200);
+    Chi2YMax=20;
   }
   const Int_t EPzNBINS=EPzMax/EPzBinSize;
   for (Int_t i=0; i<source.size(); ++i) {
@@ -410,30 +409,36 @@ void matchFrac(TString AnaVersion="V0",
   }
 
 
-  // calc chi2
+  // === calc chi2 ===
   printf("\n=========== Chi2 clac ================\n");
   Int_t N=100;
   Double_t maxTestFrac=0.5;
   TCanvas * cChi2 = new TCanvas("cChi2","cChi2",600,600);
   TH1D * hChi2 = new TH1D("hChi2",Form(";%s Fraction;#chi^{2}",wanted0.Data()),N,0,maxTestFrac);
   hChi2->SetMinimum(0);
-  hChi2->SetMaximum(Chi2YMax);
+  if (Chi2YMax>0) hChi2->SetMaximum(Chi2YMax);
   TH2D * h2Chi2 = new TH2D("h2Chi2",Form(";%s Fraction;%s Fraction",wanted0.Data(),wanted1.Data()),N,0,maxTestFrac,N,0,maxTestFrac);
   h2Chi2->SetMinimum(0);
 
   Double_t bestX=0, bestY=0, bestZ=0;
   Double_t step = maxTestFrac/(Float_t)N;
+  vector<TString> fitObsHists;
+  // determine what var to fit
+  if (AnaObs=="EvtEta") fitObsHists = evtEtaHists;
+  if (AnaObs=="EaddEp") fitObsHists = EaddEpHists;
+  if (AnaObs=="EsubEp") fitObsHists = EsubEpHists;
+  // make chi2
   if (anaMode==0 || anaMode==1) {
     for (Int_t i=1; i<=N; ++i) {
       Double_t trialFrac = i*step;
       Double_t chi2 = histDiffrChi2(
-	  EaddEpHists,
+	  fitObsHists,
 	  anaMode,
 	  trialFrac);
       hChi2->SetBinContent(i,chi2);
     }
     hChi2->Draw();
-    // fit chi2
+    // === fit chi2 ===
     Double_t chi2Min = hChi2->GetBinCenter(hChi2->GetMinimumBin());
     TF1 *myfun = new TF1("myfun","[1]*(x-[0])*(x-[0])+[2]");
     myfun->SetParameters(chi2Min,100,1);
