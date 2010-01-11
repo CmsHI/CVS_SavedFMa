@@ -270,7 +270,7 @@ void matchFrac(TString AnaVersion="V0",
   TString * databgfname;
   // data
   if (DataSource=="data")
-    datafname = new TString("PixelTree-124120-hfcuts.root");
+    datafname = new TString("../input/pixelTree_124120-vtxcmp_MB.root");
   if (DataSource=="pythia")
     datafname = new TString("pixelTree_Pythia_MinBias_D6T_2360GeV_d20091229_Vertex1224.root");
   if (DataSource=="phojet") {
