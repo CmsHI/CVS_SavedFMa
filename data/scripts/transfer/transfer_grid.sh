@@ -18,11 +18,14 @@ destination=/castor/cern.ch/user/f/frankma/data/$type/$version/Hydjet_MinBias_no
 counter=1
 
 rfmkdir -p $destination
+log=files.log
+echo start > $log
 for infile in `cat $files`
 do
    if [ $counter -ge $2 ] && [ $counter -le $3 ]; then
       file=/tmp/$infile
-      lcg-cp srm://se01.cmsaf.mit.edu:8443/$dir/$infile file:$file
+      echo $dir/$infile >> $log
+      lcg-cp srm://se01.cmsaf.mit.edu:8443/$dir/$infile file:$file >> $log
       rfcp $file $destination/
       rm $file
    fi
