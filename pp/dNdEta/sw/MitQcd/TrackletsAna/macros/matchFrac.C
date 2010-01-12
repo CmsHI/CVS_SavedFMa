@@ -454,6 +454,10 @@ void matchFrac(TString AnaVersion="V0",
     printf("\n\n   Best %s fit fraction: %f\n",wanted0.Data(),bestX);
     printf("       Error: (%f,%f)\n",bestX-chiELow,chiEHigh-bestX);
     printf("       Analysis: %s, %s: %f(%f,%f)\n\n",AnaTag.Data(),wanted0.Data(),bestX,bestX-chiELow,chiEHigh-bestX);
+    if (AnaObs=="EvtEta")
+      printf("       Twiki - %s, %s: | %s | %s | %.1f+-%.1f\% |\n\n",AnaTag.Data(),wanted0.Data(),AnaObs.Data(),MCSource.Data(),bestX*100,(chiEHigh-bestX)*100);
+    else
+      printf("       Twiki - %s, %s: | %s (%.0fto%.0fGeV) | %s | %.1f+-%.1f\% |\n\n",AnaTag.Data(),wanted0.Data(),AnaObs.Data(),EPzMin,EPzMax,MCSource.Data(),bestX*100,(chiEHigh-bestX)*100);
     TLine * lELow = new TLine(chiELow,hChi2->GetMinimum(),chiELow,hChi2->GetMaximum());
     //lELow->Draw("same");
     TLine * lEHigh = new TLine(chiEHigh,hChi2->GetMinimum(),chiEHigh,hChi2->GetMaximum());
