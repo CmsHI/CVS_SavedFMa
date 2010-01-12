@@ -19,7 +19,7 @@ for obs in EaddEp EsubEp; do
   for DataSource in data pythia phojet; do
     for MCSource in pythia phojet; do
       # case EaddEp
-      if [ $obs == "EaddEp" ]; then
+      if [ $obs != "EvtEta" ]; then
 	for EPzMax in 200 100 50; do
 	  root -b -q matchFrac.C+\(\"$version\",\"$DataSource\",\"$MCSource\",\"$obs\",$doSel,$anaMode,0,$EPzMax,5\) >> $log
 	done
