@@ -49,6 +49,7 @@ void calcTrigEff(TTree * tree, TString Source, TCut baseSel,
 
   cout << "Type: " << etype[wantType] << "  " << etypeCut[wantType] << endl;
   cout << "Truth Frac: " << nTypeTotal/nTotal << endl;
+  cout << "  After base sel: " << nTypeTrig/nTrig << "  After base+HF coinc: " << nTypeTrigSel/nTrigSel << endl;
   cout << etype[wantType] << " Sel Eff: " << nTypeTrig/nTypeTotal << "   DF - Base+HF_Coinc/Base Eff: " << nTypeTrigSel/nTypeTrig << endl;
   return;
 }
