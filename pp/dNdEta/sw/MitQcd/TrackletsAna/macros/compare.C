@@ -12,8 +12,49 @@
 #include "../selectionCut.h"
 using namespace std;
 
+// === Helpers ===
+void calcTrigEff(TTree * tree, TString Source, TCut baseSel,
+    const vector<TString> & etype, const vector<TCut> & etypeCut,
+    Int_t wantType=3)
+{
+  cout << "  --- Trig Eff for " << Source << " ---" << endl;
+  Double_t nTotal, nTrig, nTrigSel, nTypeTotal, nTypeTrig, nTypeTrigSel;
+
+  // base cuts
+  TCut All=etypeCut[0];
+  if (Source=="data") All="1==1"; 
+
+  TCut trigCut=baseSel && All;
+  TCut selCut="nHFn>0&&nHFp>0";
+  TCut trigSelCut=trigCut && selCut;
+
+  cout << "Base Selection: " << TString(trigCut) << endl;
+  cout << "Base+HF_Coinc: " << TString(trigSelCut) << endl;
+
+  nTotal=tree->GetEntries(All);
+  nTrig=tree->GetEntries(trigCut);
+  nTrigSel=tree->GetEntries(trigSelCut);
+  cout << "Base Selection Eff: " << nTrig/nTotal << "   Base+HF_Coinc/Base Eff: " << nTrigSel/nTrig << endl << endl;
+  if (Source=="data") return;
+
+  // MC only
+  TCut trigTypeCut=trigCut&&etypeCut[wantType];
+  TCut trigTypeSelCut=trigTypeCut && selCut; 
+  cout << etype[wantType] << " Base Selection: " << TString(trigTypeCut) << endl;
+  cout << etype[wantType] << " Base+HF_Coinc: " << TString(trigTypeSelCut) << endl;
+
+  nTypeTotal=tree->GetEntries(etypeCut[wantType]);
+  nTypeTrig=tree->GetEntries(trigTypeCut);
+  nTypeTrigSel=tree->GetEntries(trigTypeSelCut);
+
+  cout << "Type: " << etype[wantType] << "  " << etypeCut[wantType] << endl;
+  cout << "Truth Frac: " << nTypeTotal/nTotal << endl;
+  cout << etype[wantType] << " Sel Eff: " << nTypeTrig/nTypeTotal << "   DF - Base+HF_Coinc/Base Eff: " << nTypeTrigSel/nTypeTrig << endl;
+  return;
+}
+
 // === Main function ===
-void compare(int evtType = 0, int doSel = 4,
+void compare(int evtType = 0, int doSel = 1,
     const char * datafname="../input/pixelTree_124120-vtxcmp_MB.root",
     const char * mcfname="pixelTree_Pythia_MinBias_D6T_2360GeV_d20091229_Vertex1224.root",
     const char * mc2fname="pixelTree_Phojet_MinBias_2360GeV_d20100108.root")
@@ -112,6 +153,13 @@ void compare(int evtType = 0, int doSel = 4,
   cout << "draw: hEaddEp_phojet: " << treeMC2->Draw("SumEaddEp>>hEaddEp_phojet",mcSel.Cut&&TCut(etypePhojCut[evtType]),"E") << endl;;
   cout << "draw: hEaddEp_pythia: " << treeMC->Draw("SumEaddEp>>hEaddEp_pythia",mcSel.Cut&&etypeCut[evtType],"Esame") << endl;;
   cout << "draw: hEaddEp_data: " << treeData->Draw("SumEaddEp>>hEaddEp_data",dataSel.Cut,"Esame") << endl;;
+  // calc trigger eff
+  printf("\n===== Trig Eff =====\n");
+  Int_t calcEvtType=3; // All=0, SD=1, NSD=2, DF=3, ND=4
+  calcTrigEff(treeData,"data",dataSel.Cut,etype,etypeCut,calcEvtType);
+  calcTrigEff(treeMC,"pythia",mcSel.Cut,etype,etypeCut,calcEvtType);
+  calcTrigEff(treeMC2,"phojet",mcSel.Cut,etype,etypePhojCut,calcEvtType);
+  printf("======================================\n\n");
 
   TCanvas * c0 = new TCanvas("c0","c0",500,500);
   TH1D * hEaddEp_data = (TH1D*)gDirectory->FindObject("hEaddEp_data");
