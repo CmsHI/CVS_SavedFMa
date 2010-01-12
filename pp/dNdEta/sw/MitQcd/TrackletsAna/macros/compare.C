@@ -14,7 +14,7 @@ using namespace std;
 
 // === Main function ===
 void compare(int evtType = 0, int doSel = 4,
-    const char * datafname="pixelTree_124120-vtxcmp_MB.root",
+    const char * datafname="../input/pixelTree_124120-vtxcmp_MB.root",
     const char * mcfname="pixelTree_Pythia_MinBias_D6T_2360GeV_d20091229_Vertex1224.root",
     const char * mc2fname="pixelTree_Phojet_MinBias_2360GeV_d20100108.root")
 {
