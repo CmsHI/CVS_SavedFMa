@@ -319,11 +319,6 @@ void matchFrac(TString AnaVersion="V0",
   color.push_back(kRed);
   color.push_back(kBlue);
   color.push_back(kGreen-1);
-  // observables
-  vector<TString> obs;
-  obs.push_back("EvtEta");
-  obs.push_back("EaddEp");
-  obs.push_back("EsubEp");
   // event types
   vector<TString> etype;
   vector<TCut> etypeCut;
