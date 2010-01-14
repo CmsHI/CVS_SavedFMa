@@ -356,12 +356,16 @@ void matchFrac(TString AnaVersion="V0",
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
     vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",EPzNBINS,EPzMin,EPzMax));
+    vh1.push_back(new TH1D(Form("hEaddEpPos_%s",source[i].Data()),";#Sigma E+Pz (HF+);",EPzNBINS,EPzMin,EPzMax));
+    vh1.push_back(new TH1D(Form("hEsubEpNeg_%s",source[i].Data()),";#Sigma E-Pz (HF-);",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH2D(Form("hEPz_%s",source[i].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
     if (source[i]==mcHistLabel) {
       for (Int_t j=0; j<etype.size(); ++j) {
 	vh1.push_back(new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";Event #eta;",100,-5,5));
 	vh1.push_back(new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH1D(Form("hEsubEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz;",EPzNBINS,EPzMin,EPzMax));
+	vh1.push_back(new TH1D(Form("hEaddEpPos_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz (HF+);",EPzNBINS,EPzMin,EPzMax));
+	vh1.push_back(new TH1D(Form("hEsubEpNeg_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz (HF-);",EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH2D(Form("hEPz_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
       }
     }
@@ -376,17 +380,23 @@ void matchFrac(TString AnaVersion="V0",
   vector<TString> evtEtaHists;
   vector<TString> EaddEpHists;
   vector<TString> EsubEpHists;
+  vector<TString> EaddEpPosHists;
+  vector<TString> EsubEpNegHists;
   vector<TString> EPzHists;
   if (MCSource=="pythia") {
     fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,evtEtaHists);
     fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpHists);
     fillHist("SumEsubEp","hEsubEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EsubEpHists);
+    fillHist("SumEaddEpPos","hEaddEpPos",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpPosHists);
+    fillHist("SumEsubEpNeg","hEsubEpNeg",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EsubEpNegHists);
     fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EPzHists);
   }
   if (MCSource=="phojet") {
     fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,evtEtaHists);
     fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EaddEpHists);
     fillHist("SumEsubEp","hEsubEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EsubEpHists);
+    fillHist("SumEaddEpPos","hEaddEpPos",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EaddEpPosHists);
+    fillHist("SumEsubEpNeg","hEsubEpNeg",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EsubEpNegHists);
     fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EPzHists);
   }
   // calc cuts
@@ -433,6 +443,8 @@ void matchFrac(TString AnaVersion="V0",
   if (AnaObs=="EvtEta") fitObsHists = evtEtaHists;
   if (AnaObs=="EaddEp") fitObsHists = EaddEpHists;
   if (AnaObs=="EsubEp") fitObsHists = EsubEpHists;
+  if (AnaObs=="EaddEpPos") fitObsHists = EaddEpPosHists;
+  if (AnaObs=="EsubEpNeg") fitObsHists = EsubEpNegHists;
   // make chi2
   if (anaMode==0 || anaMode==1) {
     for (Int_t i=1; i<=N; ++i) {
@@ -486,7 +498,7 @@ void matchFrac(TString AnaVersion="V0",
     // -- default --
     TCanvas * cEaddPzDefault = new TCanvas("cEaddPzDefault","cEaddPzDefault",600,600);
     histDiffrChi2(
-	EaddEpHists,
+	EaddEpPosHists,
 	anaMode,
 	//0,
 	mcTruthFrac,
@@ -498,7 +510,7 @@ void matchFrac(TString AnaVersion="V0",
     // -- fitted --
     TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
     histDiffrChi2(
-	EaddEpHists,
+	EaddEpPosHists,
 	anaMode,
 	bestX,
 	-1,
