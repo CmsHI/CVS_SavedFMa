@@ -162,16 +162,13 @@ void compare(int evtType = 0, int doSel = 1,
   calcTrigEff(treeMC2,"phojet",mcSel.Cut,etype,etypePhojCut,calcEvtType);
   printf("======================================\n\n");
 
-  TCanvas * c0 = new TCanvas("c0","c0",500,500);
+  // get histograms
   TH1D * hEaddEp_data = (TH1D*)gDirectory->FindObject("hEaddEp_data");
   printf("%s: %f entries\n",hEaddEp_data->GetName(),hEaddEp_data->GetEntries());
   TH1D * hEaddEp_pythia = (TH1D*)gDirectory->FindObject("hEaddEp_pythia");
   printf("%s: %f entries\n",hEaddEp_pythia->GetName(),hEaddEp_pythia->GetEntries());
   TH1D * hEaddEp_phojet = (TH1D*)gDirectory->FindObject("hEaddEp_phojet");
   printf("%s: %f entries\n",hEaddEp_phojet->GetName(),hEaddEp_phojet->GetEntries());
-  hEaddEp_pythia->Draw("E");
-  hEaddEp_phojet->Draw("Esame");
-  hEaddEp_data->Draw("Esame");
 
   // declare legend
   TLegend *leg2 = new TLegend(0.748,0.833,0.95,0.93,NULL,"brNDC");
@@ -180,8 +177,8 @@ void compare(int evtType = 0, int doSel = 1,
   leg2->AddEntry(hEaddEp_data,"data","p");
   leg2->AddEntry(hEaddEp_pythia,"pythia","p");
   leg2->AddEntry(hEaddEp_phojet,"phojet","p");
-  leg2->Draw();
 
+  // draw from tree
   TCanvas * c2 = new TCanvas("c2","c2",500,500);
   treeData->Draw("vz[1]>>hVz_data",dataSel.Cut,"");
   treeMC->Draw("vz[1]>>hVz_pythia",mcSel.Cut&&etypeCut[evtType],"same");
@@ -192,8 +189,17 @@ void compare(int evtType = 0, int doSel = 1,
   for (Int_t ih1=0; ih1<vh1.size(); ++ih1) {
     vh1[ih1]->Scale(1./vh1[ih1]->GetEntries()/vh1[ih1]->GetBinWidth(1));
   }
-  c0->Draw();
-  c2->Draw();
-  c0->Print("plots/inspection/compare_hEaddEp.gif");
+  c2->Update();
   c2->Print("plots/inspection/compare_hVz.gif");
+
+  // draw from hists
+  TCanvas * cEPz = new TCanvas("cEPz","cEPz",500,500);
+  hEaddEp_pythia->SetMinimum(0);
+  hEaddEp_pythia->SetMaximum(0.015);
+  hEaddEp_pythia->Draw("E");
+  hEaddEp_phojet->Draw("Esame");
+  hEaddEp_data->Draw("Esame");
+  leg2->Draw();
+
+  cEPz->Print("plots/inspection/compare_hEaddEp.gif");
 }
