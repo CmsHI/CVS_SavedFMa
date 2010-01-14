@@ -52,7 +52,10 @@ selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumi
      evtSelection      = ("L1T[41]>0&&L1T[36]!=1&&L1T[37]!=1&&L1T[38]!=1&&L1T[39]!=1");
    // halo veto + Hf tower count
    else if (selType==4)
-     evtSelection      = ("nHFp>=1&&nHFn>=1&&L1T[36]!=1&&L1T[37]!=1&&L1T[38]!=1&&L1T[39]!=1");
+     evtSelection      = ("nHFp>0&&nHFn>0&&L1T[36]!=1&&L1T[37]!=1&&L1T[38]!=1&&L1T[39]!=1");
+   // Diffractive only
+   else if (selType==10)
+     evtSelection      = ("L1T[34]>0&&!(nHFp>0&&nHFn>0)&&L1T[36]!=1&&L1T[37]!=1&&L1T[38]!=1&&L1T[39]!=1");
 
    if (!isMC) {
      evtSelection += Form("&&nLumi>=%d&&nLumi<=%d&&L1A[0]==1&&L1A[82]==1",nLumiL,nLumiH);
