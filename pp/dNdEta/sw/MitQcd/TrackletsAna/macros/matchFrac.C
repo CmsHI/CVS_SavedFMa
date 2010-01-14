@@ -161,11 +161,14 @@ Double_t histDiffrChi2(
     TLegend *leg2 = new TLegend(0.651,0.776,0.953,0.928,NULL,"brNDC");
     leg2->SetFillColor(0);
     leg2->SetBorderSize(0);
+    TString drawMode="Best Fit";
+    if (draw==2)
+      drawMode="Default";
     leg2->AddEntry(hData,Form("%s",gDataSource.Data()),"p");
-    leg2->AddEntry(h1,Form("%s - Best Fit %s",gMCSource.Data(),wanted0.Data()),"p");
-    leg2->AddEntry(h2,Form("%s - Best Fit %s",gMCSource.Data(),wanted1.Data()),"p");
-    if (mode==2) leg2->AddEntry(h3,Form("%s - Best Fit %s",gMCSource.Data(),wanted2.Data()),"p");
-    leg2->AddEntry(hFit,Form("%s - Best Fit All",gMCSource.Data()),"l");
+    leg2->AddEntry(h1,Form("%s - %s %s",gMCSource.Data(),drawMode.Data(),wanted0.Data()),"p");
+    leg2->AddEntry(h2,Form("%s - %s %s",gMCSource.Data(),drawMode.Data(),wanted1.Data()),"p");
+    if (mode==2) leg2->AddEntry(h3,Form("%s - %s %s",gMCSource.Data(),drawMode.Data(),wanted2.Data()),"p");
+    leg2->AddEntry(hFit,Form("%s - %s All",gMCSource.Data(),drawMode.Data()),"l");
     leg2->Draw();
   }
   else {
@@ -493,7 +496,7 @@ void matchFrac(TString AnaVersion="V0",
 	//0,
 	mcTruthFrac,
 	-1,
-	1,
+	2,
 	EPzYMax);
     cEaddPzDefault->Print(Form("%s/%s_cEaddPzDefault.gif",outdir.Data(),AnaTag.Data()));
 
