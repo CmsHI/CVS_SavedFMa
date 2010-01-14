@@ -56,9 +56,9 @@ void calcTrigEff(TTree * tree, TString Source, TCut baseSel,
 
 // === Main function ===
 void compare(int evtType = 0, int doSel = 1,
-    const char * datafname="../input/pixelTree_124120-vtxcmp_MB.root",
-    const char * mcfname="pixelTree_Pythia_MinBias_D6T_2360GeV_d20091229_Vertex1224.root",
-    const char * mc2fname="pixelTree_Phojet_MinBias_2360GeV_d20100108.root")
+    const char * datafname="../input/pixelTree_124022a3a4-vtxcomp_MB.root",
+    const char * mcfname="pixelTree_Pythia_MinBias_D6T_900GeV_d20091229_Vertex1229.root",
+    const char * mc2fname="pixelTree_Phojet_MinBias_900GeV_d20100108.root")
 {
   // get trees
   cout << "data: " << datafname << endl;
@@ -72,8 +72,8 @@ void compare(int evtType = 0, int doSel = 1,
   TTree * treeMC2; mc2File->GetObject("PixelTree",treeMC2);
 
   // trigger
-  selectionCut mcSel(1,doSel,124120,0,1000000);
-  selectionCut dataSel(0,doSel,124120,0,100000);
+  selectionCut mcSel(1,doSel,124023,41,96);
+  selectionCut dataSel(0,doSel,124023,41,96);
 
   // configuation
   // sources
@@ -112,7 +112,7 @@ void compare(int evtType = 0, int doSel = 1,
   //
   // declare histograms
   printf("now declare hists\n");
-  const Double_t EPzMax=700;
+  const Double_t EPzMax=600;
   const Int_t EPzNBINS=EPzMax/5.;
   for (Int_t i=0; i<source.size(); ++i) {
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
@@ -144,6 +144,12 @@ void compare(int evtType = 0, int doSel = 1,
       vh1[ih1]->SetLineColor(kBlue);
       vh1[ih1]->SetMarkerStyle(kOpenStar);
     }
+    if (TString(vh1[ih1]->GetName()).Contains("DF")) {
+      vh1[ih1]->SetLineStyle(2);
+    }
+    if (TString(vh1[ih1]->GetName()).Contains("ND")) {
+      vh1[ih1]->SetLineStyle(7);
+    }
   }
 
   // Fill histos
@@ -151,8 +157,13 @@ void compare(int evtType = 0, int doSel = 1,
   cout << "Data: " << TString(dataSel.Cut) << endl;
   cout << "MC: " << TString(mcSel.Cut&&etypeCut[evtType]) << endl;
   cout << "MC2: " << TString(mcSel.Cut&&etypePhojCut[evtType]) << endl;
-  cout << "draw: hEaddEp_phojet: " << treeMC2->Draw("SumEaddEp>>hEaddEp_phojet",mcSel.Cut&&TCut(etypePhojCut[evtType]),"E") << endl;;
-  cout << "draw: hEaddEp_pythia: " << treeMC->Draw("SumEaddEp>>hEaddEp_pythia",mcSel.Cut&&etypeCut[evtType],"Esame") << endl;;
+  // EPz
+  cout << "draw: hEaddEp_pythia: " << treeMC->Draw("SumEaddEp>>hEaddEp_pythia",mcSel.Cut&&etypeCut[evtType],"E") << endl;;
+  cout << "draw: hEaddEp_pythia_DF: " << treeMC->Draw("SumEaddEp>>hEaddEp_pythia_DF",mcSel.Cut&&etypeCut[3],"Esame") << endl;;
+  cout << "draw: hEaddEp_pythia_ND: " << treeMC->Draw("SumEaddEp>>hEaddEp_pythia_ND",mcSel.Cut&&etypeCut[4],"Esame") << endl;;
+  cout << "draw: hEaddEp_phojet: " << treeMC2->Draw("SumEaddEp>>hEaddEp_phojet",mcSel.Cut&&TCut(etypePhojCut[evtType]),"Esame") << endl;;
+  cout << "draw: hEaddEp_phojet_DF: " << treeMC2->Draw("SumEaddEp>>hEaddEp_phojet_DF",mcSel.Cut&&TCut(etypePhojCut[3]),"Esame") << endl;;
+  cout << "draw: hEaddEp_phojet_ND: " << treeMC2->Draw("SumEaddEp>>hEaddEp_phojet_ND",mcSel.Cut&&TCut(etypePhojCut[4]),"Esame") << endl;;
   cout << "draw: hEaddEp_data: " << treeData->Draw("SumEaddEp>>hEaddEp_data",dataSel.Cut,"Esame") << endl;;
   // calc trigger eff
   printf("\n===== Trig Eff =====\n");
@@ -167,16 +178,24 @@ void compare(int evtType = 0, int doSel = 1,
   printf("%s: %f entries\n",hEaddEp_data->GetName(),hEaddEp_data->GetEntries());
   TH1D * hEaddEp_pythia = (TH1D*)gDirectory->FindObject("hEaddEp_pythia");
   printf("%s: %f entries\n",hEaddEp_pythia->GetName(),hEaddEp_pythia->GetEntries());
+  TH1D * hEaddEp_pythia_DF = (TH1D*)gDirectory->FindObject("hEaddEp_pythia_DF");
+  printf("%s: %f entries\n",hEaddEp_pythia_DF->GetName(),hEaddEp_pythia_DF->GetEntries());
+  TH1D * hEaddEp_pythia_ND = (TH1D*)gDirectory->FindObject("hEaddEp_pythia_ND");
+  printf("%s: %f entries\n",hEaddEp_pythia_ND->GetName(),hEaddEp_pythia_ND->GetEntries());
   TH1D * hEaddEp_phojet = (TH1D*)gDirectory->FindObject("hEaddEp_phojet");
   printf("%s: %f entries\n",hEaddEp_phojet->GetName(),hEaddEp_phojet->GetEntries());
+  TH1D * hEaddEp_phojet_DF = (TH1D*)gDirectory->FindObject("hEaddEp_phojet_DF");
+  printf("%s: %f entries\n",hEaddEp_phojet_DF->GetName(),hEaddEp_phojet_DF->GetEntries());
+  TH1D * hEaddEp_phojet_ND = (TH1D*)gDirectory->FindObject("hEaddEp_phojet_ND");
+  printf("%s: %f entries\n",hEaddEp_phojet_ND->GetName(),hEaddEp_phojet_ND->GetEntries());
 
   // declare legend
-  TLegend *leg2 = new TLegend(0.748,0.833,0.95,0.93,NULL,"brNDC");
+  TLegend *leg2 = new TLegend(0.679,0.802,0.929,0.93,NULL,"brNDC");
   leg2->SetFillColor(0);
   leg2->SetBorderSize(0);
   leg2->AddEntry(hEaddEp_data,"data","p");
-  leg2->AddEntry(hEaddEp_pythia,"pythia","p");
-  leg2->AddEntry(hEaddEp_phojet,"phojet","p");
+  leg2->AddEntry(hEaddEp_pythia,Form("default pythia %s",etype[evtType].Data()),"p");
+  leg2->AddEntry(hEaddEp_phojet,Form("default phojet %s",etype[evtType].Data()),"p");
 
   // draw from tree
   TCanvas * c2 = new TCanvas("c2","c2",500,500);
@@ -194,8 +213,12 @@ void compare(int evtType = 0, int doSel = 1,
 
   // draw from hists
   TCanvas * cEPz = new TCanvas("cEPz","cEPz",500,500);
-  hEaddEp_pythia->SetMinimum(0);
-  hEaddEp_pythia->SetMaximum(0.015);
+  cEPz->SetLogy();
+  Double_t EPzYMax = 0.018;
+  if (doSel==4) EPzYMax = 0.007;
+  if (doSel==10) EPzYMax = 0.12;
+  hEaddEp_pythia->SetMinimum(0.0001);
+  hEaddEp_pythia->SetMaximum(EPzYMax);
   hEaddEp_pythia->Draw("E");
   hEaddEp_phojet->Draw("Esame");
   hEaddEp_data->Draw("Esame");
