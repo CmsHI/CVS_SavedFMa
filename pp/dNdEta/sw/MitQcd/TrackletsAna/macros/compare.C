@@ -169,18 +169,18 @@ void compare(int evtType = 0, int doSel = 1,
   printf("%s: %f entries\n",hEaddEp_pythia->GetName(),hEaddEp_pythia->GetEntries());
   TH1D * hEaddEp_phojet = (TH1D*)gDirectory->FindObject("hEaddEp_phojet");
   printf("%s: %f entries\n",hEaddEp_phojet->GetName(),hEaddEp_phojet->GetEntries());
+  hEaddEp_pythia->Draw("E");
+  hEaddEp_phojet->Draw("Esame");
+  hEaddEp_data->Draw("Esame");
+
   // declare legend
-  TLegend *leg2 = new TLegend(0.1879,0.839,0.39,0.942,NULL,"brNDC");
+  TLegend *leg2 = new TLegend(0.748,0.833,0.95,0.93,NULL,"brNDC");
   leg2->SetFillColor(0);
   leg2->SetBorderSize(0);
   leg2->AddEntry(hEaddEp_data,"data","p");
   leg2->AddEntry(hEaddEp_pythia,"pythia","p");
   leg2->AddEntry(hEaddEp_phojet,"phojet","p");
   leg2->Draw();
-
-  hEaddEp_phojet->Draw("E");
-  hEaddEp_data->Draw("Esame");
-  hEaddEp_pythia->Draw("Esame");
 
   TCanvas * c2 = new TCanvas("c2","c2",500,500);
   treeData->Draw("vz[1]>>hVz_data",dataSel.Cut,"");
