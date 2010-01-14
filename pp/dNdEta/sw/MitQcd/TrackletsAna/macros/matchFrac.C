@@ -127,7 +127,7 @@ Double_t histDiffrChi2(
     hFit->SetLineColor(kRed);
     hFit->SetLineStyle(1);
     hFit->SetMarkerStyle(0);
-    hFit->SetMinimum(0);
+    hFit->SetMinimum(0.0001);
     hFit->SetMaximum(ymax);
     hFit->Draw("hist E");
     // data
@@ -270,17 +270,17 @@ void matchFrac(TString AnaVersion="V0",
   TString * databgfname;
   // data
   if (DataSource=="data")
-    datafname = new TString("../input/pixelTree_124120-vtxcmp_MB.root");
+    datafname = new TString("../input/pixelTree_124022a3a4-vtxcomp_MB.root");
   if (DataSource=="pythia")
-    datafname = new TString("pixelTree_Pythia_MinBias_D6T_2360GeV_d20091229_Vertex1224.root");
+    datafname = new TString("pixelTree_Pythia_MinBias_D6T_900GeV_d20091229_Vertex1229.root");
   if (DataSource=="phojet") {
-    datafname= new TString("pixelTree_Phojet_MinBias_2360GeV_d20100108.root");
+    datafname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100108.root");
   }
   // mc
   if (MCSource=="pythia")
-    mcfname= new TString("pixelTree_Pythia_MinBias_D6T_2360GeV_d20091229_Vertex1224.root");
+    mcfname= new TString("pixelTree_Pythia_MinBias_D6T_900GeV_d20091229_Vertex1229.root");
   if (MCSource=="phojet") {
-    mcfname= new TString("pixelTree_Phojet_MinBias_2360GeV_d20100108.root");
+    mcfname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100108.root");
   }
   databgfname= new TString("pixelTree_123596v5-emptytarget_SDRelFrac1.0.root");
   cout << "Data: " << datafname->Data() << endl;
@@ -298,9 +298,9 @@ void matchFrac(TString AnaVersion="V0",
 
   // ===== trigger =====
   bool isMC=true;
-  selectionCut mcSel(isMC,doSel,124120,0,100000);
+  selectionCut mcSel(isMC,doSel,124023,41,96);
   if (DataSource=="data") isMC=false;
-  selectionCut dataSel(isMC,doSel,124120,0,100000);
+  selectionCut dataSel(isMC,doSel,124023,41,96);
   dataSel.AnaTag = AnaTag;
   printf("\n===== Triggering =====\n");
   cout << "Data: " << TString(dataSel.Cut) << endl;
@@ -350,6 +350,9 @@ void matchFrac(TString AnaVersion="V0",
     EPzYMax=0.01/(EPzMax/200);
     Chi2YMax=20;
   }
+  if (doSel==10) {
+    EPzYMax=0.12/(EPzMax/200);
+  }
   const Int_t EPzNBINS=EPzMax/EPzBinSize;
   for (Int_t i=0; i<source.size(); ++i) {
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
@@ -391,8 +394,13 @@ void matchFrac(TString AnaVersion="V0",
   // calc cuts
   // for mc
   printf("\n===== MC Input =====\n");
-  if (MCSource=="pythia") calcFrac(treeMC,mcSel.Cut,etype,etypeCut);
-  if (MCSource=="phojet") calcFrac(treeMC,mcSel.Cut,etype,etypePhojCut);
+  Double_t mcTruthFrac=-1;
+  if (MCSource=="pythia") {
+    mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypeCut,wanted0);
+  }
+  if (MCSource=="phojet") {
+    mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypePhojCut,wanted0);
+  }
   // for data or "data"
   Double_t truthFrac=-1;
   if (DataSource=="data") {
@@ -462,7 +470,7 @@ void matchFrac(TString AnaVersion="V0",
     //lELow->Draw("same");
     TLine * lEHigh = new TLine(chiEHigh,hChi2->GetMinimum(),chiEHigh,hChi2->GetMaximum());
     //lEHigh->Draw("same");
-    // mc truth if using mc
+    // mc truth if using mc as "data"
     if (DataSource=="pythia"||DataSource=="phojet") {
       TLine * l = new TLine(truthFrac,hChi2->GetMinimum(),truthFrac,hChi2->GetMaximum());
       l->SetLineColor(2);
@@ -477,6 +485,19 @@ void matchFrac(TString AnaVersion="V0",
     cChi2->Print(Form("%s/%s_cChi2.gif",outdir.Data(),AnaTag.Data()));
 
     // draw distributions
+    // -- default --
+    TCanvas * cEaddPzDefault = new TCanvas("cEaddPzDefault","cEaddPzDefault",600,600);
+    histDiffrChi2(
+	EaddEpHists,
+	anaMode,
+	//0,
+	mcTruthFrac,
+	-1,
+	1,
+	EPzYMax);
+    cEaddPzDefault->Print(Form("%s/%s_cEaddPzDefault.gif",outdir.Data(),AnaTag.Data()));
+
+    // -- fitted --
     TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
     histDiffrChi2(
 	EaddEpHists,
