@@ -1,0 +1,20 @@
+=== Tag: DF010 ===
+--Main changes--
+- selectionCut.h
+  * Refine Sel4 to have HF coinc + Bit 34
+    + saw ~0% change in phojet, ~0.5% change in pythia
+  * Added anti-HF-coincidence (Sel10)
+- compare.C
+  * Slight adjustment for running with Sel10
+  * Add single sided E+-Pz obs's
+- matchFrac.C
+  * automatic printout of twiki
+  * add drawing of default MC distributions
+  * Add fit with single sided E+-Pz obs's
+    + saw no change in fit result from full HF sums
+
+--Ana Run--
+- V61 (900 GeV)
+  * log/anaV61*
+- https://twiki.cern.ch/twiki/bin/view/CMS/DNdEtaWorkingGroupDiffractionStudy#900_GeV
+
