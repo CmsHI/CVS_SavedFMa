@@ -9,7 +9,7 @@ version=$1
 tag=$2
 anaMode=0
 
-for doSel in 1 4 10; do
+for doSel in 1; do #1 4 10; do
   for obs in EaddEp EvtEta EsubEp EaddEpPos EsubEpNeg; do
     log=log/ana${version}_${obs}_Mode${anaMode}_Sel${doSel}_$tag.log
     echo start > $log
