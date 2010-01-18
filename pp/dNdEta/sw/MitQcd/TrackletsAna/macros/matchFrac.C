@@ -506,6 +506,7 @@ void matchFrac(TString AnaVersion="V0",
 	2,
 	EPzYMax);
     cEaddPzDefault->Print(Form("%s/%s_cEaddPzDefault.gif",outdir.Data(),AnaTag.Data()));
+    cEaddPzDefault->Print(Form("%s/%s_cEaddPzDefault.eps",outdir.Data(),AnaTag.Data()));
 
     // -- fitted --
     TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
@@ -517,6 +518,7 @@ void matchFrac(TString AnaVersion="V0",
 	1,
 	EPzYMax);
     cEaddPz->Print(Form("%s/%s_cEaddPz.gif",outdir.Data(),AnaTag.Data()));
+    cEaddPz->Print(Form("%s/%s_cEaddPz.eps",outdir.Data(),AnaTag.Data()));
     TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
     histDiffrChi2(
 	evtEtaHists,
@@ -526,6 +528,7 @@ void matchFrac(TString AnaVersion="V0",
 	1,
 	1);
     cEvtEta->Print(Form("%s/%s_cEvtEta.gif",outdir.Data(),AnaTag.Data()));
+    cEvtEta->Print(Form("%s/%s_cEvtEta.eps",outdir.Data(),AnaTag.Data()));
   } // end of anaMode<2
 
 
