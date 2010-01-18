@@ -239,7 +239,7 @@ void matchFrac(TString AnaVersion="V0",
     float EPzMin=0, float EPzMax=200, float EPzBinSize=5)
 {
   // top level info
-  gDataSource=DataSource;
+  gDataSource="Run 124023 (900 GeV)";
   gMCSource=MCSource;
   TString AnaTag = Form("ana%s_%s_Mode%d_Min%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
       AnaVersion.Data(),AnaObs.Data(),mode,
