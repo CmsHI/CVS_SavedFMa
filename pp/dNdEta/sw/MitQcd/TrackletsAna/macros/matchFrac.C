@@ -158,9 +158,10 @@ Double_t histDiffrChi2(
     }
 
     //  - add legend -
-    TLegend *leg2 = new TLegend(0.651,0.776,0.953,0.928,NULL,"brNDC");
+    TLegend *leg2 = new TLegend(0.589,0.776,0.891,0.928,NULL,"brNDC");
     leg2->SetFillColor(0);
     leg2->SetBorderSize(0);
+    leg2->SetTextSize(0.03);
     TString drawMode="Best Fit";
     if (draw==2)
       drawMode="Default";
@@ -353,7 +354,7 @@ void matchFrac(TString AnaVersion="V0",
   }
   const Int_t EPzNBINS=EPzMax/EPzBinSize;
   for (Int_t i=0; i<source.size(); ++i) {
-    vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
+    vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";#eta^{Event}_{HF};",100,-5,5));
     vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH1D(Form("hEaddEpPos_%s",source[i].Data()),";#Sigma E+Pz (HF+);",EPzNBINS,EPzMin,EPzMax));
@@ -361,7 +362,7 @@ void matchFrac(TString AnaVersion="V0",
     vh1.push_back(new TH2D(Form("hEPz_%s",source[i].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
     if (source[i]==mcHistLabel) {
       for (Int_t j=0; j<etype.size(); ++j) {
-	vh1.push_back(new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";Event #eta;",100,-5,5));
+	vh1.push_back(new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";#eta^{Event}_{HF};",100,-5,5));
 	vh1.push_back(new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH1D(Form("hEsubEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz;",EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH1D(Form("hEaddEpPos_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz (HF+);",EPzNBINS,EPzMin,EPzMax));
