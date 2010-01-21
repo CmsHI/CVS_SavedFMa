@@ -214,10 +214,13 @@ void compare(int evtType = 0, int doSel = 1,
   printf("%s: %f entries\n",hEaddEpPos_phojet->GetName(),hEaddEpPos_phojet->GetEntries());
 
   // declare legend
-  TLegend *leg2 = new TLegend(0.679,0.802,0.929,0.93,NULL,"brNDC");
+  TLegend *leg2 = new TLegend(0.595,0.8,0.845,0.927,NULL,"brNDC");
   leg2->SetFillColor(0);
   leg2->SetBorderSize(0);
-  leg2->AddEntry(hEaddEp_data,"data","p");
+  leg2->SetTextSize(0.03);
+  leg2->AddEntry("","Selection with","");
+  leg2->AddEntry("",dataSel.Tag.Data(),"");
+  leg2->AddEntry(hEaddEp_data,"Run 124023 (900 GeV)","p");
   leg2->AddEntry(hEaddEp_pythia,Form("default pythia %s",etype[evtType].Data()),"p");
   leg2->AddEntry(hEaddEp_phojet,Form("default phojet %s",etype[evtType].Data()),"p");
 
@@ -234,6 +237,7 @@ void compare(int evtType = 0, int doSel = 1,
   }
   c2->Update();
   c2->Print(Form("%s/%s_hVz.gif",outdir.Data(),InspectTag.Data()));
+  c2->Print(Form("%s/%s_hVz.eps",outdir.Data(),InspectTag.Data()));
 
   // draw from hists
   TCanvas * cEPz = new TCanvas("cEPz","cEPz",500,500);
@@ -249,4 +253,5 @@ void compare(int evtType = 0, int doSel = 1,
   leg2->Draw();
 
   cEPz->Print(Form("%s/%s_hEaddEpPos.gif",outdir.Data(),InspectTag.Data()));
+  cEPz->Print(Form("%s/%s_hEaddEpPos.eps",outdir.Data(),InspectTag.Data()));
 }
