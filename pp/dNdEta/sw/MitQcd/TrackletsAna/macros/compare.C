@@ -122,7 +122,7 @@ void compare(int evtType = 0, int doSel = 1,
   printf("now declare hists\n");
   const Double_t EPzMin=0;
   const Double_t EPzMax=600;
-  const Int_t EPzNBINS=EPzMax/5.;
+  const Int_t EPzNBINS=EPzMax/15.;
   for (Int_t i=0; i<source.size(); ++i) {
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
     vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
