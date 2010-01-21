@@ -26,6 +26,7 @@ class selectionCut
     
     // ana info
     TString AnaTag;
+    TString Tag;
 };
 
 selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumiH) :
@@ -51,11 +52,15 @@ selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumi
    else if (selType==3)
      evtSelection      = ("L1T[41]>0&&L1T[36]!=1&&L1T[37]!=1&&L1T[38]!=1&&L1T[39]!=1");
    // halo veto + Hf tower count
-   else if (selType==4)
+   else if (selType==4) {
      evtSelection      = ("L1T[34]&&nHFp>0&&nHFn>0&&L1T[36]!=1&&L1T[37]!=1&&L1T[38]!=1&&L1T[39]!=1");
+     Tag            = "HF Coincidence";
+   }
    // Diffractive only
-   else if (selType==10)
+   else if (selType==10) {
      evtSelection      = ("L1T[34]>0&&!(nHFp>0&&nHFn>0)&&L1T[36]!=1&&L1T[37]!=1&&L1T[38]!=1&&L1T[39]!=1");
+     Tag            = "HF Anti-Coincidence";
+   }
 
    if (!isMC) {
      evtSelection += Form("&&nLumi>=%d&&nLumi<=%d&&L1A[0]==1&&L1A[82]==1",nLumiL,nLumiH);
