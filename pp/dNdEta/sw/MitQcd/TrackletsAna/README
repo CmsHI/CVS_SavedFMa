@@ -1,3 +1,7 @@
+=== Tag: DF011 ===
+- Used for analysis note
+  * mainly stylistic changes
+
 === Tag: DF010 ===
 --Main changes--
 - selectionCut.h
@@ -14,7 +18,7 @@
     + saw no change in fit result from full HF sums
 
 --Ana Run--
-- V61 (900 GeV)
+- V61 (900 GeV, 2.36 TeV)
   * log/anaV61*
 - https://twiki.cern.ch/twiki/bin/view/CMS/DNdEtaWorkingGroupDiffractionStudy#900_GeV
 
