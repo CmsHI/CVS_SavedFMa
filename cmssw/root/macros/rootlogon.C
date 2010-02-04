@@ -16,3 +16,4 @@
     gSystem->Load("libDataFormatsFWLite.so");
     gSystem->Load("libDataFormatsPatCandidates.so");
   }
+}
