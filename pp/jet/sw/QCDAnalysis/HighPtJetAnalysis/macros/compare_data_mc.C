@@ -44,7 +44,7 @@ void compare_data_mc(
   //compV.SetMarkerSize(1);
   compV.SetLegend(0.6,0.75,0.95,0.99);
   compV.Draw("hist E");
-  cV->Print(Form("hSelPVz_Sel%d.gif",doSel));
+  cV->Print(Form("Sel%d_hSelPVz.gif",doSel));
 
   TCanvas *c2 = new TCanvas("c2","",500,500);
   c2->SetLogy();
@@ -56,7 +56,7 @@ void compare_data_mc(
   //comp2.SetMarkerSize(1);
   comp2.SetLegend(0.6,0.75,0.95,0.99);
   comp2.Draw("hist E");
-  c2->Print(Form("hLeadJetCorPt_Sel%d.gif",doSel));
+  c2->Print(Form("Sel%d_hLeadJetCorPt.gif",doSel));
 
   TCanvas *c3 = new TCanvas("c3","",500,500);
   compareHist comp3(tree1,tree2,"jet1Var.eta","LeadJetEta",dataCut.Data(),mcCut.Data(),-4,4,20,1);
@@ -66,7 +66,7 @@ void compare_data_mc(
   comp3.SetYTitle("Arbitrary normalization");
   comp3.SetLegend(0.6,0.75,0.95,0.95);
   comp3.Draw("hist E");
-  c3->Print(Form("hLeadJetEta_Sel%d.gif",doSel));
+  c3->Print(Form("Sel%d_hLeadJetEta.gif",doSel));
 
   TCanvas *c4 = new TCanvas("c4","",500,500);
   compareHist comp4(tree1,tree2,"jet1Var.phi","LeadJetPhi",dataCut.Data(),mcCut.Data(),-3.14,3.14,10,1);
@@ -77,7 +77,7 @@ void compare_data_mc(
   comp4.SetMinimum(0);
   comp4.SetLegend(0.6,0.75,0.95,0.95);
   comp4.Draw("hist E");
-  c4->Print(Form("hLeadJetPhi_Sel%d.gif",doSel));
+  c4->Print(Form("Sel%d_hLeadJetPhi.gif",doSel));
 
   TCanvas *c5 = new TCanvas("c5","",500,500);
   compareHist comp5(tree1,tree2,"jet1Var.emf","LeadJetEMF",dataCut.Data(),mcCut.Data(),0,1,20,1);
@@ -87,7 +87,7 @@ void compare_data_mc(
   comp5.SetYTitle("Arbitrary normalization");
   comp5.SetLegend(0.6,0.75,0.95,0.95);
   comp5.Draw("hist E");
-  c5->Print(Form("hLeadJetEMF_Sel%d.gif",doSel));
+  c5->Print(Form("Sel%d_hLeadJetEMF.gif",doSel));
 
   TCanvas *c6 = new TCanvas("c6","",500,500);
   compareHist comp6(tree1,tree2,"jet1Var.n90hits","LeadJetN90",dataCut.Data(),mcCut.Data(),0,30,30,1);
@@ -97,6 +97,6 @@ void compare_data_mc(
   comp6.SetYTitle("Arbitrary normalization");
   comp6.SetLegend(0.6,0.75,0.95,0.95);
   comp6.Draw("hist E");
-  c6->Print(Form("hLeadJetN90hits_Sel%d.gif",doSel));
+  c6->Print(Form("Sel%d_hLeadJetN90hits.gif",doSel));
 }
 
