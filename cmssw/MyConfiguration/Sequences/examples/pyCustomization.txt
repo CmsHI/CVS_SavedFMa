@@ -1,3 +1,0 @@
-# For Checking particle information
-create_custom_cfg.sh /home/frankma/UserCode/SavedFMa/cmssw/MyConfiguration/Sequences/test/skim_raw_cfg.py ../mySeq/particleListDrawer_cff.py ../mySeq/mycustom_options.py
-
