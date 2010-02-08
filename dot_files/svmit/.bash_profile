@@ -31,8 +31,15 @@ export p32gd='32-SB02-HP'
 alias lxbuild='ssh -Y lxbuild067'
 alias cgate='ssh -Y cgate.mit.edu'
 #-- my CMSSW local settings --
+alias setcms4=". $SavedFMa/bin/lxplus/basic/cmssw_slc4_set_basic.sh"
 alias setcms=". $SavedFMa/bin/lxplus/basic/cmssw_set_basic.sh"
 alias cvscms=". $SavedFMa/bin/cvsinit.sh"
+#alias cmsenv3=". /d01/frankma/scratch/pp/HLT/startup09/collisionCMSSW_3_3_5/env.sh"
+alias cmsenv3=". /d01/frankma/scratch/pp/dNdEta/anaCMSSW_3_3_6/env.sh"
+
+#--- ssh ---
+ps -elf | grep ssh-agent | grep -v "grep" > /dev/null
+if [ $? -ne 0 ]; then eval `ssh-agent`; fi
 
 #--------------------------------Universal------------------------------------
 . $SavedFMa/dot_files/univ_dot_files/.bash_univ
