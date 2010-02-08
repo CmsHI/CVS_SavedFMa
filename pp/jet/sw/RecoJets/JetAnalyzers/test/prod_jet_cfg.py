@@ -39,8 +39,7 @@ process.ana = cms.EDAnalyzer("GenJetPlotsExample",
 
 # Path and EndPath definitions
 process.generation_step = cms.Path(process.hiGenParticles*process.hiGenJets*process.ana)
-process.out_step = cms.EndPath(process.output)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.generation_step,process.out_step)
+process.schedule = cms.Schedule(process.generation_step)
 

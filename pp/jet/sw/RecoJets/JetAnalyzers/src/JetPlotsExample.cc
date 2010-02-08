@@ -93,7 +93,7 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
 
       // get lead jets
       p4jet[index] = i_jet->p4();
-      cout << "jet " << index << ": " << p4jet[index] << endl;
+      //cout << "jet " << index << ": " << p4jet[index] << endl;
       index++;
     }
 
