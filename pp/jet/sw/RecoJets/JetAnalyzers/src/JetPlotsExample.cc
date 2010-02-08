@@ -11,8 +11,13 @@
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
+#include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
+#include "HepMC/HeavyIon.h"
+#include "HepMC/GenEvent.h"
 #include <TFile.h>
 #include <cmath>
+
 using namespace edm;
 using namespace reco;
 using namespace std;
@@ -20,7 +25,7 @@ using namespace std;
 template<class Jet>
 JetPlotsExample<Jet>::JetPlotsExample(edm::ParameterSet const& cfg)
 {
-  JetAlgorithm  = cfg.getParameter<std::string> ("JetAlgorithm"); 
+  JetAlgorithm  = cfg.getParameter<std::string> ("JetAlgorithm");
   HistoFileName = cfg.getParameter<std::string> ("HistoFileName");
   NJets         = cfg.getParameter<int> ("NJets");
 }
@@ -39,11 +44,33 @@ void JetPlotsExample<Jet>::beginJob()
   m_HistNames1D[hname] = new TH1F(hname,hname,100,-M_PI,M_PI);
   hname = "NumberOfJets";
   m_HistNames1D[hname] = new TH1F(hname,hname,100,0,100);
+  
+  // write tree
+  ntjets = fs->make<TNtuple>("jets","leading jets in event","evt:b:npart:ncoll:mass:dphi:njet:njeta:njphi:ajet:ajeta:ajphi");
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 template<class Jet>
 void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const& iSetup) 
 {
+  // === HI Event info ===
+  Handle<HepMCProduct> MCevt;
+  evt.getByLabel("generator",MCevt);
+  HepMC::GenEvent * myGenEvent = new HepMC::GenEvent(*(MCevt->GetEvent()));
+  HepMC::HeavyIon * hi = new HepMC::HeavyIon(*(myGenEvent->heavy_ion()));
+
+  double b,Phi0;
+  int Npart,Ncoll,Nhard;
+  if(hi){
+    b = hi->impact_parameter();
+    Npart = hi->Npart_proj()+hi->Npart_targ();
+    Ncoll = hi->Ncoll();
+    Nhard = hi->Ncoll_hard();
+    Phi0 = hi->event_plane_angle();
+  }
+  delete myGenEvent;
+  delete hi;
+
   /////////// Get the jet collection //////////////////////
   Handle<JetCollection> jets;
   evt.getByLabel(JetAlgorithm,jets);
@@ -54,16 +81,30 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
   hname = "NumberOfJets";
   FillHist1D(hname,jets->size()); 
   /////////// Fill Histograms for the leading NJet jets ///
+  math::XYZTLorentzVector p4jet[2];
   for(i_jet = jets->begin(); i_jet != jets->end() && index < NJets; ++i_jet) 
     {
       hname = "JetPt";
-      FillHist1D(hname,i_jet->pt());   
+      FillHist1D(hname,i_jet->pt());
       hname = "JetEta";
       FillHist1D(hname,i_jet->eta());
       hname = "JetPhi";
       FillHist1D(hname,i_jet->phi());
+
+      // get lead jets
+      p4jet[index] = i_jet->p4();
+      cout << "jet " << index << ": " << p4jet[index] << endl;
       index++;
     }
+
+  // fill tree
+  double dphi = fabs(reco::deltaPhi(p4jet[0].phi(),p4jet[1].phi()));
+  ntjets->Fill(evt.id().event(),
+      b,Npart,Ncoll,
+      (p4jet[0]+p4jet[1]).mass(),dphi,
+      p4jet[0].pt(),p4jet[0].eta(),p4jet[0].phi(),
+      p4jet[1].pt(),p4jet[1].eta(),p4jet[1].phi()
+      );
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 template<class Jet>

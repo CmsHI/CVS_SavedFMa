@@ -6,10 +6,15 @@
 #define JetPlotsExample_h
 #include <TH1.h>
 #include <TFile.h>
+#include "TNtuple.h"
 #include "TNamed.h"
 #include <vector>
 #include <map>
 #include "FWCore/Framework/interface/EDAnalyzer.h"
+
+//TFile Service 
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "PhysicsTools/UtilAlgos/interface/TFileService.h"
 
 template<class Jet>
 class JetPlotsExample : public edm::EDAnalyzer 
@@ -31,5 +36,8 @@ class JetPlotsExample : public edm::EDAnalyzer
        std::string HistoFileName;
        /////// Number of jets used for the plots /////////////////////////// 
        int NJets;    
+       
+       edm::Service<TFileService> fs;
+       TNtuple *ntjets;
    };
 #endif
