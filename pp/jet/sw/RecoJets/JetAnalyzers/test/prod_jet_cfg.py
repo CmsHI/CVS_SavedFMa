@@ -13,6 +13,7 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
+	  duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
           fileNames = cms.untracked.vstring('file:input.root')
 	  )
 
