@@ -35,7 +35,7 @@ class JetPlotsExample : public edm::EDAnalyzer
        /////// Histogram where the plots are stored //////////////////////// 
        std::string HistoFileName;
        /////// Number of jets used for the plots /////////////////////////// 
-       int NJets;    
+       int NJets;
        
        edm::Service<TFileService> fs;
        TNtuple *ntjets;
