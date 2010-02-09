@@ -87,8 +87,6 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
   math::XYZTLorentzVector p4parton[2];
   double dRMat[2] = {-1, -1};
   int idMat[2] = {-1, -1};
-  const reco::GenParticle matPart[2];
-  std::vector <const reco::GenParticle*> mcparts;
   // get gen particles
   edm::Handle<std::vector<reco::GenParticle> > genParticlesHandle_;
   evt.getByLabel("hiGenParticles",genParticlesHandle_);
@@ -116,7 +114,7 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
       //cout << "jet " << index << ": " << p4jet[index] << endl;
 
       // get jet partons
-      cout << "=== parton match " << endl;
+      //cout << "=== parton match " << endl;
       int ip_max = 0;
       double pt_max= 0;
       for( size_t ip = 0; ip < genParticlesHandle_->size(); ++ ip ) {
@@ -136,9 +134,10 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
 	    dRMat[index] = dR;
 	    idMat[index] = id;
 	  }
-	  cout << "particle " << ip << ": id=" << id << ", status=" << st << ", mass=" << genP4.mass() << ", pt=" <<  genP4.pt() << ", eta=" << genP4.eta() << std::endl; 
+	  //cout << "particle " << ip << ": id=" << id << ", status=" << st << ", mass=" << genP4.mass() << ", pt=" <<  genP4.pt() << ", eta=" << genP4.eta() << std::endl; 
 	}
       }
+      /*
       if (pt_max>7) {
 	const reco::GenParticle & p = (*genParticlesHandle_)[ip_max];
 	math::XYZTLorentzVector genP4 = p.p4();
@@ -146,6 +145,7 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
 	std::cout << "particle " << ip_max << " in jet: id=" << p.pdgId() << ", status=" << p.status() << ", mass=" << genP4.mass() << ", pt=" <<  genP4.pt() << ", eta=" << genP4.eta() << std::endl; 
 	cout << "dR " << dRMat[index] << " - jet eta|phi: " << p4jet[index].eta() << "|" << p4jet[index].phi() << "  parton eta|phi: " << p4parton[index].eta() << "|" << p4parton[index].phi() << endl;
       }
+      */
       index++;
     }
   cout << endl;
