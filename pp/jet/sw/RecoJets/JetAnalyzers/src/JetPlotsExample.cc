@@ -12,9 +12,11 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
+#include "DataFormats/Math/interface/deltaR.h"
 #include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
 #include "HepMC/HeavyIon.h"
 #include "HepMC/GenEvent.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include <TFile.h>
 #include <cmath>
 
@@ -46,7 +48,7 @@ void JetPlotsExample<Jet>::beginJob()
   m_HistNames1D[hname] = new TH1F(hname,hname,100,0,100);
   
   // write tree
-  ntjets = fs->make<TNtuple>("jets","leading jets in event","evt:b:npart:ncoll:mass:dphi:njet:njeta:njphi:ajet:ajeta:ajphi");
+  ntjets = fs->make<TNtuple>("jets","leading jets in event","evt:b:npart:dphi:njet:njeta:ajet:ajeta:npjet:npjid:apjet:apjid:ndR:adR");
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +84,24 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
   FillHist1D(hname,jets->size()); 
   /////////// Fill Histograms for the leading NJet jets ///
   math::XYZTLorentzVector p4jet[2];
+  math::XYZTLorentzVector p4parton[2];
+  double dRMat[2] = {-1, -1};
+  int idMat[2] = {-1, -1};
+  const reco::GenParticle matPart[2];
+  std::vector <const reco::GenParticle*> mcparts;
+  // get gen particles
+  edm::Handle<std::vector<reco::GenParticle> > genParticlesHandle_;
+  evt.getByLabel("hiGenParticles",genParticlesHandle_);
+  /*
+  for( size_t ip = 0; ip < genParticlesHandle_->size(); ++ ip ) {
+    const reco::GenParticle & p = (*genParticlesHandle_)[ip];
+    int id = p.pdgId();
+    int st = p.status();
+    math::XYZTLorentzVector genP4 = p.p4();
+    if ((abs(id)>6 && id!=21) || st!=3) continue;
+    std::cout << "particle " << ip << ": id=" << id << ", status=" << st << ", mass=" << genP4.mass() << ", pt=" <<  genP4.pt() << ", eta=" << genP4.eta() << std::endl; 
+  }
+  */
   for(i_jet = jets->begin(); i_jet != jets->end() && index < NJets; ++i_jet) 
     {
       hname = "JetPt";
@@ -94,16 +114,53 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
       // get lead jets
       p4jet[index] = i_jet->p4();
       //cout << "jet " << index << ": " << p4jet[index] << endl;
+
+      // get jet partons
+      cout << "=== parton match " << endl;
+      int ip_max = 0;
+      double pt_max= 0;
+      for( size_t ip = 0; ip < genParticlesHandle_->size(); ++ ip ) {
+	const reco::GenParticle & p = (*genParticlesHandle_)[ip];
+	// first check status
+	int id = p.pdgId();
+	int st = p.status();
+	math::XYZTLorentzVector genP4 = p.p4();
+	if ((abs(id)>6 && id!=21) || st!=3) continue;
+	// now check dR
+	double dR = reco::deltaR(i_jet->p4(),p.p4());
+	if (dR<0.15) {
+	  if ( p.pt()>pt_max) {
+	    pt_max=p.pt();
+	    ip_max=ip;
+	    p4parton[index] = p.p4();
+	    dRMat[index] = dR;
+	    idMat[index] = id;
+	  }
+	  cout << "particle " << ip << ": id=" << id << ", status=" << st << ", mass=" << genP4.mass() << ", pt=" <<  genP4.pt() << ", eta=" << genP4.eta() << std::endl; 
+	}
+      }
+      if (pt_max>7) {
+	const reco::GenParticle & p = (*genParticlesHandle_)[ip_max];
+	math::XYZTLorentzVector genP4 = p.p4();
+	cout << " --- matched ---" << endl;
+	std::cout << "particle " << ip_max << " in jet: id=" << p.pdgId() << ", status=" << p.status() << ", mass=" << genP4.mass() << ", pt=" <<  genP4.pt() << ", eta=" << genP4.eta() << std::endl; 
+	cout << "dR " << dRMat[index] << " - jet eta|phi: " << p4jet[index].eta() << "|" << p4jet[index].phi() << "  parton eta|phi: " << p4parton[index].eta() << "|" << p4parton[index].phi() << endl;
+      }
       index++;
     }
+  cout << endl;
 
   // fill tree
   double dphi = fabs(reco::deltaPhi(p4jet[0].phi(),p4jet[1].phi()));
   ntjets->Fill(evt.id().event(),
-      b,Npart,Ncoll,
-      (p4jet[0]+p4jet[1]).mass(),dphi,
-      p4jet[0].pt(),p4jet[0].eta(),p4jet[0].phi(),
-      p4jet[1].pt(),p4jet[1].eta(),p4jet[1].phi()
+      b,Npart,//Ncoll,
+      //(p4jet[0]+p4jet[1]).mass(),
+      dphi,
+      p4jet[0].pt(),p4jet[0].eta(),//p4jet[0].phi(),
+      p4jet[1].pt(),p4jet[1].eta(),//p4jet[1].phi(),
+      p4parton[0].pt(), idMat[0],
+      p4parton[1].pt(), idMat[1],
+      dRMat[0],dRMat[1]
       );
 }
 ////////////////////////////////////////////////////////////////////////////////////////
