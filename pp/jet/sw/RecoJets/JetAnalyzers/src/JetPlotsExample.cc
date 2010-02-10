@@ -103,18 +103,18 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
     std::cout << "particle " << ip << ": id=" << id << ", status=" << st << ", mass=" << genP4.mass() << ", pt=" <<  genP4.pt() << ", eta=" << genP4.eta() << std::endl; 
   }
   */
-  cout << "check jet et" << endl;
-  double lptMax=-1;
+  //cout << "check jet et" << endl;
+  double lptMax=-99;
   for(i_jet = jets->begin(); i_jet != jets->end(); ++i_jet) {
     double lpt=i_jet->pt();
-    cout << "jet et: " << lpt << endl;
+    //cout << "jet et: " << lpt << endl;
     if (lpt>lptMax) {
       lptMax=lpt;
       i_njet=i_jet;
     }
   }
   // get away jet
-  double aptMax=-1;
+  double aptMax=-99;
   for(i_jet = jets->begin(); i_jet != jets->end(); ++i_jet) {
     double dphi = fabs(reco::deltaPhi(i_njet->phi(),i_jet->phi()));
     if (dphi>2.0) {
@@ -128,15 +128,17 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
 
   // ***add important safe guard***
   if (lptMax<0 || aptMax<0) {
-    ntjets->Fill(evt.id().event(),b,Npart,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99);
+    ntjets->Fill(evt.id().event(),b,Npart,-99,lptMax,-99,aptMax,-99,-99,-99,-99,-99,-99,-99);
     return;
   }
 
   // summarize
   //cout << "near jet: " << lptMax << "  away jet: " << aptMax << endl;
+  /*
   cout << "near jet et|eta|phi: " << i_njet->pt() << "|" << i_njet->eta() << "|" << i_njet->phi()
     << "  away jet: " << i_ajet->pt() << "|" << i_ajet->eta() << "|" << i_ajet->phi() 
     << "  dphi: " << fabs(reco::deltaPhi(i_njet->phi(),i_ajet->phi())) << endl << endl;
+    */
 
   // === now fill ===
   //for(i_jet = jets->begin(); i_jet != jets->end() && index < NJets; ++i_jet) 
