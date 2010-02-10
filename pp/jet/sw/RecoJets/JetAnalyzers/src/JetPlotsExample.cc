@@ -82,11 +82,18 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
   /////////// Count the jets in the event /////////////////
   hname = "NumberOfJets";
   FillHist1D(hname,jets->size()); 
+  cout << "N jets: " << jets->size() << endl;
+
+  // ***add important safe guard***
+  if (jets->size()<2) return;
+
   /////////// Fill Histograms for the leading NJet jets ///
   math::XYZTLorentzVector p4jet[2];
   math::XYZTLorentzVector p4parton[2];
   double dRMat[2] = {-1, -1};
   int idMat[2] = {-1, -1};
+  typename JetCollection::const_iterator i_njet;
+  typename JetCollection::const_iterator i_ajet;
   // get gen particles
   edm::Handle<std::vector<reco::GenParticle> > genParticlesHandle_;
   evt.getByLabel("hiGenParticles",genParticlesHandle_);
@@ -100,6 +107,37 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
     std::cout << "particle " << ip << ": id=" << id << ", status=" << st << ", mass=" << genP4.mass() << ", pt=" <<  genP4.pt() << ", eta=" << genP4.eta() << std::endl; 
   }
   */
+  cout << "check jet et" << endl;
+  double lptMax=-1;
+  for(i_jet = jets->begin(); i_jet != jets->end(); ++i_jet) {
+    double lpt=i_jet->pt();
+    cout << "jet et: " << lpt << endl;
+    if (lpt>lptMax) {
+      lptMax=lpt;
+      i_njet=i_jet;
+    }
+  }
+  // get away jet
+  double aptMax=-1;
+  for(i_jet = jets->begin(); i_jet != jets->end(); ++i_jet) {
+    double dphi = fabs(reco::deltaPhi(i_njet->phi(),i_jet->phi()));
+    if (dphi>2.0) {
+      double apt=i_jet->pt();
+      if (apt>aptMax) {
+	aptMax=apt;
+	i_ajet=i_jet;
+      }
+    }
+  }
+
+  // ***add important safe guard***
+  if (aptMax<0) return;
+
+  // summarize
+  //cout << "near jet: " << lptMax << "  away jet: " << aptMax << endl;
+  cout << "near jet et|eta|phi: " << i_njet->pt() << "|" << i_njet->eta() << "|" << i_njet->phi()
+    << "  away jet: " << i_ajet->pt() << "|" << i_ajet->eta() << "|" << i_ajet->phi() 
+    << "  dphi: " << fabs(reco::deltaPhi(i_njet->phi(),i_ajet->phi())) << endl << endl;
   for(i_jet = jets->begin(); i_jet != jets->end() && index < NJets; ++i_jet) 
     {
       hname = "JetPt";
