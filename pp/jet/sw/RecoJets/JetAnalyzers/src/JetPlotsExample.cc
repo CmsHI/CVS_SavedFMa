@@ -77,15 +77,11 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
   Handle<JetCollection> jets;
   evt.getByLabel(JetAlgorithm,jets);
   typename JetCollection::const_iterator i_jet;
-  int index = 0;
   TString hname; 
   /////////// Count the jets in the event /////////////////
   hname = "NumberOfJets";
   FillHist1D(hname,jets->size()); 
   cout << "N jets: " << jets->size() << endl;
-
-  // ***add important safe guard***
-  if (jets->size()<2) return;
 
   /////////// Fill Histograms for the leading NJet jets ///
   math::XYZTLorentzVector p4jet[2];
@@ -131,15 +127,22 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
   }
 
   // ***add important safe guard***
-  if (aptMax<0) return;
+  if (lptMax<0 || aptMax<0) {
+    ntjets->Fill(evt.id().event(),b,Npart,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99);
+    return;
+  }
 
   // summarize
   //cout << "near jet: " << lptMax << "  away jet: " << aptMax << endl;
   cout << "near jet et|eta|phi: " << i_njet->pt() << "|" << i_njet->eta() << "|" << i_njet->phi()
     << "  away jet: " << i_ajet->pt() << "|" << i_ajet->eta() << "|" << i_ajet->phi() 
     << "  dphi: " << fabs(reco::deltaPhi(i_njet->phi(),i_ajet->phi())) << endl << endl;
-  for(i_jet = jets->begin(); i_jet != jets->end() && index < NJets; ++i_jet) 
-    {
+
+  // === now fill ===
+  //for(i_jet = jets->begin(); i_jet != jets->end() && index < NJets; ++i_jet) 
+  for(int index=0; index<2; ++index) {
+      if (index==0) i_jet=i_njet;
+      if (index==1) i_jet=i_ajet;
       hname = "JetPt";
       FillHist1D(hname,i_jet->pt());
       hname = "JetEta";
@@ -184,7 +187,7 @@ void JetPlotsExample<Jet>::analyze(edm::Event const& evt, edm::EventSetup const&
 	cout << "dR " << dRMat[index] << " - jet eta|phi: " << p4jet[index].eta() << "|" << p4jet[index].phi() << "  parton eta|phi: " << p4parton[index].eta() << "|" << p4parton[index].phi() << endl;
       }
       */
-      index++;
+      //index++;
     }
   cout << endl;
 
