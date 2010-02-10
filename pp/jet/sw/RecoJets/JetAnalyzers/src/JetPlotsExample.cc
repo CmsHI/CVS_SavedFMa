@@ -39,7 +39,7 @@ void JetPlotsExample<Jet>::beginJob()
   m_file = new TFile(HistoFileName.c_str(),"RECREATE"); 
   /////////// Booking histograms //////////////////////////
   hname = "JetPt";
-  m_HistNames1D[hname] = new TH1F(hname,hname,100,0,1000);
+  m_HistNames1D[hname] = new TH1F(hname,hname,200,0,200);
   hname = "JetEta";
   m_HistNames1D[hname] = new TH1F(hname,hname,120,-6,6);
   hname = "JetPhi";
