@@ -49,9 +49,8 @@ void aliases(TTree* Events)
   // approximation of ptErr ignoring covariance term
   Events->SetAlias("ptErr","sqrt(pow(trk.P()*trk.Pt()*trk.fQOverPErr/trk.Charge(),2) + pow(trk.Pz()*trk.fLambdaErr,2))");
 
-  // associated supercluster
-  Events->SetAlias("sc","trk.SCluster()");
 
-
-  Events->SetAlias("goodTracks","tracks.Pt()>0.3 && tracks.Pt()<30");
+  // - ok for now keep it simple.
+  //   * From the JPT talk we see that the sigma pt, dxy, dz cuts have high efficiency
+  Events->SetAlias("goodTracks","tracks.Pt()>0.3 && tracks.Pt()<20 && highPurity");
 }
