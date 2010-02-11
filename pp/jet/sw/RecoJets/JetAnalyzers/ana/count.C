@@ -1,13 +1,19 @@
 void count(const char * inf0name = "jet_ana_v3_et_order_2.8TeV.root")
 {
+  Double_t NEt = 100.;
+  Double_t AEt = 90.;
+  Double_t DPhi = 2.2;
+
   TFile * inf0 = new TFile(inf0name);
   TTree * tree = (TTree*)inf0->FindObjectAny("jets");
   Int_t totn = tree->GetEntries();
   cout << "total number events: " << totn << endl;
-  Float_t djn = tree->GetEntries("njet>100 && ajet>70 && dphi>2.2");
-  cout << "dijets, near>100GeV, away>70GeV, dphi>2.2: " << djn << endl;
+  TString djCut(Form("njet>%.1f && ajet>%.1f && dphi>%.2f",NEt,AEt,DPhi));
+
+  cout << "Now apply djCut: " << djCut << endl;
+  Float_t djn = tree->GetEntries(djCut);
+  cout << "passed dijets in sample: " << djn << endl;
 
   Float_t djnEst = djn*(24000000./totn);
-  cout << "===Prediction for 2.4M at 2.8 TeV===" << endl;
-  cout << "dijets, near>100GeV, away>70GeV, dphi>2.2: " << djnEst << endl;
+  cout << "scale to 24M: " << djnEst << endl;
 }
