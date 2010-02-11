@@ -1,5 +1,3 @@
-// stole from ed: /home/edwenger/prod/CMSSW_3_3_5//src/MitQcd/Production/python/test.C
-
 void test(){
 
   TChain *ev = new TChain("Events");
