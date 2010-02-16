@@ -204,15 +204,29 @@ void analyze(){
     double ptjet1 = jet1->Pt();
     double etajet0 = jet0->Eta();
     double etajet1 = jet1->Eta();
+    double phijet0 = jet0->Phi();
+    double phijet1 = jet1->Phi();
     if(correct) ptjet0 = ptjet0*JEC->getCorrection(ptjet0,etajet0,jet0->E());
     if(correct) ptjet1 = ptjet1*JEC->getCorrection(ptjet1,etajet1,jet1->E());
     // cut jet
     bool goodDiJet = ptjet0>7 && ptjet1>7;
     if (!goodDiJet) continue;
-    cout << " jet 0 corr"<<correct<<"Pt|eta|phi: " << ptjet0 <<"|"<< jet0->Eta() << "|" << jet0->Phi() << endl;
-    cout << " jet 1 corr"<<correct<<"Pt|eta|phi: " << ptjet1 <<"|"<< jet1->Eta() << "|" << jet1->Phi() << endl;
-    double ljdphi = TMath::Abs(reco::deltaPhi(jet0->Phi(),jet1->Phi()));
+    cout << " jet 0 corr"<<correct<<"Pt|eta|phi: " << ptjet0 <<"|"<< etajet0 << "|" << phijet0 << endl;
+    cout << " jet 1 corr"<<correct<<"Pt|eta|phi: " << ptjet1 <<"|"<< etajet1 << "|" << phijet1 << endl;
+    double ljdphi = TMath::Abs(reco::deltaPhi(phijet0,phijet1));
     cout << "   leading jets dphi: " << ljdphi << endl;
+    // -- Fill jet info --
+    // fill dijet info
+    jd_.jdphi_      = ljdphi;
+
+    // near/away info
+    jd_.nljet_         = ptjet0;
+    jd_.nljeta_	       = etajet0;
+    jd_.nljphi_        = phijet0;
+
+    jd_.aljet_         = ptjet1;
+    jd_.aljeta_	       = etajet1;
+    jd_.aljphi_        = phijet1;
 
     // === Track Level ===
     int ntracks = tracks->GetEntries();
@@ -303,6 +317,7 @@ void analyze(){
 
     }
 
+    tree_->Fill();
   } // event end
 
   hptJet->Draw();
