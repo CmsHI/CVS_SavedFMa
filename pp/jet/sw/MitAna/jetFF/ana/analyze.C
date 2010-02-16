@@ -19,9 +19,12 @@
 #include <iostream>
 #include <string>
 #include <vector>
+// ana ntuple
+#include "TreeDiJetEventData.h"
 
 using namespace std;
 using namespace mithep;
+using namespace jetana;
 
 void analyze(){
 
@@ -39,13 +42,13 @@ void analyze(){
   double jetEMFMin = 0.01;
 
   const int nEtBins = 8;
-  char* outname = Form("hists.root",ifiles);
-  TFile* outf = new TFile(outname,"recreate");
 
+  // === input ===
   TChain* tree = new TChain("Events");
   //tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_*.root");
   tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_1.root");
   
+  // === ana config ===
   double etBinsArray[nEtBins] = {0,5,10,15,20,30,70,120};
   vector<double> etBins(etBinsArray,etBinsArray+nEtBins);
 
@@ -53,11 +56,19 @@ void analyze(){
   string JECTag = "900GeV_L2Relative_IC5Calo:900GeV_L3Absolute_IC5Calo";
   CombinedJetCorrector *JEC = new CombinedJetCorrector(JECLevels,JECTag);
 
+  // === setup output ===
+  char* outname = Form("hists.root",ifiles);
+  TFile* outf = new TFile(outname,"recreate");
   TH1::SetDefaultSumw2();
 
   TH1D* hptTr[nEtBins+1];
   TH1D* hptGen[nEtBins+1];
   
+  TTree * tree_ = new TTree("dijetTree","dijet tree");
+  TreeDiJetEventData jd_;
+  jd_.SetTree(tree_);
+  jd_.SetBranches();
+
   for(int ih = 0; ih < nEtBins+1; ++ih){
     hptTr[ih] =  new TH1D(Form("hptTr%d",ih),Form("Tracks in cone |#Delta R| < %f; p_{T}^{track}; N_{track}/N_{jet}",drMax),250,ptMin,ptMax);
     hptGen[ih] =  new TH1D(Form("hptGen%d",ih),Form("Charged Particles in cone |#Delta R| < %f; p_{T}^{chg}; N_{chg}/N_{jet}",drMax),250,ptMin,ptMax);
@@ -72,6 +83,7 @@ void analyze(){
   TH1D* hXiGen = new TH1D("hXiGen","",100,-2,8);
 
 
+  // === setup branches
   mithep::Array<mithep::CaloJet> *jets;
   mithep::Array<mithep::Track> *tracks;
   mithep::Array<mithep::Vertex> *vertices;
@@ -149,6 +161,7 @@ void analyze(){
     int njets = jets->GetEntries();
     int nGoodJets = 0;
     double awayEtMax=-99;
+    double ptljet[2] = {-99,-99};
     for(int i = 0; i < njets; ++i){
       CaloJet* jet = (CaloJet*)jets->At(i);
 
@@ -156,7 +169,7 @@ void analyze(){
       double ptjet = jet->Pt();
       double etajet = jet->Eta();
       double phijet = jet->Phi();
-      //cout << "  jet "<<i<<": Pt|eta|phi: " << ptjet <<"|"<< etajet << "|" << phijet << endl;
+      if (ptjet>3) cout << "  raw jet "<<i<<": Pt|eta|phi: " << ptjet <<"|"<< etajet << "|" << phijet << endl;
 
       double emf = jet->EnergyFractionEm();
 
@@ -177,17 +190,27 @@ void analyze(){
       if(correct) ptjet = corpt;
 
       if(ptjet< jetPtMin) continue;
-      cout << " jet" << i << " Good . corr"<<correct<<"Pt|eta|phi: " << ptjet <<"|"<< etajet << "|" << phijet << endl;
-      CaloJet* njet = (CaloJet*)jets->At(0);
-      cout << "    dphi to jet0 " << reco::deltaPhi(njet->Phi(),jet->Phi()) << endl;
+      //cout << " jet" << i << " Good . corr"<<correct<<"Pt|eta|phi: " << ptjet <<"|"<< etajet << "|" << phijet << endl;
     }
 
     // dijet selection
     if (njets<2) continue;
     CaloJet* jet0 = (CaloJet*)jets->At(0);
     CaloJet* jet1 = (CaloJet*)jets->At(1);
-    cout << " jet 0 corr"<<correct<<"Pt|eta|phi: " << jet0->Pt() <<"|"<< jet0->Eta() << "|" << jet0->Phi() << endl;
-    cout << " jet 1 corr"<<correct<<"Pt|eta|phi: " << jet1->Pt() <<"|"<< jet1->Eta() << "|" << jet1->Phi() << endl;
+    // apply corrections
+    jet0->DisableCorrections();
+    jet1->DisableCorrections();
+    double ptjet0 = jet0->Pt();
+    double ptjet1 = jet1->Pt();
+    double etajet0 = jet0->Eta();
+    double etajet1 = jet1->Eta();
+    if(correct) ptjet0 = ptjet0*JEC->getCorrection(ptjet0,etajet0,jet0->E());
+    if(correct) ptjet1 = ptjet1*JEC->getCorrection(ptjet1,etajet1,jet1->E());
+    // cut jet
+    bool goodDiJet = ptjet0>7 && ptjet1>7;
+    if (!goodDiJet) continue;
+    cout << " jet 0 corr"<<correct<<"Pt|eta|phi: " << ptjet0 <<"|"<< jet0->Eta() << "|" << jet0->Phi() << endl;
+    cout << " jet 1 corr"<<correct<<"Pt|eta|phi: " << ptjet1 <<"|"<< jet1->Eta() << "|" << jet1->Phi() << endl;
     double ljdphi = TMath::Abs(reco::deltaPhi(jet0->Phi(),jet1->Phi()));
     cout << "   leading jets dphi: " << ljdphi << endl;
 
@@ -311,6 +334,7 @@ void analyze(){
 
 
 
+  /*
   for(int is = 0; is < nEtBins; ++is){
     hptTr[is]->Write();
     hptGen[is]->Write();
@@ -319,8 +343,10 @@ void analyze(){
   hDR->Write();
   hFFz->Write();
   hXi->Write();
+  */
 
-  //  outf->Write();
+  outf->Write();
+  outf->Close();
 
   cout<<"---------------------------------------"<<endl;
   cout<<"Total Number of Events used : "<<nevtrig<<endl;
