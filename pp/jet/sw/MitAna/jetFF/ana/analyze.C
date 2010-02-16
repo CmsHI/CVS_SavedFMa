@@ -15,6 +15,7 @@
 #include "QCDAnalysis/HighPtJetAnalysis/interface/Utilities.h"
 #include "CondFormats/JetMETObjects/interface/CombinedJetCorrector.h"
 #include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -146,6 +147,8 @@ void analyze(){
 
     // === Jet Level ===
     int njets = jets->GetEntries();
+    int nGoodJets = 0;
+    double awayEtMax=-99;
     for(int i = 0; i < njets; ++i){
       CaloJet* jet = (CaloJet*)jets->At(i);
 
@@ -153,7 +156,7 @@ void analyze(){
       double ptjet = jet->Pt();
       double etajet = jet->Eta();
       double phijet = jet->Phi();
-      cout << "  jet "<<i<<": Pt|eta|phi: " << ptjet <<"|"<< etajet << "|" << phijet << endl;
+      //cout << "  jet "<<i<<": Pt|eta|phi: " << ptjet <<"|"<< etajet << "|" << phijet << endl;
 
       double emf = jet->EnergyFractionEm();
 
@@ -174,96 +177,110 @@ void analyze(){
       if(correct) ptjet = corpt;
 
       if(ptjet< jetPtMin) continue;
-      cout << "Good jet. corr"<<correct<<"Pt|eta|phi: " << ptjet <<"|"<< etajet << "|" << phijet << endl;
+      cout << " jet" << i << " Good . corr"<<correct<<"Pt|eta|phi: " << ptjet <<"|"<< etajet << "|" << phijet << endl;
+      CaloJet* njet = (CaloJet*)jets->At(0);
+      cout << "    dphi to jet0 " << reco::deltaPhi(njet->Phi(),jet->Phi()) << endl;
+    }
 
-      int ntracks = tracks->GetEntries();
-      for(int j = 0; j < ntracks; ++j){
-	Track* track = (Track*)(tracks->At(j));
+    // dijet selection
+    if (njets<2) continue;
+    CaloJet* jet0 = (CaloJet*)jets->At(0);
+    CaloJet* jet1 = (CaloJet*)jets->At(1);
+    cout << " jet 0 corr"<<correct<<"Pt|eta|phi: " << jet0->Pt() <<"|"<< jet0->Eta() << "|" << jet0->Phi() << endl;
+    cout << " jet 1 corr"<<correct<<"Pt|eta|phi: " << jet1->Pt() <<"|"<< jet1->Eta() << "|" << jet1->Phi() << endl;
+    double ljdphi = TMath::Abs(reco::deltaPhi(jet0->Phi(),jet1->Phi()));
+    cout << "   leading jets dphi: " << ljdphi << endl;
 
-	double pttrack = track->Pt();
-        double etatrack = track->Eta();
-        double phitrack = track->Phi();
+    // === Track Level ===
+    int ntracks = tracks->GetEntries();
+    for(int j = 0; j < ntracks; ++j){
+      Track* track = (Track*)(tracks->At(j));
+
+      double pttrack = track->Pt();
+      double etatrack = track->Eta();
+      double phitrack = track->Phi();
 
 
-	mithep::TrackQuality& quality = track->Quality();
+      mithep::TrackQuality& quality = track->Quality();
 
-	if(0){
-	  double d0err = track->D0Err();
-	  double sigXY = sqrt(d0err*d0err + 0.04*0.04);
-	  double qope = track->QOverPErr();
-	  double lambdaerr = track->LambdaErr();
-	  double pz = track->Pz();
-	  int chg = track->Charge();
+      if(0){
+	double d0err = track->D0Err();
+	double sigXY = sqrt(d0err*d0err + 0.04*0.04);
+	double qope = track->QOverPErr();
+	double lambdaerr = track->LambdaErr();
+	double pz = track->Pz();
+	int chg = track->Charge();
+      }
+
+      bool highPurity = quality.QualityMask().TestBit(2);
+      //cout << "highPurity?: " << quality.QualityMask().TestBit(2) << endl;
+      bool goodTrack = highPurity;
+
+      if(!goodTrack) continue;
+
+      /*
+      double dr = reco::deltaR(etatrack,phitrack,etajet,phijet);
+      hDR->Fill(dr);
+
+      if(dr > drMax) continue;
+
+      hptTr[0]->Fill(pttrack);
+      hptTr[jetbin]->Fill(pttrack);
+
+      if(pttrack < ptMin) continue;
+
+      double ffz = pttrack/ptjet;
+      double xi = -log(ffz);
+
+      hFFz->Fill(ffz);
+      hXi->Fill(xi);
+      */
+    }
+
+    // mc input
+    if(MC){
+      int ngenjets = genjets->GetEntries();
+      for(int i = 0; i < ngenjets; ++i){
+	GenJet* jet = (GenJet*)genjets->At(i);
+
+	double ptjet = jet->Pt();
+	double etajet = jet->Eta();
+	double phijet = jet->Phi();
+
+	double energy = jet->E();
+
+	int jetbin = getBin(ptjet,etBins)+1;
+	ngenjet[jetbin] += 1.;
+
+	int nparticles = genparticles->GetEntries();
+	for(int j = 0; j < nparticles; ++j){
+	  MCParticle* p = (MCParticle*)(genparticles->At(j));
+
+	  int chg = p->Charge();
+
+	  if(chg == 0 || chg < -10) continue;
+
+	  double ptpar = p->Pt();
+	  double etapar = p->Eta();
+	  double phipar = p->Phi();
+
+	  double dr = reco::deltaR(etapar,phipar,etapar,phipar);
+
+	  if(dr > drMax) continue;
+
+	  if(ptpar < ptMin) continue;
+	  double ffz = ptpar/ptjet;
+	  double xi = -log(ffz);
+	  hFFzGen->Fill(ffz);
+	  hXiGen->Fill(xi);
+
+
 	}
-	
-	bool highPurity = quality.QualityMask().TestBit(2);
-	//cout << "highPurity?: " << quality.QualityMask().TestBit(2) << endl;
-	bool goodTrack = highPurity;
-
-	if(!goodTrack) continue;
-
-	double dr = reco::deltaR(etatrack,phitrack,etajet,phijet);
-	hDR->Fill(dr);
-
-	if(dr > drMax) continue;
-
-	hptTr[0]->Fill(pttrack);
-        hptTr[jetbin]->Fill(pttrack);
-
-	if(pttrack < ptMin) continue;
-
-	double ffz = pttrack/ptjet;
-	double xi = -log(ffz);
-
-        hFFz->Fill(ffz);
-	hXi->Fill(xi);
       }
 
     }
 
-      if(MC){
-	int ngenjets = genjets->GetEntries();
-	for(int i = 0; i < ngenjets; ++i){
-	  GenJet* jet = (GenJet*)genjets->At(i);
-
-	  double ptjet = jet->Pt();
-	  double etajet = jet->Eta();
-	  double phijet = jet->Phi();
-
-	  double energy = jet->E();
-
-	  int jetbin = getBin(ptjet,etBins)+1;
-	  ngenjet[jetbin] += 1.;
-
-	  int nparticles = genparticles->GetEntries();
-	  for(int j = 0; j < nparticles; ++j){
-	    MCParticle* p = (MCParticle*)(genparticles->At(j));
-
-	    int chg = p->Charge();
-	    
-	    if(chg == 0 || chg < -10) continue;
-	    
-	    double ptpar = p->Pt();
-	    double etapar = p->Eta();
-	    double phipar = p->Phi();
-	    
-	    double dr = reco::deltaR(etapar,phipar,etapar,phipar);
-	    
-	    if(dr > drMax) continue;
-
-	    if(ptpar < ptMin) continue;
-	    double ffz = ptpar/ptjet;
-	    double xi = -log(ffz);
-	    hFFzGen->Fill(ffz);
-	    hXiGen->Fill(xi);
-	    
-	    
-	  }
-	}
-
-      }
-
-  }
+  } // event end
 
   hptJet->Draw();
 
