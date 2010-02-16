@@ -1,82 +1,50 @@
 #include "TClonesArray.h"
 #include "TTree.h"
+#include "TChain.h"
 #include "TFile.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TCanvas.h"
-
 #include "MitAna/DataTree/interface/CaloJetCol.h"
-#include "QCDAnalysis/HighPtJetAnalysis/interface/Utilities.h"
-#include "CondFormats/JetMETObjects/interface/CombinedJetCorrector.h"
+#include "MitAna/DataTree/interface/GenJetCol.h"
+#include "MitAna/DataTree/interface/MCParticleCol.h"
+#include "MitAna/DataTree/interface/TrackCol.h"
+#include "MitAna/DataTree/interface/VertexCol.h"
+#include "MitAna/DataTree/interface/DataBaseCol.h"
 #include <iostream>
 #include <string>
 #include <vector>
 
 using namespace std;
-
 using namespace mithep;
 
-void bambu(){
+void analyze(double whatever = 0){
 
-  TFile* inf = new TFile("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_1.root");
-  TTree* tree = (TTree*)inf->Get("Events");
-
-  string JECLevels = "L2:L3";
-  string JECTag = "900GeV_L2Relative_AK5Calo:900GeV_L3Absolute_AK5Calo";
-
-  CombinedJetCorrector *JEC = new CombinedJetCorrector(JECLevels,JECTag);
-
-  mithep::Array<mithep::CaloJet> *jetarray;
-
-  TH1D* hpt = new TH1D("hpt",";p_{T} [GeV];jets",100,0,20);
-  TH2D* hptCor = new TH2D("hptCor",";p_{T}^{raw} [GeV];p_{T}^{corrected} [GeV]",100,0,20,100,0,20);
+  TChain* tree = new TChain("Events");
+  tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_*.root");
   
-  tree->SetBranchAddress("ItrCone5Jets",&jetarray);
-  tree->SetBranchStatus("ItrCone5Jets",1);
-  tree->SetBranchStatus("PixelTracks",0);
-  tree->SetBranchStatus("PixelLessTracks",0);
-  tree->SetBranchStatus("ConversionOutInTracks",0);
-  tree->SetBranchStatus("GsfTracks",0);
-  tree->SetBranchStatus("ConversionInOutTracks",0);
-  tree->SetBranchStatus("StandaloneMuonTracksWVtxConstraint",0);
-  tree->SetBranchStatus("StandaloneMuonTracks",0);
-  tree->SetBranchStatus("GlobalMuonTracks",0);
+  mithep::Array<mithep::CaloJet> *jets;
+  mithep::Array<mithep::Track> *tracks;
+  mithep::Array<mithep::Vertex> *vertices;
+  mithep::DataBase *L1T;
+  mithep::DataBase *L1A;
+  mithep::Array<mithep::MCParticle> *genparticles;
+  mithep::Array<mithep::GenJet> *genjets;
+
+  tree->SetBranchAddress("ItrCone5Jets",&jets);
+  tree->SetBranchAddress("Tracks",&tracks);
+  tree->SetBranchAddress("PrimaryVertexes",&vertices);
+  tree->SetBranchAddress("L1TechBitsBeforeMask",&L1T);
+  tree->SetBranchAddress("L1AlgoBitsBeforeMask",&L1A);
 
   int nevents = tree->GetEntries();
-  
+  nevents = 2; // shorten
+
   for(int iev = 0; iev < nevents; ++iev){
 
-    cout<<"a"<<endl;
     tree->GetEntry(iev);
 
-    int njets = jetarray->GetEntries();
-    cout<<"N jets : "<<njets<<endl;
-    
-    for(int i = 0; i < njets; ++i){
-
-      cout<<"i "<<i<<endl;
-
-      CaloJet* jet = (CaloJet*)jetarray->At(i);
-      jet->DisableCorrections();
-      double pt = jet->Pt();
-
-      double eta = jet->Eta();
-      double energy = jet->E();
-
-      hpt->Fill(pt);
-
-      double corpt = pt*JEC->getCorrection(pt,eta,energy);
-      hptCor->Fill(pt,corpt);
-
-    }
-
   }
-
-  hpt->Draw();
-
-  TCanvas* c2 = new TCanvas();
-  hptCor->Draw("colz");
-
 
 }
 
