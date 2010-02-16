@@ -53,12 +53,14 @@ namespace jetana
 	 Double_t		    nljetsm_;
 	 Double_t		    nljeta_;
 	 Double_t		    nljphi_;
+	 Double_t		    nljemf_;
 	 Int_t	  		    nljnp_;
 
 	 Double_t		    aljet_;
 	 Double_t		    aljetsm_;
 	 Double_t		    aljeta_;
 	 Double_t		    aljphi_;
+	 Double_t		    aljemf_;
 	 Int_t	  		    aljnp_;
 
 	 Double_t		    jdphi_;
@@ -218,12 +220,14 @@ namespace jetana
       tree_->Branch("nljetsm", &(this->nljetsm_), "nljetsm/D");
       tree_->Branch("nljeta", &(this->nljeta_), "nljeta/D");
       tree_->Branch("nljphi", &(this->nljphi_), "nljphi/D");
+      tree_->Branch("nljemf", &(this->nljemf_), "nljemf/D");
       tree_->Branch("nljnp", &(this->nljnp_), "nljnp/I");
 
       tree_->Branch("aljet", &(this->aljet_), "aljet/D");
       tree_->Branch("aljetsm", &(this->aljetsm_), "aljetsm/D");
       tree_->Branch("aljeta", &(this->aljeta_), "aljeta/D");
       tree_->Branch("aljphi", &(this->aljphi_), "aljphi/D");
+      tree_->Branch("aljemf", &(this->aljemf_), "aljemf/D");
       tree_->Branch("aljnp", &(this->aljnp_), "aljnp/I");
 
       tree_->Branch("jdphi", &(this->jdphi_), "jdphi/D");

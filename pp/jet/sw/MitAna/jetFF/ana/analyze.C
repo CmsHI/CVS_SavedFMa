@@ -224,10 +224,12 @@ void analyze(){
     jd_.nljet_         = ptjet0;
     jd_.nljeta_	       = etajet0;
     jd_.nljphi_        = phijet0;
+    jd_.nljemf_        = jet0->EnergyFractionEm();
 
     jd_.aljet_         = ptjet1;
     jd_.aljeta_	       = etajet1;
     jd_.aljphi_        = phijet1;
+    jd_.aljemf_        = jet1->EnergyFractionEm();
 
     // === Track Level ===
     int ntracks = tracks->GetEntries();
@@ -255,6 +257,12 @@ void analyze(){
       bool goodTrack = highPurity;
 
       if(!goodTrack) continue;
+
+      // -- Fill Tracks --
+      // fill frag candidates basic info
+      jd_.ppt_[j]      = pttrack;
+      jd_.peta_[j]     = etatrack;
+      jd_.pphi_[j]     = phitrack;
 
       /*
       double dr = reco::deltaR(etatrack,phitrack,etajet,phijet);
