@@ -156,6 +156,7 @@ void analyze(){
 
     //  - got good event vertex -
     nevtrig++;
+    jd_.vz_ = vtx->Z();
 
     // === Jet Level ===
     int njets = jets->GetEntries();
