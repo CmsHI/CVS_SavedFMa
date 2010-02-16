@@ -41,7 +41,7 @@ void test(){
   Events->SetAlias("sigXY","sqrt(trk.D0Err()*trk.D0Err() + 0.04*0.04)");
   
   // high purity tracks
-  Events->SetAlias("highPurity","trk.fQuality.fQualityMask.fBitMask.TestBit(2)");
+  Events->SetAlias("highPurity","trk.fQuality.fQualityMask.TestBit(2)");
 
   // approximation of ptErr ignoring covariance term
   Events->SetAlias("ptErr","sqrt(pow(trk.P()*trk.Pt()*trk.fQOverPErr/trk.Charge(),2) + pow(trk.Pz()*trk.fLambdaErr,2))");
@@ -49,29 +49,32 @@ void test(){
   // associated supercluster
   Events->SetAlias("sc","trk.SCluster()");
 
-
-  Events->Draw("sc.Et():trk.Pt()>>h2","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && trk.NHits()>7  && evtSel"); return;
+  //Events->Draw("sc.Et():trk.Pt()>>h2","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && trk.NHits()>7  && evtSel"); return;
+  //Events->Draw("trk.Pt()","trk.fQuality.fQualityMask.TestBit(2) && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel"); return;
+  //Events->Draw("trk.Pt()>>hPt(40,0,20)","highPurity && trk.NHits()>=8 && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel"); return;
 
   // draw hists
   Events->Draw("trk.Pt()>>hPt(40,0,20)","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel","goff");
-  //Events->Draw("trk.Eta()>>hEta(25,-2.5,2.5)","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel","goff");
-  //Events->Draw("trk.Phi()>>hPhi(30,-3.1416,3.1416)","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel","goff");
+  Events->Draw("trk.Eta()>>hEta(25,-2.5,2.5)","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel","goff");
+  Events->Draw("trk.Phi()>>hPhi(30,-3.1416,3.1416)","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel","goff");
   Events->Draw("1>>hEvt","evtSel","goff");
 
   Events->Draw("trk.Pt()>>hPt6U(40,0,20)","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel && hltJet6U","goff");
-  //Events->Draw("trk.Eta()>>hEta6U(25,-2.5,2.5)","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel && hltJet6U","goff");
-  //Events->Draw("trk.Phi()>>hPhi6U(30,-3.1416,3.1416)","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel && hltJet6U","goff");
+  Events->Draw("trk.Eta()>>hEta6U(25,-2.5,2.5)","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel && hltJet6U","goff");
+  Events->Draw("trk.Phi()>>hPhi6U(30,-3.1416,3.1416)","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel && hltJet6U","goff");
   Events->Draw("1>>hEvt6U","evtSel && hltJet6U","goof");
 
-  //Events->Draw("trk.Pt()>>hInvYield(80,0,8)","(highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel)*(0.1591546/trk.Pt())","goff");
+  Events->Draw("trk.Pt()>>hPt8hits(40,0,20)","highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel && trk.NHits()>=8","goff");
+
+  Events->Draw("trk.Pt()>>hInvYield(80,0,8)","(highPurity && abs(d0Corr/sigXY)<3 && ptErr/trk.Pt()<0.1 && evtSel)*(0.1591546/trk.Pt())","goff");
 
   Float_t nEvt = (Float_t) hEvt->GetEntries();
   Float_t nEvt6U = (Float_t) hEvt6U->GetEntries();
 
   Float_t ptWidth = hPt->GetBinWidth(2);
-  //Float_t etaWidth = hEta->GetBinWidth(2);
-  //Float_t phiWidth = hPhi->GetBinWidth(2);
-  //Float_t invYieldWidth = hInvYield->GetBinWidth(2);
+  Float_t etaWidth = hEta->GetBinWidth(2);
+  Float_t phiWidth = hPhi->GetBinWidth(2);
+  Float_t invYieldWidth = hInvYield->GetBinWidth(2);
 
   // draw canvas
   TCanvas *c1 = new TCanvas("c1","c1",700,600);
@@ -81,15 +84,22 @@ void test(){
   hPt->SetMarkerStyle(20);
   hPt->SetTitle("Uncorrected Spectrum (|#eta|<2.5); p_{T} [GeV/c]; d^{2}N/d#etadp_{T}");
   hPt->Draw("pz");
+  
   hPt6U->Sumw2();
-  //hPt6U->Scale(1./nEvt6U); hPt6U->Scale(1./ptWidth);
-  hPt6U->Scale(1./nEvt); hPt6U->Scale(1./ptWidth);  // scale to match minbias
+  //hPt6U->Scale(1./nEvt6U); hPt6U->Scale(0.2/ptWidth); // 5 units of rapidity
+  hPt6U->Scale(1./nEvt); hPt6U->Scale(0.2/ptWidth);  // scale to match minbias
   hPt6U->SetMarkerStyle(20);
   hPt6U->SetMarkerColor(2);
   hPt6U->Draw("pzsame");
+  
+  hPt8hits->Sumw2();
+  hPt8hits->Scale(1./nEvt); hPt8hits->Scale(0.2/ptWidth);  // scale to match minbias
+  hPt8hits->SetMarkerStyle(24);
+  hPt8hits->SetMarkerColor(4);
+  hPt8hits->Draw("pzsame");
   gPad->SetLogy();
-
-  /*
+  
+  
   TCanvas *c2 = new TCanvas("c2","c2",700,600);
   hEta->Sumw2();
   hEta->Scale(1./nEvt); hEta->Scale(1./etaWidth);
@@ -124,5 +134,5 @@ void test(){
   hInvYield->Draw("pz");
   gPad->SetLogy();
 
-  */
+  
 }
