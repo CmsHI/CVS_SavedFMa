@@ -233,6 +233,7 @@ void analyze(){
 
     // === Track Level ===
     int ntracks = tracks->GetEntries();
+    int selTrkCt = 0;
     for(int j = 0; j < ntracks; ++j){
       Track* track = (Track*)(tracks->At(j));
 
@@ -257,12 +258,19 @@ void analyze(){
       bool goodTrack = highPurity;
 
       if(!goodTrack) continue;
+      cout << "sel track: " << selTrkCt << " pt eta phi: " << pttrack << "|" << etatrack << "|" << phitrack << endl;
 
       // -- Fill Tracks --
       // fill frag candidates basic info
-      jd_.ppt_[j]      = pttrack;
-      jd_.peta_[j]     = etatrack;
-      jd_.pphi_[j]     = phitrack;
+      jd_.trkNHits_[selTrkCt]      = track->NHits();
+      jd_.trkHP_[selTrkCt]      = highPurity;
+      jd_.ppt_[selTrkCt]      = pttrack;
+      jd_.peta_[selTrkCt]     = etatrack;
+      jd_.pphi_[selTrkCt]     = phitrack;
+      // save counter
+      ++selTrkCt;
+      jd_.evtnp_       = selTrkCt;
+
 
       /*
       double dr = reco::deltaR(etatrack,phitrack,etajet,phijet);

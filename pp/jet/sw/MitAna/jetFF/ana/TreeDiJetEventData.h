@@ -88,6 +88,10 @@ namespace jetana
 
 	 Double_t       	    zn_[MAXNPARTICLES];
 	 Double_t       	    za_[MAXNPARTICLES];
+
+	 //  - track sel -
+	 Int_t	        	    trkHP_[MAXNPARTICLES];
+	 Int_t	         	    trkNHits_[MAXNPARTICLES];
 	 
 	 // -- jet cone info --
 	 Double_t		    nljCone5Et_;
@@ -256,6 +260,8 @@ namespace jetana
       tree_->Branch("zn",this->zn_,"zn[evtnp]/D");
       tree_->Branch("za",this->za_,"za[evtnp]/D");
 
+      tree_->Branch("trkHP",this->trkHP_,"trkHP[evtnp]/I");
+      tree_->Branch("trkNHits",this->trkNHits_,"trkNHits[evtnp]/I");
 	 // -- jet cone info --
       tree_->Branch("nljCone5Et", &(this->nljCone5Et_), "nljCone5Et/D");
       tree_->Branch("nljCone5NP", &(this->nljCone5NP_), "nljCone5NP/I");
