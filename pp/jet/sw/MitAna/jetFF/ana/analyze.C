@@ -45,8 +45,8 @@ void analyze(){
 
   // === input ===
   TChain* tree = new TChain("Events");
-  //tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_*.root");
-  tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_1.root");
+  tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_*.root");
+  //tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_1.root");
   
   // === ana config ===
   double etBinsArray[nEtBins] = {0,5,10,15,20,30,70,120};
@@ -93,7 +93,8 @@ void analyze(){
   mithep::Array<mithep::GenJet> *genjets;
   mithep::EventHeader *evInfo;
 
-  tree->SetBranchAddress("ItrCone5Jets",&jets);
+  //tree->SetBranchAddress("ItrCone5Jets",&jets);
+  tree->SetBranchAddress("AKt5Jets",&jets);
   tree->SetBranchAddress("Tracks",&tracks);
   tree->SetBranchAddress("PrimaryVertexes",&vertices);
   tree->SetBranchAddress("L1TechBitsBeforeMask",&L1T);
@@ -112,8 +113,12 @@ void analyze(){
 
   //  nevents = 50;  
   for(int iev = 0; iev < nevents; ++iev){
-
     tree->GetEntry(iev);
+
+    // clear jet data
+    jd_.ClearCounters();
+
+    // trigger info
     bool T36 = L1T->TestBit(36);
     bool T37 = L1T->TestBit(37);
     bool T38 = L1T->TestBit(38);
@@ -147,16 +152,23 @@ void analyze(){
       continue;
 
     // === Event Level ===
+    // if no vertex nothing to do
     if(vertices->GetEntries() < 1) continue;
-    const mithep::Vertex * vtx = (Vertex*)vertices->At(0);
-    bool goodVertex = vtx->Ndof()> 5 && TMath::Abs(vtx->Z() < 15.);
-    cout << "Run #: " << runNum << " Event: " << evInfo->EvtNum() << " Lumi: " << evInfo->LumiSec() << endl;
 
-    if(!goodVertex) continue;
+    // there is a vertex
+    const mithep::Vertex * vtx = (Vertex*)vertices->At(0);
+    bool goodVertex = vtx->Ndof()> 4 && TMath::Abs(vtx->Z() < 15.);
+    cout << "Run #: " << runNum << " Event: " << evInfo->EvtNum() << " Lumi: " << evInfo->LumiSec() << " nvtx: " << vertices->GetEntries() << " vtxndof: " << vtx->Ndof() << endl;
+    //  - save event info
+    jd_.run_ = runNum;
+    jd_.event_ = evInfo->EvtNum();
+    jd_.vtxdof_ = vtx->Ndof();
+    jd_.vz_ = vtx->Z();
+
+    if(!goodVertex) { tree_->Fill(); continue; }
 
     //  - got good event vertex -
     nevtrig++;
-    jd_.vz_ = vtx->Z();
 
     // === Jet Level ===
     int njets = jets->GetEntries();
@@ -193,9 +205,30 @@ void analyze(){
       if(ptjet< jetPtMin) continue;
       //cout << " jet" << i << " Good . corr"<<correct<<"Pt|eta|phi: " << ptjet <<"|"<< etajet << "|" << phijet << endl;
     }
+    
+    // === Dijet Ana ===
+    if (njets<2) {
+      // nothing to do for dijet ana, fill some inclusive track info
+      int ntracks = tracks->GetEntries();
+      int nHP = 0;
+      for(int it = 0; it < ntracks; ++it){
+	Track* track		       = (Track*)(tracks->At(it));
+	mithep::TrackQuality& quality  = track->Quality();
+	bool highPurity		       = quality.QualityMask().TestBit(2);
+	jd_.trkNHits_[it]	       = track->NHits();
+	jd_.trkHP_[it]		       = highPurity;
+	jd_.ppt_[it]		       = track->Pt();
+	jd_.peta_[it]		       = track->Eta();
+	jd_.pphi_[it]		       = track->Phi();
+	if (highPurity) ++nHP;
+      }
+      jd_.evtnp_		 = ntracks;
+      jd_.fracHP_		 = (double)nHP/(double)ntracks;
+      tree_->Fill();
+      continue;
+    }
 
-    // dijet selection
-    if (njets<2) continue;
+    // there are 2 jets
     CaloJet* jet0 = (CaloJet*)jets->At(0);
     CaloJet* jet1 = (CaloJet*)jets->At(1);
     // apply corrections
@@ -210,8 +243,8 @@ void analyze(){
     if(correct) ptjet0 = ptjet0*JEC->getCorrection(ptjet0,etajet0,jet0->E());
     if(correct) ptjet1 = ptjet1*JEC->getCorrection(ptjet1,etajet1,jet1->E());
     // cut jet
-    bool goodDiJet = ptjet0>7 && ptjet1>7;
-    if (!goodDiJet) continue;
+    //bool goodDiJet = ptjet0>1 && ptjet1>1;
+    //if (!goodDiJet) continue;
     cout << " jet 0 corr"<<correct<<"Pt|eta|phi: " << ptjet0 <<"|"<< etajet0 << "|" << phijet0 << endl;
     cout << " jet 1 corr"<<correct<<"Pt|eta|phi: " << ptjet1 <<"|"<< etajet1 << "|" << phijet1 << endl;
     double ljdphi = TMath::Abs(reco::deltaPhi(phijet0,phijet1));
@@ -233,6 +266,7 @@ void analyze(){
 
     // === Track Level ===
     int ntracks = tracks->GetEntries();
+    int nHP = 0;
     int selTrkCt = 0;
     for(int j = 0; j < ntracks; ++j){
       Track* track = (Track*)(tracks->At(j));
@@ -256,9 +290,10 @@ void analyze(){
       bool highPurity = quality.QualityMask().TestBit(2);
       //cout << "highPurity?: " << quality.QualityMask().TestBit(2) << endl;
       bool goodTrack = highPurity;
+      if (highPurity) ++nHP;
 
-      if(!goodTrack) continue;
-      cout << "sel track: " << selTrkCt << " pt eta phi: " << pttrack << "|" << etatrack << "|" << phitrack << endl;
+      //if(!goodTrack) continue;
+      //cout << "sel track: " << selTrkCt << " pt eta phi: " << pttrack << "|" << etatrack << "|" << phitrack << endl;
 
       // -- Fill Tracks --
       // fill frag candidates basic info
@@ -267,9 +302,26 @@ void analyze(){
       jd_.ppt_[selTrkCt]      = pttrack;
       jd_.peta_[selTrkCt]     = etatrack;
       jd_.pphi_[selTrkCt]     = phitrack;
+
+      // Relations to jet
+      jd_.pndphi_[selTrkCt]   = TMath::Abs(reco::deltaPhi(phitrack,phijet0));
+      jd_.pndeta_[selTrkCt]   = etatrack - etajet0;
+      jd_.pndr_[selTrkCt]     = reco::deltaR(etatrack,phitrack,etajet0,phijet0);
+
+      jd_.padphi_[selTrkCt]   = TMath::Abs(reco::deltaPhi(phitrack,phijet1));
+      jd_.padeta_[selTrkCt]   = etatrack - etajet1;
+      jd_.padr_[selTrkCt]     = reco::deltaR(etatrack,phitrack,etajet1,phijet1);
+
+      //  - background variables-
+      jd_.pndrbg_[selTrkCt]	  = reco::deltaR(etatrack,phitrack,etajet0,phijet0+TMath::Pi()/2);
+      jd_.padrbg_[selTrkCt]	= reco::deltaR(etatrack,phitrack,etajet1,phijet1+TMath::Pi()/2);
+
+      // fragmentation variables
+      jd_.zn_[selTrkCt]	= pttrack/ptjet0;
+      jd_.za_[selTrkCt] = pttrack/ptjet1;
+
       // save counter
       ++selTrkCt;
-      jd_.evtnp_       = selTrkCt;
 
 
       /*
@@ -289,7 +341,10 @@ void analyze(){
       hFFz->Fill(ffz);
       hXi->Fill(xi);
       */
-    }
+    } // tracks
+    jd_.evtnp_		 = selTrkCt;
+    jd_.fracHP_		 = (double)nHP/(double)ntracks;
+
 
     // mc input
     if(MC){
@@ -334,6 +389,7 @@ void analyze(){
 
     }
 
+    // all done!
     tree_->Fill();
   } // event end
 
@@ -383,8 +439,6 @@ void analyze(){
   cout<<"---------------------------------------"<<endl;
   cout<<"Total Number of Events used : "<<nevtrig<<endl;
   cout<<"---------------------------------------"<<endl;
-
-
 }
 
 
