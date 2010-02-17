@@ -5,9 +5,10 @@ void aliases(TTree* Events)
 
   // === Event info ===
   Events->SetAlias("run","EventHeader.fRunNum");
-  Events->SetAlias("goodRuns","((run>=123596 && run<=124030) || run==124120)");
+  Events->SetAlias("goodRuns","(run==123596||run==123615||run==123732||run==123815||run==123818||run==123906||run==123908||run==124008||run==124009||run==124020||run==124022||run==124023||run==124024||run==124025||run==124027||run==124030)");
+  Events->SetAlias("phyDec","EventHeader.fIsPhysDec");
   Events->SetAlias("vtx","PrimaryVertexes.fArray");
-  Events->SetAlias("goodVertex","(vtx.fNdof>5 && abs(vtx.Z())<15)");
+  Events->SetAlias("goodVertex","(vtx.fNdof>4 && abs(vtx.Z())<15)");
 
   // === trigger ===
   //  - L1T -
