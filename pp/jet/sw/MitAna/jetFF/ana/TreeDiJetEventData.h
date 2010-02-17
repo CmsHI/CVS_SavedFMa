@@ -19,11 +19,13 @@ namespace jetana
    {
       public:
 	 //  --- event level ---
-	 ULong_t		    run_;
-	 ULong_t		    event_;
+	 UInt_t			    run_;
+	 UInt_t			    event_;
 	 Double_t		    mass_;
 	 Double_t		    cmeta_;
 	 Double_t		    vz_;
+	 Double_t		    vtxdof_;
+	 Double_t		    fracHP_;
 
 	 // -- HI Event variables --
 	 Double_t		    b_;
@@ -192,11 +194,13 @@ namespace jetana
    void TreeDiJetEventData::SetBranches()
    {
       // --event level--
-      tree_->Branch("run", &(this->run_), "run/l");
-      tree_->Branch("event", &(this->event_), "event/l");
+      tree_->Branch("run", &(this->run_), "run/i");
+      tree_->Branch("event", &(this->event_), "event/i");
       tree_->Branch("mass", &(this->mass_), "mass/D");
       tree_->Branch("cmeta", &(this->cmeta_), "cmeta/D");
       tree_->Branch("vz", &(this->vz_), "vz/D");
+      tree_->Branch("vtxdof", &(this->vtxdof_), "vtxdof/D");
+      tree_->Branch("fracHP", &(this->fracHP_), "fracHP/D");
       // -- hi event var's --
       tree_->Branch("b", &(this->b_), "b/D");
       tree_->Branch("npart", &(this->npart_), "npart/I");
@@ -283,6 +287,16 @@ namespace jetana
    }
    void TreeDiJetEventData::ClearCounters()
    {
+      // event
+      run_	  = -99;
+      event_	  = -99;
+      vtxdof_	  = -99;
+      vz_	  = -99;
+      fracHP_	  = -99;
+      // jet
+      nljet_	  = -99;
+      aljet_	  = -99;
+      // jet constituents
       evtnp_      = 0;
       nljCone5Et_ = 0;
       nljCone5NP_ = 0;
