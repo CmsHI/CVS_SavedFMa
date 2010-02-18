@@ -151,6 +151,12 @@ void analyze(){
        )
       continue;
 
+    // print out info (out of good runs) before any filters
+    cout << "Run #: " << runNum << " Event: " << evInfo->EvtNum() << " Lumi: " << evInfo->LumiSec() << " PhysDeclared?: " << evInfo->IsPhysDec() << endl;
+
+    // Filter on phys declared
+    if (!evInfo->IsPhysDec()) continue;
+
     // === Event Level ===
     // if no vertex nothing to do
     if(vertices->GetEntries() < 1) continue;
@@ -158,7 +164,7 @@ void analyze(){
     // there is a vertex
     const mithep::Vertex * vtx = (Vertex*)vertices->At(0);
     bool goodVertex = vtx->Ndof()> 4 && TMath::Abs(vtx->Z() < 15.);
-    cout << "Run #: " << runNum << " Event: " << evInfo->EvtNum() << " Lumi: " << evInfo->LumiSec() << " nvtx: " << vertices->GetEntries() << " vtxndof: " << vtx->Ndof() << endl;
+    cout << " EventInfo - nvtx: " << vertices->GetEntries() << " vtxndof: " << vtx->Ndof() << endl;
     //  - save event info
     jd_.run_ = runNum;
     jd_.event_ = evInfo->EvtNum();
