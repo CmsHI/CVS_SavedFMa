@@ -46,8 +46,8 @@ void analyze(){
 
   // === input ===
   TChain* tree = new TChain("Events");
-  //tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_*.root");
-  tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_1.root");
+  tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_*.root");
+  //tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_1.root");
   
   // === ana config ===
   double etBinsArray[nEtBins] = {0,5,10,15,20,30,70,120};
@@ -102,10 +102,12 @@ void analyze(){
   tree->SetBranchAddress("L1AlgoBitsBeforeMask",&L1A);
   tree->SetBranchAddress("EventHeader",&evInfo);
 
+  /*
   if(MC){
     tree->SetBranchAddress("MCParticles",&genparticles);
     tree->SetBranchAddress("IC5GenJets",&genjets);
   }
+  */
 
   int nevents = tree->GetEntries();
   int nevtrig = 0;
@@ -125,7 +127,8 @@ void analyze(){
     // run level
     UInt_t runNum=evInfo->RunNum();
     //  - good runs -
-    if (runNum!=123596 &&
+    if (!MC &&
+	runNum!=123596 &&
 	runNum!=123615 &&
 	runNum!=123732 &&
 	runNum!=123815 &&
@@ -149,7 +152,7 @@ void analyze(){
       << " L1A0?: " << A0 << endl;
 
     // Filter on phys declared
-    if (!evInfo->IsPhysDec() || !A0) continue;
+    if (!MC && (!evInfo->IsPhysDec() || !A0)) continue;
 
     // === Event Level ===
     // if no vertex nothing to do
@@ -361,6 +364,7 @@ void analyze(){
 
 
     // mc input
+    /*
     if(MC){
       int ngenjets = genjets->GetEntries();
       for(int i = 0; i < ngenjets; ++i){
@@ -402,6 +406,7 @@ void analyze(){
       }
 
     }
+    */
 
     // all done!
     tree_->Fill();
@@ -423,6 +428,7 @@ void analyze(){
   hXi->Draw();
 
 
+  /*
   if(MC){
     TCanvas* c4 = new TCanvas();
     c4->Divide(2,2);
@@ -433,6 +439,7 @@ void analyze(){
     c4->cd(3);
     hXiGen->Draw();
   }
+  */
 
 
 
