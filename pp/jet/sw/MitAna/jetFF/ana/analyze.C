@@ -6,6 +6,7 @@
 #include "TH2D.h"
 #include "TCanvas.h"
 #include "MitAna/DataTree/interface/EventHeader.h"
+#include "MitAna/DataTree/interface/L1TriggerMask.h"
 #include "MitAna/DataTree/interface/CaloJetCol.h"
 #include "MitAna/DataTree/interface/GenJetCol.h"
 #include "MitAna/DataTree/interface/MCParticleCol.h"
@@ -45,8 +46,8 @@ void analyze(){
 
   // === input ===
   TChain* tree = new TChain("Events");
-  tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_*.root");
-  //tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_1.root");
+  //tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_*.root");
+  tree->Add("/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/bambu/BSCNOBEAMHALO_000_1.root");
   
   // === ana config ===
   double etBinsArray[nEtBins] = {0,5,10,15,20,30,70,120};
@@ -87,8 +88,8 @@ void analyze(){
   mithep::Array<mithep::CaloJet> *jets;
   mithep::Array<mithep::Track> *tracks;
   mithep::Array<mithep::Vertex> *vertices;
-  mithep::DataBase *L1T;
-  mithep::DataBase *L1A;
+  mithep::L1TriggerMask *L1T;
+  mithep::L1TriggerMask *L1A;
   mithep::Array<mithep::MCParticle> *genparticles;
   mithep::Array<mithep::GenJet> *genjets;
   mithep::EventHeader *evInfo;
@@ -119,15 +120,7 @@ void analyze(){
     jd_.ClearCounters();
 
     // trigger info
-    bool T36 = L1T->TestBit(36);
-    bool T37 = L1T->TestBit(37);
-    bool T38 = L1T->TestBit(38);
-    bool T39 = L1T->TestBit(39);
-    bool haloVeto = !(T36 || T37 || T38 || T39);
-    bool T40 = L1T->TestBit(40);
-    bool T41 = L1T->TestBit(41);
-    bool A0 = L1A->TestBit(40);
-    bool A82 = L1A->TestBit(82);
+    bool A0 = L1A->Get().TestBit(0);
 
     // run level
     UInt_t runNum=evInfo->RunNum();
@@ -152,10 +145,11 @@ void analyze(){
       continue;
 
     // print out info (out of good runs) before any filters
-    cout << "Run #: " << runNum << " Event: " << evInfo->EvtNum() << " Lumi: " << evInfo->LumiSec() << " PhysDeclared?: " << evInfo->IsPhysDec() << endl;
+    cout << "Run #: " << runNum << " Event: " << evInfo->EvtNum() << " Lumi: " << evInfo->LumiSec() << " PhysDeclared?: " << evInfo->IsPhysDec()
+      << " L1A0?: " << A0 << endl;
 
     // Filter on phys declared
-    if (!evInfo->IsPhysDec()) continue;
+    if (!evInfo->IsPhysDec() || !A0) continue;
 
     // === Event Level ===
     // if no vertex nothing to do
@@ -246,18 +240,29 @@ void analyze(){
     double etajet1 = jet1->Eta();
     double phijet0 = jet0->Phi();
     double phijet1 = jet1->Phi();
-    if(correct) ptjet0 = ptjet0*JEC->getCorrection(ptjet0,etajet0,jet0->E());
-    if(correct) ptjet1 = ptjet1*JEC->getCorrection(ptjet1,etajet1,jet1->E());
+    FourVectorM jet0p4 = jet0->RawMom();
+    FourVectorM jet1p4 = jet1->RawMom();
+    if(correct) {
+      double scale = JEC->getCorrection(ptjet0,etajet0,jet0->E());
+      ptjet0 *= scale;
+      jet0p4 *= scale;
+    }
+    if(correct) {
+      double scale = JEC->getCorrection(ptjet1,etajet1,jet1->E());
+      ptjet1 *= scale;
+      jet1p4 *= scale;
+    }
     // cut jet
     //bool goodDiJet = ptjet0>1 && ptjet1>1;
     //if (!goodDiJet) continue;
-    cout << " jet 0 corr"<<correct<<"Pt|eta|phi: " << ptjet0 <<"|"<< etajet0 << "|" << phijet0 << endl;
-    cout << " jet 1 corr"<<correct<<"Pt|eta|phi: " << ptjet1 <<"|"<< etajet1 << "|" << phijet1 << endl;
+    cout << " jet 0 corr"<<correct<<"Pt|eta|phi: " << ptjet0 <<"|"<< etajet0 << "|" << phijet0 << " p4: " << jet0p4 << endl;
+    cout << " jet 1 corr"<<correct<<"Pt|eta|phi: " << ptjet1 <<"|"<< etajet1 << "|" << phijet1 << " p4: " << jet1p4 << endl;
     double ljdphi = TMath::Abs(reco::deltaPhi(phijet0,phijet1));
     cout << "   leading jets dphi: " << ljdphi << endl;
     // -- Fill jet info --
     // fill dijet info
-    jd_.jdphi_      = ljdphi;
+    jd_.jdphi_	       = ljdphi;
+    jd_.mass_	       = (jet0p4+jet1p4).M();
 
     // near/away info
     jd_.nljet_         = ptjet0;
@@ -321,6 +326,9 @@ void analyze(){
       //  - background variables-
       jd_.pndrbg_[selTrkCt]	  = reco::deltaR(etatrack,phitrack,etajet0,phijet0+TMath::Pi()/2);
       jd_.padrbg_[selTrkCt]	= reco::deltaR(etatrack,phitrack,etajet1,phijet1+TMath::Pi()/2);
+
+      // jet cone info
+      if (pttrack>0.3 && pttrack<60 && highPurity && track->NHits()>=8 && jd_.pndr_[selTrkCt]<0.5) ++jd_.nljCone5NP_;
 
       // fragmentation variables
       jd_.zn_[selTrkCt]	= pttrack/ptjet0;
