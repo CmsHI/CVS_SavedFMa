@@ -54,7 +54,8 @@ void analyze(){
   vector<double> etBins(etBinsArray,etBinsArray+nEtBins);
 
   string JECLevels = "L2:L3";
-  string JECTag = "900GeV_L2Relative_IC5Calo:900GeV_L3Absolute_IC5Calo";
+  //string JECTag = "900GeV_L2Relative_IC5Calo:900GeV_L3Absolute_IC5Calo";
+  string JECTag = "900GeV_L2Relative_AK5Calo:900GeV_L3Absolute_AK5Calo";
   CombinedJetCorrector *JEC = new CombinedJetCorrector(JECLevels,JECTag);
 
   // === setup output ===
