@@ -18,10 +18,7 @@ process.source = cms.Source("PoolSource",
       "/store/data/BeamCommissioning09/MinimumBias/RAW-RECO/BSCNOBEAMHALO-Jan29Skim-v2/0022/FEF6AAC7-760E-DF11-8AA3-002618943861.root"
       # mc
       #"/store/mc/Summer09/MinBias/GEN-SIM-RECO/STARTUP3X_V8P_900GeV_Jan29ReReco-v1/0018/FEE5AED4-540D-DF11-819B-00E08178C129.root"
-      ),
-    secondaryFileNames = cms.untracked.vstring(
       )
-    #        '/store/data/Commissioning08/Cosmics/RAW/v1/000/069/578/085EFED4-E5AB-DD11-9ACA-001617C3B6FE.root')
     )
 
 process.configurationMetadata = cms.untracked.PSet(
@@ -30,7 +27,7 @@ process.configurationMetadata = cms.untracked.PSet(
     annotation = cms.untracked.string('At least two general track or one pixel track or one pixelLess track')
 )
 
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(1000))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10))
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 
 
