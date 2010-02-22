@@ -68,7 +68,7 @@ process.primaryVertexFilter = cms.EDFilter("GoodVertexFilter",
     )
 
 # =============== Final Filter Path ==================
-process.jetAnaSkim_step = cms.Path(process.physDeclFilter*process.bptxAnd*process.monsterVeto*process.primaryVertexFilter)
+process.jetAnaSkim_step = cms.Path(process.physDeclFilter*process.bptxAnd*process.monsterVeto)
 
 
 # ================= Output ======================
@@ -80,7 +80,6 @@ process.output = cms.OutputModule("PoolOutputModule",
       'keep *_offlineBeamSpot_*_*',
       'keep *_TriggerResults_*_HLT',
       'keep L1GlobalTriggerReadoutRecord_gtDigis_*_*RECO',
-      'keep *_hltL1GtObjectMap_*_*RECO',
       # jet
       'keep *Jet*_*CaloJet*_*_*',
       'keep *_*JetID*_*_*',
@@ -94,9 +93,6 @@ process.output = cms.OutputModule("PoolOutputModule",
       'keep reco*_genParticles_*_*',
       # clean up
       'drop *_*BJetTags*_*_*',
-      'drop *_kt*Jet*_*_*',
-      'drop *_sisCone*Jet*_*_*',
-      'drop *_sc*Jet*_*_*'
       ),
     SelectEvents = cms.untracked.PSet(SelectEvents = cms.vstring('jetAnaSkim_step')),
     dataset = cms.untracked.PSet(
