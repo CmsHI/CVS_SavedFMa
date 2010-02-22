@@ -1,3 +1,9 @@
+#
+# - References
+#   * DPGAnalysis/Skims/python/
+#   * https://twiki.cern.ch/twiki/bin/viewauth/CMS/TRKPromptFeedBack
+#
+
 import FWCore.ParameterSet.Config as cms
 
 process = cms.Process("ANASKIM")
