@@ -18,12 +18,30 @@ process.source = cms.Source("PoolSource",
       "/store/data/BeamCommissioning09/MinimumBias/RAW-RECO/BSCNOBEAMHALO-Jan29Skim-v2/0022/FEF6AAC7-760E-DF11-8AA3-002618943861.root"
       # mc
       #"/store/mc/Summer09/MinBias/GEN-SIM-RECO/STARTUP3X_V8P_900GeV_Jan29ReReco-v1/0018/FEE5AED4-540D-DF11-819B-00E08178C129.root"
+      ),
+    lumisToProcess = cms.untracked.VLuminosityBlockRange(
+      '124120:1-124120:max',
+      '124030:2-124030:max',
+      '124027:24-124027:max',
+      '124025:5-124025:13',
+      '124024:2-124024:83',
+      '124023:38-124023:max',
+      '124022:66-124022:179',
+      '124020:12-124020:94',
+      '124009:1-124009:68',
+      '124008:1-124008:1',
+      '123908:2-123908:12',
+      '123818:2-123818:42',
+      '123815:8-123815:max',
+      '123732:62-123732:109',
+      '123615:70-123615:max',
+      '123596:2-123596:max'
       )
     )
 
 process.configurationMetadata = cms.untracked.PSet(
     version = cms.untracked.string('$Revision: 1.4 $'),
-    name = cms.untracked.string('$Source: /cvs_server/repositories/CMSSW/CMSSW/DPGAnalysis/Skims/python/GoodVertex_cfg.py,v $'),
+    name = cms.untracked.string('$Source: /cvs_server/repositories/CMSSW/UserCode/SavedFMa/pp/jet/ana/MinBias2009Winter/skim/JetAnaSkim_data_900GeV_cfg.py,v $'),
     annotation = cms.untracked.string('At least two general track or one pixel track or one pixelLess track')
 )
 
