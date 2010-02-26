@@ -17,12 +17,13 @@
 using namespace std;
 
 void jec(){
+  // Define JEC's
   string JECLevels = "L2:L3";
-  //string JECTag = "900GeV_L2Relative_IC5Calo:900GeV_L3Absolute_IC5Calo";
   string JECTag = "900GeV_L2Relative_AK5Calo:900GeV_L3Absolute_AK5Calo";
-  CombinedJetCorrector *JEC = new CombinedJetCorrector(JECLevels,JECTag);
   string JECTagIC = "900GeV_L2Relative_IC5Calo:900GeV_L3Absolute_IC5Calo";
-  CombinedJetCorrector *JECIC = new CombinedJetCorrector(JECLevels,JECTagIC);
+  CombinedJetCorrector* JECs[2];
+  JECs[0] = new CombinedJetCorrector(JECLevels,JECTag);
+  JECs[1] = new CombinedJetCorrector(JECLevels,JECTagIC);
 
   // ===== check jec vs eta =====
   Int_t N = 100;
@@ -32,20 +33,22 @@ void jec(){
   Double_t etaStep=(etaMax-etaMin)/N;
   const Int_t NPT = 2;
   Double_t ptS[NPT] = {7,20};
-  TGraph *grs[20];
+  TGraph *grs[2][20];
   Style_t lst[20] = {1,7,6};
+  Color_t lc[20] = {kRed, kBlue};
 
-  //  -pt=7 GeV, ak5-
-  for (Int_t ptSl=0; ptSl<NPT; ++ptSl) {
-    for (Int_t i=0; i<N; ++i) {
-      eta[i]=etaMin+i*etaStep;
-      Double_t theta=2*atan(exp(-1*eta[i]));
-      E[i]=ptS[ptSl]/cos(theta);
-      scale[i] = JEC->getCorrection(ptS[ptSl],eta[i],E[i]);
+  for (Int_t ijec=0; ijec<1; ++ijec) {
+    for (Int_t ptSl=0; ptSl<NPT; ++ptSl) {
+      for (Int_t i=0; i<N; ++i) {
+	eta[i]=etaMin+i*etaStep;
+	Double_t theta=2*atan(exp(-1*eta[i]));
+	E[i]=ptS[ptSl]/cos(theta);
+	scale[i] = JECs[0]->getCorrection(ptS[ptSl],eta[i],E[i]);
+      }
+      grs[ijec][ptSl] = new TGraph(N,eta,scale);
+      grs[ijec][ptSl]->SetLineColor(kRed);
+      grs[ijec][ptSl]->SetLineStyle(lst[ptSl]);
     }
-    grs[ptSl] = new TGraph(N,eta,scale);
-    grs[ptSl]->SetLineColor(kRed);
-    grs[ptSl]->SetLineStyle(lst[ptSl]);
   }
 
   //  -draw-
@@ -54,7 +57,7 @@ void jec(){
   hEta->SetMinimum(0.9);
   hEta->SetMaximum(3.5);
   hEta->Draw();
-  grs[0]->Draw("C");
-  grs[1]->Draw("C");
+  grs[0][0]->Draw("C");
+  grs[0][1]->Draw("C");
 }
 
