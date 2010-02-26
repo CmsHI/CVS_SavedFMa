@@ -24,37 +24,29 @@ void jec(){
   string JECTagIC = "900GeV_L2Relative_IC5Calo:900GeV_L3Absolute_IC5Calo";
   CombinedJetCorrector *JECIC = new CombinedJetCorrector(JECLevels,JECTagIC);
 
+  // ===== check jec vs eta =====
   Int_t N = 100;
   Double_t eta[N], pt[N], E[N], scale[N];
-
-  // ===== check jec vs eta =====
   Double_t etaMin=-3;
   Double_t etaMax=3;
   Double_t etaStep=(etaMax-etaMin)/N;
-  Double_t pt0=7;
-  Double_t pt1=20;
-  TGraph *gr0, *gr1, *gr2, *gr3;
+  const Int_t NPT = 2;
+  Double_t ptS[NPT] = {7,20};
+  TGraph *grs[20];
+  Style_t lst[20] = {1,7,6};
 
   //  -pt=7 GeV, ak5-
-  for (Int_t i=0; i<N; ++i) {
-    eta[i]=etaMin+i*etaStep;
-    Double_t theta=2*atan(exp(-1*eta[i]));
-    E[i]=pt0/cos(theta);
-    scale[i] = JEC->getCorrection(pt0,eta[i],E[i]);
+  for (Int_t ptSl=0; ptSl<NPT; ++ptSl) {
+    for (Int_t i=0; i<N; ++i) {
+      eta[i]=etaMin+i*etaStep;
+      Double_t theta=2*atan(exp(-1*eta[i]));
+      E[i]=ptS[ptSl]/cos(theta);
+      scale[i] = JEC->getCorrection(ptS[ptSl],eta[i],E[i]);
+    }
+    grs[ptSl] = new TGraph(N,eta,scale);
+    grs[ptSl]->SetLineColor(kRed);
+    grs[ptSl]->SetLineStyle(lst[ptSl]);
   }
-  gr0 = new TGraph(N,eta,scale);
-  gr0->SetLineColor(kRed);
-
-  //  -pt=20 GeV, ak5-
-  for (Int_t i=0; i<N; ++i) {
-    eta[i]=etaMin+i*etaStep;
-    Double_t theta=2*atan(exp(-1*eta[i]));
-    E[i]=pt1/cos(theta);
-    scale[i] = JEC->getCorrection(pt1,eta[i],E[i]);
-  }
-  gr1 = new TGraph(N,eta,scale);
-  gr1->SetLineColor(kRed);
-  gr1->SetLineStyle(7);
 
   //  -draw-
   TCanvas * c0 = new TCanvas("c0","c0",500,500);
@@ -62,7 +54,7 @@ void jec(){
   hEta->SetMinimum(0.9);
   hEta->SetMaximum(3.5);
   hEta->Draw();
-  gr0->Draw("C");
-  gr1->Draw("C");
+  grs[0]->Draw("C");
+  grs[1]->Draw("C");
 }
 
