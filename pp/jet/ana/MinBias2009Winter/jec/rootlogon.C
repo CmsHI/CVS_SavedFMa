@@ -1,10 +1,10 @@
-// $Id: rootlogon.C,v 1.1 2009/10/21 20:05:34 loizides Exp $
-
 {
-
+  // libs
   gROOT->Macro("$CMSSW_BASE/src/MitAna/macros/setRootEnv.C+");
   loadLibraries("libMitQcdTracklets*.so");
   loadLibraries("libCondFormatsJetMETObjects.so");
   gSystem->AddIncludePath("-I$CMSSW_RELEASE_BASE/src/");
 
+  // styles
+  gROOT->Macro("$SavedFMa/analysis/root/logon/rootlogon_dNdEtaBase.C");
 }
