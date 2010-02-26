@@ -1,8 +1,8 @@
 {
-  // paper styles
+   // from dN/dEta
+   // * http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/ASYoon/dNdEtaPlotMacros/paper/rootlogon.C?view=markup
    gStyle->SetErrorX(0);
-   //gStyle->SetPalette(1,0);
-   gStyle->SetPalette(1);
+   gStyle->SetPalette(1,0);
    gStyle->SetPadColor(0);
    gStyle->SetPadBorderSize(0);
    gStyle->SetPadBorderMode(0);
@@ -13,6 +13,7 @@
    gStyle->SetFrameLineColor(0);
    gStyle->SetTitleColor(0);
    gStyle->SetTitleBorderSize(0); 
+   gStyle->SetPalette(1,0); 
    gStyle->SetPadTickX(1);
    gStyle->SetPadTickY(1);
    gStyle->SetPadColor(0);
@@ -40,14 +41,12 @@
    gStyle->SetHistFillStyle(0);
    gStyle->SetHistLineColor(1);
    gStyle->SetHistLineStyle(0);
-   gStyle->SetHistLineWidth(3);
-   gStyle->SetHistLineWidth(3);
+   gStyle->SetHistLineWidth(1);
    gStyle->SetEndErrorSize(0);
    gStyle->SetErrorX(0);  
    gStyle->SetMarkerStyle(20);
-   gStyle->SetMarkerSize(1.0);
-   //gStyle->SetMarkerSize(1.5);
-   //gStyle->SetOptFit(1111);
+   gStyle->SetMarkerSize(1.25);
+   gStyle->SetOptFit(1111);
    gStyle->SetStatColor(0);
    gStyle->SetStatBorderSize(1);
    gStyle->SetOptTitle(0);
