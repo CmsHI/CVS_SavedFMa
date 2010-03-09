@@ -230,18 +230,20 @@ namespace jetana
     aljet_	  = -99;
     // jet constituents
     evtnp_      = 0;
-    nljCone5Et_ = 0;
+
     nljCone5NP_ = 0;
-    nljCone10Et_ = 0;
     nljCone10NP_ = 0;
-    nljCone15Et_ = 0;
     nljCone15NP_ = 0;
-    aljCone5Et_ = 0;
+    nljCone5Et_ = 0;
+    nljCone10Et_ = 0;
+    nljCone15Et_ = 0;
+
     aljCone5NP_ = 0;
-    aljCone10Et_ = 0;
     aljCone10NP_ = 0;
-    aljCone15Et_ = 0;
     aljCone15NP_ = 0;
+    aljCone5Et_ = 0;
+    aljCone10Et_ = 0;
+    aljCone15Et_ = 0;
   }
 }
 
