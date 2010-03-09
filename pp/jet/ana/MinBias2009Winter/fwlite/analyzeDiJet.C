@@ -44,8 +44,6 @@ void analyzeDiJet(){
   // event cuts
   const float hpFracCut = 0.2; // updated: 0.25
   const unsigned nTrackCut = 10;
-  const double hfEThreshold = 3.0;
-  const int nTowerThreshold = 1;
   const bool doCleanup = false;
   // track cuts
   const string qualityString = "highPurity";
@@ -90,9 +88,9 @@ void analyzeDiJet(){
 
   //----- output file -----
   TFile outFile("FFHists.root", "recreate" );
-  TTree * tree_ = new TTree("trDj","dijet tree");
+  TTree * dijetTree = new TTree("trDj","dijet tree");
   jetana::TreeDiJetEventData jd_;
-  jd_.SetTree(tree_);
+  jd_.SetTree(dijetTree);
   jd_.SetBranches();
 
 
@@ -100,8 +98,9 @@ void analyzeDiJet(){
   unsigned int iEvent=0;
   int nPreSelEvt=0;
   for(event.toBegin(); !event.atEnd(); ++event, ++iEvent){
+    // clear event data class
+    jd_.Clear();
 
-    //if( iEvent == 1000 ) break;
     if( iEvent % 5000 == 0 ) cout << "Processing " << iEvent<< "th event: "
       << "run " << event.id().run() 
 	<< ", lumi " << event.luminosityBlock() 
@@ -128,8 +127,8 @@ void analyzeDiJet(){
     vertices.getByLabel(event, "offlinePrimaryVertices");
     hVtxSize->Fill(vertices->size());
     if(!vertices->size()) continue;
-    bool goodVertex=false;
-    size_t maxtracks=0; double bestvz=-999.9, bestvx=-999.9, bestvy=-999.9, bestNchi2=999.9;
+    Int_t maxtracks=0;
+    double bestndof=-999.9,bestvz=-999.9, bestvx=-999.9, bestvy=-999.9, bestNchi2=999.9;
     for(unsigned it=0; it<vertices->size(); ++it) {
       const reco::Vertex & vtx = (*vertices)[it];
       if(vtx.tracksSize() > maxtracks
@@ -137,11 +136,8 @@ void analyzeDiJet(){
 	maxtracks = vtx.tracksSize();
 	bestvz = vtx.z(); bestvx = vtx.x(); bestvy = vtx.y();
 	bestNchi2 = vtx.normalizedChi2();
+	bestndof = vtx.ndof();
       }	
-      if (!vtx.isFake() && vtx.ndof()>=5 && abs(vtx.z())<15) {
-	goodVertex=true;
-	++nPreSelEvt;
-      }
     }
     hVtxTrks->Fill(maxtracks);
     hVtxZ->Fill(bestvz);
@@ -153,7 +149,20 @@ void analyzeDiJet(){
     hBeamYRun->Fill(event.id().run(),beamspot->y0());
     hBeamZRun->Fill(event.id().run(),beamspot->z0());
 
-    if (!goodVertex) continue;
+    // Do Vertex Selection
+    if (bestndof>=5 && abs(bestvz)<15) ++nPreSelEvt;
+    else continue;
+
+    // Done with Event Pre-Selection
+    // Fill Event info
+    jd_.run_ = event.id().run();
+    jd_.lumi_ = event.luminosityBlock();
+    jd_.evt_ = event.id().event();
+    // Fill vtx info
+    jd_.nvtx_ = vertices->size();
+    jd_.vtxntrks_ = maxtracks;
+    jd_.vtxndof_ = bestndof;
+    jd_.vz_ = bestvz;
 
     //----- loop over leading jets ------
     fwlite::Handle<reco::CaloJetCollection> jets;
@@ -203,6 +212,9 @@ void analyzeDiJet(){
       hTrkPhi->Fill(trk.phi());
 
     }
+
+    // done with event write tree content
+    dijetTree->Fill();
   }
   
   cout<<"Number of events processed : "<<iEvent<<endl;
