@@ -11,7 +11,7 @@
 
 namespace jetana
 {
-  const Int_t MAXNPARTICLES = 10000;
+  const Int_t MAXTRK = 10000;
   //
   // DiJet ana Event Data Tree definition
   //
@@ -20,95 +20,63 @@ namespace jetana
     public:
       //  --- event level ---
       Int_t run_, evt_, lumi_;
-      Double_t vtxchi2_,vtxndof_,vz_,nvtx_;
+      Int_t vtxndof_,nvtx_;
+      Double_t vtxchi2_,vz_;
       // -- HI Event variables --
       Double_t		    b_;
-      Int_t		    npart_;
-      Int_t		    ncoll_;
+      Int_t		    npart_,ncoll_;
 
       // --- DiJet variables ---
-      Double_t		    mass_;
-      Double_t		    cmeta_;
+      Double_t		    mass_,cmeta_;
 
       //  -- parton info --
-      Int_t	  	    nlpid_;
-      Int_t	  	    nlpstat_;
-      Double_t		    nlpet_;
-      Double_t		    nlpetsm_;
-      Double_t		    nlpeta_;
-      Double_t		    nlpphi_;
+      Int_t	  	    nlpid_,nlpstat_;
+      Double_t		    nlpet_,nlpetsm_;
+      Double_t		    nlpeta_,nlpphi_;
 
-      Int_t	  	    alpid_;
-      Int_t	  	    alpstat_;
-      Double_t		    alpet_;
-      Double_t		    alpetsm_;
-      Double_t		    alpeta_;
-      Double_t		    alpphi_;
+      Int_t	  	    alpid_,alpstat_;
+      Double_t		    alpet_,alpetsm_;
+      Double_t		    alpeta_,alpphi_;
 
       Double_t		    pdphi_;
 
       //  -- jet info --
-      Double_t		    nljet_;
-      Double_t		    nljetsm_;
-      Double_t		    nljeta_;
-      Double_t		    nljphi_;
+      Double_t		    nljet_,nljetsm_;
+      Double_t		    nljeta_,nljphi_;
       Double_t		    nljemf_;
-      Double_t		    nljN90hits_;
+      Int_t		    nljN90hits_;
 
-      Double_t		    aljet_;
-      Double_t		    aljetsm_;
-      Double_t		    aljeta_;
-      Double_t		    aljphi_;
+      Double_t		    aljet_,aljetsm_;
+      Double_t		    aljeta_,aljphi_;
       Double_t		    aljemf_;
-      Double_t		    aljN90hits_;
+      Int_t		    aljN90hits_;
 
       Double_t		    jdphi_;
-
-      //  -- dijet qualities --
       Int_t		    leadAwayMul_;
 
       // -- particle info --
       Int_t		    evtnp_;
-      Int_t	  	    ppid_[MAXNPARTICLES];
-      Int_t	  	    pch_[MAXNPARTICLES];
-      Double_t	      	    ppt_[MAXNPARTICLES];
-      Double_t		    peta_[MAXNPARTICLES];
-      Double_t		    pphi_[MAXNPARTICLES];
+      Int_t	  	    ppid_[MAXTRK],pch_[MAXTRK];
+      Double_t	      	    ppt_[MAXTRK],peta_[MAXTRK],pphi_[MAXTRK];
 
-      Double_t	  	    pndphi_[MAXNPARTICLES];
-      Double_t	    	    pndeta_[MAXNPARTICLES];
-      Double_t	   	    pndr_[MAXNPARTICLES];
-      Double_t		    pndrbg_[MAXNPARTICLES];
+      Double_t	  	    pndphi_[MAXTRK],pndeta_[MAXTRK];
+      Double_t	   	    pndr_[MAXTRK],pndrbg_[MAXTRK];
 
-      Double_t        	    padphi_[MAXNPARTICLES];
-      Double_t       	    padeta_[MAXNPARTICLES];
-      Double_t       	    padr_[MAXNPARTICLES];
-      Double_t       	    padrbg_[MAXNPARTICLES];
+      Double_t        	    padphi_[MAXTRK],padeta_[MAXTRK];
+      Double_t       	    padr_[MAXTRK],padrbg_[MAXTRK];
 
-      Double_t       	    zn_[MAXNPARTICLES];
-      Double_t       	    za_[MAXNPARTICLES];
+      Double_t       	    zn_[MAXTRK],za_[MAXTRK];
 
       //  - track sel -
-      Int_t	       	    trkHP_[MAXNPARTICLES];
-      Int_t	       	    trkNHits_[MAXNPARTICLES];
-      Int_t	       	    trkPtErr_[MAXNPARTICLES];
-      Int_t	       	    trkdz_[MAXNPARTICLES];
-      Int_t	       	    trkdxy_[MAXNPARTICLES];
+      Int_t	       	    trkHP_[MAXTRK],trkNHits_[MAXTRK];
+      Double_t	       	    trkPtErr_[MAXTRK],trkdz_[MAXTRK],trkdxy_[MAXTRK];
 
       // -- jet cone info --
-      Double_t		    nljCone5Et_;
-      Int_t		    nljCone5NP_;
-      Double_t    	    nljCone10Et_;
-      Int_t		    nljCone10NP_;
-      Double_t		    nljCone15Et_;
-      Int_t		    nljCone15NP_;
+      Double_t		    nljCone5Et_,nljCone10Et_,nljCone15Et_;
+      Int_t		    nljCone5NP_,nljCone10NP_,nljCone15NP_;
 
-      Double_t	      	    aljCone5Et_;
-      Int_t		    aljCone5NP_;
-      Double_t    	    aljCone10Et_;
-      Int_t		    aljCone10NP_;
-      Double_t		    aljCone15Et_;
-      Int_t		    aljCone15NP_;
+      Double_t	      	    aljCone5Et_,aljCone10Et_,aljCone15Et_;
+      Int_t		    aljCone5NP_,aljCone10NP_,aljCone15NP_;
 
       // === Functions ===
       void SetDefaults();
@@ -164,9 +132,9 @@ namespace jetana
     tree_->Branch("evt", &(this->evt_), "evt/I");
     tree_->Branch("lumi", &(this->lumi_), "lumi/I");
     tree_->Branch("vtxchi2", &(this->vtxchi2_), "vtxchi2/D");
-    tree_->Branch("vtxndof", &(this->vtxndof_), "vtxndof/D");
-    tree_->Branch("vz", &(this->vz_), "vz/D");
+    tree_->Branch("vtxndof", &(this->vtxndof_), "vtxndof/I");
     tree_->Branch("nvtx", &(this->nvtx_), "nvtx/I");
+    tree_->Branch("vz", &(this->vz_), "vz/D");
     // -- hi event var's --
     tree_->Branch("b", &(this->b_), "b/D");
     tree_->Branch("npart", &(this->npart_), "npart/I");
@@ -199,7 +167,7 @@ namespace jetana
     tree_->Branch("nljeta", &(this->nljeta_), "nljeta/D");
     tree_->Branch("nljphi", &(this->nljphi_), "nljphi/D");
     tree_->Branch("nljemf", &(this->nljemf_), "nljemf/D");
-    tree_->Branch("nljN90hits", &(this->nljN90hits_), "nljN90hits/D");
+    tree_->Branch("nljN90hits", &(this->nljN90hits_), "nljN90hits/I");
 
     tree_->Branch("aljet", &(this->aljet_), "aljet/D");
     tree_->Branch("aljetsm", &(this->aljetsm_), "aljetsm/D");
@@ -233,9 +201,9 @@ namespace jetana
 
     tree_->Branch("trkHP",this->trkHP_,"trkHP[evtnp]/I");
     tree_->Branch("trkNHits",this->trkNHits_,"trkNHits[evtnp]/I");
-    tree_->Branch("trkPtErr",this->trkPtErr_,"trkPtErr[evtnp]/I");
-    tree_->Branch("trkdz",this->trkdz_,"trkdz[evtnp]/I");
-    tree_->Branch("trkdxy",this->trkdxy_,"trkdxy[evtnp]/I");
+    tree_->Branch("trkPtErr",this->trkPtErr_,"trkPtErr[evtnp]/D");
+    tree_->Branch("trkdz",this->trkdz_,"trkdz[evtnp]/D");
+    tree_->Branch("trkdxy",this->trkdxy_,"trkdxy[evtnp]/D");
 
     // -- jet cone info --
     tree_->Branch("nljCone5Et", &(this->nljCone5Et_), "nljCone5Et/D");
