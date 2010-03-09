@@ -35,6 +35,8 @@
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
 #endif
+
+#include "TreeDiJetEventData.h"
 using namespace std;
 
 void analyzeDiJet(){
@@ -88,6 +90,10 @@ void analyzeDiJet(){
 
   //----- output file -----
   TFile outFile("FFHists.root", "recreate" );
+  TTree * tree_ = new TTree("trDj","dijet tree");
+  jetana::TreeDiJetEventData jd_;
+  jd_.SetTree(tree_);
+  jd_.SetBranches();
 
 
   //----- loop over events -----
@@ -203,6 +209,7 @@ void analyzeDiJet(){
   cout<<"Number of events pre-selected : "<<nPreSelEvt<<endl;
 
   // write to output file
+  outFile.Write();
   outFile.cd(); outFile.mkdir("evt"); outFile.cd("evt");
   hRunLumi->Write();
   hL1TechBits->Write();
