@@ -121,6 +121,7 @@ void analyzeDiJet(int verbosity=1){
   //----- loop over events -----
   unsigned int iEvent=0;
   int nPreSelEvt=0;
+  int nDJEvt=0;
   for(event.toBegin(); !event.atEnd(); ++event, ++iEvent){
     // clear event data class
     jd_.Clear();
@@ -242,6 +243,7 @@ void analyzeDiJet(int verbosity=1){
 
     // === dijet kinematics selection ===
     if (NearEtMax<5 || AwayEtMax<5) continue;
+    ++nDJEvt;
 
     // print
     if (verbosity>=1 && NearEtMax>15 && AwayEtMax>15) {
@@ -303,6 +305,7 @@ void analyzeDiJet(int verbosity=1){
   
   cout<<"Number of events processed : "<<iEvent<<endl;
   cout<<"Number of events pre-selected : "<<nPreSelEvt<<endl;
+  cout<<"Number of dijet pre-selected : "<<nDJEvt<<endl;
 
   // write to output file
   outFile.Write();
