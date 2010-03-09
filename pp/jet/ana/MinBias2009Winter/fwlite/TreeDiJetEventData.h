@@ -27,31 +27,27 @@ namespace jetana
 
       // --- DiJet variables ---
       Double_t		    mass_,cmeta_;
+      Int_t		    leadAwayMul_;
 
       //  -- parton info --
       Int_t	  	    nlpid_,nlpstat_;
-      Double_t		    nlpet_,nlpetsm_;
-      Double_t		    nlpeta_,nlpphi_;
+      Double_t		    nlpet_,nlpetsm_,nlpeta_,nlpphi_;
 
       Int_t	  	    alpid_,alpstat_;
-      Double_t		    alpet_,alpetsm_;
-      Double_t		    alpeta_,alpphi_;
+      Double_t		    alpet_,alpetsm_,alpeta_,alpphi_;
 
       Double_t		    pdphi_;
 
       //  -- jet info --
-      Double_t		    nljet_,nljetsm_;
-      Double_t		    nljeta_,nljphi_;
+      Double_t		    nljet_,nljetsm_,nljeta_,nljphi_;
       Double_t		    nljemf_;
       Int_t		    nljN90hits_;
 
-      Double_t		    aljet_,aljetsm_;
-      Double_t		    aljeta_,aljphi_;
+      Double_t		    aljet_,aljetsm_,aljeta_,aljphi_;
       Double_t		    aljemf_;
       Int_t		    aljN90hits_;
 
       Double_t		    jdphi_;
-      Int_t		    leadAwayMul_;
 
       // -- particle info --
       Int_t		    evtnp_;
@@ -130,9 +126,9 @@ namespace jetana
     tree_->Branch("run", &(this->run_), "run/I");
     tree_->Branch("evt", &(this->evt_), "evt/I");
     tree_->Branch("lumi", &(this->lumi_), "lumi/I");
-    tree_->Branch("vtxchi2", &(this->vtxchi2_), "vtxchi2/D");
-    tree_->Branch("vtxndof", &(this->vtxndof_), "vtxndof/D");
     tree_->Branch("nvtx", &(this->nvtx_), "nvtx/I");
+    tree_->Branch("vtxndof", &(this->vtxndof_), "vtxndof/D");
+    tree_->Branch("vtxchi2", &(this->vtxchi2_), "vtxchi2/D");
     tree_->Branch("vz", &(this->vz_), "vz/D");
     // -- hi event var's --
     tree_->Branch("b", &(this->b_), "b/D");
@@ -173,7 +169,7 @@ namespace jetana
     tree_->Branch("aljeta", &(this->aljeta_), "aljeta/D");
     tree_->Branch("aljphi", &(this->aljphi_), "aljphi/D");
     tree_->Branch("aljemf", &(this->aljemf_), "aljemf/D");
-    tree_->Branch("aljN90hits", &(this->aljN90hits_), "aljN90hits/D");
+    tree_->Branch("aljN90hits", &(this->aljN90hits_), "aljN90hits/I");
 
     tree_->Branch("jdphi", &(this->jdphi_), "jdphi/D");
 
