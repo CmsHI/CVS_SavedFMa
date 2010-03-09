@@ -33,14 +33,18 @@
 #include "DataFormats/JetReco/interface/JetID.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
-
+#include "QCDAnalysis/HighPtJetAnalysis/interface/Utilities.h"
+#include "CondFormats/JetMETObjects/interface/CombinedJetCorrector.h"
 #endif
 
+#include "DataFormats/Math/interface/LorentzVector.h"
+#include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
+#include "TMath.h"
 #include "TreeDiJetEventData.h"
 using namespace std;
 
-void analyzeDiJet(){
-
+void analyzeDiJet(int verbosity=1){
   // event cuts
   const float hpFracCut = 0.2; // updated: 0.25
   const unsigned nTrackCut = 10;
@@ -52,8 +56,15 @@ void analyzeDiJet(){
   const double ptErrCut = 0.1;
   const unsigned nHitsCut = 1; // at least this many hits on track
 
+  // JEC
+  string JECLevels = "L2:L3";
+  string JECTag = "900GeV_L2Relative_AK5Calo:900GeV_L3Absolute_AK5Calo";
+  CombinedJetCorrector *JEC = new CombinedJetCorrector(JECLevels,JECTag);
+  bool doJEC = true;
+
   //----- histograms -----
   TH1D::SetDefaultSumw2();
+  // Event
   TH2D *hRunLumi    = new TH2D("hRunLumi","Event information; run number; luminosity block",500,123549.5,124049.5,200,-0.5,199.5);
   TH1D *hL1TechBits = new TH1D("hL1TechBits","L1 technical trigger bits before mask",64,-0.5,63.5);
   TH2D *hHPFracNtrk = new TH2D("hHPFracNtrk","High purity fraction vs. # of tracks; number of tracks; highPurity fraction",50,0,500,50,0,1);
@@ -66,6 +77,19 @@ void analyzeDiJet(){
   TH2D *hBeamYRun   = new TH2D("hBeamYRun","y position of beamspot; run number",500,123549.5,124049.5,80,-0.2,0.2);
   TH2D *hBeamZRun   = new TH2D("hBeamZRun","z position of beamspot; run number",500,123549.5,124049.5,80,-2,2);
 
+  // inclusive jet
+  TH1D *hJetEt	    = new TH1D("hJetEt","inclusive jet Et; jet E_{T} [GeV]",16,0,80);
+  TH1D *hJetEta	    = new TH1D("hJetEta","inclusive jet Eta; jet #eta",20,-3,3);
+  TH1D *hJetPhi	    = new TH1D("hJetPhi","inclusive jet Phi; jet #phi",10,-3.14,3.14);
+
+  // dijet
+  TH1D *hDJJetEt	    = new TH1D("hDJJetEt",";j^{1,2}Et [GeV];",16,0,80);
+  TH1D *hDJJetEta	    = new TH1D("hDJJetEta",";j^{1,2} Eta;",20,-3,3);
+  TH1D *hDJJetPhi	    = new TH1D("hDJJetPhi",";j^{1,2} Phi;",10,-3.14,3.14);
+  TH1D *hDJDphi	  	    = new TH1D("hDJDphi",";dijet d #phi;",30,0,3.14);
+  TH1D *hDJMass	  	    = new TH1D("hDJMass",";dijet mass [GeV];",30,0,125);
+
+  // tracks
   TH1D *hTrkQual    = new TH1D("hTrkQual","track quality", 20, -0.5, 19.5);
   TH1D *hTrkDxyBeam = new TH1D("hTrkDxyBeam","track dxy from beamspot; dxy [cm]", 80, -2.0, 2.0);
   TH1D *hTrkDzVtx   = new TH1D("hTrkDzVtx","track dz from vertex; dz [cm]", 80, -2.0, 2.0);
@@ -165,17 +189,76 @@ void analyzeDiJet(){
     jd_.vtxchi2_ = bestNchi2;
     jd_.vz_ = bestvz;
 
-    //----- loop over leading jets ------
+    //----- loop over jets ------
     fwlite::Handle<reco::CaloJetCollection> jets;
     jets.getByLabel(event,"ak5CaloJets");
+    Double_t NearEtMax=-99,AwayEtMax=-99;
+    Int_t iNear=-99,iAway=-99;
+    math::PtEtaPhiMLorentzVectorF ljet[2];
+    // find leading jet based on corrected pt
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Jet & jet = (*jets)[j];
-      if (jet.pt()>7) {
-	if (j==0) cout << "Event " << event.id().event() << "  # jets: " << (*jets).size() << endl;
-	cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
+      // apply JEC
+      Double_t corrPt = jet.pt();
+      if (doJEC) corrPt *= JEC->getCorrection(jet.pt(),jet.eta(),jet.energy());
+      if (corrPt>NearEtMax) {
+	NearEtMax=corrPt;
+	iNear=j;
+      }
+      // Inclusive Jet Analysis
+      if (corrPt>10) {
+	hJetEt->Fill(corrPt);
+	hJetEta->Fill(jet.eta());
+	hJetPhi->Fill(jet.phi());
       }
     }
+    // found near
+    if (NearEtMax>0) {
+      const reco::Jet & NrJet = (*jets)[iNear];
+      ljet[0].SetCoordinates(NrJet.pt(),NrJet.eta(),NrJet.phi(),NrJet.mass());
+      if (doJEC) ljet[0] *= JEC->getCorrection(NrJet.pt(),NrJet.eta(),NrJet.energy());
+    }
 
+    // find away jet based on corrected pt
+    for (unsigned j=0; j<(*jets).size();++j) {
+      const reco::Jet & jet = (*jets)[j];
+      // look at away side
+      Double_t jdphi = TMath::Abs(reco::deltaPhi(ljet[0].phi(),jet.phi()));
+      if (jdphi < TMath::PiOver2()) continue;
+      // apply JEC
+      Double_t corrPt = jet.pt();
+      if (doJEC) corrPt *= JEC->getCorrection(jet.pt(),jet.eta(),jet.energy());
+      if (corrPt>AwayEtMax) {
+	AwayEtMax=corrPt;
+	iAway=j;
+      }
+    }
+    // found away
+    if (AwayEtMax>0) {
+      const reco::Jet & AwJet = (*jets)[iAway];
+      ljet[1].SetCoordinates(AwJet.pt(),AwJet.eta(),AwJet.phi(),AwJet.mass());
+      if (doJEC) ljet[1] *= JEC->getCorrection(AwJet.pt(),AwJet.eta(),AwJet.energy());
+    }
+
+    // === dijet kinematics selection ===
+    if (NearEtMax<5 || AwayEtMax<5) continue;
+
+    // print
+    if (verbosity>=1 && NearEtMax>15 && AwayEtMax>15) {
+      cout << "Event " << event.id().event()
+	<< ", lumi " << event.luminosityBlock() 
+	<< ", evt " << event.id().event()
+	<< ",  # jets: " << (*jets).size() << endl;
+      for (unsigned j=0; j<(*jets).size();++j) {
+	const reco::Jet & jet = (*jets)[j];
+	cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
+      }
+      cout << "corr" << doJEC << " leading dijet - iNear: " << iNear << " " <<": "<< ljet[0]
+	<< "  iAway: " << iAway << " " << ljet[1] << endl;
+      Double_t ljdphi = TMath::Abs(reco::deltaPhi(ljet[0].phi(),ljet[1].phi()));
+      cout << "DiJet dphi: " << ljdphi << endl;
+      cout << endl;
+    }
 
     //----- loop over tracks -----
     for(unsigned it=0; it<tracks->size(); ++it){
@@ -236,6 +319,17 @@ void analyzeDiJet(){
   hBeamXRun->Write();
   hBeamYRun->Write();
   hBeamZRun->Write();
+
+  outFile.cd(); outFile.mkdir("jet"); outFile.cd("jet");
+  hJetEt->Write();
+  hJetEta->Write();
+  hJetPhi->Write();
+  hDJJetEt->Write();
+  hDJJetEta->Write();
+  hDJJetPhi->Write();
+  hDJDphi->Write();
+  hDJMass->Write();
+
 
   outFile.cd(); outFile.mkdir("trk"); outFile.cd("trk");
   hTrkQual->Write();

@@ -16,6 +16,8 @@
     gSystem->Load("libDataFormatsFWLite.so");
     gSystem->Load("libDataFormatsPatCandidates.so");
 
+    // JEC
+    gSystem->Load("libCondFormatsJetMETObjects.so");
   }
 
   // styles
