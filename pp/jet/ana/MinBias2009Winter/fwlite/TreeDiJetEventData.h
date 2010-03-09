@@ -19,8 +19,8 @@ namespace jetana
   {
     public:
       //  --- event level ---
-      Int_t run_, evt_, lumi_,nvtx_;
-      Double_t vtxndof,_vtxchi2_,vz_;
+      Int_t run_, evt_, lumi_,nvtx_,vtxntrks_;
+      Double_t vtxndof_,vtxchi2_,vz_;
       // -- HI Event variables --
       Double_t		    b_;
       Int_t		    npart_,ncoll_;
@@ -125,6 +125,7 @@ namespace jetana
     tree_->Branch("evt", &(this->evt_), "evt/I");
     tree_->Branch("lumi", &(this->lumi_), "lumi/I");
     tree_->Branch("nvtx", &(this->nvtx_), "nvtx/I");
+    tree_->Branch("vtxntrks", &(this->vtxntrks_), "vtxntrks/I");
     tree_->Branch("vtxndof", &(this->vtxndof_), "vtxndof/D");
     tree_->Branch("vtxchi2", &(this->vtxchi2_), "vtxchi2/D");
     tree_->Branch("vz", &(this->vz_), "vz/D");
@@ -218,9 +219,10 @@ namespace jetana
     // event
     run_	  = -99;
     evt_	  = -99;
+    nvtx_	  = -99;
+    vtxntrks_	  = -99;
     vtxndof_	  = -99;
     vz_		  = -99;
-    nvtx_	  = -99;
     // di-jet
     mass_	  = -99;
     cmeta_	  = -99;
