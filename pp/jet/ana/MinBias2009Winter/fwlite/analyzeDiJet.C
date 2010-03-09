@@ -44,6 +44,7 @@ void analyzeDiJet(){
   const unsigned nTrackCut = 10;
   const double hfEThreshold = 3.0;
   const int nTowerThreshold = 1;
+  const bool doCleanup = false;
   // track cuts
   const string qualityString = "highPurity";
   const double normD0Cut = 3.0;
@@ -88,6 +89,7 @@ void analyzeDiJet(){
   //----- output file -----
   TFile outFile("FFHists.root", "recreate" );
 
+
   //----- loop over events -----
   unsigned int iEvent=0;
   int nPreSelEvt=0;
@@ -102,39 +104,18 @@ void analyzeDiJet(){
     // fill event info
     hRunLumi->Fill(event.id().run(),event.luminosityBlock());
 
-    // select on L1 trigger bits
-    /*
-    fwlite::Handle<L1GlobalTriggerReadoutRecord> gt;
-    gt.getByLabel(event, "gtDigis");
-    const TechnicalTriggerWord&  word = gt->technicalTriggerWord(); //before mask
-    for(int bit=0; bit<64; bit++) hL1TechBits->Fill(bit,word.at(bit));
-    if(!word.at(0)) continue;  // BPTX coincidence
-    if(!word.at(34)) continue; // BSC single-side
-    if(word.at(36) || word.at(37) || word.at(38) || word.at(39)) continue; // BSC halo
-    
-    // select on coincidence of HF towers above threshold
-    fwlite::Handle<CaloTowerCollection> towers;
-    towers.getByLabel(event, "towerMaker");
-    int nHfTowersN=0, nHfTowersP=0;
-    for(CaloTowerCollection::const_iterator calo = towers->begin(); calo != towers->end(); ++calo) {
-      if(calo->energy() < hfEThreshold) continue;
-      if(calo->eta()>3) nHfTowersP++;
-      if(calo->eta()<-3) nHfTowersN++;
-    }
-    hHfTowers->Fill(nHfTowersP,nHfTowersN);
-    if(nHfTowersP < nTowerThreshold || nHfTowersN < nTowerThreshold) continue;
-    */
-
     // select on high-purity track fraction
     fwlite::Handle<std::vector<reco::Track> > tracks;
     tracks.getByLabel(event, "generalTracks");
-    int numhighpurity = 0;
-    float fraction = 0;
-    for(unsigned it=0; it<tracks->size(); ++it)
-      if((*tracks)[it].quality(reco::TrackBase::qualityByName(qualityString))) numhighpurity++;
-    if(tracks->size() > 0) fraction = (float)numhighpurity/(float)tracks->size();
-    hHPFracNtrk->Fill(tracks->size(),fraction);
-    if(fraction<hpFracCut && tracks->size()>nTrackCut) continue;
+    if (doCleanup) {
+      int numhighpurity = 0;
+      float fraction = 0;
+      for(unsigned it=0; it<tracks->size(); ++it)
+	if((*tracks)[it].quality(reco::TrackBase::qualityByName(qualityString))) numhighpurity++;
+      if(tracks->size() > 0) fraction = (float)numhighpurity/(float)tracks->size();
+      hHPFracNtrk->Fill(tracks->size(),fraction);
+      if(fraction<hpFracCut && tracks->size()>nTrackCut) continue;
+    }
 
     // select on requirement of valid vertex
     fwlite::Handle<std::vector<reco::Vertex> > vertices;
@@ -174,7 +155,7 @@ void analyzeDiJet(){
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Jet & jet = (*jets)[j];
       if (jet.pt()>7) {
-	cout << "Event " << event.id().event() << "  # jets: " << (*jets).size() << endl;
+	if (j==0) cout << "Event " << event.id().event() << "  # jets: " << (*jets).size() << endl;
 	cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
       }
     }
