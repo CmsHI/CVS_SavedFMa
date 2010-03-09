@@ -162,6 +162,7 @@ void analyzeDiJet(){
     jd_.nvtx_ = vertices->size();
     jd_.vtxntrks_ = maxtracks;
     jd_.vtxndof_ = bestndof;
+    jd_.vtxchi2_ = bestNchi2;
     jd_.vz_ = bestvz;
 
     //----- loop over leading jets ------
