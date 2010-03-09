@@ -54,11 +54,9 @@ namespace jetana
       Int_t	  	    ppid_[MAXTRK],pch_[MAXTRK];
       Double_t	      	    ppt_[MAXTRK],peta_[MAXTRK],pphi_[MAXTRK];
 
-      Double_t	  	    pndphi_[MAXTRK],pndeta_[MAXTRK];
-      Double_t	   	    pndr_[MAXTRK],pndrbg_[MAXTRK];
+      Double_t	  	    pndphi_[MAXTRK],pndeta_[MAXTRK],pndr_[MAXTRK],pndrbg_[MAXTRK];
 
-      Double_t        	    padphi_[MAXTRK],padeta_[MAXTRK];
-      Double_t       	    padr_[MAXTRK],padrbg_[MAXTRK];
+      Double_t        	    padphi_[MAXTRK],padeta_[MAXTRK],padr_[MAXTRK],padrbg_[MAXTRK];
 
       Double_t       	    zn_[MAXTRK],za_[MAXTRK];
 
@@ -67,11 +65,11 @@ namespace jetana
       Double_t	       	    trkPtErr_[MAXTRK],trkdz_[MAXTRK],trkdxy_[MAXTRK];
 
       // -- jet cone info --
-      Double_t		    nljCone5Et_,nljCone10Et_,nljCone15Et_;
       Int_t		    nljCone5NP_,nljCone10NP_,nljCone15NP_;
+      Double_t		    nljCone5Et_,nljCone10Et_,nljCone15Et_;
 
-      Double_t	      	    aljCone5Et_,aljCone10Et_,aljCone15Et_;
       Int_t		    aljCone5NP_,aljCone10NP_,aljCone15NP_;
+      Double_t	      	    aljCone5Et_,aljCone10Et_,aljCone15Et_;
 
       // === Functions ===
       void SetDefaults();
@@ -201,19 +199,19 @@ namespace jetana
     tree_->Branch("trkdxy",this->trkdxy_,"trkdxy[evtnp]/D");
 
     // -- jet cone info --
-    tree_->Branch("nljCone5Et", &(this->nljCone5Et_), "nljCone5Et/D");
     tree_->Branch("nljCone5NP", &(this->nljCone5NP_), "nljCone5NP/I");
-    tree_->Branch("nljCone10Et", &(this->nljCone10Et_), "nljCone10Et/D");
     tree_->Branch("nljCone10NP", &(this->nljCone10NP_), "nljCone10NP/I");
-    tree_->Branch("nljCone15Et", &(this->nljCone15Et_), "nljCone15Et/D");
     tree_->Branch("nljCone15NP", &(this->nljCone15NP_), "nljCone15NP/I");
+    tree_->Branch("nljCone5Et", &(this->nljCone5Et_), "nljCone5Et/D");
+    tree_->Branch("nljCone10Et", &(this->nljCone10Et_), "nljCone10Et/D");
+    tree_->Branch("nljCone15Et", &(this->nljCone15Et_), "nljCone15Et/D");
 
-    tree_->Branch("aljCone5Et", &(this->aljCone5Et_), "aljCone5Et/D");
     tree_->Branch("aljCone5NP", &(this->aljCone5NP_), "aljCone5NP/I");
-    tree_->Branch("aljCone10Et", &(this->aljCone10Et_), "aljCone10Et/D");
     tree_->Branch("aljCone10NP", &(this->aljCone10NP_), "aljCone10NP/I");
-    tree_->Branch("aljCone15Et", &(this->aljCone15Et_), "aljCone15Et/D");
     tree_->Branch("aljCone15NP", &(this->aljCone15NP_), "aljCone15NP/I");
+    tree_->Branch("aljCone5Et", &(this->aljCone5Et_), "aljCone5Et/D");
+    tree_->Branch("aljCone10Et", &(this->aljCone10Et_), "aljCone10Et/D");
+    tree_->Branch("aljCone15Et", &(this->aljCone15Et_), "aljCone15Et/D");
   }
   void TreeDiJetEventData::Clear()
   {
