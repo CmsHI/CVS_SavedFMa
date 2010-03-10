@@ -196,12 +196,15 @@ void analyzeDiJet(int verbosity=1){
 
     //----- loop over jets ------
     fwlite::Handle<reco::CaloJetCollection> jets;
+    //fwlite::Handle<edm::View<reco::Jet> > jets;
     jets.getByLabel(event,"ak5CaloJets");
+    fwlite::Handle<edm::ValueMap<reco::JetID> > jetsID;
+    jetsID.getByLabel(event,"ak5JetID");
     Double_t NearEtMax=-99,AwayEtMax=-99;
     Int_t iNear=-99,iAway=-99;
     math::PtEtaPhiMLorentzVectorF ljet[2];
     // find leading jet based on corrected pt
-    for (unsigned j=0; j<(*jets).size();++j) {
+    for (unsigned int j=0; j<(*jets).size();++j) {
       const reco::Jet & jet = (*jets)[j];
       // apply JEC
       Double_t corrPt = jet.pt();
@@ -211,6 +214,8 @@ void analyzeDiJet(int verbosity=1){
 	iNear=j;
       }
       // Inclusive Jet Analysis
+      edm::Ref<reco::CaloJetCollection> ref(jets,j);
+      //edm::RefToBase<reco::Jet> jetRef(edm::Ref<reco::CaloJetCollection>(jets,j));
       if (corrPt>10) {
 	hJetEt->Fill(corrPt);
 	hJetEta->Fill(jet.eta());
@@ -307,7 +312,7 @@ void analyzeDiJet(int verbosity=1){
     dijetTree->Fill();
   }
   
-  cout << "================ Ana Process Summaries =============" << endl;
+  cout << endl << "================ Ana Process Summaries =============" << endl;
   cout << "Number of events processed : "<<iEvent<<endl;
   cout << "Number of events pre-selected : "<<nPreSelEvt<<endl;
   cout << "Number of dijet pre-selected : "<<nDJEvt<<endl;
@@ -376,6 +381,6 @@ void analyzeDiJet(int verbosity=1){
 
   // All done
   sw.Stop();
-  cout <<"Processing time --> "  << flush; sw.Print();
+  cout << "Processing time --> "  << flush; sw.Print();
   cout << "====================================================" << endl;
 }
