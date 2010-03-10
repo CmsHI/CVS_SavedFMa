@@ -41,10 +41,14 @@
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "TMath.h"
+#include "TStopwatch.h"
 #include "TreeDiJetEventData.h"
 using namespace std;
 
 void analyzeDiJet(int verbosity=1){
+  // === Start Ana Macro ===
+  TStopwatch sw;
+
   // event cuts
   const float hpFracCut = 0.2; // updated: 0.25
   const unsigned nTrackCut = 10;
@@ -303,9 +307,10 @@ void analyzeDiJet(int verbosity=1){
     dijetTree->Fill();
   }
   
-  cout<<"Number of events processed : "<<iEvent<<endl;
-  cout<<"Number of events pre-selected : "<<nPreSelEvt<<endl;
-  cout<<"Number of dijet pre-selected : "<<nDJEvt<<endl;
+  cout << "================ Ana Process Summaries =============" << endl;
+  cout << "Number of events processed : "<<iEvent<<endl;
+  cout << "Number of events pre-selected : "<<nPreSelEvt<<endl;
+  cout << "Number of dijet pre-selected : "<<nDJEvt<<endl;
 
   // write to output file
   outFile.Write();
@@ -369,4 +374,8 @@ void analyzeDiJet(int verbosity=1){
   delete hTrkEta;
   delete hTrkPhi;
 
+  // All done
+  sw.Stop();
+  cout <<"Processing time --> "  << flush; sw.Print();
+  cout << "====================================================" << endl;
 }
