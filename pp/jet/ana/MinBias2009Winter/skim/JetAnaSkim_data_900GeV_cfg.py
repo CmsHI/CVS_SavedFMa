@@ -20,7 +20,7 @@ process.source = cms.Source("PoolSource",
       #"/store/mc/Summer09/MinBias/GEN-SIM-RECO/STARTUP3X_V8P_900GeV_Jan29ReReco-v1/0018/FEE5AED4-540D-DF11-819B-00E08178C129.root"
       ),
     lumisToProcess = cms.untracked.VLuminosityBlockRange(
-      '124120:1-124120:max',
+      #'124120:1-124120:max', // this is 2.36 TeV
       '124030:2-124030:max',
       '124027:24-124027:max',
       '124025:5-124025:13',
@@ -40,7 +40,7 @@ process.source = cms.Source("PoolSource",
     )
 
 process.configurationMetadata = cms.untracked.PSet(
-    version = cms.untracked.string('$Revision: 1.4 $'),
+    version = cms.untracked.string('$Revision: 1.5 $'),
     name = cms.untracked.string('$Source: /cvs_server/repositories/CMSSW/UserCode/SavedFMa/pp/jet/ana/MinBias2009Winter/skim/JetAnaSkim_data_900GeV_cfg.py,v $'),
     annotation = cms.untracked.string('At least two general track or one pixel track or one pixelLess track')
 )
