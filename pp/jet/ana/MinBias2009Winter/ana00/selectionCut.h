@@ -33,6 +33,8 @@ class selectionCut
     // variables
     TString NConeNP;
     TString AConeNP;
+    TString NConeNPBg;
+    TString AConeNPBg;
     
     // ana info
     TString AnaTag;
@@ -66,6 +68,8 @@ selectionCut::selectionCut(bool isMC, int sel, double jet, double jeta, double j
      TrkCut = ("ppt>0.3 && ppt<25 && trkHP==1 && trkNHits>=8");
      NConeNP = "Sum$("+TString(TrkCut)+"&&pndr<0.5)";
      AConeNP = "Sum$("+TString(TrkCut)+"&&padr<0.5)";
+     NConeNPBg = "Sum$("+TString(TrkCut)+"&&pndrbg<0.5)";
+     AConeNPBg = "Sum$("+TString(TrkCut)+"&&padrbg<0.5)";
    }
    // special cuts
    if (selType==4) {
