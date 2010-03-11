@@ -31,8 +31,8 @@ class compareHist
        void Draw(TString opt) { h1->Draw(opt); h2->Draw("hist E same"); if(leg1) leg1->Draw();}
        void Draw2(TString opt) { h2->Draw("histE"); h1->Draw(opt+"same"); if(leg1) leg1->Draw();}
        void SetLegend(double x1,double y1, double x2, double y2);
-       void AppendToHist(TTree *myTree1,TTree *myTree2,const char *var,const char *cut1,const char *cut2);
-       void Normalize(int normType=1);
+       void AppendToHist(TTree *myTree1,TTree *myTree2,const char *var,const char *name,const char *cut1,const char *cut2);
+       void Normalize(int normType=1,TTree *myTree1=0,TTree *myTree2=0);
 };
 
 
@@ -92,7 +92,7 @@ void compareHist::AppendToHist(TTree *myTree1,TTree *myTree2,const char *var,con
   myTree2->Draw(Form("%s>>+h2%s",var,name),cut2);
 }
 
-void compareHist::Normalize(int normType)
+void compareHist::Normalize(int normType,TTree *myTree1,TTree *myTree2)
 {
    if (normType==1) {
       h1->Scale(1./h1->GetEntries(),"width");
