@@ -6,6 +6,7 @@
 #include "TTree.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TSystem.h"
 #include "aliases_dijet.C"
 using namespace std;
 
@@ -38,10 +39,10 @@ void ana_FF(
   double AnaJetEtMin = 10.;
   double AnaJetEtaMax = 2.;
   selectionCut dataAna(0,doSel,AnaJetEtMin,AnaJetEtaMax,2.14);
-  dataAna.AnaTag = "V21/FF";
+  dataAna.AnaTag = "V21/FFmar11";
   gSystem->mkdir(Form("plots/%s",dataAna.AnaTag.Data()),kTRUE);
   TString djCut = TString(dataAna.DJCut);
-  TString trkCut = TString(dataAna.vtxCut && dataAna.TrkCut);
+  //TString trkCut = TString(dataAna.vtxCut && dataAna.TrkCut);
   TString djTrkCut = TString(dataAna.DJCut && dataAna.TrkCut);
   dataAna.SelTag = Form("Sel%d_jEtMax%.1f_jEtaMin%.1f",doSel,AnaJetEtMin,AnaJetEtaMax);
   cout << "AnaTag: " << dataAna.SelTag << endl;
@@ -51,10 +52,11 @@ void ana_FF(
   Double_t totn2 = tree2->GetEntries();
   cout << " tot events in " << inf1 << ": " << totn1 << endl;
   cout << " tot events in " << inf2 << ": " << totn2 << endl;
-  cout << "====== selection ===== " << endl;
-  cout << "Selection: " << djCut << endl;
-  cout << " # passed cuts in " << inf1 << ": " << tree1->GetEntries(djCut) << endl;;
-  cout << " # passed cuts in " << inf2 << ": " << tree2->GetEntries(djCut) << endl;;
+  cout << "====== Analysis cuts =====" << endl;
+  cout << "djCut:    " << djCut << endl;
+  cout << "djTrkCut: " << djTrkCut << endl;
+  cout << " # evt passed djCut in " << inf1 << ": " << tree1->GetEntries(djCut) << endl;;
+  cout << " # evt passed djCut in " << inf2 << ": " << tree2->GetEntries(djCut) << endl;;
 
   // pdf comparisons
   // check dijet
@@ -70,11 +72,11 @@ void ana_FF(
   ccomp2->Print(Form("plots/%s/%s_dPhi.gif",dataAna.AnaTag.Data(),dataAna.SelTag.Data()));
 
   TCanvas *ccomp3 = new TCanvas("ccomp3","",500,500);
-  compareHist comp3(tree1,tree2,"(nljet-aljet)/(nljet+aljet)","Balance",djCut.Data(),djCut.Data(),0,1,30);
+  compareHist comp3(tree1,tree2,"2*(nljet-aljet)/(nljet+aljet)","Balance",djCut.Data(),djCut.Data(),0,1.2,30);
   comp3.Normalize(1);
   comp3.SetHistName1(title1);
   comp3.SetHistName2(title2);
-  comp3.SetXTitle("(E_{T}^{j1}-E_{T}^{j2})/(E_{T}^{j1}+E_{T}^{j2})");
+  comp3.SetXTitle("(E_{T}^{j1}-E_{T}^{j2})/((E_{T}^{j1}+E_{T}^{j2})/2)");
   comp3.SetYTitle("Arbitrary normalization");
   comp3.SetLegend(0.632,0.828,0.927,0.926);
   comp3.Draw("E");
@@ -82,12 +84,11 @@ void ana_FF(
 
   // check tracks in jet
   cout << "================= Check tracks in jet ==================" << endl;
-  TString NConeNP = "Sum$("+TString(dataAna.TrkCut)+"&&pndr<0.5)";
-  TString AConeNP = "Sum$("+TString(dataAna.TrkCut)+"&&padr<0.5)";
-  cout << "count: " << NConeNP << endl;
+  cout << "check: " << dataAna.NConeNP << endl;
+  cout << "  and  " << dataAna.AConeNP << endl;
   TCanvas *ccomp4 = new TCanvas("ccomp4","",500,500);
-  compareHist comp4(tree1,tree2,NConeNP.Data(),"Cone5NP",djCut.Data(),djCut.Data(),0,15,15);
-  comp4.AppendToHist(tree1,tree2,NConeNP.Data(),"Cone5NP",djCut.Data(),djCut.Data());
+  compareHist comp4(tree1,tree2,dataAna.NConeNP.Data(),"Cone5NP",djCut.Data(),djCut.Data(),0,15,15);
+  comp4.AppendToHist(tree1,tree2,dataAna.AConeNP.Data(),"Cone5NP",djCut.Data(),djCut.Data());
   comp4.Normalize(1);
   comp4.SetHistName1(title1);
   comp4.SetHistName2(title2);
@@ -121,13 +122,15 @@ void ana_FF(
   TH1D * djXiDataBg = new TH1D("djXiDataBg","djXiDataBg",NXiBin,0,XiMax);
   djXiDataBg->SetLineColor(kBlue);
   djXiDataBg->SetMarkerColor(kBlue);
+  djXiDataBg->SetMarkerStyle(kOpenCircle);
   TH1D * djXiDataSig = new TH1D("djXiDataSig",";#xi=ln(E_{T}^{Jet}/p_{T}^{trk});#frac{1}{N_{jet}} #frac{dN}{d#xi}",NXiBin,0,XiMax);
   TH1D * djXiMC = new TH1D("djXiMC",";#xi=ln(E_{T}^{Jet}/p_{T}^{trk});#frac{1}{N_{jet}} #frac{dN}{d#xi}",NXiBin,0,XiMax);
   djXiMC->SetLineColor(kRed);
-  djXiMC->SetMarkerColor(kRed);
+  djXiMC->SetMarkerStyle(0);
   TH1D * djXiMCBg = new TH1D("djXiMCBg","djXiMCBg",NXiBin,0,XiMax);
   djXiMCBg->SetLineColor(kBlue);
-  djXiMCBg->SetMarkerColor(kBlue);
+  djXiMCBg->SetLineStyle(2);
+  djXiMCBg->SetMarkerStyle(0);
   TH1D * djXiMCSig = new TH1D("djXiMCSig",";#xi=ln(E_{T}^{Jet}/p_{T}^{trk});#frac{1}{N_{jet}} #frac{dN}{d#xi}",NXiBin,0,XiMax);
 
   TCanvas *cFF0 = new TCanvas("cFF0","cFF0",500,500);
@@ -154,7 +157,7 @@ void ana_FF(
   djXiMCSig->Add(djXiMC,djXiMCBg,1,-1);
 
   //  -- draw --
-  double xiYMax = 1.5;
+  double xiYMax = 1.8;
   djXiData->SetMaximum(xiYMax);
   djXiDataBg->SetMaximum(xiYMax);
   djXiDataSig->SetMaximum(xiYMax);
@@ -172,20 +175,23 @@ void ana_FF(
   leg1->SetFillStyle(0);
   leg1->SetFillColor(0);
   leg1->SetTextSize(0.035);
-  leg1->AddEntry("","FF for j1,j2","");
+  leg1->AddEntry("","j1,j2 FF","");
   leg1->AddEntry(djXiData,"Data 900 GeV Raw","pl");
   leg1->AddEntry(djXiDataBg,"Background","pl");
-  TLegend * leg2 = new TLegend(0.522,0.828,0.927,0.926,NULL,"brNDC");
+  TLegend * leg2 = new TLegend(0.468,0.758,0.873,0.928,NULL,"brNDC");
   leg2->SetFillStyle(0);
   leg2->SetFillColor(0);
   leg2->SetTextSize(0.035);
-  leg2->AddEntry("","FF for j1,j2","");
+  leg2->AddEntry("","j1,j2 FF","");
+  leg2->AddEntry(djXiData,"Data 900 GeV Raw","pl");
+  leg2->AddEntry(djXiDataBg,"Data Background","pl");
   leg2->AddEntry(djXiMC,"Pythia 900 GeV Raw","pl");
-  leg2->AddEntry(djXiMCBg,"Background","pl");
-  TLegend * leg3 = new TLegend(0.522,0.828,0.927,0.926,NULL,"brNDC");
+  leg2->AddEntry(djXiMCBg,"Pythia Background","pl");
+  TLegend * leg3 = new TLegend(0.468,0.8,0.873,0.926,NULL,"brNDC");
   leg3->SetFillStyle(0);
   leg3->SetFillColor(0);
   leg3->SetTextSize(0.035);
+  leg3->AddEntry("","j1,j2 FF","");
   leg3->AddEntry(djXiData,"Data 900 GeV, Raw-Bg","pl");
   leg3->AddEntry(djXiMC,"Pythia 900 GeV, Raw-Bg","pl");
 
@@ -198,6 +204,8 @@ void ana_FF(
   TCanvas *cFF2 = new TCanvas("cFF2","cFF2",500,500);
   djXiMC->Draw("hist E");
   djXiMCBg->Draw("hist E same");
+  djXiData->Draw("E same");
+  djXiDataBg->Draw("Esame");
   leg2->Draw();
   cFF2->Print(Form("plots/%s/%s_XiMC.gif",dataAna.AnaTag.Data(),dataAna.SelTag.Data()));
 
