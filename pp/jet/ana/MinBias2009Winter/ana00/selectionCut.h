@@ -64,14 +64,14 @@ selectionCut::selectionCut(bool isMC, int sel, double jet, double jeta, double j
    if (selType>=3) {
      evtSelection = evtSelection && Form("nljemf>0.01 && aljemf>0.01");
      TrkCut = ("ppt>0.3 && ppt<25 && trkHP==1 && trkNHits>=8");
+     NConeNP = "Sum$("+TString(TrkCut)+"&&pndr<0.5)";
+     AConeNP = "Sum$("+TString(TrkCut)+"&&padr<0.5)";
    }
    // special cuts
    if (selType==4) {
      evtSelection = evtSelection && Form("nljemf<0.999 && aljemf<0.999");
    }
    if (selType==5) {
-     NConeNP = "Sum$("+TString(TrkCut)+"&&pndr<0.5)";
-     AConeNP = "Sum$("+TString(TrkCut)+"&&padr<0.5)";
      evtSelection = evtSelection && (NConeNP+">0 && "+AConeNP+">0");
    }
 
