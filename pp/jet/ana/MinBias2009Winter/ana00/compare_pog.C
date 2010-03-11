@@ -29,13 +29,16 @@ void compare_pog(
 
   int doLog=1;
 
-  selectionCut dataAna(0,doSel,10,3,2.14); // |eta|<3 to compare with jetmet
-  //selectionCut dataAna(0,doSel,10,2,2.14); // |eta|<2 for our ana
-  dataAna.AnaTag = "V21/pog";
+  double JetEtMin=10;
+  double JetEtaMax=2;
+  double DJDPhiMin=2.14;
+  //selectionCut dataAna(0,doSel,10,3,2.14); // |eta|<3 to compare with jetmet
+  selectionCut dataAna(0,doSel,JetEtMin,JetEtaMax,DJDPhiMin); // |eta|<2 for our ana
+  dataAna.AnaTag = "V21/anaFragMar11/pog";
   gSystem->mkdir(Form("plots/%s",dataAna.AnaTag.Data()),kTRUE);
   TString djCut = TString(dataAna.DJCut);
   TString trkCut = TString(dataAna.vtxCut && dataAna.TrkCut);
-  dataAna.SelTag = Form("Sel%d_jEtMax%.1f_jEtaMin%.1f",doSel,10.,3.);
+  dataAna.SelTag = Form("Sel%d_jEtMax%.1f_jEtaMin%.1f",doSel,JetEtMin,JetEtaMax);
 
   cout << "====== total input =====" << endl;
   Double_t totn1 = tree1->GetEntries();
