@@ -25,8 +25,6 @@ void ana_FF(
   TTree * tree2 = (TTree*)infile2->FindObjectAny("dijetTree");
   aliases_dijet(tree2);
 
-  TFile* outf = new TFile("dijetAna.root","recreate");
-  TH1::SetDefaultSumw2();
   // setup title
   if (title1==title2) {
     title1 = inf1;
@@ -57,6 +55,10 @@ void ana_FF(
   cout << "djTrkCut: " << djTrkCut << endl;
   cout << " # evt passed djCut in " << inf1 << ": " << tree1->GetEntries(djCut) << endl;;
   cout << " # evt passed djCut in " << inf2 << ": " << tree2->GetEntries(djCut) << endl;;
+
+  // Make output file
+  TFile* outf = new TFile(Form("plots/%s/Sel%d_jEtMax%.1f_jEtaMin%.1f.root",dataAna.AnaTag.Data(),doSel,AnaJetEtMin,AnaJetEtaMax),"recreate");
+  TH1::SetDefaultSumw2();
 
   // pdf comparisons
   // check dijet
@@ -97,6 +99,18 @@ void ana_FF(
   comp4.SetLegend(0.632,0.828,0.927,0.926);
   comp4.Draw("E");
   ccomp4->Print(Form("plots/%s/%s_Cone5NP.gif",dataAna.AnaTag.Data(),dataAna.SelTag.Data()));
+
+  TCanvas *ccomp4_2 = new TCanvas("ccomp4_2","",500,500);
+  compareHist comp4_2(tree1,tree2,dataAna.NConeNPBg.Data(),"Cone5NPBg",djCut.Data(),djCut.Data(),0,15,15);
+  comp4_2.AppendToHist(tree1,tree2,dataAna.AConeNPBg.Data(),"Cone5NPBg",djCut.Data(),djCut.Data());
+  comp4_2.Normalize(1);
+  comp4_2.SetHistName1(title1);
+  comp4_2.SetHistName2(title2);
+  comp4_2.SetXTitle("# tracks in jet^{1,2} trans. cone (dR<0.5)");
+  comp4_2.SetYTitle("Arbitrary normalization");
+  comp4_2.SetLegend(0.632,0.828,0.927,0.926);
+  comp4_2.Draw("E");
+  ccomp4_2->Print(Form("plots/%s/%s_Cone5NPBg.gif",dataAna.AnaTag.Data(),dataAna.SelTag.Data()));
 
   // check track jet correlations
   TCanvas *ccomp5 = new TCanvas("ccomp5","",500,500);
@@ -157,7 +171,7 @@ void ana_FF(
   djXiMCSig->Add(djXiMC,djXiMCBg,1,-1);
 
   //  -- draw --
-  double xiYMax = 1.8;
+  double xiYMax = 2.;
   djXiData->SetMaximum(xiYMax);
   djXiDataBg->SetMaximum(xiYMax);
   djXiDataSig->SetMaximum(xiYMax);
