@@ -31,10 +31,12 @@ AnaFrag::AnaFrag(int src, TString t,TTree *tree,TString djCut,TString djTrkCut, 
   ximax(5),
   ymin(0),
   ymax(2),
-  xtitle("#xi=ln(E_{T}^{Jet}/p_{T}^{trk})"),
-  ytitle("#frac{1}{N_{jet}} #frac{dN}{d#xi}")
+  xtitle(t+" #xi=ln(E_{T}^{Jet}/p_{T}^{trk})"),
+  ytitle(t+" #frac{1}{N_{jet}} #frac{dN}{d#xi}")
 {
   trDj = tree;
+  if (src==0) tag="data"+tag;
+  if (src==1) tag="mc"+tag;
   hXiRaw = new TH1D(Form("hXiRaw_%s",tag.Data()),(";"+xtitle+";"+ytitle),nbin,ximin,ximax);
   hXiBkg = new TH1D(Form("hXiBkg_%s",tag.Data()),(";"+xtitle+";"+ytitle),nbin,ximin,ximax);
   hXiSig = new TH1D(Form("hXiSig_%s",tag.Data()),(";"+xtitle+";"+ytitle),nbin,ximin,ximax);
