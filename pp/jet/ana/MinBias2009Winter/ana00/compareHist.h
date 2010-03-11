@@ -17,6 +17,7 @@ class compareHist
 
        string name1;
        string name2;
+       int numJets;
        
        void init();
        void SetXTitle(const char *t) { h1->SetXTitle(t); h2->SetXTitle(t);}
