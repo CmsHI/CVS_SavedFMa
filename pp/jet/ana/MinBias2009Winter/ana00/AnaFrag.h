@@ -30,9 +30,9 @@ AnaFrag::AnaFrag(int src, TString t,TTree *tree,TString djCut,TString djTrkCut, 
   ximin(0),
   ximax(5),
   ymin(0),
-  ymax(2),
-  xtitle(t+" #xi=ln(E_{T}^{Jet}/p_{T}^{trk})"),
-  ytitle(t+" #frac{1}{N_{jet}} #frac{dN}{d#xi}")
+  ymax(1.8),
+  xtitle("#xi=ln(E_{T}^{Jet}/p_{T}^{trk})"),
+  ytitle("#frac{1}{N_{jet}} #frac{dN}{d#xi}")
 {
   trDj = tree;
   if (src==0) tag="data"+tag;
