@@ -177,11 +177,11 @@ void jetFragAna(
   leg1->AddEntry(dataNr.hXiRaw,"Data 900 GeV Raw","pl");
   leg1->AddEntry(dataNr.hXiBkg,"Background","pl");
 
-  TLegend * leg2 = new TLegend(0.468,0.778,0.873,0.928,NULL,"brNDC");
+  TLegend * leg2 = new TLegend(0.468,0.741,0.873,0.928,NULL,"brNDC");
   leg2->SetFillStyle(0);
   leg2->SetFillColor(0);
   leg2->SetTextSize(0.035);
-  leg2->AddEntry("","j1,j2 FF","");
+  leg2->AddEntry("","j1,j2","");
   leg2->AddEntry(dataNr.hXiRaw,"Data 900 GeV Raw","pl");
   leg2->AddEntry(dataNr.hXiBkg,"Data Background","pl");
   leg2->AddEntry(mcNr.hXiRaw,"Pythia 900 GeV Raw","pl");
@@ -191,7 +191,7 @@ void jetFragAna(
   leg3->SetFillStyle(0);
   leg3->SetFillColor(0);
   leg3->SetTextSize(0.035);
-  leg3->AddEntry("","j1,j2 FF","");
+  leg3->AddEntry("","j1,j2","");
   leg3->AddEntry(dataNr.hXiSig,"Data 900 GeV, Raw-Bg","pl");
   leg3->AddEntry(mcNr.hXiSig,"Pythia 900 GeV, Raw-Bg","pl");
 
@@ -210,8 +210,8 @@ void jetFragAna(
   cFF2->Print(Form("plots/%s/%s_XiMC.gif",dataAna.AnaTag.Data(),dataAna.SelTag.Data()));
 
   TCanvas *cFF3 = new TCanvas("cFF3","cFF3",500,500);
-  hDataCombXiSig->Draw("E");
-  hMCCombXiSig->Draw("hist E same");
+  hMCCombXiSig->Draw("hist E");
+  hDataCombXiSig->Draw("Esame");
   leg3->Draw();
   cFF3->Print(Form("plots/%s/%s_XiSigRawDataMC.gif",dataAna.AnaTag.Data(),dataAna.SelTag.Data()));
 
