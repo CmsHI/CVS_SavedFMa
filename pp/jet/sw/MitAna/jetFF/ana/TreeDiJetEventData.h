@@ -294,6 +294,8 @@ namespace jetana
       vz_	  = -99;
       fracHP_	  = -99;
       // jet
+      mass_	  = -99;
+      jdphi_	  = -99;
       nljet_	  = -99;
       aljet_	  = -99;
       // jet constituents
