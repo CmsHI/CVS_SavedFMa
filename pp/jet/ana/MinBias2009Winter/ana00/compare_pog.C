@@ -49,6 +49,11 @@ void compare_pog(
   cout << "Selection: " << djCut << endl;
   cout << " # passed cuts in " << inf1 << ": " << tree1->GetEntries(djCut) << endl;
   cout << " # passed cuts in " << inf2 << ": " << tree2->GetEntries(djCut) << endl;
+  cout << "====== Analysis cuts =====" << endl;
+  cout << "djCut:    " << djCut << endl;
+  cout << "trkCut: " << trkCut << endl;
+  cout << " # evt passed djCut in " << inf1 << ": " << tree1->GetEntries(djCut) << endl;;
+  cout << " # evt passed djCut in " << inf2 << ": " << tree2->GetEntries(djCut) << endl;;
 
   // pdf comparisons
   // check event info
@@ -71,9 +76,9 @@ void compare_pog(
   comp2.SetHistName2(title2);
   comp2.SetXTitle("leading dijet d #phi");
   comp2.SetYTitle("Arbitrary normalization");
-  comp2.SetLegend(0.202,0.828,0.496,0.926);
+  comp2.SetLegend(0.226,0.828,0.520,0.926);
   comp2.SetMaximum(2.8);
-  comp2.Draw("E");
+  comp2.Draw2("E");
   ccomp2->Print(Form("plots/%s/%s_dPhi.gif",dataAna.AnaTag.Data(),dataAna.SelTag.Data()));
 
   TCanvas *ccomp3 = new TCanvas("ccomp3","",500,500);
@@ -85,7 +90,8 @@ void compare_pog(
   comp3.SetXTitle("leading dijet mass");
   comp3.SetYTitle("Arbitrary normalization");
   comp3.SetLegend(0.632,0.828,0.927,0.926);
-  comp3.Draw("E");
+  comp3.SetMinimum(0.001);
+  comp3.Draw2("E");
   ccomp3->Print(Form("plots/%s/%s_djMass.gif",dataAna.AnaTag.Data(),dataAna.SelTag.Data()));
 
   // check jet
