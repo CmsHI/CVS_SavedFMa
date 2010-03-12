@@ -12,12 +12,14 @@
     //
     cout << "Loading FW Lite setup." << endl;
     gSystem->Load("libFWCoreFWLite.so");
-    AutoLibraryLoader::enable();
     gSystem->Load("libDataFormatsFWLite.so");
     gSystem->Load("libDataFormatsPatCandidates.so");
+    gSystem->Load("libDataFormatsCommon.so");
 
     // JEC
     gSystem->Load("libCondFormatsJetMETObjects.so");
+
+    AutoLibraryLoader::enable();
   }
 
   // styles
