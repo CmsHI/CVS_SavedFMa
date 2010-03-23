@@ -109,6 +109,9 @@ process.akPu7CaloJets.jetPtMin = 1
 process.akFastPu5CaloJets.jetPtMin = 1
 process.akFastPu7CaloJets.jetPtMin = 1
 
+#  -- Ferenc's vertexing --
+process.load("edwenger.Skims.ExtraVertex_cff")
+
 # ================= Output ======================
 process.output = cms.OutputModule("PoolOutputModule",
     #outputCommands = process.FEVTDEBUGEventContent.outputCommands,
@@ -123,7 +126,7 @@ process.output = cms.OutputModule("PoolOutputModule",
 
 # =============== Final Paths ==================
 process.MBSkim_step = cms.Path(process.physDeclFilter*process.bptxAnd*process.monsterVeto)
-process.reco_step=cms.Path(process.rechits*process.globalRecoPbPb)
+process.reco_step=cms.Path(process.extraVertex+process.rechits*process.globalRecoPbPb)
 process.out_step = cms.EndPath(process.output)
 
 # Schedule definition
