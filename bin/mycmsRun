@@ -41,10 +41,10 @@ echo $cmdline > log/$outf
 echo cmsRun options: "$cmsopt" >> log/$outf
 run="(time cmsRun ""$cmsopt"" >> log/$outf 2>&1) 2>> log/$outf &"
 echo   At `date` >> log/$outf
-echo $run
 
 if [ $check == false ]; then
    ./create_custom_python_cfg.sh
+   echo $run
    echo run!
    eval $run
 fi
