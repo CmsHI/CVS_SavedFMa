@@ -13,6 +13,8 @@ process.configurationMetadata = cms.untracked.PSet(
     name = cms.untracked.string('PyReleaseValidation')
 )
 
+process.load("MyConfiguration.Sequences.python.Local_source_cff")
+
 # options
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(100)
