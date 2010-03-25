@@ -9,6 +9,7 @@
 #include "TSystem.h"
 #include "aliases_dijet.C"
 #include "AnaFrag.h"
+#include "common.h"
 using namespace std;
 
 void jetFragAna(
@@ -38,7 +39,7 @@ void jetFragAna(
   double AnaJetEtMin = 10.;
   double AnaJetEtaMax = 2.;
   selectionCut dataAna(0,doSel,AnaJetEtMin,AnaJetEtaMax,2.14);
-  dataAna.AnaTag = "V21/anaFragMar11";
+  dataAna.AnaTag = "V21/anaFragMar25";
   gSystem->mkdir(Form("plots/%s",dataAna.AnaTag.Data()),kTRUE);
   TString djCut = TString(dataAna.DJCut);
   //TString trkCut = TString(dataAna.vtxCut && dataAna.TrkCut);
@@ -70,9 +71,10 @@ void jetFragAna(
   comp2.SetHistName2(title2);
   comp2.SetXTitle("leading dijet d #phi");
   comp2.SetYTitle("Arbitrary normalization");
-  comp2.SetLegend(0.202,0.828,0.496,0.926);
+  comp2.SetLegend(0.222,0.830,0.516,0.930);
+  comp2.SetMaximum(2.8);
   comp2.Draw("E");
-  ccomp2->Print(Form("plots/%s/%s_dPhi.gif",dataAna.AnaTag.Data(),dataAna.SelTag.Data()));
+  printFinalCanvases(ccomp2,Form("plots/%s/%s_dPhi",dataAna.AnaTag.Data(),dataAna.SelTag.Data()),0,1);
 
   TCanvas *ccomp3 = new TCanvas("ccomp3","",500,500);
   compareHist comp3(tree1,tree2,"2*(nljet-aljet)/(nljet+aljet)","Balance",djCut.Data(),djCut.Data(),0,1.2,30);
@@ -187,7 +189,7 @@ void jetFragAna(
   leg2->AddEntry(mcNr.hXiRaw,"Pythia 900 GeV Raw","pl");
   leg2->AddEntry(mcNr.hXiBkg,"Pythia Background","pl");
 
-  TLegend * leg3 = new TLegend(0.468,0.8,0.873,0.926,NULL,"brNDC");
+  TLegend * leg3 = new TLegend(0.219,0.8,0.625,0.926,NULL,"brNDC");
   leg3->SetFillStyle(0);
   leg3->SetFillColor(0);
   leg3->SetTextSize(0.035);
@@ -207,13 +209,13 @@ void jetFragAna(
   hDataCombXiRaw->Draw("Esame");
   hDataCombXiBkg->Draw("Esame");
   leg2->Draw();
-  cFF2->Print(Form("plots/%s/%s_XiMC.gif",dataAna.AnaTag.Data(),dataAna.SelTag.Data()));
+  cFF2->Print(Form("plots/%s/%s_XiRaw.gif",dataAna.AnaTag.Data(),dataAna.SelTag.Data()));
 
   TCanvas *cFF3 = new TCanvas("cFF3","cFF3",500,500);
   hMCCombXiSig->Draw("hist E");
   hDataCombXiSig->Draw("Esame");
   leg3->Draw();
-  cFF3->Print(Form("plots/%s/%s_XiSigRawDataMC.gif",dataAna.AnaTag.Data(),dataAna.SelTag.Data()));
+  printFinalCanvases(cFF3,Form("plots/%s/%s_XiRawBgSub",dataAna.AnaTag.Data(),dataAna.SelTag.Data()),0,1);
 
   outf->Write();
 }
