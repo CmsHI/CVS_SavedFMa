@@ -53,14 +53,20 @@ selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumi
    if (selType==0 || selType==5)
      evtSelection      = noHalo;
    // halo veto + bit 34
-   else if (selType==1)
+   else if (selType==1) {
      evtSelection      = noHalo && "L1T[34]";
+     Tag	       = "Bit34";
+   }
    // halo veto + bit 40
-   else if (selType==2)
+   else if (selType==2) {
      evtSelection      = noHalo && "L1T[40]";
+     Tag	       = "Bit40";
+   }
    // halo veto + bit 41
-   else if (selType==3)
+   else if (selType==3) {
      evtSelection      = noHalo && "L1T[41]";
+     Tag	       = "Bit40";
+   }
    // halo veto + Hf tower count
    else if (selType==4) {
      evtSelection      = noHalo && "L1T[34]" && hfCoinc;
