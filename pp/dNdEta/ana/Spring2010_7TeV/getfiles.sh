@@ -11,4 +11,5 @@ cp -v $run/diffractionAna/macros/*.C macros/
 
 # analysis
 cp -v $run/diffractionAna/filled_filled_7TeV/*.h ana/
+cp -v $run/diffractionAna/filled_filled_7TeV/*.C ana/
 
