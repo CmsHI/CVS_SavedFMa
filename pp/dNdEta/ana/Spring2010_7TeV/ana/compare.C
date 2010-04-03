@@ -168,7 +168,10 @@ void compare(int evtType = 0, int doSel = 1,
   // Fill histos
   printf("\n===== Triggering =====\n");
   cout << "Data: " << TString(dataSel.Cut) << endl;
+  cout << "  Events Selected: " << treeData->GetEntries(dataSel.Cut) << endl;
   cout << "MC: " << TString(mcSel.Cut&&etypeCut[evtType]) << endl;
+  cout << "  Events Selected: " << treeMC->GetEntries(mcSel.Cut) << endl;
+  cout << "           " << etype[evtType] << ": " << treeMC->GetEntries(mcSel.Cut&&etypeCut[evtType]) << endl;
   //cout << "MC2: " << TString(mcSel.Cut&&etypePhojCut[evtType]) << endl;
   // for shape comparison
   cout << "draw: hEaddEp_pythia: " << treeMC->Draw("SumEaddEp>>hEaddEp_pythia",mcSel.Cut&&etypeCut[0],"E") << endl;
