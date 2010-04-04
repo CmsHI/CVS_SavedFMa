@@ -10,7 +10,7 @@
 #include "TSystem.h"
 #include <iostream>
 #include <vector>
-#include "../selectionCut.h"
+#include "selectionCut.h"
 using namespace std;
 
 // Declare some useful global variables
@@ -240,7 +240,7 @@ void matchFrac(TString AnaVersion="V0",
     float EPzMin=0, float EPzMax=200, float EPzBinSize=5)
 {
   // top level info
-  gDataSource="Run 124023 (900 GeV)";
+  gDataSource="Run 132440 (7TeV)";
   gMCSource=MCSource;
   TString AnaTag = Form("ana%s_%s_Mode%d_Min%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
       AnaVersion.Data(),AnaObs.Data(),mode,
@@ -274,19 +274,19 @@ void matchFrac(TString AnaVersion="V0",
   TString * databgfname;
   // data
   if (DataSource=="data")
-    datafname = new TString("../input/pixelTree_124022a3a4-vtxcomp_MB.root");
+    datafname = new TString("../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root");
   if (DataSource=="pythia")
-    datafname = new TString("pixelTree_Pythia_MinBias_D6T_900GeV_d20091229_Vertex1229.root");
+    datafname = new TString("../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root");
   if (DataSource=="phojet") {
-    datafname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100108.root");
+    datafname= new TString("pixelTree_Phojet_MinBias_7TeV.root");
   }
   // mc
   if (MCSource=="pythia")
-    mcfname= new TString("pixelTree_Pythia_MinBias_D6T_900GeV_d20091229_Vertex1229.root");
+    mcfname= new TString("../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root");
   if (MCSource=="phojet") {
-    mcfname= new TString("pixelTree_Phojet_MinBias_900GeV_d20100108.root");
+    mcfname= new TString("pixelTree_Phojet_MinBias_7TeV.root");
   }
-  databgfname= new TString("pixelTree_123596v5-emptytarget_SDRelFrac1.0.root");
+  databgfname= new TString("../pixel_trees/emptybx/pixelTree_emptyBx_132422-veryloosecuts_v2.root");
   cout << "Data: " << datafname->Data() << endl;
   cout << "MC:   " << mcfname->Data() << endl;
 
@@ -302,9 +302,9 @@ void matchFrac(TString AnaVersion="V0",
 
   // ===== trigger =====
   bool isMC=true;
-  selectionCut mcSel(isMC,doSel,124023,41,96);
+  selectionCut mcSel(isMC,doSel);
   if (DataSource=="data") isMC=false;
-  selectionCut dataSel(isMC,doSel,124023,41,96);
+  selectionCut dataSel(isMC,doSel);
   dataSel.AnaTag = AnaTag;
   printf("\n===== Triggering =====\n");
   cout << "Data: " << TString(dataSel.Cut) << endl;
