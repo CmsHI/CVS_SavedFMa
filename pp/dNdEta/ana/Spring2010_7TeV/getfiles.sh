@@ -10,6 +10,6 @@ cp -v $run/diffractionAna/pixel_trees/*.C pixeltree/
 cp -v $run/diffractionAna/macros/*.C macros/
 
 # analysis
-cp -v $run/diffractionAna/filled_filled_7TeV/*.h ana/
-cp -v $run/diffractionAna/filled_filled_7TeV/*.C ana/
+cp -v $run/diffractionAna/collbx_7TeV/*.h ana/
+cp -v $run/diffractionAna/collbx_7TeV/*.C ana/
 
