@@ -117,7 +117,6 @@ Double_t histDiffrChi2(
   // Inputs to test:
   if (mode<2) {
     testWantedFrac2 = 1 - testWantedFrac1;
-    //cout << "testWantedFrac1: " << testWantedFrac1 << "  testWantedFrac2: " << testWantedFrac2 << endl;
   }
 
   // - pdf areas -
@@ -126,8 +125,8 @@ Double_t histDiffrChi2(
   Double_t A0 = testWantedFrac1*A1 + testWantedFrac2*A2;
 
   // - correct test frac -
-  Double_t testFrac1InRange = 1./A0 * testWantedFrac1*A1;
-  Double_t testFrac2InRange = 1./A0 * testWantedFrac2*A2;
+  Double_t testFrac1InRange = testWantedFrac1*A1/A0;
+  Double_t testFrac2InRange = testWantedFrac2*A2/A0;
 
   // scale all pdf's in range to unity
   h1->Scale(1./h1->Integral()/h1->GetBinWidth(1));
@@ -148,7 +147,6 @@ Double_t histDiffrChi2(
   // if draw
   if (draw) {
     if (mode<2) {
-      //cout << "MC Truth frac0: " << trueFrac1 << " In range: " << trueFrac1InRange << endl;
       cout << "Draw: trial " << wanted0 << "frac: " << testWantedFrac1
 	<< " In range: " << testFrac1InRange 
 	<< " " << wanted1 << "frac: " << testWantedFrac2
@@ -496,8 +494,7 @@ void matchFrac(TString AnaVersion="V0",
       Double_t chi2 = histDiffrChi2(
 	  fitObsHists,
 	  anaMode,
-	  trialFrac
-	  );
+	  trialFrac);
       hChi2->SetBinContent(i,chi2);
     }
     hChi2->Draw();
