@@ -33,6 +33,7 @@ Double_t histChi2(TH1 * h1, TH1 *h2)
     if (binE1==0) binE1=1;
     Double_t binE2 = h2->GetBinError(i);
     if (binE2==0) binE2=1;
+    // better interpretation of chi2: chi2/NDOF
     Double_t binChi2 = binDiff*binDiff/(binE1*binE1+binE2*binE2);
     sum+=binChi2;
   }
@@ -55,8 +56,8 @@ Double_t hist2Chi2(TH2 * h1, TH2 *h2)
 Double_t histDiffrChi2(
     const vector<TString> & hists,
     Int_t mode            = 0,
-    Double_t testWantedFrac0   = 0.11,
-    Double_t testWantedFrac1  = -1,
+    Double_t testWantedFrac1   = 0.11,
+    Double_t testWantedFrac2  = -1,
     Int_t draw            = 0,
     Double_t ymax         = 0.025)
 {
@@ -83,11 +84,50 @@ Double_t histDiffrChi2(
   TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[index2])->Clone("h2"));
   TH1D * h3 = (TH1D*)(gDirectory->FindObject(hists[index3])->Clone("h3"));
 
-  // calc rel frac
-  // correction factor for limited range
-  Double_t trueFrac0=h1->GetEntries()/hMC->GetEntries();
-  Double_t trueFrac0InRange=h1->Integral()/hMC->Integral();
-  Double_t testFrac0InRange = testWantedFrac0*(trueFrac0InRange/trueFrac0);
+  // === calc rel frac ===
+  ///////////////////////////////////////////////////////////
+  //
+  // === correction factor for limited range ===
+  // Full range:
+  // p0(x) = a*p1(x) + b*p2(x)
+  // where p(x) are probabilities functions in the full range
+  // and a,b are fractions in the full range
+  //
+  // Limited range:
+  // p0'(x) = a'*p1'(x) + b'*p2'(x), p'(x) = 1/A p(x)
+  // where p'(x) are probabilities functions in the limited range
+  // and a',b' are fractions in the limited range
+  // A is the area is the limited range
+  //
+  // Then:
+  // a' = 1./A0 * a*A1
+  // b' = 1./A0 * b*A2
+  // where A1 = p1.Integra(x1,x2), A2 = p2.Integral(x1,x2)
+  // and A0 = a*A1 + b*A2 is the overall normalization
+  // obtained from (a*p1+ b*p2).Integral(x1,x2)
+  //
+  // In terms of a', b'
+  // a = a'*A0/A1
+  // b = b'*A0/A2
+  // where A0 = 1/(a'/A1 + b'/A2) is the overall normalization
+  // obtained from (a'*p1'+ b'*p2').Integral(x1,x2)
+  //
+  ///////////////////////////////////////////////////////////
+
+  // Inputs to test:
+  if (mode<2) {
+    testWantedFrac2 = 1 - testWantedFrac1;
+    //cout << "testWantedFrac1: " << testWantedFrac1 << "  testWantedFrac2: " << testWantedFrac2 << endl;
+  }
+
+  // - pdf areas -
+  Double_t A1 = h1->Integral()/h1->GetEntries();
+  Double_t A2 = h2->Integral()/h2->GetEntries();
+  Double_t A0 = testWantedFrac1*A1 + testWantedFrac2*A2;
+
+  // - correct test frac -
+  Double_t testFrac1InRange = 1./A0 * testWantedFrac1*A1;
+  Double_t testFrac2InRange = 1./A0 * testWantedFrac2*A2;
 
   // scale all pdf's in range to unity
   h1->Scale(1./h1->Integral()/h1->GetBinWidth(1));
@@ -97,8 +137,8 @@ Double_t histDiffrChi2(
 
   // combine
   TH1D * hFit = (TH1D*)hMC->Clone("hFit");
-  h1->Scale(testFrac0InRange);
-  h2->Scale(1-testFrac0InRange);
+  h1->Scale(testFrac1InRange);
+  h2->Scale(testFrac2InRange);
   hFit->Add(h1,h2);
   if (mode==2) hFit->Add(h3);
 
@@ -108,9 +148,12 @@ Double_t histDiffrChi2(
   // if draw
   if (draw) {
     if (mode<2) {
-      cout << "MC Truth frac0: " << trueFrac0 << " In range: " << trueFrac0InRange << endl;
-      cout << "Draw: trial " << wanted0 << "frac: " << testWantedFrac0
-	<< " In range: " << testFrac0InRange << "  Raw hist chi2: " << result << endl;
+      //cout << "MC Truth frac0: " << trueFrac1 << " In range: " << trueFrac1InRange << endl;
+      cout << "Draw: trial " << wanted0 << "frac: " << testWantedFrac1
+	<< " In range: " << testFrac1InRange 
+	<< " " << wanted1 << "frac: " << testWantedFrac2
+	<< " In range: " << testFrac2InRange
+	<< "  Raw hist chi2: " << result << endl;
       cout << "hData area: " << hData->Integral()*hData->GetBinWidth(1) << ", Entries: " << hData->GetEntries() << endl;
       cout << "hMC area: " << hMC->Integral()*hMC->GetBinWidth(1) << ", Entries: " << hMC->GetEntries() << endl;
       cout << "h1 area: " << h1->Integral()*h1->GetBinWidth(1) << ", Entries: " << h1->GetEntries() << endl;
@@ -118,7 +161,7 @@ Double_t histDiffrChi2(
       cout << "hFit area: " << hFit->Integral()*hFit->GetBinWidth(1) << ", Entries: " << hFit->GetEntries() << endl;
     }
     else if (mode==2)
-      cout << "Draw: trial " << wanted0 << ", " << wanted1 << "frac: " << testWantedFrac0 << ", " << testWantedFrac1<< "  Raw hist chi2: " << result << endl;
+      cout << "Draw: trial " << wanted0 << ", " << wanted1 << "frac: " << testWantedFrac1 << ", " << testWantedFrac2<< "  Raw hist chi2: " << result << endl;
     //hMC->Draw("h");
     hMC->SetMarkerStyle(0);
     hMC->SetLineWidth(1);
@@ -453,7 +496,8 @@ void matchFrac(TString AnaVersion="V0",
       Double_t chi2 = histDiffrChi2(
 	  fitObsHists,
 	  anaMode,
-	  trialFrac);
+	  trialFrac
+	  );
       hChi2->SetBinContent(i,chi2);
     }
     hChi2->Draw();
