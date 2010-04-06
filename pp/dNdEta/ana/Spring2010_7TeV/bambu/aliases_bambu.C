@@ -125,6 +125,14 @@ void aliases_bambu(TTree * Events, int type=0)
   Events->SetAlias("inelastic","(ND || DD || SD)");
   Events->SetAlias("elastic","!(inelastic)");
 
+  // MC particles
+  Events->SetAlias("genp","MCParticles.fArray");
+  Events->SetAlias("pdg","genp.AbsPdgId()");
+  Events->SetAlias("status","genp.Status()");
+  Events->SetAlias("chg","genp.Charge()");
+  Events->SetAlias("pdvtx","genp.fDecayVertex");
+  Events->SetAlias("pdvtxr","sqrt(pdvtx.X()*pdvtx.X()+pdvtx.Y()*pdvtx.Y())");
+
   // Event selection
   Events->SetAlias("qual","EvtSelData.fClusVtxQual");
   Events->SetAlias("qualDiff","EvtSelData.fClusVtxDiff");
