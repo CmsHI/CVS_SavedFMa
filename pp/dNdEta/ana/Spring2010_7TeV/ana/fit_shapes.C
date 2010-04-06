@@ -35,8 +35,8 @@ void fit_shapes(TString AnaVersion="V1_3")
   }
 
   // === Define Inputs ===
-  //TString DataSource = "data"; gDataSource="Run 132440 (7TeV)";
-  TString DataSource = "pythia"; gDataSource="PythiaD6T";
+  TString DataSource = "data"; gDataSource="Run 132440 (7TeV)";
+  //TString DataSource = "pythia"; gDataSource="PythiaD6T";
   Double_t truthFrac = 0.220092;
   TString MCSource = "pythia";
   
@@ -64,7 +64,6 @@ void fit_shapes(TString AnaVersion="V1_3")
   }
   vector<TH1D*> inputHists;
   inputHists.push_back( (TH1D*)dataFile->FindObjectAny(Form("h%s_%s",AnaObs.Data(),DataSource.Data())) );
-  //inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_mc_All",AnaObs.Data())) );
   inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_mc_DF",AnaObs.Data())) );
   inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_mc_ND",AnaObs.Data())) );
 

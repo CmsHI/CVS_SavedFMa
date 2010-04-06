@@ -55,39 +55,11 @@ Double_t histDiffrChi2(
     Int_t draw            = 0,
     Double_t ymax         = 0.025)
 {
-  /*
-  Int_t index1=-1,index2=-1,index3=6;
-  //2=SD, 3=NSD, 4=D, 5=ND, 6=DD
-  if ( mode==0) {
-    index1=4; index2=5;
-  } else if (mode==1) {
-    index1=2; index2=3;
-  } else if (mode==2) {
-    index1=2; index2=6; index3=5;
-  }
-
   if (draw) {
-    for (Int_t i=0; i<hists.size(); ++i) {
-      if (i<2 || (i==index1||i==index2)) cout << "use: " << hists[i]->GetName() << endl;
-      if (mode==2 && i==index3) cout << "use: " << hists[i]->GetName() << endl;
-    }
+    cout << "data: " << hists[0]->GetName() << " h1: " << hists[1]->GetName() << 
+      " h2: " << hists[2]->GetName() << endl;
   }
-
-
-  return -1;
-  */
-  /*
-  TH1D * hData = (TH1D*)(gDirectory->FindObject(hists[0])->Clone("hData"));
-  TH1D * hMC = (TH1D*)(gDirectory->FindObject(hists[1])->Clone("hMC"));
-  TH1D * h1 = (TH1D*)(gDirectory->FindObject(hists[index1])->Clone("h1"));
-  TH1D * h2 = (TH1D*)(gDirectory->FindObject(hists[index2])->Clone("h2"));
-  TH1D * h3 = (TH1D*)(gDirectory->FindObject(hists[index3])->Clone("h3"));
-  */
-  cout << "data: " << hists[0]->GetName() << endl;
-  cout << "h1: " << hists[1]->GetName() << endl;
-  cout << "h2: " << hists[2]->GetName() << endl;
   TH1D * hData = (TH1D*)hists[0]->Clone("hData");
-  //TH1D * hMC   = (TH1D*)hists[1]->Clone("hMC");
   TH1D * h1    = (TH1D*)hists[1]->Clone("h1");
   TH1D * h2    = (TH1D*)hists[2]->Clone("h2");
   //TH1D * h3    = (TH1D*)hists[4]->Clone("h3");
@@ -139,7 +111,6 @@ Double_t histDiffrChi2(
   // scale all pdf's in range to unity
   h1->Scale(1./h1->Integral()/h1->GetBinWidth(1));
   h2->Scale(1./h2->Integral()/h2->GetBinWidth(1));
-  //hMC->Scale(1./hMC->Integral()/hMC->GetBinWidth(1));
   hData->Scale(1./hData->Integral()/hData->GetBinWidth(1));
 
   // combine
@@ -161,17 +132,12 @@ Double_t histDiffrChi2(
 	<< " In range: " << testFrac2InRange
 	<< "  Raw hist chi2: " << result << endl;
       cout << "hData area: " << hData->Integral()*hData->GetBinWidth(1) << ", Entries: " << hData->GetEntries() << endl;
-      //cout << "hMC area: " << hMC->Integral()*hMC->GetBinWidth(1) << ", Entries: " << hMC->GetEntries() << endl;
       cout << "h1 area: " << h1->Integral()*h1->GetBinWidth(1) << ", Entries: " << h1->GetEntries() << endl;
       cout << "h2 area: " << h2->Integral()*h2->GetBinWidth(1) << ", Entries: " << h2->GetEntries() << endl;
       cout << "hFit area: " << hFit->Integral()*hFit->GetBinWidth(1) << ", Entries: " << hFit->GetEntries() << endl;
     }
     else if (mode==2)
       cout << "Draw: trial " << wanted0 << ", " << wanted1 << "frac: " << testWantedFrac1 << ", " << testWantedFrac2<< "  Raw hist chi2: " << result << endl;
-    //hMC->Draw("h");
-    //hMC->SetMarkerStyle(0);
-    //hMC->SetLineWidth(1);
-    //hMC->SetLineStyle(7);
     // Fit
     hFit->SetLineColor(kRed);
     hFit->SetLineStyle(1);
@@ -226,7 +192,6 @@ Double_t histDiffrChi2(
   else {
     //cout << "SDRelFrac: " << SDRelFrac << "  Raw hist chi2: " << result << endl;
     hData->Delete();
-    //hMC->Delete();
     h1->Delete();
     h2->Delete();
     //h3->Delete();
