@@ -17,4 +17,6 @@ void aliases(TTree * PixelTree)
   PixelTree->SetAlias("looseSelEmpBx","bscSelEmpBx&&edscut2");
   PixelTree->SetAlias("anaSelEmpBx","looseSelEmpBx&&vz[1]>-99");
 
+  // Obs
+  PixelTree->SetAlias("MinEPz","(SumEaddEpPos<=SumEsubEpNeg)*SumEaddEpPos + (SumEaddEpPos>SumEsubEpNeg)*SumEsubEpNeg");
 }
