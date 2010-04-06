@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include "selectionCut.h"
+#include "aliases_tree.C"
 using namespace std;
 
 // Declare some useful global variables
@@ -337,6 +338,8 @@ void matchFrac(TString AnaVersion="V0",
   TTree * treeData; dataFile->GetObject("PixelTree",treeData);
   TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
   //TTree * treeDataBg; databgFile->GetObject("PixelTree",treeDataBg);
+  aliases_tree(treeData);
+  aliases_tree(treeMC);
 
   // Now define output
   TFile * fout = new TFile(Form("%s/%s.root",outdir.Data(),AnaTag.Data()),"RECREATE");
@@ -424,6 +427,7 @@ void matchFrac(TString AnaVersion="V0",
   vector<TString> EsubEpHists;
   vector<TString> EaddEpPosHists;
   vector<TString> EsubEpNegHists;
+  vector<TString> MinEPzHists;
   vector<TString> EPzHists;
   if (MCSource=="pythia") {
     fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,evtEtaHists);
@@ -431,6 +435,7 @@ void matchFrac(TString AnaVersion="V0",
     fillHist("SumEsubEp","hEsubEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EsubEpHists);
     fillHist("SumEaddEpPos","hEaddEpPos",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpPosHists);
     fillHist("SumEsubEpNeg","hEsubEpNeg",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EsubEpNegHists);
+    fillHist("MinEPz","hMinEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,MinEPzHists);
     fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EPzHists);
   }
   if (MCSource=="phojet") {
@@ -487,6 +492,7 @@ void matchFrac(TString AnaVersion="V0",
   if (AnaObs=="EsubEp") fitObsHists = EsubEpHists;
   if (AnaObs=="EaddEpPos") fitObsHists = EaddEpPosHists;
   if (AnaObs=="EsubEpNeg") fitObsHists = EsubEpNegHists;
+  if (AnaObs=="MinEPz") fitObsHists = EsubEpNegHists;
   // make chi2
   if (anaMode==0 || anaMode==1) {
     for (Int_t i=1; i<=N; ++i) {
