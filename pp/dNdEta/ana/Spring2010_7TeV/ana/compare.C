@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include "selectionCut.h"
+#include "aliases_tree.C"
 using namespace std;
 
 // === Helpers ===
@@ -78,6 +79,8 @@ void compare(int evtType = 0, int doSel = 1,
   TTree * treeData; dataFile->GetObject("PixelTree",treeData);
   TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
   //TTree * treeMC2; mc2File->GetObject("PixelTree",treeMC2);
+  aliases_tree(treeData);
+  aliases_tree(treeMC);
 
   // Event Selection
   selectionCut dataSel(0,doSel);
@@ -96,9 +99,14 @@ void compare(int evtType = 0, int doSel = 1,
   color.push_back(kGreen-1);
   // observables
   vector<TString> obs;
-  obs.push_back("EvtEta");
-  obs.push_back("EaddEpPos");
-  obs.push_back("EsubEpNeg");
+  //obs.push_back("EvtEta");
+  //obs.push_back("SumEaddEpPos");
+  //obs.push_back("EsubEpNeg");
+  obs.push_back("MinEPz");
+  vector<TString> obstitle;
+  //obstitle.push_back("#Sigma E+Pz (+HF)");
+  obstitle.push_back(";min{#Sigma E+Pz,#Sigma E-Pz};");
+
   // event types
   vector<TString> etype;
   vector<TCut> etypeCut;
@@ -127,7 +135,7 @@ void compare(int evtType = 0, int doSel = 1,
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
     vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",EPzNBINS,EPzMin,EPzMax));
-    vh1.push_back(new TH1D(Form("hEaddEpPos_%s",source[i].Data()),";#Sigma E+Pz (HF+);",EPzNBINS,EPzMin,EPzMax));
+    vh1.push_back(new TH1D(Form("h%s_%s",obs[0].Data(),source[i].Data()),obstitle[0].Data(),EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH1D(Form("hEsubEpNeg_%s",source[i].Data()),";#Sigma E-Pz (HF-);",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH2D(Form("hEPz_%s",source[i].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH1D(Form("hVz_%s",source[i].Data()),";vz;",100,-20,20));
@@ -136,7 +144,7 @@ void compare(int evtType = 0, int doSel = 1,
 	vh1.push_back(new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";Event #eta;",100,-5,5));
 	vh1.push_back(new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH1D(Form("hEsubEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz;",EPzNBINS,EPzMin,EPzMax));
-	vh1.push_back(new TH1D(Form("hEaddEpPos_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz (HF+);",EPzNBINS,EPzMin,EPzMax));
+	vh1.push_back(new TH1D(Form("h%s_%s_%s",obs[0].Data(),source[i].Data(),etype[j].Data()),obstitle[0].Data(),EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH1D(Form("hEsubEpNeg_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz (HF-);",EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH2D(Form("hEPz_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH1D(Form("hVz_%s_%s",source[i].Data(),etype[j].Data()),";vz;",100,-20,20));
@@ -174,12 +182,16 @@ void compare(int evtType = 0, int doSel = 1,
   cout << "           " << etype[evtType] << ": " << treeMC->GetEntries(mcSel.Cut&&etypeCut[evtType]) << endl;
   //cout << "MC2: " << TString(mcSel.Cut&&etypePhojCut[evtType]) << endl;
   // for shape comparison
+  /*
   cout << "draw: hEaddEp_pythia: " << treeMC->Draw("SumEaddEp>>hEaddEp_pythia",mcSel.Cut&&etypeCut[0],"E") << endl;
   cout << "draw: hEaddEp_pythia_DF: " << treeMC->Draw("SumEaddEp>>hEaddEp_pythia_DF",mcSel.Cut&&etypeCut[3],"Esame") << endl;
   cout << "draw: hEaddEp_pythia_ND: " << treeMC->Draw("SumEaddEp>>hEaddEp_pythia_ND",mcSel.Cut&&etypeCut[4],"Esame") << endl;
   cout << "draw: hEaddEp_data: " << treeData->Draw("SumEaddEp>>hEaddEp_data",dataSel.Cut,"Esame") << endl;
-  cout << "draw: hEaddEpPos_pythia: " << treeMC->Draw("SumEaddEpPos>>hEaddEpPos_pythia",mcSel.Cut&&etypeCut[evtType],"Esame") << endl;
-  cout << "draw: hEaddEpPos_data: " << treeData->Draw("SumEaddEpPos>>hEaddEpPos_data",dataSel.Cut,"Esame") << endl;
+  */
+  TString hname = Form("h%s_pythia",obs[0].Data());
+  cout << "draw: " <<hname<< ": " <<   treeMC->Draw(Form("%s>>%s",obs[0].Data(),hname.Data()),mcSel.Cut&&etypeCut[evtType],"Esame") << endl;
+  hname = Form("h%s_data",obs[0].Data());
+  cout << "draw: " <<hname<< ": " << treeData->Draw(Form("%s>>%s",obs[0].Data(),hname.Data()),dataSel.Cut,"Esame") << endl;
   /*
   cout << "draw: hEaddEp_phojet: " << treeMC2->Draw("SumEaddEp>>hEaddEp_phojet",mcSel.Cut&&TCut(etypePhojCut[evtType]),"Esame") << endl;
   cout << "draw: hEaddEp_phojet_DF: " << treeMC2->Draw("SumEaddEp>>hEaddEp_phojet_DF",mcSel.Cut&&TCut(etypePhojCut[3]),"Esame") << endl;
@@ -213,10 +225,10 @@ void compare(int evtType = 0, int doSel = 1,
   printf("%s: %f entries\n",hEaddEp_phojet_ND->GetName(),hEaddEp_phojet_ND->GetEntries());
   */
 
-  TH1D * hEaddEpPos_data = (TH1D*)gDirectory->FindObject("hEaddEpPos_data");
-  printf("%s: %f entries\n",hEaddEpPos_data->GetName(),hEaddEpPos_data->GetEntries());
-  TH1D * hEaddEpPos_pythia = (TH1D*)gDirectory->FindObject("hEaddEpPos_pythia");
-  printf("%s: %f entries\n",hEaddEpPos_pythia->GetName(),hEaddEpPos_pythia->GetEntries());
+  TH1D * hObs_data = (TH1D*)gDirectory->FindObject(Form("h%s_data",obs[0].Data()));
+  printf("%s: %f entries\n",hObs_data->GetName(),hObs_data->GetEntries());
+  TH1D * hObs_pythia = (TH1D*)gDirectory->FindObject(Form("h%s_pythia",obs[0].Data()));
+  printf("%s: %f entries\n",hObs_pythia->GetName(),hObs_pythia->GetEntries());
   //TH1D * hEaddEpPos_phojet = (TH1D*)gDirectory->FindObject("hEaddEpPos_phojet");
   //printf("%s: %f entries\n",hEaddEpPos_phojet->GetName(),hEaddEpPos_phojet->GetEntries());
   cout << "done with histos" << endl;
@@ -228,8 +240,8 @@ void compare(int evtType = 0, int doSel = 1,
   leg2->SetTextSize(0.03);
   leg2->AddEntry("","Selection with","");
   leg2->AddEntry("",dataSel.Tag.Data(),"");
-  leg2->AddEntry(hEaddEpPos_data,"Data 7TeV (Run 132440)","p");
-  leg2->AddEntry(hEaddEpPos_pythia,Form("default pythiaD6t %s",etype[evtType].Data()),"p");
+  leg2->AddEntry(hObs_data,"Data 7TeV (Run 132440)","p");
+  leg2->AddEntry(hObs_pythia,Form("default pythiaD6t %s",etype[evtType].Data()),"p");
   //leg2->AddEntry(hEaddEp_phojet,Form("default phojet %s",etype[evtType].Data()),"p");
   cout << "declared legend" << endl;
 
@@ -254,13 +266,13 @@ void compare(int evtType = 0, int doSel = 1,
   Double_t EPzYMax = 0.018;
   if (doSel==4) EPzYMax = 0.007;
   if (doSel==10) EPzYMax = 0.12;
-  hEaddEpPos_pythia->SetMinimum(0.0001);
-  hEaddEpPos_pythia->SetMaximum(EPzYMax);
-  hEaddEpPos_pythia->Draw("E");
-  //hEaddEpPos_phojet->Draw("Esame");
-  hEaddEpPos_data->Draw("Esame");
+  hObs_pythia->SetMinimum(0.0001);
+  hObs_pythia->SetMaximum(EPzYMax);
+  hObs_pythia->Draw("E");
+  //hObs_phojet->Draw("Esame");
+  hObs_data->Draw("Esame");
   leg2->Draw();
 
-  cEPz->Print(Form("%s/%s_hEaddEpPos.gif",outdir.Data(),InspectTag.Data()));
-  cEPz->Print(Form("%s/%s_hEaddEpPos.eps",outdir.Data(),InspectTag.Data()));
+  cEPz->Print(Form("%s/%s_h%s.gif",outdir.Data(),InspectTag.Data(),obs[0].Data()));
+  cEPz->Print(Form("%s/%s_h%s.eps",outdir.Data(),InspectTag.Data(),obs[0].Data()));
 }
