@@ -131,7 +131,6 @@ void fit_shapes(TString AnaVersion="V1_3")
       printf("       Twiki - %s, %s: | %s | %s | %.1f+-%.1f\% |\n\n",AnaTag.Data(),wanted0.Data(),AnaObs.Data(),MCSource.Data(),bestX*100,(chiEHigh-bestX)*100);
     else
       printf("       Twiki - %s, %s: | %s (%.0fto%.0fGeV) | %s | %.1f+-%.1f\% |\n\n",AnaTag.Data(),wanted0.Data(),AnaObs.Data(),EPzMin,EPzMax,MCSource.Data(),bestX*100,(chiEHigh-bestX)*100);
-  }
     /*
 
     // mc truth if using mc as "data"
@@ -148,4 +147,36 @@ void fit_shapes(TString AnaVersion="V1_3")
     }
     */
     //cChi2->Print(Form("%s/%s_cChi2.gif",outdir.Data(),AnaTag.Data()));
+
+    // draw distributions
+    vector<TH1D*> EaddEpPosHists;
+    EaddEpPosHists.push_back( (TH1D*)dataFile->FindObjectAny(Form("hEaddEpPos_%s",DataSource.Data())));
+    EaddEpPosHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEaddEpPos_mc_DF"));
+    EaddEpPosHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEaddEpPos_mc_ND"));
+    vector<TH1D*> EvtEtaHists;
+    EvtEtaHists.push_back( (TH1D*)dataFile->FindObjectAny(Form("hEvtEta_%s",DataSource.Data())));
+    EvtEtaHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEvtEta_mc_DF"));
+    EvtEtaHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEvtEta_mc_ND"));
+    // -- fitted --
+    TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
+    histDiffrChi2(
+	EaddEpPosHists,
+	anaMode,
+	bestX,
+	-1,
+	1,
+	EPzYMax);
+    //cEaddPz->Print(Form("%s/%s_cEaddPz.gif",outdir.Data(),AnaTag.Data()));
+    //cEaddPz->Print(Form("%s/%s_cEaddPz.eps",outdir.Data(),AnaTag.Data()));
+    TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
+    histDiffrChi2(
+	EvtEtaHists,
+	anaMode,
+	bestX,
+	-1,
+	1,
+	1);
+    //cEvtEta->Print(Form("%s/%s_cEvtEta.gif",outdir.Data(),AnaTag.Data()));
+    //cEvtEta->Print(Form("%s/%s_cEvtEta.eps",outdir.Data(),AnaTag.Data()));
+  }
 }
