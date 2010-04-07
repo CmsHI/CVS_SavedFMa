@@ -22,6 +22,7 @@ void fit_shapes(TString AnaVersion="V1_3")
   Double_t EPzMax = 200;
   Double_t EPzBinSize=5;
   TString AnaObs("EaddEpPos");
+  //TString AnaObs("EvtEta");
   Int_t anaMode = 0; // 0 for D vs ND, 1 for SD vs NSD, 2 for SD, DD, ND
 
   // set anaMode
@@ -54,8 +55,18 @@ void fit_shapes(TString AnaVersion="V1_3")
       AnaVersion.Data(),AnaVersion.Data(),
       EPzMin,EPzMax,EPzBinSize);
   cout << "Shapes File: " << shapes0fname << endl;
+  const char * shapes1fname = Form("plots/%s/EvtEta_Sel10/ana%s_EvtEta_Mode0_Min%.0f_Max%.0f_Delta%0.f_Sel10_data_use_pythia.root",
+      AnaVersion.Data(),AnaVersion.Data(),
+      EPzMin,EPzMax,EPzBinSize);
+  cout << "Shapes File1: " << shapes1fname << endl;
+  const char * shapes2fname = Form("plots/%s/EvtEta_Sel4/ana%s_EvtEta_Mode0_Min%.0f_Max%.0f_Delta%0.f_Sel4_data_use_pythia.root",
+      AnaVersion.Data(),AnaVersion.Data(),
+      EPzMin,EPzMax,EPzBinSize);
+  cout << "Shapes File2: " << shapes2fname << endl;
   TFile * dataFile = new TFile(datafname);
   TFile * shapes0File = new TFile(shapes0fname);
+  TFile * shapes1File = new TFile(shapes1fname);
+  TFile * shapes2File = new TFile(shapes2fname);
 
 
   // === Get Histograms ===
@@ -64,8 +75,10 @@ void fit_shapes(TString AnaVersion="V1_3")
   }
   vector<TH1D*> inputHists;
   inputHists.push_back( (TH1D*)dataFile->FindObjectAny(Form("h%s_%s",AnaObs.Data(),DataSource.Data())) );
-  inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_mc_DF",AnaObs.Data())) );
-  inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_mc_ND",AnaObs.Data())) );
+  //inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_mc_DF",AnaObs.Data())) );
+  inputHists.push_back( (TH1D*)shapes1File->FindObjectAny(Form("h%s_data",AnaObs.Data())) );
+  //inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_mc_ND",AnaObs.Data())) );
+  inputHists.push_back( (TH1D*)shapes2File->FindObjectAny(Form("h%s_data",AnaObs.Data())) );
 
   Double_t EPzYMax=0.035/(EPzMax/200), Chi2YMax=60;
   if (doSel==4) {
@@ -75,6 +88,8 @@ void fit_shapes(TString AnaVersion="V1_3")
   if (doSel==10) {
     EPzYMax=0.12/(EPzMax/200);
   }
+  if (AnaObs=="EvtEta")
+    EPzYMax=1;
 
   // test
   TCanvas * cEaddPzDefault = new TCanvas("cEaddPzDefault","cEaddPzDefault",600,600);
@@ -124,6 +139,7 @@ void fit_shapes(TString AnaVersion="V1_3")
     Double_t chiELow = a-equRoot;
     Double_t chiEHigh = a+equRoot;
     Double_t bestX = myfun->GetParameter(0);
+    if (bestX<0) bestX = chi2Min;
     printf("\n\n   Best %s fit fraction: %f\n",wanted0.Data(),bestX);
     printf("       Error: (%f,%f)\n",bestX-chiELow,chiEHigh-bestX);
     printf("       Analysis: %s, %s: %f(%f,%f)\n\n",AnaTag.Data(),wanted0.Data(),bestX,bestX-chiELow,chiEHigh-bestX);
@@ -151,12 +167,16 @@ void fit_shapes(TString AnaVersion="V1_3")
     // draw distributions
     vector<TH1D*> EaddEpPosHists;
     EaddEpPosHists.push_back( (TH1D*)dataFile->FindObjectAny(Form("hEaddEpPos_%s",DataSource.Data())));
-    EaddEpPosHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEaddEpPos_mc_DF"));
-    EaddEpPosHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEaddEpPos_mc_ND"));
+    //EaddEpPosHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEaddEpPos_mc_DF"));
+    EaddEpPosHists.push_back( (TH1D*)shapes1File->FindObjectAny("hEaddEpPos_data"));
+    //EaddEpPosHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEaddEpPos_mc_ND"));
+    EaddEpPosHists.push_back( (TH1D*)shapes2File->FindObjectAny("hEaddEpPos_data"));
     vector<TH1D*> EvtEtaHists;
     EvtEtaHists.push_back( (TH1D*)dataFile->FindObjectAny(Form("hEvtEta_%s",DataSource.Data())));
-    EvtEtaHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEvtEta_mc_DF"));
-    EvtEtaHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEvtEta_mc_ND"));
+    //EvtEtaHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEvtEta_mc_DF"));
+    EvtEtaHists.push_back( (TH1D*)shapes1File->FindObjectAny("hEvtEta_data"));
+    //EvtEtaHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEvtEta_mc_ND"));
+    EvtEtaHists.push_back( (TH1D*)shapes2File->FindObjectAny("hEvtEta_data"));
     // -- fitted --
     TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
     histDiffrChi2(
