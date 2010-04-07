@@ -190,7 +190,7 @@ Double_t histDiffrChi2(
     leg2->Draw();
   }
   else {
-    //cout << "SDRelFrac: " << SDRelFrac << "  Raw hist chi2: " << result << endl;
+    cout << "Draw: trial " << wanted0 << ", " << wanted1 << "frac: " << testWantedFrac1 << ", " << testWantedFrac2<< "  Raw hist chi2: " << result << endl;
     hData->Delete();
     h1->Delete();
     h2->Delete();
