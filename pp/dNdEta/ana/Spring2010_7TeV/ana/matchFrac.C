@@ -479,7 +479,7 @@ void matchFrac(TString AnaVersion="V0",
   TCanvas * cChi2 = new TCanvas("cChi2","cChi2",600,600);
   TH1D * hChi2 = new TH1D("hChi2",Form(";%s Fraction;#chi^{2}",wanted0.Data()),N,0,maxTestFrac);
   hChi2->SetMinimum(0);
-  if (Chi2YMax>0) hChi2->SetMaximum(Chi2YMax);
+  //if (Chi2YMax>0) hChi2->SetMaximum(Chi2YMax);
   TH2D * h2Chi2 = new TH2D("h2Chi2",Form(";%s Fraction;%s Fraction",wanted0.Data(),wanted1.Data()),N,0,maxTestFrac,N,0,maxTestFrac);
   h2Chi2->SetMinimum(0);
 
@@ -517,6 +517,8 @@ void matchFrac(TString AnaVersion="V0",
     Double_t chiELow = a-equRoot;
     Double_t chiEHigh = a+equRoot;
     Double_t bestX = myfun->GetParameter(0);
+    if (bestX<0 || bestX>1) bestX = chi2Min;
+
     printf("\n\n   Best %s fit fraction: %f\n",wanted0.Data(),bestX);
     printf("       Error: (%f,%f)\n",bestX-chiELow,chiEHigh-bestX);
     printf("       Analysis: %s, %s: %f(%f,%f)\n\n",AnaTag.Data(),wanted0.Data(),bestX,bestX-chiELow,chiEHigh-bestX);
