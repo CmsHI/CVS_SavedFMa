@@ -13,3 +13,5 @@ cp -v $run/diffractionAna/macros/*.C macros/
 cp -v $run/diffractionAna/collbx_7TeV/*.h ana/
 cp -v $run/diffractionAna/collbx_7TeV/*.C ana/
 
+# results
+cp -v -r $run/diffractionAna/collbx_7TeV/results ana/
