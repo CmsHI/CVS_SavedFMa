@@ -275,11 +275,15 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
 }
 
 // === Main function ===
-void matchFrac(TString AnaVersion="V0",
-    TString DataSource = "data", TString MCSource = "pythia",
-    TString AnaObs = "EaddEp", //EvtEta, EsubEp
+void matchFrac(TString AnaVersion="test",
+    TString DataSource = "data",
+    const char * datafname = "../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root",
+    TString MCSource = "pythia",
+    const char * mcfname = "../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root",
+    TString AnaObs = "EaddEpPos", //EvtEta, EsubEp, MinEPz
     int doSel = 1, int mode=0,
-    float EPzMin=0, float EPzMax=200, float EPzBinSize=5)
+    float EPzMin=0, float EPzMax=200, float EPzBinSize=5,
+    const char * databgfname = "../pixel_trees/emptybx/pixelTree_emptyBx_132422-veryloosecuts_v2.root")
 {
   // top level info
   gDataSource="Run 132440 (7TeV)";
@@ -311,35 +315,16 @@ void matchFrac(TString AnaVersion="V0",
   }
 
   // ==== get trees ====
-  TString * datafname;
-  TString * mcfname;
-  TString * databgfname;
-  // data
-  if (DataSource=="data")
-    datafname = new TString("../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root");
-  if (DataSource=="pythia")
-    datafname = new TString("../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root");
-  if (DataSource=="phojet") {
-    datafname= new TString("pixelTree_Phojet_MinBias_7TeV.root");
-  }
-  // mc
-  if (MCSource=="pythia")
-    mcfname= new TString("../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root");
-  if (MCSource=="phojet") {
-    mcfname= new TString("pixelTree_Phojet_MinBias_7TeV.root");
-  }
-  databgfname= new TString("../pixel_trees/emptybx/pixelTree_emptyBx_132422-veryloosecuts_v2.root");
-  cout << "Data: " << datafname->Data() << endl;
-  cout << "MC:   " << mcfname->Data() << endl;
-
-  TFile * dataFile = new TFile(*datafname);
-  TFile * mcFile = new TFile(*mcfname);
-  //TFile * databgFile = new TFile(*databgfname);
+  cout << "Data: " << datafname << endl;
+  cout << "MC:   " << mcfname << endl;
+  TFile * dataFile = new TFile(datafname);
+  TFile * mcFile = new TFile(mcfname);
   TTree * treeData; dataFile->GetObject("PixelTree",treeData);
   TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
-  //TTree * treeDataBg; databgFile->GetObject("PixelTree",treeDataBg);
   aliases_tree(treeData);
   aliases_tree(treeMC);
+  //TFile * databgFile = new TFile(*databgfname);
+  //TTree * treeDataBg; databgFile->GetObject("PixelTree",treeDataBg);
 
   // Now define output
   TFile * fout = new TFile(Form("%s/%s.root",outdir.Data(),AnaTag.Data()),"RECREATE");
