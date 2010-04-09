@@ -20,8 +20,8 @@ process.source = cms.Source ("PoolSource",fileNames = readFiles, secondaryFileNa
 readFiles.extend( [
   # 342p1
   #'/store/data/BeamCommissioning09/MinimumBias/RAW-RECO/BSCNOBEAMHALO-Feb9Skim_v1/0030/FC575D7B-3918-DF11-A28F-00304867924E.root'
-  # 355
-  '/store/data/BeamCommissioning09/MinimumBias/RECO/Mar24thReReco_PreProduction_v2/0101/FEE4E809-DF37-DF11-B49D-002354EF3BDA.root'
+  # 354p1
+  '/store/relval/CMSSW_3_5_4/RelValQCD_Pt_80_120/GEN-SIM-RECO/MC_3XY_V24-v1/0004/1E7B1D00-2D2C-DF11-A182-00261894386F.root'
        ] );
 
 
@@ -72,7 +72,7 @@ process.patJets.addDiscriminators = cms.bool(False)
 
 #get the 7 TeV jet corrections
 from PhysicsTools.PatAlgos.tools.jetTools import *
-switchJECSet( process, "Summer09_7TeV")
+switchJECSet( process, "Summer09_7TeV_ReReco332")
 
 
 process.out = cms.OutputModule("PoolOutputModule",
