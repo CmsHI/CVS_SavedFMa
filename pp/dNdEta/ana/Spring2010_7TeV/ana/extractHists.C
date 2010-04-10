@@ -16,12 +16,15 @@
 using namespace std;
 
 
-// === Main function ===
-void extractHists(TString AnaVersion="V0",
-    TString DataSource = "data", TString MCSource = "pythia",
-    TString AnaObs = "EaddEp", //EvtEta, EsubEp
+void extractHists(TString AnaVersion="testV010",
+    TString DataSource = "data",
+    const char * datafname = "../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root",
+    TString MCSource = "pythia_D6T",
+    const char * mcfname = "../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root",
+    TString AnaObs = "EaddEpPos", //EvtEta, EsubEp, MinEPz
     int doSel = 1, int mode=0,
-    float EPzMin=0, float EPzMax=200, float EPzBinSize=5)
+    float EPzMin=0, float EPzMax=200, float EPzBinSize=5,
+    const char * databgfname = "../pixel_trees/emptybx/pixelTree_emptyBx_132422-veryloosecuts_v2.root")
 {
   // top level info
   gDataSource="Run 132440 (7TeV)";
@@ -37,7 +40,6 @@ void extractHists(TString AnaVersion="V0",
   gSystem->mkdir(Form("%s",outdir.Data()),kTRUE);
 
   // set anaMode
-  anaMode=mode;
   if (mode==0) {
     wanted0 ="DF";
     wanted1 ="ND";
@@ -53,35 +55,16 @@ void extractHists(TString AnaVersion="V0",
   }
 
   // ==== get trees ====
-  TString * datafname;
-  TString * mcfname;
-  TString * databgfname;
-  // data
-  if (DataSource=="data")
-    datafname = new TString("../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root");
-  if (DataSource=="pythia")
-    datafname = new TString("../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root");
-  if (DataSource=="phojet") {
-    datafname= new TString("pixelTree_Phojet_MinBias_7TeV.root");
-  }
-  // mc
-  if (MCSource=="pythia")
-    mcfname= new TString("../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root");
-  if (MCSource=="phojet") {
-    mcfname= new TString("pixelTree_Phojet_MinBias_7TeV.root");
-  }
-  databgfname= new TString("../pixel_trees/emptybx/pixelTree_emptyBx_132422-veryloosecuts_v2.root");
-  cout << "Data: " << datafname->Data() << endl;
-  cout << "MC:   " << mcfname->Data() << endl;
-
-  TFile * dataFile = new TFile(*datafname);
-  TFile * mcFile = new TFile(*mcfname);
-  //TFile * databgFile = new TFile(*databgfname);
+  cout << "Data: " << datafname << endl;
+  cout << "MC:   " << mcfname << endl;
+  TFile * dataFile = new TFile(datafname);
+  TFile * mcFile = new TFile(mcfname);
   TTree * treeData; dataFile->GetObject("PixelTree",treeData);
   TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
-  //TTree * treeDataBg; databgFile->GetObject("PixelTree",treeDataBg);
   aliases_tree(treeData);
   aliases_tree(treeMC);
+  //TFile * databgFile = new TFile(*databgfname);
+  //TTree * treeDataBg; databgFile->GetObject("PixelTree",treeDataBg);
 
   // Now define output
   TFile * fout = new TFile(Form("%s/%s.root",outdir.Data(),AnaTag.Data()),"RECREATE");
@@ -145,6 +128,7 @@ void extractHists(TString AnaVersion="V0",
     vh1.push_back(new TH1D(Form("hEsubEp_%s",source[i].Data()),";#Sigma E-Pz;",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH1D(Form("hEaddEpPos_%s",source[i].Data()),";#Sigma E+Pz (HF+);",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH1D(Form("hEsubEpNeg_%s",source[i].Data()),";#Sigma E-Pz (HF-);",EPzNBINS,EPzMin,EPzMax));
+    vh1.push_back(new TH1D(Form("hMinEPz_%s",source[i].Data()),";min(#Sigma E+Pz, #Sigma E-Pz);",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH2D(Form("hEPz_%s",source[i].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
     if (source[i]==mcHistLabel) {
       for (Int_t j=0; j<etype.size(); ++j) {
@@ -153,6 +137,7 @@ void extractHists(TString AnaVersion="V0",
 	vh1.push_back(new TH1D(Form("hEsubEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz;",EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH1D(Form("hEaddEpPos_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz (HF+);",EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH1D(Form("hEsubEpNeg_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz (HF-);",EPzNBINS,EPzMin,EPzMax));
+	vh1.push_back(new TH1D(Form("hMinEPz_%s_%s",   source[i].Data(),etype[j].Data()),";min(#Sigma E+Pz, #Sigma E-Pz);",EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH2D(Form("hEPz_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
       }
     }
@@ -171,7 +156,7 @@ void extractHists(TString AnaVersion="V0",
   vector<TString> EsubEpNegHists;
   vector<TString> MinEPzHists;
   vector<TString> EPzHists;
-  if (MCSource=="pythia") {
+  if (MCSource.Contains("pythia")) {
     fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,evtEtaHists);
     fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpHists);
     fillHist("SumEsubEp","hEsubEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EsubEpHists);
@@ -180,22 +165,23 @@ void extractHists(TString AnaVersion="V0",
     fillHist("MinEPz","hMinEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,MinEPzHists);
     fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EPzHists);
   }
-  if (MCSource=="phojet") {
+  if (MCSource.Contains("phojet")) {
     fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,evtEtaHists);
     fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EaddEpHists);
     fillHist("SumEsubEp","hEsubEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EsubEpHists);
     fillHist("SumEaddEpPos","hEaddEpPos",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EaddEpPosHists);
     fillHist("SumEsubEpNeg","hEsubEpNeg",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EsubEpNegHists);
+    fillHist("MinEPz","hMinEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,MinEPzHists);
     fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EPzHists);
   }
   // calc cuts
   // for mc
   printf("\n===== MC Input =====\n");
   Double_t mcTruthFrac=-1;
-  if (MCSource=="pythia") {
+  if (MCSource.Contains("pythia")) {
     mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypeCut,wanted0);
   }
-  if (MCSource=="phojet") {
+  if (MCSource.Contains("phojet")) {
     mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypePhojCut,wanted0);
   }
   // for data or "data"
