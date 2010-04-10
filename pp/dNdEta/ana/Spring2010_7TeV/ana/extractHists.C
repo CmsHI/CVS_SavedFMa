@@ -21,22 +21,19 @@ void extractHists(TString AnaVersion="testV010",
     const char * datafname = "../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root",
     TString MCSource = "pythia_D6T",
     const char * mcfname = "../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root",
-    TString AnaObs = "EaddEpPos", //EvtEta, EsubEp, MinEPz
     int doSel = 1, int mode=0,
     float EPzMin=0, float EPzMax=200, float EPzBinSize=5,
     const char * databgfname = "../pixel_trees/emptybx/pixelTree_emptyBx_132422-veryloosecuts_v2.root")
 {
   // top level info
-  gDataSource="Run 132440 (7TeV)";
-  gMCSource=MCSource;
-  TString AnaTag = Form("ana%s_%s_Mode%d_Min%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
-      AnaVersion.Data(),AnaObs.Data(),mode,
+  TString AnaTag = Form("ana%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
+      AnaVersion.Data(),mode,
       EPzMin,EPzMax,EPzBinSize,
       doSel,
       DataSource.Data(),MCSource.Data());
   cout << "====== Ana: " << AnaTag << endl;
   // mkdir dir for output
-  TString outdir=Form("plots/%s/%s_Sel%d",AnaVersion.Data(),AnaObs.Data(),doSel);
+  TString outdir=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),MCSource.Data(),doSel);
   gSystem->mkdir(Form("%s",outdir.Data()),kTRUE);
 
   // set anaMode
