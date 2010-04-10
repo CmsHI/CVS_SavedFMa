@@ -5,6 +5,7 @@ cp -v $run/bambu/*.C bambu/
 
 # pixel tree
 cp -v $run/diffractionAna/pixel_trees/*.C pixeltree/
+cp -v $run/pixeltrees/*.sh pixeltree/
 
 # macros
 cp -v $run/diffractionAna/macros/*.C macros/
