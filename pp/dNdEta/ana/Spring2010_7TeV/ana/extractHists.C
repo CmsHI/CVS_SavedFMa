@@ -19,7 +19,7 @@ using namespace std;
 void extractHists(TString AnaVersion="testV010",
     TString DataSource = "data",
     const char * datafname = "../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root",
-    TString MCSource = "pythia_D6T",
+    TString MCSource = "pythiaD6T",
     const char * mcfname = "../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root",
     int doSel = 1, int mode=0,
     float EPzMin=0, float EPzMax=200, float EPzBinSize=5,
