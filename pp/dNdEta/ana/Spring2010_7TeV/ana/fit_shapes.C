@@ -15,16 +15,16 @@
 using namespace std;
 #include "helpers.h"
 
-void fit_shapes(TString AnaVersion="V1_3")
+void fit_shapes(TString AnaVersion="testV010",
+    TString DataSource = "data",
+    const char * datafname = "../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root",
+    TString MCSource = "pythia_D6T",
+    const char * mcfname = "../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root",
+    TString AnaObs = "EaddEpPos", //EvtEta, EsubEp, MinEPz
+    int doSel = 1, int anaMode=0, // 0 for D vs ND, 1 for SD vs NSD, 2 for SD, DD, ND
+    float EPzMin=0, float EPzMax=200, float EPzBinSize=5,
+    const char * databgfname = "../pixel_trees/emptybx/pixelTree_emptyBx_132422-veryloosecuts_v2.root")
 {
-  Int_t doSel = 1;
-  Double_t EPzMin = 0;
-  Double_t EPzMax = 200;
-  Double_t EPzBinSize=5;
-  TString AnaObs("EaddEpPos");
-  //TString AnaObs("EvtEta");
-  Int_t anaMode = 0; // 0 for D vs ND, 1 for SD vs NSD, 2 for SD, DD, ND
-
   // set anaMode
   if (anaMode==0) {
     wanted0 ="DF";
@@ -35,22 +35,94 @@ void fit_shapes(TString AnaVersion="V1_3")
     wanted1 ="NSD";
   }
 
+  // ==== get trees ====
+  cout << "Data: " << datafname << endl;
+  cout << "MC:   " << mcfname << endl;
+  TFile * dataFile = new TFile(datafname);
+  TFile * mcFile = new TFile(mcfname);
+  TTree * treeData; dataFile->GetObject("PixelTree",treeData);
+  TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
+  aliases_tree(treeData);
+  aliases_tree(treeMC);
+  //TFile * databgFile = new TFile(*databgfname);
+  //TTree * treeDataBg; databgFile->GetObject("PixelTree",treeDataBg);
+
+  // ===== trigger =====
+  bool isMC=true;
+  selectionCut mcSel(isMC,doSel);
+  if (DataSource=="data") isMC=false;
+  selectionCut dataSel(isMC,doSel);
+  printf("\n===== Triggering =====\n");
+  cout << "Data: " << TString(dataSel.Cut) << endl;
+  cout << "MC: " << TString(mcSel.Cut) << endl;
+  // event types
+  vector<TString> etype;
+  vector<TCut> etypeCut;
+  vector<TCut> etypePhojCut;
+  //  -pythia-
+  etype.push_back("All"); etypeCut.push_back("1==1");
+  etype.push_back("SD"); etypeCut.push_back("evtType==92 || evtType==93");
+  etype.push_back("NSD"); etypeCut.push_back("evtType!=92 && evtType!=93");
+  etype.push_back("DF"); etypeCut.push_back("evtType==92 || evtType==93 || evtType==94");
+  etype.push_back("ND"); etypeCut.push_back("evtType!=92 && evtType!=93 && evtType!=94");
+  etype.push_back("DD"); etypeCut.push_back("evtType==94");
+  //  -phojet-
+  etypePhojCut.push_back("evtType==1 || evtType==5 || evtType==6 || evtType==7 || evtType==4");
+  etypePhojCut.push_back("evtType==5 || evtType==6");
+  etypePhojCut.push_back("evtType==1 || evtType==7 || evtType==4");
+  etypePhojCut.push_back("evtType==5 || evtType==6 || evtType==7 || evtType==4");
+  etypePhojCut.push_back("evtType==1");
+  etypePhojCut.push_back("evtType==7 || evtType==4");
+
+  // calc cuts
+  // for mc
+  printf("\n===== MC Input =====\n");
+  Double_t mcTruthFrac=-1;
+  if (MCSource.Contains("pythia")) {
+    mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypeCut,wanted0);
+  }
+  if (MCSource.Contains("phojet")) {
+    mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypePhojCut,wanted0);
+  }
+  // for data or "data"
+  Double_t truthFrac=-1;
+  if (DataSource.Contains("data")) {
+    printf("\n===== Data Input =====\n");
+    printf("%d passed cut\n",treeData->GetEntries(dataSel.Cut));
+  }
+  if (DataSource.Contains("pythia")) {
+    printf("\n===== \"Data\" Input =====\n");
+    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypeCut,wanted0);
+  }
+  if (DataSource.Contains("phojet")) {
+    printf("\n===== \"Data\" Input =====\n");
+    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypePhojCut,wanted0);
+  }
+
+  // done with trees
+  dataFile->Close();
+  mcFile->Close();
+
+  // ================ Hist Shapes Ana ======================
   // === Define Inputs ===
-  TString DataSource = "data"; gDataSource="Run 132440 (7TeV)";
-  //TString DataSource = "pythia"; gDataSource="PythiaD6T";
-  Double_t truthFrac = 0.220092;
-  TString MCSource = "pythia";
-  
-  TString AnaTag = Form("ana%s_%s_Mode%d_Min%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
-      AnaVersion.Data(),AnaObs.Data(),anaMode,
+  TString indir=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),MCSource.Data(),doSel);
+  TString HistsTag = Form("ana%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
+      AnaVersion.Data(),anaMode,
       EPzMin,EPzMax,EPzBinSize,
       doSel,
       DataSource.Data(),MCSource.Data());
-  cout << "====== Ana: " << AnaTag << endl;
-  TString outdir=Form("plots/%s/%s_Sel%d",AnaVersion.Data(),AnaObs.Data(),doSel);
 
-  const char * datafname = Form("%s/%s.root",outdir.Data(),AnaTag.Data());
-  cout << "Data File: " << datafname << endl;
+  if (DataSource == "data") gDataSource="Run 132440 (7TeV)";
+  else gDataSource = DataSource;
+  gMCSource=MCSource;
+  
+  const char * dataHistsName = Form("%s/%s.root",indir.Data(),HistsTag.Data());
+  cout << "Data File: " << dataHistsName << endl;
+  const char * shapes0fname = Form("%s/%s.root",indir.Data(),HistsTag.Data());
+  cout << "Shapes File: " << shapes0fname << endl;
+  TFile * dataHistFile = new TFile(dataHistsName);
+  TFile * shapes0File = new TFile(shapes0fname);
+  /*
   const char * shapes0fname = Form("plots/%s/EvtEta_Sel1/ana%s_EvtEta_Mode0_Min%.0f_Max%.0f_Delta%0.f_Sel1_data_use_pythia.root",
       AnaVersion.Data(),AnaVersion.Data(),
       EPzMin,EPzMax,EPzBinSize);
@@ -63,22 +135,32 @@ void fit_shapes(TString AnaVersion="V1_3")
       AnaVersion.Data(),AnaVersion.Data(),
       EPzMin,EPzMax,EPzBinSize);
   cout << "Shapes File2: " << shapes2fname << endl;
-  TFile * dataFile = new TFile(datafname);
   TFile * shapes0File = new TFile(shapes0fname);
   TFile * shapes1File = new TFile(shapes1fname);
   TFile * shapes2File = new TFile(shapes2fname);
-
+  */
 
   // === Get Histograms ===
-  if (DataSource=="pythia") {
-    DataSource = "mc_All";
-  }
   vector<TH1D*> inputHists;
-  inputHists.push_back( (TH1D*)dataFile->FindObjectAny(Form("h%s_%s",AnaObs.Data(),DataSource.Data())) );
-  //inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_mc_DF",AnaObs.Data())) );
-  inputHists.push_back( (TH1D*)shapes1File->FindObjectAny(Form("h%s_data",AnaObs.Data())) );
-  //inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_mc_ND",AnaObs.Data())) );
-  inputHists.push_back( (TH1D*)shapes2File->FindObjectAny(Form("h%s_data",AnaObs.Data())) );
+  inputHists.push_back( (TH1D*)dataHistFile->FindObjectAny(Form("h%s_%s",AnaObs.Data(),dataHistLabel.Data())) );
+  inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_%s_%s",AnaObs.Data(),mcHistLabel.Data(),wanted0.Data())) );
+  inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_%s_%s",AnaObs.Data(),mcHistLabel.Data(),wanted1.Data())) );
+  //inputHists.push_back( (TH1D*)shapes1File->FindObjectAny(Form("h%s_data",AnaObs.Data())) );
+  //inputHists.push_back( (TH1D*)shapes2File->FindObjectAny(Form("h%s_data",AnaObs.Data())) );
+
+  // === Top level info ===
+  TString AnaTag = Form("ana%s_%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
+      AnaVersion.Data(),AnaObs.Data(),anaMode,
+      EPzMin,EPzMax,EPzBinSize,
+      doSel,
+      DataSource.Data(),MCSource.Data());
+  cout << "====== Ana: " << AnaTag << endl;
+
+  // === Now define output ===
+  TString outdir = indir+"/"+AnaObs;
+  gSystem->mkdir(Form("%s",outdir.Data()),kTRUE);
+  TFile * fout = new TFile(Form("%s/%s_fits.root",outdir.Data(),AnaTag.Data()),"RECREATE");
+
 
   Double_t EPzYMax=0.035/(EPzMax/200), Chi2YMax=60;
   if (doSel==4) {
@@ -115,7 +197,7 @@ void fit_shapes(TString AnaVersion="V1_3")
   Double_t bestX=0, bestY=0, bestZ=0;
   Double_t step = maxTestFrac/(Float_t)N;
   // make chi2
-  if (anaMode==0 || anaMode==1) {
+  if (anaMode<2) {
     for (Int_t i=1; i<=N; ++i) {
       Double_t trialFrac = i*step;
       Double_t chi2 = histDiffrChi2(
@@ -165,6 +247,7 @@ void fit_shapes(TString AnaVersion="V1_3")
     */
     //cChi2->Print(Form("%s/%s_cChi2.gif",outdir.Data(),AnaTag.Data()));
 
+    /*
     // draw distributions
     vector<TH1D*> EaddEpPosHists;
     EaddEpPosHists.push_back( (TH1D*)dataFile->FindObjectAny(Form("hEaddEpPos_%s",DataSource.Data())));
@@ -199,5 +282,6 @@ void fit_shapes(TString AnaVersion="V1_3")
 	1);
     //cEvtEta->Print(Form("%s/%s_cEvtEta.gif",outdir.Data(),AnaTag.Data()));
     //cEvtEta->Print(Form("%s/%s_cEvtEta.eps",outdir.Data(),AnaTag.Data()));
+  */
   }
 }
