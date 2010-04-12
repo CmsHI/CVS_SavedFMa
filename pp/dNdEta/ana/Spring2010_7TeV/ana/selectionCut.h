@@ -38,8 +38,8 @@ selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumi
   selType(sel),
   runNum(runnum)
 {
-   VzRangeL = -15; 
-   VzRangeH = 15;
+   VzRangeL = -30; 
+   VzRangeH = 30;
    vtxCut = Form("vz[1]<%d&&vz[1]>%d",VzRangeH,VzRangeL);
    runCut = Form("nRun==%d",runNum);
 
