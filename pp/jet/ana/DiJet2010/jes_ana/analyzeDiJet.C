@@ -25,15 +25,13 @@
 #include "DataFormats/CaloTowers/interface/CaloTower.h"
 #include "DataFormats/CaloTowers/interface/CaloTowerFwd.h"
 #include "DataFormats/TrackReco/interface/Track.h"
-#include "DataFormats/JetReco/interface/CaloJet.h"
-#include "DataFormats/JetReco/interface/CaloJetCollection.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/JetReco/interface/GenJetCollection.h"
 #include "DataFormats/JetReco/interface/JetExtendedAssociation.h"
 #include "DataFormats/JetReco/interface/JetID.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
-#include "QCDAnalysis/HighPtJetAnalysis/interface/Utilities.h"
 #include "CondFormats/JetMETObjects/interface/CombinedJetCorrector.h"
 #endif
 
@@ -45,14 +43,14 @@
 #include "TreeDiJetEventData.h"
 using namespace std;
 
-void analyzeDiJet(int verbosity=1){
+void analyzeDiJet(int doMC=1, int verbosity=1){
   // === Start Ana Macro ===
   TStopwatch sw;
 
   // event cuts
   const float hpFracCut = 0.2; // updated: 0.25
   const unsigned nTrackCut = 10;
-  const bool doCleanup = false;
+  const bool doCleanup = (doMC==0);
   // track cuts
   const string qualityString = "highPurity";
   const double normD0Cut = 3.0;
@@ -62,9 +60,9 @@ void analyzeDiJet(int verbosity=1){
 
   // JEC
   string JECLevels = "L2:L3";
-  string JECTag = "900GeV_L2Relative_AK5Calo:900GeV_L3Absolute_AK5Calo";
+  string JECTag = "Summer09_7TeV_ReReco332_L2Relative_AK5Calo:Summer09_7TeV_ReReco332_L3Absolute_AK5Calo";
   CombinedJetCorrector *JEC = new CombinedJetCorrector(JECLevels,JECTag);
-  bool doJEC = true;
+  bool doJEC = false;
 
   //----- histograms -----
   TH1D::SetDefaultSumw2();
@@ -103,19 +101,19 @@ void analyzeDiJet(int verbosity=1){
   TH1D *hTrkEta     = new TH1D("hTrkEta","track #eta; #eta", 60, -3.0, 3.0);
   TH1D *hTrkPhi     = new TH1D("hTrkPhi","track #phi; #phi [radians]", 56, -3.5, 3.5);
 
-  //----- input files (900 GeV data) -----
+  //----- input files  -----
   vector<string> fileNames;
-  string fileDir = "/d100/data/MinimumBias-ReReco/Jan29ReReco-v2/skim_v3";
+  string fileDir = "/d01/frankma/scratch/HI/jet/pppatCMSSW_3_5_4_patch1/outputs/";
   cout << "directory: '" << fileDir << "'" << endl;
-  for(int ifile=1; ifile<=3; ifile++) {
-    TString name = Form("jetAnaSkimAOD_%d.root",ifile);
+  for(int ifile=1; ifile<=1; ifile++) {
+    TString name = Form("jetSkimRelValQCD_Pt_80_120_sw354-JEC_Summer09_7TeV.root");
     cout << "  adding file: " << name.Data() << endl;
     fileNames.push_back(fileDir + "/" + name.Data());
   }
   fwlite::ChainEvent event(fileNames);
 
   //----- output file -----
-  TFile outFile("FFHists.root", "recreate" );
+  TFile outFile("jes_ana.root", "recreate" );
   TTree * dijetTree = new TTree("trDj","dijet tree");
   jetana::TreeDiJetEventData jd_;
   jd_.SetTree(dijetTree);
@@ -130,7 +128,7 @@ void analyzeDiJet(int verbosity=1){
     // clear event data class
     jd_.Clear();
 
-    if( iEvent % 5000 == 0 ) cout << "Processing " << iEvent<< "th event: "
+    if( iEvent % 1000 == 0 ) cout << "Processing " << iEvent<< "th event: "
       << "run " << event.id().run() 
 	<< ", lumi " << event.luminosityBlock() 
 	<< ", evt " << event.id().event() << endl;
@@ -138,6 +136,9 @@ void analyzeDiJet(int verbosity=1){
     // fill event info
     hRunLumi->Fill(event.id().run(),event.luminosityBlock());
 
+    //
+    // === Event Preselection ===
+    //
     // select on high-purity track fraction
     fwlite::Handle<std::vector<reco::Track> > tracks;
     tracks.getByLabel(event, "generalTracks");
@@ -194,18 +195,17 @@ void analyzeDiJet(int verbosity=1){
     jd_.vtxchi2_ = bestNchi2;
     jd_.vz_ = bestvz;
 
-    //----- loop over jets ------
-    fwlite::Handle<reco::CaloJetCollection> jets;
-    //fwlite::Handle<edm::View<reco::Jet> > jets;
-    jets.getByLabel(event,"ak5CaloJets");
-    fwlite::Handle<edm::ValueMap<reco::JetID> > jetsID;
-    jetsID.getByLabel(event,"ak5JetID");
-    Double_t NearEtMax=-99,AwayEtMax=-99;
-    Int_t iNear=-99,iAway=-99;
+    //
+    // ===== Inclusive Jet Ana =====
+    //
+    fwlite::Handle<vector<pat::Jet> > jets;
+    jets.getByLabel(event,"patJets");
+    Double_t   NearEtMax=-99;
+    Int_t      iNear=-99;
     math::PtEtaPhiMLorentzVectorF ljet[2];
     // find leading jet based on corrected pt
     for (unsigned int j=0; j<(*jets).size();++j) {
-      const reco::Jet & jet = (*jets)[j];
+      const pat::Jet & jet = (*jets)[j];
       // apply JEC
       Double_t corrPt = jet.pt();
       if (doJEC) corrPt *= JEC->getCorrection(jet.pt(),jet.eta(),jet.energy());
@@ -213,25 +213,29 @@ void analyzeDiJet(int verbosity=1){
 	NearEtMax=corrPt;
 	iNear=j;
       }
-      // Inclusive Jet Analysis
-      edm::Ref<reco::CaloJetCollection> ref(jets,j);
-      //edm::RefToBase<reco::Jet> jetRef(edm::Ref<reco::CaloJetCollection>(jets,j));
       if (corrPt>10) {
 	hJetEt->Fill(corrPt);
 	hJetEta->Fill(jet.eta());
 	hJetPhi->Fill(jet.phi());
       }
     }
-    // found near
+
+    //
+    // ===== Near Jet Ana =====
+    //
     if (NearEtMax>0) {
-      const reco::Jet & NrJet = (*jets)[iNear];
+      const pat::Jet & NrJet = (*jets)[iNear];
       ljet[0].SetCoordinates(NrJet.pt(),NrJet.eta(),NrJet.phi(),NrJet.mass());
       if (doJEC) ljet[0] *= JEC->getCorrection(NrJet.pt(),NrJet.eta(),NrJet.energy());
     }
 
-    // find away jet based on corrected pt
+    //
+    // ===== Away Jet Ana =====
+    //
+    Double_t   AwayEtMax=-99;
+    Int_t      iAway=-99;
     for (unsigned j=0; j<(*jets).size();++j) {
-      const reco::Jet & jet = (*jets)[j];
+      const pat::Jet & jet = (*jets)[j];
       // look at away side
       Double_t jdphi = TMath::Abs(reco::deltaPhi(ljet[0].phi(),jet.phi()));
       if (jdphi < TMath::PiOver2()) continue;
@@ -243,9 +247,8 @@ void analyzeDiJet(int verbosity=1){
 	iAway=j;
       }
     }
-    // found away
     if (AwayEtMax>0) {
-      const reco::Jet & AwJet = (*jets)[iAway];
+      const pat::Jet & AwJet = (*jets)[iAway];
       ljet[1].SetCoordinates(AwJet.pt(),AwJet.eta(),AwJet.phi(),AwJet.mass());
       if (doJEC) ljet[1] *= JEC->getCorrection(AwJet.pt(),AwJet.eta(),AwJet.energy());
     }
@@ -255,13 +258,13 @@ void analyzeDiJet(int verbosity=1){
     ++nDJEvt;
 
     // print
-    if (verbosity>=1 && NearEtMax>15 && AwayEtMax>15) {
+    if (verbosity>=1 && nDJEvt<=5) {
       cout << "Event " << event.id().event()
 	<< ", lumi " << event.luminosityBlock() 
 	<< ", evt " << event.id().event()
 	<< ",  # jets: " << (*jets).size() << endl;
       for (unsigned j=0; j<(*jets).size();++j) {
-	const reco::Jet & jet = (*jets)[j];
+	const pat::Jet & jet = (*jets)[j];
 	cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
       }
       cout << "corr" << doJEC << " leading dijet - iNear: " << iNear << " " <<": "<< ljet[0]
@@ -271,6 +274,7 @@ void analyzeDiJet(int verbosity=1){
       cout << endl;
     }
 
+    /*
     //----- loop over tracks -----
     for(unsigned it=0; it<tracks->size(); ++it){
       
@@ -307,6 +311,7 @@ void analyzeDiJet(int verbosity=1){
       hTrkPhi->Fill(trk.phi());
 
     }
+    */
 
     // done with event write tree content
     dijetTree->Fill();
