@@ -89,7 +89,7 @@ process.out = cms.OutputModule("PoolOutputModule",
       # jets
       'keep *_towerMaker_*_*',
       'keep *_selectedPatJets*_*_*',
-      'keep *_patJets*_*_*'
+      'keep *_patJets*_*_*',
       # tracks
       'keep recoTracks_generalTracks_*_*RECO',
       # mc
