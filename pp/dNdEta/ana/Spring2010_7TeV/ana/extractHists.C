@@ -32,9 +32,6 @@ void extractHists(TString AnaVersion="testV010",
       doSel,
       DataSource.Data(),MCSource.Data());
   cout << "====== Ana: " << AnaTag << endl;
-  // mkdir dir for output
-  TString outdir=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),MCSource.Data(),doSel);
-  gSystem->mkdir(Form("%s",outdir.Data()),kTRUE);
 
   // set anaMode
   if (mode==0) {
@@ -62,9 +59,6 @@ void extractHists(TString AnaVersion="testV010",
   aliases_tree(treeMC);
   //TFile * databgFile = new TFile(*databgfname);
   //TTree * treeDataBg; databgFile->GetObject("PixelTree",treeDataBg);
-
-  // Now define output
-  TFile * fout = new TFile(Form("%s/%s.root",outdir.Data(),AnaTag.Data()),"RECREATE");
 
   // ===== trigger =====
   bool isMC=true;
@@ -104,12 +98,48 @@ void extractHists(TString AnaVersion="testV010",
   etypePhojCut.push_back("evtType==5 || evtType==6 || evtType==7 || evtType==4");
   etypePhojCut.push_back("evtType==1");
   etypePhojCut.push_back("evtType==7 || evtType==4");
-  // container for all declared histograms
-  vector<TH1*> vh1;
 
   //
-  // declare histograms
+  // === calc cuts ===
+  //
+  // for mc
+  printf("\n===== MC Input =====\n");
+  Double_t mcTruthFrac=-1;
+  if (MCSource.Contains("pythia")) {
+    mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypeCut,wanted0);
+  }
+  if (MCSource.Contains("phojet")) {
+    mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypePhojCut,wanted0);
+  }
+  // for data or "data"
+  Double_t truthFrac=-1;
+  if (DataSource.Contains("data")) {
+    printf("\n===== Data Input =====\n");
+    printf("%d passed cut\n",treeData->GetEntries(dataSel.Cut));
+  }
+  if (DataSource.Contains("pythia")) {
+    printf("\n===== \"Data\" Input =====\n");
+    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypeCut,wanted0);
+  }
+  if (DataSource.Contains("phojet")) {
+    printf("\n===== \"Data\" Input =====\n");
+    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypePhojCut,wanted0);
+  }
+
+  // Checking cuts only, exit
+  if (AnaVersion.Contains("Eff")) return;
+
+  // === Define output ===
+  TString outdir=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),MCSource.Data(),doSel);
+  gSystem->mkdir(Form("%s",outdir.Data()),kTRUE);
+  TFile * fout = new TFile(Form("%s/%s.root",outdir.Data(),AnaTag.Data()),"RECREATE");
+
+  //
+  // === Declare histograms ===
+  //
   printf("now declare hists\n");
+  // container for all declared histograms
+  vector<TH1*> vh1;
   Double_t EPzYMax=0.035/(EPzMax/200), Chi2YMax=60;
   if (doSel==4) {
     EPzYMax=0.01/(EPzMax/200);
@@ -171,31 +201,6 @@ void extractHists(TString AnaVersion="testV010",
     fillHist("MinEPz","hMinEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,MinEPzHists);
     fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EPzHists);
   }
-  // calc cuts
-  // for mc
-  printf("\n===== MC Input =====\n");
-  Double_t mcTruthFrac=-1;
-  if (MCSource.Contains("pythia")) {
-    mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypeCut,wanted0);
-  }
-  if (MCSource.Contains("phojet")) {
-    mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypePhojCut,wanted0);
-  }
-  // for data or "data"
-  Double_t truthFrac=-1;
-  if (DataSource=="data") {
-    printf("\n===== Data Input =====\n");
-    printf("%d passed cut\n",treeData->GetEntries(dataSel.Cut));
-  }
-  if (DataSource=="pythia") {
-    printf("\n===== \"Data\" Input =====\n");
-    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypeCut,wanted0);
-  }
-  if (DataSource=="phojet") {
-    printf("\n===== \"Data\" Input =====\n");
-    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypePhojCut,wanted0);
-  }
-
   // save
   fout->Write();
   //fout->Close();
