@@ -7,7 +7,6 @@
 #include <vector>
 
 // Declare some useful global variables
-//Int_t anaMode; // 0 for D vs ND, 1 for SD vs NSD, 2 for SD, DD, ND
 TString gDataSource;
 TString gMCSource;
 TString wanted0;
@@ -190,7 +189,7 @@ Double_t histDiffrChi2(
     leg2->Draw();
   }
   else {
-    cout << "Draw: trial " << wanted0 << ", " << wanted1 << "frac: " << testWantedFrac1 << ", " << testWantedFrac2<< "  Raw hist chi2: " << result << endl;
+    //cout << "Draw: trial " << wanted0 << ", " << wanted1 << "frac: " << testWantedFrac1 << ", " << testWantedFrac2<< "  Raw hist chi2: " << result << endl;
     hData->Delete();
     h1->Delete();
     h2->Delete();
@@ -221,16 +220,19 @@ void fillHist(const char* var,const char* hname,
     outHists.push_back(hMC);
   }
 }
+
 Double_t calcFrac(TTree * treeMC, TCut mcSel,
     const vector<TString> & etype, const vector<TCut> & etypeCut,
     TString want="none")
 {
   Double_t ans=-1;
   Double_t den, num, frac, selDen, selNum, selFrac;
+  Double_t selEff, typeSelEff;
 
   den = treeMC->GetEntries(etypeCut[0]);
   selDen = treeMC->GetEntries(mcSel&&etypeCut[0]);
-  cout << "-- Base Cut: " << TString(mcSel&&etypeCut[0]) << endl;
+  selEff = selDen/den;
+  cout << "Base Cut: " << TString(mcSel&&etypeCut[0]) << endl;
   for (Int_t i=0; i<etype.size(); ++i) {
     num = treeMC->GetEntries(etypeCut[i]); 
     frac = num/den;
@@ -238,9 +240,10 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
     selNum = treeMC->GetEntries(mcCut);
     selFrac = selNum/selDen;
     TString t = etype[i];
-    printf("MC input %s frac: %f, after selection MC %s frac: %f.\n",t.Data(),frac,t.Data(),selFrac);
-    //cout << "- " << mcCut << endl;
-    printf("- numbers: before sel: %f/%f, after sel: %f/%f\n",num,den,selNum,selDen);
+    cout << " - Type: " << t << endl;
+    cout << "   * MC input frac: " << frac << " (" << num << "/" << den << ")" << endl;
+    cout << "   * SelEff " << selNum/num << endl;
+    cout << "   * Frac after Sel: " << selFrac << " ("<< selNum <<"/" << selDen << ")" << endl;
     if (t==want)
       ans=selFrac;
   }
