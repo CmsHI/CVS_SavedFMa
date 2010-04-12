@@ -257,6 +257,23 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
     if (NearEtMax<5 || AwayEtMax<5) continue;
     ++nDJEvt;
 
+    // -- Fill jet info --
+    Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
+    // fill dijet info
+    jd_.jdphi_          = ljdphi;
+    jd_.mass_	       = (anajets[0]+anajets[1]).M();
+
+    // near/away info
+    jd_.nljet_		= anajets[0].pt();
+    jd_.nljeta_		= anajets[0].eta();
+    jd_.nljphi_		= anajets[0].phi();
+    jd_.nljemf_		= (*jets)[iNear].emEnergyFraction();
+
+    jd_.aljet_		= anajets[1].pt();
+    jd_.aljeta_		= anajets[1].eta();
+    jd_.aljphi_		= anajets[1].phi();
+    jd_.aljemf_		= (*jets)[iAway].emEnergyFraction();
+
     // print
     if (verbosity>=1 && nDJEvt<=5) {
       cout << "Event " << event.id().event()
@@ -269,7 +286,6 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
       }
       cout << "corr" << doJEC << " leading dijet - iNear: " << iNear << " " <<": "<< anajets[0]
 	<< "  iAway: " << iAway << " " << anajets[1] << endl;
-      Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
       cout << "DiJet dphi: " << ljdphi << endl;
       cout << endl;
     }
