@@ -221,37 +221,45 @@ void fillHist(const char* var,const char* hname,
   }
 }
 
-Double_t calcFrac(TTree * treeMC, TCut mcSel,
+Double_t calcFrac(int doMC,TTree * tree, TCut evtSel,
     const vector<TString> & etype, const vector<TCut> & etypeCut,
     TString want="none")
 {
   Double_t ans=-1;
-  Double_t den, num, frac, selDen, selNum, selFrac;
-  Double_t selEff, typeSelEff;
-
-  den = treeMC->GetEntries(etypeCut[0]);
-  selDen = treeMC->GetEntries(mcSel&&etypeCut[0]);
-  selEff = selDen/den;
-  cout << "Base Cut: " << TString(mcSel&&etypeCut[0]) << endl;
-  for (Int_t i=0; i<etype.size(); ++i) {
-    num = treeMC->GetEntries(etypeCut[i]); 
-    frac = num/den;
-    TCut mcCut = mcSel&&etypeCut[i];
-    selNum = treeMC->GetEntries(mcCut);
-    selFrac = selNum/selDen;
-    TString t = etype[i];
-    cout << " - Type: " << t << endl;
-    cout << "   * MC input frac: " << frac << " (" << num << "/" << den << ")" << endl;
-    cout << "   * SelEff " << selNum/num << endl;
-    cout << "   * Frac after Sel: " << selFrac << " ("<< selNum <<"/" << selDen << ")" << endl;
-    if (t==want)
-      ans=selFrac;
-    // check effect of HF coinc
-    TCut typeHfCut = mcCut && "nHFp>0&&nHFn>0";
-    Double_t numTypeHFCut = treeMC->GetEntries(typeHfCut);
-    cout << "   * && HF_coinc SelEff: " << numTypeHFCut/selNum
-      << " (" << numTypeHFCut <<"/"<< selNum << ")" << endl;
+  if (doMC==0) {
+    Double_t numEvtSel = tree->GetEntries(evtSel);
+    Double_t numHfCut = tree->GetEntries(evtSel&&"nHFp>0&&nHFn>0");
+    cout << "Passed EvtSel: " << numEvtSel << endl;
+    cout << "Passed EvtSel && Hf_coinc: " << numHfCut << endl;
+    cout << "  * Hf rel eff: " << numHfCut/numEvtSel << endl;
   }
-  cout << "answer: " << ans << endl;
+  else {
+    Double_t den, num, frac, selDen, selNum, selFrac;
+    Double_t selEff, typeSelEff;
+    den = tree->GetEntries(etypeCut[0]);
+    selDen = tree->GetEntries(evtSel&&etypeCut[0]);
+    selEff = selDen/den;
+    cout << "Base Cut: " << TString(evtSel&&etypeCut[0]) << endl;
+    for (Int_t i=0; i<etype.size(); ++i) {
+      num = tree->GetEntries(etypeCut[i]); 
+      frac = num/den;
+      TCut mcCut = evtSel&&etypeCut[i];
+      selNum = tree->GetEntries(mcCut);
+      selFrac = selNum/selDen;
+      TString t = etype[i];
+      cout << " - Type: " << t << endl;
+      cout << "   * MC input frac: " << frac << " (" << num << "/" << den << ")" << endl;
+      cout << "   * SelEff " << selNum/num << endl;
+      cout << "   * Frac after Sel: " << selFrac << " ("<< selNum <<"/" << selDen << ")" << endl;
+      if (t==want)
+	ans=selFrac;
+      // check effect of HF coinc
+      TCut typeHfCut = mcCut && "nHFp>0&&nHFn>0";
+      Double_t numTypeHFCut = tree->GetEntries(typeHfCut);
+      cout << "   * && HF_coinc SelEff: " << numTypeHFCut/selNum
+	<< " (" << numTypeHFCut <<"/"<< selNum << ")" << endl;
+    }
+    cout << "answer: " << ans << endl;
+  }
   return ans;
 }

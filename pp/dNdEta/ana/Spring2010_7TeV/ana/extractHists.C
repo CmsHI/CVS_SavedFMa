@@ -106,24 +106,24 @@ void extractHists(TString AnaVersion="testV010",
   printf("\n===== MC Input =====\n");
   Double_t mcTruthFrac=-1;
   if (MCSource.Contains("pythia")) {
-    mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypeCut,wanted0);
+    mcTruthFrac = calcFrac(1,treeMC,mcSel.Cut,etype,etypeCut,wanted0);
   }
   if (MCSource.Contains("phojet")) {
-    mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypePhojCut,wanted0);
+    mcTruthFrac = calcFrac(1,treeMC,mcSel.Cut,etype,etypePhojCut,wanted0);
   }
   // for data or "data"
   Double_t truthFrac=-1;
   if (DataSource.Contains("data")) {
     printf("\n===== Data Input =====\n");
-    printf("%d passed cut\n",treeData->GetEntries(dataSel.Cut));
+    calcFrac(0,treeData,dataSel.Cut,etype,etypeCut,wanted0);
   }
   if (DataSource.Contains("pythia")) {
     printf("\n===== \"Data\" Input =====\n");
-    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypeCut,wanted0);
+    truthFrac = calcFrac(1,treeData,mcSel.Cut,etype,etypeCut,wanted0);
   }
   if (DataSource.Contains("phojet")) {
     printf("\n===== \"Data\" Input =====\n");
-    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypePhojCut,wanted0);
+    truthFrac = calcFrac(1,treeData,mcSel.Cut,etype,etypePhojCut,wanted0);
   }
 
   // Checking cuts only, exit
