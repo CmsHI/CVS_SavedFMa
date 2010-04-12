@@ -76,19 +76,27 @@ switchJECSet( process, "Summer09_7TeV_ReReco332")
 
 
 process.out = cms.OutputModule("PoolOutputModule",
-       outputCommands = cms.untracked.vstring('drop *_*_*_*','keep recoGenParticles_genParticles_*_*',
-			        'keep *_ak5GenJets_*_*',
-                                'keep *_genEventScale_*_*',
-                                'keep *_genEventWeight_*_*',
-                                'keep *_genEventPdfInfo_*_*',
-                                'keep edmTriggerResults_TriggerResults_*_HLT',
-                                'keep *_hltTriggerSummaryAOD_*_*',
-                                'keep *_offlineBeamSpot_*_*',
-                                'keep *_offlinePrimaryVertices_*_*',
-                                'keep *_towerMaker_*_*',
-                                'keep *_selectedPatJets*_*_*',
-                                'keep *_patJets*_*_*'),
-    
+    outputCommands = cms.untracked.vstring('drop *_*_*_*',
+      # event
+      'keep *_TriggerResults_*_HLT',
+      'keep L1GlobalTriggerReadoutRecord_gtDigis_*_*RECO',
+      'keep *_genEventScale_*_*',
+      'keep *_genEventWeight_*_*',
+      'keep *_genEventPdfInfo_*_*',
+      'keep *_hltTriggerSummaryAOD_*_*',
+      'keep *_offlineBeamSpot_*_*',
+      'keep *_offlinePrimaryVertices_*_*',
+      # jets
+      'keep *_towerMaker_*_*',
+      'keep *_selectedPatJets*_*_*',
+      'keep *_patJets*_*_*'
+      # tracks
+      'keep recoTracks_generalTracks_*_*RECO',
+      # mc
+      'keep recoGenParticles_genParticles_*_*',
+      'keep *_ak5GenJets_*_*'
+      ),
+
     fileName = cms.untracked.string('jetSkim.root')
 )
 
