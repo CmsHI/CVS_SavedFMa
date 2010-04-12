@@ -114,7 +114,7 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
 
   //----- output file -----
   TFile outFile("jes_ana.root", "recreate" );
-  TTree * dijetTree = new TTree("trDj","dijet tree");
+  TTree * dijetTree = new TTree("djtree","dijet tree");
   jetana::TreeDiJetEventData jd_;
   jd_.SetTree(dijetTree);
   jd_.SetBranches();
@@ -202,7 +202,7 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
     jets.getByLabel(event,"patJets");
     Double_t   NearEtMax=-99;
     Int_t      iNear=-99;
-    math::PtEtaPhiMLorentzVectorF ljet[2];
+    std::vector<math::PtEtaPhiMLorentzVectorF> anajets;
     // find leading jet based on corrected pt
     for (unsigned int j=0; j<(*jets).size();++j) {
       const pat::Jet & jet = (*jets)[j];
@@ -225,8 +225,8 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
     //
     if (NearEtMax>0) {
       const pat::Jet & NrJet = (*jets)[iNear];
-      ljet[0].SetCoordinates(NrJet.pt(),NrJet.eta(),NrJet.phi(),NrJet.mass());
-      if (doJEC) ljet[0] *= JEC->getCorrection(NrJet.pt(),NrJet.eta(),NrJet.energy());
+      anajets.push_back(math::PtEtaPhiMLorentzVectorF(NrJet.pt(),NrJet.eta(),NrJet.phi(),NrJet.mass()));
+      if (doJEC) anajets[0] *= JEC->getCorrection(NrJet.pt(),NrJet.eta(),NrJet.energy());
     }
 
     //
@@ -237,7 +237,7 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
     for (unsigned j=0; j<(*jets).size();++j) {
       const pat::Jet & jet = (*jets)[j];
       // look at away side
-      Double_t jdphi = TMath::Abs(reco::deltaPhi(ljet[0].phi(),jet.phi()));
+      Double_t jdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),jet.phi()));
       if (jdphi < TMath::PiOver2()) continue;
       // apply JEC
       Double_t corrPt = jet.pt();
@@ -249,8 +249,8 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
     }
     if (AwayEtMax>0) {
       const pat::Jet & AwJet = (*jets)[iAway];
-      ljet[1].SetCoordinates(AwJet.pt(),AwJet.eta(),AwJet.phi(),AwJet.mass());
-      if (doJEC) ljet[1] *= JEC->getCorrection(AwJet.pt(),AwJet.eta(),AwJet.energy());
+      anajets.push_back(math::PtEtaPhiMLorentzVectorF(AwJet.pt(),AwJet.eta(),AwJet.phi(),AwJet.mass()));
+      if (doJEC) anajets[1] *= JEC->getCorrection(AwJet.pt(),AwJet.eta(),AwJet.energy());
     }
 
     // === dijet kinematics selection ===
@@ -267,9 +267,9 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
 	const pat::Jet & jet = (*jets)[j];
 	cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
       }
-      cout << "corr" << doJEC << " leading dijet - iNear: " << iNear << " " <<": "<< ljet[0]
-	<< "  iAway: " << iAway << " " << ljet[1] << endl;
-      Double_t ljdphi = TMath::Abs(reco::deltaPhi(ljet[0].phi(),ljet[1].phi()));
+      cout << "corr" << doJEC << " leading dijet - iNear: " << iNear << " " <<": "<< anajets[0]
+	<< "  iAway: " << iAway << " " << anajets[1] << endl;
+      Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
       cout << "DiJet dphi: " << ljdphi << endl;
       cout << endl;
     }
