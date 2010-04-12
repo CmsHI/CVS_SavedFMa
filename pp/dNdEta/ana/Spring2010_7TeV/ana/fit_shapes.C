@@ -18,8 +18,8 @@ using namespace std;
 void fit_shapes(TString AnaVersion="testV010",
     TString DataSource = "data",
     const char * datafname = "../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root",
-    TString MCSource = "pythiaD6T",
-    const char * mcfname = "../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root",
+    TString MCSource = "pythiaAtlas",
+    const char * mcfname = "../pixel_trees/mc/pixelTree_yilmaz-MinBiasATLAS_RECO_0332_v1.root",
     TString AnaObs = "EaddEpPos", //EvtEta, EsubEp, MinEPz
     int doSel = 1, int anaMode=0, // 0 for D vs ND, 1 for SD vs NSD, 2 for SD, DD, ND
     float EPzMin=0, float EPzMax=200, float EPzBinSize=5,
