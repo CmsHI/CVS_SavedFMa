@@ -246,6 +246,11 @@ Double_t calcFrac(TTree * treeMC, TCut mcSel,
     cout << "   * Frac after Sel: " << selFrac << " ("<< selNum <<"/" << selDen << ")" << endl;
     if (t==want)
       ans=selFrac;
+    // check effect of HF coinc
+    TCut typeHfCut = mcCut && "nHFp>0&&nHFn>0";
+    Double_t numTypeHFCut = treeMC->GetEntries(typeHfCut);
+    cout << "   * && HF_coinc SelEff: " << numTypeHFCut/selNum
+      << " (" << numTypeHFCut <<"/"<< selNum << ")" << endl;
   }
   cout << "answer: " << ans << endl;
   return ans;
