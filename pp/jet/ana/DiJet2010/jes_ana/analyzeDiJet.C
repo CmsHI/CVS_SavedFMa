@@ -274,6 +274,18 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
     jd_.aljphi_		= anajets[1].phi();
     jd_.aljemf_		= (*jets)[iAway].emEnergyFraction();
 
+    // === gen info ana ===
+    const reco::GenJet * NrGJet = (*jets)[iNear].genJet();
+    const reco::GenJet * AwGJet = (*jets)[iAway].genJet();
+    if (NrGJet && AwGJet) {
+      jd_.nlpet_		= NrGJet->pt();
+      jd_.nlpeta_		= NrGJet->eta();
+      jd_.nlpphi_		= NrGJet->phi();
+      jd_.alpet_		= AwGJet->pt();
+      jd_.alpeta_		= AwGJet->eta();
+      jd_.alpphi_		= AwGJet->phi();
+    }
+
     // print
     if (verbosity>=1 && nDJEvt<=5) {
       cout << "Event " << event.id().event()
@@ -287,6 +299,9 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
       cout << "corr" << doJEC << " leading dijet - iNear: " << iNear << " " <<": "<< anajets[0]
 	<< "  iAway: " << iAway << " " << anajets[1] << endl;
       cout << "DiJet dphi: " << ljdphi << endl;
+      cout << "- Gen jets" << endl;
+      cout << "  * Near " << "pt: " << NrGJet->pt() << endl;
+      cout << "  * Away " << "pt: " << AwGJet->pt() << endl;
       cout << endl;
     }
 
