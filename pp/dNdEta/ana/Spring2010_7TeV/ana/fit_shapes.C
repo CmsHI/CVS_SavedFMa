@@ -74,36 +74,40 @@ void fit_shapes(TString AnaVersion="testV010",
   etypePhojCut.push_back("evtType==1");
   etypePhojCut.push_back("evtType==7 || evtType==4");
 
-  // calc cuts
+  //
+  // === calc cuts ===
+  //
   // for mc
   printf("\n===== MC Input =====\n");
   Double_t mcTruthFrac=-1;
   if (MCSource.Contains("pythia")) {
-    mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypeCut,wanted0);
+    mcTruthFrac = calcFrac(1,treeMC,mcSel.Cut,etype,etypeCut,wanted0);
   }
   if (MCSource.Contains("phojet")) {
-    mcTruthFrac = calcFrac(treeMC,mcSel.Cut,etype,etypePhojCut,wanted0);
+    mcTruthFrac = calcFrac(1,treeMC,mcSel.Cut,etype,etypePhojCut,wanted0);
   }
   // for data or "data"
   Double_t truthFrac=-1;
   if (DataSource.Contains("data")) {
     printf("\n===== Data Input =====\n");
-    printf("%d passed cut\n",treeData->GetEntries(dataSel.Cut));
+    calcFrac(0,treeData,dataSel.Cut,etype,etypeCut,wanted0);
   }
   if (DataSource.Contains("pythia")) {
     printf("\n===== \"Data\" Input =====\n");
-    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypeCut,wanted0);
+    truthFrac = calcFrac(1,treeData,mcSel.Cut,etype,etypeCut,wanted0);
   }
   if (DataSource.Contains("phojet")) {
     printf("\n===== \"Data\" Input =====\n");
-    truthFrac = calcFrac(treeData,mcSel.Cut,etype,etypePhojCut,wanted0);
+    truthFrac = calcFrac(1,treeData,mcSel.Cut,etype,etypePhojCut,wanted0);
   }
 
   // done with trees
   dataFile->Close();
   mcFile->Close();
 
+  //
   // ================ Hist Shapes Ana ======================
+  //
   // === Define Inputs ===
   TString indir=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),MCSource.Data(),doSel);
   TString HistsTag = Form("ana%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
@@ -230,10 +234,9 @@ void fit_shapes(TString AnaVersion="testV010",
       printf("       Twiki - %s, %s: | %s | %s | %.1f+-%.1f\% |\n\n",AnaTag.Data(),wanted0.Data(),AnaObs.Data(),MCSource.Data(),bestX*100,(chiEHigh-bestX)*100);
     else
       printf("       Twiki - %s, %s: | %s (%.0fto%.0fGeV) | %s | %.1f+-%.1f\% |\n\n",AnaTag.Data(),wanted0.Data(),AnaObs.Data(),EPzMin,EPzMax,MCSource.Data(),bestX*100,(chiEHigh-bestX)*100);
-    /*
 
     // mc truth if using mc as "data"
-    if (DataSource.Contains("mc")) {
+    if (DataSource.Contains("pythia")||DataSource.Contains("phojet")) {
       TLine * l = new TLine(truthFrac,hChi2->GetMinimum(),truthFrac,hChi2->GetMaximum());
       l->SetLineColor(2);
       l->Draw("same");
@@ -244,8 +247,7 @@ void fit_shapes(TString AnaVersion="testV010",
       leg2->AddEntry("",Form("%.4f",truthFrac),"");
       leg2->Draw();
     }
-    */
-    //cChi2->Print(Form("%s/%s_cChi2.gif",outdir.Data(),AnaTag.Data()));
+    cChi2->Print(Form("%s/%s_cChi2.gif",outdir.Data(),AnaTag.Data()));
 
     /*
     // draw distributions
