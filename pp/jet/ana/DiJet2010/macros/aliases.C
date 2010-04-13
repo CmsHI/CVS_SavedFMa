@@ -1,6 +1,12 @@
 void aliases(TTree * Events)
 {
+  // Event
+  Events->SetAlias("vtx","recoVertexs_offlinePrimaryVertices__RECO.obj");
+
+  // jets
   Events->SetAlias("jet","patJets_selectedPatJets__PAT.obj");
+
+  // mc
   Events->SetAlias("gjet","jet.genJet()");
 }
 
