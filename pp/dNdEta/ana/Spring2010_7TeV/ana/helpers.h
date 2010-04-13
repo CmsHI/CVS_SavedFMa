@@ -55,8 +55,8 @@ Double_t histDiffrChi2(
     Double_t ymax         = 0.025)
 {
   if (draw) {
-    cout << "data: " << hists[0]->GetName() << " h1: " << hists[1]->GetName() << 
-      " h2: " << hists[2]->GetName() << endl;
+    cout << "- data: " << hists[0]->GetName() << "  h1: " << hists[1]->GetName() << 
+      "  h2: " << hists[2]->GetName() << endl;
   }
   TH1D * hData = (TH1D*)hists[0]->Clone("hData");
   TH1D * h1    = (TH1D*)hists[1]->Clone("h1");
