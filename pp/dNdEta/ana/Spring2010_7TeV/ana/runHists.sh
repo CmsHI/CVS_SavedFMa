@@ -11,7 +11,7 @@ version=$1
 dataFile=../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root
 pythiaD6tFile=../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root
 pythiaAtlasFile=../pixel_trees/mc/pixelTree_yilmaz-MinBiasATLAS_RECO_0332_v1.root
-phojetFile=../pixel_trees/mc/pixelTree_yilmaz-MinBiasPhojet_RECO_0404_v1.root
+phojetFile=../pixel_trees/mc/pixelTree_yilmaz-MinBiasPhojet_RECO_0413_v1.root
 
 anaMode=0
 
@@ -22,7 +22,7 @@ anaMode=0
 for doSel in 4; do #1 4 10; do
   #for doSel in 1 4 10; do #1 4 10; do
   #for DataSource in data pythiaD6T pythiaAtlas phojet; do
-  for DataSource in data; do
+  for DataSource in data pythiaAtlas; do
     if [ $DataSource == data ]; then dataF=$dataFile; fi
     if [ $DataSource == pythiaD6T ]; then dataF=$pythiaD6tFile; fi
     if [ $DataSource == pythiaAtlas ]; then dataF=$pythiaAtlasFile; fi

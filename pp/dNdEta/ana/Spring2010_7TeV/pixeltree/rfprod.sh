@@ -1,5 +1,6 @@
 #!/bin/bash -
-sample=yilmaz-MinBiasPhojet_RECO_0404_v1
+#sample=yilmaz-MinBiasPhojet_RECO_0404_v1
+sample=yilmaz-MinBiasPhojet_RECO_0413_v1
 inDir=/castor/cern.ch/user/f/frankma/mc/ana/private_7TeV/$sample-Bambu
 isMC=1
 
