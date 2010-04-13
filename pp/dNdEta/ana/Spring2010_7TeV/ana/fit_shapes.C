@@ -188,27 +188,6 @@ void fit_shapes(TString AnaVersion="testV010",
   TFile * fout = new TFile(Form("%s/%s_fits.root",outdir.Data(),AnaTag.Data()),"RECREATE");
 
 
-  Double_t EPzYMax=0.035/(EPzMax/200), Chi2YMax=60;
-  if (doSel==4) {
-    EPzYMax=0.01/(EPzMax/200);
-    Chi2YMax=20;
-  }
-  if (doSel==10) {
-    EPzYMax=0.12/(EPzMax/200);
-  }
-  if (AnaObs=="EvtEta")
-    EPzYMax=1;
-
-  // test
-  TCanvas * cEaddPzDefault = new TCanvas("cEaddPzDefault","cEaddPzDefault",600,600);
-  histDiffrChi2(
-      inputHists,
-      anaMode,
-      truthFrac,
-      -1,
-      2,
-      EPzYMax);
-
   // === calc chi2 ===
   printf("\n=========== Chi2 clac ================\n");
   Int_t N=100;
@@ -271,41 +250,66 @@ void fit_shapes(TString AnaVersion="testV010",
     }
     cChi2->Print(Form("%s/%s_cChi2.gif",outdir.Data(),AnaTag.Data()));
 
-    /*
-    // draw distributions
+    //
+    // ===================== Draw Observables ===============
+    //
+    // Set some plotting paremeters
+    Double_t EPzYMax=0.035/(EPzMax/200), Chi2YMax=60;
+    if (doSel==4) {
+      EPzYMax=0.01/(EPzMax/200);
+      Chi2YMax=20;
+    }
+    if (doSel==10) {
+      EPzYMax=0.12/(EPzMax/200);
+    }
+    if (AnaObs=="EvtEta")
+      EPzYMax=1;
+    // === First Look what Default MC looks like compared to data or "data" ===
+    TCanvas * cEaddPzDefault = new TCanvas("cEaddPzDefault","cEaddPzDefault",600,600);
     vector<TH1D*> EaddEpPosHists;
-    EaddEpPosHists.push_back( (TH1D*)dataFile->FindObjectAny(Form("hEaddEpPos_%s",DataSource.Data())));
-    //EaddEpPosHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEaddEpPos_mc_DF"));
-    EaddEpPosHists.push_back( (TH1D*)shapes1File->FindObjectAny("hEaddEpPos_data"));
-    //EaddEpPosHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEaddEpPos_mc_ND"));
-    EaddEpPosHists.push_back( (TH1D*)shapes2File->FindObjectAny("hEaddEpPos_data"));
-    vector<TH1D*> EvtEtaHists;
-    EvtEtaHists.push_back( (TH1D*)dataFile->FindObjectAny(Form("hEvtEta_%s",DataSource.Data())));
-    //EvtEtaHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEvtEta_mc_DF"));
-    EvtEtaHists.push_back( (TH1D*)shapes1File->FindObjectAny("hEvtEta_data"));
-    //EvtEtaHists.push_back( (TH1D*)shapes0File->FindObjectAny("hEvtEta_mc_ND"));
-    EvtEtaHists.push_back( (TH1D*)shapes2File->FindObjectAny("hEvtEta_data"));
-    // -- fitted --
-    TCanvas * cEaddPz = new TCanvas("cEaddPz","cEaddPz",600,600);
+    if (DataSource.Contains("data")) {
+      EaddEpPosHists.push_back( (TH1D*)dataHistFile->FindObjectAny( Form("hEaddEpPos_%s",dataHistLabel.Data()) ) );
+    } else {
+      EaddEpPosHists.push_back( (TH1D*)dataHistFile->FindObjectAny( Form("hEaddEpPos_%s",(mcHistLabel+"_All").Data()) ) );
+    }
+    EaddEpPosHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("hEaddEpPos_%s_%s",mcHistLabel.Data(),wanted0.Data())) );
+    EaddEpPosHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("hEaddEpPos_%s_%s",mcHistLabel.Data(),wanted1.Data())) );
     histDiffrChi2(
 	EaddEpPosHists,
 	anaMode,
-	bestX,
+	truthFrac,
 	-1,
-	1,
+	2,
 	EPzYMax);
-    //cEaddPz->Print(Form("%s/%s_cEaddPz.gif",outdir.Data(),AnaTag.Data()));
-    //cEaddPz->Print(Form("%s/%s_cEaddPz.eps",outdir.Data(),AnaTag.Data()));
-    TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",600,600);
-    histDiffrChi2(
-	EvtEtaHists,
-	anaMode,
-	bestX,
-	-1,
-	1,
-	1);
-    //cEvtEta->Print(Form("%s/%s_cEvtEta.gif",outdir.Data(),AnaTag.Data()));
-    //cEvtEta->Print(Form("%s/%s_cEvtEta.eps",outdir.Data(),AnaTag.Data()));
-  */
-  }
+
+    // === draw distributions with fitted parameters ===
+    vector<TString> observs;
+    vector<Double_t> obsymax;
+    observs.push_back("hEaddEpPos"); obsymax.push_back(EPzYMax);
+    observs.push_back("hEvtEta"); obsymax.push_back(1);
+    observs.push_back("hMinEPz"); obsymax.push_back(EPzYMax);
+
+    for (UInt_t i=0; i<observs.size(); ++i) {
+      // make hist list
+      vector<TH1D*> obsHists;
+      if (DataSource.Contains("data")) {
+	obsHists.push_back( (TH1D*)dataHistFile->FindObjectAny( Form("h%s_%s",observs[i].Data(),dataHistLabel.Data()) ) );
+      } else {
+	obsHists.push_back( (TH1D*)dataHistFile->FindObjectAny( Form("h%s_%s",observs[i].Data(),(mcHistLabel+"_All").Data()) ) );
+      }
+      obsHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_%s_%s",observs[i].Data(),mcHistLabel.Data(),wanted0.Data())) );
+      obsHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_%s_%s",observs[i].Data(),mcHistLabel.Data(),wanted1.Data())) );
+      // draw
+      TCanvas * cObs = new TCanvas("cObs","cObs",600,600);
+      histDiffrChi2(
+	  obsHists,
+	  anaMode,
+	  bestX,
+	  -1,
+	  1,
+	  obsymax[i]);
+      cObs->Print( Form("%s/%s_%s.gif",outdir.Data(),AnaTag.Data(),observs[i].Data()) );
+      delete cObs;
+    }
+  } // end of anaMode<2
 }
