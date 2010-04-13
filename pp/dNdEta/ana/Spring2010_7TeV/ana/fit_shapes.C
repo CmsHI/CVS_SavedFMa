@@ -109,20 +109,38 @@ void fit_shapes(TString AnaVersion="testV010",
   // ================ Hist Shapes Ana ======================
   //
   // === Define Inputs ===
-  TString indir=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),MCSource.Data(),doSel);
-  TString HistsTag = Form("ana%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
+  TString fitInDir, fitHistTag;
+  // target hist
+  if (DataSource.Contains("data")) {
+    gDataSource="Run 132440 (7TeV)";
+    fitInDir=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),"pythiaAtlas",doSel);
+    fitHistTag = Form("ana%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
+	AnaVersion.Data(),anaMode,
+	EPzMin,EPzMax,EPzBinSize,
+	doSel,
+	"data","pythiaAtlas");
+  }
+  else {
+    gDataSource = DataSource;
+    fitInDir=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),DataSource.Data(),doSel);
+    fitHistTag = Form("ana%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
+	AnaVersion.Data(),anaMode,
+	EPzMin,EPzMax,EPzBinSize,
+	doSel,
+	"data",DataSource.Data());
+  }
+  // shape hists
+  TString shapeInDir=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),MCSource.Data(),doSel);
+  TString shapeHistTag = Form("ana%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
       AnaVersion.Data(),anaMode,
       EPzMin,EPzMax,EPzBinSize,
       doSel,
-      DataSource.Data(),MCSource.Data());
-
-  if (DataSource == "data") gDataSource="Run 132440 (7TeV)";
-  else gDataSource = DataSource;
+      "data",MCSource.Data());
   gMCSource=MCSource;
   
-  const char * dataHistsName = Form("%s/%s.root",indir.Data(),HistsTag.Data());
+  const char * dataHistsName = Form("%s/%s.root",fitInDir.Data(),fitHistTag.Data());
   cout << "Data File: " << dataHistsName << endl;
-  const char * shapes0fname = Form("%s/%s.root",indir.Data(),HistsTag.Data());
+  const char * shapes0fname = Form("%s/%s.root",shapeInDir.Data(),shapeHistTag.Data());
   cout << "Shapes File: " << shapes0fname << endl;
   TFile * dataHistFile = new TFile(dataHistsName);
   TFile * shapes0File = new TFile(shapes0fname);
@@ -146,7 +164,11 @@ void fit_shapes(TString AnaVersion="testV010",
 
   // === Get Histograms ===
   vector<TH1D*> inputHists;
-  inputHists.push_back( (TH1D*)dataHistFile->FindObjectAny(Form("h%s_%s",AnaObs.Data(),dataHistLabel.Data())) );
+  if (DataSource.Contains("data")) {
+    inputHists.push_back( (TH1D*)dataHistFile->FindObjectAny( Form("h%s_%s",AnaObs.Data(),dataHistLabel.Data()) ) );
+  } else {
+    inputHists.push_back( (TH1D*)dataHistFile->FindObjectAny( Form("h%s_%s",AnaObs.Data(),(mcHistLabel+"_All").Data()) ) );
+  }
   inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_%s_%s",AnaObs.Data(),mcHistLabel.Data(),wanted0.Data())) );
   inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_%s_%s",AnaObs.Data(),mcHistLabel.Data(),wanted1.Data())) );
   //inputHists.push_back( (TH1D*)shapes1File->FindObjectAny(Form("h%s_data",AnaObs.Data())) );
@@ -161,7 +183,7 @@ void fit_shapes(TString AnaVersion="testV010",
   cout << "====== Ana: " << AnaTag << endl;
 
   // === Now define output ===
-  TString outdir = indir+"/"+AnaObs;
+  TString outdir = shapeInDir+"/"+DataSource+"/"+AnaObs;
   gSystem->mkdir(Form("%s",outdir.Data()),kTRUE);
   TFile * fout = new TFile(Form("%s/%s_fits.root",outdir.Data(),AnaTag.Data()),"RECREATE");
 
