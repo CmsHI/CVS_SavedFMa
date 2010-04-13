@@ -106,14 +106,15 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
   string fileDir = "/d01/frankma/scratch/HI/jet/pppatCMSSW_3_5_4_patch1/outputs/";
   cout << "directory: '" << fileDir << "'" << endl;
   for(int ifile=1; ifile<=1; ifile++) {
-    TString name = Form("jetSkimRelValQCD_Pt_80_120_sw354-JEC_Summer09_7TeV.root");
+    //TString name = Form("jetSkimRelValQCD_Pt_80_120_sw354-JEC_Summer09_7TeV.root");
+    TString name = Form("jetSkimRelValQCD_Pt_80_120_sw354-JEC_Summer09_7TeV_ReReco332.root");
     cout << "  adding file: " << name.Data() << endl;
     fileNames.push_back(fileDir + "/" + name.Data());
   }
   fwlite::ChainEvent event(fileNames);
 
   //----- output file -----
-  TFile outFile("jes_ana.root", "recreate" );
+  TFile outFile("djtree_JEC_Summer09_7TeV_ReReco332.root", "recreate");
   TTree * dijetTree = new TTree("djtree","dijet tree");
   jetana::TreeDiJetEventData jd_;
   jd_.SetTree(dijetTree);
