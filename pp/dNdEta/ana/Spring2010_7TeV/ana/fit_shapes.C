@@ -277,17 +277,19 @@ void fit_shapes(TString AnaVersion="testV010",
     histDiffrChi2(
 	EaddEpPosHists,
 	anaMode,
-	truthFrac,
+	mcTruthFrac,
 	-1,
 	2,
 	EPzYMax);
+    cEaddPzDefault->Print(Form("%s/%s_EaddEpPosDefault.gif",outdir.Data(),AnaTag.Data()));
+    cEaddPzDefault->Print(Form("%s/%s_EaddEpPosDefault.eps",outdir.Data(),AnaTag.Data()));
 
     // === draw distributions with fitted parameters ===
     vector<TString> observs;
     vector<Double_t> obsymax;
-    observs.push_back("hEaddEpPos"); obsymax.push_back(EPzYMax);
-    observs.push_back("hEvtEta"); obsymax.push_back(1);
-    observs.push_back("hMinEPz"); obsymax.push_back(EPzYMax);
+    observs.push_back("EaddEpPos"); obsymax.push_back(EPzYMax);
+    observs.push_back("EvtEta"); obsymax.push_back(1);
+    observs.push_back("MinEPz"); obsymax.push_back(EPzYMax*1.3);
 
     for (UInt_t i=0; i<observs.size(); ++i) {
       // make hist list
@@ -309,6 +311,7 @@ void fit_shapes(TString AnaVersion="testV010",
 	  1,
 	  obsymax[i]);
       cObs->Print( Form("%s/%s_%s.gif",outdir.Data(),AnaTag.Data(),observs[i].Data()) );
+      cObs->Print( Form("%s/%s_%s.eps",outdir.Data(),AnaTag.Data(),observs[i].Data()) );
       delete cObs;
     }
   } // end of anaMode<2
