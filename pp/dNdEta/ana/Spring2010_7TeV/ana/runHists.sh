@@ -19,16 +19,13 @@ anaMode=0
 
 
 # === run ===
-for doSel in 4; do #1 4 10; do
-  #for doSel in 1 4 10; do #1 4 10; do
-  #for DataSource in data pythiaD6T pythiaAtlas phojet; do
-  for DataSource in data pythiaAtlas; do
+for doSel in 1; do #1 4 10; do
+  for DataSource in data pythiaAtlas phojet pythiaD6T; do
     if [ $DataSource == data ]; then dataF=$dataFile; fi
     if [ $DataSource == pythiaD6T ]; then dataF=$pythiaD6tFile; fi
     if [ $DataSource == pythiaAtlas ]; then dataF=$pythiaAtlasFile; fi
     if [ $DataSource == phojet ]; then dataF=$phojetFile; fi
-    #for MCSource in pythiaD6T pythiaAtlas phojet; do
-    for MCSource in phojet; do
+    for MCSource in pythiaAtlas phojet pythiaD6T; do
       if [ $MCSource == data ]; then mcF=$dataFile; fi
       if [ $MCSource == pythiaD6T ]; then mcF=$pythiaD6tFile; fi
       if [ $MCSource == pythiaAtlas ]; then mcF=$pythiaAtlasFile; fi
