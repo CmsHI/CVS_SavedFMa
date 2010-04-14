@@ -429,6 +429,7 @@ void matchFrac(TString AnaVersion="test",
     fillHist("SumEsubEp","hEsubEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EsubEpHists);
     fillHist("SumEaddEpPos","hEaddEpPos",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EaddEpPosHists);
     fillHist("SumEsubEpNeg","hEsubEpNeg",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EsubEpNegHists);
+    fillHist("MinEPz","hMinEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,MinEPzHists);
     fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EPzHists);
   }
   // calc cuts
@@ -477,7 +478,7 @@ void matchFrac(TString AnaVersion="test",
   if (AnaObs=="EsubEp") fitObsHists = EsubEpHists;
   if (AnaObs=="EaddEpPos") fitObsHists = EaddEpPosHists;
   if (AnaObs=="EsubEpNeg") fitObsHists = EsubEpNegHists;
-  if (AnaObs=="MinEPz") fitObsHists = EsubEpNegHists;
+  if (AnaObs=="MinEPz") fitObsHists = MinEPzHists;
   // make chi2
   if (anaMode==0 || anaMode==1) {
     for (Int_t i=1; i<=N; ++i) {
