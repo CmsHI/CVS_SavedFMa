@@ -262,8 +262,7 @@ void fit_shapes(TString AnaVersion="testV010",
     if (doSel==10) {
       EPzYMax=0.12/(EPzMax/200);
     }
-    if (AnaObs=="EvtEta")
-      EPzYMax=1;
+
     // === First Look what Default MC looks like compared to data or "data" ===
     TCanvas * cEaddPzDefault = new TCanvas("cEaddPzDefault","cEaddPzDefault",600,600);
     vector<TH1D*> EaddEpPosHists;
