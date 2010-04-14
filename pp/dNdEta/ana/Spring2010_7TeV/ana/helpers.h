@@ -174,10 +174,10 @@ Double_t histDiffrChi2(
     */
 
     //  - add legend -
-    TLegend *leg2 = new TLegend(0.589,0.776,0.891,0.928,NULL,"brNDC");
+    TLegend *leg2 = new TLegend(0.58,0.783,0.891,0.935,NULL,"brNDC");
     leg2->SetFillColor(0);
     leg2->SetBorderSize(0);
-    leg2->SetTextSize(0.03);
+    leg2->SetTextSize(0.028);
     TString drawMode="Best Fit";
     if (draw==2)
       drawMode="Default";
