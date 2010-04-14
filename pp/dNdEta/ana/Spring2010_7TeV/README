@@ -1,0 +1,12 @@
+=== Latest Fit ===
+- V011
+  * Uses extractHists.C + fit_shapes.C
+
+=== Histories ===
+- V2
+  * Uses pythiaD6t as mc
+  * Fixed EvtEta, uses matchFrac.C
+  * bug in MinEPz obs
+
+- V2_pythiaAtlas
+  * same as V2 except uses pythiaAtalas as mc
