@@ -37,7 +37,7 @@ for doSel in 1; do #1 4 10; do
       echo "input pars: $version $DataSource $dataF $MCSource $mcF $doSel $anaMode" > $log
       # Different obs
       root -b -q fit_shapes.C+\(\"$version\",\"$DataSource\",\"$dataF\",\"$MCSource\",\"$mcF\",\"$fitVersion\",\"EvtEta\",$doSel,$anaMode,0,200,5\) >> $log
-      for obs in MinEPz EaddEpPos EsubEpNeg; do
+      for obs in MinEPz EaddEpPos EsubEpNeg EaddEpPos2Bin EubEpNeg2Bin; do
 	# different EPz ranges
 	for EPzMax in 100 200 300; do
 	  root -b -q fit_shapes.C+\(\"$version\",\"$DataSource\",\"$dataF\",\"$MCSource\",\"$mcF\",\"$fitVersion\",\"$obs\",$doSel,$anaMode,0,$EPzMax,5\) >> $log

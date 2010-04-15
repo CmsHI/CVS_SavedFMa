@@ -140,6 +140,7 @@ void extractHists(TString AnaVersion="testV010",
   printf("now declare hists\n");
   // container for all declared histograms
   vector<TH1*> vh1;
+  // some histogram properties
   Double_t EPzYMax=0.035/(EPzMax/200), Chi2YMax=60;
   if (doSel==4) {
     EPzYMax=0.01/(EPzMax/200);
@@ -149,6 +150,9 @@ void extractHists(TString AnaVersion="testV010",
     EPzYMax=0.12/(EPzMax/200);
   }
   const Int_t EPzNBINS=EPzMax/EPzBinSize;
+  // hist x range for 2 bin fit
+  Double_t EPzXbins[3] = {0,5,EPzMax};
+  // define hists
   for (Int_t i=0; i<source.size(); ++i) {
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";#eta^{Event}_{HF};",100,-5,5));
     vh1.push_back(new TH1D(Form("hEaddEp_%s",source[i].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
@@ -157,6 +161,8 @@ void extractHists(TString AnaVersion="testV010",
     vh1.push_back(new TH1D(Form("hEsubEpNeg_%s",source[i].Data()),";#Sigma E-Pz (HF-);",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH1D(Form("hMinEPz_%s",source[i].Data()),";min(#Sigma E+Pz, #Sigma E-Pz);",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH2D(Form("hEPz_%s",source[i].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
+    vh1.push_back(new TH1D(Form("hEaddEpPos2Bin_%s",source[i].Data()),";#Sigma E+Pz (HF+);",2,EPzXbins));
+    vh1.push_back(new TH1D(Form("hEsubEpNeg2Bin_%s",source[i].Data()),";#Sigma E-Pz (HF-);",2,EPzXbins));
     if (source[i]==mcHistLabel) {
       for (Int_t j=0; j<etype.size(); ++j) {
 	vh1.push_back(new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";#eta^{Event}_{HF};",100,-5,5));
@@ -166,6 +172,8 @@ void extractHists(TString AnaVersion="testV010",
 	vh1.push_back(new TH1D(Form("hEsubEpNeg_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz (HF-);",EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH1D(Form("hMinEPz_%s_%s",   source[i].Data(),etype[j].Data()),";min(#Sigma E+Pz, #Sigma E-Pz);",EPzNBINS,EPzMin,EPzMax));
 	vh1.push_back(new TH2D(Form("hEPz_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
+	vh1.push_back(new TH1D(Form("hEaddEpPos2Bin_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz (HF+);",2,EPzXbins));
+	vh1.push_back(new TH1D(Form("hEsubEpNeg2Bin_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E-Pz (HF-);",2,EPzXbins));
       }
     }
   }
@@ -183,6 +191,8 @@ void extractHists(TString AnaVersion="testV010",
   vector<TString> EsubEpNegHists;
   vector<TString> MinEPzHists;
   vector<TString> EPzHists;
+  vector<TString> EaddEpPos2BinHists;
+  vector<TString> EsubEpNeg2BinHists;
   if (MCSource.Contains("pythia")) {
     fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,evtEtaHists);
     fillHist("SumEaddEp","hEaddEp",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpHists);
@@ -191,6 +201,8 @@ void extractHists(TString AnaVersion="testV010",
     fillHist("SumEsubEpNeg","hEsubEpNeg",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EsubEpNegHists);
     fillHist("MinEPz","hMinEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,MinEPzHists);
     fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EPzHists);
+    fillHist("SumEaddEpPos","hEaddEpPos2Bin",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EaddEpPos2BinHists);
+    fillHist("SumEsubEpNeg","hEsubEpNeg2Bin",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypeCut,EsubEpNeg2BinHists);
   }
   if (MCSource.Contains("phojet")) {
     fillHist("evtEta","hEvtEta",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,evtEtaHists);
@@ -200,6 +212,8 @@ void extractHists(TString AnaVersion="testV010",
     fillHist("SumEsubEpNeg","hEsubEpNeg",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EsubEpNegHists);
     fillHist("MinEPz","hMinEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,MinEPzHists);
     fillHist("SumEsubEp:SumEaddEp","hEPz",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EPzHists);
+    fillHist("SumEaddEpPos","hEaddEpPos2Bin",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EaddEpPos2BinHists);
+    fillHist("SumEsubEpNeg","hEsubEpNeg2Bin",treeData,treeMC,dataSel.Cut,mcSel.Cut,etype,etypePhojCut,EsubEpNeg2BinHists);
   }
   // save
   fout->Write();

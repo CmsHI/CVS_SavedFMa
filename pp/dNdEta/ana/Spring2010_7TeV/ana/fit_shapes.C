@@ -290,6 +290,7 @@ void fit_shapes(TString AnaVersion="testV010",
     observs.push_back("EaddEpPos"); obsymax.push_back(EPzYMax);
     observs.push_back("EvtEta"); obsymax.push_back(1);
     observs.push_back("MinEPz"); obsymax.push_back(EPzYMax*1.3);
+    observs.push_back("EaddEpPos2Bin"); obsymax.push_back(EPzYMax);
 
     for (UInt_t i=0; i<observs.size(); ++i) {
       // make hist list

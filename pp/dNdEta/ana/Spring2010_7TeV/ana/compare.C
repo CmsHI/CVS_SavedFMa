@@ -100,9 +100,9 @@ void compare(int evtType = 0, int doSel = 1,
   // observables
   vector<TString> obs;
   //obs.push_back("EvtEta");
-  //obs.push_back("SumEaddEpPos");
+  obs.push_back("SumEaddEpPos");
   //obs.push_back("EsubEpNeg");
-  obs.push_back("MinEPz");
+  //obs.push_back("MinEPz");
   vector<TString> obstitle;
   //obstitle.push_back("#Sigma E+Pz (+HF)");
   obstitle.push_back(";min{#Sigma E+Pz,#Sigma E-Pz};");
