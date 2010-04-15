@@ -5,6 +5,7 @@
 #include "TLegend.h"
 #include <iostream>
 #include <vector>
+#include "/home/frankma/UserCode/SavedFMa/analysis/root/macros/HistMath.C"
 
 // Declare some useful global variables
 TString gDataSource;
@@ -108,9 +109,9 @@ Double_t histDiffrChi2(
   Double_t testFrac2InRange = testWantedFrac2*A2/A0;
 
   // scale all pdf's in range to unity
-  h1->Scale(1./h1->Integral()/h1->GetBinWidth(1));
-  h2->Scale(1./h2->Integral()/h2->GetBinWidth(1));
-  hData->Scale(1./hData->Integral()/hData->GetBinWidth(1));
+  normHist(h1,1);
+  normHist(h2,1);
+  normHist(hData,1);
 
   // combine
   TH1D * hFit = (TH1D*)h1->Clone("hFit");
@@ -130,10 +131,10 @@ Double_t histDiffrChi2(
 	<< " " << wanted1 << "frac: " << testWantedFrac2
 	<< " In range: " << testFrac2InRange
 	<< "  Raw hist chi2: " << result << endl;
-      cout << "hData area: " << hData->Integral()*hData->GetBinWidth(1) << ", Entries: " << hData->GetEntries() << endl;
-      cout << "h1 area: " << h1->Integral()*h1->GetBinWidth(1) << ", Entries: " << h1->GetEntries() << endl;
-      cout << "h2 area: " << h2->Integral()*h2->GetBinWidth(1) << ", Entries: " << h2->GetEntries() << endl;
-      cout << "hFit area: " << hFit->Integral()*hFit->GetBinWidth(1) << ", Entries: " << hFit->GetEntries() << endl;
+      cout << "hData area: " << hData->Integral("width") << ", Entries: " << hData->GetEntries() << endl;
+      cout << "h1 area: " << h1->Integral("width") << ", Entries: " << h1->GetEntries() << endl;
+      cout << "h2 area: " << h2->Integral("width") << ", Entries: " << h2->GetEntries() << endl;
+      cout << "hFit area: " << hFit->Integral("width") << ", Entries: " << hFit->GetEntries() << endl;
     }
     else if (mode==2)
       cout << "Draw: trial " << wanted0 << ", " << wanted1 << "frac: " << testWantedFrac1 << ", " << testWantedFrac2<< "  Raw hist chi2: " << result << endl;
