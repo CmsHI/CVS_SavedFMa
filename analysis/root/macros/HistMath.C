@@ -25,7 +25,8 @@ TH1D * integrateHist(TH1 * hin)
 
 void normHist(TH1 * hin, Int_t type=1)
 {
-  hin->Sumw2();
+  // call sumw2 if hasn't been called
+  if (hin->GetSumw2N()!=(hin->GetNbinsX()+2)) hin->Sumw2();
   // Normalize by area
   if (type<10) {
     hin->Scale(1./hin->Integral());
