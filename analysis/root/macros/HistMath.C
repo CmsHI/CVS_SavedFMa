@@ -36,9 +36,8 @@ void normHist(TH1 * hin, Int_t type=1)
       Double_t w = hin->GetBinWidth(i);
       Double_t h = hin->GetBinContent(i);
       Double_t e = hin->GetBinError(i);
-      cout << "bin " << i << ": " << "width: " << w
-	<< " height: " << h << " error: " << e << endl;
-      cout << "    new height: " << h/w << " new error: " << e/w << endl;
+      //cout << "bin " << i << ": " << "width: " << w << " height: " << h << " error: " << e << endl;
+      //cout << "    new height: " << h/w << " new error: " << e/w << endl;
       hin->SetBinContent(i,h/w);
       hin->SetBinError(i,e/w);
     }
