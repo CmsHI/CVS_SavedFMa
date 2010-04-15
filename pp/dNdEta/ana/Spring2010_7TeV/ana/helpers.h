@@ -55,6 +55,10 @@ Double_t histDiffrChi2(
     Int_t draw            = 0,
     Double_t ymax         = 0.025)
 {
+  if (hists.size()<3||!hists[0]||!hists[1]|!hists[2]) {
+    cout << "hists are not defined please check" << endl;
+    return -1;
+  }
   if (draw) {
     cout << "- data: " << hists[0]->GetName() << "  h1: " << hists[1]->GetName() << 
       "  h2: " << hists[2]->GetName() << endl;
