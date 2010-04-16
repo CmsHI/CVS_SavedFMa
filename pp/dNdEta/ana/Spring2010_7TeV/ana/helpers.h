@@ -135,6 +135,7 @@ Double_t histDiffrChi2(
 	<< " " << wanted1 << "frac: " << testWantedFrac2
 	<< " In range: " << testFrac2InRange
 	<< "  Raw hist chi2: " << result << endl;
+      cout << "A1: " << A1 << "  A2: " << A2 << "  A0: " << A0 << endl;
       cout << "hData area: " << hData->Integral("width") << ", Entries: " << hData->GetEntries() << endl;
       cout << "h1 area: " << h1->Integral("width") << ", Entries: " << h1->GetEntries() << endl;
       cout << "h2 area: " << h2->Integral("width") << ", Entries: " << h2->GetEntries() << endl;
