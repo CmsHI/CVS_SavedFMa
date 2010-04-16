@@ -15,15 +15,16 @@
 using namespace std;
 #include "helpers.h"
 
-void fit_shapes(TString AnaVersion="testV010",
+void fit_shapes(TString AnaVersion="V012",
     TString DataSource = "data",
     const char * datafname = "../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root",
     TString MCSource = "pythiaAtlas",
     const char * mcfname = "../pixel_trees/mc/pixelTree_yilmaz-MinBiasATLAS_RECO_0332_v1.root",
-    TString FitVersion = "Fit0",
+    TString FitVersion = "Fit10",
     TString AnaObs = "EaddEpPos", //EvtEta, EsubEp, MinEPz
     int doSel = 1, int anaMode=0, // 0 for D vs ND, 1 for SD vs NSD, 2 for SD, DD, ND
     float EPzMin=0, float EPzMax=200, float EPzBinSize=5,
+    TString MCSource2 = "pythiaAtlas",
     const char * databgfname = "../pixel_trees/emptybx/pixelTree_emptyBx_132422-veryloosecuts_v2.root")
 {
   // set anaMode
@@ -131,37 +132,30 @@ void fit_shapes(TString AnaVersion="testV010",
 	"data",DataSource.Data());
   }
   // shape hists
-  TString shapeInDir=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),MCSource.Data(),doSel);
-  TString shapeHistTag = Form("ana%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
+  TString shapeInDir, shapeHistTag, shapeInDir2, shapeHistTag2;
+  shapeInDir=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),MCSource.Data(),doSel);
+  shapeHistTag = Form("ana%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
       AnaVersion.Data(),anaMode,
       EPzMin,EPzMax,EPzBinSize,
       doSel,
       "data",MCSource.Data());
   gMCSource=MCSource;
+  shapeInDir2=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),MCSource2.Data(),doSel);
+  shapeHistTag2 = Form("ana%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
+      AnaVersion.Data(),anaMode,
+      EPzMin,EPzMax,EPzBinSize,
+      doSel,
+      "data",MCSource2.Data());
   
   const char * dataHistsName = Form("%s/%s.root",fitInDir.Data(),fitHistTag.Data());
   cout << "Data File: " << dataHistsName << endl;
   const char * shapes0fname = Form("%s/%s.root",shapeInDir.Data(),shapeHistTag.Data());
   cout << "Shapes File: " << shapes0fname << endl;
+  const char * shapes1fname = Form("%s/%s.root",shapeInDir2.Data(),shapeHistTag2.Data());
+  cout << "Shapes File: " << shapes1fname << endl;
   TFile * dataHistFile = new TFile(dataHistsName);
   TFile * shapes0File = new TFile(shapes0fname);
-  /*
-  const char * shapes0fname = Form("plots/%s/EvtEta_Sel1/ana%s_EvtEta_Mode0_Min%.0f_Max%.0f_Delta%0.f_Sel1_data_use_pythia.root",
-      AnaVersion.Data(),AnaVersion.Data(),
-      EPzMin,EPzMax,EPzBinSize);
-  cout << "Shapes File: " << shapes0fname << endl;
-  const char * shapes1fname = Form("plots/%s/EvtEta_Sel10/ana%s_EvtEta_Mode0_Min%.0f_Max%.0f_Delta%0.f_Sel10_data_use_pythia.root",
-      AnaVersion.Data(),AnaVersion.Data(),
-      EPzMin,EPzMax,EPzBinSize);
-  cout << "Shapes File1: " << shapes1fname << endl;
-  const char * shapes2fname = Form("plots/%s/EvtEta_Sel4/ana%s_EvtEta_Mode0_Min%.0f_Max%.0f_Delta%0.f_Sel4_data_use_pythia.root",
-      AnaVersion.Data(),AnaVersion.Data(),
-      EPzMin,EPzMax,EPzBinSize);
-  cout << "Shapes File2: " << shapes2fname << endl;
-  TFile * shapes0File = new TFile(shapes0fname);
   TFile * shapes1File = new TFile(shapes1fname);
-  TFile * shapes2File = new TFile(shapes2fname);
-  */
 
   // === Get Histograms ===
   vector<TH1D*> inputHists;
@@ -171,20 +165,18 @@ void fit_shapes(TString AnaVersion="testV010",
     inputHists.push_back( (TH1D*)dataHistFile->FindObjectAny( Form("h%s_%s",AnaObs.Data(),(mcHistLabel+"_All").Data()) ) );
   }
   inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_%s_%s",AnaObs.Data(),mcHistLabel.Data(),wanted0.Data())) );
-  inputHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_%s_%s",AnaObs.Data(),mcHistLabel.Data(),wanted1.Data())) );
-  //inputHists.push_back( (TH1D*)shapes1File->FindObjectAny(Form("h%s_data",AnaObs.Data())) );
-  //inputHists.push_back( (TH1D*)shapes2File->FindObjectAny(Form("h%s_data",AnaObs.Data())) );
+  inputHists.push_back( (TH1D*)shapes1File->FindObjectAny(Form("h%s_%s_%s",AnaObs.Data(),mcHistLabel.Data(),wanted1.Data())) );
 
   // === Top level info ===
-  TString AnaTag = Form("ana%s_%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
+  TString AnaTag = Form("ana%s_%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s_%s",
       AnaVersion.Data(),AnaObs.Data(),anaMode,
       EPzMin,EPzMax,EPzBinSize,
       doSel,
-      DataSource.Data(),MCSource.Data());
+      DataSource.Data(),MCSource.Data(),MCSource2.Data());
   cout << "====== Ana: " << AnaTag << endl;
 
   // === Now define output ===
-  TString outdir = shapeInDir+"/"+FitVersion+"/"+DataSource+"/"+AnaObs;
+  TString outdir = "plots/"+AnaVersion+"/"+FitVersion+"/"+DataSource+"/"+MCSource+"_"+MCSource2+"/"+AnaObs;
   gSystem->mkdir(Form("%s",outdir.Data()),kTRUE);
   TFile * fout = new TFile(Form("%s/%s_fits.root",outdir.Data(),AnaTag.Data()),"RECREATE");
 
