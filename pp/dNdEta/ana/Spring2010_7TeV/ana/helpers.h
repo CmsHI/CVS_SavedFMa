@@ -10,6 +10,7 @@
 // Declare some useful global variables
 TString gDataSource;
 TString gMCSource;
+TString gMCSource2;
 TString wanted0;
 TString wanted1;
 TString wanted2;
@@ -189,9 +190,9 @@ Double_t histDiffrChi2(
       drawMode="Default";
     leg2->AddEntry(hData,Form("%s",gDataSource.Data()),"p");
     leg2->AddEntry(h1,Form("%s - %s %s",gMCSource.Data(),drawMode.Data(),wanted0.Data()),"p");
-    leg2->AddEntry(h2,Form("%s - %s %s",gMCSource.Data(),drawMode.Data(),wanted1.Data()),"p");
+    leg2->AddEntry(h2,Form("%s - %s %s",gMCSource2.Data(),drawMode.Data(),wanted1.Data()),"p");
     //if (mode==2) leg2->AddEntry(h3,Form("%s - %s %s",gMCSource.Data(),drawMode.Data(),wanted2.Data()),"p");
-    leg2->AddEntry(hFit,Form("%s - %s All",gMCSource.Data(),drawMode.Data()),"l");
+    leg2->AddEntry(hFit,Form("%s - %s All","MC",drawMode.Data()),"l");
     leg2->Draw();
   }
   else {

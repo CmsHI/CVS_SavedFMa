@@ -140,6 +140,7 @@ void fit_shapes(TString AnaVersion="V012",
       doSel,
       "data",MCSource.Data());
   gMCSource=MCSource;
+  gMCSource2=MCSource2;
   shapeInDir2=Form("plots/%s/%s/Sel%d",AnaVersion.Data(),MCSource2.Data(),doSel);
   shapeHistTag2 = Form("ana%s_Mode%d_EPzMin%.0f_Max%.0f_Delta%.0f_Sel%d_%s_use_%s",
       AnaVersion.Data(),anaMode,
@@ -225,9 +226,9 @@ void fit_shapes(TString AnaVersion="V012",
     printf("       Error: (%f,%f)\n",bestX-chiELow,chiEHigh-bestX);
     printf("       Analysis: %s, %s: %f(%f,%f)\n\n",AnaTag.Data(),wanted0.Data(),bestX,bestX-chiELow,chiEHigh-bestX);
     if (AnaObs=="EvtEta")
-      printf("       Twiki - %s, %s: | %s | %s | %.1f+-%.1f\% |\n\n",AnaTag.Data(),wanted0.Data(),AnaObs.Data(),MCSource.Data(),bestX*100,(chiEHigh-bestX)*100);
+      printf("       Twiki - %s, %s: | %s | %s_%s | %.1f+-%.1f\% |\n\n",AnaTag.Data(),wanted0.Data(),AnaObs.Data(),MCSource.Data(),MCSource2.Data(),bestX*100,(chiEHigh-bestX)*100);
     else
-      printf("       Twiki - %s, %s: | %s (%.0fto%.0fGeV) | %s | %.1f+-%.1f\% |\n\n",AnaTag.Data(),wanted0.Data(),AnaObs.Data(),EPzMin,EPzMax,MCSource.Data(),bestX*100,(chiEHigh-bestX)*100);
+      printf("       Twiki - %s, %s: | %s (%.0fto%.0fGeV) | %s_%s | %.1f+-%.1f\% |\n\n",AnaTag.Data(),wanted0.Data(),AnaObs.Data(),EPzMin,EPzMax,MCSource.Data(),MCSource2.Data(),bestX*100,(chiEHigh-bestX)*100);
 
     // mc truth if using mc as "data"
     if (DataSource.Contains("pythia")||DataSource.Contains("phojet")) {
@@ -257,6 +258,7 @@ void fit_shapes(TString AnaVersion="V012",
     }
 
     // === First Look what Default MC looks like compared to data or "data" ===
+    /*
     TCanvas * cEaddPzDefault = new TCanvas("cEaddPzDefault","cEaddPzDefault",600,600);
     vector<TH1D*> EaddEpPosHists;
     if (DataSource.Contains("data")) {
@@ -275,6 +277,7 @@ void fit_shapes(TString AnaVersion="V012",
 	EPzYMax);
     cEaddPzDefault->Print(Form("%s/%s_EaddEpPosDefault.gif",outdir.Data(),AnaTag.Data()));
     cEaddPzDefault->Print(Form("%s/%s_EaddEpPosDefault.eps",outdir.Data(),AnaTag.Data()));
+    */
 
     // === draw distributions with fitted parameters ===
     vector<TString> observs;
