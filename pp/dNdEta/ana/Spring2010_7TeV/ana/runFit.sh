@@ -7,7 +7,7 @@ fi
 
 # === Configure ===
 version=$1
-fitVersion=Fit2
+fitVersion=Fit4
 
 dataFile=../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root
 pythiaD6tFile=../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root
