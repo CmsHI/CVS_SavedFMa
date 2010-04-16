@@ -103,4 +103,5 @@
   cout << "Comb: All: " << hDFFitFracCombAll->GetMean()
     << "  rms: " << hDFFitFracCombAll->GetRMS() << endl;
   hDFFitFracCombAll->Draw();
+  cDFFitFracCombAll->Print("results_7TeV_all.gif");
 }
