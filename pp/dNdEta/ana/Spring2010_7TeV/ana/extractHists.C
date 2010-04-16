@@ -141,14 +141,6 @@ void extractHists(TString AnaVersion="testV010",
   // container for all declared histograms
   vector<TH1*> vh1;
   // some histogram properties
-  Double_t EPzYMax=0.035/(EPzMax/200), Chi2YMax=60;
-  if (doSel==4) {
-    EPzYMax=0.01/(EPzMax/200);
-    Chi2YMax=20;
-  }
-  if (doSel==10) {
-    EPzYMax=0.12/(EPzMax/200);
-  }
   const Int_t EPzNBINS=EPzMax/EPzBinSize;
   // hist x range for 2 bin fit
   Double_t EPzXbins[3] = {0,5,EPzMax};
