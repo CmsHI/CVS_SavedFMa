@@ -255,7 +255,7 @@ void fit_shapes(TString AnaVersion="testV010",
     // ===================== Draw Observables ===============
     //
     // Set some plotting paremeters
-    Double_t EPzYMax=0.035/(EPzMax/200), Chi2YMax=60;
+    Double_t EPzYMax=0.01+0.035/(EPzMax/180), Chi2YMax=60;
     if (doSel==4) {
       EPzYMax=0.01/(EPzMax/200);
       Chi2YMax=20;
@@ -289,7 +289,7 @@ void fit_shapes(TString AnaVersion="testV010",
     vector<Double_t> obsymax;
     observs.push_back("EaddEpPos"); obsymax.push_back(EPzYMax);
     observs.push_back("EvtEta"); obsymax.push_back(1);
-    observs.push_back("MinEPz"); obsymax.push_back(EPzYMax*1.3);
+    observs.push_back("MinEPz"); obsymax.push_back(EPzYMax*1.5);
     observs.push_back("EaddEpPos2Bin"); obsymax.push_back(EPzYMax);
 
     for (UInt_t i=0; i<observs.size(); ++i) {
