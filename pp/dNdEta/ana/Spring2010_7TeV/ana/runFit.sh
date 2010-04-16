@@ -7,7 +7,7 @@ fi
 
 # === Configure ===
 version=$1
-fitVersion=Fit4
+fitVersion=Fit5
 
 dataFile=../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root
 pythiaD6tFile=../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root
@@ -31,6 +31,8 @@ for doSel in 1; do #1 4 10; do
       if [ $MCSource == pythiaD6t ]; then mcF=$pythiaD6tFile; fi
       if [ $MCSource == pythiaAtlas ]; then mcF=$pythiaAtlasFile; fi
       if [ $MCSource == phojet ]; then mcF=$phojetFile; fi
+      if [ $MCSource == $DataSource ]; then continue; fi
+      echo $DataSource $MCSource
       # output log
       tag=${DataSource}_${MCSource}
       log=log/ana${version}_Mode${anaMode}_Sel${doSel}-${tag}_${fitVersion}.log
@@ -39,7 +41,7 @@ for doSel in 1; do #1 4 10; do
       root -b -q fit_shapes.C+\(\"$version\",\"$DataSource\",\"$dataF\",\"$MCSource\",\"$mcF\",\"$fitVersion\",\"EvtEta\",$doSel,$anaMode,0,200,5\) >> $log
       for obs in MinEPz EaddEpPos EsubEpNeg EaddEpPos2Bin EsubEpNeg2Bin; do
 	# different EPz ranges
-	for EPzMax in 100 200 300 600; do
+	for EPzMax in 100 200 300 600 5000; do
 	  root -b -q fit_shapes.C+\(\"$version\",\"$DataSource\",\"$dataF\",\"$MCSource\",\"$mcF\",\"$fitVersion\",\"$obs\",$doSel,$anaMode,0,$EPzMax,5\) >> $log
 	done
       done
