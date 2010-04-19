@@ -18,4 +18,4 @@ cp -v $run/diffractionAna/collbx_7TeV/*.C ana/
 cp -v $run/diffractionAna/collbx_7TeV/*.sh ana/
 
 # results
-cp -v -r $run/diffractionAna/collbx_7TeV/results/*.C ana/
+cp -v -r $run/diffractionAna/collbx_7TeV/results/*.C ana/results/
