@@ -57,7 +57,7 @@ alias rm='rm -i'
 # --clusters--
 alias cgate='ssh -Y frankma@cgate.mit.edu'
 alias dialup='ssh -Y frankma@x.dialup.mit.edu'
-alias lxplus='ssh -Y frankma@lxplus.cern.ch'
+alias lxplus='ssh -Y frankma@lxplus5.cern.ch'
 alias cmsusr5='ssh -Y frankma@cmsusr5.cern.ch'
 alias svmithi01='ssh -Y frankma@svmithi01.cern.ch'
 # env setup shortcuts
