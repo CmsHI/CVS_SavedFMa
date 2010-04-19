@@ -74,6 +74,54 @@
   cout << "Phojet - mean: " << hDFFitFracPhojet->GetMean()
     << "  rms: " << hDFFitFracPhojet->GetRMS() << endl;
 
+  // MC: PhojetPythiaAtlas
+  TCanvas * cDFFitFracPhojetPythiaAtlas = new TCanvas("cDFFitFracPhojetPythiaAtlas","cDFFitFracPhojetPythiaAtlas",600,600);
+  TH1D * hDFFitFracPhojetPythiaAtlas = new TH1D("hDFFitFracPhojetPythiaAtlas","PhojetPythiaAtlas;fitted DF frac;",100,0,100);
+  hDFFitFracPhojetPythiaAtlas->Fill(22.4);
+  hDFFitFracPhojetPythiaAtlas->Fill(21.8);
+  hDFFitFracPhojetPythiaAtlas->Fill(20.1);
+  hDFFitFracPhojetPythiaAtlas->Fill(17.2);
+  hDFFitFracPhojetPythiaAtlas->Fill(17.7);
+  hDFFitFracPhojetPythiaAtlas->Fill(25.6);
+  hDFFitFracPhojetPythiaAtlas->Fill(25.5);
+  hDFFitFracPhojetPythiaAtlas->Fill(23.6);
+  hDFFitFracPhojetPythiaAtlas->Fill(17.8);
+  hDFFitFracPhojetPythiaAtlas->Fill(13.7);
+  hDFFitFracPhojetPythiaAtlas->Fill(24.5);
+  hDFFitFracPhojetPythiaAtlas->Fill(25.2);
+  hDFFitFracPhojetPythiaAtlas->Fill(23.9);
+  hDFFitFracPhojetPythiaAtlas->Fill(18.4);
+  hDFFitFracPhojetPythiaAtlas->Fill(14.9);
+  hDFFitFracPhojetPythiaAtlas->Fill(19.1);
+  hDFFitFracPhojetPythiaAtlas->Fill(19.5);
+  hDFFitFracPhojetPythiaAtlas->Draw();
+  cout << "PhojetPythiaAtlas - mean: " << hDFFitFracPhojetPythiaAtlas->GetMean()
+    << "  rms: " << hDFFitFracPhojetPythiaAtlas->GetRMS() << endl;
+
+  // MC: PhojetPythiaD6t
+  TCanvas * cDFFitFracPhojetPythiaD6t = new TCanvas("cDFFitFracPhojetPythiaD6t","cDFFitFracPhojetPythiaD6t",600,600);
+  TH1D * hDFFitFracPhojetPythiaD6t = new TH1D("hDFFitFracPhojetPythiaD6t","PhojetPythiaD6t;fitted DF frac;",100,0,100);
+  hDFFitFracPhojetPythiaD6t->Fill(19.5);
+  hDFFitFracPhojetPythiaD6t->Fill(19.9);
+  hDFFitFracPhojetPythiaD6t->Fill(20.5);
+  hDFFitFracPhojetPythiaD6t->Fill(19.5);
+  hDFFitFracPhojetPythiaD6t->Fill(19.8);
+  hDFFitFracPhojetPythiaD6t->Fill(22.0);
+  hDFFitFracPhojetPythiaD6t->Fill(21.8);
+  hDFFitFracPhojetPythiaD6t->Fill(22.5);
+  hDFFitFracPhojetPythiaD6t->Fill(20.2);
+  hDFFitFracPhojetPythiaD6t->Fill(16.3);
+  hDFFitFracPhojetPythiaD6t->Fill(21.6);
+  hDFFitFracPhojetPythiaD6t->Fill(22.1);
+  hDFFitFracPhojetPythiaD6t->Fill(23.1);
+  hDFFitFracPhojetPythiaD6t->Fill(21.6);
+  hDFFitFracPhojetPythiaD6t->Fill(17.9);
+  hDFFitFracPhojetPythiaD6t->Fill(19.4);
+  hDFFitFracPhojetPythiaD6t->Fill(20.1);
+  hDFFitFracPhojetPythiaD6t->Draw();
+  cout << "PhojetPythiaD6t - mean: " << hDFFitFracPhojetPythiaD6t->GetMean()
+    << "  rms: " << hDFFitFracPhojetPythiaD6t->GetRMS() << endl;
+
   // Combine
   TCanvas * cDFFitFracComb = new TCanvas("cDFFitFracComb","cDFFitFracComb",600,600);
   TH1D * hDFFitFracComb = new TH1D("hDFFitFracComb","Phojet;fitted DF frac;",100,0,100);
