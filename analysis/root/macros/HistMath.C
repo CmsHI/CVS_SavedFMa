@@ -31,8 +31,12 @@ void normHist(TH1 * hin, Int_t type=1)
   if (type<10) {
     hin->Scale(1./hin->Integral());
   }
+  if (type<20) {
+    //cout << "Entries " << hin->GetEntries() << endl;
+    hin->Scale(1./hin->GetEntries());
+  }
 
-  if (type==1) {
+  if (type%10==1) {
     for (Int_t i=1; i<=hin->GetNbinsX(); ++i) {
       Double_t w = hin->GetBinWidth(i);
       Double_t h = hin->GetBinContent(i);
