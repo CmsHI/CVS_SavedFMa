@@ -59,8 +59,8 @@ void calcTrigEff(TTree * tree, TString Source, TCut baseSel,
 // === Main function ===
 void compare(int evtType = 0, int doSel = 1,
     const char * datafname="../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root",
-    const char * mcfname="../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root")
-    //const char * mc2fname="pixelTree_Phojet_MinBias_900GeV_d20100108.root")
+    const char * mcfname="../pixel_trees/mc/pixelTree_yilmaz-MinBiasATLAS_RECO_0332_v1.root",
+    const char * mc2fname="../pixel_trees/mc/pixelTree_yilmaz-MinBiasPhojet_RECO_0413_v1.root")
 {
   // top level info
   TString InspectTag = Form("Sel%d_type%d",doSel,evtType);
@@ -72,13 +72,13 @@ void compare(int evtType = 0, int doSel = 1,
   // get trees
   cout << "data: " << datafname << endl;
   cout << "mc1: " << mcfname << endl;
-  //cout << "mc2: " << mc2fname << endl;
+  /cout << "mc2: " << mc2fname << endl;
   TFile * dataFile = new TFile(datafname);
   TFile * mcFile = new TFile(mcfname);
-  //TFile * mc2File = new TFile(mc2fname);
+  /TFile * mc2File = new TFile(mc2fname);
   TTree * treeData; dataFile->GetObject("PixelTree",treeData);
   TTree * treeMC;   mcFile->GetObject("PixelTree",treeMC);
-  //TTree * treeMC2; mc2File->GetObject("PixelTree",treeMC2);
+  TTree * treeMC2; mc2File->GetObject("PixelTree",treeMC2);
   aliases_tree(treeData);
   aliases_tree(treeMC);
 
@@ -90,8 +90,8 @@ void compare(int evtType = 0, int doSel = 1,
   // sources
   vector<TString> source;
   source.push_back("data");
-  source.push_back("pythia");
-  //source.push_back("phojet");
+  source.push_back("pythiaAtlas");
+  source.push_back("phojet");
   // colors
   vector<Color_t> color;
   color.push_back(kRed);
@@ -99,13 +99,13 @@ void compare(int evtType = 0, int doSel = 1,
   color.push_back(kGreen-1);
   // observables
   vector<TString> obs;
+  vector<TString> obstitle;
   //obs.push_back("EvtEta");
   obs.push_back("SumEaddEpPos");
+  obstitle.push_back("#Sigma E+Pz (+HF)");
   //obs.push_back("EsubEpNeg");
   //obs.push_back("MinEPz");
-  vector<TString> obstitle;
-  //obstitle.push_back("#Sigma E+Pz (+HF)");
-  obstitle.push_back(";min{#Sigma E+Pz,#Sigma E-Pz};");
+  //obstitle.push_back(";min{#Sigma E+Pz,#Sigma E-Pz};");
 
   // event types
   vector<TString> etype;
@@ -129,7 +129,7 @@ void compare(int evtType = 0, int doSel = 1,
   // declare histograms
   printf("now declare hists\n");
   const Double_t EPzMin=0;
-  const Double_t EPzMax=600;
+  const Double_t EPzMax=1000;
   const Int_t EPzNBINS=EPzMax/5.;
   for (Int_t i=0; i<source.size(); ++i) {
     vh1.push_back(new TH1D(Form("hEvtEta_%s",source[i].Data()),";Event #eta;",100,-5,5));
@@ -139,7 +139,7 @@ void compare(int evtType = 0, int doSel = 1,
     vh1.push_back(new TH1D(Form("hEsubEpNeg_%s",source[i].Data()),";#Sigma E-Pz (HF-);",EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH2D(Form("hEPz_%s",source[i].Data()),";#Sigma E+Pz;E-Pz",EPzNBINS,EPzMin,EPzMax,EPzNBINS,EPzMin,EPzMax));
     vh1.push_back(new TH1D(Form("hVz_%s",source[i].Data()),";vz;",100,-20,20));
-    if (source[i]=="pythia"||source[i]=="phojet") {
+    if (source[i].Contains("pythia")||source[i].Contains("phojet")) {
       for (Int_t j=0; j<etype.size(); ++j) {
 	vh1.push_back(new TH1D(Form("hEvtEta_%s_%s",source[i].Data(),etype[j].Data()),";Event #eta;",100,-5,5));
 	vh1.push_back(new TH1D(Form("hEaddEp_%s_%s",source[i].Data(),etype[j].Data()),";#Sigma E+Pz;",EPzNBINS,EPzMin,EPzMax));
@@ -180,7 +180,7 @@ void compare(int evtType = 0, int doSel = 1,
   cout << "MC: " << TString(mcSel.Cut&&etypeCut[evtType]) << endl;
   cout << "  Events Selected: " << treeMC->GetEntries(mcSel.Cut) << endl;
   cout << "           " << etype[evtType] << ": " << treeMC->GetEntries(mcSel.Cut&&etypeCut[evtType]) << endl;
-  //cout << "MC2: " << TString(mcSel.Cut&&etypePhojCut[evtType]) << endl;
+  cout << "MC2: " << TString(mcSel.Cut&&etypePhojCut[evtType]) << endl;
   // for shape comparison
   /*
   cout << "draw: hEaddEp_pythia: " << treeMC->Draw("SumEaddEp>>hEaddEp_pythia",mcSel.Cut&&etypeCut[0],"E") << endl;
