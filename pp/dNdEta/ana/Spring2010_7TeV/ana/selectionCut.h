@@ -55,27 +55,27 @@ selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumi
    // halo veto + bit 34
    else if (selType==1) {
      evtSelection      = noHalo && "L1T[34]";
-     Tag	       = "Bit34";
+     Tag	       = "Bit34 + vtx";
    }
    // halo veto + bit 40
    else if (selType==2) {
      evtSelection      = noHalo && "L1T[40]";
-     Tag	       = "Bit40";
+     Tag	       = "Bit40 + vtx";
    }
    // halo veto + bit 41
    else if (selType==3) {
      evtSelection      = noHalo && "L1T[41]";
-     Tag	       = "Bit40";
+     Tag	       = "Bit41 + vtx";
    }
    // halo veto + Hf tower count
    else if (selType==4) {
      evtSelection      = noHalo && "L1T[34]" && hfCoinc;
-     Tag            = "HF Coincidence";
+     Tag            = "HF Coinc. + vtx";
    }
    // Diffractive only
    else if (selType==10) {
      evtSelection      = noHalo && "L1T[34]" && !hfCoinc;
-     Tag            = "HF Anti-Coincidence";
+     Tag            = "HF Anti-Coinc. + vtx";
    }
 
    if (!isMC) {
