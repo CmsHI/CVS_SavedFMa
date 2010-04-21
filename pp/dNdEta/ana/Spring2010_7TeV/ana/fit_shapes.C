@@ -186,7 +186,7 @@ void fit_shapes(TString AnaVersion="V012",
   printf("\n=========== Chi2 clac ================\n");
   Int_t N=100;
   Double_t maxTestFrac=0.5;
-  TCanvas * cChi2 = new TCanvas("cChi2","cChi2",600,600);
+  TCanvas * cChi2 = new TCanvas("cChi2","cChi2",500,550);
   TH1D * hChi2 = new TH1D("hChi2",Form(";%s Fraction;#chi^{2}",wanted0.Data()),N,0,maxTestFrac);
   hChi2->SetMinimum(0);
   //if (Chi2YMax>0) hChi2->SetMaximum(Chi2YMax);
@@ -258,26 +258,6 @@ void fit_shapes(TString AnaVersion="V012",
     }
 
     // === First Look what Default MC looks like compared to data or "data" ===
-    /*
-    TCanvas * cEaddPzDefault = new TCanvas("cEaddPzDefault","cEaddPzDefault",600,600);
-    vector<TH1D*> EaddEpPosHists;
-    if (DataSource.Contains("data")) {
-      EaddEpPosHists.push_back( (TH1D*)dataHistFile->FindObjectAny( Form("hEaddEpPos_%s",dataHistLabel.Data()) ) );
-    } else {
-      EaddEpPosHists.push_back( (TH1D*)dataHistFile->FindObjectAny( Form("hEaddEpPos_%s",(mcHistLabel+"_All").Data()) ) );
-    }
-    EaddEpPosHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("hEaddEpPos_%s_%s",mcHistLabel.Data(),wanted0.Data())) );
-    EaddEpPosHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("hEaddEpPos_%s_%s",mcHistLabel.Data(),wanted1.Data())) );
-    histDiffrChi2(
-	EaddEpPosHists,
-	anaMode,
-	mcTruthFrac,
-	-1,
-	2,
-	EPzYMax);
-    cEaddPzDefault->Print(Form("%s/%s_EaddEpPosDefault.gif",outdir.Data(),AnaTag.Data()));
-    cEaddPzDefault->Print(Form("%s/%s_EaddEpPosDefault.eps",outdir.Data(),AnaTag.Data()));
-    */
 
     // === draw distributions with fitted parameters ===
     vector<TString> observs;
@@ -298,7 +278,7 @@ void fit_shapes(TString AnaVersion="V012",
       obsHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_%s_%s",observs[i].Data(),mcHistLabel.Data(),wanted0.Data())) );
       obsHists.push_back( (TH1D*)shapes1File->FindObjectAny(Form("h%s_%s_%s",observs[i].Data(),mcHistLabel.Data(),wanted1.Data())) );
       // draw
-      TCanvas * cObs = new TCanvas("cObs","cObs",600,600);
+      TCanvas * cObs = new TCanvas("cObs","cObs",500,550);
       histDiffrChi2(
 	  obsHists,
 	  anaMode,
@@ -307,7 +287,7 @@ void fit_shapes(TString AnaVersion="V012",
 	  1,
 	  obsymax[i]);
       cObs->Print( Form("%s/%s_%s.gif",outdir.Data(),AnaTag.Data(),observs[i].Data()) );
-      cObs->Print( Form("%s/%s_%s.eps",outdir.Data(),AnaTag.Data(),observs[i].Data()) );
+      cObs->Print( Form("%s/%s_%s.pdf",outdir.Data(),AnaTag.Data(),observs[i].Data()) );
       delete cObs;
     }
   } // end of anaMode<2
