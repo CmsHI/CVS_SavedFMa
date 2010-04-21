@@ -99,7 +99,6 @@ void compare_simple(int doSel = 1, int mode=0,
   cout << "declared legend" << endl;
   leg2->Draw();
   c2->Print(Form("%s/%s_hVz.gif",outdir.Data(),InspectTag.Data()));
-  c2->Print(Form("%s/%s_hVz.eps",outdir.Data(),InspectTag.Data()));
   c2->Print(Form("%s/%s_hVz.pdf",outdir.Data(),InspectTag.Data()));
 
   // === Compare EPz
@@ -129,7 +128,6 @@ void compare_simple(int doSel = 1, int mode=0,
   cEPz->Update();
   leg2->Draw();
   cEPz->Print(Form("%s/%s_hEPz.gif",outdir.Data(),InspectTag.Data()));
-  cEPz->Print(Form("%s/%s_hEPz.eps",outdir.Data(),InspectTag.Data()));
   cEPz->Print(Form("%s/%s_hEPz.pdf",outdir.Data(),InspectTag.Data()));
 
   // === Compare EvtEta
@@ -159,6 +157,5 @@ void compare_simple(int doSel = 1, int mode=0,
   cEvtEta->Update();
   leg2->Draw();
   cEvtEta->Print(Form("%s/%s_hEvtEta.gif",outdir.Data(),InspectTag.Data()));
-  cEvtEta->Print(Form("%s/%s_hEvtEta.eps",outdir.Data(),InspectTag.Data()));
   cEvtEta->Print(Form("%s/%s_hEvtEta.pdf",outdir.Data(),InspectTag.Data()));
 }
