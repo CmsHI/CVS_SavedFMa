@@ -23,7 +23,7 @@ TH1D * integrateHist(TH1 * hin)
    return hout;
 }
 
-void normHist(TH1 * hin, Int_t type=1)
+void normHist(TH1 * hin, Int_t type)
 {
   // call sumw2 if hasn't been called
   if (hin->GetSumw2N()!=(hin->GetNbinsX()+2)) hin->Sumw2();
@@ -36,6 +36,10 @@ void normHist(TH1 * hin, Int_t type=1)
     hin->Scale(1./hin->GetEntries());
   }
 
+  // normalize bin width
+  if (type%10==0) {
+    hin->Scale(1./hin->GetBinWidth(1));
+  }
   if (type%10==1) {
     for (Int_t i=1; i<=hin->GetNbinsX(); ++i) {
       Double_t w = hin->GetBinWidth(i);
