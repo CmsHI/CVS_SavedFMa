@@ -296,7 +296,7 @@ void fit_shapes(TString AnaVersion="V012",
 	obsHists.push_back( (TH1D*)dataHistFile->FindObjectAny( Form("h%s_%s",observs[i].Data(),(mcHistLabel+"_All").Data()) ) );
       }
       obsHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_%s_%s",observs[i].Data(),mcHistLabel.Data(),wanted0.Data())) );
-      obsHists.push_back( (TH1D*)shapes0File->FindObjectAny(Form("h%s_%s_%s",observs[i].Data(),mcHistLabel.Data(),wanted1.Data())) );
+      obsHists.push_back( (TH1D*)shapes1File->FindObjectAny(Form("h%s_%s_%s",observs[i].Data(),mcHistLabel.Data(),wanted1.Data())) );
       // draw
       TCanvas * cObs = new TCanvas("cObs","cObs",600,600);
       histDiffrChi2(
