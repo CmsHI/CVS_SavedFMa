@@ -25,7 +25,7 @@ void compare_simple(int doSel = 1, int mode=0,
   TString InspectTag = Form("Sel%d_mode%d",doSel,mode);
   cout << "====== Inspect: " << InspectTag << endl;
   // mkdir dir for output
-  TString outdir=Form("plots/inspection");
+  TString outdir=Form("plots/inspection/V01X");
   gSystem->mkdir(outdir.Data(),kTRUE);
 
   // get trees
@@ -47,21 +47,37 @@ void compare_simple(int doSel = 1, int mode=0,
   selectionCut mcSel(1,doSel);
 
   // cuts
-  TCut type1Cut("evtType==92 || evtType==93 || evtType==94");
-  TCut type2Cut("evtType!=92 && evtType!=93 && evtType!=94");
-  TCut type1PhoCut("evtType==5 || evtType==6 || evtType==7 || evtType==4");
-  TCut type2PhoCut("evtType==1");
+  TCut typeCut,typePhoCut;
+  TString modeTag="Default";
+  if (mode==3) { // DF
+    typeCut = "evtType==92 || evtType==93 || evtType==94";
+    typePhoCut = "evtType==5 || evtType==6 || evtType==7 || evtType==4";
+    modeTag="DF";
+  }
+  if (mode==4) { // ND
+    typeCut = "evtType!=92 && evtType!=93 && evtType!=94";
+    typePhoCut = "evtType==1";
+    modeTag="ND";
+  }
 
 
-  // draw from tree
-  TCanvas * c2 = new TCanvas("c2","c2",500,500);
+  // Compare Vz
+  TCanvas * c2 = new TCanvas("c2","c2",500,550);
+  cout << "====== Compare Vz =====" << endl;
+  cout << "- Cuts: " << endl;
+  cout << "  * Data: " << TString(dataSel.Cut) << endl;
+  cout << "  * MC1:  " << TString(mcSel.Cut&&typeCut) << endl;
+  cout << "  * MC2:  " << TString(mcSel.Cut&&typePhoCut) << endl;
   TString VzBins("(100,-20,20)");
   treeData->Draw(Form("vz[1]>>hVz_data%s",VzBins.Data()),dataSel.Cut,"");
-  treeMC->Draw(Form("vz[1]-0.4847>>hVz_MC1%s",VzBins.Data()),mcSel.Cut,"same");
-  treeMC2->Draw(Form("vz[1]-0.4847>>hVz_MC2%s",VzBins.Data()),mcSel.Cut,"same");
+  treeMC->Draw(Form("vz[1]-0.4847>>hVz_MC1%s",VzBins.Data()),mcSel.Cut&&typeCut,"same");
+  treeMC2->Draw(Form("vz[1]-0.4847>>hVz_MC2%s",VzBins.Data()),mcSel.Cut&&typePhoCut,"same");
   normHist(hVz_data,11);
   normHist(hVz_MC1,11);
   normHist(hVz_MC2,11);
+  hVz_data->SetTitle(";vz [cm];pdf");
+  hVz_data->SetMinimum(0);
+  hVz_data->SetMaximum(0.25);
   hVz_data->SetMarkerStyle(kFullCircle);
   hVz_MC1->SetMarkerStyle(kOpenCircle);
   hVz_MC2->SetMarkerStyle(kOpenSquare);
@@ -71,16 +87,48 @@ void compare_simple(int doSel = 1, int mode=0,
   hVz_MC2->SetLineColor(kBlue);
   c2->Update();
   // declare legend
-  TLegend *leg2 = new TLegend(0.595,0.8,0.845,0.927,NULL,"brNDC");
+  TLegend *leg2 = new TLegend(0.482,0.763,0.887,0.936,NULL,"brNDC");
   leg2->SetFillColor(0);
   leg2->SetBorderSize(0);
-  leg2->SetTextSize(0.03);
+  leg2->SetTextSize(0.035);
   leg2->AddEntry("","Selection with","");
   leg2->AddEntry("",dataSel.Tag.Data(),"");
   leg2->AddEntry(hVz_data,"Data 7TeV (Run 132440)","p");
-  leg2->AddEntry(hVz_MC1,"PYTHIA Atlas","p");
-  leg2->AddEntry(hVz_MC2,"PHOJET","p");
+  leg2->AddEntry(hVz_MC1,Form("PYTHIA Atlas %s",modeTag.Data()),"p");
+  leg2->AddEntry(hVz_MC2,Form("PHOJET %s",modeTag.Data()),"p");
   cout << "declared legend" << endl;
+  leg2->Draw();
   c2->Print(Form("%s/%s_hVz.gif",outdir.Data(),InspectTag.Data()));
   c2->Print(Form("%s/%s_hVz.eps",outdir.Data(),InspectTag.Data()));
+  c2->Print(Form("%s/%s_hVz.pdf",outdir.Data(),InspectTag.Data()));
+
+  // === Compare EPz
+  TCanvas * cEPz = new TCanvas("cEPz","cEPz",500,550);
+  cEPz->SetLogy();
+  cout << "====== Compare EPz =====" << endl;
+  cout << "- Cuts: " << endl;
+  cout << "  * Data: " << TString(dataSel.Cut) << endl;
+  cout << "  * MC1:  " << TString(mcSel.Cut&&typeCut) << endl;
+  cout << "  * MC2:  " << TString(mcSel.Cut&&typePhoCut) << endl;
+  TString EPzBins("(100,0,1000)");
+  treeData->Draw(Form("SumEaddEp>>hEPz_data%s",EPzBins.Data()),dataSel.Cut,"");
+  treeMC->Draw(Form("SumEaddEp>>hEPz_MC1%s",EPzBins.Data()),mcSel.Cut&&typeCut,"same");
+  treeMC2->Draw(Form("SumEaddEp>>hEPz_MC2%s",EPzBins.Data()),mcSel.Cut&&typePhoCut,"same");
+  normHist(hEPz_data,10);
+  normHist(hEPz_MC1,10);
+  normHist(hEPz_MC2,10);
+  hEPz_data->SetTitle(";#sum_{HF+}#left(E+p_{z}#right) [GeV];pdf");
+  hEPz_data->SetMarkerStyle(kFullCircle);
+  hEPz_data->SetTitleOffset(1.35,"X");
+  hEPz_MC1->SetMarkerStyle(kOpenCircle);
+  hEPz_MC2->SetMarkerStyle(kOpenSquare);
+  hEPz_MC1->SetMarkerColor(kRed);
+  hEPz_MC2->SetMarkerColor(kBlue);
+  hEPz_MC1->SetLineColor(kRed);
+  hEPz_MC2->SetLineColor(kBlue);
+  cEPz->Update();
+  leg2->Draw();
+  cEPz->Print(Form("%s/%s_hEPz.gif",outdir.Data(),InspectTag.Data()));
+  cEPz->Print(Form("%s/%s_hEPz.eps",outdir.Data(),InspectTag.Data()));
+  cEPz->Print(Form("%s/%s_hEPz.pdf",outdir.Data(),InspectTag.Data()));
 }
