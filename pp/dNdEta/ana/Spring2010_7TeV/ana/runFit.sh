@@ -1,13 +1,7 @@
 #!/bin/bash -
-if [ $# -eq 0 ]; then
-  echo Usage
-  echo "  $0 <Version>"
-  exit 1
-fi
-
 # === Configure ===
-version=$1
-fitVersion=Fit10
+version=V012
+fitVersion=Fit11
 
 dataFile=../pixel_trees/collbx/pixelTree_run132440_PromptReco-v7_veryloosecuts_v4.root
 pythiaD6tFile=../pixel_trees/mc/pixelTree_pythiaD6t_MB7TeV_356ReRecov1_1M.root
@@ -21,7 +15,8 @@ anaMode=0
 
 # === run ===
 for doSel in 1; do #1 4 10; do
-  for DataSource in data pythiaAtlas phojet pythiaD6t; do
+  #for DataSource in data pythiaAtlas phojet pythiaD6t; do
+  for DataSource in data; do
     if [ $DataSource == data ]; then dataF=$dataFile; fi
     if [ $DataSource == pythiaD6t ]; then dataF=$pythiaD6tFile; fi
     if [ $DataSource == pythiaAtlas ]; then dataF=$pythiaAtlasFile; fi
