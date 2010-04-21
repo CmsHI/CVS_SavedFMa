@@ -131,4 +131,34 @@ void compare_simple(int doSel = 1, int mode=0,
   cEPz->Print(Form("%s/%s_hEPz.gif",outdir.Data(),InspectTag.Data()));
   cEPz->Print(Form("%s/%s_hEPz.eps",outdir.Data(),InspectTag.Data()));
   cEPz->Print(Form("%s/%s_hEPz.pdf",outdir.Data(),InspectTag.Data()));
+
+  // === Compare EvtEta
+  TCanvas * cEvtEta = new TCanvas("cEvtEta","cEvtEta",500,550);
+  cout << "====== Compare EvtEta =====" << endl;
+  cout << "- Cuts: " << endl;
+  cout << "  * Data: " << TString(dataSel.Cut) << endl;
+  cout << "  * MC1:  " << TString(mcSel.Cut&&typeCut) << endl;
+  cout << "  * MC2:  " << TString(mcSel.Cut&&typePhoCut) << endl;
+  TString EvtEtaBins("(100,-6,6)");
+  treeData->Draw(Form("evtEta>>hEvtEta_data%s",EvtEtaBins.Data()),dataSel.Cut,"");
+  treeMC->Draw(Form("evtEta>>hEvtEta_MC1%s",EvtEtaBins.Data()),mcSel.Cut&&typeCut,"same");
+  treeMC2->Draw(Form("evtEta>>hEvtEta_MC2%s",EvtEtaBins.Data()),mcSel.Cut&&typePhoCut,"same");
+  normHist(hEvtEta_data,10);
+  normHist(hEvtEta_MC1,10);
+  normHist(hEvtEta_MC2,10);
+  hEvtEta_data->SetTitleOffset(1.35,"X");
+  hEvtEta_data->SetMinimum(0);
+  hEvtEta_data->SetMaximum(1.2);
+  hEvtEta_data->SetMarkerStyle(kFullCircle);
+  hEvtEta_MC1->SetMarkerStyle(kOpenCircle);
+  hEvtEta_MC2->SetMarkerStyle(kOpenSquare);
+  hEvtEta_MC1->SetMarkerColor(kRed);
+  hEvtEta_MC2->SetMarkerColor(kBlue);
+  hEvtEta_MC1->SetLineColor(kRed);
+  hEvtEta_MC2->SetLineColor(kBlue);
+  cEvtEta->Update();
+  leg2->Draw();
+  cEvtEta->Print(Form("%s/%s_hEvtEta.gif",outdir.Data(),InspectTag.Data()));
+  cEvtEta->Print(Form("%s/%s_hEvtEta.eps",outdir.Data(),InspectTag.Data()));
+  cEvtEta->Print(Form("%s/%s_hEvtEta.pdf",outdir.Data(),InspectTag.Data()));
 }
