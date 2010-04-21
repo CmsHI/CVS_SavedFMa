@@ -30,8 +30,7 @@ void normHist(TH1 * hin, Int_t type)
   // Normalize by area
   if (type<10) {
     hin->Scale(1./hin->Integral());
-  }
-  if (type<20) {
+  } else if (type<20) {
     //cout << "Entries " << hin->GetEntries() << endl;
     hin->Scale(1./hin->GetEntries());
   }
