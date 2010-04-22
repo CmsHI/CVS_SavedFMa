@@ -32,7 +32,7 @@
    gStyle->SetTitleXSize(.055);
    gStyle->SetTitleYSize(.055);
    gStyle->SetTitleXOffset(1.0);
-   gStyle->SetTitleYOffset(1.6);
+   gStyle->SetTitleYOffset(1.4);
    gStyle->SetLabelSize(0.045,"XYZ");
    gStyle->SetLabelOffset(0.01,"X");
    gStyle->SetLabelOffset(0.01,"Y");
@@ -41,11 +41,11 @@
    gStyle->SetHistFillStyle(0);
    gStyle->SetHistLineColor(1);
    gStyle->SetHistLineStyle(0);
-   gStyle->SetHistLineWidth(1);
+   gStyle->SetHistLineWidth(3);
    gStyle->SetEndErrorSize(0);
    gStyle->SetErrorX(0);  
    gStyle->SetMarkerStyle(20);
-   gStyle->SetMarkerSize(1.25);
+   gStyle->SetMarkerSize(1);
    gStyle->SetOptFit(1111);
    gStyle->SetStatColor(0);
    gStyle->SetStatBorderSize(1);
