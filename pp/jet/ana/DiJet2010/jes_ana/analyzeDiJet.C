@@ -33,6 +33,7 @@
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 #include "CondFormats/JetMETObjects/interface/CombinedJetCorrector.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #endif
 
 #include "DataFormats/Math/interface/LorentzVector.h"
@@ -114,7 +115,7 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
   fwlite::ChainEvent event(fileNames);
 
   //----- output file -----
-  TFile outFile("djtree_JEC_Summer09_7TeV_ReReco332.root", "recreate");
+  TFile * outFile = new TFile("djtree_JEC_Summer09_7TeV_ReReco332.root", "recreate");
   TTree * dijetTree = new TTree("djtree","dijet tree");
   jetana::TreeDiJetEventData jd_;
   jd_.SetTree(dijetTree);
@@ -125,7 +126,8 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
   unsigned int iEvent=0;
   int nPreSelEvt=0;
   int nDJEvt=0;
-  for(event.toBegin(); !event.atEnd(); ++event, ++iEvent){
+  int maxEvents=10000000;
+  for(event.toBegin(); !event.atEnd() && iEvent<maxEvents; ++event, ++iEvent){
     // clear event data class
     jd_.Clear();
 
@@ -285,6 +287,18 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
       jd_.alpet_		= AwGJet->pt();
       jd_.alpeta_		= AwGJet->eta();
       jd_.alpphi_		= AwGJet->phi();
+
+      // parton
+      const reco::GenParticle * NrPartn = (*jets)[iNear].genParton();
+      const reco::GenParticle * AwPartn = (*jets)[iAway].genParton();
+      if (NrPartn && AwPartn) {
+	//cout << "Nr GenParton: id|pt - " << NrPartn->pdgId() << "|" << NrPartn->pt() << endl;
+	//cout << "Aw GenParton: id|pt - " << AwPartn->pdgId() << "|" << AwPartn->pt() << endl;
+	jd_.nlpstat_	        = NrPartn->status();
+	jd_.nlpid_	        = NrPartn->pdgId();
+	jd_.alpstat_	        = AwPartn->status();
+	jd_.alpid_	        = AwPartn->pdgId();
+      }
     }
 
     // print
@@ -355,7 +369,10 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
   cout << "Number of dijet pre-selected : "<<nDJEvt<<endl;
 
   // write to output file
-  outFile.Write();
+  outFile->Write();
+  /*
+  outFile.cd(); outFile.mkdir("ana"); outFile.cd("ana");
+  dijetTree->Write();
   outFile.cd(); outFile.mkdir("evt"); outFile.cd("evt");
   hRunLumi->Write();
   hL1TechBits->Write();
@@ -390,9 +407,10 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
   hTrkPt->Write();
   hTrkEta->Write();
   hTrkPhi->Write();
+  */
   
-  outFile.ls();
-  outFile.Close();
+  outFile->ls();
+  outFile->Close();
 
   // free allocated space
   delete hRunLumi;
