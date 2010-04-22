@@ -1,6 +1,9 @@
+working dir: /d01/frankma/scratch/pp/dNdEta/anaCMSSW_3_5_6/diffractionAna
 === Latest Fit ===
-- V012_Fit10
-  * Take DF and ND shapes separately from phojet and pythia
+- V012_Fit11
+  * Correctly plots the fit for mixed shape fits.
+  * numbers: collbx_7TeV/log/anaV012_Mode0_Fit11_Sel1-data_*
+  * plots: collbx_7TeV/plots/V012/Fit11/data
 
 === Histories ===
 - V2
@@ -14,3 +17,5 @@
   * Uses extractHists.C + fit_shapes.C
 - V012
   * Add EPz2Bin fit
+- V012_Fit10
+  * Take DF and ND shapes separately from phojet and pythia
