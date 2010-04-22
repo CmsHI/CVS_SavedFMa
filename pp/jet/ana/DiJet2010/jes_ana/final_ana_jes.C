@@ -49,7 +49,7 @@ void final_ana_jes(int doMC=1,
   Events->Draw("jet.p4().pt()>>hPt1",evtSelInc,"same");
   cPt1->Print("plots/cPt1.gif");
 
-  TProfile * hJes = new TProfile("hJes","jes",20,85,115);
+  TProfile * hJes = new TProfile("hJes","jes",25,85,110);
   hJes->SetMinimum(0);
   hJes->SetMaximum(1.2);
   hJes->SetTitle(";p_{T}^{gen jet};p_{T}^{reco jet}/p_{T}^{gen jet}");
@@ -82,9 +82,7 @@ void final_ana_jes(int doMC=1,
   cDPhi->Print("plots/cDPhi.gif");
 
   //  - jes -
-  TProfile * hDJesNr = new TProfile("hDJesNr","jes",20,85,115);
-  hDJesNr->SetMinimum(0);
-  hDJesNr->SetMaximum(1.2);
+  TProfile * hDJesNr = (TProfile*)hJes->Clone("hDJesNr");
   hDJesNr->SetMarkerColor(kRed);
   hDJesNr->SetMarkerStyle(kOpenCircle);
   hDJesNr->SetTitle(";p_{T}^{gen jet};p_{T}^{reco jet}/p_{T}^{gen jet}");
