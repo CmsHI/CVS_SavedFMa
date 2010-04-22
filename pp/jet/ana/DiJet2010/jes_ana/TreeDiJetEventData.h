@@ -230,6 +230,8 @@ namespace jetana
     // jet
     nljet_	  = -99;
     aljet_	  = -99;
+    alpid_	  = 0;
+    alpstat_	  = -99;
     nlpet_	  = -99;
     alpet_	  = -99;
     // jet constituents
