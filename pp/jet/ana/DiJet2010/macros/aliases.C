@@ -8,6 +8,7 @@ void aliases(TTree * Events)
 
   // mc
   Events->SetAlias("gjet","jet.genJet()");
+  Events->SetAlias("pjet","jet.genParton()");
 }
 
 void drawJes(TTree * Events)
