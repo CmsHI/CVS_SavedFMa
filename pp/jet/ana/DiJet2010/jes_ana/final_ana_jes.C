@@ -5,6 +5,7 @@
 #include "TCanvas.h"
 #include "TProfile.h"
 #include "TCut.h"
+#include "TLegend.h"
 #include "../macros/aliases.C"
 using namespace std;
 
@@ -65,51 +66,56 @@ void final_ana_jes(int doMC=1,
   cout << "Events:" << endl;
   cout << "- with none-fake vtx: " << numPreSelEvtl << endl;
 
-  TCut evtSelDj("nlpet>80 && nlpet<120 && alpet>70");
-  TCut evtSelDj2("nlpet>80 && nlpet<120 && alpet>70 && jdphi>3.0");
+  //  - selection -
+  TCut evtSelDj("nlpet>80 && nlpet<120 && alpet>80");
+  TCut evtSelDj2("nlpet>80 && nlpet<120 && alpet>80 && jdphi>3.0");
   Int_t numSelEvt1 = djtree->GetEntries(evtSelDj);
   cout << "- Passing sel: " << numSelEvt1 << endl;
   Int_t numSelEvt2 = djtree->GetEntries(evtSelDj2);
   cout << "- Passing diphi sel: " << numSelEvt2 << endl;
 
-  TCanvas * cDPhi2 = new TCanvas("cDPhi2","cDPhi2",500,500);
-  TH1D * hDPhi2 = new TH1D("hDPhi2","jdphi",50,0,3.14);
-  hDPhi2->SetTitle(";reco jet d #phi;");
-  djtree->Draw("jdphi>>hDPhi2",evtSelDj);
-  cDPhi2->Print("plots/cDPhi2.gif");
+  //  - dphi -
+  TCanvas * cDPhi = new TCanvas("cDPhi","cDPhi",500,500);
+  TH1D * hDPhi = new TH1D("hDPhi","jdphi",50,0,3.14);
+  hDPhi->SetTitle(";reco jet d #phi;");
+  djtree->Draw("jdphi>>hDPhi",evtSelDj);
+  cDPhi->Print("plots/cDPhi.gif");
 
-  TProfile * hDJes = new TProfile("hDJes","jes",20,85,115);
-  hDJes->SetMinimum(0);
-  hDJes->SetMaximum(1.2);
-  hDJes->SetMarkerColor(kRed);
-  hDJes->SetMarkerStyle(kOpenCircle);
-  hDJes->SetTitle(";p_{T}^{gen jet};p_{T}^{reco jet}/p_{T}^{gen jet}");
-  TCanvas * cDJes = new TCanvas("cDJes","cDJes",500,500);
-  djtree->Draw("nljet/nlpet:nlpet>>hDJes",evtSelDj);
-  //djtree->Draw("aljet/alpet:alpet>>+hDJes",evtSelDj);
+  //  - jes -
+  TProfile * hDJesNr = new TProfile("hDJesNr","jes",20,85,115);
+  hDJesNr->SetMinimum(0);
+  hDJesNr->SetMaximum(1.2);
+  hDJesNr->SetMarkerColor(kRed);
+  hDJesNr->SetMarkerStyle(kOpenCircle);
+  hDJesNr->SetTitle(";p_{T}^{gen jet};p_{T}^{reco jet}/p_{T}^{gen jet}");
+  TCanvas * cDJesNr = new TCanvas("cDJesNr","cDJesNr",500,500);
+  djtree->Draw("nljet/nlpet:nlpet>>hDJesNr",evtSelDj);
 
-  TProfile * hDJes2 = new TProfile("hDJes2","jes",20,85,115);
-  hDJes2->SetMinimum(0);
-  hDJes2->SetMaximum(1.2);
-  hDJes2->SetMarkerColor(kBlue);
-  hDJes2->SetMarkerStyle(kOpenSquare);
-  hDJes2->SetTitle(";p_{T}^{gen jet};p_{T}^{reco jet}/p_{T}^{gen jet}");
-  TCanvas * cDJes2 = new TCanvas("cDJes2","cDJes2",500,500);
-  djtree->Draw("nljet/nlpet:nlpet>>hDJes2",evtSelDj2);
-  //djtree->Draw("aljet/alpet:alpet>>+hDJes2",evtSelDj2);
+  TProfile * hDJes2Nr = (TProfile*)hDJesNr->Clone("hDJes2Nr");
+  hDJes2Nr->SetMarkerColor(kBlue);
+  hDJes2Nr->SetMarkerStyle(kOpenSquare);
+  TCanvas * cDJes2Nr = new TCanvas("cDJes2Nr","cDJes2Nr",500,500);
+  djtree->Draw("nljet/nlpet:nlpet>>hDJes2Nr",evtSelDj2);
+
+  TProfile * hDJesAw = (TProfile*)hDJesNr->Clone("hDJesAw");
+  hDJesAw->SetMarkerColor(kBlue);
+  TCanvas * cDJesAw = new TCanvas("cDJesAw","cDJesAw",500,500);
+  djtree->Draw("aljet/alpet:alpet>>hDJesAw",evtSelDj);
 
   // === Final Plots ===
   TCanvas * cFinalJes = new TCanvas("cFinalJes","cFinalJes",500,500);
   hJes->Draw("E");
-  hDJes->Draw("same E");
-  hDJes2->Draw("same E");
+  hDJesNr->Draw("same E");
+  //hDJes2Nr->Draw("same E");
+  hDJesAw->Draw("same E");
   TLegend *leg2 = new TLegend(0.605,0.216,0.905,0.369,NULL,"brNDC");
   leg2->SetFillColor(0);
   leg2->SetBorderSize(0);
   leg2->SetTextSize(0.03);
   leg2->AddEntry(hJes,"Incl. Jets","p");
-  leg2->AddEntry(hDJes,"Di-Jets, Near Jet","p");
-  leg2->AddEntry(hDJes2,"Di-Jets d#phi>3, Near Jet","p");
+  leg2->AddEntry(hDJesNr,"Di-Jets, Near Jet","p");
+  //leg2->AddEntry(hDJes2Nr,"Di-Jets d#phi>3, Near Jet","p");
+  leg2->AddEntry(hDJesAw,"Di-Jets, Away Jet","p");
   leg2->Draw();
   cFinalJes->Print("plots/cFinalJes.gif");
 }
