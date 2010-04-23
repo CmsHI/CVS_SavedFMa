@@ -10,6 +10,7 @@
 using namespace std;
 
 void final_ana_jes(int doMC=1,
+    const char * JecType = "abs",
     const char * inFile0Name="../outputs/jetSkimRelValQCD_Pt_80_120_sw354-JEC_Summer09_7TeV_ReReco332.root",
     const char * inFile1Name="djtree_JEC_Summer09_7TeV_ReReco332.root")
 {
@@ -20,7 +21,7 @@ void final_ana_jes(int doMC=1,
   //TFile * inFile0 = new TFile(inFile0Name);
   //TFile * inFile1 = new TFile(inFile1Name);
   TFile * inFile0 = new TFile("../outputs/jetSkimRelValQCD_Pt_80_120_sw354-JEC_Summer09_7TeV_ReReco332.root");
-  TFile * inFile1 = new TFile("djtree_JEC_Summer09_7TeV_ReReco332.root");
+  TFile * inFile1 = new TFile(Form("djtree_JEC_Summer09_7TeV_ReReco332_%s.root",JecType));
   TTree * Events; inFile0->GetObject("Events",Events);
   TTree * djtree; inFile1->GetObject("djtree",djtree);
   aliases(Events);
@@ -84,6 +85,7 @@ void final_ana_jes(int doMC=1,
   //  - jes -
   TProfile * hDJesNr = (TProfile*)hJes->Clone("hDJesNr");
   hDJesNr->SetMarkerColor(kRed);
+  hDJesNr->SetLineColor(kRed);
   hDJesNr->SetMarkerStyle(kOpenCircle);
   hDJesNr->SetTitle(";p_{T}^{gen jet};p_{T}^{reco jet}/p_{T}^{gen jet}");
   TCanvas * cDJesNr = new TCanvas("cDJesNr","cDJesNr",500,500);
@@ -91,6 +93,7 @@ void final_ana_jes(int doMC=1,
 
   TProfile * hDJes2Nr = (TProfile*)hDJesNr->Clone("hDJes2Nr");
   hDJes2Nr->SetMarkerColor(kBlue);
+  hDJes2Nr->SetLineColor(kBlue);
   hDJes2Nr->SetMarkerStyle(kOpenSquare);
   TCanvas * cDJes2Nr = new TCanvas("cDJes2Nr","cDJes2Nr",500,500);
   djtree->Draw("nljet/nlpet:nlpet>>hDJes2Nr",evtSelDj2);
@@ -100,7 +103,7 @@ void final_ana_jes(int doMC=1,
   TCanvas * cDJesAw = new TCanvas("cDJesAw","cDJesAw",500,500);
   djtree->Draw("aljet/alpet:alpet>>hDJesAw",evtSelDj);
 
-  // === Final Plots ===
+  // === Final Jes Plots ===
   TCanvas * cFinalJes = new TCanvas("cFinalJes","cFinalJes",500,500);
   hJes->Draw("E");
   hDJesNr->Draw("same E");
