@@ -228,7 +228,11 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
     //
     if (NearEtMax>0) {
       const pat::Jet & NrJet = (*jets)[iNear];
-      anajets.push_back(math::PtEtaPhiMLorentzVectorF(NrJet.pt(),NrJet.eta(),NrJet.phi(),NrJet.mass()));
+      //anajets.push_back(math::PtEtaPhiMLorentzVectorF(NrJet.pt(),NrJet.eta(),NrJet.phi(),NrJet.mass()));
+      //Double_t NrPt = (*jets)[iNear].correctedP4("abs").pt();
+      //Double_t NrPt = (*jets)[iNear].correctedP4("had","uds").pt();
+      Double_t NrPt = (*jets)[iNear].correctedP4("part","uds").pt();
+      anajets.push_back(math::PtEtaPhiMLorentzVectorF(NrPt,NrJet.eta(),NrJet.phi(),NrJet.mass()));
       if (doJEC) anajets[0] *= JEC->getCorrection(NrJet.pt(),NrJet.eta(),NrJet.energy());
     }
 
@@ -252,7 +256,11 @@ void analyzeDiJet(int doMC=1, int verbosity=1){
     }
     if (AwayEtMax>0) {
       const pat::Jet & AwJet = (*jets)[iAway];
-      anajets.push_back(math::PtEtaPhiMLorentzVectorF(AwJet.pt(),AwJet.eta(),AwJet.phi(),AwJet.mass()));
+      //anajets.push_back(math::PtEtaPhiMLorentzVectorF(AwJet.pt(),AwJet.eta(),AwJet.phi(),AwJet.mass()));
+      //Double_t AwPt = (*jets)[iAway].correctedP4("abs").pt();
+      //Double_t AwPt = (*jets)[iAway].correctedP4("had","glu").pt();
+      Double_t AwPt = (*jets)[iAway].correctedP4("part","glu").pt();
+      anajets.push_back(math::PtEtaPhiMLorentzVectorF(AwPt,AwJet.eta(),AwJet.phi(),AwJet.mass()));
       if (doJEC) anajets[1] *= JEC->getCorrection(AwJet.pt(),AwJet.eta(),AwJet.energy());
     }
 
