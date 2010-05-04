@@ -4,7 +4,7 @@ import FWCore.ParameterSet.Config as cms
 from PhysicsTools.PatAlgos.patHeavyIonSequences_cff import *
 
 # calo
-akPu5corr = process.patJetCorrFactors.clone(
+akPu5corr = patJetCorrFactors.clone(
    jetSource = cms.InputTag("akPu5CaloJets")
 )
 
