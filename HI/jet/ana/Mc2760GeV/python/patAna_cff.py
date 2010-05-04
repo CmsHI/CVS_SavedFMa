@@ -27,16 +27,3 @@ akPu5PartonMatch = patJetPartonMatch.clone(
    matched = cms.InputTag("hiGenParticles")
 )
 
-# define pat producers
-patJets.addJetCorrFactors = True
-patJets.addGenPartonMatch   = True
-patJets.addJetID            = False
-patJets.addGenJetMatch      = True
-patJets.embedGenJetMatch    = True
-
-akPu5patJets = patJets.clone(
-   jetSource  = cms.InputTag("akPu5CaloJets"),
-   genJetMatch = cms.InputTag("akPu5match"),
-   genPartonMatch =  cms.InputTag("akPu5PartonMatch"),
-   jetCorrFactorsSource = cms.VInputTag(cms.InputTag("akPu5corr"))
-)

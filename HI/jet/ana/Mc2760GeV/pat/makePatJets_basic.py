@@ -10,54 +10,21 @@ process.maxEvents = cms.untracked.PSet(
       input = cms.untracked.int32(10)
       )
 
+# define ana modules
+process.load('ana.Mc2760GeV.patAna_cff')
+
+# define pat producers
 process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
 from PhysicsTools.PatAlgos.tools.heavyIonTools import *
 configureHeavyIons(process)
-
 from PhysicsTools.PatAlgos.tools.jetTools import *
 switchJECSet( process, "Summer09_7TeV_ReReco332")
 
-# calo
-#process.ak5corr = process.patJetCorrFactors.clone()
-#process.ak5corr.jetSource = cms.InputTag("akFastPu5CaloJets")
-#process.ak5corr.corrLevels.L2Relative = "L2Relative_AK5Calo"
-#process.ak5corr.corrLevels.L3Absolute = "L3Absolute_AK5Calo"
-process.akPu5corr = process.patJetCorrFactors.clone(
-   jetSource = cms.InputTag("akPu5CaloJets")
-)
-
-# mc inputs
-process.ak5clean = process.heavyIonCleanedGenJets.clone()
-process.ak5clean.src = cms.untracked.string('ak5HiGenJets')
-from PhysicsTools.JetMCAlgos.SelectPartons_cff import myPartons
-process.partons = myPartons.clone(
-   src = cms.InputTag("hiGenParticles")
-)
-process.heavyIonCleanedPartons = cms.EDProducer('HiPartonCleaner',
-   src    = cms.untracked.string('partons'),
-   deltaR = cms.untracked.double(0.25),
-   ptCut  = cms.untracked.double(20),
-   createNewCollection = cms.untracked.bool(True),
-   fillDummyEntries = cms.untracked.bool(True)
-)
-
-# matching
-process.akPu5match = process.patJetGenJetMatch.clone(
-   src = cms.InputTag("akPu5CaloJets"),
-   matched = cms.InputTag("ak5clean")
-)
-process.akPu5PartonMatch = process.patJetPartonMatch.clone(
-   src = cms.InputTag("akPu5CaloJets"),
-   matched = cms.InputTag("hiGenParticles")
-)
-
-# pat settings
 process.patJets.addJetCorrFactors = True
 process.patJets.addGenPartonMatch   = True
 process.patJets.addJetID            = False
 process.patJets.addGenJetMatch      = True
 process.patJets.embedGenJetMatch    = True
-        
 process.akPu5patJets = process.patJets.clone(
    jetSource  = cms.InputTag("akPu5CaloJets"),
    genJetMatch = cms.InputTag("akPu5match"),
@@ -82,7 +49,7 @@ process.output = cms.OutputModule("PoolOutputModule",
 
 process.cleaning = cms.Sequence(
    (process.partons *
-      #process.heavyIonCleanedPartons *
+   #process.heavyIonCleanedPartons *
    process.ak5clean)
 )
 
