@@ -27,3 +27,10 @@ akPu5PartonMatch = patJetPartonMatch.clone(
    matched = cms.InputTag("hiGenParticles")
 )
 
+# sequences
+genana = cms.Sequence(
+   partons *
+   #heavyIonCleanedPartons *
+   ak5clean
+)
+

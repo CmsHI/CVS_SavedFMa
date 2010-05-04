@@ -53,12 +53,6 @@ process.output = cms.OutputModule("PoolOutputModule",
     )
 
 # === Final Paths ===
-process.cleaning = cms.Sequence(
-   (process.partons *
-   #process.heavyIonCleanedPartons *
-   process.ak5clean)
-)
-
 process.ak5pu_patseq = cms.Sequence(
    process.akPu5match *
    process.akPu5PartonMatch *
@@ -67,8 +61,8 @@ process.ak5pu_patseq = cms.Sequence(
 )
 
 process.ana = cms.Path(
-   (process.cleaning) *
-   (process.ak5pu_patseq) *
+   process.genana *
+   process.ak5pu_patseq *
    process.allTracks
 )
 
