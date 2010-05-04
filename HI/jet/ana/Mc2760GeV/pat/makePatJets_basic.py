@@ -32,20 +32,11 @@ process.akPu5patJets = process.patJets.clone(
    jetCorrFactorsSource = cms.VInputTag(cms.InputTag("akPu5corr"))
 )
 
+process.load("ana.Mc2760GeV.anaSkimContent_cff")
 process.output = cms.OutputModule("PoolOutputModule",
-                                  fileName = cms.untracked.string("jetAnaSkim.root"),
-                                  outputCommands = cms.untracked.vstring(
-    'drop *',
-    'keep *_*FastPu*_*_JETS',
-    'drop recoCaloJets_*_*_*',
-    'keep recoGenJets_*_*_HISIGNAL',
-    'keep *_heavyIon_*_*',
-    'keep *_hiCentrality_*_*',
-    'keep *_towerMaker_*_JETS',
-    'keep patJets_*_*_*',
-    'keep *_partons_*_*',
+    process.analysisSkimContent,
+    fileName = cms.untracked.string("jetAnaSkim.root")
     )
-)
 
 process.cleaning = cms.Sequence(
    (process.partons *
@@ -60,6 +51,7 @@ process.ak5pu_patseq = cms.Sequence(
    process.akPu5patJets
 )
 
+# === Final Paths ===
 process.ana = cms.Path(
    (process.cleaning) *
    (process.ak5pu_patseq)
