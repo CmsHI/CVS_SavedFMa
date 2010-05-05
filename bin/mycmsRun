@@ -8,6 +8,7 @@ if [ $# -eq 0 ]; then
    echo "                    [-c check_only]"
    echo "Eg:"
    echo "  mycmsRun skim_cfg_custom_skim_options.py print files=file:Minbias_DIGI_L1_DIGI2RAW.root maxEvents=12 output=file:Minbias_raw_cmssw322patch2_Digi2RawFix_Ecal_Dttf.root"
+   echo "  mycmsRun skim_cfg_custom_skim_options.py print files_load=file:Minbias_DIGI_L1_DIGI2RAW.txt maxEvents=12 output=file:Minbias_raw_cmssw322patch2_Digi2RawFix_Ecal_Dttf.root"
    exit 1;
 fi
 
