@@ -51,4 +51,5 @@ if [ $check == false ]; then
 fi
 
 # check if job crashed already
-tail log/$outf
+sleep 1
+tail -n 20 log/$outf
