@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.3 2010/05/06 13:40:23 frankma Exp $
+// $Id: DiJetAna.cc,v 1.4 2010/05/06 14:02:35 frankma Exp $
 //
 //
 
@@ -50,12 +50,15 @@ Implementation:
 
 
 using namespace std;
+using namespace edm;
+using namespace reco;
 
 //
 // constructors and destructor
 //
-DiJetAna::DiJetAna(const edm::ParameterSet& iConfig)
-
+DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
+  numPreEvtSel_(0),
+  numDJEvtSel_(0)
 {
   //now do what ever initialization is needed
   vtxsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("vtxsrc",edm::InputTag("hiSelectedVertex"));
@@ -85,9 +88,6 @@ DiJetAna::~DiJetAna()
   void
 DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-  using namespace edm;
-  using namespace std;
-  using namespace reco;
   const int nTrigs = 5;
 
   const string qualityString = "highPurity";
@@ -121,6 +121,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if(maxtracks<nVtxTrkCut_) return; // vtx quality selection
   hVtxNumTrksEvtSel_->Fill(maxtracks);
   hVtxZEvtSel_->Fill(bestvz);
+  ++numPreEvtSel_;
 
   // Done with Event Pre-Selection
   // Fill Event info
@@ -130,7 +131,6 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //
   Handle<vector<pat::Jet> > jets;
   iEvent.getByLabel(jetsrc_,jets);
-  std::vector<math::PtEtaPhiMLorentzVectorF> anajets;
   // find leading jet based on corrected pt
   for (unsigned int j=0; j<(*jets).size();++j) {
     const pat::Jet & jet = (*jets)[j];
@@ -141,8 +141,23 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     hJetPhiPreSel_->Fill(jet.phi());
   }
 
+  /// ===== DiJet Ana =====
+  anaJets_.clear();
+  iNear_ = FindNearJet(iEvent,2);
+  if (iNear_<0) return;
+
+  const pat::Jet & NrJet = (*jets)[iNear_];
+  Double_t NrPt=0;
+  if (doJEC_==3) NrPt = (*jets)[iNear_].correctedP4("abs").pt();
+  if (doJEC_==5) NrPt = (*jets)[iNear_].correctedP4("had","uds").pt();
+  if (doJEC_==7) NrPt = (*jets)[iNear_].correctedP4("part","uds").pt();
+  anaJets_.push_back(math::PtEtaPhiMLorentzVectorF(NrPt,NrJet.eta(),NrJet.phi(),NrJet.mass()));
+
+  ++numDJEvtSel_;
+  if (numDJEvtSel_<=5) PrintDJEvent(iEvent);
+
   //
-  // === Tracks ===
+  // ===== Tracks =====
   //
   Handle<vector<Track> > tracks;
   iEvent.getByLabel(trksrc_, tracks);
@@ -159,8 +174,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 // ------------ method called once each job just before starting event loop  ------------
-  void 
-DiJetAna::beginJob()
+void DiJetAna::beginJob()
 {
   // histos
   hNumVtx_ = fs->make<TH1D>("hNumVtx","; # vtx;#",20,0,20);
@@ -188,6 +202,58 @@ DiJetAna::beginJob()
 // ------------ method called once each job just after ending the event loop  ------------
 void 
 DiJetAna::endJob() {
+  // ===== Done =====
+  cout << endl << "================ Ana Process Summaries =============" << endl;
+  cout << "Number of events pre-selected : "<< numPreEvtSel_ <<endl;
+  cout << "Number of dijet pre-selected : "<< numDJEvtSel_<<endl;
+}
+
+// ------------ Find DiJet ----------------
+Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, Int_t jetType)
+{
+  Handle<vector<pat::Jet> > jets;
+  iEvent.getByLabel(jetsrc_,jets);
+
+  Int_t iNear = -99;
+  Double_t NearPtMax=-99;
+  for (unsigned int j=0; j<(*jets).size();++j) {
+    const pat::Jet & jet = (*jets)[j];
+    Double_t corrPt=-99;
+    if (doJEC_==3) corrPt = jet.pt();
+    if (corrPt>NearPtMax) {
+      NearPtMax=corrPt;
+      iNear=j;
+    }
+  }
+  return iNear;
+}
+
+Int_t DiJetAna::FindAwayJet(const edm::Event&, Int_t jetType)
+{
+  Int_t iAway = -99;
+  return iAway;
+}
+
+// ------------- Helpers ------------------
+void DiJetAna::PrintDJEvent(const edm::Event& iEvent)
+{
+  Handle<vector<pat::Jet> > jets;
+  iEvent.getByLabel(jetsrc_,jets);
+  cout << "# jets: " << (*jets).size() << endl;
+  for (unsigned j=0; j<(*jets).size();++j) {
+    const pat::Jet & jet = (*jets)[j];
+    cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
+  }
+  cout << "corr" << doJEC_ << " leading dijet - iNear: " << iNear_ << " " <<": "<< anaJets_[0]
+    << endl;
+  /*
+     << "  iAway: " << iAway << " " << anajets[1] << endl;
+     cout << "DiJet dphi: " << ljdphi << endl;
+     cout << "- Gen jets" << endl;
+     cout << "  * Near " << "pt: " << NrGJet->pt() << endl;
+     cout << "  * Away " << "pt: " << AwGJet->pt() << endl;
+     cout << endl;
+   */
 }
 
 //define this as a plug-in

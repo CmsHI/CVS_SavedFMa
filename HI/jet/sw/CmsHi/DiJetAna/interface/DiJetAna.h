@@ -7,6 +7,7 @@
 #include "TTree.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "DataFormats/Math/interface/LorentzVector.h"
 
 //
 // class declaration
@@ -17,6 +18,10 @@ class DiJetAna : public edm::EDAnalyzer {
     explicit DiJetAna(const edm::ParameterSet&);
     ~DiJetAna();
 
+    // class methods
+    Int_t FindNearJet(const edm::Event&, Int_t jetType=2);
+    Int_t FindAwayJet(const edm::Event&, Int_t jetType=2);
+    void PrintDJEvent(const edm::Event&);
 
   private:
     virtual void beginJob() ;
@@ -34,6 +39,12 @@ class DiJetAna : public edm::EDAnalyzer {
     Double_t	  jetEtaMax_;
     Int_t	  nVtxTrkCut_;
     Int_t	  doJEC_;
+    // ana vars
+    Int_t	  numPreEvtSel_;
+    Int_t	  numDJEvtSel_;
+    std::vector<math::PtEtaPhiMLorentzVectorF> anaJets_;
+    Int_t	  iNear_;
+    Int_t	  iAway_;
 
     // ana data
     TH1D	  *hNumVtx_;
@@ -61,4 +72,3 @@ class DiJetAna : public edm::EDAnalyzer {
 //
 // static data member definitions
 //
-
