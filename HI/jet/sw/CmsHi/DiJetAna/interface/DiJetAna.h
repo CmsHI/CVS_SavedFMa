@@ -6,6 +6,7 @@
 
 #include "TTree.h"
 #include "TH1D.h"
+#include "TH2D.h"
 
 //
 // class declaration
@@ -43,6 +44,8 @@ class DiJetAna : public edm::EDAnalyzer {
     TH1D	  *hJetEtaPreSel_;
     TH1D	  *hJetPhiPreSel_;
     TH1D	  *hTrkPtPreSel_;
+    TH1D	  *hTrkEtaPreSel_;
+    TH2D	  *hTrkPtEtaPreSel_;
 
     TTree	  *calojTree_;
     TTree	  *calojGenjTree_;
