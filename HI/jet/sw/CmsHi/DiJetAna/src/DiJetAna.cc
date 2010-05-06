@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.7 2010/05/06 15:44:14 frankma Exp $
+// $Id: DiJetAna.cc,v 1.8 2010/05/06 15:49:44 frankma Exp $
 //
 //
 
@@ -93,8 +93,12 @@ DiJetAna::~DiJetAna()
 DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   const int nTrigs = 5;
-
   const string qualityString = "highPurity";
+  calojData_.Clear();
+  calojGenjData_.Clear();
+  calojPtnjData_.Clear();
+  genjCalojData_.Clear();
+  ptnjCalojData_.Clear();
 
   //-----------------------  Preselection (This part will be in an EDFilter later)  
   // get vtx collection 
@@ -172,7 +176,8 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   ++numDJEvtSel_;
   if (numDJEvtSel_<=10) PrintDJEvent(iEvent);
 
-  //
+  // -- Fill jet info --
+
   // ===== Tracks =====
   //
   Handle<vector<Track> > tracks;
@@ -207,11 +212,21 @@ void DiJetAna::beginJob()
   hTrkPtEtaPreSel_ = fs->make<TH2D>("hTrkPtEtaPreSel",";#eta^{trk};p_{T}^{trk} [GeV/c]", 50, -3., 3.,200,0,200.);
   // trees
   calojTree_ = fs->make<TTree>("calojTree","data: calo dijet tree");
+  calojData_.SetTree(calojTree_);
+  calojData_.SetBranches();
   if ( isMC_ ) {
     calojGenjTree_ = fs->make<TTree>("calojGenjTree","mc: calo dijet tree with genjet ref");
     calojPtnjTree_ = fs->make<TTree>("calojPtnjTree","mc: calo dijet tree with parton ref");
     genjCalojTree_ = fs->make<TTree>("genjCalojTree","mc: genjet dijet tree with calojet ref");
     ptnjCalojTree_ = fs->make<TTree>("ptnjCalojTree","mc: parton dijet tree with calojet ref");
+    calojGenjData_.SetTree(calojGenjTree_);
+    calojPtnjData_.SetTree(calojPtnjTree_);
+    genjCalojData_.SetTree(genjCalojTree_);
+    ptnjCalojData_.SetTree(ptnjCalojTree_);
+    calojGenjData_.SetBranches();
+    calojPtnjData_.SetBranches();
+    genjCalojData_.SetBranches();
+    ptnjCalojData_.SetBranches();
   }
 }
 

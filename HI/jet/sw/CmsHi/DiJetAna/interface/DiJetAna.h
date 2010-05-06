@@ -8,6 +8,7 @@
 #include "TH1D.h"
 #include "TH2D.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
+#include "CmsHi/DiJetAna/interface/TreeDiJetEventData.h"
 
 //
 // class declaration
@@ -67,6 +68,11 @@ class DiJetAna : public edm::EDAnalyzer {
     TTree	  *calojPtnjTree_;
     TTree	  *genjCalojTree_;
     TTree	  *ptnjCalojTree_;
+    TreeDiJetEventData calojData_;
+    TreeDiJetEventData calojGenjData_;
+    TreeDiJetEventData calojPtnjData_;
+    TreeDiJetEventData genjCalojData_;
+    TreeDiJetEventData ptnjCalojData_;
 };
 
 //
