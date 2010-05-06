@@ -39,6 +39,8 @@ class DiJetAna : public edm::EDAnalyzer {
     Double_t	  jetEtaMax_;
     Int_t	  nVtxTrkCut_;
     Int_t	  doJEC_;
+    Double_t	  nearJetPtMin_;
+    Double_t	  awayJetPtMin_;
     // ana vars
     Int_t	  numPreEvtSel_;
     Int_t	  numDJEvtSel_;

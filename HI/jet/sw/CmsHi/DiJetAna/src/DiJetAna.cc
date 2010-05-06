@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.6 2010/05/06 15:23:37 frankma Exp $
+// $Id: DiJetAna.cc,v 1.7 2010/05/06 15:44:14 frankma Exp $
 //
 //
 
@@ -70,6 +70,8 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   jetEtaMax_ = iConfig.getUntrackedParameter<double>("jetEtaMax", 2.0);
   nVtxTrkCut_ = iConfig.getUntrackedParameter<int>("nVtxTrkCut", 3);
   doJEC_ = iConfig.getUntrackedParameter<int>("doJEC", 3);
+  nearJetPtMin_ = iConfig.getUntrackedParameter<double>("nearJetPtMin", 50);
+  awayJetPtMin_ = iConfig.getUntrackedParameter<double>("awayJetPtMin", 50);
 }
 
 
@@ -166,7 +168,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   anaJets_.push_back(math::PtEtaPhiMLorentzVectorF(awayJetPt_,AwJet.eta(),AwJet.phi(),AwJet.mass()));
 
   // === dijet kinematics selection ===
-  if (nearJetPt_<50 || awayJetPt_<50) return;
+  if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) return;
   ++numDJEvtSel_;
   if (numDJEvtSel_<=10) PrintDJEvent(iEvent);
 
@@ -219,7 +221,7 @@ DiJetAna::endJob() {
   // ===== Done =====
   cout << endl << "================ Ana Process Summaries =============" << endl;
   cout << "Number of events pre-selected : "<< numPreEvtSel_ <<endl;
-  cout << "Number of dijet pre-selected : "<< numDJEvtSel_<<endl;
+  cout << "Number of dijet events pre-selected : "<< numDJEvtSel_<<endl;
 }
 
 // ------------ Find DiJet ----------------
