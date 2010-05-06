@@ -34,17 +34,17 @@ class TreeDiJetEventData
     Int_t		    npart_,ncoll_;
 
     // --- DiJet variables ---
-    Double_t		    mass_,cmeta_;
+    Double_t		    djmass_,cmeta_,rdjmass_;
     Int_t		    leadAwayMul_;
 
-    //  -- gen jet/parton info --
-    Int_t	  	    nlpid_,nlpstat_;
-    Double_t		    nlpet_,nlpetsm_,nlpeta_,nlpphi_;
+    //  -- ref jet info --
+    Int_t	  	    nlrjid_,nlrjstat_;
+    Double_t		    nlrjet_,nlrjetsm_,nlrjeta_,nlrjphi_;
 
-    Int_t	  	    alpid_,alpstat_;
-    Double_t		    alpet_,alpetsm_,alpeta_,alpphi_;
+    Int_t	  	    alrjid_,alrjstat_;
+    Double_t		    alrjet_,alrjetsm_,alrjeta_,alrjphi_;
 
-    Double_t		    pdphi_;
+    Double_t		    rjdphi_;
 
     //  -- jet info --
     Double_t		    nljet_,nljetsm_,nljeta_,nljphi_;

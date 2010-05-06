@@ -52,7 +52,7 @@ void TreeDiJetEventData::CalcDJVars(std::vector<math::PtEtaPhiMLorentzVectorF> a
   // dijet info
   Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
   jdphi_            = ljdphi;
-  mass_             = (anajets[0]+anajets[1]).M();
+  djmass_             = (anajets[0]+anajets[1]).M();
 }
 
 // set brances
@@ -73,25 +73,26 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("ncoll", &(this->ncoll_), "ncoll/I");
 
   // -- dijet info --
-  tree_->Branch("mass", &(this->mass_), "mass/D");
+  tree_->Branch("djmass", &(this->djmass_), "djmass/D");
+  tree_->Branch("rdjmass", &(this->rdjmass_), "rdjmass/D");
   tree_->Branch("cmeta", &(this->cmeta_), "cmeta/D");
   tree_->Branch("lajmul", &(this->leadAwayMul_), "lajmul/I");
-  // --parton info--
-  tree_->Branch("nlpid", &(this->nlpid_), "nlpid/I");
-  tree_->Branch("nlpstat", &(this->nlpstat_), "nlpstat/I");
-  tree_->Branch("nlpet", &(this->nlpet_), "nlpet/D");
-  tree_->Branch("nlpetsm", &(this->nlpetsm_), "nlpetsm/D");
-  tree_->Branch("nlpeta", &(this->nlpeta_), "nlpeta/D");
-  tree_->Branch("nlpphi", &(this->nlpphi_), "nlpphi/D");
+  // --ref jet info--
+  tree_->Branch("nlrjid", &(this->nlrjid_), "nlrjid/I");
+  tree_->Branch("nlrjstat", &(this->nlrjstat_), "nlrjstat/I");
+  tree_->Branch("nlrjet", &(this->nlrjet_), "nlrjet/D");
+  tree_->Branch("nlrjetsm", &(this->nlrjetsm_), "nlrjetsm/D");
+  tree_->Branch("nlrjeta", &(this->nlrjeta_), "nlrjeta/D");
+  tree_->Branch("nlrjphi", &(this->nlrjphi_), "nlrjphi/D");
 
-  tree_->Branch("alpid", &(this->alpid_), "alpid/I");
-  tree_->Branch("alpstat", &(this->alpstat_), "alpstat/I");
-  tree_->Branch("alpet", &(this->alpet_), "alpet/D");
-  tree_->Branch("alpetsm", &(this->alpetsm_), "alpetsm/D");
-  tree_->Branch("alpeta", &(this->alpeta_), "alpeta/D");
-  tree_->Branch("alpphi", &(this->alpphi_), "alpphi/D");
+  tree_->Branch("alrjid", &(this->alrjid_), "alrjid/I");
+  tree_->Branch("alrjstat", &(this->alrjstat_), "alrjstat/I");
+  tree_->Branch("alrjet", &(this->alrjet_), "alrjet/D");
+  tree_->Branch("alrjetsm", &(this->alrjetsm_), "alrjetsm/D");
+  tree_->Branch("alrjeta", &(this->alrjeta_), "alrjeta/D");
+  tree_->Branch("alrjphi", &(this->alrjphi_), "alrjphi/D");
 
-  tree_->Branch("pdphi", &(this->pdphi_), "pdphi/D");
+  tree_->Branch("rjdphi", &(this->rjdphi_), "rjdphi/D");
 
   // -- jet info --
   tree_->Branch("nljet", &(this->nljet_), "nljet/D");
@@ -156,16 +157,17 @@ void TreeDiJetEventData::Clear()
   vtxndof_	  = -99;
   vz_		  = -99;
   // di-jet
-  mass_	  = -99;
+  djmass_	  = -99;
+  rdjmass_	  = -99;
   cmeta_	  = -99;
   jdphi_	  = -99;
   // jet
   nljet_	  = -99;
   aljet_	  = -99;
-  alpid_	  = 0;
-  alpstat_	  = -99;
-  nlpet_	  = -99;
-  alpet_	  = -99;
+  alrjid_	  = 0;
+  alrjstat_	  = -99;
+  nlrjet_	  = -99;
+  alrjet_	  = -99;
   // jet constituents
   evtnp_      = 0;
 
