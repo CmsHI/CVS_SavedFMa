@@ -1,4 +1,8 @@
 #include "CmsHi/DiJetAna/interface/TreeDiJetEventData.h"
+#include "DataFormats/Math/interface/LorentzVector.h"
+#include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
+#include "TMath.h"
 
 // Defaults
 void TreeDiJetEventData::SetDefaults()
@@ -32,6 +36,23 @@ TreeDiJetEventData::TreeDiJetEventData(TTree * tree)
 {
   SetDefaults();
   tree_ = tree;
+}
+
+// ---------------- Helpers ------------------
+void TreeDiJetEventData::CalcDJVars(std::vector<math::PtEtaPhiMLorentzVectorF> anajets)
+{
+  // near/away info     
+  nljet_            = anajets[0].pt();
+  nljeta_           = anajets[0].eta();
+  nljphi_           = anajets[0].phi();
+  aljet_            = anajets[1].pt();
+  aljeta_           = anajets[1].eta();
+  aljphi_           = anajets[1].phi();
+
+  // dijet info
+  Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
+  jdphi_            = ljdphi;
+  mass_             = (anajets[0]+anajets[1]).M();
 }
 
 // set brances

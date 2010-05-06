@@ -6,6 +6,7 @@
 #define TREEDIJETEVENTDATA_H
 #include <vector>
 #include "TTree.h"
+#include "DataFormats/Math/interface/LorentzVector.h"
 
 const Int_t MAXTRK = 100000;
 //
@@ -14,6 +15,17 @@ const Int_t MAXTRK = 100000;
 class TreeDiJetEventData
 {
   public:
+    // ===== Class Methods =====
+    void SetDefaults();
+    TreeDiJetEventData();
+    TreeDiJetEventData(TTree * tree);
+    void SetTree(TTree * t) { tree_=t; }
+    void SetBranches();
+    void Clear();
+    void CalcDJVars(std::vector<math::PtEtaPhiMLorentzVectorF> anajets);
+    void CalcJetTrkVars();
+
+    // ===== Ana Data =====
     //  --- event level ---
     Int_t run_, evt_, lumi_,nvtx_,vtxntrks_;
     Double_t vtxndof_,vtxchi2_,vz_;
@@ -69,14 +81,6 @@ class TreeDiJetEventData
 
     // -- jes vars --
     Double_t		   meanppt_;
-
-    // === Functions ===
-    void SetDefaults();
-    TreeDiJetEventData();
-    TreeDiJetEventData(TTree * tree);
-    void SetTree(TTree * t) { tree_=t; }
-    void SetBranches();
-    void Clear();
 
   private:
     TTree*                             tree_;

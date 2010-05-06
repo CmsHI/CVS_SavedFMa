@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.9 2010/05/06 16:05:39 frankma Exp $
+// $Id: DiJetAna.cc,v 1.10 2010/05/06 16:38:33 frankma Exp $
 //
 //
 
@@ -251,22 +251,14 @@ DiJetAna::endJob() {
   cout << "Number of dijet events pre-selected : "<< numDJEvtSel_<<endl;
 }
 
+
+
+// ==================== Member Methods ===========================
 // ------------ Tree Filling --------------
 void DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd_, Int_t jetType, Int_t jetRefType)
 {
-  // near/away info
-  jd_.nljet_		= anaJets_[0].pt();
-  jd_.nljeta_		= anaJets_[0].eta();
-  jd_.nljphi_		= anaJets_[0].phi();
-  jd_.aljet_		= anaJets_[1].pt();
-  jd_.aljeta_		= anaJets_[1].eta();
-  jd_.aljphi_		= anaJets_[1].phi();
-
-  // fill dijet info
-  Double_t ljdphi = TMath::Abs(reco::deltaPhi(anaJets_[0].phi(),anaJets_[1].phi()));
-  jd_.jdphi_		= ljdphi;
-  jd_.mass_		= (anaJets_[0]+anaJets_[1]).M();
-
+  // Calc dijet vars for ana jets
+  jd_.CalcDJVars(anaJets_);
   if (jetType==2) {
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
