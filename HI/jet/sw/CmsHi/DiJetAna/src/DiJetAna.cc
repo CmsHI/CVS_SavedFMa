@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.5 2010/05/06 15:02:24 frankma Exp $
+// $Id: DiJetAna.cc,v 1.6 2010/05/06 15:23:37 frankma Exp $
 //
 //
 
@@ -47,6 +47,8 @@ Implementation:
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "TMath.h"
 #include "TStopwatch.h"
+
+#include "CmsHi/DiJetAna/interface/TreeDiJetEventData.h"
 
 
 using namespace std;
@@ -147,22 +149,24 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if (iNear_<0) return;
 
   const pat::Jet & NrJet = (*jets)[iNear_];
-  Double_t NrPt=0;
-  if (doJEC_==3) NrPt = (*jets)[iNear_].correctedP4("abs").pt();
-  if (doJEC_==5) NrPt = (*jets)[iNear_].correctedP4("had","uds").pt();
-  if (doJEC_==7) NrPt = (*jets)[iNear_].correctedP4("part","uds").pt();
-  anaJets_.push_back(math::PtEtaPhiMLorentzVectorF(NrPt,NrJet.eta(),NrJet.phi(),NrJet.mass()));
+  nearJetPt_ = -99;
+  if (doJEC_==3) nearJetPt_ = (*jets)[iNear_].correctedP4("abs").pt();
+  if (doJEC_==5) nearJetPt_ = (*jets)[iNear_].correctedP4("had","uds").pt();
+  if (doJEC_==7) nearJetPt_ = (*jets)[iNear_].correctedP4("part","uds").pt();
+  anaJets_.push_back(math::PtEtaPhiMLorentzVectorF(nearJetPt_,NrJet.eta(),NrJet.phi(),NrJet.mass()));
 
   iAway_ = FindAwayJet(iEvent,2);
   if (iAway_<0) return;
 
   const pat::Jet & AwJet = (*jets)[iAway_];
-  Double_t AwPt=0;
-  if (doJEC_==3) AwPt = (*jets)[iAway_].correctedP4("abs").pt();
-  if (doJEC_==5) AwPt = (*jets)[iAway_].correctedP4("had","glu").pt();
-  if (doJEC_==7) AwPt = (*jets)[iAway_].correctedP4("part","glu").pt();
-  anaJets_.push_back(math::PtEtaPhiMLorentzVectorF(AwPt,AwJet.eta(),AwJet.phi(),AwJet.mass()));
+  awayJetPt_ = -99;
+  if (doJEC_==3) awayJetPt_ = (*jets)[iAway_].correctedP4("abs").pt();
+  if (doJEC_==5) awayJetPt_ = (*jets)[iAway_].correctedP4("had","glu").pt();
+  if (doJEC_==7) awayJetPt_ = (*jets)[iAway_].correctedP4("part","glu").pt();
+  anaJets_.push_back(math::PtEtaPhiMLorentzVectorF(awayJetPt_,AwJet.eta(),AwJet.phi(),AwJet.mass()));
 
+  // === dijet kinematics selection ===
+  if (nearJetPt_<50 || awayJetPt_<50) return;
   ++numDJEvtSel_;
   if (numDJEvtSel_<=10) PrintDJEvent(iEvent);
 

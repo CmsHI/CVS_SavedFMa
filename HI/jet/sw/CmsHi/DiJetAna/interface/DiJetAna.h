@@ -44,7 +44,9 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t	  numDJEvtSel_;
     std::vector<math::PtEtaPhiMLorentzVectorF> anaJets_;
     Int_t	  iNear_;
+    Double_t	  nearJetPt_;
     Int_t	  iAway_;
+    Double_t	  awayJetPt_;
 
     // ana data
     TH1D	  *hNumVtx_;
