@@ -6,5 +6,6 @@ dijetAna = cms.EDAnalyzer('DiJetAna',
     trksrc = cms.untracked.InputTag("hiSelectTracks"),
     isMC = cms.untracked.bool(True),
     jetEtaMax = cms.untracked.double(5.0),
-    nVtxTrkCut = cms.untracked.int32(3)
+    nVtxTrkCut = cms.untracked.int32(3),
+    doJEC = cms.untracked.int32(3)
 )

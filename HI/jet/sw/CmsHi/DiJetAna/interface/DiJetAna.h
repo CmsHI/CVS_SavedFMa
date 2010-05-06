@@ -28,9 +28,11 @@ class DiJetAna : public edm::EDAnalyzer {
     edm::InputTag vtxsrc_;
     edm::InputTag jetsrc_;
     edm::InputTag trksrc_;
-    bool isMC_;
-    double  jetEtaMax_;
-    int32_t nVtxTrkCut_;
+    // ana setup
+    Bool_t	  isMC_;
+    Double_t	  jetEtaMax_;
+    Int_t	  nVtxTrkCut_;
+    Int_t	  doJEC_;
 
     // ana data
     TH1D	  *hNumVtx_;
@@ -38,6 +40,8 @@ class DiJetAna : public edm::EDAnalyzer {
     TH1D	  *hVtxNumTrksPreSel_;
     TH1D	  *hVtxNumTrksEvtSel_;
     TH1D	  *hJetPtPreSel_;
+    TH1D	  *hJetEtaPreSel_;
+    TH1D	  *hJetPhiPreSel_;
     TH1D	  *hTrkPtPreSel_;
 
     TTree	  *calojTree_;

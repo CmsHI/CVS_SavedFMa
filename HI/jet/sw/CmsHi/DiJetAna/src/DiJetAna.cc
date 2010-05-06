@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.1 2010/05/06 09:41:23 frankma Exp $
+// $Id: DiJetAna.cc,v 1.2 2010/05/06 12:56:48 frankma Exp $
 //
 //
 
@@ -42,6 +42,12 @@ Implementation:
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/Math/interface/LorentzVector.h"
+#include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
+#include "TMath.h"
+#include "TStopwatch.h"
+
 
 using namespace std;
 
@@ -58,6 +64,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig)
   isMC_ = iConfig.getUntrackedParameter<bool>("isMC", true);
   jetEtaMax_ = iConfig.getUntrackedParameter<double>("jetEtaMax", 2.0);
   nVtxTrkCut_ = iConfig.getUntrackedParameter<int>("nVtxTrkCut", 3);
+  doJEC_ = iConfig.getUntrackedParameter<int>("doJEC", 3);
 }
 
 
@@ -114,6 +121,25 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if(maxtracks<nVtxTrkCut_) return; // vtx quality selection
   hVtxNumTrksEvtSel_->Fill(maxtracks);
   hVtxZEvtSel_->Fill(bestvz);
+
+  // Done with Event Pre-Selection
+  // Fill Event info
+
+  //
+  // ===== Inclusive Jet Ana =====
+  //
+  Handle<vector<pat::Jet> > jets;
+  iEvent.getByLabel(jetsrc_,jets);
+  std::vector<math::PtEtaPhiMLorentzVectorF> anajets;
+  // find leading jet based on corrected pt
+  for (unsigned int j=0; j<(*jets).size();++j) {
+    const pat::Jet & jet = (*jets)[j];
+    Double_t corrPt=-99;
+    if (doJEC_==3) corrPt = jet.pt();
+    hJetPtPreSel_->Fill(corrPt);
+    hJetEtaPreSel_->Fill(jet.eta());
+    hJetPhiPreSel_->Fill(jet.phi());
+  }
 }
 
 
@@ -126,8 +152,12 @@ DiJetAna::beginJob()
   hVtxZEvtSel_ = fs->make<TH1D>("hVtxZEvtSel","z position of best reconstructed hi selected vertex;vz [cm]", 80,-20,20);
   hVtxNumTrksPreSel_ = fs->make<TH1D>("hVtxNumTrksPreSel",";# trks in best vtx (pre evt sel);",100,0,100);
   hVtxNumTrksEvtSel_ = fs->make<TH1D>("hVtxNumTrksEvtSel",";# trks in best vtx;",100,0,100);
-  hJetPtPreSel_ = fs->make<TH1D>("hJetPtPreSel",";p_{T}^{trk} [GeV/c]", 200, 0.0, 200.0);
-  hTrkPtPreSel_ = fs->make<TH1D>("hTrkPtPreSel",";p_{T}^{corr. jet} [GeV/c]", 200, 0.0, 200.0);
+  // jets
+  hJetPtPreSel_ = fs->make<TH1D>("hJetPtPreSel",";p_{T}^{corr. jet} [GeV/c]", 200, 0.0, 200.0);
+  hJetEtaPreSel_ = fs->make<TH1D>("hJetEtaPreSel",";#eta^{jet}", 50, -1.5*jetEtaMax_, 1.5*jetEtaMax_);
+  hJetPhiPreSel_ = fs->make<TH1D>("hJetPhiPreSel",";#phi^{jet}", 50, -1*TMath::Pi(), TMath::Pi());
+  // trks
+  hTrkPtPreSel_ = fs->make<TH1D>("hTrkPtPreSel",";p_{T}^{trk} [GeV/c]", 200, 0.0, 200.0);
   // trees
   calojTree_ = fs->make<TTree>("calojTree","data: calo dijet tree");
   if ( isMC_ ) {
