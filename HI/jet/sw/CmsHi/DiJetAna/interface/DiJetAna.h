@@ -43,6 +43,8 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t	  doJEC_;
     Double_t	  nearJetPtMin_;
     Double_t	  awayJetPtMin_;
+    Int_t	  anaJetType_;
+    Int_t	  refJetType_;
     // ana vars
     Int_t	  numPreEvtSel_;
     Int_t	  numDJEvtSel_;

@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.11 2010/05/06 16:58:08 frankma Exp $
+// $Id: DiJetAna.cc,v 1.12 2010/05/06 17:10:20 frankma Exp $
 //
 //
 
@@ -63,15 +63,17 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   numDJEvtSel_(0)
 {
   //now do what ever initialization is needed
+  isMC_ = iConfig.getUntrackedParameter<bool>("isMC", true);
   vtxsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("vtxsrc",edm::InputTag("hiSelectedVertex"));
   jetsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("jetsrc",edm::InputTag("akPu5patJets"));
   trksrc_ = iConfig.getUntrackedParameter<edm::InputTag>("trksrc",edm::InputTag("hiSelectTracks"));
-  isMC_ = iConfig.getUntrackedParameter<bool>("isMC", true);
   jetEtaMax_ = iConfig.getUntrackedParameter<double>("jetEtaMax", 2.0);
   nVtxTrkCut_ = iConfig.getUntrackedParameter<int>("nVtxTrkCut", 3);
   doJEC_ = iConfig.getUntrackedParameter<int>("doJEC", 3);
   nearJetPtMin_ = iConfig.getUntrackedParameter<double>("nearJetPtMin", 50);
   awayJetPtMin_ = iConfig.getUntrackedParameter<double>("awayJetPtMin", 50);
+  anaJetType_ = iConfig.getUntrackedParameter<int>("anaJetType", 2);
+  refJetType_ = iConfig.getUntrackedParameter<int>("refJetType", 1);
 }
 
 
