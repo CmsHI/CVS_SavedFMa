@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.8 2010/05/06 15:49:44 frankma Exp $
+// $Id: DiJetAna.cc,v 1.9 2010/05/06 16:05:39 frankma Exp $
 //
 //
 
@@ -149,7 +149,9 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     hJetPhiPreSel_->Fill(jet.phi());
   }
 
-  /// ===== DiJet Ana =====
+  //
+  // ===== DiJet Ana =====
+  //
   anaJets_.clear();
   iNear_ = FindNearJet(iEvent,2);
   if (iNear_<0) return;
@@ -177,6 +179,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if (numDJEvtSel_<=10) PrintDJEvent(iEvent);
 
   // -- Fill jet info --
+  FillJets(iEvent,calojData_,2);
 
   // ===== Tracks =====
   //
@@ -190,6 +193,15 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     hTrkPtPreSel_->Fill(trk.pt());
     hTrkEtaPreSel_->Fill(trk.eta());
     hTrkPtEtaPreSel_->Fill(trk.eta(),trk.pt());
+  }
+
+  // All done
+  calojTree_->Fill();
+  if (isMC_) {
+    calojGenjTree_->Fill();
+    calojPtnjTree_->Fill();
+    genjCalojTree_->Fill();
+    ptnjCalojTree_->Fill();
   }
 }
 
@@ -237,6 +249,30 @@ DiJetAna::endJob() {
   cout << endl << "================ Ana Process Summaries =============" << endl;
   cout << "Number of events pre-selected : "<< numPreEvtSel_ <<endl;
   cout << "Number of dijet events pre-selected : "<< numDJEvtSel_<<endl;
+}
+
+// ------------ Tree Filling --------------
+void DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd_, Int_t jetType, Int_t jetRefType)
+{
+  // near/away info
+  jd_.nljet_		= anaJets_[0].pt();
+  jd_.nljeta_		= anaJets_[0].eta();
+  jd_.nljphi_		= anaJets_[0].phi();
+  jd_.aljet_		= anaJets_[1].pt();
+  jd_.aljeta_		= anaJets_[1].eta();
+  jd_.aljphi_		= anaJets_[1].phi();
+
+  // fill dijet info
+  Double_t ljdphi = TMath::Abs(reco::deltaPhi(anaJets_[0].phi(),anaJets_[1].phi()));
+  jd_.jdphi_		= ljdphi;
+  jd_.mass_		= (anaJets_[0]+anaJets_[1]).M();
+
+  if (jetType==2) {
+    Handle<vector<pat::Jet> > jets;
+    iEvent.getByLabel(jetsrc_,jets);
+    jd_.nljemf_		= (*jets)[iNear_].emEnergyFraction();
+    jd_.aljemf_		= (*jets)[iAway_].emEnergyFraction();
+  }
 }
 
 // ------------ Find DiJet ----------------

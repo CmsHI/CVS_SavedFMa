@@ -20,9 +20,10 @@ class DiJetAna : public edm::EDAnalyzer {
     ~DiJetAna();
 
     // class methods
-    Int_t FindNearJet(const edm::Event&, Int_t jetType=2);
-    Int_t FindAwayJet(const edm::Event&, Int_t jetType=2);
-    void PrintDJEvent(const edm::Event&);
+    void  FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd_, Int_t jetType=2, Int_t jetRefType=-1);
+    Int_t FindNearJet(const edm::Event& iEvent, Int_t jetType=2);
+    Int_t FindAwayJet(const edm::Event& iEvent, Int_t jetType=2);
+    void PrintDJEvent(const edm::Event& iEvent);
 
   private:
     virtual void beginJob() ;
