@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.10 2010/05/06 16:38:33 frankma Exp $
+// $Id: DiJetAna.cc,v 1.11 2010/05/06 16:58:08 frankma Exp $
 //
 //
 
@@ -179,7 +179,10 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if (numDJEvtSel_<=10) PrintDJEvent(iEvent);
 
   // -- Fill jet info --
-  FillJets(iEvent,calojData_,2);
+  if (!isMC_) FillJets(iEvent,calojData_,2);
+  else {
+    FillJets(iEvent,calojGenjData_,2,1);
+  }
 
   // ===== Tracks =====
   //
@@ -196,8 +199,8 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   // All done
-  calojTree_->Fill();
-  if (isMC_) {
+  if (!isMC_) calojTree_->Fill();
+  else {
     calojGenjTree_->Fill();
     calojPtnjTree_->Fill();
     genjCalojTree_->Fill();
