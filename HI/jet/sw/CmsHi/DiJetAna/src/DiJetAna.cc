@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.4 2010/05/06 14:02:35 frankma Exp $
+// $Id: DiJetAna.cc,v 1.5 2010/05/06 15:02:24 frankma Exp $
 //
 //
 
@@ -153,8 +153,18 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if (doJEC_==7) NrPt = (*jets)[iNear_].correctedP4("part","uds").pt();
   anaJets_.push_back(math::PtEtaPhiMLorentzVectorF(NrPt,NrJet.eta(),NrJet.phi(),NrJet.mass()));
 
+  iAway_ = FindAwayJet(iEvent,2);
+  if (iAway_<0) return;
+
+  const pat::Jet & AwJet = (*jets)[iAway_];
+  Double_t AwPt=0;
+  if (doJEC_==3) AwPt = (*jets)[iAway_].correctedP4("abs").pt();
+  if (doJEC_==5) AwPt = (*jets)[iAway_].correctedP4("had","glu").pt();
+  if (doJEC_==7) AwPt = (*jets)[iAway_].correctedP4("part","glu").pt();
+  anaJets_.push_back(math::PtEtaPhiMLorentzVectorF(AwPt,AwJet.eta(),AwJet.phi(),AwJet.mass()));
+
   ++numDJEvtSel_;
-  if (numDJEvtSel_<=5) PrintDJEvent(iEvent);
+  if (numDJEvtSel_<=10) PrintDJEvent(iEvent);
 
   //
   // ===== Tracks =====
@@ -218,8 +228,7 @@ Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, Int_t jetType)
   Double_t NearPtMax=-99;
   for (unsigned int j=0; j<(*jets).size();++j) {
     const pat::Jet & jet = (*jets)[j];
-    Double_t corrPt=-99;
-    if (doJEC_==3) corrPt = jet.pt();
+    Double_t corrPt = jet.pt();
     if (corrPt>NearPtMax) {
       NearPtMax=corrPt;
       iNear=j;
@@ -228,9 +237,24 @@ Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, Int_t jetType)
   return iNear;
 }
 
-Int_t DiJetAna::FindAwayJet(const edm::Event&, Int_t jetType)
+Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, Int_t jetType)
 {
-  Int_t iAway = -99;
+  Handle<vector<pat::Jet> > jets;
+  iEvent.getByLabel(jetsrc_,jets);
+
+  Int_t      iAway=-99;
+  Double_t   AwayPtMax=-99;
+  for (unsigned j=0; j<(*jets).size();++j) {
+    const pat::Jet & jet = (*jets)[j];
+    Double_t jdphi = TMath::Abs(reco::deltaPhi(anaJets_[0].phi(),jet.phi()));
+    if (jdphi < TMath::Pi()*2./3.) continue; // not too close to near jet in dphi
+
+    Double_t corrPt = jet.pt();
+    if (corrPt>AwayPtMax) {
+      AwayPtMax=corrPt;
+      iAway=j;
+    }
+  }
   return iAway;
 }
 
@@ -244,16 +268,10 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent)
     const pat::Jet & jet = (*jets)[j];
     cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
   }
+  Double_t ljdphi = TMath::Abs(reco::deltaPhi(anaJets_[0].phi(),anaJets_[1].phi()));
   cout << "corr" << doJEC_ << " leading dijet - iNear: " << iNear_ << " " <<": "<< anaJets_[0]
-    << endl;
-  /*
-     << "  iAway: " << iAway << " " << anajets[1] << endl;
+     << "  iAway: " << iAway_ << " " << anaJets_[1] << endl;
      cout << "DiJet dphi: " << ljdphi << endl;
-     cout << "- Gen jets" << endl;
-     cout << "  * Near " << "pt: " << NrGJet->pt() << endl;
-     cout << "  * Away " << "pt: " << AwGJet->pt() << endl;
-     cout << endl;
-   */
 }
 
 //define this as a plug-in
