@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.13 2010/05/06 17:29:54 frankma Exp $
+// $Id: DiJetAna.cc,v 1.14 2010/05/06 17:46:08 frankma Exp $
 //
 //
 
@@ -156,30 +156,8 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //
   // ===== DiJet Ana =====
   //
-  anaJets_.clear();
-  iNear_ = FindNearJet(iEvent,anaJetType_);
-  if (iNear_<0) return;
-
-  if (anaJetType_==2) {
-    const pat::Jet & NrJet = (*jets)[iNear_];
-    nearJetPt_ = -99;
-    if (doJEC_==3) nearJetPt_ = (*jets)[iNear_].correctedP4("abs").pt();
-    if (doJEC_==5) nearJetPt_ = (*jets)[iNear_].correctedP4("had","uds").pt();
-    if (doJEC_==7) nearJetPt_ = (*jets)[iNear_].correctedP4("part","uds").pt();
-    anaJets_.push_back(math::PtEtaPhiMLorentzVectorF(nearJetPt_,NrJet.eta(),NrJet.phi(),NrJet.mass()));
-  }
-
-  iAway_ = FindAwayJet(iEvent,anaJetType_);
-  if (iAway_<0) return;
-
-  if (anaJetType_==2) {
-    const pat::Jet & AwJet = (*jets)[iAway_];
-    awayJetPt_ = -99;
-    if (doJEC_==3) awayJetPt_ = (*jets)[iAway_].correctedP4("abs").pt();
-    if (doJEC_==5) awayJetPt_ = (*jets)[iAway_].correctedP4("had","glu").pt();
-    if (doJEC_==7) awayJetPt_ = (*jets)[iAway_].correctedP4("part","glu").pt();
-    anaJets_.push_back(math::PtEtaPhiMLorentzVectorF(awayJetPt_,AwJet.eta(),AwJet.phi(),AwJet.mass()));
-  }
+  nearJetPt_ = -99; awayJetPt_ = -99;
+  FindDiJet(iEvent,anaJets_,anaJetType_);
 
   // === dijet kinematics selection ===
   if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) return;
@@ -319,6 +297,37 @@ Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, Int_t jetType)
     }
   }
   return iAway;
+}
+
+void DiJetAna::FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType)
+{
+  Handle<vector<pat::Jet> > jets;
+  iEvent.getByLabel(jetsrc_,jets);
+  anajets.clear();
+
+  iNear_ = FindNearJet(iEvent,jetType);
+  if (iNear_<0) return;
+
+  // Near JES
+  if (jetType==2) {
+    const pat::Jet & NrJet = (*jets)[iNear_];
+    if (doJEC_==3) nearJetPt_ = (*jets)[iNear_].correctedP4("abs").pt();
+    if (doJEC_==5) nearJetPt_ = (*jets)[iNear_].correctedP4("had","uds").pt();
+    if (doJEC_==7) nearJetPt_ = (*jets)[iNear_].correctedP4("part","uds").pt();
+    anajets.push_back(math::PtEtaPhiMLorentzVectorF(nearJetPt_,NrJet.eta(),NrJet.phi(),NrJet.mass()));
+  }
+
+  iAway_ = FindAwayJet(iEvent,jetType);
+  if (iAway_<0) return;
+
+  // Away JES
+  if (jetType==2) {
+    const pat::Jet & AwJet = (*jets)[iAway_];
+    if (doJEC_==3) awayJetPt_ = (*jets)[iAway_].correctedP4("abs").pt();
+    if (doJEC_==5) awayJetPt_ = (*jets)[iAway_].correctedP4("had","glu").pt();
+    if (doJEC_==7) awayJetPt_ = (*jets)[iAway_].correctedP4("part","glu").pt();
+    anajets.push_back(math::PtEtaPhiMLorentzVectorF(awayJetPt_,AwJet.eta(),AwJet.phi(),AwJet.mass()));
+  }
 }
 
 // ------------- Helpers ------------------

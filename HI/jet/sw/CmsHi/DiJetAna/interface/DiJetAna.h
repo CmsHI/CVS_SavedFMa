@@ -9,6 +9,7 @@
 #include "TH2D.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "CmsHi/DiJetAna/interface/TreeDiJetEventData.h"
+#include "DataFormats/Math/interface/LorentzVector.h"
 
 //
 // class declaration
@@ -23,6 +24,7 @@ class DiJetAna : public edm::EDAnalyzer {
     void  FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd_, Int_t jetType=2, Int_t jetRefType=-1);
     Int_t FindNearJet(const edm::Event& iEvent, Int_t jetType=2);
     Int_t FindAwayJet(const edm::Event& iEvent, Int_t jetType=2);
+    void FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType=2); 
     void PrintDJEvent(const edm::Event& iEvent);
 
   private:
