@@ -39,20 +39,40 @@ TreeDiJetEventData::TreeDiJetEventData(TTree * tree)
 }
 
 // ---------------- Helpers ------------------
-void TreeDiJetEventData::CalcDJVars(std::vector<math::PtEtaPhiMLorentzVectorF> anajets)
+void TreeDiJetEventData::CalcDJVars(Bool_t isMC, std::vector<math::PtEtaPhiMLorentzVectorF> anajets,
+    std::vector<math::PtEtaPhiMLorentzVectorF> refjets)
 {
   // near/away info     
-  nljet_            = anajets[0].pt();
-  nljeta_           = anajets[0].eta();
-  nljphi_           = anajets[0].phi();
-  aljet_            = anajets[1].pt();
-  aljeta_           = anajets[1].eta();
-  aljphi_           = anajets[1].phi();
+  nljet_	     = anajets[0].pt();
+  nljeta_	     = anajets[0].eta();
+  nljphi_	     = anajets[0].phi();
+  aljet_	     = anajets[1].pt();
+  aljeta_	     = anajets[1].eta();
+  aljphi_	     = anajets[1].phi();
 
   // dijet info
-  Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
-  jdphi_            = ljdphi;
-  djmass_             = (anajets[0]+anajets[1]).M();
+  Double_t jdphi     = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
+  jdphi_	     = jdphi;
+  djmass_	     = (anajets[0]+anajets[1]).M();
+
+  // Done if data
+  if (!isMC) return;
+
+  // refjets
+  if (refjets.size()>0) {
+    // near/away info     
+    nlrjet_            = refjets[0].pt();
+    nlrjeta_           = refjets[0].eta();
+    nlrjphi_           = refjets[0].phi();
+    alrjet_            = refjets[1].pt();
+    alrjeta_           = refjets[1].eta();
+    alrjphi_           = refjets[1].phi();
+
+    // dijet info
+    Double_t rjdphi    = TMath::Abs(reco::deltaPhi(refjets[0].phi(),refjets[1].phi()));
+    rjdphi_            = rjdphi;
+    rdjmass_	     = (refjets[0]+refjets[1]).M();
+  }
 }
 
 // set brances

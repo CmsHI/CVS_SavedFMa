@@ -22,7 +22,9 @@ class TreeDiJetEventData
     void SetTree(TTree * t) { tree_=t; }
     void SetBranches();
     void Clear();
-    void CalcDJVars(std::vector<math::PtEtaPhiMLorentzVectorF> anajets);
+    void CalcDJVars(Bool_t isMC,
+	std::vector<math::PtEtaPhiMLorentzVectorF> anajets,
+	std::vector<math::PtEtaPhiMLorentzVectorF> refjets);
     void CalcJetTrkVars();
 
     // ===== Ana Data =====

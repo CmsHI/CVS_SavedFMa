@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.23 2010/05/07 11:02:25 frankma Exp $
+// $Id: DiJetAna.cc,v 1.24 2010/05/07 11:21:25 frankma Exp $
 //
 //
 
@@ -234,12 +234,12 @@ void DiJetAna::FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
 }
 
 void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
-    std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType,
-    std::vector<math::PtEtaPhiMLorentzVectorF> & refjets, Int_t jetRefType)
+    std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t anajetType,
+    std::vector<math::PtEtaPhiMLorentzVectorF> & refjets, Int_t refjetType)
 {
   // Calc dijet vars for ana jets
-  jd.CalcDJVars(anajets);
-  if (jetType==2) {
+  jd.CalcDJVars(isMC_,anajets,refjets);
+  if (anajetType==2) {
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
     jd.nljemf_		= (*jets)[iNear_].emEnergyFraction();
@@ -356,7 +356,7 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
   if (jetType<=2) {
     edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
-    cout << "# jets: " << (*jets).size() << endl;
+    cout << "# type " << jetType << " jets: " << (*jets).size() << endl;
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
       if (jet.pt()>(nearJetPtMin_/2.)) cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
