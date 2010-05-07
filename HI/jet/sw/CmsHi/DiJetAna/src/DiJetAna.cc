@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.14 2010/05/06 17:46:08 frankma Exp $
+// $Id: DiJetAna.cc,v 1.15 2010/05/07 07:35:50 frankma Exp $
 //
 //
 
@@ -262,11 +262,11 @@ Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, Int_t jetType)
   Int_t iNear = -99;
   Double_t NearPtMax=-99;
 
-  if (jetType==2) {
-    Handle<vector<pat::Jet> > jets;
+  if (jetType<=2) {
+    edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
     for (unsigned int j=0; j<(*jets).size();++j) {
-      const pat::Jet & jet = (*jets)[j];
+      const reco::Candidate & jet = (*jets)[j];
       Double_t corrPt = jet.pt();
       if (corrPt>NearPtMax) {
 	NearPtMax=corrPt;
@@ -281,11 +281,11 @@ Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, Int_t jetType)
 {
   Int_t      iAway=-99;
   Double_t   AwayPtMax=-99;
-  if (jetType==2) {
-    Handle<vector<pat::Jet> > jets;
+  if (jetType<=2) {
+    edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
     for (unsigned j=0; j<(*jets).size();++j) {
-      const pat::Jet & jet = (*jets)[j];
+      const reco::Candidate & jet = (*jets)[j];
       Double_t jdphi = TMath::Abs(reco::deltaPhi(anaJets_[0].phi(),jet.phi()));
       if (jdphi < TMath::Pi()*2./3.) continue; // not too close to near jet in dphi
 
