@@ -66,16 +66,19 @@ class DiJetAna : public edm::EDAnalyzer {
     Double_t	  awayJetPt_;
 
     // ana data
+    // -- evt --
     TH1D	  *hNumVtx_;
     TH1D	  *hVtxZEvtSel_;
     TH1D	  *hVtxNumTrksPreSel_;
     TH1D	  *hVtxNumTrksEvtSel_;
+    // -- jet --
     TH1D	  *hJetPtPreSel_;
     TH1D	  *hJetEtaPreSel_;
     TH1D	  *hJetPhiPreSel_;
-    TH1D	  *hTrkPtPreSel_;
-    TH1D	  *hTrkEtaPreSel_;
-    TH2D	  *hTrkPtEtaPreSel_;
+    // -- trk --
+    TH1D	  *hTrkPtDJEvtSel_;
+    TH1D	  *hTrkEtaDJEvtSel_;
+    TH2D	  *hTrkPtEtaDJEvtSel_;
 
     TTree	  *djTree_;
     TreeDiJetEventData djEvt_;

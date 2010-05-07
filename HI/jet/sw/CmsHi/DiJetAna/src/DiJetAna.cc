@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.25 2010/05/07 11:49:21 frankma Exp $
+// $Id: DiJetAna.cc,v 1.26 2010/05/07 13:48:38 frankma Exp $
 //
 //
 
@@ -183,9 +183,9 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     const reco::Track & trk = (*tracks)[it];
     //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
 
-    hTrkPtPreSel_->Fill(trk.pt());
-    hTrkEtaPreSel_->Fill(trk.eta());
-    hTrkPtEtaPreSel_->Fill(trk.eta(),trk.pt());
+    hTrkPtDJEvtSel_->Fill(trk.pt());
+    hTrkEtaDJEvtSel_->Fill(trk.eta());
+    hTrkPtEtaDJEvtSel_->Fill(trk.eta(),trk.pt());
   }
 
   //
@@ -211,9 +211,9 @@ void DiJetAna::beginJob()
   hJetEtaPreSel_ = fs->make<TH1D>("hJetEtaPreSel",";#eta^{jet};#", 50, -1.5*jetEtaMax_, 1.5*jetEtaMax_);
   hJetPhiPreSel_ = fs->make<TH1D>("hJetPhiPreSel",";#phi^{jet};#", 50, -1*TMath::Pi(), TMath::Pi());
   // trks
-  hTrkPtPreSel_ = fs->make<TH1D>("hTrkPtPreSel",";p_{T}^{trk} [GeV/c];#", 200, 0.0, 200.0);
-  hTrkEtaPreSel_ = fs->make<TH1D>("hTrkEtaPreSel",";#eta^{trk};#", 50, -3., 3.);
-  hTrkPtEtaPreSel_ = fs->make<TH2D>("hTrkPtEtaPreSel",";#eta^{trk};p_{T}^{trk} [GeV/c]", 50, -3., 3.,200,0,200.);
+  hTrkPtDJEvtSel_ = fs->make<TH1D>("hTrkPtDJEvtSel",";p_{T}^{trk} [GeV/c];#", 200, 0.0, 200.0);
+  hTrkEtaDJEvtSel_ = fs->make<TH1D>("hTrkEtaDJEvtSel",";#eta^{trk};#", 50, -3., 3.);
+  hTrkPtEtaDJEvtSel_ = fs->make<TH2D>("hTrkPtEtaDJEvtSel",";#eta^{trk};p_{T}^{trk} [GeV/c]", 50, -3., 3.,200,0,200.);
   // trees
   djTree_ = fs->make<TTree>("djTree","dijet tree");
   djEvt_.SetTree(djTree_);
