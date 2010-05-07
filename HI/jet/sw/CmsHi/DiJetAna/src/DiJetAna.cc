@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.16 2010/05/07 07:55:04 frankma Exp $
+// $Id: DiJetAna.cc,v 1.17 2010/05/07 08:01:54 frankma Exp $
 //
 //
 
@@ -138,9 +138,9 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   Handle<vector<pat::Jet> > jets;
   //
-  // ===== Inclusive Jet Ana =====
+  // ---------------------------- Jet Analysis ---------------------------------
   //
-  // find leading jet based on corrected pt
+  // Check Inclusive Jets
   if (anaJetType_<=2) {
     edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
@@ -163,7 +163,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // === dijet kinematics selection ===
   if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) return;
   ++numDJEvtSel_;
-  if (numDJEvtSel_<=10) PrintDJEvent(iEvent);
+  if (numDJEvtSel_<=10) PrintDJEvent(iEvent,anaJets_,anaJetType_);
 
   // -- Fill jet info --
   if (!isMC_) FillJets(iEvent,calojData_,2);
@@ -332,20 +332,20 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLo
 }
 
 // ------------- Helpers ------------------
-void DiJetAna::PrintDJEvent(const edm::Event& iEvent)
+void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType)
 {
-  if (anaJetType_==2) {
-    Handle<vector<pat::Jet> > jets;
+  if (jetType<=2) {
+    edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
     cout << "# jets: " << (*jets).size() << endl;
     for (unsigned j=0; j<(*jets).size();++j) {
-      const pat::Jet & jet = (*jets)[j];
+      const reco::Candidate & jet = (*jets)[j];
       cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
     }
   }
-  Double_t ljdphi = TMath::Abs(reco::deltaPhi(anaJets_[0].phi(),anaJets_[1].phi()));
-  cout << "corr" << doJEC_ << " leading dijet - iNear: " << iNear_ << " " <<": "<< anaJets_[0]
-     << "  iAway: " << iAway_ << " " << anaJets_[1] << endl;
+  Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
+  cout << "corr" << doJEC_ << " leading dijet - iNear: " << iNear_ << " " <<": "<< anajets[0]
+     << "  iAway: " << iAway_ << " " << anajets[1] << endl;
      cout << "DiJet dphi: " << ljdphi << endl;
 }
 

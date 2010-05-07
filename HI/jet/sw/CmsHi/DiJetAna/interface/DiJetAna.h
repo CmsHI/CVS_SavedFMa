@@ -25,7 +25,7 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t FindNearJet(const edm::Event& iEvent, Int_t jetType=2);
     Int_t FindAwayJet(const edm::Event& iEvent, Int_t jetType=2);
     void FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType=2); 
-    void PrintDJEvent(const edm::Event& iEvent);
+    void PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType=2);
 
   private:
     virtual void beginJob() ;
