@@ -20,7 +20,7 @@ genDijetAna_mc = dijetAna_mc.clone(
     anaJetType = cms.untracked.int32(1)
     )
 
-dijetAna_data = dijetAna_data.clone(
+dijetAna_data = dijetAna_mc.clone(
     isMC = cms.untracked.bool(False)
     )
 
