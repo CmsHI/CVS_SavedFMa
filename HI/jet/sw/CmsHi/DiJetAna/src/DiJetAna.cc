@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.21 2010/05/07 10:39:55 frankma Exp $
+// $Id: DiJetAna.cc,v 1.22 2010/05/07 10:47:08 frankma Exp $
 //
 //
 
@@ -164,8 +164,10 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // -- Fill DiJet Event info --
   FillEventInfo(iEvent,djEvt_);
-  if (!isMC_) FillJets(iEvent,djEvt_,2);
-  else FillJets(iEvent,djEvt_,anaJetType_,refJetType_);
+  if (!isMC_) FillJets(iEvent,djEvt_,anaJets_,2,refJets_,-1);
+  else { 
+    FillJets(iEvent,djEvt_,anaJets_,anaJetType_,refJets_,refJetType_);
+  }
 
   // ===== Tracks =====
   //
@@ -228,10 +230,12 @@ void DiJetAna::FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
   jd.lumi_	  = iEvent.luminosityBlock();
 }
 
-void DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd, Int_t jetType, Int_t jetRefType)
+void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
+    std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType,
+    std::vector<math::PtEtaPhiMLorentzVectorF> & refjets, Int_t jetRefType)
 {
   // Calc dijet vars for ana jets
-  jd.CalcDJVars(anaJets_);
+  jd.CalcDJVars(anajets);
   if (jetType==2) {
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
