@@ -19,6 +19,9 @@ process.TFileService = cms.Service('TFileService',
 
 #================ DiJet Ana ==========================
 process.load("CmsHi.DiJetAna.dijetAna_cfi")
+process.dijetAna.jetsrc = "ak5HiGenJets"
+process.dijetAna.anaJetType = 1
+print process.dijetAna.dumpPython()
 
 # =============== Final Paths =====================
 process.ana = cms.Path(#process.chargedCandidates *
