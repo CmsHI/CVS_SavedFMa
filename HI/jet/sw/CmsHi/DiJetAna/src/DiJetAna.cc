@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.19 2010/05/07 08:47:56 frankma Exp $
+// $Id: DiJetAna.cc,v 1.20 2010/05/07 10:04:29 frankma Exp $
 //
 //
 
@@ -96,11 +96,8 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   const int nTrigs = 5;
   const string qualityString = "highPurity";
-  dataDJEvt_.Clear();
-  mcDJEvt_.Clear();
-  calojPtnjData_.Clear();
-  genjCalojData_.Clear();
-  ptnjCalojData_.Clear();
+  djEvt_.Clear();
+  djEvt_.Clear();
 
   //-----------------------  Preselection (This part will be in an EDFilter later)  
   // get vtx collection 
@@ -166,13 +163,12 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if (numDJEvtSel_<=10) PrintDJEvent(iEvent,anaJets_,anaJetType_);
 
   // -- Fill DiJet Event info --
+  FillEventInfo(iEvent,djEvt_);
   if (!isMC_) {
-    FillEventInfo(iEvent,dataDJEvt_);
-    FillJets(iEvent,dataDJEvt_,2);
+    FillJets(iEvent,djEvt_,2);
   }
   else {
-    FillEventInfo(iEvent,mcDJEvt_);
-    FillJets(iEvent,mcDJEvt_,anaJetType_,refJetType_);
+    FillJets(iEvent,djEvt_,anaJetType_,refJetType_);
   }
 
   // ===== Tracks =====
@@ -190,13 +186,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   // All done
-  if (!isMC_) dataTree_->Fill();
-  else {
-    mcTree_->Fill();
-    //calojPtnjTree_->Fill();
-    //genjCalojTree_->Fill();
-    //ptnjCalojTree_->Fill();
-  }
+  djTree_->Fill();
 }
 
 
@@ -217,25 +207,9 @@ void DiJetAna::beginJob()
   hTrkEtaPreSel_ = fs->make<TH1D>("hTrkEtaPreSel",";#eta^{trk};#", 50, -3., 3.);
   hTrkPtEtaPreSel_ = fs->make<TH2D>("hTrkPtEtaPreSel",";#eta^{trk};p_{T}^{trk} [GeV/c]", 50, -3., 3.,200,0,200.);
   // trees
-  if ( !isMC_ ) {
-    dataTree_ = fs->make<TTree>("datadjTree","data: dijet tree");
-    dataDJEvt_.SetTree(dataTree_);
-    dataDJEvt_.SetBranches();
-  }
-  if ( isMC_ ) {
-    mcTree_ = fs->make<TTree>("mcdjTree",Form("mc: jetType%d dijet tree with jetType%d ref",anaJetType_,refJetType_));
-    //calojPtnjTree_ = fs->make<TTree>("calojPtnjTree","mc: calo dijet tree with parton ref");
-    //genjCalojTree_ = fs->make<TTree>("genjCalojTree","mc: genjet dijet tree with calojet ref");
-    //ptnjCalojTree_ = fs->make<TTree>("ptnjCalojTree","mc: parton dijet tree with calojet ref");
-    mcDJEvt_.SetTree(mcTree_);
-    //calojPtnjData_.SetTree(calojPtnjTree_);
-    //genjCalojData_.SetTree(genjCalojTree_);
-    //ptnjCalojData_.SetTree(ptnjCalojTree_);
-    mcDJEvt_.SetBranches();
-    //calojPtnjData_.SetBranches();
-    //genjCalojData_.SetBranches();
-    //ptnjCalojData_.SetBranches();
-  }
+  djTree_ = fs->make<TTree>("djTree","dijet tree");
+  djEvt_.SetTree(djTree_);
+  djEvt_.SetBranches();
 }
 
 // ------------ method called once each job just after ending the event loop  ------------

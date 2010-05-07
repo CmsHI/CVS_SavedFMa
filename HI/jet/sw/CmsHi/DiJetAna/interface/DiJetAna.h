@@ -69,16 +69,8 @@ class DiJetAna : public edm::EDAnalyzer {
     TH1D	  *hTrkEtaPreSel_;
     TH2D	  *hTrkPtEtaPreSel_;
 
-    TTree	  *dataTree_;
-    TTree	  *mcTree_;
-    TTree	  *calojPtnjTree_;
-    TTree	  *genjCalojTree_;
-    TTree	  *ptnjCalojTree_;
-    TreeDiJetEventData dataDJEvt_;
-    TreeDiJetEventData mcDJEvt_;
-    TreeDiJetEventData calojPtnjData_;
-    TreeDiJetEventData genjCalojData_;
-    TreeDiJetEventData ptnjCalojData_;
+    TTree	  *djTree_;
+    TreeDiJetEventData djEvt_;
 };
 
 //
