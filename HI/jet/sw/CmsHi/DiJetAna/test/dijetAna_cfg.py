@@ -13,15 +13,18 @@ process.source = cms.Source("PoolSource",
       )
     )
 
-process.TFileService = cms.Service('TFileService',
-    fileName = cms.string('dijetAna.root')
-    )
-
 #================ DiJet Ana ==========================
 process.load("CmsHi.DiJetAna.dijetAna_cfi")
 process.dijetAna.jetsrc = "ak5HiGenJets"
 process.dijetAna.anaJetType = 1
 print process.dijetAna.dumpPython()
+
+anaOutName = "dijetAna_anaJet%d_refJet%d.root" % (process.dijetAna.anaJetType.value(),process.dijetAna.refJetType.value())
+print "AnaOutput: ", anaOutName
+
+process.TFileService = cms.Service('TFileService',
+    fileName = cms.string(anaOutName)
+    )
 
 # =============== Final Paths =====================
 process.ana = cms.Path(#process.chargedCandidates *
