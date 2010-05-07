@@ -1,7 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
-dijetAna_data = cms.EDAnalyzer('DiJetAna',
-    isMC = cms.untracked.bool(False),
+# Dijet Ana Modules
+dijetAna_mc = cms.EDAnalyzer('DiJetAna',
+    isMC = cms.untracked.bool(True),
     vtxsrc = cms.untracked.InputTag("hiSelectedVertex"),
     jetsrc = cms.untracked.InputTag("akPu5patJets"),
     trksrc = cms.untracked.InputTag("hiSelectedTracks"),
@@ -14,15 +15,16 @@ dijetAna_data = cms.EDAnalyzer('DiJetAna',
     refJetType = cms.untracked.int32(1)
     )
 
-dijetAna_mc = dijetAna_data.clone(
-    isMC = cms.untracked.bool(True)
-    )
-
 genDijetAna_mc = dijetAna_mc.clone(
     jetsrc = cms.untracked.InputTag("ak5HiGenJets"),
     anaJetType = cms.untracked.int32(1)
     )
 
+dijetAna_data = dijetAna_data.clone(
+    isMC = cms.untracked.bool(False)
+    )
+
+# Analysis Sequences
 dijetAna_data_seq = cms.Sequence(
     dijetAna_data
     )
