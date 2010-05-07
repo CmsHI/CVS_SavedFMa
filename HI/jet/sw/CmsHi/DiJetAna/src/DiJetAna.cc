@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.20 2010/05/07 10:04:29 frankma Exp $
+// $Id: DiJetAna.cc,v 1.21 2010/05/07 10:39:55 frankma Exp $
 //
 //
 
@@ -164,12 +164,8 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // -- Fill DiJet Event info --
   FillEventInfo(iEvent,djEvt_);
-  if (!isMC_) {
-    FillJets(iEvent,djEvt_,2);
-  }
-  else {
-    FillJets(iEvent,djEvt_,anaJetType_,refJetType_);
-  }
+  if (!isMC_) FillJets(iEvent,djEvt_,2);
+  else FillJets(iEvent,djEvt_,anaJetType_,refJetType_);
 
   // ===== Tracks =====
   //
@@ -340,7 +336,7 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
     cout << "# jets: " << (*jets).size() << endl;
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
-      cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
+      if (jet.pt()>(nearJetPtMin_/2.)) cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
     }
   }
   Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
