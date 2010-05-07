@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.17 2010/05/07 08:01:54 frankma Exp $
+// $Id: DiJetAna.cc,v 1.18 2010/05/07 08:09:03 frankma Exp $
 //
 //
 
@@ -96,8 +96,8 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   const int nTrigs = 5;
   const string qualityString = "highPurity";
-  calojData_.Clear();
-  calojGenjData_.Clear();
+  dataDJEvt_.Clear();
+  mcDJEvt_.Clear();
   calojPtnjData_.Clear();
   genjCalojData_.Clear();
   ptnjCalojData_.Clear();
@@ -166,9 +166,9 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if (numDJEvtSel_<=10) PrintDJEvent(iEvent,anaJets_,anaJetType_);
 
   // -- Fill jet info --
-  if (!isMC_) FillJets(iEvent,calojData_,2);
+  if (!isMC_) FillJets(iEvent,dataDJEvt_,2);
   else {
-    FillJets(iEvent,calojGenjData_,2,1);
+    FillJets(iEvent,mcDJEvt_,anaJetType_,refJetType_);
   }
 
   // ===== Tracks =====
@@ -186,12 +186,12 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   // All done
-  if (!isMC_) calojTree_->Fill();
+  if (!isMC_) dataTree_->Fill();
   else {
-    calojGenjTree_->Fill();
-    calojPtnjTree_->Fill();
-    genjCalojTree_->Fill();
-    ptnjCalojTree_->Fill();
+    mcTree_->Fill();
+    //calojPtnjTree_->Fill();
+    //genjCalojTree_->Fill();
+    //ptnjCalojTree_->Fill();
   }
 }
 
@@ -213,22 +213,24 @@ void DiJetAna::beginJob()
   hTrkEtaPreSel_ = fs->make<TH1D>("hTrkEtaPreSel",";#eta^{trk};#", 50, -3., 3.);
   hTrkPtEtaPreSel_ = fs->make<TH2D>("hTrkPtEtaPreSel",";#eta^{trk};p_{T}^{trk} [GeV/c]", 50, -3., 3.,200,0,200.);
   // trees
-  calojTree_ = fs->make<TTree>("calojTree","data: calo dijet tree");
-  calojData_.SetTree(calojTree_);
-  calojData_.SetBranches();
+  if ( !isMC_ ) {
+    dataTree_ = fs->make<TTree>("datadjTree","data: dijet tree");
+    dataDJEvt_.SetTree(dataTree_);
+    dataDJEvt_.SetBranches();
+  }
   if ( isMC_ ) {
-    calojGenjTree_ = fs->make<TTree>("calojGenjTree","mc: calo dijet tree with genjet ref");
-    calojPtnjTree_ = fs->make<TTree>("calojPtnjTree","mc: calo dijet tree with parton ref");
-    genjCalojTree_ = fs->make<TTree>("genjCalojTree","mc: genjet dijet tree with calojet ref");
-    ptnjCalojTree_ = fs->make<TTree>("ptnjCalojTree","mc: parton dijet tree with calojet ref");
-    calojGenjData_.SetTree(calojGenjTree_);
-    calojPtnjData_.SetTree(calojPtnjTree_);
-    genjCalojData_.SetTree(genjCalojTree_);
-    ptnjCalojData_.SetTree(ptnjCalojTree_);
-    calojGenjData_.SetBranches();
-    calojPtnjData_.SetBranches();
-    genjCalojData_.SetBranches();
-    ptnjCalojData_.SetBranches();
+    mcTree_ = fs->make<TTree>("mcdjTree",Form("mc: jetType%d dijet tree with jetType%d ref",anaJetType_,refJetType_));
+    //calojPtnjTree_ = fs->make<TTree>("calojPtnjTree","mc: calo dijet tree with parton ref");
+    //genjCalojTree_ = fs->make<TTree>("genjCalojTree","mc: genjet dijet tree with calojet ref");
+    //ptnjCalojTree_ = fs->make<TTree>("ptnjCalojTree","mc: parton dijet tree with calojet ref");
+    mcDJEvt_.SetTree(mcTree_);
+    //calojPtnjData_.SetTree(calojPtnjTree_);
+    //genjCalojData_.SetTree(genjCalojTree_);
+    //ptnjCalojData_.SetTree(ptnjCalojTree_);
+    mcDJEvt_.SetBranches();
+    //calojPtnjData_.SetBranches();
+    //genjCalojData_.SetBranches();
+    //ptnjCalojData_.SetBranches();
   }
 }
 
@@ -302,31 +304,44 @@ Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, Int_t jetType)
 
 void DiJetAna::FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType)
 {
-  Handle<vector<pat::Jet> > jets;
-  iEvent.getByLabel(jetsrc_,jets);
   anajets.clear();
 
   iNear_ = FindNearJet(iEvent,jetType);
   if (iNear_<0) return;
 
-  // Near JES
+  // Establish JES for reco jet
   if (jetType==2) {
+    Handle<vector<pat::Jet> > jets;
+    iEvent.getByLabel(jetsrc_,jets);
     const pat::Jet & NrJet = (*jets)[iNear_];
     if (doJEC_==3) nearJetPt_ = (*jets)[iNear_].correctedP4("abs").pt();
     if (doJEC_==5) nearJetPt_ = (*jets)[iNear_].correctedP4("had","uds").pt();
     if (doJEC_==7) nearJetPt_ = (*jets)[iNear_].correctedP4("part","uds").pt();
     anajets.push_back(math::PtEtaPhiMLorentzVectorF(nearJetPt_,NrJet.eta(),NrJet.phi(),NrJet.mass()));
-  }
 
-  iAway_ = FindAwayJet(iEvent,jetType);
-  if (iAway_<0) return;
+    iAway_ = FindAwayJet(iEvent,jetType);
+    if (iAway_<0) return;
 
-  // Away JES
-  if (jetType==2) {
     const pat::Jet & AwJet = (*jets)[iAway_];
     if (doJEC_==3) awayJetPt_ = (*jets)[iAway_].correctedP4("abs").pt();
     if (doJEC_==5) awayJetPt_ = (*jets)[iAway_].correctedP4("had","glu").pt();
     if (doJEC_==7) awayJetPt_ = (*jets)[iAway_].correctedP4("part","glu").pt();
+    anajets.push_back(math::PtEtaPhiMLorentzVectorF(awayJetPt_,AwJet.eta(),AwJet.phi(),AwJet.mass()));
+  }
+
+  // For gen level don't consider JES for now
+  if (jetType<2) {
+    edm::Handle<reco::CandidateView> jets;
+    iEvent.getByLabel(jetsrc_,jets);
+    const reco::Candidate & NrJet = (*jets)[iNear_];
+    nearJetPt_ = NrJet.pt();
+    anajets.push_back(math::PtEtaPhiMLorentzVectorF(nearJetPt_,NrJet.eta(),NrJet.phi(),NrJet.mass()));
+    
+    iAway_ = FindAwayJet(iEvent,jetType);
+    if (iAway_<0) return;
+
+    const reco::Candidate & AwJet = (*jets)[iAway_];
+    awayJetPt_ = AwJet.pt();
     anajets.push_back(math::PtEtaPhiMLorentzVectorF(awayJetPt_,AwJet.eta(),AwJet.phi(),AwJet.mass()));
   }
 }
