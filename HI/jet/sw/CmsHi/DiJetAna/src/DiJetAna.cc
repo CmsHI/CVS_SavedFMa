@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.22 2010/05/07 10:47:08 frankma Exp $
+// $Id: DiJetAna.cc,v 1.23 2010/05/07 11:02:25 frankma Exp $
 //
 //
 
@@ -161,6 +161,9 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) return;
   ++numDJEvtSel_;
   if (numDJEvtSel_<=10) PrintDJEvent(iEvent,anaJets_,anaJetType_);
+
+  // -- Get Ref jets to the selected dijet (if MC) --
+  if (isMC_)FindRefJets(iEvent,anaJetType_,refJets_);
 
   // -- Fill DiJet Event info --
   FillEventInfo(iEvent,djEvt_);
@@ -328,6 +331,22 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLo
     const reco::Candidate & AwJet = (*jets)[iAway_];
     awayJetPt_ = AwJet.pt();
     anajets.push_back(math::PtEtaPhiMLorentzVectorF(awayJetPt_,AwJet.eta(),AwJet.phi(),AwJet.mass()));
+  }
+}
+
+// ------------- Reference Jets ---------------
+void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t anajetType, std::vector<math::PtEtaPhiMLorentzVectorF> & refjets)
+{
+  refjets.clear();
+  if (anajetType==2) {
+    Handle<vector<pat::Jet> > jets;
+    iEvent.getByLabel(jetsrc_,jets);
+    const reco::GenJet * NrGJet = (*jets)[iNear_].genJet();
+    const reco::GenJet * AwGJet = (*jets)[iAway_].genJet();
+    if (NrGJet && AwGJet) {
+      refjets.push_back(math::PtEtaPhiMLorentzVectorF(NrGJet->pt(),NrGJet->eta(),NrGJet->phi(),NrGJet->mass()));
+      refjets.push_back(math::PtEtaPhiMLorentzVectorF(AwGJet->pt(),AwGJet->eta(),AwGJet->phi(),AwGJet->mass()));
+    }
   }
 }
 
