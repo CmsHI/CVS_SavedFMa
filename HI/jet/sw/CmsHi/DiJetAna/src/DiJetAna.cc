@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.24 2010/05/07 11:21:25 frankma Exp $
+// $Id: DiJetAna.cc,v 1.25 2010/05/07 11:49:21 frankma Exp $
 //
 //
 
@@ -172,8 +172,10 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     FillJets(iEvent,djEvt_,anaJets_,anaJetType_,refJets_,refJetType_);
   }
 
-  // ===== Tracks =====
   //
+  // ------------------------------- Tracks ------------------------------
+  //
+  // Inclusive Trk ana
   Handle<vector<Track> > tracks;
   iEvent.getByLabel(trksrc_, tracks);
 
@@ -185,6 +187,11 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     hTrkEtaPreSel_->Fill(trk.eta());
     hTrkPtEtaPreSel_->Fill(trk.eta(),trk.pt());
   }
+
+  //
+  // -- Jet-Track Correlations ---
+  //
+  FillTrks(iEvent,djEvt_,anaJets_,refJets_);
 
   // All done
   djTree_->Fill();
@@ -245,6 +252,33 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     jd.nljemf_		= (*jets)[iNear_].emEnergyFraction();
     jd.aljemf_		= (*jets)[iAway_].emEnergyFraction();
   }
+}
+
+void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
+    std::vector<math::PtEtaPhiMLorentzVectorF> & anajets,
+    std::vector<math::PtEtaPhiMLorentzVectorF> & refjets)
+{
+  Handle<vector<Track> > tracks;
+  iEvent.getByLabel(trksrc_, tracks);
+
+  int selTrkCt = 0;
+  for(unsigned it=0; it<tracks->size(); ++it){
+    const reco::Track & trk = (*tracks)[it];
+    // Trk Selection
+    //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
+
+    // fill frag candidates basic info
+    jd.trkNHits_[selTrkCt]	 = trk.numberOfValidHits();
+    jd.ppt_[selTrkCt]		 = trk.pt();
+    jd.peta_[selTrkCt]		 = trk.eta();
+    jd.pphi_[selTrkCt]		 = trk.phi();
+
+    ++selTrkCt;
+  }
+  jd.evtnp_			 = selTrkCt;
+
+  // make correlation calcuations
+  jd.CalcTrkVars(isMC_,anajets);
 }
 
 // ------------ Find DiJet ----------------
@@ -364,8 +398,23 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
   }
   Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
   cout << "corr" << doJEC_ << " leading dijet - iNear: " << iNear_ << " " <<": "<< anajets[0]
-     << "  iAway: " << iAway_ << " " << anajets[1] << endl;
-     cout << "DiJet dphi: " << ljdphi << endl;
+    << "  iAway: " << iAway_ << " " << anajets[1] << endl;
+  cout << "DiJet dphi: " << ljdphi << endl;
+
+  // Print Tracks
+  if (jetType==2) PrintTrks(iEvent,1);
+}
+
+void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
+{
+  Handle<vector<Track> > tracks;
+  iEvent.getByLabel(trksrc_, tracks);
+
+  for(unsigned it=0; it<tracks->size(); ++it){
+    const reco::Track & trk = (*tracks)[it];
+    //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
+    cout << "trk " << it << " pt|eta|phi: " << trk.pt() << "|" << trk.eta() << "|" << trk.phi() << endl;
+  }
 }
 
 //define this as a plug-in

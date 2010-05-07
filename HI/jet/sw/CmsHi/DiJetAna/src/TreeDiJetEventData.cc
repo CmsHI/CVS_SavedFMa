@@ -75,6 +75,10 @@ void TreeDiJetEventData::CalcDJVars(Bool_t isMC, std::vector<math::PtEtaPhiMLore
   }
 }
 
+void TreeDiJetEventData::CalcTrkVars(Bool_t isMC, std::vector<math::PtEtaPhiMLorentzVectorF> anajets)
+{
+}
+
 // set brances
 void TreeDiJetEventData::SetBranches()
 {

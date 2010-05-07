@@ -25,7 +25,8 @@ class TreeDiJetEventData
     void CalcDJVars(Bool_t isMC,
 	std::vector<math::PtEtaPhiMLorentzVectorF> anajets,
 	std::vector<math::PtEtaPhiMLorentzVectorF> refjets);
-    void CalcJetTrkVars();
+    void CalcTrkVars(Bool_t isMC,
+	std::vector<math::PtEtaPhiMLorentzVectorF> anajets);
 
     // ===== Ana Data =====
     //  --- event level ---

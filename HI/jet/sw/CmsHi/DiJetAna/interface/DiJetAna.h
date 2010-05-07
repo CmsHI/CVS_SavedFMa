@@ -25,11 +25,15 @@ class DiJetAna : public edm::EDAnalyzer {
     void  FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t anajetType,
 	std::vector<math::PtEtaPhiMLorentzVectorF> & refjets, Int_t refjetType=-1);
+    void  FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
+	std::vector<math::PtEtaPhiMLorentzVectorF> & anajets,
+	std::vector<math::PtEtaPhiMLorentzVectorF> & refjets);
     Int_t FindNearJet(const edm::Event& iEvent, Int_t jetType=2);
     Int_t FindAwayJet(const edm::Event& iEvent, Int_t jetType=2);
     void FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType=2); 
     void FindRefJets(const edm::Event& iEvent, Int_t anajetType, std::vector<math::PtEtaPhiMLorentzVectorF> & refjets); 
     void PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType=2);
+    void PrintTrks(const edm::Event& iEvent, Int_t trkType=1);
 
   private:
     virtual void beginJob() ;
