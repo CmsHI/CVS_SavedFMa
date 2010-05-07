@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.15 2010/05/07 07:35:50 frankma Exp $
+// $Id: DiJetAna.cc,v 1.16 2010/05/07 07:55:04 frankma Exp $
 //
 //
 
@@ -141,10 +141,11 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // ===== Inclusive Jet Ana =====
   //
   // find leading jet based on corrected pt
-  if (anaJetType_==2) {
+  if (anaJetType_<=2) {
+    edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
     for (unsigned int j=0; j<(*jets).size();++j) {
-      const pat::Jet & jet = (*jets)[j];
+      const reco::Candidate & jet = (*jets)[j];
       Double_t corrPt=-99;
       if (doJEC_==3) corrPt = jet.pt();
       hJetPtPreSel_->Fill(corrPt);
