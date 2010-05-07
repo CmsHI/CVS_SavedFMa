@@ -21,7 +21,8 @@ class DiJetAna : public edm::EDAnalyzer {
     ~DiJetAna();
 
     // class methods
-    void  FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd_, Int_t jetType=2, Int_t jetRefType=-1);
+    void  FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd);
+    void  FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd, Int_t jetType=2, Int_t jetRefType=-1);
     Int_t FindNearJet(const edm::Event& iEvent, Int_t jetType=2);
     Int_t FindAwayJet(const edm::Event& iEvent, Int_t jetType=2);
     void FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType=2); 

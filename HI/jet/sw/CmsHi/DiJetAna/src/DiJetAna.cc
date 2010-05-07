@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.18 2010/05/07 08:09:03 frankma Exp $
+// $Id: DiJetAna.cc,v 1.19 2010/05/07 08:47:56 frankma Exp $
 //
 //
 
@@ -165,9 +165,13 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   ++numDJEvtSel_;
   if (numDJEvtSel_<=10) PrintDJEvent(iEvent,anaJets_,anaJetType_);
 
-  // -- Fill jet info --
-  if (!isMC_) FillJets(iEvent,dataDJEvt_,2);
+  // -- Fill DiJet Event info --
+  if (!isMC_) {
+    FillEventInfo(iEvent,dataDJEvt_);
+    FillJets(iEvent,dataDJEvt_,2);
+  }
   else {
+    FillEventInfo(iEvent,mcDJEvt_);
     FillJets(iEvent,mcDJEvt_,anaJetType_,refJetType_);
   }
 
@@ -247,15 +251,22 @@ DiJetAna::endJob() {
 
 // ==================== Member Methods ===========================
 // ------------ Tree Filling --------------
-void DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd_, Int_t jetType, Int_t jetRefType)
+void DiJetAna::FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
+{
+  jd.run_	  = iEvent.id().run();
+  jd.evt_	  = iEvent.id().event();
+  jd.lumi_	  = iEvent.luminosityBlock();
+}
+
+void DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd, Int_t jetType, Int_t jetRefType)
 {
   // Calc dijet vars for ana jets
-  jd_.CalcDJVars(anaJets_);
+  jd.CalcDJVars(anaJets_);
   if (jetType==2) {
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
-    jd_.nljemf_		= (*jets)[iNear_].emEnergyFraction();
-    jd_.aljemf_		= (*jets)[iAway_].emEnergyFraction();
+    jd.nljemf_		= (*jets)[iNear_].emEnergyFraction();
+    jd.aljemf_		= (*jets)[iAway_].emEnergyFraction();
   }
 }
 
