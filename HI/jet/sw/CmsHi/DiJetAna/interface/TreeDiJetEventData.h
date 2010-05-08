@@ -8,7 +8,7 @@
 #include "TTree.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
 
-const Int_t MAXTRK = 100000;
+const Int_t MAXTRK = 200000;
 //
 // DiJet ana Event Data Tree definition
 //
