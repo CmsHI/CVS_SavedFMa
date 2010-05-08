@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.27 2010/05/07 13:54:54 frankma Exp $
+// $Id: DiJetAna.cc,v 1.28 2010/05/08 15:45:35 frankma Exp $
 //
 //
 
@@ -160,7 +160,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // === dijet kinematics selection ===
   if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) return;
   ++numDJEvtSel_;
-  if (numDJEvtSel_<=10) PrintDJEvent(iEvent,anaJets_,anaJetType_);
+  if (numDJEvtSel_<=10) PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
 
   // -- Get Ref jets to the selected dijet (if MC) --
   if (isMC_)FindRefJets(iEvent,anaJetType_,refJets_);
@@ -176,24 +176,10 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // ------------------------------- Tracks ------------------------------
   //
   // Inclusive Trk ana
-  if (anaTrkType_==2) {
-    Handle<vector<Track> > tracks;
-    iEvent.getByLabel(trksrc_, tracks);
+  InclTrkAna(iEvent,anaTrkType_);
 
-    for(unsigned it=0; it<tracks->size(); ++it){
-      const reco::Track & trk = (*tracks)[it];
-      //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
-
-      hTrkPtDJEvtSel_->Fill(trk.pt());
-      hTrkEtaDJEvtSel_->Fill(trk.eta());
-      hTrkPtEtaDJEvtSel_->Fill(trk.eta(),trk.pt());
-    }
-  }
-
-  //
   // -- Jet-Track Correlations ---
-  //
-  FillTrks(iEvent,djEvt_,anaJets_,refJets_,anaTrkType_);
+  //FillTrks(iEvent,djEvt_,anaJets_,refJets_,anaTrkType_);
 
   // All done
   djTree_->Fill();
@@ -234,6 +220,36 @@ DiJetAna::endJob() {
 
 
 // ==================== Member Methods ===========================
+// ------------ Inclusive Ana -------------
+void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
+{
+  if (trkType==2) {
+    Handle<vector<Track> > tracks;
+    iEvent.getByLabel(trksrc_, tracks);
+    for(unsigned it=0; it<tracks->size(); ++it){
+      const reco::Track & trk = (*tracks)[it];
+      //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
+      hTrkPtDJEvtSel_->Fill(trk.pt());
+      hTrkEtaDJEvtSel_->Fill(trk.eta());
+      hTrkPtEtaDJEvtSel_->Fill(trk.eta(),trk.pt());
+    }
+  }
+
+  if (trkType==0) {
+    edm::Handle<reco::GenParticleCollection> genps;
+    iEvent.getByLabel(trksrc_, genps);
+    for(unsigned it=0; it<genps->size(); ++it){
+      const reco::GenParticle & trk = (*genps)[it];
+      // select charged stable particles
+      if (!GoodAnaTrkParticle(trk)) continue;
+
+      hTrkPtDJEvtSel_->Fill(trk.pt());
+      hTrkEtaDJEvtSel_->Fill(trk.eta());
+      hTrkPtEtaDJEvtSel_->Fill(trk.eta(),trk.pt());
+    }
+  }
+}
+
 // ------------ Tree Filling --------------
 void DiJetAna::FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
 {
@@ -387,12 +403,19 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t anajetType, std::vect
 }
 
 // ------------- Helpers ------------------
-void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType)
+Bool_t DiJetAna::GoodAnaTrkParticle(const reco::GenParticle & p)
+{
+  if (p.status()!=1) return false;
+  if (p.charge()==0) return false;
+  return true;
+}
+void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType, Int_t trkType)
 {
   if (jetType<=2) {
     edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
-    cout << "# type " << jetType << " jets: " << (*jets).size() << endl;
+    cout << "jetType " << jetType << ", trkType " << trkType <<
+      ".  # jets: " << (*jets).size() << endl;
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
       if (jet.pt()>(nearJetPtMin_/2.)) cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
@@ -404,7 +427,7 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
   cout << "DiJet dphi: " << ljdphi << endl;
 
   // Print Tracks
-  if (jetType==2) PrintTrks(iEvent,2);
+  if ((jetType+trkType)==4 || (jetType+trkType)==1) PrintTrks(iEvent,trkType);
 }
 
 void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
@@ -412,11 +435,30 @@ void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
   if (trkType==2) {
     Handle<vector<Track> > tracks;
     iEvent.getByLabel(trksrc_, tracks);
-
+    cout << " # trks: " << tracks->size() << endl;
     for(unsigned it=0; it<tracks->size(); ++it){
       const reco::Track & trk = (*tracks)[it];
       //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
-      cout << "trk " << it << " pt|eta|phi: " << trk.pt() << "|" << trk.eta() << "|" << trk.phi() << endl;
+      if (it<20 || it>(tracks->size()-20))
+	cout << "trk " << it << " pt|eta|phi: " << trk.pt() << "|" << trk.eta() << "|" << trk.phi() << endl;
+    }
+  }
+
+  if (trkType==0) {
+    edm::Handle<reco::GenParticleCollection> genps;
+    iEvent.getByLabel(trksrc_, genps);
+    cout << " # particles: " << genps->size() << endl;
+    Int_t pct = 0;
+    for(unsigned it=0; it<genps->size(); ++it){
+      const reco::GenParticle & trk = (*genps)[it];
+      // select charged stable particles
+      if (!GoodAnaTrkParticle(trk)) continue;
+      ++pct;
+      if (pct<=20 || it>(genps->size()-20)) {
+	cout << "particle " << it
+	<< " pid|status|charge: " << trk.pdgId() << "|" << trk.status() << "|" << trk.charge()
+	<< " pt|eta|phi: " << trk.pt() << "|" << trk.eta() << "|" << trk.phi() << endl;
+      }
     }
   }
 }
