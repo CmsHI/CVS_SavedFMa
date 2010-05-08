@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 analysisSkimContent = cms.PSet(
     outputCommands = cms.untracked.vstring('drop *',
       # event
-      'keep *_offlinePrimaryVertices_*_*',
+      'keep *_hiSelectedVertex_*_*',
       'keep *_pixelVertices_*_*',
       'keep *_offlineBeamSpot_*_*',
       'keep *_TriggerResults_*_HLT',
@@ -15,7 +15,7 @@ analysisSkimContent = cms.PSet(
 
       # mc gen info
       'keep recoGenJets_*_*_HISIGNAL',
-      'keep reco*_genParticles_*_*',
+      'keep reco*_hiGenParticles_*_*',
       'keep GenEventInfoProduct_*_*_*',
       'keep *_partons_*_*',
 
