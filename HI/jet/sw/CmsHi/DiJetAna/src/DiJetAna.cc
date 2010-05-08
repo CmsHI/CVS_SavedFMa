@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.29 2010/05/08 17:31:35 frankma Exp $
+// $Id: DiJetAna.cc,v 1.30 2010/05/08 17:51:25 frankma Exp $
 //
 //
 
@@ -180,7 +180,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   InclTrkAna(iEvent,anaTrkType_);
 
   // -- Jet-Track Correlations ---
-  //FillTrks(iEvent,djEvt_,anaJets_,refJets_,anaTrkType_);
+  FillTrks(iEvent,djEvt_,anaJets_,refJets_,anaTrkType_);
 
   // All done
   djTree_->Fill();
@@ -200,9 +200,9 @@ void DiJetAna::beginJob()
   hJetEtaPreSel_ = fs->make<TH1D>("hJetEtaPreSel",";#eta^{jet};#", 50, -1.5*jetEtaMax_, 1.5*jetEtaMax_);
   hJetPhiPreSel_ = fs->make<TH1D>("hJetPhiPreSel",";#phi^{jet};#", 50, -1*TMath::Pi(), TMath::Pi());
   // trks
-  hTrkPtDJEvtSel_ = fs->make<TH1D>("hTrkPtDJEvtSel",";p_{T}^{trk} [GeV/c];#", 200, 0.0, 200.0);
+  hTrkPtDJEvtSel_ = fs->make<TH1D>("hTrkPtDJEvtSel",";p_{T}^{trk} [GeV/c];#", 200, 0.0, 100.0);
   hTrkEtaDJEvtSel_ = fs->make<TH1D>("hTrkEtaDJEvtSel",";#eta^{trk};#", 50, -3., 3.);
-  hTrkPtEtaDJEvtSel_ = fs->make<TH2D>("hTrkPtEtaDJEvtSel",";#eta^{trk};p_{T}^{trk} [GeV/c]", 50, -3., 3.,200,0,200.);
+  hTrkPtEtaDJEvtSel_ = fs->make<TH2D>("hTrkPtEtaDJEvtSel",";#eta^{trk};p_{T}^{trk} [GeV/c]", 50, -3., 3.,200,0,100.);
   // trees
   djTree_ = fs->make<TTree>("djTree","dijet tree");
   djEvt_.SetTree(djTree_);
@@ -279,19 +279,36 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
     std::vector<math::PtEtaPhiMLorentzVectorF> & refjets,
     Int_t trkType)
 {
+  int selTrkCt = 0;
+
   if (trkType==2) {
     Handle<vector<Track> > tracks;
     iEvent.getByLabel(trksrc_, tracks);
-    int selTrkCt = 0;
     for(unsigned it=0; it<tracks->size(); ++it){
       const reco::Track & trk = (*tracks)[it];
       // Trk Selection
-      //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
+      if (!GoodAnaTrk(trk)) continue;
       // fill frag candidates basic info
-      jd.trkNHits_[selTrkCt]	 = trk.numberOfValidHits();
-      jd.ppt_[selTrkCt]		 = trk.pt();
-      jd.peta_[selTrkCt]		 = trk.eta();
-      jd.pphi_[selTrkCt]		 = trk.phi();
+      jd.trkNHits_[selTrkCt]	       = trk.numberOfValidHits();
+      jd.ppt_[selTrkCt]		       = trk.pt();
+      jd.peta_[selTrkCt]	       = trk.eta();
+      jd.pphi_[selTrkCt]	       = trk.phi();
+      ++selTrkCt;
+    }
+    jd.evtnp_			 = selTrkCt;
+  } else if (trkType==0) {
+    edm::Handle<reco::GenParticleCollection> genps;
+    iEvent.getByLabel(trksrc_, genps);
+    for(unsigned it=0; it<genps->size(); ++it){
+      const reco::GenParticle & trk = (*genps)[it];
+      // select charged stable particles
+      if (!GoodAnaTrkParticle(trk)) continue;
+      // fill frag candidates basic info
+      jd.ppid_[selTrkCt]	       = trk.pdgId();
+      jd.pch_[selTrkCt]		       = trk.charge();
+      jd.ppt_[selTrkCt]		       = trk.pt();
+      jd.peta_[selTrkCt]	       = trk.eta();
+      jd.pphi_[selTrkCt]	       = trk.phi();
       ++selTrkCt;
     }
     jd.evtnp_			 = selTrkCt;
