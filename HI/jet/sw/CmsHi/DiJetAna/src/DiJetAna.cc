@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.30 2010/05/08 17:51:25 frankma Exp $
+// $Id: DiJetAna.cc,v 1.31 2010/05/08 18:24:54 frankma Exp $
 //
 //
 
@@ -75,7 +75,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   trkPtMin_ = iConfig.getUntrackedParameter<double>("trkPtMin", 0.3);
   anaJetType_ = iConfig.getUntrackedParameter<int>("anaJetType", 2);
   refJetType_ = iConfig.getUntrackedParameter<int>("refJetType", 1);
-  anaTrkType_ = iConfig.getUntrackedParameter<int>("anaTrkType", 2);
+  anaTrkType_ = iConfig.getUntrackedParameter<int>("anaTrkType", 3);
 }
 
 
@@ -237,13 +237,13 @@ void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
     }
   }
 
-  if (trkType==0) {
-    edm::Handle<reco::GenParticleCollection> genps;
-    iEvent.getByLabel(trksrc_, genps);
-    for(unsigned it=0; it<genps->size(); ++it){
-      const reco::GenParticle & trk = (*genps)[it];
+  if (trkType==0||trkType==3) {
+    edm::Handle<reco::CandidateView> trks;
+    iEvent.getByLabel(trksrc_,trks);
+    for (unsigned int it=0; it<(*trks).size();++it) {
+      const reco::Candidate & trk = (*trks)[it];
       // select charged stable particles
-      if (!GoodAnaTrkParticle(trk)) continue;
+      if (!GoodAnaTrkParticle(trk,trkType)) continue;
 
       hTrkPtDJEvtSel_->Fill(trk.pt());
       hTrkEtaDJEvtSel_->Fill(trk.eta());
@@ -279,30 +279,30 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
     std::vector<math::PtEtaPhiMLorentzVectorF> & refjets,
     Int_t trkType)
 {
-  int selTrkCt = 0;
-
   if (trkType==2) {
     Handle<vector<Track> > tracks;
     iEvent.getByLabel(trksrc_, tracks);
+    int selTrkCt = 0;
     for(unsigned it=0; it<tracks->size(); ++it){
       const reco::Track & trk = (*tracks)[it];
       // Trk Selection
       if (!GoodAnaTrk(trk)) continue;
       // fill frag candidates basic info
-      jd.trkNHits_[selTrkCt]	       = trk.numberOfValidHits();
+      //jd.trkNHits_[selTrkCt]	       = trk.numberOfValidHits();
       jd.ppt_[selTrkCt]		       = trk.pt();
       jd.peta_[selTrkCt]	       = trk.eta();
       jd.pphi_[selTrkCt]	       = trk.phi();
       ++selTrkCt;
     }
     jd.evtnp_			 = selTrkCt;
-  } else if (trkType==0) {
-    edm::Handle<reco::GenParticleCollection> genps;
-    iEvent.getByLabel(trksrc_, genps);
-    for(unsigned it=0; it<genps->size(); ++it){
-      const reco::GenParticle & trk = (*genps)[it];
+  } else if (trkType==0||trkType==3) {
+    edm::Handle<reco::CandidateView> trks;
+    iEvent.getByLabel(trksrc_,trks);
+    int selTrkCt = 0;
+    for (unsigned int it=0; it<(*trks).size();++it) {
+      const reco::Candidate & trk = (*trks)[it];
       // select charged stable particles
-      if (!GoodAnaTrkParticle(trk)) continue;
+      if (!GoodAnaTrkParticle(trk,trkType)) continue;
       // fill frag candidates basic info
       jd.ppid_[selTrkCt]	       = trk.pdgId();
       jd.pch_[selTrkCt]		       = trk.charge();
@@ -428,10 +428,12 @@ Bool_t DiJetAna::GoodAnaTrk(const reco::Track & trk)
   if (trk.pt()<trkPtMin_) return false;
   return true;
 }
-Bool_t DiJetAna::GoodAnaTrkParticle(const reco::GenParticle & p)
+Bool_t DiJetAna::GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType)
 {
-  if (p.status()!=1) return false;
-  if (p.charge()==0) return false;
+  if (trkType==0) {
+    if (p.status()!=1) return false;
+    if (p.charge()==0) return false;
+  }
   if (p.pt()<trkPtMin_) return false;
   return true;
 }
@@ -453,7 +455,7 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
   cout << "DiJet dphi: " << ljdphi << endl;
 
   // Print Tracks
-  if ((jetType+trkType)==4 || (jetType+trkType)==1) PrintTrks(iEvent,trkType);
+  if ((jetType+trkType)==5 || (jetType+trkType)==1) PrintTrks(iEvent,trkType);
 }
 
 void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
@@ -469,20 +471,20 @@ void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
     }
   }
 
-  if (trkType==0) {
-    edm::Handle<reco::GenParticleCollection> genps;
-    iEvent.getByLabel(trksrc_, genps);
-    cout << " # particles: " << genps->size() << endl;
+  if (trkType==0||trkType==3) {
+    edm::Handle<reco::CandidateView> trks;
+    iEvent.getByLabel(trksrc_, trks);
+    cout << "# of (type" << trkType <<")" << "trks: " << trks->size() << endl;
     Int_t pct = 0;
-    for(unsigned it=0; it<genps->size(); ++it){
-      const reco::GenParticle & trk = (*genps)[it];
+    for(unsigned it=0; it<trks->size(); ++it){
+      const reco::Candidate & trk = (*trks)[it];
       // select charged stable particles
-      if (!GoodAnaTrkParticle(trk)) continue;
+      if (!GoodAnaTrkParticle(trk,trkType)) continue;
       ++pct;
-      if (pct<=20 || it>(genps->size()-20)) {
-	cout << "particle " << it
-	<< " pid|status|charge: " << trk.pdgId() << "|" << trk.status() << "|" << trk.charge()
-	<< " pt|eta|phi: " << trk.pt() << "|" << trk.eta() << "|" << trk.phi() << endl;
+      if (pct<=20 || it>(trks->size()-20)) {
+	cout << "trk" << it;
+	if (trkType==0) cout << " pid|status|charge: " << trk.pdgId() << "|" << trk.status() << "|" << trk.charge();
+	cout << " pt|eta|phi: " << trk.pt() << "|" << trk.eta() << "|" << trk.phi() << endl;
       }
     }
   }

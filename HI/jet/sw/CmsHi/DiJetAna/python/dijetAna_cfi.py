@@ -5,7 +5,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     isMC = cms.untracked.bool(True),
     vtxsrc = cms.untracked.InputTag("hiSelectedVertex"),
     jetsrc = cms.untracked.InputTag("akPu5patJets"),
-    trksrc = cms.untracked.InputTag("hiSelectedTracks"),
+    trksrc = cms.untracked.InputTag("allTracks"),
     jetEtaMax = cms.untracked.double(3.0),
     nVtxTrkCut = cms.untracked.int32(3),
     doJEC = cms.untracked.int32(3),
@@ -14,7 +14,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     trkPtMin = cms.untracked.double(0.3),
     anaJetType = cms.untracked.int32(2),
     refJetType = cms.untracked.int32(1),
-    anaTrkType = cms.untracked.int32(2)
+    anaTrkType = cms.untracked.int32(3)
     )
 
 dijetAna_mc_genjet_trk = dijetAna_mc.clone(

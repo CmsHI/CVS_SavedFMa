@@ -156,11 +156,11 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("zn",this->zn_,"zn[evtnp]/D");
   tree_->Branch("za",this->za_,"za[evtnp]/D");
 
-  tree_->Branch("trkHP",this->trkHP_,"trkHP[evtnp]/I");
-  tree_->Branch("trkNHits",this->trkNHits_,"trkNHits[evtnp]/I");
-  tree_->Branch("trkPtErr",this->trkPtErr_,"trkPtErr[evtnp]/D");
-  tree_->Branch("trkdz",this->trkdz_,"trkdz[evtnp]/D");
-  tree_->Branch("trkdxy",this->trkdxy_,"trkdxy[evtnp]/D");
+  //tree_->Branch("trkHP",this->trkHP_,"trkHP[evtnp]/I");
+  //tree_->Branch("trkNHits",this->trkNHits_,"trkNHits[evtnp]/I");
+  //tree_->Branch("trkPtErr",this->trkPtErr_,"trkPtErr[evtnp]/D");
+  //tree_->Branch("trkdz",this->trkdz_,"trkdz[evtnp]/D");
+  //tree_->Branch("trkdxy",this->trkdxy_,"trkdxy[evtnp]/D");
 
   // -- jet cone info --
   tree_->Branch("nljCone5NP", &(this->nljCone5NP_), "nljCone5NP/I");

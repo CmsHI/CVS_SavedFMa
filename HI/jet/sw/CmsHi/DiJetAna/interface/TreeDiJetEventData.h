@@ -72,8 +72,8 @@ class TreeDiJetEventData
     Double_t       	    zn_[MAXTRK],za_[MAXTRK];
 
     //  - track sel -
-    Int_t	       	    trkHP_[MAXTRK],trkNHits_[MAXTRK];
-    Double_t	       	    trkPtErr_[MAXTRK],trkdz_[MAXTRK],trkdxy_[MAXTRK];
+    //Int_t	       	    trkHP_[MAXTRK],trkNHits_[MAXTRK];
+    //Double_t	       	    trkPtErr_[MAXTRK],trkdz_[MAXTRK],trkdxy_[MAXTRK];
 
     // -- jet cone info --
     Int_t		    nljCone5NP_,nljCone10NP_,nljCone15NP_;
