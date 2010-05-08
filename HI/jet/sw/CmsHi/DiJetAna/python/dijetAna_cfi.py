@@ -12,7 +12,8 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     nearJetPtMin = cms.untracked.double(40.0),
     awayJetPtMin = cms.untracked.double(40.0),
     anaJetType = cms.untracked.int32(2),
-    refJetType = cms.untracked.int32(1)
+    refJetType = cms.untracked.int32(1),
+    anaTrkType = cms.untracked.int32(2)
     )
 
 genDijetAna_mc = dijetAna_mc.clone(

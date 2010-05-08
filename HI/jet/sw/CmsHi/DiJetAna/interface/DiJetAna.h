@@ -27,7 +27,8 @@ class DiJetAna : public edm::EDAnalyzer {
 	std::vector<math::PtEtaPhiMLorentzVectorF> & refjets, Int_t refjetType=-1);
     void  FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	std::vector<math::PtEtaPhiMLorentzVectorF> & anajets,
-	std::vector<math::PtEtaPhiMLorentzVectorF> & refjets);
+	std::vector<math::PtEtaPhiMLorentzVectorF> & refjets,
+	Int_t trkType);
     Int_t FindNearJet(const edm::Event& iEvent, Int_t jetType=2);
     Int_t FindAwayJet(const edm::Event& iEvent, Int_t jetType=2);
     void FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType=2); 
@@ -55,6 +56,7 @@ class DiJetAna : public edm::EDAnalyzer {
     Double_t	  awayJetPtMin_;
     Int_t	  anaJetType_;
     Int_t	  refJetType_;
+    Int_t	  anaTrkType_;
     // ana vars
     Int_t	  numPreEvtSel_;
     Int_t	  numDJEvtSel_;

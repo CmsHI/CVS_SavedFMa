@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.26 2010/05/07 13:48:38 frankma Exp $
+// $Id: DiJetAna.cc,v 1.27 2010/05/07 13:54:54 frankma Exp $
 //
 //
 
@@ -74,6 +74,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   awayJetPtMin_ = iConfig.getUntrackedParameter<double>("awayJetPtMin", 50);
   anaJetType_ = iConfig.getUntrackedParameter<int>("anaJetType", 2);
   refJetType_ = iConfig.getUntrackedParameter<int>("refJetType", 1);
+  anaTrkType_ = iConfig.getUntrackedParameter<int>("anaTrkType", 2);
 }
 
 
@@ -96,7 +97,6 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   const int nTrigs = 5;
   const string qualityString = "highPurity";
-  djEvt_.Clear();
   djEvt_.Clear();
 
   //-----------------------  Preselection (This part will be in an EDFilter later)  
@@ -176,22 +176,24 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // ------------------------------- Tracks ------------------------------
   //
   // Inclusive Trk ana
-  Handle<vector<Track> > tracks;
-  iEvent.getByLabel(trksrc_, tracks);
+  if (anaTrkType_==2) {
+    Handle<vector<Track> > tracks;
+    iEvent.getByLabel(trksrc_, tracks);
 
-  for(unsigned it=0; it<tracks->size(); ++it){
-    const reco::Track & trk = (*tracks)[it];
-    //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
+    for(unsigned it=0; it<tracks->size(); ++it){
+      const reco::Track & trk = (*tracks)[it];
+      //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
 
-    hTrkPtDJEvtSel_->Fill(trk.pt());
-    hTrkEtaDJEvtSel_->Fill(trk.eta());
-    hTrkPtEtaDJEvtSel_->Fill(trk.eta(),trk.pt());
+      hTrkPtDJEvtSel_->Fill(trk.pt());
+      hTrkEtaDJEvtSel_->Fill(trk.eta());
+      hTrkPtEtaDJEvtSel_->Fill(trk.eta(),trk.pt());
+    }
   }
 
   //
   // -- Jet-Track Correlations ---
   //
-  FillTrks(iEvent,djEvt_,anaJets_,refJets_);
+  FillTrks(iEvent,djEvt_,anaJets_,refJets_,anaTrkType_);
 
   // All done
   djTree_->Fill();
@@ -256,26 +258,26 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 
 void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
     std::vector<math::PtEtaPhiMLorentzVectorF> & anajets,
-    std::vector<math::PtEtaPhiMLorentzVectorF> & refjets)
+    std::vector<math::PtEtaPhiMLorentzVectorF> & refjets,
+    Int_t trkType)
 {
-  Handle<vector<Track> > tracks;
-  iEvent.getByLabel(trksrc_, tracks);
-
-  int selTrkCt = 0;
-  for(unsigned it=0; it<tracks->size(); ++it){
-    const reco::Track & trk = (*tracks)[it];
-    // Trk Selection
-    //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
-
-    // fill frag candidates basic info
-    jd.trkNHits_[selTrkCt]	 = trk.numberOfValidHits();
-    jd.ppt_[selTrkCt]		 = trk.pt();
-    jd.peta_[selTrkCt]		 = trk.eta();
-    jd.pphi_[selTrkCt]		 = trk.phi();
-
-    ++selTrkCt;
+  if (trkType==2) {
+    Handle<vector<Track> > tracks;
+    iEvent.getByLabel(trksrc_, tracks);
+    int selTrkCt = 0;
+    for(unsigned it=0; it<tracks->size(); ++it){
+      const reco::Track & trk = (*tracks)[it];
+      // Trk Selection
+      //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
+      // fill frag candidates basic info
+      jd.trkNHits_[selTrkCt]	 = trk.numberOfValidHits();
+      jd.ppt_[selTrkCt]		 = trk.pt();
+      jd.peta_[selTrkCt]		 = trk.eta();
+      jd.pphi_[selTrkCt]		 = trk.phi();
+      ++selTrkCt;
+    }
+    jd.evtnp_			 = selTrkCt;
   }
-  jd.evtnp_			 = selTrkCt;
 
   // make correlation calcuations
   jd.CalcTrkVars(isMC_,anajets);
@@ -402,18 +404,20 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
   cout << "DiJet dphi: " << ljdphi << endl;
 
   // Print Tracks
-  if (jetType==2) PrintTrks(iEvent,1);
+  if (jetType==2) PrintTrks(iEvent,2);
 }
 
 void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
 {
-  Handle<vector<Track> > tracks;
-  iEvent.getByLabel(trksrc_, tracks);
+  if (trkType==2) {
+    Handle<vector<Track> > tracks;
+    iEvent.getByLabel(trksrc_, tracks);
 
-  for(unsigned it=0; it<tracks->size(); ++it){
-    const reco::Track & trk = (*tracks)[it];
-    //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
-    cout << "trk " << it << " pt|eta|phi: " << trk.pt() << "|" << trk.eta() << "|" << trk.phi() << endl;
+    for(unsigned it=0; it<tracks->size(); ++it){
+      const reco::Track & trk = (*tracks)[it];
+      //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
+      cout << "trk " << it << " pt|eta|phi: " << trk.pt() << "|" << trk.eta() << "|" << trk.phi() << endl;
+    }
   }
 }
 
