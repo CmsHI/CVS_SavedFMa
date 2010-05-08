@@ -10,6 +10,7 @@
 <use name=DataFormats/Common>
 <use name=SimDataFormats/GeneratorProducts>
 <use name=DataFormats/PatCandidates>
+<use name=DataFormats/HepMCCandidate>
 <flags EDM_PLUGIN=1>
 <export>
    <lib name=CmsHiDiJetAna>
@@ -25,4 +26,5 @@
    <use name=DataFormats/Common>
    <use name=SimDataFormats/GeneratorProducts>
    <use name=DataFormats/PatCandidates>
+   <use name=DataFormats/HepMCCandidate>
 </export>

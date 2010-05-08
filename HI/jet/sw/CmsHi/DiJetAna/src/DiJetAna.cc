@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.28 2010/05/08 15:45:35 frankma Exp $
+// $Id: DiJetAna.cc,v 1.29 2010/05/08 17:31:35 frankma Exp $
 //
 //
 
@@ -72,6 +72,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   doJEC_ = iConfig.getUntrackedParameter<int>("doJEC", 3);
   nearJetPtMin_ = iConfig.getUntrackedParameter<double>("nearJetPtMin", 50);
   awayJetPtMin_ = iConfig.getUntrackedParameter<double>("awayJetPtMin", 50);
+  trkPtMin_ = iConfig.getUntrackedParameter<double>("trkPtMin", 0.3);
   anaJetType_ = iConfig.getUntrackedParameter<int>("anaJetType", 2);
   refJetType_ = iConfig.getUntrackedParameter<int>("refJetType", 1);
   anaTrkType_ = iConfig.getUntrackedParameter<int>("anaTrkType", 2);
@@ -228,7 +229,8 @@ void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
     iEvent.getByLabel(trksrc_, tracks);
     for(unsigned it=0; it<tracks->size(); ++it){
       const reco::Track & trk = (*tracks)[it];
-      //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
+      // trk selection
+      if (!GoodAnaTrk(trk)) continue;
       hTrkPtDJEvtSel_->Fill(trk.pt());
       hTrkEtaDJEvtSel_->Fill(trk.eta());
       hTrkPtEtaDJEvtSel_->Fill(trk.eta(),trk.pt());
@@ -403,10 +405,17 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t anajetType, std::vect
 }
 
 // ------------- Helpers ------------------
+Bool_t DiJetAna::GoodAnaTrk(const reco::Track & trk)
+{
+  //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
+  if (trk.pt()<trkPtMin_) return false;
+  return true;
+}
 Bool_t DiJetAna::GoodAnaTrkParticle(const reco::GenParticle & p)
 {
   if (p.status()!=1) return false;
   if (p.charge()==0) return false;
+  if (p.pt()<trkPtMin_) return false;
   return true;
 }
 void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType, Int_t trkType)
@@ -438,7 +447,6 @@ void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
     cout << " # trks: " << tracks->size() << endl;
     for(unsigned it=0; it<tracks->size(); ++it){
       const reco::Track & trk = (*tracks)[it];
-      //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
       if (it<20 || it>(tracks->size()-20))
 	cout << "trk " << it << " pt|eta|phi: " << trk.pt() << "|" << trk.eta() << "|" << trk.phi() << endl;
     }

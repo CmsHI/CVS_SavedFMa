@@ -10,6 +10,9 @@
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "CmsHi/DiJetAna/interface/TreeDiJetEventData.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+
 
 //
 // class declaration
@@ -21,8 +24,9 @@ class DiJetAna : public edm::EDAnalyzer {
     ~DiJetAna();
 
     // class methods
-    void  FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd);
-    void  FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
+    void InclTrkAna(const edm::Event& iEvent, Int_t trkType=2);
+    void FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd);
+    void FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t anajetType,
 	std::vector<math::PtEtaPhiMLorentzVectorF> & refjets, Int_t refjetType=-1);
     void  FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
@@ -33,8 +37,10 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t FindAwayJet(const edm::Event& iEvent, Int_t jetType=2);
     void FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType=2); 
     void FindRefJets(const edm::Event& iEvent, Int_t anajetType, std::vector<math::PtEtaPhiMLorentzVectorF> & refjets); 
-    void PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType=2);
-    void PrintTrks(const edm::Event& iEvent, Int_t trkType=1);
+    Bool_t GoodAnaTrk(const reco::Track & trk);
+    Bool_t GoodAnaTrkParticle(const reco::GenParticle & p);
+    void PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType=2, Int_t trkType=2);
+    void PrintTrks(const edm::Event& iEvent, Int_t trkType=2);
 
   private:
     virtual void beginJob() ;
@@ -54,6 +60,7 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t	  doJEC_;
     Double_t	  nearJetPtMin_;
     Double_t	  awayJetPtMin_;
+    Double_t	  trkPtMin_;
     Int_t	  anaJetType_;
     Int_t	  refJetType_;
     Int_t	  anaTrkType_;
