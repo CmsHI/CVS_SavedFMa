@@ -8,6 +8,11 @@
 void TreeDiJetEventData::SetDefaults()
 {
   // Class Defaults
+  numJec_ = MAXJEC;
+  for (Int_t i=0; i<numJec_; ++i) {
+    njec_[i]=1;
+    ajec_[i]=1;
+  }
 }
 // constructors
 TreeDiJetEventData::TreeDiJetEventData()
@@ -138,14 +143,12 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("nlrjid", &(this->nlrjid_), "nlrjid/I");
   tree_->Branch("nlrjstat", &(this->nlrjstat_), "nlrjstat/I");
   tree_->Branch("nlrjet", &(this->nlrjet_), "nlrjet/F");
-  tree_->Branch("nlrjetsm", &(this->nlrjetsm_), "nlrjetsm/F");
   tree_->Branch("nlrjeta", &(this->nlrjeta_), "nlrjeta/F");
   tree_->Branch("nlrjphi", &(this->nlrjphi_), "nlrjphi/F");
 
   tree_->Branch("alrjid", &(this->alrjid_), "alrjid/I");
   tree_->Branch("alrjstat", &(this->alrjstat_), "alrjstat/I");
   tree_->Branch("alrjet", &(this->alrjet_), "alrjet/F");
-  tree_->Branch("alrjetsm", &(this->alrjetsm_), "alrjetsm/F");
   tree_->Branch("alrjeta", &(this->alrjeta_), "alrjeta/F");
   tree_->Branch("alrjphi", &(this->alrjphi_), "alrjphi/F");
 
@@ -153,20 +156,25 @@ void TreeDiJetEventData::SetBranches()
 
   // -- jet info --
   tree_->Branch("nljet", &(this->nljet_), "nljet/F");
-  tree_->Branch("nljetsm", &(this->nljetsm_), "nljetsm/F");
+  tree_->Branch("nljrawet", &(this->nljrawet_), "nljrawet/F");
   tree_->Branch("nljeta", &(this->nljeta_), "nljeta/F");
   tree_->Branch("nljphi", &(this->nljphi_), "nljphi/F");
   tree_->Branch("nljemf", &(this->nljemf_), "nljemf/F");
   tree_->Branch("nljN90hits", &(this->nljN90hits_), "nljN90hits/I");
 
   tree_->Branch("aljet", &(this->aljet_), "aljet/F");
-  tree_->Branch("aljetsm", &(this->aljetsm_), "aljetsm/F");
+  tree_->Branch("aljrawet", &(this->aljrawet_), "aljrawet/F");
   tree_->Branch("aljeta", &(this->aljeta_), "aljeta/F");
   tree_->Branch("aljphi", &(this->aljphi_), "aljphi/F");
   tree_->Branch("aljemf", &(this->aljemf_), "aljemf/F");
   tree_->Branch("aljN90hits", &(this->aljN90hits_), "aljN90hits/I");
 
   tree_->Branch("jdphi", &(this->jdphi_), "jdphi/F");
+
+  // -- jec info --
+  tree_->Branch("numJec",&(this->numJec_),"numJec/I");
+  tree_->Branch("njec",this->njec_,"njec[numJec]/F");
+  tree_->Branch("ajec",this->ajec_,"ajec[numJec]/F");
 
   // -- particle info --
   tree_->Branch("evtnp",&(this->evtnp_),"evtnp/I");

@@ -9,6 +9,7 @@
 #include "DataFormats/Math/interface/LorentzVector.h"
 
 const Int_t MAXTRK = 100000;
+const Int_t MAXJEC = 15;
 //
 // DiJet ana Event Data Tree definition
 //
@@ -43,23 +44,27 @@ class TreeDiJetEventData
 
     //  -- ref jet info --
     Int_t	  	    nlrjid_,nlrjstat_;
-    Float_t		    nlrjet_,nlrjetsm_,nlrjeta_,nlrjphi_;
+    Float_t		    nlrjet_,nlrjeta_,nlrjphi_;
 
     Int_t	  	    alrjid_,alrjstat_;
-    Float_t		    alrjet_,alrjetsm_,alrjeta_,alrjphi_;
+    Float_t		    alrjet_,alrjeta_,alrjphi_;
 
     Float_t		    rjdphi_;
 
     //  -- jet info --
-    Float_t		    nljet_,nljetsm_,nljeta_,nljphi_;
+    Float_t		    nljet_,nljrawet_,nljeta_,nljphi_;
     Float_t		    nljemf_;
     Int_t		    nljN90hits_;
 
-    Float_t		    aljet_,aljetsm_,aljeta_,aljphi_;
+    Float_t		    aljet_,aljrawet_,aljeta_,aljphi_;
     Float_t		    aljemf_;
     Int_t		    aljN90hits_;
 
     Float_t		    jdphi_;
+
+    //  -- JEC --
+    Int_t		    numJec_;
+    Float_t       	    njec_[MAXJEC],ajec_[MAXJEC];
 
     // -- particle info --
     Int_t		    evtnp_;
