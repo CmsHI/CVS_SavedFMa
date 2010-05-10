@@ -24,7 +24,9 @@ class DiJetAna : public edm::EDAnalyzer {
     ~DiJetAna();
 
     // class methods
-    void InclTrkAna(const edm::Event& iEvent, Int_t trkType=2);
+    void InclJetAna(const edm::Event& iEvent, Int_t jetType,
+	TH1D * hPt, TH1D * hEta, TH1D * hPhi);
+    void InclTrkAna(const edm::Event& iEvent, Int_t trkType);
     void FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd);
     void FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t anajetType,
@@ -84,6 +86,9 @@ class DiJetAna : public edm::EDAnalyzer {
     TH1D	  *hJetPtPreSel_;
     TH1D	  *hJetEtaPreSel_;
     TH1D	  *hJetPhiPreSel_;
+    TH1D	  *hJetPtDJSel_;
+    TH1D	  *hJetEtaDJSel_;
+    TH1D	  *hJetPhiDJSel_;
     // -- trk --
     TH1D	  *hTrkPtDJEvtSel_;
     TH1D	  *hTrkEtaDJEvtSel_;

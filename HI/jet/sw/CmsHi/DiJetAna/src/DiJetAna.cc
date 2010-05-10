@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.34 2010/05/10 13:25:30 frankma Exp $
+// $Id: DiJetAna.cc,v 1.35 2010/05/10 14:03:43 frankma Exp $
 //
 //
 
@@ -138,19 +138,8 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //
   // ---------------------------- Jet Analysis ---------------------------------
   //
-  // Check Inclusive Jets
-  if (anaJetType_<=2) {
-    edm::Handle<reco::CandidateView> jets;
-    iEvent.getByLabel(jetsrc_,jets);
-    for (unsigned int j=0; j<(*jets).size();++j) {
-      const reco::Candidate & jet = (*jets)[j];
-      Double_t corrPt=-99;
-      if (doJEC_==3) corrPt = jet.pt();
-      hJetPtPreSel_->Fill(corrPt);
-      hJetEtaPreSel_->Fill(jet.eta());
-      hJetPhiPreSel_->Fill(jet.phi());
-    }
-  }
+  // Check Inclusive Jets Before DJ Selection
+  InclJetAna(iEvent,anaJetType_,hJetPtPreSel_,hJetEtaPreSel_,hJetPhiPreSel_);
 
   //
   // ===== DiJet Ana =====
@@ -162,6 +151,8 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) return;
   ++numDJEvtSel_;
   if (numDJEvtSel_<=20) PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
+  // Check Inclusive Jets After DJ Selection
+  InclJetAna(iEvent,anaJetType_,hJetPtDJSel_,hJetEtaDJSel_,hJetPhiDJSel_);
 
   // -- Get Ref jets to the selected dijet (if MC) --
   if (isMC_)FindRefJets(iEvent,anaJetType_,refJets_);
@@ -199,6 +190,9 @@ void DiJetAna::beginJob()
   hJetPtPreSel_ = fs->make<TH1D>("hJetPtPreSel",";p_{T}^{corr. jet} [GeV/c];#", 200, 0.0, 200.0);
   hJetEtaPreSel_ = fs->make<TH1D>("hJetEtaPreSel",";#eta^{jet};#", 50, -1.5*jetEtaMax_, 1.5*jetEtaMax_);
   hJetPhiPreSel_ = fs->make<TH1D>("hJetPhiPreSel",";#phi^{jet};#", 50, -1*TMath::Pi(), TMath::Pi());
+  hJetPtDJSel_ = fs->make<TH1D>("hJetPtDJSel",";p_{T}^{corr. jet} [GeV/c];#", 200, 0.0, 200.0);
+  hJetEtaDJSel_ = fs->make<TH1D>("hJetEtaDJSel",";#eta^{jet};#", 50, -1.5*jetEtaMax_, 1.5*jetEtaMax_);
+  hJetPhiDJSel_ = fs->make<TH1D>("hJetPhiDJSel",";#phi^{jet};#", 50, -1*TMath::Pi(), TMath::Pi());
   // trks
   hTrkPtDJEvtSel_ = fs->make<TH1D>("hTrkPtDJEvtSel",";p_{T}^{trk} [GeV/c];#", 200, 0.0, 100.0);
   hTrkEtaDJEvtSel_ = fs->make<TH1D>("hTrkEtaDJEvtSel",";#eta^{trk};#", 50, -3., 3.);
@@ -222,6 +216,23 @@ DiJetAna::endJob() {
 
 // ==================== Member Methods ===========================
 // ------------ Inclusive Ana -------------
+void DiJetAna::InclJetAna(const edm::Event& iEvent, Int_t jetType,
+    TH1D * hPt, TH1D * hEta, TH1D * hPhi)
+{
+  Handle<vector<pat::Jet> > jets;
+  if (jetType<=2) {
+    edm::Handle<reco::CandidateView> jets;
+    iEvent.getByLabel(jetsrc_,jets);
+    for (unsigned int j=0; j<(*jets).size();++j) {
+      const reco::Candidate & jet = (*jets)[j];
+      Double_t corrPt=-99;
+      if (doJEC_==3) corrPt = jet.pt();
+      hPt->Fill(corrPt);
+      hEta->Fill(jet.eta());
+      hPhi->Fill(jet.phi());
+    }
+  }
+}
 void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
 {
   if (trkType==2) {
