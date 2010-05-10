@@ -242,16 +242,20 @@ void TreeDiJetEventData::Clear()
   evtnp_      = 0;
 
   // cone info
-  nljCone5NP_ = 0;
-  nljCone5Et_ = 0;
-  aljCone5NP_ = 0;
-  aljCone5Et_ = 0;
-  nljCone5NPBg_ = 0;
-  nljCone5EtBg_ = 0;
-  aljCone5NPBg_ = 0;
-  aljCone5EtBg_ = 0;
+  nljCone5NP_	  = 0;
+  nljCone5Et_	  = 0;
+  aljCone5NP_	  = 0;
+  aljCone5Et_	  = 0;
+  nljCone5NPBg_	  = 0;
+  nljCone5EtBg_	  = 0;
+  aljCone5NPBg_	  = 0;
+  aljCone5EtBg_	  = 0;
 
   // jes vars
+  for (Int_t i=0; i<numJec_; ++i) {
+    njec_[i]=1;
+    ajec_[i]=1;
+  }
   meanppt_	  = -99;
 }
 
