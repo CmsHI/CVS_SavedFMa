@@ -9,13 +9,25 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     trksrc = cms.untracked.InputTag("allTracks"),
     jetEtaMax = cms.untracked.double(3.0),
     nVtxTrkCut = cms.untracked.int32(3),
-    doJEC = cms.untracked.int32(3),
+    JECLab1 = cms.string("abs"),
+    JECLab2Nr = cms.string(""),
+    JECLab2Aw = cms.string(""),
     nearJetPtMin = cms.untracked.double(40.0),
     awayJetPtMin = cms.untracked.double(40.0),
     trkPtMin = cms.untracked.double(0.3),
     anaJetType = cms.untracked.int32(2),
     refJetType = cms.untracked.int32(1),
     anaTrkType = cms.untracked.int32(3)
+    )
+
+dijetAna_mc_JECRaw = dijetAna_mc.clone(
+    JECLab1 = cms.string("raw")
+    )
+
+dijetAna_mc_JECL5 = dijetAna_mc.clone(
+    JECLab1 = cms.string("had"),
+    JECLab2Nr = cms.string("uds"),
+    JECLab2Aw = cms.string("glu")
     )
 
 dijetAna_mc_genjet_trk = dijetAna_mc.clone(
@@ -46,6 +58,7 @@ dijetAna_data_seq = cms.Sequence(
 
 dijetAna_mc_seq = cms.Sequence(
     dijetAna_mc *
+    dijetAna_mc_JECRaw *
     #dijetAna_mc_genjet_trk *
     dijetAna_mc_calojet_genp *
     dijetAna_mc_genjet_genp

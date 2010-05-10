@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.37 2010/05/10 16:11:05 frankma Exp $
+// $Id: DiJetAna.cc,v 1.38 2010/05/10 17:17:32 frankma Exp $
 //
 //
 
@@ -73,7 +73,9 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   trksrc_ = iConfig.getUntrackedParameter<edm::InputTag>("trksrc",edm::InputTag("hiSelectTracks"));
   jetEtaMax_ = iConfig.getUntrackedParameter<double>("jetEtaMax", 2.0);
   nVtxTrkCut_ = iConfig.getUntrackedParameter<int>("nVtxTrkCut", 3);
-  doJEC_ = iConfig.getUntrackedParameter<int>("doJEC", 3);
+  JECLab1_ = iConfig.getParameter<string>("JECLab1");
+  JECLab2Nr_ = iConfig.getParameter<string>("JECLab2Nr");
+  JECLab2Aw_ = iConfig.getParameter<string>("JECLab2Aw");
   nearJetPtMin_ = iConfig.getUntrackedParameter<double>("nearJetPtMin", 50);
   awayJetPtMin_ = iConfig.getUntrackedParameter<double>("awayJetPtMin", 50);
   trkPtMin_ = iConfig.getUntrackedParameter<double>("trkPtMin", 0.3);
@@ -144,13 +146,13 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
   Double_t hf	  = cent->EtHFhitSum();
   Int_t cbin	  = HFhitBinMap_[1]->getBin(hf);
+  cout << "cbin: " << cbin << endl;
   if (cbin>=6) return; // centrality selection: top 30%
   ++numHiEvtSel_;
 
   // Done with Event Pre-Selection
   // Fill Event info
 
-  Handle<vector<pat::Jet> > jets;
   //
   // ---------------------------- Jet Analysis ---------------------------------
   //
@@ -236,14 +238,17 @@ DiJetAna::endJob() {
 void DiJetAna::InclJetAna(const edm::Event& iEvent, Int_t jetType,
     TH1D * hPt, TH1D * hEta, TH1D * hPhi)
 {
-  Handle<vector<pat::Jet> > jets;
   if (jetType<=2) {
     edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
     for (unsigned int j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
-      Double_t corrPt=-99;
-      if (doJEC_==3) corrPt = jet.pt();
+      Double_t corrPt=jet.pt();
+      if (jetType==2) {
+	Handle<vector<pat::Jet> > patjets;
+	iEvent.getByLabel(jetsrc_,patjets);
+	corrPt = (*patjets)[j].correctedP4(JECLab1_).pt();
+      }
       hPt->Fill(corrPt);
       hEta->Fill(jet.eta());
       hPhi->Fill(jet.phi());
@@ -422,18 +427,14 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLo
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
     const pat::Jet & NrJet = (*jets)[iNear_];
-    if (doJEC_==3) nearJetPt_ = (*jets)[iNear_].correctedP4("abs").pt();
-    if (doJEC_==5) nearJetPt_ = (*jets)[iNear_].correctedP4("had","uds").pt();
-    if (doJEC_==7) nearJetPt_ = (*jets)[iNear_].correctedP4("part","uds").pt();
+    nearJetPt_ = (*jets)[iNear_].correctedP4(JECLab1_,JECLab2Nr_).pt();
     anajets.push_back(math::PtEtaPhiMLorentzVector(nearJetPt_,NrJet.eta(),NrJet.phi(),NrJet.mass()));
 
     iAway_ = FindAwayJet(iEvent,jetType);
     if (iAway_<0) return;
 
     const pat::Jet & AwJet = (*jets)[iAway_];
-    if (doJEC_==3) awayJetPt_ = (*jets)[iAway_].correctedP4("abs").pt();
-    if (doJEC_==5) awayJetPt_ = (*jets)[iAway_].correctedP4("had","glu").pt();
-    if (doJEC_==7) awayJetPt_ = (*jets)[iAway_].correctedP4("part","glu").pt();
+    awayJetPt_ = (*jets)[iAway_].correctedP4(JECLab1_,JECLab2Aw_).pt();
     anajets.push_back(math::PtEtaPhiMLorentzVector(awayJetPt_,AwJet.eta(),AwJet.phi(),AwJet.mass()));
   }
 
@@ -499,7 +500,8 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
     }
   }
   Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
-  cout << "corr" << doJEC_ << " leading dijet - iNear: " << iNear_ << " " <<": "<< anajets[0]
+  cout << "JEC: " << JECLab1_ << " (Nr:" << JECLab2Nr_ << "|Aw:" << JECLab2Aw_ << ") "
+    << " leading dijet - iNear: " << iNear_ << " " <<": "<< anajets[0]
     << "  iAway: " << iAway_ << " " << anajets[1] << endl;
   cout << "DiJet dphi: " << ljdphi << endl;
 
