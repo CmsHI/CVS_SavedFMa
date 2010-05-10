@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.35 2010/05/10 14:03:43 frankma Exp $
+// $Id: DiJetAna.cc,v 1.36 2010/05/10 14:41:38 frankma Exp $
 //
 //
 
@@ -49,6 +49,8 @@ Implementation:
 #include "TStopwatch.h"
 
 #include "CmsHi/DiJetAna/interface/TreeDiJetEventData.h"
+#include "DataFormats/HeavyIonEvent/interface/Centrality.h"
+#include "SimDataFormats/HiGenData/interface/GenHIEvent.h"
 
 
 using namespace std;
@@ -266,9 +268,21 @@ void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
 // ------------ Tree Filling --------------
 void DiJetAna::FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
 {
+  // General Info
   jd.run_	  = iEvent.id().run();
   jd.evt_	  = iEvent.id().event();
   jd.lumi_	  = iEvent.luminosityBlock();
+
+  // HI Event info
+  edm::Handle<reco::Centrality> cent;
+  iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
+  if (isMC_) {
+    edm::Handle<edm::GenHIEvent> mchievt;
+    iEvent.getByLabel(edm::InputTag("heavyIon"),mchievt);
+    jd.b_	  = mchievt->b();
+    jd.npart_	  = mchievt->Npart();
+    jd.ncoll_	  = mchievt->Ncoll();
+  }
 }
 
 void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
