@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.31 2010/05/08 18:24:54 frankma Exp $
+// $Id: DiJetAna.cc,v 1.32 2010/05/08 22:13:43 frankma Exp $
 //
 //
 
@@ -261,8 +261,8 @@ void DiJetAna::FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
 }
 
 void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
-    std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t anajetType,
-    std::vector<math::PtEtaPhiMLorentzVectorF> & refjets, Int_t refjetType)
+    std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t anajetType,
+    std::vector<math::PtEtaPhiMLorentzVector> & refjets, Int_t refjetType)
 {
   // Calc dijet vars for ana jets
   jd.CalcDJVars(isMC_,anajets,refjets);
@@ -275,8 +275,8 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 }
 
 void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
-    std::vector<math::PtEtaPhiMLorentzVectorF> & anajets,
-    std::vector<math::PtEtaPhiMLorentzVectorF> & refjets,
+    std::vector<math::PtEtaPhiMLorentzVector> & anajets,
+    std::vector<math::PtEtaPhiMLorentzVector> & refjets,
     Int_t trkType)
 {
   if (trkType==2) {
@@ -289,9 +289,9 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
       if (!GoodAnaTrk(trk)) continue;
       // fill frag candidates basic info
       //jd.trkNHits_[selTrkCt]	       = trk.numberOfValidHits();
-      jd.ppt_[selTrkCt]		       = trk.pt();
-      jd.peta_[selTrkCt]	       = trk.eta();
-      jd.pphi_[selTrkCt]	       = trk.phi();
+      // make trk-jet calcuations
+      math::PtEtaPhiMLorentzVector tcand(trk.pt(),trk.eta(),trk.phi(),0.13957); // assume it's pi+/-
+      jd.CalcTrkVars(isMC_,anajets,tcand,selTrkCt);
       ++selTrkCt;
     }
     jd.evtnp_			 = selTrkCt;
@@ -306,16 +306,13 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
       // fill frag candidates basic info
       jd.ppid_[selTrkCt]	       = trk.pdgId();
       jd.pch_[selTrkCt]		       = trk.charge();
-      jd.ppt_[selTrkCt]		       = trk.pt();
-      jd.peta_[selTrkCt]	       = trk.eta();
-      jd.pphi_[selTrkCt]	       = trk.phi();
+      // make trk-jet calcuations
+      jd.CalcTrkVars(isMC_,anajets,trk.polarP4(),selTrkCt);
       ++selTrkCt;
     }
     jd.evtnp_			 = selTrkCt;
   }
 
-  // make correlation calcuations
-  jd.CalcTrkVars(isMC_,anajets);
 }
 
 // ------------ Find DiJet ----------------
@@ -361,7 +358,7 @@ Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, Int_t jetType)
   return iAway;
 }
 
-void DiJetAna::FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType)
+void DiJetAna::FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType)
 {
   anajets.clear();
 
@@ -376,7 +373,7 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLo
     if (doJEC_==3) nearJetPt_ = (*jets)[iNear_].correctedP4("abs").pt();
     if (doJEC_==5) nearJetPt_ = (*jets)[iNear_].correctedP4("had","uds").pt();
     if (doJEC_==7) nearJetPt_ = (*jets)[iNear_].correctedP4("part","uds").pt();
-    anajets.push_back(math::PtEtaPhiMLorentzVectorF(nearJetPt_,NrJet.eta(),NrJet.phi(),NrJet.mass()));
+    anajets.push_back(math::PtEtaPhiMLorentzVector(nearJetPt_,NrJet.eta(),NrJet.phi(),NrJet.mass()));
 
     iAway_ = FindAwayJet(iEvent,jetType);
     if (iAway_<0) return;
@@ -385,7 +382,7 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLo
     if (doJEC_==3) awayJetPt_ = (*jets)[iAway_].correctedP4("abs").pt();
     if (doJEC_==5) awayJetPt_ = (*jets)[iAway_].correctedP4("had","glu").pt();
     if (doJEC_==7) awayJetPt_ = (*jets)[iAway_].correctedP4("part","glu").pt();
-    anajets.push_back(math::PtEtaPhiMLorentzVectorF(awayJetPt_,AwJet.eta(),AwJet.phi(),AwJet.mass()));
+    anajets.push_back(math::PtEtaPhiMLorentzVector(awayJetPt_,AwJet.eta(),AwJet.phi(),AwJet.mass()));
   }
 
   // For gen level don't consider JES for now
@@ -394,19 +391,19 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLo
     iEvent.getByLabel(jetsrc_,jets);
     const reco::Candidate & NrJet = (*jets)[iNear_];
     nearJetPt_ = NrJet.pt();
-    anajets.push_back(math::PtEtaPhiMLorentzVectorF(nearJetPt_,NrJet.eta(),NrJet.phi(),NrJet.mass()));
+    anajets.push_back(math::PtEtaPhiMLorentzVector(nearJetPt_,NrJet.eta(),NrJet.phi(),NrJet.mass()));
     
     iAway_ = FindAwayJet(iEvent,jetType);
     if (iAway_<0) return;
 
     const reco::Candidate & AwJet = (*jets)[iAway_];
     awayJetPt_ = AwJet.pt();
-    anajets.push_back(math::PtEtaPhiMLorentzVectorF(awayJetPt_,AwJet.eta(),AwJet.phi(),AwJet.mass()));
+    anajets.push_back(math::PtEtaPhiMLorentzVector(awayJetPt_,AwJet.eta(),AwJet.phi(),AwJet.mass()));
   }
 }
 
 // ------------- Reference Jets ---------------
-void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t anajetType, std::vector<math::PtEtaPhiMLorentzVectorF> & refjets)
+void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t anajetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets)
 {
   refjets.clear();
   if (anajetType==2) {
@@ -415,8 +412,8 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t anajetType, std::vect
     const reco::GenJet * NrGJet = (*jets)[iNear_].genJet();
     const reco::GenJet * AwGJet = (*jets)[iAway_].genJet();
     if (NrGJet && AwGJet) {
-      refjets.push_back(math::PtEtaPhiMLorentzVectorF(NrGJet->pt(),NrGJet->eta(),NrGJet->phi(),NrGJet->mass()));
-      refjets.push_back(math::PtEtaPhiMLorentzVectorF(AwGJet->pt(),AwGJet->eta(),AwGJet->phi(),AwGJet->mass()));
+      refjets.push_back(math::PtEtaPhiMLorentzVector(NrGJet->pt(),NrGJet->eta(),NrGJet->phi(),NrGJet->mass()));
+      refjets.push_back(math::PtEtaPhiMLorentzVector(AwGJet->pt(),AwGJet->eta(),AwGJet->phi(),AwGJet->mass()));
     }
   }
 }
@@ -437,7 +434,7 @@ Bool_t DiJetAna::GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType)
   if (p.pt()<trkPtMin_) return false;
   return true;
 }
-void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType, Int_t trkType)
+void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, Int_t trkType)
 {
   if (jetType<=2) {
     edm::Handle<reco::CandidateView> jets;
@@ -482,7 +479,7 @@ void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
       if (!GoodAnaTrkParticle(trk,trkType)) continue;
       ++pct;
       if (pct<=20 || it>(trks->size()-20)) {
-	cout << "trk" << it;
+	cout << "trk " << it;
 	if (trkType==0) cout << " pid|status|charge: " << trk.pdgId() << "|" << trk.status() << "|" << trk.charge();
 	cout << " pt|eta|phi: " << trk.pt() << "|" << trk.eta() << "|" << trk.phi() << endl;
       }

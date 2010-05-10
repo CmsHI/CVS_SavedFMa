@@ -27,19 +27,19 @@ class DiJetAna : public edm::EDAnalyzer {
     void InclTrkAna(const edm::Event& iEvent, Int_t trkType=2);
     void FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd);
     void FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
-	std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t anajetType,
-	std::vector<math::PtEtaPhiMLorentzVectorF> & refjets, Int_t refjetType=-1);
+	std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t anajetType,
+	std::vector<math::PtEtaPhiMLorentzVector> & refjets, Int_t refjetType=-1);
     void  FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
-	std::vector<math::PtEtaPhiMLorentzVectorF> & anajets,
-	std::vector<math::PtEtaPhiMLorentzVectorF> & refjets,
+	std::vector<math::PtEtaPhiMLorentzVector> & anajets,
+	std::vector<math::PtEtaPhiMLorentzVector> & refjets,
 	Int_t trkType);
     Int_t FindNearJet(const edm::Event& iEvent, Int_t jetType=2);
     Int_t FindAwayJet(const edm::Event& iEvent, Int_t jetType=2);
-    void FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType=2); 
-    void FindRefJets(const edm::Event& iEvent, Int_t anajetType, std::vector<math::PtEtaPhiMLorentzVectorF> & refjets); 
+    void FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType=2); 
+    void FindRefJets(const edm::Event& iEvent, Int_t anajetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets); 
     Bool_t GoodAnaTrk(const reco::Track & trk);
     Bool_t GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType);
-    void PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVectorF> & anajets, Int_t jetType=2, Int_t trkType=2);
+    void PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType=2, Int_t trkType=2);
     void PrintTrks(const edm::Event& iEvent, Int_t trkType=2);
 
   private:
@@ -67,8 +67,8 @@ class DiJetAna : public edm::EDAnalyzer {
     // ana vars
     Int_t	  numPreEvtSel_;
     Int_t	  numDJEvtSel_;
-    std::vector<math::PtEtaPhiMLorentzVectorF> anaJets_;
-    std::vector<math::PtEtaPhiMLorentzVectorF> refJets_;
+    std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
+    std::vector<math::PtEtaPhiMLorentzVector> refJets_;
     Int_t	  iNear_;
     Double_t	  nearJetPt_;
     Int_t	  iAway_;

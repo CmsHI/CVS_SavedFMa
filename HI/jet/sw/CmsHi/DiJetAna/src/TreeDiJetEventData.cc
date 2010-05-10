@@ -39,8 +39,8 @@ TreeDiJetEventData::TreeDiJetEventData(TTree * tree)
 }
 
 // ---------------- Helpers ------------------
-void TreeDiJetEventData::CalcDJVars(Bool_t isMC, std::vector<math::PtEtaPhiMLorentzVectorF> anajets,
-    std::vector<math::PtEtaPhiMLorentzVectorF> refjets)
+void TreeDiJetEventData::CalcDJVars(Bool_t isMC, std::vector<math::PtEtaPhiMLorentzVector> anajets,
+    std::vector<math::PtEtaPhiMLorentzVector> refjets)
 {
   // near/away info     
   nljet_	     = anajets[0].pt();
@@ -75,8 +75,13 @@ void TreeDiJetEventData::CalcDJVars(Bool_t isMC, std::vector<math::PtEtaPhiMLore
   }
 }
 
-void TreeDiJetEventData::CalcTrkVars(Bool_t isMC, std::vector<math::PtEtaPhiMLorentzVectorF> anajets)
+void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
+    std::vector<math::PtEtaPhiMLorentzVector> anajets,
+    math::PtEtaPhiMLorentzVector anaTrk, Int_t it)
 {
+  ppt_[it]                = anaTrk.pt();
+  peta_[it]               = anaTrk.eta();
+  pphi_[it]               = anaTrk.phi();
 }
 
 // set brances
