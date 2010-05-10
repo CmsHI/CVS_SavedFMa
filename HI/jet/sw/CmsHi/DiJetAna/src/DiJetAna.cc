@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.33 2010/05/10 11:37:52 frankma Exp $
+// $Id: DiJetAna.cc,v 1.34 2010/05/10 13:25:30 frankma Exp $
 //
 //
 
@@ -297,12 +297,20 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
     jd.evtnp_			 = selTrkCt;
   } else if (trkType==0||trkType==3) {
     edm::Handle<reco::CandidateView> trks;
+    edm::Handle<reco::GenParticleCollection> genps;
     iEvent.getByLabel(trksrc_,trks);
+    if (trkType==0) iEvent.getByLabel(trksrc_, genps);
+
     int selTrkCt = 0;
     for (unsigned int it=0; it<(*trks).size();++it) {
       const reco::Candidate & trk = (*trks)[it];
       // select charged stable particles
       if (!GoodAnaTrkParticle(trk,trkType)) continue;
+      // fill subevent info if genp
+      if (trkType==0) {
+	const reco::GenParticle & p    = (*genps)[it];
+	jd.psube_[selTrkCt]	       = p.collisionId();
+      }
       // fill frag candidates basic info
       jd.ppid_[selTrkCt]	       = trk.pdgId();
       jd.pch_[selTrkCt]		       = trk.charge();

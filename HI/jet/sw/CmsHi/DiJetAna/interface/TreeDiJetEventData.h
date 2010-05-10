@@ -63,7 +63,7 @@ class TreeDiJetEventData
 
     // -- particle info --
     Int_t		    evtnp_;
-    Int_t	  	    ppid_[MAXTRK],pch_[MAXTRK];
+    Int_t	  	    psube_[MAXTRK],ppid_[MAXTRK],pch_[MAXTRK];
     Float_t	      	    ppt_[MAXTRK],peta_[MAXTRK],pphi_[MAXTRK];
 
     Float_t	  	    pndphi_[MAXTRK],pndeta_[MAXTRK],pndr_[MAXTRK],pndrbg_[MAXTRK];

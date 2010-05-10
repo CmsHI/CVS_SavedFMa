@@ -169,6 +169,7 @@ void TreeDiJetEventData::SetBranches()
 
   // -- particle info --
   tree_->Branch("evtnp",&(this->evtnp_),"evtnp/I");
+  tree_->Branch("psube",this->psube_,"psube[evtnp]/I");
   tree_->Branch("ppid",this->ppid_,"ppid[evtnp]/I");
   tree_->Branch("pch",this->pch_,"pch[evtnp]/I");
   tree_->Branch("ppt",this->ppt_,"ppt[evtnp]/F");
