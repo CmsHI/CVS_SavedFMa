@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.32 2010/05/08 22:13:43 frankma Exp $
+// $Id: DiJetAna.cc,v 1.33 2010/05/10 11:37:52 frankma Exp $
 //
 //
 
@@ -161,7 +161,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // === dijet kinematics selection ===
   if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) return;
   ++numDJEvtSel_;
-  if (numDJEvtSel_<=10) PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
+  if (numDJEvtSel_<=20) PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
 
   // -- Get Ref jets to the selected dijet (if MC) --
   if (isMC_)FindRefJets(iEvent,anaJetType_,refJets_);

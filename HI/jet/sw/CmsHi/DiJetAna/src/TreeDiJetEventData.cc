@@ -7,19 +7,7 @@
 // Defaults
 void TreeDiJetEventData::SetDefaults()
 {
-  // -- jet cone info --
-  nljCone5Et_ = -1;
-  nljCone5NP_ = -1;
-  nljCone10Et_ = -1;
-  nljCone10NP_ = -1;
-  nljCone15Et_ = -1;
-  nljCone15NP_ = -1;
-  aljCone5Et_ = -1;
-  aljCone5NP_ = -1;
-  aljCone10Et_ = -1;
-  aljCone10NP_ = -1;
-  aljCone15Et_ = -1;
-  aljCone15NP_ = -1;
+  // Class Defaults
 }
 // constructors
 TreeDiJetEventData::TreeDiJetEventData()
@@ -51,7 +39,7 @@ void TreeDiJetEventData::CalcDJVars(Bool_t isMC, std::vector<math::PtEtaPhiMLore
   aljphi_	     = anajets[1].phi();
 
   // dijet info
-  Double_t jdphi     = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
+  Float_t jdphi     = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
   jdphi_	     = jdphi;
   djmass_	     = (anajets[0]+anajets[1]).M();
 
@@ -69,7 +57,7 @@ void TreeDiJetEventData::CalcDJVars(Bool_t isMC, std::vector<math::PtEtaPhiMLore
     alrjphi_           = refjets[1].phi();
 
     // dijet info
-    Double_t rjdphi    = TMath::Abs(reco::deltaPhi(refjets[0].phi(),refjets[1].phi()));
+    Float_t rjdphi    = TMath::Abs(reco::deltaPhi(refjets[0].phi(),refjets[1].phi()));
     rjdphi_            = rjdphi;
     rdjmass_	     = (refjets[0]+refjets[1]).M();
   }
@@ -79,9 +67,48 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
     std::vector<math::PtEtaPhiMLorentzVector> anajets,
     math::PtEtaPhiMLorentzVector anaTrk, Int_t it)
 {
-  ppt_[it]                = anaTrk.pt();
-  peta_[it]               = anaTrk.eta();
-  pphi_[it]               = anaTrk.phi();
+  // Basic Kinematic Info
+  ppt_[it]		= anaTrk.pt();
+  peta_[it]		= anaTrk.eta();
+  pphi_[it]		= anaTrk.phi();
+
+  // Relations to jet
+  pndphi_[it]		= TMath::Abs(reco::deltaPhi(pphi_[it],anajets[0].phi()));
+  pndeta_[it]		= peta_[it] - anajets[0].eta();;
+  pndr_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[0].eta(),anajets[0].phi());
+
+  padphi_[it]		= TMath::Abs(reco::deltaPhi(pphi_[it],anajets[1].phi()));
+  padeta_[it]		= peta_[it] - anajets[1].eta();
+  padr_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[1].phi(),anajets[1].eta());
+
+  //  - background variables-
+  pndrbg_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[0].eta(),anajets[0].phi()+TMath::PiOver2());
+  padrbg_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[1].eta(),anajets[1].phi()+TMath::PiOver2());
+
+  // jet cone info
+  if (ppt_[it]>0.5){
+    if (pndr_[it]<0.5 && ppt_[it]<anajets[0].pt()) {
+      ++nljCone5NP_;
+      nljCone5Et_+=ppt_[it];
+    }
+    if (padr_[it]<0.5 && ppt_[it]<anajets[1].pt()) {
+      ++aljCone5NP_;
+      aljCone5Et_+=ppt_[it];
+    }
+    if (pndrbg_[it]<0.5 && ppt_[it]<anajets[0].pt()) {
+      ++nljCone5NPBg_;
+      nljCone5EtBg_+=ppt_[it];
+    }
+    if (padrbg_[it]<0.5 && ppt_[it]<anajets[1].pt()) {
+      ++aljCone5NPBg_;
+      aljCone5EtBg_+=ppt_[it];
+    }
+  }
+
+  // fragmentation variables
+  // will change to dijet frame soon
+  zn_[it]		= ppt_[it]/anajets[0].pt();
+  za_[it]		= ppt_[it]/anajets[1].pt();
 }
 
 // set brances
@@ -93,88 +120,92 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("lumi", &(this->lumi_), "lumi/I");
   tree_->Branch("nvtx", &(this->nvtx_), "nvtx/I");
   tree_->Branch("vtxntrks", &(this->vtxntrks_), "vtxntrks/I");
-  tree_->Branch("vtxndof", &(this->vtxndof_), "vtxndof/D");
-  tree_->Branch("vtxchi2", &(this->vtxchi2_), "vtxchi2/D");
-  tree_->Branch("vz", &(this->vz_), "vz/D");
+  tree_->Branch("vtxndof", &(this->vtxndof_), "vtxndof/F");
+  tree_->Branch("vtxchi2", &(this->vtxchi2_), "vtxchi2/F");
+  tree_->Branch("vz", &(this->vz_), "vz/F");
   // -- hi event var's --
-  tree_->Branch("b", &(this->b_), "b/D");
+  tree_->Branch("b", &(this->b_), "b/F");
   tree_->Branch("npart", &(this->npart_), "npart/I");
   tree_->Branch("ncoll", &(this->ncoll_), "ncoll/I");
 
   // -- dijet info --
-  tree_->Branch("djmass", &(this->djmass_), "djmass/D");
-  tree_->Branch("rdjmass", &(this->rdjmass_), "rdjmass/D");
-  tree_->Branch("cmeta", &(this->cmeta_), "cmeta/D");
+  tree_->Branch("djmass", &(this->djmass_), "djmass/F");
+  tree_->Branch("rdjmass", &(this->rdjmass_), "rdjmass/F");
+  tree_->Branch("cmeta", &(this->cmeta_), "cmeta/F");
   tree_->Branch("lajmul", &(this->leadAwayMul_), "lajmul/I");
   // --ref jet info--
   tree_->Branch("nlrjid", &(this->nlrjid_), "nlrjid/I");
   tree_->Branch("nlrjstat", &(this->nlrjstat_), "nlrjstat/I");
-  tree_->Branch("nlrjet", &(this->nlrjet_), "nlrjet/D");
-  tree_->Branch("nlrjetsm", &(this->nlrjetsm_), "nlrjetsm/D");
-  tree_->Branch("nlrjeta", &(this->nlrjeta_), "nlrjeta/D");
-  tree_->Branch("nlrjphi", &(this->nlrjphi_), "nlrjphi/D");
+  tree_->Branch("nlrjet", &(this->nlrjet_), "nlrjet/F");
+  tree_->Branch("nlrjetsm", &(this->nlrjetsm_), "nlrjetsm/F");
+  tree_->Branch("nlrjeta", &(this->nlrjeta_), "nlrjeta/F");
+  tree_->Branch("nlrjphi", &(this->nlrjphi_), "nlrjphi/F");
 
   tree_->Branch("alrjid", &(this->alrjid_), "alrjid/I");
   tree_->Branch("alrjstat", &(this->alrjstat_), "alrjstat/I");
-  tree_->Branch("alrjet", &(this->alrjet_), "alrjet/D");
-  tree_->Branch("alrjetsm", &(this->alrjetsm_), "alrjetsm/D");
-  tree_->Branch("alrjeta", &(this->alrjeta_), "alrjeta/D");
-  tree_->Branch("alrjphi", &(this->alrjphi_), "alrjphi/D");
+  tree_->Branch("alrjet", &(this->alrjet_), "alrjet/F");
+  tree_->Branch("alrjetsm", &(this->alrjetsm_), "alrjetsm/F");
+  tree_->Branch("alrjeta", &(this->alrjeta_), "alrjeta/F");
+  tree_->Branch("alrjphi", &(this->alrjphi_), "alrjphi/F");
 
-  tree_->Branch("rjdphi", &(this->rjdphi_), "rjdphi/D");
+  tree_->Branch("rjdphi", &(this->rjdphi_), "rjdphi/F");
 
   // -- jet info --
-  tree_->Branch("nljet", &(this->nljet_), "nljet/D");
-  tree_->Branch("nljetsm", &(this->nljetsm_), "nljetsm/D");
-  tree_->Branch("nljeta", &(this->nljeta_), "nljeta/D");
-  tree_->Branch("nljphi", &(this->nljphi_), "nljphi/D");
-  tree_->Branch("nljemf", &(this->nljemf_), "nljemf/D");
+  tree_->Branch("nljet", &(this->nljet_), "nljet/F");
+  tree_->Branch("nljetsm", &(this->nljetsm_), "nljetsm/F");
+  tree_->Branch("nljeta", &(this->nljeta_), "nljeta/F");
+  tree_->Branch("nljphi", &(this->nljphi_), "nljphi/F");
+  tree_->Branch("nljemf", &(this->nljemf_), "nljemf/F");
   tree_->Branch("nljN90hits", &(this->nljN90hits_), "nljN90hits/I");
 
-  tree_->Branch("aljet", &(this->aljet_), "aljet/D");
-  tree_->Branch("aljetsm", &(this->aljetsm_), "aljetsm/D");
-  tree_->Branch("aljeta", &(this->aljeta_), "aljeta/D");
-  tree_->Branch("aljphi", &(this->aljphi_), "aljphi/D");
-  tree_->Branch("aljemf", &(this->aljemf_), "aljemf/D");
+  tree_->Branch("aljet", &(this->aljet_), "aljet/F");
+  tree_->Branch("aljetsm", &(this->aljetsm_), "aljetsm/F");
+  tree_->Branch("aljeta", &(this->aljeta_), "aljeta/F");
+  tree_->Branch("aljphi", &(this->aljphi_), "aljphi/F");
+  tree_->Branch("aljemf", &(this->aljemf_), "aljemf/F");
   tree_->Branch("aljN90hits", &(this->aljN90hits_), "aljN90hits/I");
 
-  tree_->Branch("jdphi", &(this->jdphi_), "jdphi/D");
+  tree_->Branch("jdphi", &(this->jdphi_), "jdphi/F");
 
   // -- particle info --
   tree_->Branch("evtnp",&(this->evtnp_),"evtnp/I");
   tree_->Branch("ppid",this->ppid_,"ppid[evtnp]/I");
   tree_->Branch("pch",this->pch_,"pch[evtnp]/I");
-  tree_->Branch("ppt",this->ppt_,"ppt[evtnp]/D");
-  tree_->Branch("peta",this->peta_,"peta[evtnp]/D");
-  tree_->Branch("pphi",this->pphi_,"pphi[evtnp]/D");
+  tree_->Branch("ppt",this->ppt_,"ppt[evtnp]/F");
+  tree_->Branch("peta",this->peta_,"peta[evtnp]/F");
+  tree_->Branch("pphi",this->pphi_,"pphi[evtnp]/F");
 
-  tree_->Branch("pndphi",this->pndphi_,"pndphi[evtnp]/D");
-  tree_->Branch("pndeta",this->pndeta_,"pndeta[evtnp]/D");
-  tree_->Branch("pndr",this->pndr_,"pndr[evtnp]/D");
-  tree_->Branch("pndrbg",this->pndrbg_,"pndrbg[evtnp]/D");
+  tree_->Branch("pndphi",this->pndphi_,"pndphi[evtnp]/F");
+  //tree_->Branch("pndeta",this->pndeta_,"pndeta[evtnp]/F");
+  tree_->Branch("pndr",this->pndr_,"pndr[evtnp]/F");
+  tree_->Branch("pndrbg",this->pndrbg_,"pndrbg[evtnp]/F");
 
-  tree_->Branch("padphi",this->padphi_,"padphi[evtnp]/D");
-  tree_->Branch("padeta",this->padeta_,"padeta[evtnp]/D");
-  tree_->Branch("padr",this->padr_,"padr[evtnp]/D");
-  tree_->Branch("padrbg",this->padrbg_,"padrbg[evtnp]/D");
+  tree_->Branch("padphi",this->padphi_,"padphi[evtnp]/F");
+  //tree_->Branch("padeta",this->padeta_,"padeta[evtnp]/F");
+  tree_->Branch("padr",this->padr_,"padr[evtnp]/F");
+  tree_->Branch("padrbg",this->padrbg_,"padrbg[evtnp]/F");
 
-  tree_->Branch("zn",this->zn_,"zn[evtnp]/D");
-  tree_->Branch("za",this->za_,"za[evtnp]/D");
+  tree_->Branch("zn",this->zn_,"zn[evtnp]/F");
+  tree_->Branch("za",this->za_,"za[evtnp]/F");
 
   //tree_->Branch("trkHP",this->trkHP_,"trkHP[evtnp]/I");
   //tree_->Branch("trkNHits",this->trkNHits_,"trkNHits[evtnp]/I");
-  //tree_->Branch("trkPtErr",this->trkPtErr_,"trkPtErr[evtnp]/D");
-  //tree_->Branch("trkdz",this->trkdz_,"trkdz[evtnp]/D");
-  //tree_->Branch("trkdxy",this->trkdxy_,"trkdxy[evtnp]/D");
+  //tree_->Branch("trkPtErr",this->trkPtErr_,"trkPtErr[evtnp]/F");
+  //tree_->Branch("trkdz",this->trkdz_,"trkdz[evtnp]/F");
+  //tree_->Branch("trkdxy",this->trkdxy_,"trkdxy[evtnp]/F");
 
   // -- jet cone info --
   tree_->Branch("nljCone5NP", &(this->nljCone5NP_), "nljCone5NP/I");
-  tree_->Branch("nljCone5Et", &(this->nljCone5Et_), "nljCone5Et/D");
+  tree_->Branch("nljCone5Et", &(this->nljCone5Et_), "nljCone5Et/F");
   tree_->Branch("aljCone5NP", &(this->aljCone5NP_), "aljCone5NP/I");
-  tree_->Branch("aljCone5Et", &(this->aljCone5Et_), "aljCone5Et/D");
+  tree_->Branch("aljCone5Et", &(this->aljCone5Et_), "aljCone5Et/F");
+  tree_->Branch("nljCone5NPBg", &(this->nljCone5NPBg_), "nljCone5NPBg/I");
+  tree_->Branch("nljCone5EtBg", &(this->nljCone5EtBg_), "nljCone5EtBg/F");
+  tree_->Branch("aljCone5NPBg", &(this->aljCone5NPBg_), "aljCone5NPBg/I");
+  tree_->Branch("aljCone5EtBg", &(this->aljCone5EtBg_), "aljCone5EtBg/F");
   
   // -- jes vars --
-  tree_->Branch("meanppt", &(this->meanppt_), "meanppt/D");
+  //tree_->Branch("meanppt", &(this->meanppt_), "meanppt/F");
 }
 void TreeDiJetEventData::Clear()
 {
@@ -205,6 +236,10 @@ void TreeDiJetEventData::Clear()
   nljCone5Et_ = 0;
   aljCone5NP_ = 0;
   aljCone5Et_ = 0;
+  nljCone5NPBg_ = 0;
+  nljCone5EtBg_ = 0;
+  aljCone5NPBg_ = 0;
+  aljCone5EtBg_ = 0;
 
   // jes vars
   meanppt_	  = -99;
