@@ -4,6 +4,7 @@ import FWCore.ParameterSet.Config as cms
 dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     isMC = cms.untracked.bool(True),
     centFile = cms.string("CentralityTables.root"),
+    centLabel = cms.string("HFhits20_MC_Hydjet2760GeV_MC_3XY_V24_v0"),
     vtxsrc = cms.untracked.InputTag("hiSelectedVertex"),
     jetsrc = cms.untracked.InputTag("akPu5patJets"),
     trksrc = cms.untracked.InputTag("allTracks"),
@@ -17,7 +18,10 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     trkPtMin = cms.untracked.double(0.3),
     anaJetType = cms.untracked.int32(2),
     refJetType = cms.untracked.int32(1),
-    anaTrkType = cms.untracked.int32(3)
+    anaTrkType = cms.untracked.int32(3),
+    # HI Event Selection: top 30% centrality
+    centBinBeg = cms.untracked.int32(0),
+    centBinEnd = cms.untracked.int32(6)
     )
 
 dijetAna_mc_JECRaw = dijetAna_mc.clone(

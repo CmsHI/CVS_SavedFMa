@@ -54,6 +54,7 @@ class DiJetAna : public edm::EDAnalyzer {
     edm::Service<TFileService> fs;
 
     std::string centFile_;
+    std::string centLabel_;
     edm::InputTag vtxsrc_;
     edm::InputTag jetsrc_;
     edm::InputTag trksrc_;
@@ -81,6 +82,8 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t	  iAway_;
     Double_t	  awayJetPt_;
     CentralityBins::RunMap HFhitBinMap_;
+    Int_t	  centBinBeg_;
+    Int_t	  centBinEnd_;
 
     // ana data
     // -- evt --

@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.38 2010/05/10 17:17:32 frankma Exp $
+// $Id: DiJetAna.cc,v 1.39 2010/05/10 18:17:05 frankma Exp $
 //
 //
 
@@ -68,6 +68,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   //now do what ever initialization is needed
   isMC_ = iConfig.getUntrackedParameter<bool>("isMC", true);
   centFile_ = iConfig.getParameter<string>("centFile");
+  centLabel_ = iConfig.getParameter<string>("centLabel");
   vtxsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("vtxsrc",edm::InputTag("hiSelectedVertex"));
   jetsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("jetsrc",edm::InputTag("akPu5patJets"));
   trksrc_ = iConfig.getUntrackedParameter<edm::InputTag>("trksrc",edm::InputTag("hiSelectTracks"));
@@ -82,10 +83,12 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   anaJetType_ = iConfig.getUntrackedParameter<int>("anaJetType", 2);
   refJetType_ = iConfig.getUntrackedParameter<int>("refJetType", 1);
   anaTrkType_ = iConfig.getUntrackedParameter<int>("anaTrkType", 3);
+  centBinBeg_ = iConfig.getUntrackedParameter<int>("centBinBeg", 0);
+  centBinEnd_ = iConfig.getUntrackedParameter<int>("centBinEnd", 6);
 
   // Setup centrality
   TFile * centFile = new TFile(centFile_.c_str());
-  HFhitBinMap_ = getCentralityFromFile(centFile,"HFhits20_MC_Hydjet2760GeV_MC_3XY_V24_v0",0,20);
+  HFhitBinMap_ = getCentralityFromFile(centFile,centLabel_.c_str(),0,99);
 }
 
 
@@ -147,7 +150,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   Double_t hf	  = cent->EtHFhitSum();
   Int_t cbin	  = HFhitBinMap_[1]->getBin(hf);
   cout << "cbin: " << cbin << endl;
-  if (cbin>=6) return; // centrality selection: top 30%
+  if (cbin<centBinBeg_ || cbin>=centBinEnd_) return;
   ++numHiEvtSel_;
 
   // Done with Event Pre-Selection
