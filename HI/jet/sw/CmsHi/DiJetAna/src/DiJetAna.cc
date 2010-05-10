@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.41 2010/05/10 21:52:12 frankma Exp $
+// $Id: DiJetAna.cc,v 1.42 2010/05/10 22:24:01 frankma Exp $
 //
 //
 
@@ -324,6 +324,10 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 {
   // Calc dijet vars for ana jets
   jd.CalcDJVars(isMC_,anajets,refjets);
+  // -- jec studies --
+  jd.njec_[10]	= funcGaus_->GetRandom();
+  jd.ajec_[10]	= funcGaus_->GetRandom();
+
   if (anajetType==2) {
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
@@ -337,14 +341,12 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     jd.njec_[3]		= (*jets)[iNear_].corrFactor("abs");
     jd.njec_[5]		= (*jets)[iNear_].corrFactor("had","uds");
     jd.njec_[7]		= (*jets)[iNear_].corrFactor("part","uds");
-    jd.njec_[10]	= funcGaus_->GetRandom();
 
     jd.ajec_[0]		= (*jets)[iAway_].corrFactor("raw");
     jd.ajec_[1]		= (*jets)[iAway_].corrFactor("rel");
     jd.ajec_[3]		= (*jets)[iAway_].corrFactor("abs");
     jd.ajec_[5]		= (*jets)[iAway_].corrFactor("had","glu");
     jd.ajec_[7]		= (*jets)[iAway_].corrFactor("part","glu");
-    jd.ajec_[10]	= funcGaus_->GetRandom();
 
     // -- jet id --
     jd.nljemf_		= (*jets)[iNear_].emEnergyFraction();
