@@ -12,6 +12,7 @@
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/HeavyIonEvent/interface/CentralityBins.h"
 
 
 //
@@ -52,6 +53,7 @@ class DiJetAna : public edm::EDAnalyzer {
     // ----------member data ---------------------------
     edm::Service<TFileService> fs;
 
+    std::string centFile_;
     edm::InputTag vtxsrc_;
     edm::InputTag jetsrc_;
     edm::InputTag trksrc_;
@@ -68,6 +70,7 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t	  anaTrkType_;
     // ana vars
     Int_t	  numPreEvtSel_;
+    Int_t	  numHiEvtSel_;
     Int_t	  numDJEvtSel_;
     std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
     std::vector<math::PtEtaPhiMLorentzVector> refJets_;
@@ -75,6 +78,7 @@ class DiJetAna : public edm::EDAnalyzer {
     Double_t	  nearJetPt_;
     Int_t	  iAway_;
     Double_t	  awayJetPt_;
+    CentralityBins::RunMap HFhitBinMap_;
 
     // ana data
     // -- evt --

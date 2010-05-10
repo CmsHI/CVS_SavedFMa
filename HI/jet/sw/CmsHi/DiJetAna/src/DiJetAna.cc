@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.36 2010/05/10 14:41:38 frankma Exp $
+// $Id: DiJetAna.cc,v 1.37 2010/05/10 16:11:05 frankma Exp $
 //
 //
 
@@ -62,10 +62,12 @@ using namespace reco;
 //
 DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   numPreEvtSel_(0),
+  numHiEvtSel_(0),
   numDJEvtSel_(0)
 {
   //now do what ever initialization is needed
   isMC_ = iConfig.getUntrackedParameter<bool>("isMC", true);
+  centFile_ = iConfig.getParameter<string>("centFile");
   vtxsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("vtxsrc",edm::InputTag("hiSelectedVertex"));
   jetsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("jetsrc",edm::InputTag("akPu5patJets"));
   trksrc_ = iConfig.getUntrackedParameter<edm::InputTag>("trksrc",edm::InputTag("hiSelectTracks"));
@@ -78,6 +80,10 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   anaJetType_ = iConfig.getUntrackedParameter<int>("anaJetType", 2);
   refJetType_ = iConfig.getUntrackedParameter<int>("refJetType", 1);
   anaTrkType_ = iConfig.getUntrackedParameter<int>("anaTrkType", 3);
+
+  // Setup centrality
+  TFile * centFile = new TFile(centFile_.c_str());
+  HFhitBinMap_ = getCentralityFromFile(centFile,"HFhits20_MC_Hydjet2760GeV_MC_3XY_V24_v0",0,20);
 }
 
 
@@ -132,6 +138,14 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   hVtxNumTrksEvtSel_->Fill(maxtracks);
   hVtxZEvtSel_->Fill(bestvz);
   ++numPreEvtSel_;
+
+  //-----------------------  HI Evt election (This part will be in an EDFilter later)  
+  edm::Handle<reco::Centrality> cent;
+  iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
+  Double_t hf	  = cent->EtHFhitSum();
+  Int_t cbin	  = HFhitBinMap_[1]->getBin(hf);
+  if (cbin>=6) return; // centrality selection: top 30%
+  ++numHiEvtSel_;
 
   // Done with Event Pre-Selection
   // Fill Event info
@@ -211,7 +225,8 @@ DiJetAna::endJob() {
   // ===== Done =====
   cout << endl << "================ Ana Process Summaries =============" << endl;
   cout << "Number of events pre-selected : "<< numPreEvtSel_ <<endl;
-  cout << "Number of dijet events pre-selected : "<< numDJEvtSel_<<endl;
+  cout << "Number of HI events selected : "<< numHiEvtSel_<<endl;
+  cout << "Number of dijet events selected : "<< numDJEvtSel_<<endl;
 }
 
 
@@ -276,6 +291,10 @@ void DiJetAna::FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
   // HI Event info
   edm::Handle<reco::Centrality> cent;
   iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
+  Double_t hf	  = cent->EtHFhitSum();
+  jd.cbin_	  = HFhitBinMap_[1]->getBin(hf);
+
+
   if (isMC_) {
     edm::Handle<edm::GenHIEvent> mchievt;
     iEvent.getByLabel(edm::InputTag("heavyIon"),mchievt);

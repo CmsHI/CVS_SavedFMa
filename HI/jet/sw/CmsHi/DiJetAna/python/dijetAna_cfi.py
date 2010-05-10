@@ -3,6 +3,7 @@ import FWCore.ParameterSet.Config as cms
 # Dijet Ana Modules
 dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     isMC = cms.untracked.bool(True),
+    centFile = cms.string("CentralityTables.root"),
     vtxsrc = cms.untracked.InputTag("hiSelectedVertex"),
     jetsrc = cms.untracked.InputTag("akPu5patJets"),
     trksrc = cms.untracked.InputTag("allTracks"),

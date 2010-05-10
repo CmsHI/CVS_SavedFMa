@@ -127,6 +127,7 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("b", &(this->b_), "b/F");
   tree_->Branch("npart", &(this->npart_), "npart/I");
   tree_->Branch("ncoll", &(this->ncoll_), "ncoll/I");
+  tree_->Branch("cbin", &(this->cbin_), "cbin/I");
 
   // -- dijet info --
   tree_->Branch("djmass", &(this->djmass_), "djmass/F");

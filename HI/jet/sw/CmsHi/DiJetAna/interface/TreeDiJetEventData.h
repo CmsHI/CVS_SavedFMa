@@ -35,7 +35,7 @@ class TreeDiJetEventData
     Float_t vtxndof_,vtxchi2_,vz_;
     // -- HI Event variables --
     Float_t		    b_;
-    Int_t		    npart_,ncoll_;
+    Int_t		    npart_,ncoll_,cbin_;
 
     // --- DiJet variables ---
     Float_t		    djmass_,cmeta_,rdjmass_;
