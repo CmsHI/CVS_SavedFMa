@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.40 2010/05/10 20:36:36 frankma Exp $
+// $Id: DiJetAna.cc,v 1.41 2010/05/10 21:52:12 frankma Exp $
 //
 //
 
@@ -89,6 +89,12 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   // Setup centrality
   TFile * centFile = new TFile(centFile_.c_str());
   HFhitBinMap_ = getCentralityFromFile(centFile,centLabel_.c_str(),0,99);
+
+  // jec studies
+  funcGaus_ = new TF1("funcGaus_","gaus",-1,3);
+  funcGaus_->SetParameter(0,1); // norm
+  funcGaus_->SetParameter(1,1); // mean
+  funcGaus_->SetParameter(2,0.15); // jet et resolution
 }
 
 
@@ -331,12 +337,14 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     jd.njec_[3]		= (*jets)[iNear_].corrFactor("abs");
     jd.njec_[5]		= (*jets)[iNear_].corrFactor("had","uds");
     jd.njec_[7]		= (*jets)[iNear_].corrFactor("part","uds");
+    jd.njec_[10]	= funcGaus_->GetRandom();
 
     jd.ajec_[0]		= (*jets)[iAway_].corrFactor("raw");
     jd.ajec_[1]		= (*jets)[iAway_].corrFactor("rel");
     jd.ajec_[3]		= (*jets)[iAway_].corrFactor("abs");
     jd.ajec_[5]		= (*jets)[iAway_].corrFactor("had","glu");
     jd.ajec_[7]		= (*jets)[iAway_].corrFactor("part","glu");
+    jd.ajec_[10]	= funcGaus_->GetRandom();
 
     // -- jet id --
     jd.nljemf_		= (*jets)[iNear_].emEnergyFraction();

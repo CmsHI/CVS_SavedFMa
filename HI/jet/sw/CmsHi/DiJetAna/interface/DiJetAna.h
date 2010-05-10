@@ -7,6 +7,7 @@
 #include "TTree.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TF1.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "CmsHi/DiJetAna/interface/TreeDiJetEventData.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
@@ -84,6 +85,8 @@ class DiJetAna : public edm::EDAnalyzer {
     CentralityBins::RunMap HFhitBinMap_;
     Int_t	  centBinBeg_;
     Int_t	  centBinEnd_;
+    // jec studies
+    TF1		  *funcGaus_; //! Function parametrizing the jes uncertainty
 
     // ana data
     // -- evt --
