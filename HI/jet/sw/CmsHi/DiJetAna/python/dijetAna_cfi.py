@@ -24,16 +24,6 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     centBinEnd = cms.untracked.int32(6)
     )
 
-dijetAna_mc_JECRaw = dijetAna_mc.clone(
-    JECLab1 = cms.string("raw")
-    )
-
-dijetAna_mc_JECL5 = dijetAna_mc.clone(
-    JECLab1 = cms.string("had"),
-    JECLab2Nr = cms.string("uds"),
-    JECLab2Aw = cms.string("glu")
-    )
-
 dijetAna_mc_periph = dijetAna_mc.clone(
     # HI Event Selection: peripheral bins
     centBinBeg = cms.untracked.int32(12),
@@ -68,7 +58,6 @@ dijetAna_data_seq = cms.Sequence(
 
 dijetAna_mc_seq = cms.Sequence(
     dijetAna_mc *
-    dijetAna_mc_JECRaw *
     dijetAna_mc_periph *
     #dijetAna_mc_genjet_trk *
     dijetAna_mc_calojet_genp *

@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.39 2010/05/10 18:17:05 frankma Exp $
+// $Id: DiJetAna.cc,v 1.40 2010/05/10 20:36:36 frankma Exp $
 //
 //
 
@@ -321,6 +321,24 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
   if (anajetType==2) {
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
+    // -- jec --
+    cout << "Current JEC Step: " << "Nr: " << (*jets)[iNear_].corrStep() << " Aw: " <<  (*jets)[iAway_].corrStep() << endl;
+    jd.nljrawet_	= (*jets)[iNear_].correctedP4("raw").pt();
+    jd.aljrawet_	= (*jets)[iAway_].correctedP4("raw").pt();
+
+    jd.njec_[0]		= (*jets)[iNear_].corrFactor("raw");
+    jd.njec_[1]		= (*jets)[iNear_].corrFactor("rel");
+    jd.njec_[3]		= (*jets)[iNear_].corrFactor("abs");
+    jd.njec_[5]		= (*jets)[iNear_].corrFactor("had","uds");
+    jd.njec_[7]		= (*jets)[iNear_].corrFactor("part","uds");
+
+    jd.ajec_[0]		= (*jets)[iAway_].corrFactor("raw");
+    jd.ajec_[1]		= (*jets)[iAway_].corrFactor("rel");
+    jd.ajec_[3]		= (*jets)[iAway_].corrFactor("abs");
+    jd.ajec_[5]		= (*jets)[iAway_].corrFactor("had","glu");
+    jd.ajec_[7]		= (*jets)[iAway_].corrFactor("part","glu");
+
+    // -- jet id --
     jd.nljemf_		= (*jets)[iNear_].emEnergyFraction();
     jd.aljemf_		= (*jets)[iAway_].emEnergyFraction();
   }
