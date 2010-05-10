@@ -34,6 +34,12 @@ dijetAna_mc_JECL5 = dijetAna_mc.clone(
     JECLab2Aw = cms.string("glu")
     )
 
+dijetAna_mc_periph = dijetAna_mc.clone(
+    # HI Event Selection: peripheral bins
+    centBinBeg = cms.untracked.int32(12),
+    centBinEnd = cms.untracked.int32(18)
+    )
+
 dijetAna_mc_genjet_trk = dijetAna_mc.clone(
     jetsrc = cms.untracked.InputTag("ak5HiGenJets"),
     anaJetType = cms.untracked.int32(1)
@@ -63,6 +69,7 @@ dijetAna_data_seq = cms.Sequence(
 dijetAna_mc_seq = cms.Sequence(
     dijetAna_mc *
     dijetAna_mc_JECRaw *
+    dijetAna_mc_periph *
     #dijetAna_mc_genjet_trk *
     dijetAna_mc_calojet_genp *
     dijetAna_mc_genjet_genp
