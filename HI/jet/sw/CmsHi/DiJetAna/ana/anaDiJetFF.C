@@ -117,22 +117,65 @@ void anaDiJetFF(int doMC=1,
   AnaFrag mcGenAw("mcGen","Away",mcj1t0,mcAna.Evt,djTrkCut,"log(1/za)","padr<0.5","padrbg<0.5");
 
   // Gen-Truth
-  AnaFrag mcGenNr("mcGenTruth","Near",mcj1t0,mcAna.Evt,djTrkCut,"log(1/zn)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcGenAw("mcGenTruth","Away",mcj1t0,mcAna.Evt,djTrkCut,"log(1/za)","padr<0.5","padrbg<0.5");
+  TString djTrkTruthCut = TString(mcAna.DJ && mcAna.Trk && "psube==0");
+  AnaFrag mcGenTruthNr("mcGenTruth","Near",mcj1t0,mcAna.Evt,djTrkTruthCut,"log(1/zn)","pndr<0.5","pndrbg<0.5");
+  mcGenTruthNr.hXiSig->SetLineColor(2);
+  mcGenTruthNr.hXiSig->SetMarkerStyle(0);
+  AnaFrag mcGenTruthAw("mcGenTruth","Away",mcj1t0,mcAna.Evt,djTrkTruthCut,"log(1/za)","padr<0.5","padrbg<0.5");
 
+  // Final Plots
+  // gen truth
+  TCanvas *cFFGenTruth = new TCanvas("cFFGenTruth","cFFGenTruth",500,500);
+  cFFGenTruth->SetLogy();
+  mcGenTruthNr.hXiRaw->Draw("E");
+  mcGenTruthNr.hXiBkg->Draw("hist Esame");
+  mcGenTruthNr.hXiSig->Draw("E hist same");
+  TLegend * leg1 = new TLegend(0.18,0.756,0.58,0.945,NULL,"brNDC");
+  leg1->SetFillStyle(0);
+  leg1->SetFillColor(0);
+  leg1->SetTextSize(0.025);
+  leg1->AddEntry("","Leading Jet","");
+  leg1->AddEntry(mcGenTruthNr.hXiRaw,"Signal genjet+ptl Raw","p");
+  leg1->AddEntry(mcGenTruthNr.hXiBkg,"Signal genjet+ptl Bkg","l");
+  leg1->AddEntry(mcGenTruthNr.hXiSig,"Signal genjet+ptl Raw-Bkg","p");
+  leg1->Draw();
+  cFFGenTruth->Print(Form("plots/%s/%s_McGenTruthXi.gif",mcAna.AnaTag.Data(),mcAna.Tag.Data()));
+
+  // gen
   TCanvas *cFFGen = new TCanvas("cFFGen","cFFGen",500,500);
   cFFGen->SetLogy();
   mcGenNr.hXiRaw->Draw("E");
   mcGenNr.hXiBkg->Draw("hist Esame");
+  mcGenTruthNr.hXiSig->Draw("E hist same");
   mcGenNr.hXiSig->Draw("Esame");
-  TLegend * leg2 = new TLegend(0.18,0.741,0.58,0.928,NULL,"brNDC");
+  TLegend * leg2 = new TLegend(0.18,0.756,0.58,0.945,NULL,"brNDC");
   leg2->SetFillStyle(0);
   leg2->SetFillColor(0);
   leg2->SetTextSize(0.025);
   leg2->AddEntry("","Leading Jet","");
-  leg2->AddEntry(mcGenNr.hXiRaw,"Gen jet,ptl Raw","pl");
-  leg2->AddEntry(mcGenNr.hXiBkg,"Gen jet,ptl Bkg","pl");
-  leg2->AddEntry(mcGenNr.hXiSig,"Gen jet,ptl Raw-Bkg","pl");
+  leg2->AddEntry(mcGenNr.hXiRaw,"genjet+ptl Raw","p");
+  leg2->AddEntry(mcGenNr.hXiBkg,"genjet+ptl Bkg","l");
+  leg2->AddEntry(mcGenNr.hXiSig,"genjet+ptl Raw-Bkg","p");
+  leg2->AddEntry(mcGenTruthNr.hXiSig,"Gen signal jet,ptl","l");
   leg2->Draw();
   cFFGen->Print(Form("plots/%s/%s_McGenXi.gif",mcAna.AnaTag.Data(),mcAna.Tag.Data()));
+
+  // reco
+  TCanvas *cFFMcReco = new TCanvas("cFFMcReco","cFFMcReco",500,500);
+  cFFMcReco->SetLogy();
+  mcRecoNr.hXiRaw->Draw("E");
+  mcRecoNr.hXiBkg->Draw("hist Esame");
+  mcGenTruthNr.hXiSig->Draw("E hist same");
+  mcRecoNr.hXiSig->Draw("Esame");
+  TLegend * leg3 = new TLegend(0.18,0.756,0.58,0.945,NULL,"brNDC");
+  leg3->SetFillStyle(0);
+  leg3->SetFillColor(0);
+  leg3->SetTextSize(0.025);
+  leg3->AddEntry("","Leading Jet","");
+  leg3->AddEntry(mcRecoNr.hXiRaw,"calojet+trk Raw","p");
+  leg3->AddEntry(mcRecoNr.hXiBkg,"calojet+trk Bkg","l");
+  leg3->AddEntry(mcRecoNr.hXiSig,"calojet+trk Raw-Bkg","p");
+  leg3->AddEntry(mcGenTruthNr.hXiSig,"Signal genjet+ptl","l");
+  leg3->Draw();
+  cFFMcReco->Print(Form("plots/%s/%s_McRecoXi.gif",mcAna.AnaTag.Data(),mcAna.Tag.Data()));
 }

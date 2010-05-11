@@ -47,15 +47,15 @@ AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TString djCut,TString djTrkC
     hXiBkg->SetMarkerStyle(kOpenCircle);
   }
   if (src.Contains("mc")) {
-    hXiRaw->SetLineColor(kBlack);
-    hXiRaw->SetMarkerColor(kBlack);
-    hXiSig->SetLineColor(kRed);
-    hXiSig->SetMarkerColor(kRed);
+    hXiRaw->SetLineColor(kGreen-2);
+    hXiRaw->SetMarkerColor(kGreen-2);
+    hXiSig->SetLineColor(kBlack);
+    hXiSig->SetMarkerColor(kBlack);
     hXiBkg->SetLineColor(kBlue);
 
-    hXiRaw->SetMarkerStyle(kFullCircle);
+    hXiRaw->SetMarkerStyle(kOpenSquare);
     hXiBkg->SetMarkerStyle(0);
-    hXiSig->SetMarkerStyle(kOpenCircle);
+    hXiSig->SetMarkerStyle(kFullCircle);
 
     hXiBkg->SetLineStyle(2);
   }
