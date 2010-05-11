@@ -119,6 +119,10 @@ void anaDiJetFF(int doMC=1,
   AnaFrag mcj2t0Nr("mcj2t0","Near",mcj2t0,mcAna.Evt,djTrkCut,"log(1./zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcj2t0Aw("mcj2t0","Away",mcj2t0,mcAna.Evt,djTrkCut,"log(1./za)","padr<0.5","padrbg<0.5");
 
+  // gen jet smear + genp
+  AnaFrag mcGenJetSmearNr("mcGen","Near",mcj1t0,mcAna.Evt,djTrkCut,"log(nljet*njec[10]/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcGenJetSmearAw("mcGen","Away",mcj1t0,mcAna.Evt,djTrkCut,"log(aljet*ajec[10]/ppt)","padr<0.5","padrbg<0.5");
+
   // Gen
   AnaFrag mcGenNr("mcGen","Near",mcj1t0,mcAna.Evt,djTrkCut,"log(1/zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenAw("mcGen","Away",mcj1t0,mcAna.Evt,djTrkCut,"log(1/za)","padr<0.5","padrbg<0.5");
@@ -205,4 +209,22 @@ void anaDiJetFF(int doMC=1,
   leg4->Draw();
   cFFMcj2t0->Print(Form("plots/%s/%s_Mcj2t0Xi.gif",mcAna.AnaTag.Data(),mcAna.Tag.Data()));
 
+  // genjet smear + genp
+  TCanvas *cFFGenJetSmear = new TCanvas("cFFGenJetSmear","cFFGenJetSmear",500,500);
+  cFFGenJetSmear->SetLogy();
+  mcGenJetSmearNr.hXiRaw->Draw("E");
+  mcGenJetSmearNr.hXiBkg->Draw("hist Esame");
+  mcGenTruthNr.hXiSig->Draw("E hist same");
+  mcGenJetSmearNr.hXiSig->Draw("Esame");
+  TLegend * leg5 = new TLegend(0.18,0.756,0.58,0.945,NULL,"brNDC");
+  leg5->SetFillStyle(0);
+  leg5->SetFillColor(0);
+  leg5->SetTextSize(0.025);
+  leg5->AddEntry("","Leading Jet","");
+  leg5->AddEntry(mcGenJetSmearNr.hXiRaw,"genjet(smear:0.15)+ptl Raw","p");
+  leg5->AddEntry(mcGenJetSmearNr.hXiBkg,"genjet(smear:0.15)+ptl Bkg","l");
+  leg5->AddEntry(mcGenJetSmearNr.hXiSig,"genjet(smear:0.15)+ptl Raw-Bkg","p");
+  leg5->AddEntry(mcGenTruthNr.hXiSig,"Gen signal jet,ptl","l");
+  leg5->Draw();
+  cFFGenJetSmear->Print(Form("plots/%s/%s_McGenJetSmearXi.gif",mcAna.AnaTag.Data(),mcAna.Tag.Data()));
 }
