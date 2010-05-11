@@ -5,7 +5,7 @@
 class AnaFrag
 {
   public:
-    AnaFrag(int src, TString t,TTree *tree,TString djCut,TString djTrkCut, TString var, TString dRSig, TString dRBkg);
+    AnaFrag(TString src, TString t,TTree *tree,TString djCut,TString djTrkCut, TString var, TString dRSig, TString dRBkg);
 
     TString tag;
     TTree * trDj;
@@ -24,19 +24,18 @@ class AnaFrag
     TString ytitle;
 };
 
-AnaFrag::AnaFrag(int src, TString t,TTree *tree,TString djCut,TString djTrkCut, TString var, TString dRSig, TString dRBkg) :
+AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TString djCut,TString djTrkCut, TString var, TString dRSig, TString dRBkg) :
   tag(t),
   nbin(20),
   ximin(0),
-  ximax(5),
-  ymin(0),
-  ymax(1.8),
+  ximax(7),
+  ymin(0.001),
+  ymax(200),
   xtitle("#xi=ln(E_{T}^{Jet}/p_{T}^{trk})"),
   ytitle("#frac{1}{N_{jet}} #frac{dN}{d#xi}")
 {
   trDj = tree;
-  if (src==0) tag="data"+tag;
-  if (src==1) tag="mc"+tag;
+  tag=tag+"_"+src;
   hXiRaw = new TH1D(Form("hXiRaw_%s",tag.Data()),(";"+xtitle+";"+ytitle),nbin,ximin,ximax);
   hXiBkg = new TH1D(Form("hXiBkg_%s",tag.Data()),(";"+xtitle+";"+ytitle),nbin,ximin,ximax);
   hXiSig = new TH1D(Form("hXiSig_%s",tag.Data()),(";"+xtitle+";"+ytitle),nbin,ximin,ximax);
@@ -44,17 +43,19 @@ AnaFrag::AnaFrag(int src, TString t,TTree *tree,TString djCut,TString djTrkCut, 
   hXiBkg->SetLineColor(kBlue);
   hXiBkg->SetMarkerColor(kBlue);
   // 0 for data, 1 for mc
-  if (src==0) {
+  if (src.Contains("data")) {
     hXiBkg->SetMarkerStyle(kOpenCircle);
   }
-  if (src==1) {
-    hXiRaw->SetLineColor(kRed);
+  if (src.Contains("mc")) {
+    hXiRaw->SetLineColor(kBlack);
+    hXiRaw->SetMarkerColor(kBlack);
     hXiSig->SetLineColor(kRed);
+    hXiSig->SetMarkerColor(kRed);
     hXiBkg->SetLineColor(kBlue);
 
-    hXiRaw->SetMarkerStyle(0);
+    hXiRaw->SetMarkerStyle(kFullCircle);
     hXiBkg->SetMarkerStyle(0);
-    hXiSig->SetMarkerStyle(0);
+    hXiSig->SetMarkerStyle(kOpenCircle);
 
     hXiBkg->SetLineStyle(2);
   }
