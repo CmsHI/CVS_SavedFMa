@@ -30,7 +30,7 @@ void anaDiJetFF(int doMC=1,
   inFile0->GetObject("dijetAna_mc_genjet_genp/djTree",mcj1t0);
 
   // Define dijet selection
-  selectionCut mcAna(1,1);
+  selectionCut mcAna(doMC,1);
   gSystem->mkdir(Form("plots/%s",mcAna.AnaTag.Data()),kTRUE);
   cout << endl << "====== Ana: " << mcAna.AnaTag << " ======" << endl;
   cout << "DJ selection: " << TString(mcAna.DJ) << endl;
@@ -56,5 +56,19 @@ void anaDiJetFF(int doMC=1,
   comp2.SetLegend(0.222,0.830,0.516,0.930);
   comp2.SetMaximum(6);
   comp2.Draw("E");
-  ccomp2->Print(Form("plots/%s/%s_dPhi",mcAna.AnaTag.Data(),mcAna.Tag.Data()) );
+  ccomp2->Print(Form("plots/%s/%s_dPhi.gif",mcAna.AnaTag.Data(),mcAna.Tag.Data()) );
+
+  TCanvas *ccomp3 = new TCanvas("ccomp3","",500,500);
+  compareHist comp3(mcj2t3,mcj1t0,"2*(nljet-aljet)/(nljet+aljet)","Balance",mcAna.Evt.Data(),mcAna.Evt.Data(),0,1.2,30);
+  comp3.Normalize(1);
+  comp3.SetHistName1(title1);
+  comp3.SetHistName2(title2);
+  comp3.SetXTitle("(p_{T}^{j1}-p_{T}^{j2})/((p_{T}^{j1}+p_{T}^{j2})/2)");
+  comp3.SetYTitle("Arbitrary normalization");
+  comp3.SetLegend(0.45,0.80,0.75,0.9);
+  comp3.SetMaximum(7);
+  comp3.Draw("E");
+  ccomp3->Print(Form("plots/%s/%s_Balance.gif",mcAna.AnaTag.Data(),mcAna.Tag.Data()));
+
+
 }
