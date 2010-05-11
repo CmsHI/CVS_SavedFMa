@@ -6,12 +6,17 @@
 #include "TProfile.h"
 #include "TCut.h"
 #include "TLegend.h"
+#include "TSystem.h"
 #include "CmsHi/DiJetAna/ana/aliases_dijet.C"
 #include "CmsHi/DiJetAna/ana/selectionCut.h"
+#include "CmsHi/DiJetAna/ana/AnaFrag.h"
+#include "CmsHi/DiJetAna/ana/compareHist.h"
 using namespace std;
 
 void anaDiJetFF(int doMC=1,
-    const char * inFile0Name="../process_aod/outputs/dijetAna_anaJet_Mc1_2k.root")
+    const char * inFile0Name="../process_aod/outputs/dijetAna_anaJet_Mc1_2k.root",
+    TString title1="MC Reco (Hyd2.76TeV+dijet)",
+    TString title2="MC Input (Hyd2.76TeV+dijet)")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -22,17 +27,34 @@ void anaDiJetFF(int doMC=1,
   TTree *mcj2t3, *mcj2t3peri, *mcj2t0, *mcj1t0;
   inFile0->GetObject("dijetAna_mc/djTree",mcj2t3);
   inFile0->GetObject("dijetAna_mc_periph/djTree",mcj2t3peri);
-
-  cout << "dijetAna_mc/mcj2t3 # entries: " << mcj2t3->GetEntries() << endl;
-  cout << "dijetAna_mc_periph/mcj2t3 # entries: " << mcj2t3peri->GetEntries() << endl;
+  inFile0->GetObject("dijetAna_mc_genjet_genp/djTree",mcj1t0);
 
   // Define dijet selection
   selectionCut mcAna(1,1);
+  gSystem->mkdir(Form("plots/%s",mcAna.AnaTag.Data()),kTRUE);
+  cout << endl << "====== Ana: " << mcAna.AnaTag << " ======" << endl;
   cout << "DJ selection: " << TString(mcAna.DJ) << endl;
   cout << "dijetAna_mc/mcj2t3 # entries: " << mcj2t3->GetEntries() << endl;
   cout << "# DJ events passed: " << mcj2t3->GetEntries(mcAna.DJ) << endl;
-  cout << "dijetAna_mc_periph/mcj2t3 # entries: " << mcj2t3peri->GetEntries() << endl;
-  cout << "# DJ events passed: " << mcj2t3peri->GetEntries(mcAna.DJ) << endl;
+  cout << "dijetAna_mc/mcj1t0 # entries: " << mcj1t0->GetEntries() << endl;
+  cout << "# DJ events passed: " << mcj1t0->GetEntries(mcAna.DJ) << endl;
 
-  //  - DiJet FF -
+  // Setup root
+  TH1::SetDefaultSumw2();
+
+  // ============== pdf comparisons ===============
+  // check dijet
+  cout << " --- Check Distributions --- " << endl;
+  cout << " Evt Sel: " << mcAna.Evt << endl;
+  TCanvas *ccomp2 = new TCanvas("ccomp2","",500,500);
+  compareHist comp2(mcj2t3,mcj1t0,"jdphi","dPhi",mcAna.Evt.Data(),mcAna.Evt.Data(),0,3.14,30);
+  comp2.Normalize(1);
+  comp2.SetHistName1(title1);
+  comp2.SetHistName2(title2);
+  comp2.SetXTitle("leading dijet d #phi");
+  comp2.SetYTitle("Arbitrary normalization");
+  comp2.SetLegend(0.222,0.830,0.516,0.930);
+  comp2.SetMaximum(6);
+  comp2.Draw("E");
+  ccomp2->Print(Form("plots/%s/%s_dPhi",mcAna.AnaTag.Data(),mcAna.Tag.Data()) );
 }
