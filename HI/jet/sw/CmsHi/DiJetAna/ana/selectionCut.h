@@ -13,7 +13,7 @@ class selectionCut
 
     TCut Cut; 
     TCut runCut;
-    TString evtSelection;
+    TString Evt;
     TCut CutWOVtxCut;
     TString vtxCut;
     TString myCut;
@@ -22,6 +22,7 @@ class selectionCut
     TCut noMonster;
     TCut hfCoinc;
     TCut DJ;
+    TCut Trk;
 
     // evt sel
     int numVzBin;
@@ -94,14 +95,13 @@ selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumi
    if (selType==1) {
      DJ = Form("nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%f",
 	 nrJetPtMin,nrJetPtMax,awJetPtMin,jetEtaMax,jetEtaMax,djDPhiMin);
-     evtSelection = TString(DJ);
-     Tag = "Dijet Ana";
+     Evt = TString(DJ);
+     Trk = ("ppt>0.3 && ppt<nljet");
+     Tag = "ana01";
    }
 
-   if (!isMC) {
-     evtSelection = trigger && "L1T[0]" && noMonster && TCut(evtSelection);
-   }
+   CutWOVtxCut = TCut(Evt);
+   Cut = TCut(Evt);
 
-   CutWOVtxCut = TCut(evtSelection);
-   Cut = TCut(evtSelection);
+   AnaTag = Form("Sel%d_Nr_%0.f_%.0f_Aw_%.0f_DPhi_%.1f",selType,nrJetPtMin,nrJetPtMax,awJetPtMin,djDPhiMin);
 }
