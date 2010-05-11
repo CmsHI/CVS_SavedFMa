@@ -27,6 +27,7 @@ void anaDiJetFF(int doMC=1,
   TTree *mcj2t3, *mcj2t3peri, *mcj2t0, *mcj1t0;
   inFile0->GetObject("dijetAna_mc/djTree",mcj2t3);
   inFile0->GetObject("dijetAna_mc_periph/djTree",mcj2t3peri);
+  inFile0->GetObject("dijetAna_mc_calojet_genp/djTree",mcj2t0);
   inFile0->GetObject("dijetAna_mc_genjet_genp/djTree",mcj1t0);
 
   // Define dijet selection
@@ -36,6 +37,8 @@ void anaDiJetFF(int doMC=1,
   cout << "DJ selection: " << TString(mcAna.DJ) << endl;
   cout << "dijetAna_mc/mcj2t3 # entries: " << mcj2t3->GetEntries() << endl;
   cout << "# DJ events passed: " << mcj2t3->GetEntries(mcAna.DJ) << endl;
+  cout << "dijetAna_mc/mcj2t0 # entries: " << mcj2t0->GetEntries() << endl;
+  cout << "# DJ events passed: " << mcj2t0->GetEntries(mcAna.DJ) << endl;
   cout << "dijetAna_mc/mcj1t0 # entries: " << mcj1t0->GetEntries() << endl;
   cout << "# DJ events passed: " << mcj1t0->GetEntries(mcAna.DJ) << endl;
 
@@ -112,6 +115,10 @@ void anaDiJetFF(int doMC=1,
   AnaFrag mcRecoNr("mcReco","Near",mcj2t3,mcAna.Evt,djTrkCut,"log(1./zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcRecoAw("mcReco","Away",mcj2t3,mcAna.Evt,djTrkCut,"log(1./za)","padr<0.5","padrbg<0.5");
 
+  // Reco jet + genp
+  AnaFrag mcj2t0Nr("mcj2t0","Near",mcj2t0,mcAna.Evt,djTrkCut,"log(1./zn)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcj2t0Aw("mcj2t0","Away",mcj2t0,mcAna.Evt,djTrkCut,"log(1./za)","padr<0.5","padrbg<0.5");
+
   // Gen
   AnaFrag mcGenNr("mcGen","Near",mcj1t0,mcAna.Evt,djTrkCut,"log(1/zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenAw("mcGen","Away",mcj1t0,mcAna.Evt,djTrkCut,"log(1/za)","padr<0.5","padrbg<0.5");
@@ -160,7 +167,7 @@ void anaDiJetFF(int doMC=1,
   leg2->Draw();
   cFFGen->Print(Form("plots/%s/%s_McGenXi.gif",mcAna.AnaTag.Data(),mcAna.Tag.Data()));
 
-  // reco
+  // reco full
   TCanvas *cFFMcReco = new TCanvas("cFFMcReco","cFFMcReco",500,500);
   cFFMcReco->SetLogy();
   mcRecoNr.hXiRaw->Draw("E");
@@ -178,4 +185,24 @@ void anaDiJetFF(int doMC=1,
   leg3->AddEntry(mcGenTruthNr.hXiSig,"Signal genjet+ptl","l");
   leg3->Draw();
   cFFMcReco->Print(Form("plots/%s/%s_McRecoXi.gif",mcAna.AnaTag.Data(),mcAna.Tag.Data()));
+
+  // reco jet + genp
+  TCanvas *cFFMcj2t0 = new TCanvas("cFFMcj2t0","cFFMcj2t0",500,500);
+  cFFMcj2t0->SetLogy();
+  mcj2t0Nr.hXiRaw->Draw("E");
+  mcj2t0Nr.hXiBkg->Draw("hist Esame");
+  mcGenTruthNr.hXiSig->Draw("E hist same");
+  mcj2t0Nr.hXiSig->Draw("Esame");
+  TLegend * leg4 = new TLegend(0.18,0.756,0.58,0.945,NULL,"brNDC");
+  leg4->SetFillStyle(0);
+  leg4->SetFillColor(0);
+  leg4->SetTextSize(0.025);
+  leg4->AddEntry("","Leading Jet","");
+  leg4->AddEntry(mcj2t0Nr.hXiRaw,"calojet+ptl Raw","p");
+  leg4->AddEntry(mcj2t0Nr.hXiBkg,"calojet+ptl Bkg","l");
+  leg4->AddEntry(mcj2t0Nr.hXiSig,"calojet+ptl Raw-Bkg","p");
+  leg4->AddEntry(mcGenTruthNr.hXiSig,"Signal genjet+ptl","l");
+  leg4->Draw();
+  cFFMcj2t0->Print(Form("plots/%s/%s_Mcj2t0Xi.gif",mcAna.AnaTag.Data(),mcAna.Tag.Data()));
+
 }
