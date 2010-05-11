@@ -1,3 +1,5 @@
+#include "TTree.h"
+
 void aliases_dijet(TTree * dijetTree)
 { 
   // dijet level
