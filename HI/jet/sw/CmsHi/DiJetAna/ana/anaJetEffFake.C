@@ -48,6 +48,7 @@ void anaJetEffFake(int doMC=1,
   mcj2t3->Draw("aljet>>+hJetPtDJSel",mcAna.DJ,"Esame");
   hJetPtPreSel->Draw("hist");
   hJetPtDJSel->Draw("Esame");
+  cJetPt->Print("plots/cJetPt.gif");
 
   // Jet Eta
   TCanvas * cJetEta = new TCanvas("cJetEta","cJetEta",500,500);
@@ -85,6 +86,7 @@ void anaJetEffFake(int doMC=1,
   mcj2t3->Draw("jdphi>>hJetDjDPhiDJSel",mcAna.DJ,"Esame");
   hJetDjDPhiPreSel->Draw("hist");
   hJetDjDPhiDJSel->Draw("Esame");
+  cJetDjDPhi->Print("plots/cJetDjDPhi.gif");
 
   // Draw Gen jets
   // GJet Pt
@@ -99,6 +101,7 @@ void anaJetEffFake(int doMC=1,
   mcj2t3->Draw("alrjet>>+hGJetPtDJSel",mcAna.DJ,"Esame");
   hGJetPtPreSel->Draw("hist");
   hGJetPtDJSel->Draw("Esame");
+  cGJetPt->Print("plots/cGJetPt.gif");
 
   // GJet Eta
   TCanvas * cGJetEta = new TCanvas("cGJetEta","cGJetEta",500,500);
