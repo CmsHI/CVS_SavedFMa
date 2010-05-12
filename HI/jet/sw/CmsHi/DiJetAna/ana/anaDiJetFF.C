@@ -120,8 +120,8 @@ void anaDiJetFF(int doMC=1,
   AnaFrag mcj2t0Aw("mcj2t0","Away",mcj2t0,mcAna.Evt,djTrkCut,"log(1./za)","padr<0.5","padrbg<0.5");
 
   // gen jet smear + genp
-  AnaFrag mcGenJetSmearNr("mcGen","Near",mcj1t0,mcAna.Evt,djTrkCut,"log(nljet*njec[10]/ppt)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcGenJetSmearAw("mcGen","Away",mcj1t0,mcAna.Evt,djTrkCut,"log(aljet*ajec[10]/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcGenJetSmearNr("mcGenJetSmear","Near",mcj1t0,mcAna.Evt,djTrkCut,"log(nljet*njec[10]/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcGenJetSmearAw("mcGenJetSmear","Away",mcj1t0,mcAna.Evt,djTrkCut,"log(aljet*ajec[10]/ppt)","padr<0.5","padrbg<0.5");
 
   // Gen
   AnaFrag mcGenNr("mcGen","Near",mcj1t0,mcAna.Evt,djTrkCut,"log(1/zn)","pndr<0.5","pndrbg<0.5");
@@ -227,4 +227,36 @@ void anaDiJetFF(int doMC=1,
   leg5->AddEntry(mcGenTruthNr.hXiSig,"Gen signal jet,ptl","l");
   leg5->Draw();
   cFFGenJetSmear->Print(Form("plots/%s/%s_McGenJetSmearXi.gif",mcAna.AnaTag.Data(),mcAna.Tag.Data()));
+
+  // final
+  TCanvas *cFFAnaComb = new TCanvas("cFFAnaComb","cFFAnaComb",500,500);
+  mcGenTruthNr.hXiSig->SetMaximum(5.5);
+  mcGenTruthNr.hXiSig->Draw("E hist");
+
+  mcGenNr.hXiSig->SetMarkerStyle(kOpenSquare);
+  mcGenNr.hXiSig->SetMarkerColor(kGreen-2);
+  mcGenNr.hXiSig->Draw("Esame");
+
+  mcRecoNr.hXiSig->Draw("Esame");
+
+  mcj2t0Nr.hXiSig->SetMarkerStyle(kOpenCircle);
+  mcj2t0Nr.hXiSig->SetMarkerColor(kBlue);
+  mcj2t0Nr.hXiSig->Draw("Esame");
+
+  mcGenJetSmearNr.hXiSig->SetMarkerStyle(kOpenStar);
+  mcGenJetSmearNr.hXiSig->SetMarkerColor(kBlue+3);
+  mcGenJetSmearNr.hXiSig->Draw("Esame");
+
+  TLegend * leg10 = new TLegend(0.18,0.756,0.58,0.945,NULL,"brNDC");
+  leg10->SetFillStyle(0);
+  leg10->SetFillColor(0);
+  leg10->SetTextSize(0.025);
+  leg10->AddEntry("","Leading Jet","");
+  leg10->AddEntry(mcGenTruthNr.hXiSig,"Signal: genjet+ptl Raw-Bkg","l");
+  leg10->AddEntry(mcGenNr.hXiSig,"HI: genjet+ptl Raw-Bkg","p");
+  leg10->AddEntry(mcRecoNr.hXiSig,"HI: calojet+trk Raw-Bkg","p");
+  leg10->AddEntry(mcj2t0Nr.hXiSig,"HI: calojet+ptl Raw-Bkg","p");
+  leg10->AddEntry(mcGenJetSmearNr.hXiSig,"HI: gejet_smear(0.15)+ptl Raw-Bkg","p");
+  leg10->Draw();
+  cFFAnaComb->Print(Form("plots/%s/%s_McAnaCombXi.gif",mcAna.AnaTag.Data(),mcAna.Tag.Data()));
 }
