@@ -6,7 +6,7 @@
 #include <TRandom.h>                 // random number generator
 #endif
 
-#include "CPlot.hh"           // helper class for plots
+#include "CPlot.h"           // helper class for plots
 
 void plotExample()
 {

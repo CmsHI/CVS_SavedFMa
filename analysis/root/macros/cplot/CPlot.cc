@@ -1,4 +1,4 @@
-#include "CPlot.hh"
+#include "CPlot.h"
 #include <TLatex.h>
 
 CPlot::CPlot()
