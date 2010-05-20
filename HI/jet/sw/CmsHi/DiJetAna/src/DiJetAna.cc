@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.42 2010/05/10 22:24:01 frankma Exp $
+// $Id: DiJetAna.cc,v 1.43 2010/05/10 22:40:56 frankma Exp $
 //
 //
 
@@ -81,7 +81,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   awayJetPtMin_ = iConfig.getUntrackedParameter<double>("awayJetPtMin", 50);
   trkPtMin_ = iConfig.getUntrackedParameter<double>("trkPtMin", 0.3);
   anaJetType_ = iConfig.getUntrackedParameter<int>("anaJetType", 2);
-  refJetType_ = iConfig.getUntrackedParameter<int>("refJetType", 1);
+  refJetType_ = iConfig.getUntrackedParameter<int>("refJetType", 11);
   anaTrkType_ = iConfig.getUntrackedParameter<int>("anaTrkType", 3);
   centBinBeg_ = iConfig.getUntrackedParameter<int>("centBinBeg", 0);
   centBinEnd_ = iConfig.getUntrackedParameter<int>("centBinEnd", 6);
@@ -174,7 +174,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   nearJetPt_ = -99; awayJetPt_ = -99;
   FindDiJet(iEvent,anaJets_,anaJetType_);
 
-  // === dijet kinematics selection ===
+  // === basic dijet selection to simulate jet trigger ===
   if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) return;
   ++numDJEvtSel_;
   if (numDJEvtSel_<=20) PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);

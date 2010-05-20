@@ -17,7 +17,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     awayJetPtMin = cms.untracked.double(40.0),
     trkPtMin = cms.untracked.double(0.3),
     anaJetType = cms.untracked.int32(2),
-    refJetType = cms.untracked.int32(1),
+    refJetType = cms.untracked.int32(11),
     anaTrkType = cms.untracked.int32(3),
     # HI Event Selection: top 30% centrality
     centBinBeg = cms.untracked.int32(0),
