@@ -14,4 +14,9 @@ void aliases_dijet(TTree * dijetTree)
   dijetTree->SetAlias("AC5NTrk","Sum$(goodTrk && padr<0.5)");
   dijetTree->SetAlias("NC5TrkEt","Sum$((goodTrk && pndr<0.5)*ppt)");
   dijetTree->SetAlias("AC5TrkEt","Sum$((goodTrk && padr<0.5)*ppt)");
+
+  dijetTree->SetAlias("NC5NTrkBg","Sum$(goodTrk && pndrbg<0.5)");
+  dijetTree->SetAlias("AC5NTrkBg","Sum$(goodTrk && padrbg<0.5)");
+  dijetTree->SetAlias("NC5TrkEtBg","Sum$((goodTrk && pndrbg<0.5)*ppt)");
+  dijetTree->SetAlias("AC5TrkEtBg","Sum$((goodTrk && padrbg<0.5)*ppt)");
 }
