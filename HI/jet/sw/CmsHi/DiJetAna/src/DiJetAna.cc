@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.43 2010/05/10 22:40:56 frankma Exp $
+// $Id: DiJetAna.cc,v 1.44 2010/05/20 23:08:04 frankma Exp $
 //
 //
 
@@ -70,7 +70,8 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   centFile_ = iConfig.getParameter<string>("centFile");
   centLabel_ = iConfig.getParameter<string>("centLabel");
   vtxsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("vtxsrc",edm::InputTag("hiSelectedVertex"));
-  jetsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("jetsrc",edm::InputTag("akPu5patJets"));
+  jetsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("jetsrc",edm::InputTag("patJets"));
+  refjetsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("refjetsrc",edm::InputTag("patJets"));
   trksrc_ = iConfig.getUntrackedParameter<edm::InputTag>("trksrc",edm::InputTag("hiSelectTracks"));
   jetEtaMax_ = iConfig.getUntrackedParameter<double>("jetEtaMax", 2.0);
   nVtxTrkCut_ = iConfig.getUntrackedParameter<int>("nVtxTrkCut", 3);
@@ -182,7 +183,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   InclJetAna(iEvent,anaJetType_,hJetPtDJSel_,hJetEtaDJSel_,hJetPhiDJSel_);
 
   // -- Get Ref jets to the selected dijet (if MC) --
-  if (isMC_)FindRefJets(iEvent,anaJetType_,refJets_);
+  if (isMC_)FindRefJets(iEvent,refJetType_,refJets_);
 
   // -- Fill DiJet Event info --
   FillEventInfo(iEvent,djEvt_);
@@ -487,12 +488,12 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLo
 }
 
 // ------------- Reference Jets ---------------
-void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t anajetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets)
+void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets)
 {
   refjets.clear();
-  if (anajetType==2) {
+  if (refjetType==11) {
     Handle<vector<pat::Jet> > jets;
-    iEvent.getByLabel(jetsrc_,jets);
+    iEvent.getByLabel(refjetsrc_,jets);
     const reco::GenJet * NrGJet = (*jets)[iNear_].genJet();
     const reco::GenJet * AwGJet = (*jets)[iAway_].genJet();
     if (NrGJet && AwGJet) {
@@ -520,11 +521,14 @@ Bool_t DiJetAna::GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType)
 }
 void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, Int_t trkType)
 {
+  cout << "=== Ana setup: ===" << endl;
+  cout << "AnaJet: " << jetsrc_ << " with anaJetType: " << anaJetType_ << endl;
+  cout << "RefJet: " << refjetsrc_ << " with refJetType: " << refJetType_ << endl;
+  cout << "AnaTrk: " << trksrc_ << " with anaTrkType: " << anaTrkType_ << endl;
   if (jetType<=2) {
     edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
-    cout << "jetType " << jetType << ", trkType " << trkType <<
-      ".  # jets: " << (*jets).size() << endl;
+    cout << "jetType " << jetType << ", trkType " << trkType << "# jets: " << (*jets).size() << endl;
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
       if (jet.pt()>(nearJetPtMin_/2.)) cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;

@@ -40,7 +40,7 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t FindNearJet(const edm::Event& iEvent, Int_t jetType=2);
     Int_t FindAwayJet(const edm::Event& iEvent, Int_t jetType=2);
     void FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType=2); 
-    void FindRefJets(const edm::Event& iEvent, Int_t anajetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets); 
+    void FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets); 
     Bool_t GoodAnaTrk(const reco::Track & trk);
     Bool_t GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType);
     void PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType=2, Int_t trkType=2);
@@ -58,6 +58,7 @@ class DiJetAna : public edm::EDAnalyzer {
     std::string centLabel_;
     edm::InputTag vtxsrc_;
     edm::InputTag jetsrc_;
+    edm::InputTag refjetsrc_;
     edm::InputTag trksrc_;
     // ana setup
     Bool_t	  isMC_;
