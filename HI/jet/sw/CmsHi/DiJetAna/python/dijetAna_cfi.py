@@ -32,7 +32,7 @@ dijetAna_mc_periph = dijetAna_mc.clone(
     )
 
 dijetAna_mc_genjet_trk = dijetAna_mc.clone(
-    jetsrc = cms.untracked.InputTag("ak5HiGenJets"),
+    jetsrc = cms.untracked.InputTag("iterativeCone5HiGenJets"),
     anaJetType = cms.untracked.int32(1)
     )
 
@@ -42,7 +42,7 @@ dijetAna_mc_calojet_genp = dijetAna_mc.clone(
     )
 
 dijetAna_mc_genjet_genp = dijetAna_mc.clone(
-    jetsrc = cms.untracked.InputTag("ak5HiGenJets"),
+    jetsrc = cms.untracked.InputTag("iterativeCone5HiGenJets"),
     anaJetType = cms.untracked.int32(1),
     trksrc = cms.untracked.InputTag("hiGenParticles"),
     anaTrkType = cms.untracked.int32(0)
