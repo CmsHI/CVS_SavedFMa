@@ -39,7 +39,8 @@ class DiJetAna : public edm::EDAnalyzer {
 	Int_t trkType);
     Int_t FindNearJet(const edm::Event& iEvent, Int_t jetType=2);
     Int_t FindAwayJet(const edm::Event& iEvent, Int_t jetType=2);
-    void FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType,
+    void FindDiJet(const edm::Event& iEvent, const edm::InputTag & jsrc,
+	std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType,
 	Double_t & nrjetPt, Int_t & iNr, Double_t & awjetPt, Int_t & iAw); 
     void FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets); 
     Bool_t GoodAnaTrk(const reco::Track & trk);
@@ -84,6 +85,10 @@ class DiJetAna : public edm::EDAnalyzer {
     Double_t	  nearJetPt_;
     Int_t	  iAway_;
     Double_t	  awayJetPt_;
+    Int_t	  iNearRef_;
+    Double_t	  nearRefJetPt_;
+    Int_t	  iAwayRef_;
+    Double_t	  awayRefJetPt_;
     CentralityBins::RunMap HFhitBinMap_;
     Int_t	  centBinBeg_;
     Int_t	  centBinEnd_;
