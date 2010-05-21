@@ -72,6 +72,8 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
     std::vector<math::PtEtaPhiMLorentzVector> anajets,
     math::PtEtaPhiMLorentzVector anaTrk, Int_t it)
 {
+  if (anajets.size()<2) return;
+
   // Basic Kinematic Info
   ppt_[it]		= anaTrk.pt();
   peta_[it]		= anaTrk.eta();
@@ -79,7 +81,7 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
 
   // Relations to jet
   pndphi_[it]		= TMath::Abs(reco::deltaPhi(pphi_[it],anajets[0].phi()));
-  pndeta_[it]		= peta_[it] - anajets[0].eta();;
+  pndeta_[it]		= peta_[it] - anajets[0].eta();
   pndr_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[0].eta(),anajets[0].phi());
 
   padphi_[it]		= TMath::Abs(reco::deltaPhi(pphi_[it],anajets[1].phi()));
