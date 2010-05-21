@@ -72,8 +72,6 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
     std::vector<math::PtEtaPhiMLorentzVector> anajets,
     math::PtEtaPhiMLorentzVector anaTrk, Int_t it)
 {
-  if (anajets.size()<2) return;
-
   // Basic Kinematic Info
   ppt_[it]		= anaTrk.pt();
   peta_[it]		= anaTrk.eta();
