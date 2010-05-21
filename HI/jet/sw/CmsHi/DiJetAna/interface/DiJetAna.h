@@ -39,7 +39,8 @@ class DiJetAna : public edm::EDAnalyzer {
 	Int_t trkType);
     Int_t FindNearJet(const edm::Event& iEvent, Int_t jetType=2);
     Int_t FindAwayJet(const edm::Event& iEvent, Int_t jetType=2);
-    void FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType=2); 
+    void FindDiJet(const edm::Event& iEvent, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType,
+	Double_t & nrjetPt, Int_t & iNr, Double_t & awjetPt, Int_t & iAw); 
     void FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets); 
     Bool_t GoodAnaTrk(const reco::Track & trk);
     Bool_t GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType);
