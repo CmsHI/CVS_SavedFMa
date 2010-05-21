@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.46 2010/05/21 00:14:19 frankma Exp $
+// $Id: DiJetAna.cc,v 1.47 2010/05/21 12:49:12 frankma Exp $
 //
 //
 
@@ -494,14 +494,16 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, const edm::InputTag & jsrc,
 // ------------- Reference Jets ---------------
 void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets)
 {
+  refjets.clear();
+
   if (refjetType==11) {
     std::vector<math::PtEtaPhiMLorentzVector> seljets;
     nearRefJetPt_ = -99; awayRefJetPt_ = -99;
     FindDiJet(iEvent,refjetsrc_,seljets,2,nearRefJetPt_,iNearRef_,awayRefJetPt_,iAwayRef_);
     cout << "Ref Jets: " << endl;
     cout << " refjetsrc_: " << refjetsrc_ << endl;
-    cout << " nearRefJetPt_: " << nearRefJetPt_ << " iNearRef_: " << iNearRef_
-      << " awayRefJetPt_: " << awayRefJetPt_ << " iAwayRef_: " << iAwayRef_ << endl;
+    cout << " sel nearRefJetPt_: " << nearRefJetPt_ << " iNearRef_: " << iNearRef_
+      << " sel awayRefJetPt_: " << awayRefJetPt_ << " iAwayRef_: " << iAwayRef_ << endl;
     if (nearRefJetPt_<0 || awayRefJetPt_<0) return;
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(refjetsrc_,jets);
@@ -510,6 +512,8 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
     if (NrGJet && AwGJet) {
       refjets.push_back(math::PtEtaPhiMLorentzVector(NrGJet->pt(),NrGJet->eta(),NrGJet->phi(),NrGJet->mass()));
       refjets.push_back(math::PtEtaPhiMLorentzVector(AwGJet->pt(),AwGJet->eta(),AwGJet->phi(),AwGJet->mass()));
+      cout << " nearRefJet: " << refjets[0] << " iNearRef_: " << iNearRef_
+	<< " awayRefJet: " << refjets[1] << " iAwayRef_: " << iAwayRef_ << endl;
     }
   }
 }
