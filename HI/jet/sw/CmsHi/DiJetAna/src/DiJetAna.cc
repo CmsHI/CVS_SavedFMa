@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.47 2010/05/21 12:49:12 frankma Exp $
+// $Id: DiJetAna.cc,v 1.48 2010/05/21 13:46:36 frankma Exp $
 //
 //
 
@@ -407,14 +407,14 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
 }
 
 // ------------ Find DiJet ----------------
-Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, Int_t jetType)
+Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType)
 {
   Int_t iNear = -99;
   Double_t NearPtMax=-99;
 
   if (jetType<=2) {
     edm::Handle<reco::CandidateView> jets;
-    iEvent.getByLabel(jetsrc_,jets);
+    iEvent.getByLabel(jsrc,jets);
     for (unsigned int j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
       Double_t corrPt = jet.pt();
@@ -427,16 +427,17 @@ Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, Int_t jetType)
   return iNear;
 }
 
-Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, Int_t jetType)
+Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType, Int_t iNr)
 {
   Int_t      iAway=-99;
   Double_t   AwayPtMax=-99;
   if (jetType<=2) {
     edm::Handle<reco::CandidateView> jets;
-    iEvent.getByLabel(jetsrc_,jets);
+    iEvent.getByLabel(jsrc,jets);
+    const reco::Candidate & NrJet = (*jets)[iNr];
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
-      Double_t jdphi = TMath::Abs(reco::deltaPhi(anaJets_[0].phi(),jet.phi()));
+      Double_t jdphi = TMath::Abs(reco::deltaPhi(NrJet.phi(),jet.phi()));
       if (jdphi < TMath::Pi()*2./3.) continue; // not too close to near jet in dphi
 
       Double_t corrPt = jet.pt();
@@ -455,7 +456,7 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, const edm::InputTag & jsrc,
 {
   anajets.clear();
 
-  iNr = FindNearJet(iEvent,jetType);
+  iNr = FindNearJet(iEvent,jsrc,jetType);
   if (iNr<0) return;
 
   // Establish JES for reco jet
@@ -466,7 +467,7 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, const edm::InputTag & jsrc,
     nrjetPt = (*jets)[iNr].correctedP4(JECLab1_,JECLab2Nr_).pt();
     anajets.push_back(math::PtEtaPhiMLorentzVector(nrjetPt,NrJet.eta(),NrJet.phi(),NrJet.mass()));
 
-    iAw = FindAwayJet(iEvent,jetType);
+    iAw = FindAwayJet(iEvent,jsrc,jetType,iNr);
     if (iAw<0) return;
 
     const pat::Jet & AwJet = (*jets)[iAw];
@@ -482,7 +483,7 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, const edm::InputTag & jsrc,
     nrjetPt = NrJet.pt();
     anajets.push_back(math::PtEtaPhiMLorentzVector(nrjetPt,NrJet.eta(),NrJet.phi(),NrJet.mass()));
     
-    iAw = FindAwayJet(iEvent,jetType);
+    iAw = FindAwayJet(iEvent,jsrc,jetType,iNr);
     if (iAw<0) return;
 
     const reco::Candidate & AwJet = (*jets)[iAw];
