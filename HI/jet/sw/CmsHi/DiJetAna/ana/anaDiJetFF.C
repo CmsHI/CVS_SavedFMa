@@ -14,7 +14,8 @@
 using namespace std;
 
 void anaDiJetFF(int doMC=1,
-    const char * inFile0Name="../process_aod/outputs/dijetAna_anaJet_Mc1_2k.root",
+    const char * inFile0Name="../process_aod/outputs/dijetAna_anaJet_Mc1_try23_2k.root",
+    TString outdir = "plots/dijetAna_anaJet_Mc1_try23_2k",
     TString title1="MC Reco (Hyd2.76TeV+dijet)",
     TString title2="MC Input (Hyd2.76TeV+dijet)")
 {
@@ -32,7 +33,7 @@ void anaDiJetFF(int doMC=1,
 
   // Define dijet selection
   selectionCut mcAna(doMC,1);
-  gSystem->mkdir(Form("plots/%s",mcAna.AnaTag.Data()),kTRUE);
+  gSystem->mkdir(Form("%s/%s",outdir.Data(),mcAna.AnaTag.Data()),kTRUE);
   cout << endl << "====== Ana: " << mcAna.AnaTag << " ======" << endl;
   cout << "DJ selection: " << TString(mcAna.DJ) << endl;
   cout << "dijetAna_mc/mcj2t3 # entries: " << mcj2t3->GetEntries() << endl;
