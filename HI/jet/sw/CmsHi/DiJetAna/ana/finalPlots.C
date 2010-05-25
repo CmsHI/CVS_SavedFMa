@@ -23,6 +23,6 @@ void finalPlots(const char * inFileName="plots/dijetAna_anaJet_Mc1_try26_2k/Sel1
   TCanvas * cFFAll = new TCanvas("cFFAll","cFFAll",500,500);
   CPlot cpFFAll("FFAll","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
   cpFFAll.SetYRange(0,6.);
-  cpFFAll.AddHist1D(inFile,"hXiSig_Near_mcGen",kGreen+2);
+  cpFFAll.AddHist1D(inFile,"hXiSig_Near_mcGen","#xi genjet+genp","E",kGreen+2,1,kOpenSquare);
   cpFFAll.Draw(cFFAll,true,"gif");
 }
