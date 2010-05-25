@@ -23,6 +23,7 @@ class selectionCut
     TCut hfCoinc;
     TCut DJ;
     TCut Trk;
+    TCut DJTrk;
 
     // evt sel
     int numVzBin;
@@ -97,7 +98,8 @@ selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumi
 	 nrJetPtMin,nrJetPtMax,awJetPtMin,jetEtaMax,jetEtaMax,djDPhiMin);
      Evt = TString(DJ);
      Trk = ("ppt>0.3 && ppt<nljet");
-     Tag = "ana01";
+     DJTrk = DJ&&Trk;
+     Tag = "ana02";
    }
 
    CutWOVtxCut = TCut(Evt);
