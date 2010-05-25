@@ -33,6 +33,7 @@ void anaDiJetFF(int doMC=1,
 
   // Define dijet selection
   selectionCut mcAna(doMC,1);
+  selectionCut mcMatAna(doMC,11);
   gSystem->mkdir(Form("%s/%s",outdir.Data(),mcAna.AnaTag.Data()),kTRUE);
   cout << endl << "====== Ana: " << mcAna.AnaTag << " ======" << endl;
   cout << "DJ selection: " << TString(mcAna.DJ) << endl;
@@ -114,14 +115,20 @@ void anaDiJetFF(int doMC=1,
   cout << endl << "==================== DiJet Ana ===================" << endl;
   cout << "DJ Cut: " << mcAna.DJ << endl;
   cout << "mcAna.DJTrk: " << mcAna.DJTrk << endl;
+  cout << "Matched DJ Cut: " << mcMatAna.DJ << endl;
+  cout << "matched mcAna.DJTrk: " << mcMatAna.DJTrk << endl;
   TCanvas *ctemp = new TCanvas("ctemp","ctemp",500,500);
   // Reco
   AnaFrag mcRecoNr("mcReco","Near",mcj2t3,mcAna.DJ,mcAna.DJTrk,"log(1./zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcRecoAw("mcReco","Away",mcj2t3,mcAna.DJ,mcAna.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
+  AnaFrag mcRecoNrMat("mcRecoMat","Near",mcj2t3,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zn)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcRecoAwMat("mcRecoMat","Away",mcj2t3,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
 
   // Reco jet + genp
   AnaFrag mcj2t0Nr("mcj2t0","Near",mcj2t0,mcAna.DJ,mcAna.DJTrk,"log(1./zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcj2t0Aw("mcj2t0","Away",mcj2t0,mcAna.DJ,mcAna.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj2t0NrMat("mcj2t0Mat","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zn)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcj2t0AwMat("mcj2t0Mat","Away",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
 
   // gen jet smear + genp
   AnaFrag mcGenJetSmearNr("mcj1Smear","Near",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(nljet*njec[10]/ppt)","pndr<0.5","pndrbg<0.5");
@@ -130,9 +137,11 @@ void anaDiJetFF(int doMC=1,
   // Gen
   AnaFrag mcGenNr("mcGen","Near",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(1/zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenAw("mcGen","Away",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(1/za)","padr<0.5","padrbg<0.5");
+  AnaFrag mcGenNrMat("mcGenMat","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(nlrjet/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcGenAwMat("mcGenMat","Away",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(alrjet/ppt)","padr<0.5","padrbg<0.5");
 
   // Gen-Truth
-  TString djTrkTruthCut = TString(mcAna.DJ && mcAna.Trk && "psube==0");
+  TCut djTrkTruthCut = mcAna.DJTrk && "psube==0";
   AnaFrag mcGenTruthNr("mcGenTruth","Near",mcj1t0,mcAna.DJ,djTrkTruthCut,"log(1/zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenTruthAw("mcGenTruth","Away",mcj1t0,mcAna.DJ,djTrkTruthCut,"log(1/za)","padr<0.5","padrbg<0.5");
 

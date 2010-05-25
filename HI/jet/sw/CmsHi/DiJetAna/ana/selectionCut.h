@@ -99,7 +99,15 @@ selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumi
      Evt = TString(DJ);
      Trk = ("ppt>0.3 && ppt<nljet");
      DJTrk = DJ&&Trk;
-     Tag = "ana02";
+     Tag = "Basic";
+   } else if (selType==11) {
+     DJ = Form("nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%f",
+	 nrJetPtMin,nrJetPtMax,awJetPtMin,jetEtaMax,jetEtaMax,djDPhiMin);
+     DJ = DJ && "nlrjet>0&&alrjet>0";
+     Evt = TString(DJ);
+     Trk = ("ppt>0.3 && ppt<nljet");
+     DJTrk = DJ&&Trk;
+     Tag = "Match";
    }
 
    CutWOVtxCut = TCut(Evt);
