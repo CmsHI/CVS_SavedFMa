@@ -16,13 +16,15 @@ using namespace std;
 void finalPlots(const char * inFileName="plots/dijetAna_anaJet_Mc1_try26_2k/Sel1_Nr_80_120_Aw_70_DPhi_2.6/ffana_hists.root")
 {
   TFile * inFile = new TFile(inFileName);
-  CPlot::sOutDir = TString("plots/ana0525");
+  CPlot::sOutDir = TString("plots/dijetAna_anaJet_Mc1_try26_2k/ana0525");
   inFile->ls();
 
   // plot
   TCanvas * cFFAll = new TCanvas("cFFAll","cFFAll",500,500);
   CPlot cpFFAll("FFAll","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
   cpFFAll.SetYRange(0,6.);
-  cpFFAll.AddHist1D(inFile,"hXiSig_Near_mcGen","#xi genjet+genp","E",kGreen+2,1,kOpenSquare);
+  cpFFAll.AddHist1D(inFile,"hXiSig_Near_mcGenTruth","Signal: genjet+genp","histE",kRed,1,0);
+  cpFFAll.AddHist1D(inFile,"hXiSig_Near_mcGen","HI: genjet+genp","E",kGreen+2,1,kOpenSquare);
+  cpFFAll.AddHist1D(inFile,"hXiSig_Near_mcj2t0","HI: calojet+genp","E",kBlue,1,kOpenCircle);
   cpFFAll.Draw(cFFAll,true,"gif");
 }
