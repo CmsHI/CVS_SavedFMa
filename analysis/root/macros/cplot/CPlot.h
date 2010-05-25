@@ -113,6 +113,11 @@ public:
     fLeg->SetX1(fLeg->GetX1()+dx); fLeg->SetY1(fLeg->GetY1()+dy); 
     fLeg->SetX2(fLeg->GetX2()+dx); fLeg->SetY2(fLeg->GetY2()+dy);
   }  
+  // Legend Header
+  void SetLegendHeader(const char * header) {
+    assert(fLeg);
+    fLeg->SetHeader(header);
+  }
   
   // Set stats box position
   void SetStats(double x, double y) { fStatsX = x; fStatsY = y; }
