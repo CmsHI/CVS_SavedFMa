@@ -6,6 +6,7 @@ class AnaFrag
 {
   public:
     AnaFrag(TString src, TString t,TTree *tree,TString djCut,TString djTrkCut, TString var, TString dRSig, TString dRBkg);
+    AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TString dRSig, TString dRBkg);
 
     TString tag;
     TTree * trDj;
@@ -80,4 +81,8 @@ AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TString djCut,TString djTrkC
   hXiBkg->SetMinimum(ymin);
   hXiSig->SetMaximum(ymax);
   hXiSig->SetMaximum(ymax);
+}
+AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TString dRSig, TString dRBkg)
+{
+  AnaFrag(src,t,tree,TString(djCut),TString(djTrkCut),var,dRSig,dRBkg);
 }
