@@ -58,7 +58,7 @@ public:
 //  void Clear(){}
   
   // Draw the plot to a given canvas
-  void Draw(TCanvas *c, bool doSave=false, TString format="png");
+  void Draw(TCanvas *c, bool doSave=false, TString format="gif");
   
   // Adding a 1D histogram to the plot
   void AddHist1D(TH1F *h, TString drawopt="", int color=kBlack, int linesty=1, int mksty=20, int fillsty=0);    

@@ -426,7 +426,7 @@ void CPlot::Draw(TCanvas *c, bool doSave, TString format)
         gSystem->mkdir(sOutDir,true);
         TString outname = sOutDir+TString("/")+fName+TString(".");
 	if(format.CompareTo("all",TString::kIgnoreCase)==0) {
-	  c->SaveAs(outname+TString("png"));
+	  c->SaveAs(outname+TString("gif"));
 	  c->SaveAs(outname+TString("eps"));
 	  c->SaveAs(outname+TString("C"));
 	} else {
@@ -705,7 +705,7 @@ void CPlot::Draw(TCanvas *c, bool doSave, TString format)
     gSystem->mkdir(sOutDir,true);
     TString outname = sOutDir+TString("/")+fName+TString(".");
     if(format.CompareTo("all",TString::kIgnoreCase)==0) {
-      c->SaveAs(outname+TString("png"));
+      c->SaveAs(outname+TString("gif"));
       c->SaveAs(outname+TString("eps"));
       c->SaveAs(outname+TString("C"));
     } else {
