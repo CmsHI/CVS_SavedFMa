@@ -14,8 +14,8 @@
 using namespace std;
 
 void anaDiJetFF(int doMC=1,
-    const char * inFile0Name="../process_aod/outputs/dijetAna_anaJet_Mc1_try26_2k.root",
-    TString outdir = "plots/dijetAna_anaJet_Mc1_try26_2k",
+    const char * inFile0Name="../process_aod/outputs/dijetAna_anaJet_Mc1_try26_10k.root",
+    TString outdir = "plots/dijetAna_anaJet_Mc1_try26_10k",
     TString title1="MC Calojet (Hyd2.76TeV+dijet)",
     TString title2="MC Genjet (Hyd2.76TeV+dijet)")
 {
@@ -129,6 +129,10 @@ void anaDiJetFF(int doMC=1,
   AnaFrag mcj2t0Aw("mcj2t0","Away",mcj2t0,mcAna.DJ,mcAna.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
   AnaFrag mcj2t0NrMat("mcj2t0Mat","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcj2t0AwMat("mcj2t0Mat","Away",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj2t0NrMatOrder("mcj2t0MatOrder","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,
+      "log(1./zn)*(nlrjet>alrjet)+log(1./za)*(nlrjet<alrjet)",
+      "(pndr<0.5 && nlrjet>alrjet)||(padr<0.5 && nlrjet<alrjet)",
+      "(pndrbg<0.5 && nlrjet>alrjet)||(padrbg<0.5 && nlrjet<alrjet)");
 
   // gen jet smear + genp
   AnaFrag mcGenJetSmearNr("mcj1Smear","Near",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(nljet*njec[10]/ppt)","pndr<0.5","pndrbg<0.5");
@@ -139,11 +143,18 @@ void anaDiJetFF(int doMC=1,
   AnaFrag mcGenAw("mcGen","Away",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(1/za)","padr<0.5","padrbg<0.5");
   AnaFrag mcGenNrMat("mcGenMat","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(nlrjet/ppt)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenAwMat("mcGenMat","Away",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(alrjet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcGenNrMatOrder("mcGenMatOrder","Near",mcj1t0,mcMatAna.DJ,mcMatAna.DJTrk,
+      "log(1./zn)*(nlrjet>alrjet)+log(1./za)*(nlrjet<alrjet)",
+      "(pndr<0.5 && nlrjet>alrjet)||(padr<0.5 && nlrjet<alrjet)",
+      "(pndrbg<0.5 && nlrjet>alrjet)||(padrbg<0.5 && nlrjet<alrjet)");
 
   // Gen-Truth
   TCut djTrkTruthCut = mcAna.DJTrk && "psube==0";
+  TCut djTrkTruthMat = mcMatAna.DJTrk && "psube==0";
   AnaFrag mcGenTruthNr("mcGenTruth","Near",mcj1t0,mcAna.DJ,djTrkTruthCut,"log(1/zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenTruthAw("mcGenTruth","Away",mcj1t0,mcAna.DJ,djTrkTruthCut,"log(1/za)","padr<0.5","padrbg<0.5");
+  AnaFrag mcGenTruthNrMat("mcGenTruthMat","Near",mcj2t0,mcMatAna.DJ,djTrkTruthMat,"log(nlrjet/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcGenTruthAwMat("mcGenTruthMat","Away",mcj2t0,mcMatAna.DJ,djTrkTruthMat,"log(alrjet/ppt)","padr<0.5","padrbg<0.5");
 
   // All done, save and exit
   outf->Write();
