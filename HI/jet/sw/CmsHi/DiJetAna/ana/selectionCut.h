@@ -113,5 +113,5 @@ selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumi
    CutWOVtxCut = TCut(Evt);
    Cut = TCut(Evt);
 
-   AnaTag = Form("Sel%d_Nr_%0.f_%.0f_Aw_%.0f_DPhi_%.1f",selType,nrJetPtMin,nrJetPtMax,awJetPtMin,djDPhiMin);
+   AnaTag = Form("Sel%d_N%0.fto%.0f_A%.0f_DPhi%.0f",selType,nrJetPtMin,nrJetPtMax,awJetPtMin,djDPhiMin*10);
 }
