@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.49 2010/05/24 23:50:16 frankma Exp $
+// $Id: DiJetAna.cc,v 1.50 2010/05/26 16:36:44 frankma Exp $
 //
 //
 
@@ -499,13 +499,15 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
 
   // Find DJ from refjet collection
   nearRefJetPt_ = -99; awayRefJetPt_ = -99;
-  if (refjetType>=10) refjetType=2; // for maching cases, use patjet
-  FindDiJet(iEvent,refjetsrc_,refjets,refjetType,nearRefJetPt_,iNearRef_,awayRefJetPt_,iAwayRef_);
+  if (refjetType<10)
+    FindDiJet(iEvent,refjetsrc_,refjets,refjetType,nearRefJetPt_,iNearRef_,awayRefJetPt_,iAwayRef_);
+  else
+    FindDiJet(iEvent,refjetsrc_,refjets,2,nearRefJetPt_,iNearRef_,awayRefJetPt_,iAwayRef_);
   if (refjets.size()<2) return;
 
   // Print some refjet info
   if (numDJEvtSel_<=20) {
-    cout << "Ref Jets: " << endl;
+    cout << "Ref Jets (j"<<refjetType<<"): " << endl;
     cout << " refjetsrc_: " << refjetsrc_ << endl;
     cout << " sel nearRefJetPt_: " << nearRefJetPt_ << " iNearRef_: " << iNearRef_
       << " sel awayRefJetPt_: " << awayRefJetPt_ << " iAwayRef_: " << iAwayRef_ << endl;
@@ -513,6 +515,7 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
 
   // If not matching, we're done
   if (refjetType<10) return;
+  refjets.clear();
 
   // For matching use patjet matched
   Handle<vector<pat::Jet> > jets;
@@ -521,10 +524,9 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
     const reco::GenJet * NrGJet = (*jets)[iNearRef_].genJet();
     const reco::GenJet * AwGJet = (*jets)[iAwayRef_].genJet();
     if (NrGJet && AwGJet) {
-      refjets.clear();
       refjets.push_back(math::PtEtaPhiMLorentzVector(NrGJet->pt(),NrGJet->eta(),NrGJet->phi(),NrGJet->mass()));
       refjets.push_back(math::PtEtaPhiMLorentzVector(AwGJet->pt(),AwGJet->eta(),AwGJet->phi(),AwGJet->mass()));
-      cout << " nearRefJet: " << refjets[0] << " iNearRef_: " << iNearRef_
+      cout << " Matched: nearRefJet: " << refjets[0] << " iNearRef_: " << iNearRef_
 	<< " awayRefJet: " << refjets[1] << " iAwayRef_: " << iAwayRef_ << endl;
     }
   }
