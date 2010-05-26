@@ -61,8 +61,8 @@ AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TString djCut,TString djTrkC
     hXiBkg->SetLineStyle(2);
   }
 
-  TString SigTrkCut = djTrkCut + Form("&&%s",dRSig.Data());
-  TString BkgTrkCut = djTrkCut + Form("&&%s",dRBkg.Data());
+  TString SigTrkCut = djTrkCut + Form("&&(%s)",dRSig.Data());
+  TString BkgTrkCut = djTrkCut + Form("&&(%s)",dRBkg.Data());
 
   numJets = trDj->Draw("nljet",djCut);
   cout << tag << ": number of jets for FF: " << numJets << endl;
