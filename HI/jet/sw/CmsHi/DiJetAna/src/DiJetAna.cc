@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.52 2010/05/27 10:32:18 frankma Exp $
+// $Id: DiJetAna.cc,v 1.53 2010/05/27 11:34:56 frankma Exp $
 //
 //
 
@@ -341,13 +341,13 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     jd.aljrawet_	= (*jets)[iAway_].correctedP4("raw").pt();
 
     jd.njec_[0]		= (*jets)[iNear_].corrFactor("raw");
-    jd.njec_[1]		= (*jets)[iNear_].corrFactor("rel");
+    jd.njec_[2]		= (*jets)[iNear_].corrFactor("rel");
     jd.njec_[3]		= (*jets)[iNear_].corrFactor("abs");
     jd.njec_[5]		= (*jets)[iNear_].corrFactor("had","uds");
     jd.njec_[7]		= (*jets)[iNear_].corrFactor("part","uds");
 
     jd.ajec_[0]		= (*jets)[iAway_].corrFactor("raw");
-    jd.ajec_[1]		= (*jets)[iAway_].corrFactor("rel");
+    jd.ajec_[2]		= (*jets)[iAway_].corrFactor("rel");
     jd.ajec_[3]		= (*jets)[iAway_].corrFactor("abs");
     jd.ajec_[5]		= (*jets)[iAway_].corrFactor("had","glu");
     jd.ajec_[7]		= (*jets)[iAway_].corrFactor("part","glu");
@@ -594,7 +594,7 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
   cout << "DiJet dphi: " << ljdphi << endl;
 
   // Print Tracks
-  //if ((jetType+trkType)==5 || (jetType+trkType)==1) PrintTrks(iEvent,trkType);
+  if ((jetType+trkType)==5 || (jetType+trkType)==1) PrintTrks(iEvent,trkType);
 }
 
 void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
