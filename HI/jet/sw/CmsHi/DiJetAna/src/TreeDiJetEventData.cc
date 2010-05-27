@@ -92,20 +92,20 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
   // jet cone info
   if (ppt_[it]>0.5){
     if (pndr_[it]<0.5 && ppt_[it]<anajets[0].pt()) {
-      ++nljCone5NP_;
-      nljCone5Et_+=ppt_[it];
+      ++nljC5NP_;
+      nljC5Pt_+=ppt_[it];
     }
     if (padr_[it]<0.5 && ppt_[it]<anajets[1].pt()) {
-      ++aljCone5NP_;
-      aljCone5Et_+=ppt_[it];
+      ++aljC5NP_;
+      aljC5Pt_+=ppt_[it];
     }
     if (pndrbg_[it]<0.5 && ppt_[it]<anajets[0].pt()) {
-      ++nljCone5NPBg_;
-      nljCone5EtBg_+=ppt_[it];
+      ++nljC5NPBg_;
+      nljC5PtBg_+=ppt_[it];
     }
     if (padrbg_[it]<0.5 && ppt_[it]<anajets[1].pt()) {
-      ++aljCone5NPBg_;
-      aljCone5EtBg_+=ppt_[it];
+      ++aljC5NPBg_;
+      aljC5PtBg_+=ppt_[it];
     }
   }
 
@@ -202,14 +202,14 @@ void TreeDiJetEventData::SetBranches()
   //tree_->Branch("trkdxy",this->trkdxy_,"trkdxy[evtnp]/F");
 
   // -- jet cone info --
-  tree_->Branch("nljCone5NP", &(this->nljCone5NP_), "nljCone5NP/I");
-  tree_->Branch("nljCone5Et", &(this->nljCone5Et_), "nljCone5Et/F");
-  tree_->Branch("aljCone5NP", &(this->aljCone5NP_), "aljCone5NP/I");
-  tree_->Branch("aljCone5Et", &(this->aljCone5Et_), "aljCone5Et/F");
-  tree_->Branch("nljCone5NPBg", &(this->nljCone5NPBg_), "nljCone5NPBg/I");
-  tree_->Branch("nljCone5EtBg", &(this->nljCone5EtBg_), "nljCone5EtBg/F");
-  tree_->Branch("aljCone5NPBg", &(this->aljCone5NPBg_), "aljCone5NPBg/I");
-  tree_->Branch("aljCone5EtBg", &(this->aljCone5EtBg_), "aljCone5EtBg/F");
+  tree_->Branch("nljC5NP", &(this->nljC5NP_), "nljC5NP/I");
+  tree_->Branch("nljC5Pt", &(this->nljC5Pt_), "nljC5Pt/F");
+  tree_->Branch("aljC5NP", &(this->aljC5NP_), "aljC5NP/I");
+  tree_->Branch("aljC5Pt", &(this->aljC5Pt_), "aljC5Pt/F");
+  tree_->Branch("nljC5NPBg", &(this->nljC5NPBg_), "nljC5NPBg/I");
+  tree_->Branch("nljC5PtBg", &(this->nljC5PtBg_), "nljC5PtBg/F");
+  tree_->Branch("aljC5NPBg", &(this->aljC5NPBg_), "aljC5NPBg/I");
+  tree_->Branch("aljC5PtBg", &(this->aljC5PtBg_), "aljC5PtBg/F");
   
   // -- jes vars --
   //tree_->Branch("meanppt", &(this->meanppt_), "meanppt/F");
@@ -239,14 +239,14 @@ void TreeDiJetEventData::Clear()
   evtnp_      = 0;
 
   // cone info
-  nljCone5NP_	  = 0;
-  nljCone5Et_	  = 0;
-  aljCone5NP_	  = 0;
-  aljCone5Et_	  = 0;
-  nljCone5NPBg_	  = 0;
-  nljCone5EtBg_	  = 0;
-  aljCone5NPBg_	  = 0;
-  aljCone5EtBg_	  = 0;
+  nljC5NP_	  = 0;
+  nljC5Pt_	  = 0;
+  aljC5NP_	  = 0;
+  aljC5Pt_	  = 0;
+  nljC5NPBg_	  = 0;
+  nljC5PtBg_	  = 0;
+  aljC5NPBg_	  = 0;
+  aljC5PtBg_	  = 0;
 
   // jes vars
   for (Int_t i=0; i<numJec_; ++i) {

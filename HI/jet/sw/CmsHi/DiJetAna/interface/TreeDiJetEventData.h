@@ -82,11 +82,11 @@ class TreeDiJetEventData
     //Float_t	       	    trkPtErr_[MAXTRK],trkdz_[MAXTRK],trkdxy_[MAXTRK];
 
     // -- jet cone info --
-    Int_t		    nljCone5NP_,nljCone5NPBg_;
-    Float_t		    nljCone5Et_,nljCone5EtBg_;
+    Int_t		    nljC5NP_,nljC5NPBg_;
+    Float_t		    nljC5Pt_,nljC5PtBg_;
 
-    Int_t		    aljCone5NP_,aljCone5NPBg_;
-    Float_t	      	    aljCone5Et_,aljCone5EtBg_;
+    Int_t		    aljC5NP_,aljC5NPBg_;
+    Float_t	      	    aljC5Pt_,aljC5PtBg_;
 
     // -- jes vars --
     Float_t		   meanppt_;
