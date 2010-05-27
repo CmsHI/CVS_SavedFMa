@@ -45,6 +45,7 @@ dijetAna_mc_genjet_genp = dijetAna_mc.clone(
     jetsrc = cms.untracked.InputTag("iterativeCone5HiGenJets"),
     anaJetType = cms.untracked.int32(1),
     trksrc = cms.untracked.InputTag("hiGenParticles"),
+    refJetType = cms.untracked.int32(12),
     anaTrkType = cms.untracked.int32(0)
     )
 

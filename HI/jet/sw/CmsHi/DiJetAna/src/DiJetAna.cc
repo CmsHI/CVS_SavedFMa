@@ -13,13 +13,16 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.51 2010/05/26 17:24:53 frankma Exp $
+// $Id: DiJetAna.cc,v 1.52 2010/05/27 10:32:18 frankma Exp $
 //
 //
 
 
 // system include files
 #include <memory>
+
+// stl
+#include <algorithm>
 
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -515,35 +518,40 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
 
   // If not matching, we're done
   if (refjetType<10) return;
-  refjets.clear();
 
   // For matching use patjet matched
   Handle<vector<pat::Jet> > jets;
   iEvent.getByLabel(refjetsrc_,jets);
   if (refjetType<20) {
+    // genjet matching
     const reco::GenJet * NrGJet = (*jets)[iNearRef_].genJet();
     const reco::GenJet * AwGJet = (*jets)[iAwayRef_].genJet();
     if (NrGJet && AwGJet) {
       // got matched jets
-      refjets.push_back(math::PtEtaPhiMLorentzVector(NrGJet->pt(),NrGJet->eta(),NrGJet->phi(),NrGJet->mass()));
-      refjets.push_back(math::PtEtaPhiMLorentzVector(AwGJet->pt(),AwGJet->eta(),AwGJet->phi(),AwGJet->mass()));
-      cout << " Matched: nearRefJet: " << refjets[0] << " iNearRef_: " << iNearRef_
-	<< " awayRefJet: " << refjets[1] << " iAwayRef_: " << iAwayRef_ << endl;
-      if (refjetType==11) return; // this is what we want for case genjet match calojet
-      else if (refjetType==12) {
-	// reorder to genjet ordering
-	if (anaJets_.size()>=2) {
-	  cout << " ana jets deta: " << anaJets_[0].eta()-anaJets_[1].eta() << endl;
-	  cout << " ref jets deta: " << NrGJet->eta()-AwGJet->eta() << endl;
-	  if (NrGJet->pt()>AwGJet->pt()) {
-	    cout << " matched anaJetPt-refJetPt Nr: " << anaJets_[0].pt()-NrGJet->pt() << endl;
-	    cout << " matched anaJetPt-refJetPt Aw: " << anaJets_[1].pt()-AwGJet->pt() << endl;
-	  } else {
-	    cout << " matched anaJetPt-refJetPt Nr: " << anaJets_[0].pt()-AwGJet->pt() << endl;
-	    cout << " matched anaJetPt-refJetPt Aw: " << anaJets_[1].pt()-NrGJet->pt() << endl;
-	  }
+      if (refjetType==11) {
+	// just use the pat matching directly
+	refjets.clear();
+	refjets.push_back(math::PtEtaPhiMLorentzVector(NrGJet->pt(),NrGJet->eta(),NrGJet->phi(),NrGJet->mass()));
+	refjets.push_back(math::PtEtaPhiMLorentzVector(AwGJet->pt(),AwGJet->eta(),AwGJet->phi(),AwGJet->mass()));
+      } else if (refjetType==12) {
+	// check genjets matched to leading calojets are the same as
+	// the current leading genjets
+	if (anaJets_.size()<2) { cout << "warning no anajets" << endl; return; }// just safety
+	Double_t dPt0 = TMath::Abs(anaJets_[0].pt()-TMath::Max(NrGJet->pt(),AwGJet->pt()));
+	Double_t dPt1 = TMath::Abs(anaJets_[1].pt()-TMath::Min(NrGJet->pt(),AwGJet->pt()));
+	//cout << " matched anaJetPt-refJetPt Nr: " << dPt0 << endl;
+	//cout << " matched anaJetPt-refJetPt Aw: " << dPt1 << endl;
+	if (dPt0>0.01||dPt1>0.01) { refjets.clear(); } // the calojet matched genjets are not the leading genjets
+	else if (NrGJet->pt()<AwGJet->pt()) {
+	  // with matched genjets to calo, we can use the found leading calojets
+	  // just make sure the ordering is following genjet
+	  std::swap(refjets[0],refjets[1]);
 	}
       }
+      // printout patjet based match result
+      if (numDJEvtSel_<20) cout << " Matched: nearRefJet: " << refjets[0] << " awayRefJet: " << refjets[1] << endl;
+    } else { // no match
+      refjets.clear();
     }
   }
 }
