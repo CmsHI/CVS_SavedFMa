@@ -32,21 +32,21 @@ TreeDiJetEventData::TreeDiJetEventData(TTree * tree)
 }
 
 // ---------------- Helpers ------------------
-void TreeDiJetEventData::CalcDJVars(Bool_t isMC, std::vector<math::PtEtaPhiMLorentzVector> anajets,
-    std::vector<math::PtEtaPhiMLorentzVector> refjets)
+void TreeDiJetEventData::CalcDJVars(Bool_t isMC,
+    const std::vector<math::PtEtaPhiMLorentzVector> & anajets,
+    const std::vector<math::PtEtaPhiMLorentzVector> & refjets)
 {
   // near/away info     
-  nljet_	     = anajets[0].pt();
-  nljeta_	     = anajets[0].eta();
-  nljphi_	     = anajets[0].phi();
-  aljet_	     = anajets[1].pt();
-  aljeta_	     = anajets[1].eta();
-  aljphi_	     = anajets[1].phi();
+  nljet_	      = anajets[0].pt();
+  nljeta_	      = anajets[0].eta();
+  nljphi_	      = anajets[0].phi();
+  aljet_	      = anajets[1].pt();
+  aljeta_	      = anajets[1].eta();
+  aljphi_	      = anajets[1].phi();
 
   // dijet info
-  Float_t jdphi     = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
-  jdphi_	     = jdphi;
-  djmass_	     = (anajets[0]+anajets[1]).M();
+  jdphi_	      = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
+  djmass_	      = (anajets[0]+anajets[1]).M();
 
   // Done if data
   if (!isMC) return;
@@ -54,23 +54,22 @@ void TreeDiJetEventData::CalcDJVars(Bool_t isMC, std::vector<math::PtEtaPhiMLore
   // refjets
   if (refjets.size()>0) {
     // near/away info     
-    nlrjet_            = refjets[0].pt();
-    nlrjeta_           = refjets[0].eta();
-    nlrjphi_           = refjets[0].phi();
-    alrjet_            = refjets[1].pt();
-    alrjeta_           = refjets[1].eta();
-    alrjphi_           = refjets[1].phi();
+    nlrjet_	      = refjets[0].pt();
+    nlrjeta_	      = refjets[0].eta();
+    nlrjphi_          = refjets[0].phi();
+    alrjet_           = refjets[1].pt();
+    alrjeta_          = refjets[1].eta();
+    alrjphi_          = refjets[1].phi();
 
     // dijet info
-    Float_t rjdphi    = TMath::Abs(reco::deltaPhi(refjets[0].phi(),refjets[1].phi()));
-    rjdphi_            = rjdphi;
-    rdjmass_	     = (refjets[0]+refjets[1]).M();
+    rjdphi_	      = TMath::Abs(reco::deltaPhi(refjets[0].phi(),refjets[1].phi()));
+    rdjmass_	      = (refjets[0]+refjets[1]).M();
   }
 }
 
 void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
-    std::vector<math::PtEtaPhiMLorentzVector> anajets,
-    math::PtEtaPhiMLorentzVector anaTrk, Int_t it)
+    const std::vector<math::PtEtaPhiMLorentzVector> & anajets,
+    const math::PtEtaPhiMLorentzVector & anaTrk, Int_t it)
 {
   // Basic Kinematic Info
   ppt_[it]		= anaTrk.pt();
