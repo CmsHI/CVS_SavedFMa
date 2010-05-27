@@ -185,12 +185,10 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("pphi",this->pphi_,"pphi[evtnp]/F");
 
   tree_->Branch("pndphi",this->pndphi_,"pndphi[evtnp]/F");
-  //tree_->Branch("pndeta",this->pndeta_,"pndeta[evtnp]/F");
   tree_->Branch("pndr",this->pndr_,"pndr[evtnp]/F");
   tree_->Branch("pndrbg",this->pndrbg_,"pndrbg[evtnp]/F");
 
   tree_->Branch("padphi",this->padphi_,"padphi[evtnp]/F");
-  //tree_->Branch("padeta",this->padeta_,"padeta[evtnp]/F");
   tree_->Branch("padr",this->padr_,"padr[evtnp]/F");
   tree_->Branch("padrbg",this->padrbg_,"padrbg[evtnp]/F");
 
