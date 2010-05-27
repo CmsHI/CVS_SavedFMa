@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.50 2010/05/26 16:36:44 frankma Exp $
+// $Id: DiJetAna.cc,v 1.51 2010/05/26 17:24:53 frankma Exp $
 //
 //
 
@@ -520,14 +520,30 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
   // For matching use patjet matched
   Handle<vector<pat::Jet> > jets;
   iEvent.getByLabel(refjetsrc_,jets);
-  if (refjetType==11) {
+  if (refjetType<20) {
     const reco::GenJet * NrGJet = (*jets)[iNearRef_].genJet();
     const reco::GenJet * AwGJet = (*jets)[iAwayRef_].genJet();
     if (NrGJet && AwGJet) {
+      // got matched jets
       refjets.push_back(math::PtEtaPhiMLorentzVector(NrGJet->pt(),NrGJet->eta(),NrGJet->phi(),NrGJet->mass()));
       refjets.push_back(math::PtEtaPhiMLorentzVector(AwGJet->pt(),AwGJet->eta(),AwGJet->phi(),AwGJet->mass()));
       cout << " Matched: nearRefJet: " << refjets[0] << " iNearRef_: " << iNearRef_
 	<< " awayRefJet: " << refjets[1] << " iAwayRef_: " << iAwayRef_ << endl;
+      if (refjetType==11) return; // this is what we want for case genjet match calojet
+      else if (refjetType==12) {
+	// reorder to genjet ordering
+	if (anaJets_.size()>=2) {
+	  cout << " ana jets deta: " << anaJets_[0].eta()-anaJets_[1].eta() << endl;
+	  cout << " ref jets deta: " << NrGJet->eta()-AwGJet->eta() << endl;
+	  if (NrGJet->pt()>AwGJet->pt()) {
+	    cout << " matched anaJetPt-refJetPt Nr: " << anaJets_[0].pt()-NrGJet->pt() << endl;
+	    cout << " matched anaJetPt-refJetPt Aw: " << anaJets_[1].pt()-AwGJet->pt() << endl;
+	  } else {
+	    cout << " matched anaJetPt-refJetPt Nr: " << anaJets_[0].pt()-AwGJet->pt() << endl;
+	    cout << " matched anaJetPt-refJetPt Aw: " << anaJets_[1].pt()-NrGJet->pt() << endl;
+	  }
+	}
+      }
     }
   }
 }
@@ -557,7 +573,7 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
   if (jetType<=2) {
     edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
-    cout << "jetType " << jetType << ", trkType " << trkType << "# jets: " << (*jets).size() << endl;
+    cout << "jetType " << jetType << ", # jets: " << (*jets).size() << ". trkType " << trkType << endl;
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
       if (jet.pt()>(nearJetPtMin_/2.)) cout << "jet " << j << " pt|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
@@ -570,7 +586,7 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
   cout << "DiJet dphi: " << ljdphi << endl;
 
   // Print Tracks
-  if ((jetType+trkType)==5 || (jetType+trkType)==1) PrintTrks(iEvent,trkType);
+  //if ((jetType+trkType)==5 || (jetType+trkType)==1) PrintTrks(iEvent,trkType);
 }
 
 void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
