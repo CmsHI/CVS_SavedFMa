@@ -83,7 +83,7 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
 
   padphi_[it]		= TMath::Abs(reco::deltaPhi(pphi_[it],anajets[1].phi()));
   padeta_[it]		= peta_[it] - anajets[1].eta();
-  padr_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[1].phi(),anajets[1].eta());
+  padr_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[1].eta(),anajets[1].phi());
 
   //  - background variables-
   pndrbg_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[0].eta(),anajets[0].phi()+TMath::PiOver2());
