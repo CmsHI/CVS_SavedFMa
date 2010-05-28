@@ -5,7 +5,7 @@
 class selectionCut
 {  
     public:
-    selectionCut(bool isMC, int sel, int runnum=-1, int nLumiL=0, int nLumiH=10000);
+    selectionCut(bool isMC, int sel, float NrJetMin=80, float NrJetMax=120, float AwJetMin=70, int runnum=-1, int nLumiL=0, int nLumiH=10000);
     ~selectionCut(){}
     
     // ana setup
@@ -61,16 +61,16 @@ class selectionCut
     float trkPtMax;
 };
 
-selectionCut::selectionCut(bool isMC, int sel, int runnum, int nLumiL, int nLumiH) :
+selectionCut::selectionCut(bool isMC, int sel, float NrJetMin, float NrJetMax, float AwJetMin, int runnum, int nLumiL, int nLumiH) :
   selType(sel),
   runNum(runnum),
   histJetPtBins(30),
   histJetPtMin(0),
   histJetPtMax(150),
   numJetPtBin(20),
-  nrJetPtMin(80),
-  nrJetPtMax(120),
-  awJetPtMin(70),
+  nrJetPtMin(NrJetMin),
+  nrJetPtMax(NrJetMax),
+  awJetPtMin(AwJetMin),
   djDPhiMin(3.14*5/6),
   histJetEtaBins(40),
   histJetEtaMin(-3.0),
