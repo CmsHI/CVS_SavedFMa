@@ -8,14 +8,18 @@
 #include "TLegend.h"
 #include "CmsHi/DiJetAna/ana/aliases_dijet.C"
 #include "CmsHi/DiJetAna/ana/selectionCut.h"
+#include "analysis/root/macros/cplot/CPlot.h"           // helper class for plots
 using namespace std;
 
 void anaJes(int doMC=1,
-    const char * inFile0Name="../process_aod/outputs/dijetAna_anaJet_Mc1_2k.root")
+    const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
+    TString outdir = "plots/mcuq120to170_10k/dj")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
+  // Define dijet selection
+  selectionCut mcMatAna(doMC,11,120,170,100);
 
   TFile * inFile0 = new TFile(inFile0Name);
   inFile0->ls();
@@ -23,45 +27,29 @@ void anaJes(int doMC=1,
   inFile0->GetObject("dijetAna_mc/djTree",mcj2t3);
   inFile0->GetObject("dijetAna_mc_periph/djTree",mcj2t3peri);
 
+  cout << "DJ selection: " << TString(mcMatAna.DJ) << endl;
   cout << "dijetAna_mc/mcj2t3 # entries: " << mcj2t3->GetEntries() << endl;
+  cout << "# DJ events passed: " << mcj2t3->GetEntries(mcMatAna.DJ) << endl;
   cout << "dijetAna_mc_periph/mcj2t3 # entries: " << mcj2t3peri->GetEntries() << endl;
-
-  // Define dijet selection
-  selectionCut mcAna(1,1);
-  cout << "DJ selection: " << TString(mcAna.DJ) << endl;
-  cout << "dijetAna_mc/mcj2t3 # entries: " << mcj2t3->GetEntries() << endl;
-  cout << "# DJ events passed: " << mcj2t3->GetEntries(mcAna.DJ) << endl;
-  cout << "dijetAna_mc_periph/mcj2t3 # entries: " << mcj2t3peri->GetEntries() << endl;
-  cout << "# DJ events passed: " << mcj2t3peri->GetEntries(mcAna.DJ) << endl;
+  cout << "# DJ events passed: " << mcj2t3peri->GetEntries(mcMatAna.DJ) << endl;
 
   //  - DiJet jes -
-  TProfile * hJes = new TProfile("hJes",";p_{T}^{gen jet};p_{T}^{reco jet}/p_{T}^{gen jet}",20,mcAna.nrJetPtMin,mcAna.nrJetPtMax);
-  hJes->SetMinimum(0);
-  hJes->SetMaximum(1.2);
+  TProfile * hJes = new TProfile("hJes","JES profile",20,mcMatAna.nrJetPtMin,mcMatAna.nrJetPtMax);
 
-  TProfile * hDJesNr = (TProfile*)hJes->Clone("hDJesNr");
-  hDJesNr->SetMarkerColor(kRed);
-  hDJesNr->SetLineColor(kRed);
-  hDJesNr->SetMarkerStyle(kOpenCircle);
-  TCanvas * cDJesNr = new TCanvas("cDJesNr","cDJesNr",500,500);
-  mcj2t3->Draw("nljet/nlrjet:nlrjet>>hDJesNr",mcAna.DJ,"E");
+  TProfile * hDJesTopCentNr = (TProfile*)hJes->Clone("hDJesTopCentNr");
+  mcj2t3->Draw("nljet/nlrjet:nlrjet>>hDJesTopCentNr",mcMatAna.DJ,"goff");
 
-  TProfile * hDJesAw = (TProfile*)hDJesNr->Clone("hDJesAw");
-  hDJesAw->SetMarkerColor(kBlue);
-  hDJesAw->SetLineColor(kBlue);
-  TCanvas * cDJesAw = new TCanvas("cDJesAw","cDJesAw",500,500);
-  mcj2t3->Draw("aljet/alrjet:alrjet>>hDJesAw",mcAna.DJ);
+  TProfile * hDJesTopCentAw = (TProfile*)hDJesTopCentNr->Clone("hDJesTopCentAw");
+  mcj2t3->Draw("aljet/alrjet:alrjet>>hDJesTopCentAw",mcMatAna.DJ,"goff");
 
   // === Final Jes Plots ===
-  TCanvas * cFinalJes = new TCanvas("cFinalJes","cFinalJes",500,500);
-  hDJesNr->Draw("E");
-  hDJesAw->Draw("same E");
-  TLegend *leg2 = new TLegend(0.605,0.216,0.905,0.369,NULL,"brNDC");
-  leg2->SetFillColor(0);
-  leg2->SetBorderSize(0);
-  leg2->SetTextSize(0.03);
-  leg2->AddEntry(hDJesNr,"Leading Jet","p");
-  leg2->AddEntry(hDJesAw,"Away Jet","p");
-  leg2->Draw();
-  cFinalJes->Print("plots/cFinalJes.gif");
+  CPlot::sOutDir = outdir+"/"+mcMatAna.AnaTag;
+  TCanvas * cDJesTopCent = new TCanvas("cDJesTopCent","cDJesTopCent",500,500);
+  CPlot cpDJesTopCent("DJesTopCent","DJ JES","p_{T}^{gen jet}","p_{T}^{reco jet}/p_{T}^{gen jet}");
+  cpDJesTopCent.SetYRange(0,1.2);
+  cpDJesTopCent.AddProfile(hDJesTopCentNr,"Lead Jet","E",kRed,kOpenCircle);
+  cpDJesTopCent.AddProfile(hDJesTopCentAw,"Away Jet","E",kBlue,kOpenCircle);
+  cpDJesTopCent.SetLegendHeader("30\% Central");
+  cpDJesTopCent.SetLegend(0.57,0.23,0.83,0.34);
+  cpDJesTopCent.Draw(cDJesTopCent,true);
 }
