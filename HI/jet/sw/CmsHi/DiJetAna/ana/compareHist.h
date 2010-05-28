@@ -4,6 +4,7 @@
 #include <TLegend.h>
 #include "TLegendEntry.h"
 #include "TString.h"
+#include <cassert>
 
 class compareHist
 {
@@ -32,6 +33,7 @@ class compareHist
        void Draw(TString opt) { h1->Draw(opt); h2->Draw("hist E same"); if(leg1) leg1->Draw();}
        void Draw2(TString opt) { h2->Draw("histE"); h1->Draw(opt+"same"); if(leg1) leg1->Draw();}
        void SetLegend(double x1,double y1, double x2, double y2);
+       void SetLegendHeader(const char * hd) { assert(leg1); leg1->SetHeader(hd); }
        void AppendToHist(TTree *myTree1,TTree *myTree2,const char *var,const char *name,const char *cut1,const char *cut2);
        void Normalize(int normType=1,TTree *myTree1=0,TTree *myTree2=0);
 };
@@ -84,7 +86,7 @@ void compareHist::SetLegend(double x1,double y1, double x2, double y2)
 
    leg1->SetFillStyle(0);
    leg1->SetFillColor(0);
-   leg1->SetTextSize(0.035);
+   leg1->SetTextSize(0.03);
 }
 
 void compareHist::AppendToHist(TTree *myTree1,TTree *myTree2,const char *var,const char *name,const char *cut1,const char *cut2)
