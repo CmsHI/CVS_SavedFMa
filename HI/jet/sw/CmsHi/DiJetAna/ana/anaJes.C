@@ -12,6 +12,8 @@
 using namespace std;
 
 void anaJes(int doMC=1,
+    //const char * inFile0Name="../process_aod/outputs/McUqDj80to120_DJes002_10k.root",
+    //TString outdir = "plots/mcuq80to120_10k")
     const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
     TString outdir = "plots/mcuq120to170_10k")
 {
@@ -19,6 +21,7 @@ void anaJes(int doMC=1,
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
   // Define dijet selection
+  //selectionCut mcMatAna(doMC,11,80,120,70);
   selectionCut mcMatAna(doMC,11,120,170,100);
 
   TFile * inFile0 = new TFile(inFile0Name);
@@ -53,7 +56,7 @@ void anaJes(int doMC=1,
   // === Final Jes Plots ===
   CPlot::sOutDir = outdir+"/"+mcMatAna.AnaTag+"/dj";
   TCanvas * cDJesComp = new TCanvas("cDJesComp","cDJesComp",500,500);
-  CPlot cpDJesComp("DJesTopCent","DJ JES","p_{T}^{gen jet}","p_{T}^{reco jet}/p_{T}^{gen jet}");
+  CPlot cpDJesComp("DJesComp","DJ JES","p_{T}^{gen jet}","p_{T}^{reco jet}/p_{T}^{gen jet}");
   cpDJesComp.SetYRange(0,1.2);
   cpDJesComp.AddProfile(hJes,"Centrality: 60-90\%","P",0,0);
   cpDJesComp.AddProfile(hDJesPeriphNr,"Lead Jet","Ehist",kRed-7,0);
