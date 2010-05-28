@@ -17,9 +17,10 @@ void anaDiJet(int doMC=1,
     //const char * inFile0Name="../process_aod/outputs/McUqDj80to120_DJes002_10k.root",
     //TString outdir = "plots/mcuq80to120_10k/dj",
     const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
-    TString outdir = "plots/mcuq120to170_10k/dj",
-    TString title1="MC Calojet (Hyd2.76TeV+dijet)",
-    TString title2="MC Genjet (Hyd2.76TeV+dijet)")
+    TString outdir = "plots/mcuq120to170_10k",
+    TString title1="MC Calojet",
+    TString title2="MC Genjet",
+    TString header="Hydjet2.76TeV+80to120GeVDiJet")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -29,7 +30,8 @@ void anaDiJet(int doMC=1,
   //selectionCut mcMatAna(doMC,11);
   selectionCut mcAna(doMC,1,120,170,100);
   selectionCut mcMatAna(doMC,11,120,170,100);
-  gSystem->mkdir(Form("%s/%s",outdir.Data(),mcAna.AnaTag.Data()),kTRUE);
+  TString anaoutdir = Form("%s/%s/dj",outdir.Data(),mcAna.AnaTag.Data());
+  gSystem->mkdir(anaoutdir.Data(),kTRUE);
 
   TFile * inFile0 = new TFile(inFile0Name);
   inFile0->ls();
@@ -54,7 +56,7 @@ void anaDiJet(int doMC=1,
   TH1::SetDefaultSumw2();
 
   // Save output
-  TFile * outf = new TFile(Form("%s/%s/djana_hists.root",outdir.Data(),mcAna.AnaTag.Data()),"RECREATE");
+  TFile * outf = new TFile(Form("%s/djana_hists.root",anaoutdir.Data()),"RECREATE");
 
   // ============== pdf comparisons ===============
   // check dijet
@@ -68,9 +70,10 @@ void anaDiJet(int doMC=1,
   comp2.SetXTitle("leading dijet d #phi");
   comp2.SetYTitle("Arbitrary normalization");
   comp2.SetLegend(0.222,0.830,0.516,0.930);
-  comp2.SetMaximum(6);
-  comp2.Draw("E");
-  ccomp2->Print(Form("%s/%s/%s_dPhi.gif",outdir.Data(),mcAna.AnaTag.Data(),mcAna.Tag.Data()) );
+  comp2.SetLegendHeader(header);
+  comp2.SetMaximum(7);
+  comp2.Draw2("E");
+  ccomp2->Print(Form("%s/%s_dPhi.gif",anaoutdir.Data(),mcAna.Tag.Data()) );
 
   TCanvas *ccomp3 = new TCanvas("ccomp3","",500,500);
   compareHist comp3(mcj2t3,mcj1t0,"2*(nljet-aljet)/(nljet+aljet)","Balance",mcAna.Evt.Data(),mcAna.Evt.Data(),0,1.2,30);
@@ -80,9 +83,10 @@ void anaDiJet(int doMC=1,
   comp3.SetXTitle("(p_{T}^{j1}-p_{T}^{j2})/((p_{T}^{j1}+p_{T}^{j2})/2)");
   comp3.SetYTitle("Arbitrary normalization");
   comp3.SetLegend(0.45,0.80,0.75,0.9);
-  comp3.SetMaximum(7);
-  comp3.Draw("E");
-  ccomp3->Print(Form("%s/%s/%s_Balance.gif",outdir.Data(),mcAna.AnaTag.Data(),mcAna.Tag.Data()));
+  comp3.SetLegendHeader(header);
+  comp3.SetMaximum(8);
+  comp3.Draw2("E");
+  ccomp3->Print(Form("%s/%s_Balance.gif",anaoutdir.Data(),mcAna.Tag.Data()));
 
   // All done, save and exit
   outf->Write();
