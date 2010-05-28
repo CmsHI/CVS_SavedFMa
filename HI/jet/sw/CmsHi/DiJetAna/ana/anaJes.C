@@ -54,7 +54,7 @@ void anaJes(int doMC=1,
   mcj2t3peri->Draw("aljet/alrjet:alrjet>>hDJesPeriphAw",mcMatAna.DJ,"goff");
 
   // === Final Jes Plots ===
-  CPlot::sOutDir = outdir+"/"+mcMatAna.AnaTag+"/dj";
+  CPlot::sOutDir = outdir+"/"+mcMatAna.AnaTag+"/jes";
   TCanvas * cDJesComp = new TCanvas("cDJesComp","cDJesComp",500,500);
   CPlot cpDJesComp("DJesComp","DJ JES","p_{T}^{gen jet}","p_{T}^{reco jet}/p_{T}^{gen jet}");
   cpDJesComp.SetYRange(0,1.2);
