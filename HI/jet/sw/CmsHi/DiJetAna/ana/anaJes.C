@@ -13,7 +13,7 @@ using namespace std;
 
 void anaJes(int doMC=1,
     const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
-    TString outdir = "plots/mcuq120to170_10k/dj")
+    TString outdir = "plots/mcuq120to170_10k")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -51,16 +51,16 @@ void anaJes(int doMC=1,
   mcj2t3peri->Draw("aljet/alrjet:alrjet>>hDJesPeriphAw",mcMatAna.DJ,"goff");
 
   // === Final Jes Plots ===
-  CPlot::sOutDir = outdir+"/"+mcMatAna.AnaTag;
-  TCanvas * cDJesTopCent = new TCanvas("cDJesTopCent","cDJesTopCent",500,500);
-  CPlot cpDJesTopCent("DJesTopCent","DJ JES","p_{T}^{gen jet}","p_{T}^{reco jet}/p_{T}^{gen jet}");
-  cpDJesTopCent.SetYRange(0,1.2);
-  cpDJesTopCent.AddProfile(hJes,"Centrality: 60-90\%","P",0,0);
-  cpDJesTopCent.AddProfile(hDJesPeriphNr,"Lead Jet","Ehist",kRed-7,0);
-  cpDJesTopCent.AddProfile(hDJesPeriphAw,"Away Jet","Ehist",kBlue-7,0);
-  cpDJesTopCent.AddProfile(hJes,"Centrality: 0-30\%","P",0,0);
-  cpDJesTopCent.AddProfile(hDJesTopCentNr,"Lead Jet","E",kRed,kFullCircle);
-  cpDJesTopCent.AddProfile(hDJesTopCentAw,"Away Jet","E",kBlue,kFullCircle);
-  cpDJesTopCent.SetLegend(0.57,0.23,0.83,0.44);
-  cpDJesTopCent.Draw(cDJesTopCent,true);
+  CPlot::sOutDir = outdir+"/"+mcMatAna.AnaTag+"/dj";
+  TCanvas * cDJesComp = new TCanvas("cDJesComp","cDJesComp",500,500);
+  CPlot cpDJesComp("DJesTopCent","DJ JES","p_{T}^{gen jet}","p_{T}^{reco jet}/p_{T}^{gen jet}");
+  cpDJesComp.SetYRange(0,1.2);
+  cpDJesComp.AddProfile(hJes,"Centrality: 60-90\%","P",0,0);
+  cpDJesComp.AddProfile(hDJesPeriphNr,"Lead Jet","Ehist",kRed-7,0);
+  cpDJesComp.AddProfile(hDJesPeriphAw,"Away Jet","Ehist",kBlue-7,0);
+  cpDJesComp.AddProfile(hJes,"Centrality: 0-30\%","P",0,0);
+  cpDJesComp.AddProfile(hDJesTopCentNr,"Lead Jet","E",kRed,kFullCircle);
+  cpDJesComp.AddProfile(hDJesTopCentAw,"Away Jet","E",kBlue,kFullCircle);
+  cpDJesComp.SetLegend(0.57,0.23,0.83,0.44);
+  cpDJesComp.Draw(cDJesComp,true);
 }
