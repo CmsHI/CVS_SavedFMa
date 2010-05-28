@@ -36,20 +36,31 @@ void anaJes(int doMC=1,
   //  - DiJet jes -
   TProfile * hJes = new TProfile("hJes","JES profile",20,mcMatAna.nrJetPtMin,mcMatAna.nrJetPtMax);
 
+  // Centrality 0 to 30%
   TProfile * hDJesTopCentNr = (TProfile*)hJes->Clone("hDJesTopCentNr");
   mcj2t3->Draw("nljet/nlrjet:nlrjet>>hDJesTopCentNr",mcMatAna.DJ,"goff");
 
   TProfile * hDJesTopCentAw = (TProfile*)hDJesTopCentNr->Clone("hDJesTopCentAw");
   mcj2t3->Draw("aljet/alrjet:alrjet>>hDJesTopCentAw",mcMatAna.DJ,"goff");
 
+  // Centrality 60 to 90%
+  TProfile * hDJesPeriphNr = (TProfile*)hJes->Clone("hDJesPeriphNr");
+  mcj2t3peri->Draw("nljet/nlrjet:nlrjet>>hDJesPeriphNr",mcMatAna.DJ,"goff");
+
+  TProfile * hDJesPeriphAw = (TProfile*)hDJesPeriphNr->Clone("hDJesPeriphAw");
+  mcj2t3peri->Draw("aljet/alrjet:alrjet>>hDJesPeriphAw",mcMatAna.DJ,"goff");
+
   // === Final Jes Plots ===
   CPlot::sOutDir = outdir+"/"+mcMatAna.AnaTag;
   TCanvas * cDJesTopCent = new TCanvas("cDJesTopCent","cDJesTopCent",500,500);
   CPlot cpDJesTopCent("DJesTopCent","DJ JES","p_{T}^{gen jet}","p_{T}^{reco jet}/p_{T}^{gen jet}");
   cpDJesTopCent.SetYRange(0,1.2);
-  cpDJesTopCent.AddProfile(hDJesTopCentNr,"Lead Jet","E",kRed,kOpenCircle);
-  cpDJesTopCent.AddProfile(hDJesTopCentAw,"Away Jet","E",kBlue,kOpenCircle);
-  cpDJesTopCent.SetLegendHeader("30\% Central");
-  cpDJesTopCent.SetLegend(0.57,0.23,0.83,0.34);
+  cpDJesTopCent.AddProfile(hJes,"Centrality: 60-90\%","P",0,0);
+  cpDJesTopCent.AddProfile(hDJesPeriphNr,"Lead Jet","Ehist",kRed-7,0);
+  cpDJesTopCent.AddProfile(hDJesPeriphAw,"Away Jet","Ehist",kBlue-7,0);
+  cpDJesTopCent.AddProfile(hJes,"Centrality: 0-30\%","P",0,0);
+  cpDJesTopCent.AddProfile(hDJesTopCentNr,"Lead Jet","E",kRed,kFullCircle);
+  cpDJesTopCent.AddProfile(hDJesTopCentAw,"Away Jet","E",kBlue,kFullCircle);
+  cpDJesTopCent.SetLegend(0.57,0.23,0.83,0.44);
   cpDJesTopCent.Draw(cDJesTopCent,true);
 }
