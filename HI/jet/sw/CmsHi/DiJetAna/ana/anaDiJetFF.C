@@ -14,8 +14,8 @@
 using namespace std;
 
 void anaDiJetFF(int doMC=1,
-    const char * inFile0Name="../process_aod/outputs/dijetAna_anaJet_Mc1_try26_10k.root",
-    TString outdir = "plots/dj_try26_10k",
+    const char * inFile0Name="../process_aod/outputs/McUqDj80to120_DJes002_10k.root",
+    TString outdir = "plots/mcuq80to120_10k",
     TString title1="MC Calojet (Hyd2.76TeV+dijet)",
     TString title2="MC Genjet (Hyd2.76TeV+dijet)")
 {
@@ -28,8 +28,6 @@ void anaDiJetFF(int doMC=1,
   TTree *mcj2t3, *mcj2t3peri, *mcj2t0, *mcj1t0;
   inFile0->GetObject("dijetAna_mc/djTree",mcj2t3);
   aliases_dijet(mcj2t3);
-  inFile0->GetObject("dijetAna_mc_periph/djTree",mcj2t3peri);
-  aliases_dijet(mcj2t3peri);
   inFile0->GetObject("dijetAna_mc_calojet_genp/djTree",mcj2t0);
   aliases_dijet(mcj2t0);
   inFile0->GetObject("dijetAna_mc_genjet_genp/djTree",mcj1t0);
