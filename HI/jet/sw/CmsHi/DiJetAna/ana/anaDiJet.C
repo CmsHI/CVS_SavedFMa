@@ -14,20 +14,25 @@
 using namespace std;
 
 void anaDiJet(int doMC=1,
-    //const char * inFile0Name="../process_aod/outputs/McUqDj80to120_DJes002_10k.root",
-    //TString outdir = "plots/mcuq80to120_10k/dj",
+    const char * inFile0Name="../process_aod/outputs/McUqDj80to120_DJes002_10k.root",
+    /*
+    TString outdir = "plots/mcuq80to120_10k",
+    TString header="Hydjet2.76TeV+DiJet(80-120GeV)",
     const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
+    */
+    TString header="Hydjet2.76TeV+DiJet(120-170GeV)",
     TString outdir = "plots/mcuq120to170_10k",
     TString title1="MC Calojet",
-    TString title2="MC Genjet",
-    TString header="Hydjet2.76TeV+80to120GeVDiJet")
+    TString title2="MC Genjet")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
   // Define dijet selection
-  //selectionCut mcAna(doMC,1);
-  //selectionCut mcMatAna(doMC,11);
+  /*
+  selectionCut mcAna(doMC,1,80,120,70);
+  selectionCut mcMatAna(doMC,11,80,120,70);
+  */
   selectionCut mcAna(doMC,1,120,170,100);
   selectionCut mcMatAna(doMC,11,120,170,100);
   TString anaoutdir = Form("%s/%s/dj",outdir.Data(),mcAna.AnaTag.Data());
@@ -69,7 +74,7 @@ void anaDiJet(int doMC=1,
   comp2.SetHistName2(title2);
   comp2.SetXTitle("leading dijet d #phi");
   comp2.SetYTitle("Arbitrary normalization");
-  comp2.SetLegend(0.222,0.830,0.516,0.930);
+  comp2.SetLegend(0.23,0.81,0.52,0.91);
   comp2.SetLegendHeader(header);
   comp2.SetMaximum(7);
   comp2.Draw2("E");
