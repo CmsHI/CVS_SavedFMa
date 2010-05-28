@@ -611,6 +611,7 @@ void CPlot::Draw(TCanvas *c, bool doSave, TString format)
   if(fLeg) {
     fLeg->SetFillStyle(0);
     fLeg->SetBorderSize(0);
+    fLeg->SetTextSize(0.03);
     fLeg->Draw();
   }
   
