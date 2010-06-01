@@ -140,6 +140,7 @@ public:
   void SetGridy(bool value=1)              { fGridy = value; }             // toggle grid lines from y-axis ticks
   void Rebin(int ngroup)                   { fRebin = ngroup; }            // 1D histogram re-bin
   void ShowStats(int show=111)             { fShowStats = show; }          // display statistics
+  void ShowLegend(int show=1)		   { fShowLegend = show; }          // display legend
 
   //
   // Accessors
@@ -163,6 +164,7 @@ protected:
   int fRebin;                      // grouping for histogram re-bin
   TLegend *fLeg;                   // legend object
   int fShowStats;                  // whether to display statistics
+  int fShowLegend;                  // whether to display legend
   double fStatsX, fStatsY;         // x,y coordinates of top left corner of stats box
   
 //  RooPlot *fRooPlot;

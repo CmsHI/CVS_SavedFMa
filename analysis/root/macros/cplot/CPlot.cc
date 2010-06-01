@@ -25,6 +25,7 @@ fGridy(0),
 fRebin(1),
 fLeg(0),
 fShowStats(0),
+fShowLegend(1),
 fStatsX(0.63),
 fStatsY(0.90)//,
 //fRooPlot(0)
@@ -608,7 +609,7 @@ void CPlot::Draw(TCanvas *c, bool doSave, TString format)
   //
   // Draw legend
   //
-  if(fLeg) {
+  if(fShowLegend && fLeg) {
     fLeg->SetFillStyle(0);
     fLeg->SetBorderSize(0);
     fLeg->SetTextSize(0.03);
