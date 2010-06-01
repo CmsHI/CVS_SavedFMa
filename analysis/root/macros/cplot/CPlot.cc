@@ -428,7 +428,7 @@ void CPlot::Draw(TPad *c, bool doSave, TString format)
         TString outname = sOutDir+TString("/")+fName+TString(".");
 	if(format.CompareTo("all",TString::kIgnoreCase)==0) {
 	  c->SaveAs(outname+TString("gif"));
-	  c->SaveAs(outname+TString("eps"));
+	  c->SaveAs(outname+TString("pdf"));
 	  c->SaveAs(outname+TString("C"));
 	} else {
 	  c->SaveAs(outname+format);
@@ -708,7 +708,7 @@ void CPlot::Draw(TPad *c, bool doSave, TString format)
     TString outname = sOutDir+TString("/")+fName+TString(".");
     if(format.CompareTo("all",TString::kIgnoreCase)==0) {
       c->SaveAs(outname+TString("gif"));
-      c->SaveAs(outname+TString("eps"));
+      c->SaveAs(outname+TString("pdf"));
       c->SaveAs(outname+TString("C"));
     } else {
       c->SaveAs(outname+format);
