@@ -386,7 +386,7 @@ void CPlot::AddFcn(TF1* fcn, TString label, int color, int linesty)
 } 
 
 //--------------------------------------------------------------------------------------------------
-void CPlot::Draw(TCanvas *c, bool doSave, TString format)
+void CPlot::Draw(TPad *c, bool doSave, TString format)
 { 
 //  if(!fItems.size() && !fRooPlot)
 //    return;   

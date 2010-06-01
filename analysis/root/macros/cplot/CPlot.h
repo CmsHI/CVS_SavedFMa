@@ -16,7 +16,7 @@
 
 #include <TROOT.h>
 #include <TSystem.h>
-#include <TCanvas.h>
+#include <TPad.h>
 #include <TFile.h>
 #include <TLegend.h>
 #include <TPaveStats.h>
@@ -58,7 +58,7 @@ public:
 //  void Clear(){}
   
   // Draw the plot to a given canvas
-  void Draw(TCanvas *c, bool doSave=false, TString format="gif");
+  void Draw(TPad *c, bool doSave=false, TString format="gif");
   
   // Adding a 1D histogram to the plot
   void AddHist1D(TH1F *h, TString drawopt="", int color=kBlack, int mksty=20, int linesty=1, int fillsty=0);    
