@@ -18,6 +18,8 @@ fXmin(0),
 fXmax(0),
 fYmin(0),
 fYmax(0),
+fAxisLabelSize(-1),
+fAxisTitleSize(-1),
 fLogx(0),
 fLogy(0),
 fGridx(0),
@@ -486,6 +488,23 @@ void CPlot::Draw(TPad *c, bool doSave, TString format)
       vHists[ifirst]->SetXTitle(fXTitle);
       vHists[ifirst]->SetYTitle(fYTitle);
       vHists[ifirst]->SetLineWidth(2);
+      // axis labelling
+      if (fAxisLabelSize>0) {
+	vHists[ifirst]->GetXaxis()->SetLabelSize(fAxisLabelSize);
+	vHists[ifirst]->GetXaxis()->SetLabelFont(fAxisLabelFont);
+	vHists[ifirst]->GetYaxis()->SetLabelSize(fAxisLabelSize);
+	vHists[ifirst]->GetYaxis()->SetLabelFont(fAxisLabelFont);
+      }
+      if (fAxisTitleSize>0) {
+	vHists[ifirst]->GetXaxis()->SetTitleSize(fAxisTitleSize);
+	vHists[ifirst]->GetXaxis()->SetTitleFont(fAxisTitleFont);
+	vHists[ifirst]->GetYaxis()->SetTitleSize(fAxisTitleSize);
+	vHists[ifirst]->GetYaxis()->SetTitleFont(fAxisTitleFont);
+	vHists[ifirst]->GetXaxis()->SetTitleOffset(fXAxisTitleOffset);
+	vHists[ifirst]->GetYaxis()->SetTitleOffset(fYAxisTitleOffset);
+      }
+      vHists[ifirst]->GetXaxis()->CenterTitle();
+      vHists[ifirst]->GetYaxis()->CenterTitle();
       vHists[ifirst]->Draw(vHistOpts[ifirst].Data());
     }
    
@@ -553,6 +572,22 @@ void CPlot::Draw(TPad *c, bool doSave, TString format)
       vGraphs[0]->SetTitle(fTitle);
       vGraphs[0]->GetXaxis()->SetTitle(fXTitle);
       vGraphs[0]->GetYaxis()->SetTitle(fYTitle);
+      if (fAxisLabelSize>0) {
+	vGraphs[0]->GetXaxis()->SetLabelSize(fAxisLabelSize);
+	vGraphs[0]->GetXaxis()->SetLabelFont(fAxisLabelFont);
+	vGraphs[0]->GetYaxis()->SetLabelSize(fAxisLabelSize);
+	vGraphs[0]->GetYaxis()->SetLabelFont(fAxisLabelFont);
+      }
+      if (fAxisTitleSize>0) {
+	vGraphs[0]->GetXaxis()->SetTitleSize(fAxisTitleSize);
+	vGraphs[0]->GetXaxis()->SetTitleFont(fAxisTitleFont);
+	vGraphs[0]->GetYaxis()->SetTitleSize(fAxisTitleSize);
+	vGraphs[0]->GetYaxis()->SetTitleFont(fAxisTitleFont);
+	vGraphs[0]->GetXaxis()->SetTitleOffset(fXAxisTitleOffset);
+	vGraphs[0]->GetYaxis()->SetTitleOffset(fYAxisTitleOffset);
+      }
+      vGraphs[0]->GetXaxis()->CenterTitle();
+      vGraphs[0]->GetYaxis()->CenterTitle();
     }
     
     for(uint i=0; i<vGraphs.size(); i++) {
