@@ -99,7 +99,7 @@ selectionCut::selectionCut(bool isMC, int sel, float NrJetMin, float NrJetMax, f
      Evt = TString(DJ);
      Trk = ("ppt>0.3 && ppt<nljet");
      DJTrk = DJ&&Trk;
-     Tag = "Basic";
+     Tag = "SelAna";
    } else if (selType==11) {
      DJ = Form("nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%f",
 	 nrJetPtMin,nrJetPtMax,awJetPtMin,jetEtaMax,jetEtaMax,djDPhiMin);
@@ -107,11 +107,43 @@ selectionCut::selectionCut(bool isMC, int sel, float NrJetMin, float NrJetMax, f
      Evt = TString(DJ);
      Trk = ("ppt>0.3 && ppt<nljet");
      DJTrk = DJ&&Trk;
-     Tag = "Match";
+     Tag = "SelAna_GenMatchCalo";
+   } else if (selType==101) {
+     DJ = Form("nlrjet>%.1f&&nlrjet<%.1f&&alrjet>%.1f&&abs(nlrjeta)<%.1f&&abs(alrjeta)<%.1f&&rjdphi>%f",
+	 nrJetPtMin,nrJetPtMax,awJetPtMin,jetEtaMax,jetEtaMax,djDPhiMin);
+     Evt = TString(DJ);
+     Trk = ("ppt>0.3 && ppt<nljet");
+     DJTrk = DJ&&Trk;
+     Tag = "SelRef";
+   } else if (selType==111) {
+     DJ = Form("nlrjet>%.1f&&nlrjet<%.1f&&alrjet>%.1f&&abs(nlrjeta)<%.1f&&abs(alrjeta)<%.1f&&rjdphi>%f",
+	 nrJetPtMin,nrJetPtMax,awJetPtMin,jetEtaMax,jetEtaMax,djDPhiMin);
+     DJ = DJ && "nlrjet>50&&alrjet>50";
+     Evt = TString(DJ);
+     Trk = ("ppt>0.3 && ppt<nljet");
+     DJTrk = DJ&&Trk;
+     Tag = "SelRef_GenMatchCalo";
+   } else if (selType==1001) {
+     DJ = Form("nrlrjet>%.1f&&nrlrjet<%.1f&&arlrjet>%.1f&&abs(nrlrjeta)<%.1f&&abs(arlrjeta)<%.1f&&rjdphi>%f",
+	 nrJetPtMin,nrJetPtMax,awJetPtMin,jetEtaMax,jetEtaMax,djDPhiMin);
+     Evt = TString(DJ);
+     Trk = ("ppt>0.3 && ppt<nljet");
+     DJTrk = DJ&&Trk;
+     Tag = "SelRef";
+   } else if (selType==1011) {
+     DJ = Form("nrlrjet>%.1f&&nrlrjet<%.1f&&arlrjet>%.1f&&abs(nrlrjeta)<%.1f&&abs(arlrjeta)<%.1f&&rjdphi>%f",
+	 nrJetPtMin,nrJetPtMax,awJetPtMin,jetEtaMax,jetEtaMax,djDPhiMin);
+     DJ = DJ && "nlrjet>50&&alrjet>50";
+     Evt = TString(DJ);
+     Trk = ("ppt>0.3 && ppt<nljet");
+     DJTrk = DJ&&Trk;
+     Tag = "SelRef_GenMatchCalo";
    }
 
    CutWOVtxCut = TCut(Evt);
    Cut = TCut(Evt);
 
    AnaTag = Form("Sel%d_N%0.fto%.0f_A%.0f_DPhi%.0f",selType,nrJetPtMin,nrJetPtMax,awJetPtMin,djDPhiMin*10);
+   cout << "Ana: " << AnaTag << endl;
+   cout << " w/ DJ cut: " << TString(DJ) << endl;
 }
