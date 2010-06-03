@@ -29,7 +29,7 @@ void finalPlots(TString inDir="plots/dj_try26_10k/Sel1_N80to120_A70_DPhi26")
   cpFFAll.AddHist1D(inFile,"hXiSig_Near_mcj2t0","HI: calojet+genp","E",kBlue,kOpenCircle);
   cpFFAll.AddHist1D(inFile,"hXiSig_Near_mcj2t0MatOrder","HI: calojet(MatGen)+genp","E",kBlue,kOpenStar);
   cpFFAll.AddHist1D(inFile,"hXiSig_Near_mcGenMatOrder","HI: genjet(MatCalo)+genp","E",kGreen+2,kOpenStar);
-  cpFFAll.Draw(cFFAll,true,"png");
+  cpFFAll.Draw(cFFAll,true);
 
   TCanvas * cFFMatAll = new TCanvas("cFFMatAll","cFFMatAll",500,500);
   CPlot cpFFMatAll("FFMat","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
@@ -37,5 +37,5 @@ void finalPlots(TString inDir="plots/dj_try26_10k/Sel1_N80to120_A70_DPhi26")
   cpFFMatAll.AddHist1D(inFile,"hXiSig_Near_mcGenTruthMat","Signal: genjet(Matched)+genp","histE",kRed,0);
   cpFFMatAll.AddHist1D(inFile,"hXiSig_Near_mcGenMat","HI: genjet(matched)+genp","E",kGreen+2,kOpenSquare);
   cpFFMatAll.AddHist1D(inFile,"hXiSig_Near_mcj2t0Mat","HI: calojet(matched)+genp","E",kBlue,kOpenCircle);
-  cpFFMatAll.Draw(cFFMatAll,true,"png");
+  cpFFMatAll.Draw(cFFMatAll,true);
 }
