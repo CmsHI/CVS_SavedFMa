@@ -9,6 +9,7 @@
 #include "CmsHi/DiJetAna/ana/aliases_dijet.C"
 #include "CmsHi/DiJetAna/ana/selectionCut.h"
 #include "analysis/root/macros/cplot/CPlot.h"           // helper class for plots
+#include "analysis/root/macros/histogram/HisGroup.h"
 using namespace std;
 
 void anaJes(int doMC=1,
@@ -43,7 +44,9 @@ void anaJes(int doMC=1,
   cout << "dijetAna_mc_periph/mcj2t3 # entries: " << mcj2t3peri->GetEntries() << endl;
   cout << "# DJ events passed: " << mcj2t3peri->GetEntries(mcMatAna.DJ) << endl;
 
-  //  - DiJet jes -
+  TFile * outfile = new TFile("plots/anajes.root","RECREATE");
+
+  //  === Main Ana: DiJet jes ===
   TProfile * hJes = new TProfile("hJes","JES profile",20,mcMatAna.nrJetPtMin,mcMatAna.nrJetPtMax);
 
   // Centrality 0 to 30%
@@ -64,6 +67,12 @@ void anaJes(int doMC=1,
   TProfile * hDJesPeriphAw = (TProfile*)hDJesPeriphNr->Clone("hDJesPeriphAw");
   mcj2t3peri->Draw("aljet/alrjet:alrjet>>hDJesPeriphAw",mcMatAna.DJ,"goff");
 
+  // === Histograms ===
+  HisGroup hgDJesTopCentLoose("hgDJesTopCentLoose");
+  hgDJesTopCentLoose.Add(hDJesTopCentLooseNr);
+  hgDJesTopCentLoose.Add(hDJesTopCentLooseAw);
+  hgDJesTopCentLoose.Sum();
+
   // === Final Jes Plots ===
   CPlot::sOutDir = outdir+"/"+mcMatAna.AnaTag+"/jes";
 
@@ -71,8 +80,9 @@ void anaJes(int doMC=1,
   CPlot cpLooseSelDJes("LooseSelDJes","DJ JES","p_{T}^{gen jet}","p_{T}^{reco jet}/p_{T}^{gen jet}");
   cpLooseSelDJes.SetYRange(0,1.2);
   cpLooseSelDJes.AddProfile(hJes,"Centrality: 0-30\%","P",0,0);
-  cpLooseSelDJes.AddProfile(hDJesTopCentLooseNr,"Lead CaloJet","E",kRed,kFullCircle);
-  cpLooseSelDJes.AddProfile(hDJesTopCentLooseAw,"Away CaloJet","E",kBlue,kFullCircle);
+  cpLooseSelDJes.AddProfile(hDJesTopCentLooseNr,"Lead Jet^{calo}","E",kRed,kFullCircle);
+  cpLooseSelDJes.AddProfile(hDJesTopCentLooseAw,"Away Jet^{calo}","E",kBlue,kFullCircle);
+  cpLooseSelDJes.AddHist1D(hgDJesTopCentLoose.hSum_,"DiJet^{calo}","E",kBlack,kOpenSquare);
   cpLooseSelDJes.SetLegend(0.57,0.23,0.83,0.44);
   cpLooseSelDJes.Draw(cLooseSelDJes,true);
 
