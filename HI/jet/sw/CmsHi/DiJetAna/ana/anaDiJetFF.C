@@ -14,14 +14,32 @@
 using namespace std;
 
 void anaDiJetFF(int doMC=1,
+    /*
     const char * inFile0Name="../process_aod/outputs/McUqDj80to120_DJes002_10k.root",
     TString outdir = "plots/mcuq80to120_10k",
-    TString title1="MC Calojet (Hyd2.76TeV+dijet)",
-    TString title2="MC Genjet (Hyd2.76TeV+dijet)")
+    TString header="Hydjet2.76TeV+DiJet(80-120GeV)",
+    */
+    const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
+    TString outdir = "plots/mcuq120to170_10k",
+    TString header="Hydjet2.76TeV+DiJet(120-170GeV)",
+    //
+    TString title1="MC Calojet",
+    TString title2="MC Genjet")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
+  // Define dijet selection
+  /*
+  selectionCut mcAna(doMC,1,80,120,70);
+  selectionCut mcMatAna(doMC,11,80,120,70);
+  */
+  selectionCut mcAna(doMC,1,120,170,100);
+  selectionCut mcMatAna(doMC,11,120,170,100);
+
+  selectionCut mcAnaLoose(doMC,1,50,200,50);
+  selectionCut mcMatAnaLoose(doMC,11,50,200,50);
+  selectionCut mcRefLoose(doMC,101,50,200,50);
 
   TFile * inFile0 = new TFile(inFile0Name);
   inFile0->ls();
@@ -34,8 +52,6 @@ void anaDiJetFF(int doMC=1,
   aliases_dijet(mcj1t0);
 
   // Define dijet selection
-  selectionCut mcAna(doMC,1);
-  selectionCut mcMatAna(doMC,11);
   gSystem->mkdir(Form("%s/%s",outdir.Data(),mcAna.AnaTag.Data()),kTRUE);
   cout << endl << "====== Ana: " << mcAna.AnaTag << " ======" << endl;
   cout << "DJ selection: " << TString(mcAna.DJ) << endl;
@@ -53,33 +69,6 @@ void anaDiJetFF(int doMC=1,
   TFile * outf = new TFile(Form("%s/%s/ffana_hists.root",outdir.Data(),mcAna.AnaTag.Data()),"RECREATE");
 
   // ============== pdf comparisons ===============
-  // check dijet
-  cout << " --- Check Jet Distributions --- " << endl;
-  cout << " Evt Sel: " << mcAna.Evt << endl;
-  TCanvas *ccomp2 = new TCanvas("ccomp2","",500,500);
-  compareHist comp2(mcj2t3,mcj1t0,"jdphi","dPhi",mcAna.Evt.Data(),mcAna.Evt.Data(),0,3.14,30);
-  comp2.Normalize(1);
-  comp2.SetHistName1(title1);
-  comp2.SetHistName2(title2);
-  comp2.SetXTitle("leading dijet d #phi");
-  comp2.SetYTitle("Arbitrary normalization");
-  comp2.SetLegend(0.222,0.830,0.516,0.930);
-  comp2.SetMaximum(6);
-  comp2.Draw("E");
-  ccomp2->Print(Form("%s/%s/%s_dPhi.gif",outdir.Data(),mcAna.AnaTag.Data(),mcAna.Tag.Data()) );
-
-  TCanvas *ccomp3 = new TCanvas("ccomp3","",500,500);
-  compareHist comp3(mcj2t3,mcj1t0,"2*(nljet-aljet)/(nljet+aljet)","Balance",mcAna.Evt.Data(),mcAna.Evt.Data(),0,1.2,30);
-  comp3.Normalize(1);
-  comp3.SetHistName1(title1);
-  comp3.SetHistName2(title2);
-  comp3.SetXTitle("(p_{T}^{j1}-p_{T}^{j2})/((p_{T}^{j1}+p_{T}^{j2})/2)");
-  comp3.SetYTitle("Arbitrary normalization");
-  comp3.SetLegend(0.45,0.80,0.75,0.9);
-  comp3.SetMaximum(7);
-  comp3.Draw("E");
-  ccomp3->Print(Form("%s/%s/%s_Balance.gif",outdir.Data(),mcAna.AnaTag.Data(),mcAna.Tag.Data()));
-
   cout << " --- Check Trk-Jet Distributions --- " << endl;
   TString djTrkCut = TString(mcAna.DJ && mcAna.Trk);
   cout << "djTrkCut: " << djTrkCut << endl;
@@ -131,18 +120,18 @@ void anaDiJetFF(int doMC=1,
   AnaFrag mcj2t0Aw("mcj2t0","Away",mcj2t0,mcAna.DJ,mcAna.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
   AnaFrag mcj2t0NrMat("mcj2t0Mat","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcj2t0AwMat("mcj2t0Mat","Away",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
-  AnaFrag mcj2t0NrMatJ2Order("mcj2t0MatJ1Order","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zrln)","prlndr<0.5","prlndrbg<0.5");
+  //AnaFrag mcj2t0NrMatJ2Order("mcj2t0MatJ1Order","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zrln)","prlndr<0.5","prlndrbg<0.5");
 
   // gen jet smear + genp
-  AnaFrag mcGenJetSmearNr("mcj1Smear","Near",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(nljet*njec[10]/ppt)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcGenJetSmearAw("mcj1Smear","Away",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(aljet*ajec[10]/ppt)","padr<0.5","padrbg<0.5");
+  //AnaFrag mcGenJetSmearNr("mcj1Smear","Near",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(nljet*njec[10]/ppt)","pndr<0.5","pndrbg<0.5");
+  //AnaFrag mcGenJetSmearAw("mcj1Smear","Away",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(aljet*ajec[10]/ppt)","padr<0.5","padrbg<0.5");
 
   // Gen
   AnaFrag mcGenNr("mcGen","Near",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(1/zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenAw("mcGen","Away",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(1/za)","padr<0.5","padrbg<0.5");
   AnaFrag mcGenNrMat("mcGenMat","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1/zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenAwMat("mcGenMat","Away",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1/za)","padr<0.5","padrbg<0.5");
-  AnaFrag mcGenNrMatJ2Order("mcGenMatJ2Order","Near",mcj1t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zrln)","(prlndr<0.5)","(prlndrbg<0.5)");
+  //AnaFrag mcGenNrMatJ2Order("mcGenMatJ2Order","Near",mcj1t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zrln)","(prlndr<0.5)","(prlndrbg<0.5)");
 
   // Gen-Truth
   TCut djTrkTruth = mcAna.DJTrk && "psube==0";
@@ -151,7 +140,7 @@ void anaDiJetFF(int doMC=1,
   AnaFrag mcGenTruthAw("mcGenTruth","Away",mcj1t0,mcAna.DJ,djTrkTruth,"log(1/za)","padr<0.5","padrbg<0.5");
   AnaFrag mcGenTruthNrMat("mcGenTruthMat","Near",mcj2t0,mcMatAna.DJ,djTrkTruthMat,"log(nlrjet/ppt)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenTruthAwMat("mcGenTruthMat","Away",mcj2t0,mcMatAna.DJ,djTrkTruthMat,"log(alrjet/ppt)","padr<0.5","padrbg<0.5");
-  AnaFrag mcGenTruthNrMatJ2Order("mcGenTruthMatJ2Order","Near",mcj1t0,mcMatAna.DJ,djTrkTruthMat,"log(1./zrln)","(prlndr<0.5)","(prlndrbg<0.5)");
+  //AnaFrag mcGenTruthNrMatJ2Order("mcGenTruthMatJ2Order","Near",mcj1t0,mcMatAna.DJ,djTrkTruthMat,"log(1./zrln)","(prlndr<0.5)","(prlndrbg<0.5)");
 
   // All done, save and exit
   outf->Write();
