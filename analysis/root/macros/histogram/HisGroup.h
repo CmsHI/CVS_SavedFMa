@@ -6,6 +6,7 @@
 #include "TString.h"
 #include "TH1F.h"
 #include "TFile.h"
+#include <iostream>
 
 class HisGroup
 {
@@ -93,9 +94,9 @@ TH1F * HisGroup::Sum()
       iter=hm_.begin(); iter != hm_.end(); ++iter) {
     if (iter==hm_.begin()) {
       hSum_ = (TH1F*)iter->second->Clone(name_+"_Sum");
-      cout << "first to add: " << iter->first << endl;
+      std::cout << "first to add: " << iter->first << endl;
     } else {
-      cout << "add more: " << iter->first << endl;
+      std::cout << "add more: " << iter->first << endl;
       hSum_->Add(iter->second);
     }
   }
