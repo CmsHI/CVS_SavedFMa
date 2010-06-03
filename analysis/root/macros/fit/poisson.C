@@ -17,7 +17,7 @@ void poisson()
   pois->SetParName(0,"Const");                                                
   pois->SetParName(1,"#mu");                                                  
   // Create histogram with poisson distribution                               
-  TH1F*testhi = new TH1F("testhi","Poisson distribution",100,0,5);            
+  TH1D*testhi = new TH1D("testhi","Poisson distribution",100,0,5);            
   pois->SetParameter(0,3.75654);                                              
   pois->SetParameter(1,2.95437);                                              
   testhi->FillRandom("pois",20000);                                           

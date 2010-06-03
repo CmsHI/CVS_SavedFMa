@@ -64,7 +64,7 @@ fRooPlot(frame)
 */
 
 //--------------------------------------------------------------------------------------------------
-void CPlot::AddHist1D(TH1F *h, TString drawopt, int color, int mksty, int linesty, int fillsty)
+void CPlot::AddHist1D(TH1D *h, TString drawopt, int color, int mksty, int linesty, int fillsty)
 {
   if(!h)
     return;
@@ -82,7 +82,7 @@ void CPlot::AddHist1D(TH1F *h, TString drawopt, int color, int mksty, int linest
   fItems.push_back(item);
 }
 
-void CPlot::AddHist1D(TH1F *h, TString label, TString drawopt, int color, int mksty, int linesty, int fillsty)
+void CPlot::AddHist1D(TH1D *h, TString label, TString drawopt, int color, int mksty, int linesty, int fillsty)
 {
   if(!h)
     return;
@@ -108,7 +108,7 @@ void CPlot::AddHist1D(TFile *f, TString histName, TString drawopt, int color, in
   if(!f)
     return;
   
-  TH1F *h = (TH1F*)f->FindObjectAny(histName);
+  TH1D *h = (TH1D*)f->FindObjectAny(histName);
   AddHist1D(h,drawopt,color,mksty,linesty,fillsty);
 }
 
@@ -117,12 +117,12 @@ void CPlot::AddHist1D(TFile *f, TString histName, TString label, TString drawopt
   if(!f)
     return;
   
-  TH1F *h = (TH1F*)f->FindObjectAny(histName);
+  TH1D *h = (TH1D*)f->FindObjectAny(histName);
   AddHist1D(h,label,drawopt,color,mksty,linesty,fillsty);
 }
 
 //--------------------------------------------------------------------------------------------------
-void CPlot::AddToStack(TH1F *h, int color)
+void CPlot::AddToStack(TH1D *h, int color)
 {
   if(!h)
     return;
@@ -134,7 +134,7 @@ void CPlot::AddToStack(TH1F *h, int color)
   AddHist1D(h,"",color,20,1,1001);
 }
 
-void CPlot::AddToStack(TH1F *h, TString label, int color)
+void CPlot::AddToStack(TH1D *h, TString label, int color)
 {
   if(!h)
     return;
@@ -151,7 +151,7 @@ void CPlot::AddToStack(TFile *f, TString histName, int color)
   if(!f)
     return;
   
-  TH1F *h = (TH1F*)f->FindObjectAny(histName);
+  TH1D *h = (TH1D*)f->FindObjectAny(histName);
   AddToStack(h,color);
 }
 
@@ -160,7 +160,7 @@ void CPlot::AddToStack(TFile *f, TString histName, TString label, int color)
   if(!f)
     return;
   
-  TH1F *h = (TH1F*)f->FindObjectAny(histName);
+  TH1D *h = (TH1D*)f->FindObjectAny(histName);
   AddToStack(h,label,color);
 }  
   
@@ -453,7 +453,7 @@ void CPlot::Draw(TPad *c, bool doSave, TString format)
   //   Histograms are cloned so that content and properties 
   //   of the original histograms are not changed
   //
-  std::vector<TH1F*> vHists;
+  std::vector<TH1D*> vHists;
   std::vector<TString> vHistOpts;
   if(nHist1D>0) {   
     
@@ -468,11 +468,11 @@ void CPlot::Draw(TPad *c, bool doSave, TString format)
       hname += "_h_";
       hname += i;
     
-      TH1F *h;     
+      TH1D *h;     
       if(fRebin>1)      
-        h = (TH1F*)fItems[i].hist1D->Rebin(fRebin,hname);
+        h = (TH1D*)fItems[i].hist1D->Rebin(fRebin,hname);
       else
-        h = (TH1F*)fItems[i].hist1D->Clone(hname);
+        h = (TH1D*)fItems[i].hist1D->Clone(hname);
   
       if(fXmin < fXmax)
         h->GetXaxis()->SetRangeUser(fXmin,fXmax);
@@ -541,7 +541,7 @@ void CPlot::Draw(TPad *c, bool doSave, TString format)
     }
         
     for(uint i=0; i<vHists.size(); i++) {
-      TH1F *h = vHists[i];              
+      TH1D *h = vHists[i];              
       h->SetLineWidth(2);
       char opt[100];
       sprintf(opt,"same%s",vHistOpts[i].Data());    

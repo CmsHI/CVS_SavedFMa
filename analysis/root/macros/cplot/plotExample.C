@@ -2,7 +2,7 @@
 #include <TROOT.h>                   // access to gROOT, entry point to ROOT system
 #include <TStyle.h>                  // class to handle plot styles in ROOT
 #include <TCanvas.h>                 // class for drawing
-#include <TH1F.h>                    // 1D histograms
+#include <TH1D.h>                    // 1D histograms
 #include <TRandom.h>                 // random number generator
 #endif
 
@@ -13,8 +13,8 @@ void plotExample()
   gStyle->SetOptStat(0);  // get rid of stats box
   
   // set up histograms
-  TH1F *h1 = new TH1F("h1","",100,-5,5);
-  TH1F *h2 = new TH1F("h2","",100,-5,5);
+  TH1D *h1 = new TH1D("h1","",100,-5,5);
+  TH1D *h2 = new TH1D("h2","",100,-5,5);
   
   // fill histograms using random generators
   TRandom gen1;

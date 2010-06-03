@@ -21,7 +21,7 @@
 #include <TLegend.h>
 #include <TPaveStats.h>
 #include <TF1.h>
-#include <TH1F.h>
+#include <TH1D.h>
 #include <TH2F.h>
 #include <TGraph.h>
 #include <TProfile.h>
@@ -38,7 +38,7 @@ public:
   CPlotItem():hist1D(0),hist2D(0),graph(0),prof(0),drawopt(""){}
   ~CPlotItem(){}
 
-  TH1F* hist1D;
+  TH1D* hist1D;
   TH2F* hist2D;
   TGraph* graph;
   TProfile* prof;
@@ -61,14 +61,14 @@ public:
   void Draw(TPad *c, bool doSave=false, TString format="gif");
   
   // Adding a 1D histogram to the plot
-  void AddHist1D(TH1F *h, TString drawopt="", int color=kBlack, int mksty=20, int linesty=1, int fillsty=0);    
-  void AddHist1D(TH1F *h, TString label, TString drawopt, int color=kBlack, int mksty=20, int linesty=1, int fillsty=0);
+  void AddHist1D(TH1D *h, TString drawopt="", int color=kBlack, int mksty=20, int linesty=1, int fillsty=0);    
+  void AddHist1D(TH1D *h, TString label, TString drawopt, int color=kBlack, int mksty=20, int linesty=1, int fillsty=0);
   void AddHist1D(TFile *f, TString histName, TString drawopt="", int color=kBlack, int mksty=20, int linesty=1, int fillsty=0);
   void AddHist1D(TFile *f, TString histName, TString label, TString drawopt, int color=kBlack, int mksty=20, int linesty=1, int fillsty=0);
   
   // Adding a 1D histogram to a histogram stack
-  void AddToStack(TH1F *h, int color);
-  void AddToStack(TH1F *h, TString label, int color);
+  void AddToStack(TH1D *h, int color);
+  void AddToStack(TH1D *h, TString label, int color);
   void AddToStack(TFile *f, TString histName, int color);
   void AddToStack(TFile *f, TString histName, TString label, int color);
   
