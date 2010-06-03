@@ -22,8 +22,9 @@ void anaDiJet(int doMC=1,
     TString header="Hydjet2.76TeV+DiJet(80-120GeV)",
     */
     const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
-    TString header="Hydjet2.76TeV+DiJet(120-170GeV)",
     TString outdir = "plots/mcuq120to170_10k",
+    TString header="Hydjet2.76TeV+DiJet(120-170GeV)",
+    //
     TString title1="MC Calojet",
     TString title2="MC Genjet")
 {
@@ -36,10 +37,12 @@ void anaDiJet(int doMC=1,
   selectionCut mcMatAna(doMC,11,80,120,70);
   */
   selectionCut mcAna(doMC,1,120,170,100);
-  selectionCut mcAnaLoose(doMC,1,50,200,50);
   selectionCut mcMatAna(doMC,11,120,170,100);
+
+  selectionCut mcAnaLoose(doMC,1,50,200,50);
   TString anaoutdir = Form("%s/%s/dj",outdir.Data(),mcAna.AnaTag.Data());
   gSystem->mkdir(anaoutdir.Data(),kTRUE);
+  CPlot::sOutDir = anaoutdir;
 
   TFile * inFile0 = new TFile(inFile0Name);
   inFile0->ls();
