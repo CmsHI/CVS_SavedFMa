@@ -428,6 +428,9 @@ void CPlot::Draw(TPad *c, bool doSave, TString format)
     
       for(uint j=0; j<fTextBoxes.size(); j++)
         fTextBoxes[j]->Draw();
+
+      // canvas options for the zaxis to show up
+      c->SetRightMargin(0.13);
                   
       if(doSave) {
         gSystem->mkdir(sOutDir,true);
