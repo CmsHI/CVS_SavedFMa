@@ -11,15 +11,17 @@
 #include "CmsHi/DiJetAna/ana/selectionCut.h"
 #include "CmsHi/DiJetAna/ana/AnaFrag.h"
 #include "CmsHi/DiJetAna/ana/compareHist.h"
+#include "analysis/root/macros/cplot/CPlot.h"           // helper class for plots
+#include "analysis/root/macros/histogram/HisGroup.h"
 using namespace std;
 
 void anaDiJet(int doMC=1,
-    const char * inFile0Name="../process_aod/outputs/McUqDj80to120_DJes002_10k.root",
     /*
+    const char * inFile0Name="../process_aod/outputs/McUqDj80to120_DJes002_10k.root",
     TString outdir = "plots/mcuq80to120_10k",
     TString header="Hydjet2.76TeV+DiJet(80-120GeV)",
-    const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
     */
+    const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
     TString header="Hydjet2.76TeV+DiJet(120-170GeV)",
     TString outdir = "plots/mcuq120to170_10k",
     TString title1="MC Calojet",
@@ -34,6 +36,7 @@ void anaDiJet(int doMC=1,
   selectionCut mcMatAna(doMC,11,80,120,70);
   */
   selectionCut mcAna(doMC,1,120,170,100);
+  selectionCut mcAnaLoose(doMC,1,50,200,50);
   selectionCut mcMatAna(doMC,11,120,170,100);
   TString anaoutdir = Form("%s/%s/dj",outdir.Data(),mcAna.AnaTag.Data());
   gSystem->mkdir(anaoutdir.Data(),kTRUE);
@@ -67,6 +70,7 @@ void anaDiJet(int doMC=1,
   // check dijet
   cout << " --- Check Jet Distributions --- " << endl;
   cout << " Evt Sel: " << mcAna.Evt << endl;
+  cout << " DJ Sel: " << TString(mcAna.DJ) << endl;
   TCanvas *ccomp2 = new TCanvas("ccomp2","",500,500);
   compareHist comp2(mcj2t3,mcj1t0,"jdphi","dPhi",mcAna.Evt.Data(),mcAna.Evt.Data(),0,3.14,30);
   comp2.Normalize(1);
@@ -92,6 +96,20 @@ void anaDiJet(int doMC=1,
   comp3.SetMaximum(8);
   comp3.Draw2("E");
   ccomp3->Print(Form("%s/%s_Balance.gif",anaoutdir.Data(),mcAna.Tag.Data()));
+
+  // Dijet Scales
+  TH2F * hJEtNrAwCalo = new TH2F("hJEtNrAwCalo","",50,0,200,50,0,200);
+  TH2F * hJEtNrAwGen = (TH2F*)hJEtNrAwCalo->Clone("hJEtNrAwGen");
+  mcj2t3->Draw("aljet:nljet>>hJEtNrAwCalo",mcAnaLoose.DJ,"goff");
+  mcj1t0->Draw("aljet:nljet>>hJEtNrAwGen",mcAnaLoose.DJ,"goff");
+
+  // === Final Plots ===
+  TCanvas * cJEtNrAwCalo = new TCanvas("cJEtNrAwCalo","cJEtNrAwCalo",500,500);
+  CPlot cpJEtNrAwCalo("JEtNrAwCalo","FF","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
+  cpJEtNrAwCalo.SetXRange(0,200);
+  cpJEtNrAwCalo.SetYRange(0,200);
+  cpJEtNrAwCalo.AddHist2D(hJEtNrAwCalo,"colz");
+  cpJEtNrAwCalo.Draw(cJEtNrAwCalo,true);
 
   // All done, save and exit
   outf->Write();
