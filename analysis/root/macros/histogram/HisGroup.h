@@ -7,11 +7,11 @@
 #include "TH1F.h"
 #include "TFile.h"
 
-class HistoGroup
+class HisGroup
 {
   public:
     // methods
-    HistoGroup(TString name, Int_t n=0, Float_t xmin=0, Float_t xmax=0);
+    HisGroup(TString name, Int_t n=0, Float_t xmin=0, Float_t xmax=0);
     void Add(TH1F* h1,Float_t sc=1);
     void Add(TString hname,Float_t sc=1);
     void Add(TFile * inFile, TString hname,Float_t sc=1);
@@ -33,7 +33,7 @@ class HistoGroup
     TH1F * hSum_;
 };
 
-HistoGroup::HistoGroup(TString name, Int_t n, Float_t xmin, Float_t xmax) :
+HisGroup::HisGroup(TString name, Int_t n, Float_t xmin, Float_t xmax) :
   name_(name),
   nbins_(n),
   xmin_(xmin),
@@ -42,20 +42,20 @@ HistoGroup::HistoGroup(TString name, Int_t n, Float_t xmin, Float_t xmax) :
   TH1::SetDefaultSumw2();
 }
 
-void HistoGroup::Add(TH1F* h1,Float_t sc)
+void HisGroup::Add(TH1F* h1,Float_t sc)
 {
   assert(h1);
   hm_[h1->GetName()] = h1;
   scales_[h1->GetName()] = sc;
 }
 
-void HistoGroup::Add(TString hname,Float_t sc)
+void HisGroup::Add(TString hname,Float_t sc)
 {
   TH1F * h1 = new TH1F(hname,"",nbins_,xmin_,xmax_);
   Add(h1,sc);
 }
 
-void HistoGroup::Add(TFile * inFile, TString hname,Float_t sc)
+void HisGroup::Add(TFile * inFile, TString hname,Float_t sc)
 {
   assert(inFile);
   TH1F * h1;
@@ -63,7 +63,7 @@ void HistoGroup::Add(TFile * inFile, TString hname,Float_t sc)
   Add(h1,sc);
 }
 
-void HistoGroup::Save()
+void HisGroup::Save()
 {
   for (std::map<TString, TH1F*>::iterator 
       iter=hm_.begin(); iter != hm_.end(); ++iter) {
@@ -75,7 +75,7 @@ void HistoGroup::Save()
   }
 }
 
-void HistoGroup::Scale()
+void HisGroup::Scale()
 {
   for (std::map<TString, TH1F*>::iterator 
       iter=hm_.begin(); iter != hm_.end(); ++iter) {
@@ -87,7 +87,7 @@ void HistoGroup::Scale()
   }
 }
 
-TH1F * HistoGroup::Sum()
+TH1F * HisGroup::Sum()
 {
   for (std::map<TString, TH1F*>::iterator 
       iter=hm_.begin(); iter != hm_.end(); ++iter) {
