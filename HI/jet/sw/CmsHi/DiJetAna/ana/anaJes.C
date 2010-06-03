@@ -84,23 +84,33 @@ void anaJes(int doMC=1,
   CPlot cpLooseSelDJes("LooseSelDJes","DJ JES","p_{T}^{genjet}","p_{T}^{calojet}/p_{T}^{genjet}");
   cpLooseSelDJes.SetYRange(0,1.2);
   cpLooseSelDJes.AddProfile(hJes,"Centrality: 0-30\%","P",0,0);
-  cpLooseSelDJes.AddProfile(hDJesTopCentLooseNr,"Lead p_{T}^{calojet}","E",kRed,kFullCircle);
-  cpLooseSelDJes.AddProfile(hDJesTopCentLooseAw,"Away p_{T}^{calojet}","E",kBlue,kFullCircle);
-  cpLooseSelDJes.AddHist1D(hgDJesTopCentLoose.hSum_,"Dip_{T}^{calojet}","E",kBlack,kOpenSquare);
+  cpLooseSelDJes.AddProfile(hDJesTopCentLooseNr,"Lead calojet","E",kRed,kFullCircle);
+  cpLooseSelDJes.AddProfile(hDJesTopCentLooseAw,"Away calojet","E",kBlue,kFullCircle);
+  cpLooseSelDJes.AddHist1D(hgDJesTopCentLoose.hSum_,"calojet1,2","E",kBlack,kOpenSquare);
   cpLooseSelDJes.SetLegend(0.57,0.23,0.83,0.44);
-  cpLooseSelDJes.SetLegendHeader("Lead p_{T}^{calojet} > 80GeV");
+  cpLooseSelDJes.SetLegendHeader("80GeV<p_{T}^{calojet1}<170GeV");
   cpLooseSelDJes.Draw(cLooseSelDJes,true);
 
   TCanvas * cAnaSelDJes = new TCanvas("cAnaSelDJes","cAnaSelDJes",500,500);
   CPlot cpAnaSelDJes("AnaSelDJes","DJ JES","p_{T}^{genjet}","p_{T}^{calojet}/p_{T}^{genjet}");
   cpAnaSelDJes.SetYRange(0,1.2);
   cpAnaSelDJes.AddProfile(hJes,"Centrality: 0-30\%","P",0,0);
-  cpAnaSelDJes.AddProfile(hDJesTopCentNr,"Lead p_{T}^{calojet}","E",kRed,kFullCircle);
-  cpAnaSelDJes.AddProfile(hDJesTopCentAw,"Away p_{T}^{calojet}","E",kBlue,kFullCircle);
-  cpAnaSelDJes.AddHist1D(hgDJesTopCent.hSum_,"Dip_{T}^{calojet}","E",kBlack,kOpenSquare);
+  cpAnaSelDJes.AddProfile(hDJesTopCentNr,"Lead calojet","E",kRed,kFullCircle);
+  cpAnaSelDJes.AddProfile(hDJesTopCentAw,"Away calojet","E",kBlue,kFullCircle);
+  cpAnaSelDJes.AddHist1D(hgDJesTopCent.hSum_,"calojet1,2","E",kBlack,kOpenSquare);
   cpAnaSelDJes.AddProfile(hJes,"Centrality: 60-90\%","P",0,0);
   cpAnaSelDJes.AddProfile(hDJesPeriphNr,"Lead Jet","Ehist",kRed-7,0);
   cpAnaSelDJes.AddProfile(hDJesPeriphAw,"Away Jet","Ehist",kBlue-7,0);
   cpAnaSelDJes.SetLegend(0.57,0.23,0.83,0.44);
+  cpAnaSelDJes.SetLegendHeader("120GeV<p_{T}^{calojet1}<170GeV");
   cpAnaSelDJes.Draw(cAnaSelDJes,true);
+
+  TCanvas * cDJesComp = new TCanvas("cDJesComp","cDJesComp",500,500);
+  CPlot cpDJesComp("DJesComp","DJ JES","p_{T}^{genjet}","p_{T}^{calojet}/p_{T}^{genjet}");
+  cpDJesComp.SetYRange(0,1.2);
+  cpDJesComp.AddHist1D(hgDJesTopCent.hSum_,"120GeV<p_{T}^{calojet1}<170GeV","E",kRed,kFullCircle);
+  cpDJesComp.AddHist1D(hgDJesTopCentLoose.hSum_,"80GeV<p_{T}^{calojet1}<170GeV","E",kBlue,kOpenSquare);
+  cpDJesComp.SetLegend(0.57,0.23,0.83,0.44);
+  cpDJesComp.SetLegendHeader("calojet1,2");
+  cpDJesComp.Draw(cDJesComp,true);
 }
