@@ -421,6 +421,10 @@ void CPlot::Draw(TPad *c, bool doSave, TString format)
       fItems[i].hist2D->SetTitle(fTitle);
       fItems[i].hist2D->GetXaxis()->SetTitle(fXTitle);
       fItems[i].hist2D->GetYaxis()->SetTitle(fYTitle);
+      if (fXmin<fXmax)
+	fItems[i].hist2D->GetXaxis()->SetRangeUser(fXmin,fXmax);
+      if (fYmin<fYmax)
+	fItems[i].hist2D->GetYaxis()->SetRangeUser(fYmin,fYmax);
     
       for(uint j=0; j<fTextBoxes.size(); j++)
         fTextBoxes[j]->Draw();
