@@ -19,6 +19,7 @@ class HisGroup
     void Save();
     void Scale();
     TH1D * Sum();
+    TH1D * Average();
 
     // data
     TString name_;
@@ -32,13 +33,16 @@ class HisGroup
 
     // group relations
     TH1D * hSum_;
+    TH1D * hAve_;
 };
 
 HisGroup::HisGroup(TString name, Int_t n, Float_t xmin, Float_t xmax) :
   name_(name),
   nbins_(n),
   xmin_(xmin),
-  xmax_(xmax)
+  xmax_(xmax),
+  hSum_(0),
+  hAve_(0)
 {
   TH1::SetDefaultSumw2();
 }
@@ -62,6 +66,15 @@ void HisGroup::Add(TFile * inFile, TString hname,Float_t sc)
   TH1D * h1;
   inFile->GetObject(hname.Data(),h1);
   Add(h1,sc);
+}
+
+TH1D * HisGroup::Average()
+{
+  cout << "hSum_" << hSum_ << endl;
+  if (!hSum_) Sum();
+  hAve_ = (TH1D*)hSum_->Clone("hAve_");
+  hAve_->Scale(1./hm_.size());
+  return hAve_;
 }
 
 void HisGroup::Save()
@@ -90,6 +103,7 @@ void HisGroup::Scale()
 
 TH1D * HisGroup::Sum()
 {
+  cout << "begin sum" << endl;
   for (std::map<TString, TH1D*>::iterator 
       iter=hm_.begin(); iter != hm_.end(); ++iter) {
     if (iter==hm_.begin()) {
