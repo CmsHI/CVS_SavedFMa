@@ -1,3 +1,4 @@
+#include "TH1.h"
 #include <TCut.h>
 #include <TString.h>
 #include <iostream>
@@ -81,10 +82,12 @@ selectionCut::selectionCut(bool isMC, int sel, float NrJetMin, float NrJetMax, f
   histJetPhiMin(-3.14),
   histJetPhiMax(3.14)
 {
+   // some default setup
    VzRangeL = -30; 
    VzRangeH = 30;
    vtxCut = Form("vz[1]<%d&&vz[1]>%d",VzRangeH,VzRangeL);
    runCut = Form("nRun==%d",runNum);
+   TH1::SetDefaultSumw2();
 
    // define selections here
    trigger = "L1A[124]";
