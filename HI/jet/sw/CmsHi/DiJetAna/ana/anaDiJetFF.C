@@ -66,7 +66,9 @@ void anaDiJetFF(int doMC=1,
   TH1::SetDefaultSumw2();
 
   // Save output
-  TFile * outf = new TFile(Form("%s/%s/ffana_hists.root",outdir.Data(),mcAna.AnaTag.Data()),"RECREATE");
+  TString anaoutdir = Form("%s/%s/ff",outdir.Data(),mcAna.AnaTag.Data());
+  gSystem->mkdir(anaoutdir.Data(),kTRUE);
+  TFile * outf = new TFile(Form("%s/ffana_hists.root",anaoutdir.Data()),"RECREATE");
 
   // ============== pdf comparisons ===============
   cout << " --- Check Trk-Jet Distributions --- " << endl;
