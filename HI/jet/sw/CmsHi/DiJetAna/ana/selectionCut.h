@@ -65,9 +65,9 @@ class selectionCut
 selectionCut::selectionCut(bool isMC, int sel, float NrJetMin, float NrJetMax, float AwJetMin, int runnum, int nLumiL, int nLumiH) :
   selType(sel),
   runNum(runnum),
-  histJetPtBins(30),
+  histJetPtBins(50),
   histJetPtMin(0),
-  histJetPtMax(150),
+  histJetPtMax(200),
   numJetPtBin(20),
   nrJetPtMin(NrJetMin),
   nrJetPtMax(NrJetMax),
