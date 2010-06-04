@@ -11,7 +11,7 @@
 using namespace std;
 
 void anaJetEffFake(int doMC=1,
-    const char * inFile0Name="../process_aod/outputs/dijetAna_anaJet_Mc1_2k.root")
+    const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -26,12 +26,12 @@ void anaJetEffFake(int doMC=1,
 
 
   // Define dijet selection
-  selectionCut mcAna(1,1);
+  selectionCut mcAna(doMC,1,120,170,80);
   cout << "DJ selection: " << TString(mcAna.DJ) << endl;
   cout << "dijetAna_mc/djTree # entries: " << mcj2t3->GetEntries() << endl;
   cout << "# DJ events passed: " << mcj2t3->GetEntries(mcAna.DJ) << endl;
-  cout << "dijetAna_mc_periph/djTree # entries: " << mcj2t3peri->GetEntries() << endl;
-  cout << "# DJ events passed: " << mcj2t3peri->GetEntries(mcAna.DJ) << endl;
+  //cout << "dijetAna_mc_periph/djTree # entries: " << mcj2t3peri->GetEntries() << endl;
+  //cout << "# DJ events passed: " << mcj2t3peri->GetEntries(mcAna.DJ) << endl;
   cout << "dijetAna_mc/djTree # entries: " << mcj1t0->GetEntries() << endl;
   cout << "# DJ events passed: " << mcj1t0->GetEntries(mcAna.DJ) << endl;
 
