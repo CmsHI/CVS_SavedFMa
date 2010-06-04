@@ -122,18 +122,16 @@ void anaDiJetFF(int doMC=1,
   AnaFrag mcj2t0Aw("mcj2t0","Away",mcj2t0,mcAna.DJ,mcAna.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
   AnaFrag mcj2t0NrMat("mcj2t0Mat","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcj2t0AwMat("mcj2t0Mat","Away",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
-  //AnaFrag mcj2t0NrMatJ2Order("mcj2t0MatJ1Order","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zrln)","prlndr<0.5","prlndrbg<0.5");
 
   // gen jet smear + genp
-  //AnaFrag mcGenJetSmearNr("mcj1Smear","Near",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(nljet*njec[10]/ppt)","pndr<0.5","pndrbg<0.5");
-  //AnaFrag mcGenJetSmearAw("mcj1Smear","Away",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(aljet*ajec[10]/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcGenJetSmearNr("mcj1Smeart0","Near",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(nljet*njec[10]/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcGenJetSmearAw("mcj1Smeart0","Away",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(aljet*ajec[10]/ppt)","padr<0.5","padrbg<0.5");
 
   // Gen
   AnaFrag mcGenNr("mcGen","Near",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(1/zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenAw("mcGen","Away",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(1/za)","padr<0.5","padrbg<0.5");
   AnaFrag mcGenNrMat("mcGenMat","Near",mcj1t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1/zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenAwMat("mcGenMat","Away",mcj1t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1/za)","padr<0.5","padrbg<0.5");
-  //AnaFrag mcGenNrMatJ2Order("mcGenMatJ2Order","Near",mcj1t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zrln)","(prlndr<0.5)","(prlndrbg<0.5)");
 
   // Gen-Truth
   TCut djTrkTruth = mcAna.DJTrk && "psube==0";
@@ -142,7 +140,6 @@ void anaDiJetFF(int doMC=1,
   AnaFrag mcGenTruthAw("mcGenTruth","Away",mcj1t0,mcAna.DJ,djTrkTruth,"log(1/za)","padr<0.5","padrbg<0.5");
   AnaFrag mcGenTruthNrMat("mcGenTruthMat","Near",mcj1t0,mcMatAna.DJ,djTrkTruthMat,"log(nljet/ppt)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenTruthAwMat("mcGenTruthMat","Away",mcj1t0,mcMatAna.DJ,djTrkTruthMat,"log(aljet/ppt)","padr<0.5","padrbg<0.5");
-  //AnaFrag mcGenTruthNrMatJ2Order("mcGenTruthMatJ2Order","Near",mcj1t0,mcMatAna.DJ,djTrkTruthMat,"log(1./zrln)","(prlndr<0.5)","(prlndrbg<0.5)");
 
   // All done, save and exit
   outf->Write();
