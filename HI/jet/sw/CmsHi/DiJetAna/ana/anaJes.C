@@ -25,10 +25,10 @@ void anaJes(int doMC=1,
   /*
   selectionCut mcMatAna(doMC,11,80,120,70);
   */
-  selectionCut mcMatAna(doMC,11,120,170,100);
+  selectionCut mcMatAna(doMC,11,120,170,80);
   selectionCut mcMatAnaLoose(doMC,11,80,200,70);
-  selectionCut mcSelRefMat(doMC,111,120,170,100);
-  selectionCut mcSelRefLeadRef(doMC,1011,120,170,100);
+  selectionCut mcSelRefMat(doMC,111,120,170,80);
+  selectionCut mcSelRefLeadRef(doMC,1011,120,170,80);
 
   TFile * inFile0 = new TFile(inFile0Name);
   inFile0->ls();
@@ -109,18 +109,18 @@ void anaJes(int doMC=1,
   CPlot cpDJesComp("DJesComp","DJ JES","p_{T}^{genjet}","p_{T}^{calojet}/p_{T}^{genjet}");
   cpDJesComp.SetYRange(0,1.2);
   cpDJesComp.AddProfile(hJes,"Centrality: 0-30\%","P",0,0);
-  cpDJesComp.AddHist1D(hgDJesTopCent.hSum_,"120GeV<p_{T}^{calojet1}<170GeV","E",kRed,kFullCircle);
+  cpDJesComp.AddProfile(hJes,"120GeV<p_{T}^{calojet1}<170GeV","P",0,0);
+  cpDJesComp.AddHist1D(hgDJesTopCent.hSum_,"calojet1,2","E",kRed,kFullCircle);
   cpDJesComp.AddHist1D(hgDJesTopCentLoose.hSum_,"80GeV<p_{T}^{calojet1}<200GeV","E",kBlue,kOpenSquare);
   cpDJesComp.SetLegend(0.57,0.23,0.83,0.44);
-  cpDJesComp.SetLegendHeader("calojet1,2");
   cpDJesComp.Draw(cDJesComp,true);
 
   TCanvas * cDJesFinal = new TCanvas("cDJesFinal","cDJesFinal",500,500);
   CPlot cpDJesFinal("DJesFinal","DJ JES","p_{T}^{genjet}","p_{T}^{calojet}/p_{T}^{genjet}");
   cpDJesFinal.SetYRange(0,1.2);
   cpDJesFinal.AddProfile(hJes,"Centrality: 0-30\%","P",0,0);
-  cpDJesFinal.AddHist1D(hgDJesTopCent.hSum_,"120GeV<p_{T}^{calojet1}<170GeV","E",kRed,kFullCircle);
+  cpDJesFinal.AddProfile(hJes,"120GeV<p_{T}^{calojet1}<170GeV","P",0,0);
+  cpDJesFinal.AddHist1D(hgDJesTopCent.hSum_,"calojet1,2","E",kRed,kFullCircle);
   cpDJesFinal.SetLegend(0.57,0.23,0.83,0.44);
-  cpDJesFinal.SetLegendHeader("calojet1,2");
   cpDJesFinal.Draw(cDJesFinal,true);
 }
