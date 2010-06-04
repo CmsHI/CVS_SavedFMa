@@ -34,8 +34,8 @@ void anaDiJetFF(int doMC=1,
   selectionCut mcAna(doMC,1,80,120,70);
   selectionCut mcMatAna(doMC,11,80,120,70);
   */
-  selectionCut mcAna(doMC,1,120,170,100);
-  selectionCut mcMatAna(doMC,11,120,170,100);
+  selectionCut mcAna(doMC,1,120,170,80);
+  selectionCut mcMatAna(doMC,11,120,170,80);
 
   selectionCut mcAnaLoose(doMC,1,50,200,50);
   selectionCut mcMatAnaLoose(doMC,11,50,200,50);
