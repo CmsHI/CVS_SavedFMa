@@ -36,6 +36,7 @@ void anaDiJetFF(int doMC=1,
   */
   selectionCut mcAna(doMC,1,120,170,80);
   selectionCut mcMatAna(doMC,11,120,170,80);
+  selectionCut mcSelRefAnaJet(doMC,101,120,170,80);
 
   selectionCut mcAnaLoose(doMC,1,50,200,50);
   selectionCut mcMatAnaLoose(doMC,11,50,200,50);
@@ -122,6 +123,8 @@ void anaDiJetFF(int doMC=1,
   AnaFrag mcj2t0Aw("mcj2t0","Away",mcj2t0,mcAna.DJ,mcAna.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
   AnaFrag mcj2t0NrMat("mcj2t0Mat","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcj2t0AwMat("mcj2t0Mat","Away",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj2t0SelRefNr("mcj2t0SelRef","Near",mcj2t0,mcSelRefAnaJet.DJ,mcSelRefAnaJet.DJTrk,"log(1./zn)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcj2t0SelRefAw("mcj2t0SelRef","Away",mcj2t0,mcSelRefAnaJet.DJ,mcSelRefAnaJet.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
 
   // gen jet smear + genp
   AnaFrag mcGenJetSmearNr("mcj1Smeart0","Near",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(nljet*njec[10]/ppt)","pndr<0.5","pndrbg<0.5");
@@ -132,6 +135,8 @@ void anaDiJetFF(int doMC=1,
   AnaFrag mcGenAw("mcGen","Away",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(1/za)","padr<0.5","padrbg<0.5");
   AnaFrag mcGenNrMat("mcGenMat","Near",mcj1t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1/zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenAwMat("mcGenMat","Away",mcj1t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1/za)","padr<0.5","padrbg<0.5");
+  AnaFrag mcGenSelRefNr("mcGenSelRef","Near",mcj1t0,mcSelRefAnaJet.DJ,mcSelRefAnaJet.DJTrk,"log(1./zn)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcGenSelRefAw("mcGenSelRef","Away",mcj1t0,mcSelRefAnaJet.DJ,mcSelRefAnaJet.DJTrk,"log(1./za)","padr<0.5","padrbg<0.5");
 
   // Gen-Truth
   TCut djTrkTruth = mcAna.DJTrk && "psube==0";
