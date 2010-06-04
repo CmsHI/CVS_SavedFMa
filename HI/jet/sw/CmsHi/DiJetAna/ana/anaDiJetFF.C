@@ -131,8 +131,8 @@ void anaDiJetFF(int doMC=1,
   // Gen
   AnaFrag mcGenNr("mcGen","Near",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(1/zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenAw("mcGen","Away",mcj1t0,mcAna.DJ,mcAna.DJTrk,"log(1/za)","padr<0.5","padrbg<0.5");
-  AnaFrag mcGenNrMat("mcGenMat","Near",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1/zn)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcGenAwMat("mcGenMat","Away",mcj2t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1/za)","padr<0.5","padrbg<0.5");
+  AnaFrag mcGenNrMat("mcGenMat","Near",mcj1t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1/zn)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcGenAwMat("mcGenMat","Away",mcj1t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1/za)","padr<0.5","padrbg<0.5");
   //AnaFrag mcGenNrMatJ2Order("mcGenMatJ2Order","Near",mcj1t0,mcMatAna.DJ,mcMatAna.DJTrk,"log(1./zrln)","(prlndr<0.5)","(prlndrbg<0.5)");
 
   // Gen-Truth
@@ -140,8 +140,8 @@ void anaDiJetFF(int doMC=1,
   TCut djTrkTruthMat = mcMatAna.DJTrk && "psube==0";
   AnaFrag mcGenTruthNr("mcGenTruth","Near",mcj1t0,mcAna.DJ,djTrkTruth,"log(1/zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcGenTruthAw("mcGenTruth","Away",mcj1t0,mcAna.DJ,djTrkTruth,"log(1/za)","padr<0.5","padrbg<0.5");
-  AnaFrag mcGenTruthNrMat("mcGenTruthMat","Near",mcj2t0,mcMatAna.DJ,djTrkTruthMat,"log(nlrjet/ppt)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcGenTruthAwMat("mcGenTruthMat","Away",mcj2t0,mcMatAna.DJ,djTrkTruthMat,"log(alrjet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcGenTruthNrMat("mcGenTruthMat","Near",mcj1t0,mcMatAna.DJ,djTrkTruthMat,"log(nljet/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcGenTruthAwMat("mcGenTruthMat","Away",mcj1t0,mcMatAna.DJ,djTrkTruthMat,"log(aljet/ppt)","padr<0.5","padrbg<0.5");
   //AnaFrag mcGenTruthNrMatJ2Order("mcGenTruthMatJ2Order","Near",mcj1t0,mcMatAna.DJ,djTrkTruthMat,"log(1./zrln)","(prlndr<0.5)","(prlndrbg<0.5)");
 
   // All done, save and exit
