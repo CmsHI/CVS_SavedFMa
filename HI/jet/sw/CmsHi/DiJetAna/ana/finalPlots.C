@@ -61,6 +61,11 @@ void finalPlots(int doMC=1,
   hgMcj2t0MatXiSig.Add(inFile,"hXiSig_Away_mcj2t0Mat");
   hgMcj2t0MatXiSig.Average();
 
+  HisGroup hgMcRecoXiSig("hgMcRecoXiSig");
+  hgMcRecoXiSig.Add(inFile,"hXiSig_Near_mcReco");
+  hgMcRecoXiSig.Add(inFile,"hXiSig_Away_mcReco");
+  hgMcRecoXiSig.Average();
+
   TH1D * hFrame = (TH1D*)hgMcj2t0MatXiSig.hAve_->Clone("hFrame");
   hFrame->Scale(0);
 
@@ -148,4 +153,15 @@ void finalPlots(int doMC=1,
   cpFFAll.AddHist1D(hgMcj2t0SelRefXiSig.hAve_,"HI: calojet1,2 (Cut genjet JES) + gentrk","E",kGreen+2,kOpenCircle);
   cpFFAll.SetLegend(0.194,0.64,0.52,0.94);
   cpFFAll.Draw(cFFAll,true);
+
+  TCanvas * cFFMeas = new TCanvas("cFFMeas","cFFMeas",700,700);
+  CPlot cpFFMeas("FFMeas","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  cpFFMeas.SetYRange(0,6.);
+  cpFFMeas.AddHist1D(hFrame,"Centrality: 0-30\%","",0,0);
+  cpFFMeas.AddHist1D(hFrame,"120GeV<p_{T}^{jet1}<170GeV","",0,0);
+  cpFFMeas.AddHist1D(hgMcGenTruthXiSig.hAve_,"Signal: genjet1,2 + gentrk","histE",kRed,0);
+  cpFFMeas.AddHist1D(hgMcj2t0XiSig.hAve_,"HI: calojet1,2 + gentrk","E",kBlue,kFullCircle);
+  cpFFMeas.AddHist1D(hgMcRecoXiSig.hAve_,"HI: calojet1,2 + recotrk","E",kBlack,kFullCircle);
+  cpFFMeas.SetLegend(0.194,0.64,0.52,0.94);
+  cpFFMeas.Draw(cFFMeas,true);
 }
