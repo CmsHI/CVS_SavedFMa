@@ -40,6 +40,8 @@ void anaDiJet(int doMC=1,
   selectionCut mcMatAna(doMC,11,120,170,100);
 
   selectionCut mcAnaLoose(doMC,1,50,200,50);
+  selectionCut mcMatAnaLoose(doMC,11,50,200,50);
+  selectionCut mcRefLoose(doMC,101,50,200,50);
   TString anaoutdir = Form("%s/%s/dj",outdir.Data(),mcAna.AnaTag.Data());
   gSystem->mkdir(anaoutdir.Data(),kTRUE);
   CPlot::sOutDir = anaoutdir;
@@ -102,8 +104,11 @@ void anaDiJet(int doMC=1,
 
   // Dijet Scales
   TH2F * hJEtNrAwCalo = new TH2F("hJEtNrAwCalo","",50,0,200,50,0,200);
+  TH2F * hJEtNrAwGenMatCalo = (TH2F*)hJEtNrAwCalo->Clone("hJEtNrAwGenMatCalo");
   TH2F * hJEtNrAwGen = (TH2F*)hJEtNrAwCalo->Clone("hJEtNrAwGen");
+
   mcj2t3->Draw("aljet:nljet>>hJEtNrAwCalo",mcAnaLoose.DJ,"goff");
+  mcj2t3->Draw("alrjet:nlrjet>>hJEtNrAwGenMatCalo",mcMatAnaLoose.DJ,"goff");
   mcj1t0->Draw("aljet:nljet>>hJEtNrAwGen",mcAnaLoose.DJ,"goff");
 
   // === Final Plots ===
@@ -113,6 +118,23 @@ void anaDiJet(int doMC=1,
   cpJEtNrAwCalo.SetYRange(0,200);
   cpJEtNrAwCalo.AddHist2D(hJEtNrAwCalo,"colz");
   cpJEtNrAwCalo.Draw(cJEtNrAwCalo,true);
+
+  TCanvas * cJEtNrAwGenMatCalo = new TCanvas("cJEtNrAwGenMatCalo","cJEtNrAwGenMatCalo",500,500);
+  mcj2t3->Draw("alrjet:nlrjet",mcMatAnaLoose.DJ,"goff");
+  /*
+  CPlot cpJEtNrAwGenMatCalo("JEtNrAwGenMatCalo","FF","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
+  cpJEtNrAwGenMatCalo.SetXRange(0,200);
+  cpJEtNrAwGenMatCalo.SetYRange(0,200);
+  cpJEtNrAwGenMatCalo.AddHist2D(hJEtNrAwGenMatCalo,"colz");
+  cpJEtNrAwGenMatCalo.Draw(cJEtNrAwGenMatCalo,true);
+  */
+
+  TCanvas * cJEtNrAwGen = new TCanvas("cJEtNrAwGen","cJEtNrAwGen",500,500);
+  CPlot cpJEtNrAwGen("JEtNrAwGen","FF","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
+  cpJEtNrAwGen.SetXRange(0,200);
+  cpJEtNrAwGen.SetYRange(0,200);
+  cpJEtNrAwGen.AddHist2D(hJEtNrAwGen,"colz");
+  cpJEtNrAwGen.Draw(cJEtNrAwGen,true);
 
   // All done, save and exit
   outf->Write();
