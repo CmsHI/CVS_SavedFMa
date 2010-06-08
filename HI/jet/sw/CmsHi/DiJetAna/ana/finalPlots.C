@@ -142,6 +142,18 @@ void finalPlots(int doMC=1,
   cpFFMatAll.AddHist1D(hgMcj2t0MatXiSig.hAve_,"HI: calojet(matched)+genp","E",kBlue,kFullCircle);
   cpFFMatAll.Draw(cFFMatAll,true);
 
+  TCanvas * cFFSelRefNrAw = new TCanvas("cFFSelRefNrAw","cFFSelRefNrAw",700,700);
+  CPlot cpFFSelRefNrAw("FFSelRefNrAw","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  cpFFSelRefNrAw.SetYRange(0,6.);
+  cpFFSelRefNrAw.AddHist1D(hFrame,"Centrality: 0-30\%","",0,0);
+  cpFFSelRefNrAw.AddHist1D(hFrame,"120GeV<p_{T}^{genjet1}<170GeV","",0,0);
+  cpFFSelRefNrAw.AddHist1D(hgMcGenTruthXiSig.hm_["hXiSig_Near_mcGenTruth"],"Signal: genjet1 + gentrk","histE",kRed,0);
+  cpFFSelRefNrAw.AddHist1D(hgMcGenTruthXiSig.hm_["hXiSig_Away_mcGenTruth"],"Signal: genjet2 + gentrk","histE",kBlue,0);
+  cpFFSelRefNrAw.AddHist1D(hgMcj2t0SelRefXiSig.hm_["hXiSig_Near_mcj2t0SelRef"],"HI: calojet1 (Cut matched genjet) + gentrk","E",kRed,kFullCircle);
+  cpFFSelRefNrAw.AddHist1D(hgMcj2t0SelRefXiSig.hm_["hXiSig_Away_mcj2t0SelRef"],"HI: calojet2 (Cut matched genjet) + gentrk","E",kBlue,kFullCircle);
+  cpFFSelRefNrAw.SetLegend(0.194,0.64,0.52,0.94);
+  cpFFSelRefNrAw.Draw(cFFSelRefNrAw,true);
+
   TCanvas * cFFAll = new TCanvas("cFFAll","cFFAll",700,700);
   CPlot cpFFAll("FFAll","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
   cpFFAll.SetYRange(0,6.);
