@@ -154,6 +154,16 @@ void finalPlots(int doMC=1,
   cpFFSelRefNrAw.SetLegend(0.194,0.64,0.52,0.94);
   cpFFSelRefNrAw.Draw(cFFSelRefNrAw,true);
 
+  TCanvas * cFFSelRef = new TCanvas("cFFSelRef","cFFSelRef",700,700);
+  CPlot cpFFSelRef("FFSelRef","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  cpFFSelRef.SetYRange(0,6.);
+  cpFFSelRef.AddHist1D(hFrame,"Centrality: 0-30\%","",0,0);
+  cpFFSelRef.AddHist1D(hFrame,"120GeV<p_{T}^{genjet1}<170GeV","",0,0);
+  cpFFSelRef.AddHist1D(hgMcGenTruthXiSig.hAve_,"Signal: genjet1,2 + gentrk","histE",kRed,0);
+  cpFFSelRef.AddHist1D(hgMcj2t0SelRefXiSig.hAve_,"HI: calojet1,2 (Cut genjet JES) + gentrk","E",kGreen+2,kOpenCircle);
+  cpFFSelRef.SetLegend(0.194,0.64,0.52,0.94);
+  cpFFSelRef.Draw(cFFSelRef,true);
+
   TCanvas * cFFAll = new TCanvas("cFFAll","cFFAll",700,700);
   CPlot cpFFAll("FFAll","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
   cpFFAll.SetYRange(0,6.);
