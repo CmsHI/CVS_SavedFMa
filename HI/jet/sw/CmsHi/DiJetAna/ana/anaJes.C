@@ -56,10 +56,20 @@ void anaJes(int doMC=1,
   TProfile * hDJesTopCentAw = (TProfile*)hDJesTopCentNr->Clone("hDJesTopCentAw");
   mcj2t3->Draw("aljet/alrjet:alrjet>>hDJesTopCentAw",mcMatAna.DJ,"goff");
 
+  TProfile * hDJesVsCaloTopCentNr = (TProfile*)hJes->Clone("hDJesVsCaloTopCentNr");
+  mcj2t3->Draw("nljet/nlrjet:nljet>>hDJesVsCaloTopCentNr",mcMatAna.DJ,"goff");
+  TProfile * hDJesVsCaloTopCentAw = (TProfile*)hDJesVsCaloTopCentNr->Clone("hDJesVsCaloTopCentAw");
+  mcj2t3->Draw("aljet/alrjet:aljet>>hDJesVsCaloTopCentAw",mcMatAna.DJ,"goff");
+
   TProfile * hDJesTopCentSelRefAnaJetNr = (TProfile*)hJes->Clone("hDJesTopCentSelRefAnaJetNr");
   mcj2t3->Draw("nljet/nlrjet:nlrjet>>hDJesTopCentSelRefAnaJetNr",mcSelRefAnaJet.DJ,"goff");
   TProfile * hDJesTopCentSelRefAnaJetAw = (TProfile*)hDJesTopCentSelRefAnaJetNr->Clone("hDJesTopCentSelRefAnaJetAw");
   mcj2t3->Draw("aljet/alrjet:alrjet>>hDJesTopCentSelRefAnaJetAw",mcSelRefAnaJet.DJ,"goff");
+
+  TProfile * hDJesVsCaloTopCentSelRefAnaJetNr = (TProfile*)hJes->Clone("hDJesVsCaloTopCentSelRefAnaJetNr");
+  mcj2t3->Draw("nljet/nlrjet:nljet>>hDJesVsCaloTopCentSelRefAnaJetNr",mcSelRefAnaJet.DJ,"goff");
+  TProfile * hDJesVsCaloTopCentSelRefAnaJetAw = (TProfile*)hDJesVsCaloTopCentSelRefAnaJetNr->Clone("hDJesVsCaloTopCentSelRefAnaJetAw");
+  mcj2t3->Draw("aljet/alrjet:aljet>>hDJesVsCaloTopCentSelRefAnaJetAw",mcSelRefAnaJet.DJ,"goff");
 
   TProfile * hDJesTopCentLooseNr = (TProfile*)hJes->Clone("hDJesTopCentLooseNr");
   mcj2t3->Draw("nljet/nlrjet:nlrjet>>hDJesTopCentLooseNr",mcMatAnaLoose.DJ,"goff");
@@ -79,10 +89,20 @@ void anaJes(int doMC=1,
   hgDJesTopCent.Add(hDJesTopCentAw);
   hgDJesTopCent.Sum();
 
+  HisGroup hgDJesVsCaloTopCent("hgDJesVsCaloTopCent");
+  hgDJesVsCaloTopCent.Add(hDJesVsCaloTopCentNr);
+  hgDJesVsCaloTopCent.Add(hDJesVsCaloTopCentAw);
+  hgDJesVsCaloTopCent.Sum();
+
   HisGroup hgDJesTopCentSelRefAnaJet("hgDJesTopCentSelRefAnaJet");
   hgDJesTopCentSelRefAnaJet.Add(hDJesTopCentSelRefAnaJetNr);
   hgDJesTopCentSelRefAnaJet.Add(hDJesTopCentSelRefAnaJetAw);
   hgDJesTopCentSelRefAnaJet.Sum();
+
+  HisGroup hgDJesVsCaloTopCentSelRefAnaJet("hgDJesVsCaloTopCentSelRefAnaJet");
+  hgDJesVsCaloTopCentSelRefAnaJet.Add(hDJesVsCaloTopCentSelRefAnaJetNr);
+  hgDJesVsCaloTopCentSelRefAnaJet.Add(hDJesVsCaloTopCentSelRefAnaJetAw);
+  hgDJesVsCaloTopCentSelRefAnaJet.Sum();
 
   HisGroup hgDJesTopCentLoose("hgDJesTopCentLoose");
   hgDJesTopCentLoose.Add(hDJesTopCentLooseNr);
@@ -114,18 +134,31 @@ void anaJes(int doMC=1,
   cpLooseSelDJes.SetLegendHeader("80GeV<p_{T}^{calojet1}<200GeV");
   cpLooseSelDJes.Draw(cLooseSelDJes,true);
 
+  TCanvas * cDJesVsCaloTopCent = new TCanvas("cDJesVsCaloTopCent","cDJesVsCaloTopCent",500,500);
+  CPlot cpDJesVsCaloTopCent("DJesVsCaloTopCent","DJ JES","p_{T}^{calojet}","p_{T}^{calojet}/p_{T}^{genjet}");
+  cpDJesVsCaloTopCent.SetYRange(0,1.2);
+  cpDJesVsCaloTopCent.AddProfile(hJes,"Centrality: 0-30\%","P",0,0);
+  //cpDJesVsCaloTopCent.AddProfile(hDJesVsCaloTopCentNr,"Lead calojet","E",kRed,kFullCircle);
+  //cpDJesVsCaloTopCent.AddProfile(hDJesVsCaloTopCentAw,"Away calojet","E",kBlue,kFullCircle);
+  cpDJesVsCaloTopCent.AddHist1D(hgDJesVsCaloTopCent.hSum_,"120GeV<p_{T}^{calojet1}<170GeV","E",kBlack,kFullCircle);
+  cpDJesVsCaloTopCent.AddHist1D(hgDJesVsCaloTopCentSelRefAnaJet.hSum_,"120GeV<p_{T}^{matched genjet1}<170GeV","E",kRed,kOpenSquare);
+  cpDJesVsCaloTopCent.SetLegend(0.32,0.23,0.58,0.44);
+  cpDJesVsCaloTopCent.SetLegendHeader("calojet1,2");
+  cpDJesVsCaloTopCent.Draw(cDJesVsCaloTopCent,true);
+
   TCanvas * cAnaSelDJes = new TCanvas("cAnaSelDJes","cAnaSelDJes",500,500);
   CPlot cpAnaSelDJes("AnaSelDJes","DJ JES","p_{T}^{genjet}","p_{T}^{calojet}/p_{T}^{genjet}");
   cpAnaSelDJes.SetYRange(0,1.2);
   cpAnaSelDJes.AddProfile(hJes,"Centrality: 0-30\%","P",0,0);
-  cpAnaSelDJes.AddProfile(hDJesTopCentNr,"Lead calojet","E",kRed,kFullCircle);
-  cpAnaSelDJes.AddProfile(hDJesTopCentAw,"Away calojet","E",kBlue,kFullCircle);
-  cpAnaSelDJes.AddHist1D(hgDJesTopCent.hSum_,"calojet1,2","E",kBlack,kOpenSquare);
-  cpAnaSelDJes.AddProfile(hJes,"Centrality: 60-90\%","P",0,0);
-  cpAnaSelDJes.AddProfile(hDJesPeriphNr,"Lead Jet","Ehist",kRed-7,0);
-  cpAnaSelDJes.AddProfile(hDJesPeriphAw,"Away Jet","Ehist",kBlue-7,0);
-  cpAnaSelDJes.SetLegend(0.57,0.23,0.83,0.44);
-  cpAnaSelDJes.SetLegendHeader("120GeV<p_{T}^{calojet1}<170GeV");
+  //cpAnaSelDJes.AddProfile(hDJesTopCentNr,"Lead calojet","E",kRed,kFullCircle);
+  //cpAnaSelDJes.AddProfile(hDJesTopCentAw,"Away calojet","E",kBlue,kFullCircle);
+  cpAnaSelDJes.AddHist1D(hgDJesTopCent.hSum_,"120GeV<p_{T}^{calojet1}<170GeV","E",kBlack,kFullCircle);
+  //cpAnaSelDJes.AddProfile(hJes,"Centrality: 60-90\%","P",0,0);
+  //cpAnaSelDJes.AddProfile(hDJesPeriphNr,"Lead Jet","Ehist",kRed-7,0);
+  //cpAnaSelDJes.AddProfile(hDJesPeriphAw,"Away Jet","Ehist",kBlue-7,0);
+  cpAnaSelDJes.AddHist1D(hgDJesTopCentSelRefAnaJet.hSum_,"120GeV<p_{T}^{matched genjet1}<170GeV","E",kRed,kOpenSquare);
+  cpAnaSelDJes.SetLegend(0.32,0.23,0.58,0.44);
+  cpAnaSelDJes.SetLegendHeader("calojet1,2");
   cpAnaSelDJes.Draw(cAnaSelDJes,true);
 
   TCanvas * cDJesComp = new TCanvas("cDJesComp","cDJesComp",500,500);
