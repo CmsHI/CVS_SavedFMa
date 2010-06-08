@@ -27,6 +27,7 @@ void anaJetEffFake(int doMC=1,
 
   // Define dijet selection
   selectionCut mcAna(doMC,1,120,170,80);
+  selectionCut mcSelRefAnaJet(doMC,101,120,170,80);
   cout << "DJ selection: " << TString(mcAna.DJ) << endl;
   cout << "dijetAna_mc/djTree # entries: " << mcj2t3->GetEntries() << endl;
   cout << "# DJ events passed: " << mcj2t3->GetEntries(mcAna.DJ) << endl;
@@ -93,14 +94,30 @@ void anaJetEffFake(int doMC=1,
   TCanvas * cGJetPt = new TCanvas("cGJetPt","cGJetPt",500,500);
   cGJetPt->SetLogy(0);
   TH1D * hGJetPtDJSel = new TH1D("hGJetPtDJSel",";p_{T}^{genjet};",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+  hGJetPtDJSel->SetMarkerColor(kRed);
+  hGJetPtDJSel->SetLineColor(kRed);
+  hGJetPtDJSel->SetMarkerStyle(kOpenCircle);
   TH1D * hGJetPtPreSel = (TH1D*)hGJetPtDJSel->Clone("hGJetPtPreSel");
-  hGJetPtPreSel->SetMarkerStyle(kOpenCircle);
+  TH1D * hGJetPtDJSelMatCalo = (TH1D*)hGJetPtDJSel->Clone("hGJetPtDJSelMatCalo");
+  hGJetPtDJSelMatCalo->SetMarkerColor(kBlack);
+  hGJetPtDJSelMatCalo->SetLineColor(kBlack);
+  hGJetPtDJSelMatCalo->SetMarkerStyle(kOpenSquare);
+  TH1D * hGJetPtDJSelMatCaloGenEt = (TH1D*)hGJetPtDJSel->Clone("hGJetPtDJSelMatCaloGenEt");
+  hGJetPtDJSelMatCaloGenEt->SetMarkerColor(kBlue);
+  hGJetPtDJSelMatCaloGenEt->SetMarkerStyle(kOpenStar);
+  hGJetPtDJSelMatCaloGenEt->SetLineColor(kBlue);
   mcj1t0->Draw("nljet>>hGJetPtPreSel","","E");
   mcj1t0->Draw("aljet>>+hGJetPtPreSel","","Esame");
-  mcj2t3->Draw("nlrjet>>hGJetPtDJSel",mcAna.DJ,"Esame");
-  mcj2t3->Draw("alrjet>>+hGJetPtDJSel",mcAna.DJ,"Esame");
+  mcj1t0->Draw("nljet>>hGJetPtDJSel",mcAna.DJ,"Esame");
+  mcj1t0->Draw("aljet>>+hGJetPtDJSel",mcAna.DJ,"Esame");
+  mcj2t3->Draw("nlrjet>>hGJetPtDJSelMatCalo",mcAna.DJ,"Esame");
+  mcj2t3->Draw("alrjet>>+hGJetPtDJSelMatCalo",mcAna.DJ,"Esame");
+  mcj2t3->Draw("nlrjet>>hGJetPtDJSelMatCaloGenEt",mcSelRefAnaJet.DJ,"Esame");
+  mcj2t3->Draw("alrjet>>+hGJetPtDJSelMatCaloGenEt",mcSelRefAnaJet.DJ,"Esame");
   hGJetPtPreSel->Draw("hist");
+  hGJetPtDJSelMatCalo->Draw("Esame");
   hGJetPtDJSel->Draw("Esame");
+  hGJetPtDJSelMatCaloGenEt->Draw("Esame");
   cGJetPt->Print("plots/cGJetPt.gif");
 
   // GJet Eta
