@@ -26,6 +26,8 @@ export HLTpprun=$pprun/HLT
 export dNdEta=$ppsw/dNdEta
 export dNdEtasw=$ppsw/dNdEta/sw
 export dNdEtarun=$pprun/dNdEta
+#  - spectra related -
+export spectra=$ppsw/spectra
 #  - prod related -
 export prod=$work/prod 
 # -older-
