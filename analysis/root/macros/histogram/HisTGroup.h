@@ -12,10 +12,10 @@ class HisTGroup
 {
   public:
     // methods
-    HisTGroup(TString name, Int_t n=0, Float_t xmin=0, Float_t xmax=0);
-    void Add(TData * t1, TString iname,Float_t sc=-1);
+    HisTGroup(TString name, Int_t n=0, Double_t xmin=0, Double_t xmax=0);
+    void Add(TData * t1, TString iname,Double_t sc=-1);
     void Add(TString iname);
-    void Add(TFile * inFile, TString hname,TString iname, Float_t sc=-1);
+    void Add(TFile * inFile, TString hname,TString iname, Double_t sc=-1);
     void Save();
     TData * Sum();
     TData * Average();
@@ -23,12 +23,14 @@ class HisTGroup
     // data
     TString name_;
     std::map<TString,TData*> hm_;
-    std::map<TString,Float_t> scales_;
+    std::map<TString,Double_t> scales_;
 
     // group properties
     Int_t nbins_;
-    Float_t xmin_;
-    Float_t xmax_;
+    Double_t xmin_;
+    Double_t xmax_;
+    Double_t ymin_;
+    Double_t ymax_;
 
     // group relations
     TData * hSum_;
@@ -36,7 +38,7 @@ class HisTGroup
 };
 
 template <typename TData>
-HisTGroup<TData>::HisTGroup(TString name, Int_t n, Float_t xmin, Float_t xmax) :
+HisTGroup<TData>::HisTGroup(TString name, Int_t n, Double_t xmin, Double_t xmax) :
   name_(name),
   nbins_(n),
   xmin_(xmin),
@@ -48,7 +50,7 @@ HisTGroup<TData>::HisTGroup(TString name, Int_t n, Float_t xmin, Float_t xmax) :
 }
 
 template <typename TData>
-void HisTGroup<TData>::Add(TData * h1, TString iname, Float_t sc)
+void HisTGroup<TData>::Add(TData * h1, TString iname, Double_t sc)
 {
   assert(h1);
   scales_[iname] = sc;
