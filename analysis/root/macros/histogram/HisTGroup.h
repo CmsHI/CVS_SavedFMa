@@ -12,7 +12,7 @@ class HisTGroup
 {
   public:
     // methods
-    HisTGroup(TString gname, Int_t n=0, Float_t xmin=0, Float_t xmax=0);
+    HisTGroup(TString name, Int_t n=0, Float_t xmin=0, Float_t xmax=0);
     void Add(TData * t1, TString iname,Float_t sc=-1);
     void Add(TString iname);
     void Add(TFile * inFile, TString hname,TString iname, Float_t sc=-1);
@@ -65,13 +65,12 @@ void HisTGroup<TData>::Add(TData * h1, TString iname, Float_t sc)
   }
 }
 
-/*
 template <typename TData>
-void HisTGroup<TData>::Add(TString iname,Float_t sc)
+void HisTGroup<TData>::Add(TString iname)
 {
-  TData * h1 = new TData(iname,iname,nbins_,xmin_,xmax_);
-  Add(h1,sc);
+  TString hname = TString("h")+name_+iname;
+  TData * h1 = new TData(hname,hname,nbins_,xmin_,xmax_);
+  Add(h1,iname);
 }
-*/
 
 #endif
