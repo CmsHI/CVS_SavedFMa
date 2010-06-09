@@ -1,6 +1,7 @@
 #include <iostream>
 #include "HisTGroup.h"
 #include "TH1D.h"
+#include "TProfile.h"
 #include "TCanvas.h"
 using namespace std;
 
@@ -25,7 +26,7 @@ void hisTGroupDriver()
   TCanvas * c3 = new TCanvas("c3","c3",500,500);
   hgDj1.hm_["NrSmall"]->Draw();
 
-  HisTGroup<TH1D> hgDj0("Dj0",10,0,10);
+  HisTGroup<TProfile> hgDj0("Dj0",10,0,10);
   cout << "nbins: " << hgDj0.nbins_ << " xmin: " << hgDj0.xmin_ << " xmax: " << hgDj0.xmax_ << " " << hgDj0.hSum_ << " " << hgDj0.hAve_ << endl;
   hgDj0.Add("Nr");
 
