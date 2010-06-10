@@ -1,6 +1,7 @@
 #include <iostream>
 #include "HisTGroup.h"
 #include "TH1D.h"
+#include "TH2D.h"
 #include "TProfile.h"
 #include "TCanvas.h"
 using namespace std;
@@ -32,4 +33,7 @@ void hisTGroupDriver()
 
   TCanvas * c4 = new TCanvas("c4","c4",500,500);
   hgDj0.hm_["Nr"]->Draw();
+
+  // Test TH2D
+  HisTGroup<TH2D> hgDj2("Dj2",10,0,10,10,0,10);
 }

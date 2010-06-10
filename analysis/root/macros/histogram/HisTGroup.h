@@ -12,7 +12,9 @@ class HisTGroup
 {
   public:
     // methods
-    HisTGroup(TString name, Int_t n=0, Double_t xmin=0, Double_t xmax=0);
+    HisTGroup(TString name,
+	Int_t xn=-1, Double_t xmin=-1, Double_t xmax=-1,
+	Int_t yn=-1, Double_t ymin=-1, Double_t ymax=-1);
     void Add(TData * t1, TString iname,Double_t sc=-1);
     void Add(TString iname);
     void Add(TFile * inFile, TString hname,TString iname, Double_t sc=-1);
@@ -40,14 +42,16 @@ class HisTGroup
 };
 
 template <typename TData>
-HisTGroup<TData>::HisTGroup(TString name, Int_t n, Double_t xmin, Double_t xmax) :
+HisTGroup<TData>::HisTGroup(TString name,
+    Int_t xn, Double_t xmin, Double_t xmax,
+    Int_t yn, Double_t ymin, Double_t ymax) :
   name_(name),
-  xnbins_(n),
+  xnbins_(xn),
   xmin_(xmin),
   xmax_(xmax),
-  ynbins_(-1),
-  ymin_(-1),
-  ymax_(-1),
+  ynbins_(yn),
+  ymin_(ymin),
+  ymax_(ymax),
   hSum_(0),
   hAve_(0)
 {
@@ -76,7 +80,10 @@ template <typename TData>
 void HisTGroup<TData>::Add(TString iname)
 {
   TString hname = TString("h")+name_+iname;
-  TData * h1 = new TData(hname,hname,xnbins_,xmin_,xmax_);
+  TData * h1 = 0;
+  if (xnbins_>0)
+    h1 = new TData(hname,hname,xnbins_,xmin_,xmax_);
+  assert(h1);
   Add(h1,iname);
 }
 
