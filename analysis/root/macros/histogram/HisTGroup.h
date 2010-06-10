@@ -16,12 +16,13 @@ class HisTGroup
 	Int_t xn=-1, Double_t xmin=-1, Double_t xmax=-1,
 	Int_t yn=-1, Double_t ymin=-1, Double_t ymax=-1);
     void Add(TData * t1, TString iname,Double_t sc=-1);
-    void Add(TString iname);
+    void Add1D(TString iname);
+    void Add2D(TString iname);
     void Add(TFile * inFile, TString hname,TString iname, Double_t sc=-1);
+    TData * Average();
     void Print();
     void Save();
     TData * Sum();
-    TData * Average();
 
     // data
     TString name_;
@@ -41,6 +42,7 @@ class HisTGroup
     TData * hAve_;
 };
 
+// === Constructors ===
 template <typename TData>
 HisTGroup<TData>::HisTGroup(TString name,
     Int_t xn, Double_t xmin, Double_t xmax,
@@ -58,6 +60,7 @@ HisTGroup<TData>::HisTGroup(TString name,
   TData::SetDefaultSumw2();
 }
 
+// === Adding to Group ===
 template <typename TData>
 void HisTGroup<TData>::Add(TData * h1, TString iname, Double_t sc)
 {
@@ -77,7 +80,7 @@ void HisTGroup<TData>::Add(TData * h1, TString iname, Double_t sc)
 }
 
 template <typename TData>
-void HisTGroup<TData>::Add(TString iname)
+void HisTGroup<TData>::Add1D(TString iname)
 {
   TString hname = TString("h")+name_+iname;
   TData * h1 = 0;
@@ -87,6 +90,18 @@ void HisTGroup<TData>::Add(TString iname)
   Add(h1,iname);
 }
 
+template <typename TData>
+void HisTGroup<TData>::Add2D(TString iname)
+{
+  TString hname = TString("h")+name_+iname;
+  TData * h1 = 0;
+  if (xnbins_>0 && ynbins_>0)
+    h1 = new TData(hname,hname,xnbins_,xmin_,xmax_,ynbins_,ymin_,ymax_);
+  assert(h1);
+  Add(h1,iname);
+}
+
+// === Helper Functions ===
 template <typename TData>
 void HisTGroup<TData>::Print()
 {
