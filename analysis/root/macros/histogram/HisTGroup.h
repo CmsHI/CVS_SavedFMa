@@ -15,7 +15,7 @@ class HisTGroup
     HisTGroup(TString name,
 	Int_t xn=-1, Double_t xmin=-1, Double_t xmax=-1,
 	Int_t yn=-1, Double_t ymin=-1, Double_t ymax=-1);
-    void Add(TData * t1, TString iname,Double_t sc=-1);
+    void Add(TData * h1, TString iname,Double_t sc=-1);
     void Add1D(TString iname);
     void Add2D(TString iname);
     void Add(TFile * inFile, TString hname,TString iname, Double_t sc=-1);
@@ -99,6 +99,15 @@ void HisTGroup<TData>::Add2D(TString iname)
     h1 = new TData(hname,hname,xnbins_,xmin_,xmax_,ynbins_,ymin_,ymax_);
   assert(h1);
   Add(h1,iname);
+}
+
+template <typename TData>
+void HisTGroup<TData>::Add(TFile * inFile, TString hname,TString iname, Double_t sc)
+{
+  assert(inFile);
+  TData * h1;
+  inFile->GetObject(hname.Data(),h1);
+  Add(h1,iname,sc);
 }
 
 // === Helper Functions ===

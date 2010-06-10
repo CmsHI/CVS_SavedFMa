@@ -41,4 +41,14 @@ void hisTGroupDriver()
   TCanvas * c5 = new TCanvas("c5","c5",500,500);
   hgDj2.hm_["NrAw"]->Fill(1,1);
   hgDj2.hm_["NrAw"]->Draw("colz");
+
+  // Test get from file
+  TFile * inFile0 = new TFile("/home/frankma/work/pp/spectra/QCD-10-008/notes/AN-10-117/trunk/anaDNDPtTrig/plots/V0607_v1/all/HisHltEff/anahlt.root");
+  HisTGroup<TH1D> hgSpec("Spec");
+  hgSpec.Add(inFile0,"hJet0Pt","J0Pt");
+  hgSpec.Add(inFile0,"hJet0Pt","PSJ0Pt",0.5);
+  hgSpec.hm_["PSJ0Pt"]->SetMarkerColor(kRed);
+  TCanvas * c6 = new TCanvas("c6","c6",500,500);
+  hgSpec.hm_["J0Pt"]->Draw("E");
+  hgSpec.hm_["PSJ0Pt"]->Draw("Esame");
 }
