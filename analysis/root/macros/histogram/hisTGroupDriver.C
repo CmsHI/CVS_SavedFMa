@@ -9,6 +9,7 @@ using namespace std;
 void hisTGroupDriver()
 {
   TFile * inFile0 = new TFile("/home/frankma/work/pp/spectra/QCD-10-008/notes/AN-10-117/trunk/anaDNDPtTrig/plots/V0607_v1/all/HisHltEff/anahlt.root");
+  TFile * outFile = new TFile("outf.root","RECREATE");
   HisTGroup<TH1D> hgDj1("Dj1");
   hgDj1.Print();
 
@@ -66,4 +67,15 @@ void hisTGroupDriver()
   hgTestSum.hSum_->Draw();
   hgTestSum.hm_["h1"]->Draw("same hist");
   hgTestSum.hm_["h2"]->Draw("same hist");
+
+  // Test Average
+  HisTGroup<TH1D> hgTestAve("TestAve");
+  hgTestAve.Add(h1,"h1");
+  hgTestAve.Add(h2,"h2");
+  hgTestAve.Average();
+  hgTestAve.Print();
+  TCanvas * c8 = new TCanvas("c8","c8",500,500);
+  hgTestAve.hm_["h1"]->Draw("hist");
+  hgTestAve.hAve_->Draw("same");
+  hgTestAve.hm_["h2"]->Draw("same hist");
 }

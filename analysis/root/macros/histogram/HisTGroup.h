@@ -110,6 +110,16 @@ void HisTGroup<TData>::Add(TFile * inFile, TString hname,TString iname, Double_t
   Add(h1,iname,sc);
 }
 
+// === Relation: Average ===
+template <typename TData>
+TData * HisTGroup<TData>::Average()
+{
+  if (!hSum_) Sum();
+  hAve_ = (TData*)hSum_->Clone("h"+name_+"_Ave");
+  hAve_->Scale(1./hm_.size());
+  return hAve_;
+}
+
 // === Helper Functions ===
 template <typename TData>
 void HisTGroup<TData>::Print()
@@ -123,7 +133,7 @@ void HisTGroup<TData>::Print()
   }
 }
 
-// === Relation Functions ===
+// === Relation: Sum ===
 template <typename TData>
 TData * HisTGroup<TData>::Sum()
 {
