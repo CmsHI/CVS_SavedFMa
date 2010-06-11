@@ -118,6 +118,27 @@ void HisTGroup<TData>::Print()
   std::cout << "xnbins: " << xnbins_ << " xmin: " << xmin_ << " xmax: " << xmax_ << " hSum_: " << hSum_ << " hAve_: " << hAve_ << std::endl;
   if (ynbins_>0)
     std::cout << "ynbins: " << ynbins_ << " ymin: " << ymin_ << " ymax: " << ymax_ << " hSum_: " << hSum_ << " hAve_: " << hAve_ << std::endl;
+  if (hSum_) {
+    std::cout << "hSum_: " << hSum_->GetName() << " has: " << hSum_->GetEntries() << std::endl;
+  }
+}
+
+// === Relation Functions ===
+template <typename TData>
+TData * HisTGroup<TData>::Sum()
+{
+  typename std::map<TString, TData*>::iterator iter; // typename keyword needed here, b/c comiple is in doubt whether TData is a type
+  for (iter=hm_.begin(); iter != hm_.end(); ++iter) {
+    if (iter==hm_.begin()) {
+      hSum_ = (TData*)iter->second->Clone("h"+name_+"_Sum");
+      assert(hSum_);
+      //std::cout << "first to add: " << iter->first << endl;
+    } else {
+      //std::cout << "add more: " << iter->first << endl;
+      hSum_->Add(iter->second);
+    }
+  }
+  return hSum_;
 }
 
 #endif

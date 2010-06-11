@@ -8,6 +8,7 @@ using namespace std;
 
 void hisTGroupDriver()
 {
+  TFile * inFile0 = new TFile("/home/frankma/work/pp/spectra/QCD-10-008/notes/AN-10-117/trunk/anaDNDPtTrig/plots/V0607_v1/all/HisHltEff/anahlt.root");
   HisTGroup<TH1D> hgDj1("Dj1");
   hgDj1.Print();
 
@@ -43,7 +44,6 @@ void hisTGroupDriver()
   hgDj2.hm_["NrAw"]->Draw("colz");
 
   // Test get from file
-  TFile * inFile0 = new TFile("/home/frankma/work/pp/spectra/QCD-10-008/notes/AN-10-117/trunk/anaDNDPtTrig/plots/V0607_v1/all/HisHltEff/anahlt.root");
   HisTGroup<TH1D> hgSpec("Spec");
   hgSpec.Add(inFile0,"hJet0Pt","J0Pt");
   hgSpec.Add(inFile0,"hJet0Pt","PSJ0Pt",0.5);
@@ -51,4 +51,19 @@ void hisTGroupDriver()
   TCanvas * c6 = new TCanvas("c6","c6",500,500);
   hgSpec.hm_["J0Pt"]->Draw("E");
   hgSpec.hm_["PSJ0Pt"]->Draw("Esame");
+
+  // Test Sum
+  TH1D * h2 = new TH1D("h2","h2",10,0,10);
+  h2->Fill(1);
+  h2->Fill(5);
+  h2->Fill(9);
+  HisTGroup<TH1D> hgTestSum("TestSum");
+  hgTestSum.Add(h1,"h1");
+  hgTestSum.Add(h2,"h2");
+  hgTestSum.Sum();
+  hgTestSum.Print();
+  TCanvas * c7 = new TCanvas("c7","c7",500,500);
+  hgTestSum.hSum_->Draw();
+  hgTestSum.hm_["h1"]->Draw("same hist");
+  hgTestSum.hm_["h2"]->Draw("same hist");
 }
