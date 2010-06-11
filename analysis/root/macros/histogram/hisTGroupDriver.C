@@ -78,4 +78,11 @@ void hisTGroupDriver()
   hgTestAve.hm_["h1"]->Draw("hist");
   hgTestAve.hAve_->Draw("same");
   hgTestAve.hm_["h2"]->Draw("same hist");
+
+  // Test Save
+  hgDj0.Save();
+  hgDj1.Save();
+  hgDj2.Save();
+  hgSpec.Save();
+  hgTestAve.Save();
 }

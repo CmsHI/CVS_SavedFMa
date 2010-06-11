@@ -133,6 +133,16 @@ void HisTGroup<TData>::Print()
   }
 }
 
+template <typename TData>
+void HisTGroup<TData>::Save()
+{
+  for (typename std::map<TString, TData*>::iterator 
+      iter=hm_.begin(); iter != hm_.end(); ++iter) {
+    iter->second->Write();
+    //std::cout << "Save: " << iter->second->GetName() << std::endl;
+  }
+}
+
 // === Relation: Sum ===
 template <typename TData>
 TData * HisTGroup<TData>::Sum()
