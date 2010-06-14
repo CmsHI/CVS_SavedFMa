@@ -39,8 +39,6 @@ class HisTGroup
 
     // group relations
     std::map<TString,TData*> hr_;
-    TData * hSum_;
-    TData * hAve_;
 };
 
 // === Constructors ===
@@ -54,9 +52,7 @@ HisTGroup<TData>::HisTGroup(TString name,
   xmax_(xmax),
   ynbins_(yn),
   ymin_(ymin),
-  ymax_(ymax),
-  hSum_(0),
-  hAve_(0)
+  ymax_(ymax)
 {
   TData::SetDefaultSumw2();
 }
@@ -116,9 +112,9 @@ template <typename TData>
 TData * HisTGroup<TData>::Average()
 {
   if (hr_.find("Sum")==hr_.end()) Sum();
-  hr_["Ave"] = (TData*)hSum_->Clone("h"+name_+"_Ave");
+  hr_["Ave"] = (TData*)hr_["Sum"]->Clone("h"+name_+"_Ave");
   hr_["Ave"]->Scale(1./hm_.size());
-  return hAve_;
+  return hr_["Ave"];
 }
 
 // === Helper Functions ===
@@ -130,7 +126,7 @@ void HisTGroup<TData>::Print()
   if (ynbins_>0)
     std::cout << "ynbins: " << ynbins_ << " ymin: " << ymin_ << " ymax: " << ymax_ << std::endl;
   if (hr_["Sum"]) {
-    std::cout << "hSum_: " << hr_["Sum"]->GetName() << " has: " << hr_["Sum"]->GetEntries() << std::endl;
+    std::cout << "hrSum: " << hr_["Sum"]->GetName() << " has: " << hr_["Sum"]->GetEntries() << std::endl;
   }
 }
 
@@ -151,17 +147,15 @@ TData * HisTGroup<TData>::Sum()
   typename std::map<TString, TData*>::iterator iter; // typename keyword needed here, b/c comiple is in doubt whether TData is a type
   for (iter=hm_.begin(); iter != hm_.end(); ++iter) {
     if (iter==hm_.begin()) {
-      hSum_ = (TData*)iter->second->Clone("h"+name_+"_Sum");
       hr_["Sum"] = (TData*)iter->second->Clone("h"+name_+"_Sum");
-      assert(hSum_);
+      assert(hr_["Sum"]);
       //std::cout << "first to add: " << iter->first << endl;
     } else {
       //std::cout << "add more: " << iter->first << endl;
-      hSum_->Add(iter->second);
       hr_["Sum"]->Add(iter->second);
     }
   }
-  return hSum_;
+  return hr_["Sum"];
 }
 
 #endif
