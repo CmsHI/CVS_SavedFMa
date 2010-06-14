@@ -38,6 +38,7 @@ class HisTGroup
     Double_t ymax_;
 
     // group relations
+    std::map<TString,TData*> hr_;
     TData * hSum_;
     TData * hAve_;
 };
@@ -114,9 +115,9 @@ void HisTGroup<TData>::Add(TFile * inFile, TString hname,TString iname, Double_t
 template <typename TData>
 TData * HisTGroup<TData>::Average()
 {
-  if (!hSum_) Sum();
-  hAve_ = (TData*)hSum_->Clone("h"+name_+"_Ave");
-  hAve_->Scale(1./hm_.size());
+  if (hr_.find("Sum")==hr_.end()) Sum();
+  hr_["Ave"] = (TData*)hSum_->Clone("h"+name_+"_Ave");
+  hr_["Ave"]->Scale(1./hm_.size());
   return hAve_;
 }
 
@@ -125,11 +126,11 @@ template <typename TData>
 void HisTGroup<TData>::Print()
 {
   std::cout << "group: " << name_ << std::endl;
-  std::cout << "xnbins: " << xnbins_ << " xmin: " << xmin_ << " xmax: " << xmax_ << " hSum_: " << hSum_ << " hAve_: " << hAve_ << std::endl;
+  std::cout << "xnbins: " << xnbins_ << " xmin: " << xmin_ << " xmax: " << xmax_ << std::endl;
   if (ynbins_>0)
-    std::cout << "ynbins: " << ynbins_ << " ymin: " << ymin_ << " ymax: " << ymax_ << " hSum_: " << hSum_ << " hAve_: " << hAve_ << std::endl;
-  if (hSum_) {
-    std::cout << "hSum_: " << hSum_->GetName() << " has: " << hSum_->GetEntries() << std::endl;
+    std::cout << "ynbins: " << ynbins_ << " ymin: " << ymin_ << " ymax: " << ymax_ << std::endl;
+  if (hr_["Sum"]) {
+    std::cout << "hSum_: " << hr_["Sum"]->GetName() << " has: " << hr_["Sum"]->GetEntries() << std::endl;
   }
 }
 
@@ -151,11 +152,13 @@ TData * HisTGroup<TData>::Sum()
   for (iter=hm_.begin(); iter != hm_.end(); ++iter) {
     if (iter==hm_.begin()) {
       hSum_ = (TData*)iter->second->Clone("h"+name_+"_Sum");
+      hr_["Sum"] = (TData*)iter->second->Clone("h"+name_+"_Sum");
       assert(hSum_);
       //std::cout << "first to add: " << iter->first << endl;
     } else {
       //std::cout << "add more: " << iter->first << endl;
       hSum_->Add(iter->second);
+      hr_["Sum"]->Add(iter->second);
     }
   }
   return hSum_;

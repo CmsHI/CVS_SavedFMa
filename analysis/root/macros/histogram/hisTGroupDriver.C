@@ -67,6 +67,8 @@ void hisTGroupDriver()
   hgTestSum.hSum_->Draw();
   hgTestSum.hm_["h1"]->Draw("same hist");
   hgTestSum.hm_["h2"]->Draw("same hist");
+  hgTestSum.hr_["Sum"]->SetMarkerStyle(kOpenSquare);
+  hgTestSum.hr_["Sum"]->Draw("same E");
 
   // Test Average
   HisTGroup<TH1D> hgTestAve("TestAve");
@@ -76,7 +78,9 @@ void hisTGroupDriver()
   hgTestAve.Print();
   TCanvas * c8 = new TCanvas("c8","c8",500,500);
   hgTestAve.hm_["h1"]->Draw("hist");
-  hgTestAve.hAve_->Draw("same");
+  //hgTestAve.hAve_->Draw("same");
+  hgTestAve.hr_["Ave"]->SetMarkerStyle(kOpenSquare);
+  hgTestAve.hr_["Ave"]->Draw("sameE");
   hgTestAve.hm_["h2"]->Draw("same hist");
 
   // Test Save
