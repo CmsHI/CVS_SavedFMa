@@ -81,6 +81,18 @@ void hisTGroupDriver()
   hgTestAve.hr_["Ave"]->Draw("sameE");
   hgTestAve.hm_["h2"]->Draw("same hist");
 
+  // Test Sum 2d
+  HisTGroup<TH2D> hgTestSum2D("TestSum2D",10,0,10,10,0,10);
+  hgTestSum2D.Print();
+  hgTestSum2D.Add(hgDj2.hm_["NrAw"],"NrAw");
+  hgTestSum2D.Add2D("NrAw2");
+  hgTestSum2D.hm_["NrAw2"]->Fill(1,1);
+  hgTestSum2D.hm_["NrAw2"]->Fill(1,1);
+  hgTestSum2D.hm_["NrAw2"]->Fill(1,2);
+  hgTestSum2D.Sum();
+  TCanvas * c9 = new TCanvas("c9","c9",500,500);
+  hgTestSum2D.hr_["Sum"]->Draw("colz");
+
   // Test Save
   hgDj0.Save();
   hgDj1.Save();
