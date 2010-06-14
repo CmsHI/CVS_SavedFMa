@@ -111,6 +111,9 @@ void HisTGroup<TData>::Add(TFile * inFile, TString hname,TString iname, Double_t
 template <typename TData>
 TData * HisTGroup<TData>::Average()
 {
+  // check if average already taken
+  if (hr_.find("Ave")!=hr_.end()) return hr_["Ave"];
+
   if (hr_.find("Sum")==hr_.end()) Sum();
   hr_["Ave"] = (TData*)hr_["Sum"]->Clone("h"+name_+"_Ave");
   hr_["Ave"]->Scale(1./hm_.size());
@@ -125,8 +128,17 @@ void HisTGroup<TData>::Print()
   std::cout << "xnbins: " << xnbins_ << " xmin: " << xmin_ << " xmax: " << xmax_ << std::endl;
   if (ynbins_>0)
     std::cout << "ynbins: " << ynbins_ << " ymin: " << ymin_ << " ymax: " << ymax_ << std::endl;
-  if (hr_["Sum"]) {
+  cout << "hm size: " << hm_.size() << endl;
+  cout << "hr size: " << hr_.size() << endl;
+  if (hr_.find("Sum")!=hr_.end()) {
     std::cout << "hrSum: " << hr_["Sum"]->GetName() << " has: " << hr_["Sum"]->GetEntries() << std::endl;
+  }
+  if (hr_.find("Ave")!=hr_.end()) {
+    std::cout << "hrAve: " << hr_["Ave"]->GetName() << " has: " << hr_["Ave"]->GetEntries() << std::endl;
+  }
+  for (typename std::map<TString, TData*>::iterator 
+      iter=hr_.begin(); iter != hr_.end(); ++iter) {
+    std::cout << "hr: " << iter->first << " " << iter->second << std::endl;
   }
 }
 
@@ -144,6 +156,9 @@ void HisTGroup<TData>::Save()
 template <typename TData>
 TData * HisTGroup<TData>::Sum()
 {
+  // check if Sum already taken
+  if (hr_.find("Sum")!=hr_.end()) return hr_["Sum"];
+
   typename std::map<TString, TData*>::iterator iter; // typename keyword needed here, b/c comiple is in doubt whether TData is a type
   for (iter=hm_.begin(); iter != hm_.end(); ++iter) {
     if (iter==hm_.begin()) {
