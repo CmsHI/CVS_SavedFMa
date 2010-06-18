@@ -25,7 +25,7 @@ def output_cfg_summary(process):
       print "  no maxEvents\n"
    try:
       print "  output: ", process.output.fileName, "\n"
-      print "  event content: ", process.output.outputCommands, "\n"
+      print "  First 50 event content: ", process.output.outputCommands[:50], "\n"
    except:
       print ""
    try:
