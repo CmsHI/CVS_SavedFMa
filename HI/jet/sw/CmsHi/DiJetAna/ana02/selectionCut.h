@@ -8,7 +8,7 @@
 class selectionCut
 {  
   public:
-    selectionCut(bool isMC, int sel, float NrJetMin=80, float NrJetMax=120, float AwJetMin=70, int runnum=-1, int nLumiL=0, int nLumiH=10000);
+    selectionCut(TString name, bool isMC, int sel, float NrJetMin=80, float NrJetMax=120, float AwJetMin=70, int runnum=-1, int nLumiL=0, int nLumiH=10000);
     ~selectionCut(){}
     void Print();
 
@@ -36,6 +36,7 @@ class selectionCut
     int runNum;
 
     // ana info
+    TString Name;
     TString AnaTag;
 
     // jet
@@ -62,7 +63,8 @@ class selectionCut
     float trkPtMax;
 };
 
-selectionCut::selectionCut(bool isMC, int sel, float NrJetMin, float NrJetMax, float AwJetMin, int runnum, int nLumiL, int nLumiH) :
+selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, float NrJetMax, float AwJetMin, int runnum, int nLumiL, int nLumiH) :
+  Name(name),
   selType(sel),
   runNum(runnum),
   histJetPtBins(50),
@@ -113,7 +115,7 @@ selectionCut::selectionCut(bool isMC, int sel, float NrJetMin, float NrJetMax, f
   Cut = TCut(Evt);
 
   // Analysis Tag
-  AnaTag = Form("Sel%d_N%0.fto%.0f_A%.0f_DPhi%.0f",selType,nrJetPtMin,nrJetPtMax,awJetPtMin,djDPhiMin*10);
+  AnaTag = Form("Sel%d_N%0.fto%.0f_A%.0f",selType,nrJetPtMin,nrJetPtMax,awJetPtMin);
 
   // Check
   Print();
@@ -121,13 +123,13 @@ selectionCut::selectionCut(bool isMC, int sel, float NrJetMin, float NrJetMax, f
 
 void selectionCut::Print()
 {
-  cout << "Ana: " << AnaTag << endl;
-  cout << " w/ DJ cut: " << endl;
+  cout << endl << "Ana: " << Name << "/" << AnaTag << endl;
+  cout << " -- DJ cut -- " << endl;
   for (std::map<TString, TCut>::iterator 
       iter=DJ.begin(); iter != DJ.end(); ++iter) {
     std::cout << std::setw(15) << iter->first << ": " << TString(iter->second) << std::endl;
   }
-  cout << std::endl << " w/ Trk cut: " << std::endl;
+  cout << " -- Trk cut -- " << std::endl;
   for (std::map<TString, TCut>::iterator 
       iter=Trk.begin(); iter != Trk.end(); ++iter) {
     std::cout << std::setw(15) << iter->first << ": " << TString(iter->second) << std::endl;
