@@ -13,6 +13,8 @@
 
 #ifndef CPLOT_HH
 #define CPLOT_HH
+#include <iostream>
+#include <cassert>
 
 #include <TROOT.h>
 #include <TSystem.h>
@@ -150,10 +152,10 @@ public:
   TLegend* GetLegend() { return fLeg; }
   
 protected:
-  vector<CPlotItem> fItems;        // list of items to be plotted
-  vector<TPaveText*> fTextBoxes;   // list of text boxes
-  vector<TLine*> fLines;           // list of lines
-  vector<TF1*> fFcns;              // list of 1D functions
+  std::vector<CPlotItem> fItems;        // list of items to be plotted
+  std::vector<TPaveText*> fTextBoxes;   // list of text boxes
+  std::vector<TLine*> fLines;           // list of lines
+  std::vector<TF1*> fFcns;              // list of 1D functions
   THStack *fStack;                 // histogram stack
   TString fName;                   // plot name
   TString fTitle;                  // plot title
