@@ -20,15 +20,18 @@ class HisTGroup
     void Add2D(TString iname);
     void Add(TFile * inFile, TString hname,TString iname, Double_t sc=-1);
     TData * Average();
-    TData * hm(TString iname) const { return hm_.find(iname)->second; }
-    TData * hr(TString iname) const { return hr_.find(iname)->second; }
-    void Print();
+    void Print() const;
     void Save();
     TData * Sum();
 
+    // Accessors
+    TData * H(TString iname) const { return hm_.find(iname)->second; }
+    TData * R(TString iname) const { return hr_.find(iname)->second; }
+    const TData * GetH(TString iname) const { return hm_.find(iname)->second; }
+    const TData * GetR(TString iname) const { return hr_.find(iname)->second; }
+
     // data
     TString name_;
-    std::map<TString,TData*> hm_;
     std::map<TString,Double_t> scales_;
 
     // group properties
@@ -39,7 +42,9 @@ class HisTGroup
     Double_t ymin_;
     Double_t ymax_;
 
-    // group relations
+  protected:
+    // group private members
+    std::map<TString,TData*> hm_;
     std::map<TString,TData*> hr_;
 };
 
@@ -124,7 +129,7 @@ TData * HisTGroup<TData>::Average()
 
 // === Helper Functions ===
 template <typename TData>
-void HisTGroup<TData>::Print()
+void HisTGroup<TData>::Print() const
 {
   std::cout << "group: " << name_ << std::endl;
   std::cout << "xnbins: " << xnbins_ << " xmin: " << xmin_ << " xmax: " << xmax_ << std::endl;
@@ -133,12 +138,12 @@ void HisTGroup<TData>::Print()
   cout << "hm size: " << hm_.size() << endl;
   cout << "hr size: " << hr_.size() << endl;
   if (hr_.find("Sum")!=hr_.end()) {
-    std::cout << "hrSum: " << hr_["Sum"]->GetName() << " has: " << hr_["Sum"]->GetEntries() << std::endl;
+    std::cout << "hrSum: " << GetR("Sum")->GetName() << " has: " << GetR("Sum")->GetEntries() << std::endl;
   }
   if (hr_.find("Ave")!=hr_.end()) {
-    std::cout << "hrAve: " << hr_["Ave"]->GetName() << " has: " << hr_["Ave"]->GetEntries() << std::endl;
+    std::cout << "hrAve: " << GetR("Ave")->GetName() << " has: " << GetR("Ave")->GetEntries() << std::endl;
   }
-  for (typename std::map<TString, TData*>::iterator 
+  for (typename std::map<TString, TData*>::const_iterator 
       iter=hr_.begin(); iter != hr_.end(); ++iter) {
     std::cout << "hr: " << iter->first << " " << iter->second << std::endl;
   }
