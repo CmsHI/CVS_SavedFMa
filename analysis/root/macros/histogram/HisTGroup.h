@@ -20,6 +20,8 @@ class HisTGroup
     void Add2D(TString iname);
     void Add(TFile * inFile, TString hname,TString iname, Double_t sc=-1);
     TData * Average();
+    TData * hm(TString iname) const { return hm_.find(iname)->second; }
+    TData * hr(TString iname) const { return hr_.find(iname)->second; }
     void Print();
     void Save();
     TData * Sum();
