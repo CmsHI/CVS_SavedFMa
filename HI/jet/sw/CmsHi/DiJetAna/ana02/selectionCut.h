@@ -123,13 +123,13 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
 
 void selectionCut::Print()
 {
-  cout << endl << "Ana: " << Name << "/" << AnaTag << endl;
-  cout << " -- DJ cut -- " << endl;
+  std::cout << std::endl << "Ana: " << Name << "/" << AnaTag << std::endl;
+  std::cout << " -- DJ cut -- " << std::endl;
   for (std::map<TString, TCut>::iterator 
       iter=DJ.begin(); iter != DJ.end(); ++iter) {
     std::cout << std::setw(15) << iter->first << ": " << TString(iter->second) << std::endl;
   }
-  cout << " -- Trk cut -- " << std::endl;
+  std::cout << " -- Trk cut -- " << std::endl;
   for (std::map<TString, TCut>::iterator 
       iter=Trk.begin(); iter != Trk.end(); ++iter) {
     std::cout << std::setw(15) << iter->first << ": " << TString(iter->second) << std::endl;
