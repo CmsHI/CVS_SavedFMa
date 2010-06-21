@@ -7,6 +7,7 @@
 #include "TCut.h"
 #include "TLegend.h"
 #include "TSystem.h"
+#include "TMath.h"
 #include "CmsHi/DiJetAna/ana02/aliases_dijet.C"
 #include "CmsHi/DiJetAna/ana02/selectionCut.h"
 #include "CmsHi/DiJetAna/ana02/AnaFrag.h"
@@ -60,8 +61,9 @@ void anaDiJet(int doMC=1,
   // Save output
   TFile * outf = new TFile(Form("%s/anaDiJet.root",anaoutdir.Data()),"RECREATE");
 
-  /*
   // ============== pdf comparisons ===============
+  AnaFrag mcJDPhi("mcj2","JDPhi",mcj2t3,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
+  /*
   // check dijet
   cout << " --- Check Jet Distributions --- " << endl;
   cout << " Evt Sel: " << mcAna.Evt << endl;

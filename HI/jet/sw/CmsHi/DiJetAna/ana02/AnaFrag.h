@@ -1,88 +1,69 @@
+#include <iostream>
 #include "TTree.h"
 #include "TH1D.h"
 #include "TString.h"
+#include "TCut.h"
 
 class AnaFrag
 {
   public:
-    AnaFrag(TString src, TString t,TTree *tree,TString djCut,TString djTrkCut, TString var, TString dRSig, TString dRBkg);
-    AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TString dRSig, TString dRBkg);
+    AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TCut dRSig, TCut dRBkg,int nx=20,double min=0,double max=7);
 
     TString tag;
     TTree * trDj;
-    TH1D * hXiRaw;
-    TH1D * hXiBkg;
-    TH1D * hXiSig;
-
-    int numJets;
-    int nbin;
-    double ximin;
-    double ximax;
-    double ymin;
-    double ymax;
+    TH1D * hRaw;
+    TH1D * hBkg;
+    TH1D * hSig;
 
     TString xtitle;
-    TString ytitle;
+
+    int numDJ;
+    int nbin;
+    double xmin;
+    double xmax;
 };
 
-AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TString djCut,TString djTrkCut, TString var, TString dRSig, TString dRBkg) :
-  tag(t),
-  nbin(20),
-  ximin(0),
-  ximax(7),
-  ymin(0.001),
-  ymax(200),
-  xtitle("#xi=ln(E_{T}^{Jet}/p_{T}^{trk})"),
-  ytitle("#frac{1}{N_{jet}} #frac{dN}{d#xi}")
+AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TString var, TCut dRSig, TCut dRBkg, int nx,double min,double max) :
+  tag(src),
+  xtitle(t),
+  numDJ(-1),
+  nbin(nx),
+  xmin(min),
+  xmax(max)
 {
   trDj = tree;
-  tag=tag+"_"+src;
-  hXiRaw = new TH1D(Form("hXiRaw_%s",tag.Data()),(";"+xtitle+";"+ytitle),nbin,ximin,ximax);
-  hXiBkg = new TH1D(Form("hXiBkg_%s",tag.Data()),(";"+xtitle+";"+ytitle),nbin,ximin,ximax);
-  hXiSig = new TH1D(Form("hXiSig_%s",tag.Data()),(";"+xtitle+";"+ytitle),nbin,ximin,ximax);
+  tag+=t;
 
-  hXiBkg->SetLineColor(kBlue);
-  hXiBkg->SetMarkerColor(kBlue);
-  // 0 for data, 1 for mc
-  if (src.Contains("data")) {
-    hXiBkg->SetMarkerStyle(kOpenCircle);
+  // Normalization
+  numDJ = trDj->Draw("nljet",djCut,"goff");
+  std::cout << tag << ": number of selected dijets: " << numDJ << std::endl;
+
+  // Plot Histograms
+  if (TString(dRBkg).Length()) {
+    hRaw = new TH1D(Form("hRaw_%s",tag.Data()),(";"+xtitle+";"),nbin,xmin,xmax);
+    hBkg = new TH1D(Form("hBkg_%s",tag.Data()),(";"+xtitle+";"),nbin,xmin,xmax);
+    hSig = new TH1D(Form("hSig_%s",tag.Data()),(";"+xtitle+";"),nbin,xmin,xmax);
+
+    TCut SigTrkCut = djCut && trkCut && dRSig;
+    TCut BkgTrkCut = djCut && trkCut && dRBkg;
+
+    std::cout << "Sig Trk Cut: " << TString(SigTrkCut) << std::endl;
+    std::cout << "Bkg Trk Cut: " << TString(BkgTrkCut) << std::endl;
+    trDj->Draw(Form("%s>>hRaw_%s",var.Data(),tag.Data()),SigTrkCut);
+    trDj->Draw(Form("%s>>hBkg_%s",var.Data(),tag.Data()),BkgTrkCut);
+  } else {
+    hRaw = new TH1D(Form("h%s",tag.Data()),(";"+xtitle+";"),nbin,xmin,xmax);
+    if (TString(trkCut).Length()) {
+      trDj->Draw(Form("%s>>h%s",var.Data(),tag.Data()),djCut&&trkCut);
+    } else {
+      trDj->Draw(Form("%s>>h%s",var.Data(),tag.Data()),djCut);
+    }
   }
-  if (src.Contains("mc")) {
-    hXiRaw->SetLineColor(kGreen-2);
-    hXiRaw->SetMarkerColor(kGreen-2);
-    hXiSig->SetLineColor(kBlack);
-    hXiSig->SetMarkerColor(kBlack);
-    hXiBkg->SetLineColor(kBlue);
 
-    hXiRaw->SetMarkerStyle(kOpenSquare);
-    hXiBkg->SetMarkerStyle(0);
-    hXiSig->SetMarkerStyle(kFullCircle);
-
-    hXiBkg->SetLineStyle(2);
+  // Calc
+  hRaw->Scale(1./numDJ,"width");
+  if (TString(dRBkg).Length()) {
+    hBkg->Scale(1./numDJ,"width");
+    hSig->Add(hRaw,hBkg,1,-1);
   }
-
-  TString SigTrkCut = djTrkCut + Form("&&(%s)",dRSig.Data());
-  TString BkgTrkCut = djTrkCut + Form("&&(%s)",dRBkg.Data());
-
-  numJets = trDj->Draw("nljet",djCut);
-  cout << tag << ": number of jets for FF: " << numJets << endl;
-
-  cout << "Sig Trk Cut: " << SigTrkCut << endl;
-  cout << "Bkg Trk Cut: " << BkgTrkCut << endl;
-  trDj->Draw(Form("%s>>hXiRaw_%s",var.Data(),tag.Data()),SigTrkCut);
-  trDj->Draw(Form("%s>>hXiBkg_%s",var.Data(),tag.Data()),BkgTrkCut);
-  hXiRaw->Scale(1./numJets,"width");
-  hXiBkg->Scale(1./numJets,"width");
-  hXiSig->Add(hXiRaw,hXiBkg,1,-1);
-
-  hXiRaw->SetMinimum(ymin);
-  hXiRaw->SetMaximum(ymax);
-  hXiBkg->SetMinimum(ymin);
-  hXiBkg->SetMinimum(ymin);
-  hXiSig->SetMaximum(ymax);
-  hXiSig->SetMaximum(ymax);
-}
-AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TString dRSig, TString dRBkg)
-{
-  AnaFrag(src,t,tree,TString(djCut),TString(djTrkCut),var,dRSig,dRBkg);
 }
