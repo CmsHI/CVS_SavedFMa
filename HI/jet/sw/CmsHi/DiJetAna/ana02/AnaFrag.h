@@ -49,14 +49,14 @@ AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TStr
 
     std::cout << "Sig Trk Cut: " << TString(SigTrkCut) << std::endl;
     std::cout << "Bkg Trk Cut: " << TString(BkgTrkCut) << std::endl;
-    trDj->Draw(Form("%s>>hRaw_%s",var.Data(),tag.Data()),SigTrkCut);
-    trDj->Draw(Form("%s>>hBkg_%s",var.Data(),tag.Data()),BkgTrkCut);
+    trDj->Draw(Form("%s>>hRaw_%s",var.Data(),tag.Data()),SigTrkCut,"goff");
+    trDj->Draw(Form("%s>>hBkg_%s",var.Data(),tag.Data()),BkgTrkCut,"goff");
   } else {
     hRaw = new TH1D(Form("h%s",tag.Data()),(";"+xtitle+";"),nbin,xmin,xmax);
     if (TString(trkCut).Length()) {
-      trDj->Draw(Form("%s>>h%s",var.Data(),tag.Data()),djCut&&trkCut);
+      trDj->Draw(Form("%s>>h%s",var.Data(),tag.Data()),djCut&&trkCut,"goff");
     } else {
-      trDj->Draw(Form("%s>>h%s",var.Data(),tag.Data()),djCut);
+      trDj->Draw(Form("%s>>h%s",var.Data(),tag.Data()),djCut,"goff");
     }
   }
 

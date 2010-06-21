@@ -36,7 +36,7 @@ void anaDiJet(int doMC=1,
   inFile0->ls();
 
   // Define dijet selection
-  selectionCut mcAna(AnaName,doMC,1,120,170,80);
+  selectionCut mcAna(AnaName,doMC,1,120,170,90);
   selectionCut mcAnaLoose(AnaName,doMC,1,50,200,50);
 
   TTree *mcj2t3, *mcj2t3peri, *mcj2t0, *mcj1t0;
@@ -45,55 +45,43 @@ void anaDiJet(int doMC=1,
   inFile0->GetObject("dijetAna_mc_genjet_genp/djTree",mcj1t0);
   aliases_dijet(mcj1t0);
 
-  cout << endl << "====== Ana Selection: " << mcAna.AnaTag << " ======" << endl;
-  cout << "DJ selection: " << TString(mcAna.DJ["Ana"]) << endl;
+  TString djSelTag("Ana");
+  TString trkSelTag("Ana");
+  cout << endl << "====== DJ Selection: " << djSelTag << " ======" << endl;
+  cout << "DJ selection: " << TString(mcAna.DJ[djSelTag]) << endl;
   cout << "dijetAna_mc/mcj2t3 # entries: " << mcj2t3->GetEntries() << endl;
-  cout << "# DJ events passed: " << mcj2t3->GetEntries(mcAna.DJ["Ana"]) << endl;
+  cout << "# DJ events passed: " << mcj2t3->GetEntries(mcAna.DJ[djSelTag]) << endl;
   cout << "dijetAna_mc/mcj1t0 # entries: " << mcj1t0->GetEntries() << endl;
-  cout << "# DJ events passed: " << mcj1t0->GetEntries(mcAna.DJ["Ana"]) << endl;
+  cout << "# DJ events passed: " << mcj1t0->GetEntries(mcAna.DJ[djSelTag]) << endl;
 
   // Define Output
   cout << "======= Output Dir: ========" << endl;
   TString anaoutdir = Form("plots/%s/%s",AnaName.Data(),mcAna.AnaTag.Data());
   cout << "Output dir: " << anaoutdir << endl;
   gSystem->mkdir(anaoutdir.Data(),kTRUE);
-  CPlot::sOutDir = anaoutdir;
+  CPlot::sOutDir = anaoutdir+"/dj";
   // Save output
   TFile * outf = new TFile(Form("%s/anaDiJet.root",anaoutdir.Data()),"RECREATE");
 
   // ============== pdf comparisons ===============
-  AnaFrag mcJDPhi("mcj2","JDPhi",mcj2t3,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
-  /*
-  // check dijet
-  cout << " --- Check Jet Distributions --- " << endl;
-  cout << " Evt Sel: " << mcAna.Evt << endl;
-  cout << " DJ Sel: " << TString(mcAna.DJ) << endl;
-  TCanvas *ccomp2 = new TCanvas("ccomp2","",500,500);
-  compareHist comp2(mcj2t3,mcj1t0,"jdphi","dPhi",mcAna.DJ["Ana"],mcAna.DJ["Ana"],0,3.14,30);
-  comp2.Normalize(1);
-  comp2.SetHistName1(title1);
-  comp2.SetHistName2(title2);
-  comp2.SetXTitle("leading dijet d #phi");
-  comp2.SetYTitle("Arbitrary normalization");
-  comp2.SetLegend(0.23,0.81,0.52,0.91);
-  comp2.SetLegendHeader(header);
-  comp2.SetMaximum(7);
-  comp2.Draw2("E");
-  ccomp2->Print(Form("%s/dj/%s_dPhi.gif",anaoutdir.Data(),mcAna.Tag.Data()) );
+  AnaFrag mcj2JDPhi("mcj2","JDPhi",mcj2t3,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
+  AnaFrag mcj1JDPhi("mcj1","JDPhi",mcj1t0,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
 
-  TCanvas *ccomp3 = new TCanvas("ccomp3","",500,500);
-  compareHist comp3(mcj2t3,mcj1t0,"2*(nljet-aljet)/(nljet+aljet)","Balance",mcAna.DJ["Ana"],mcAna.DJ["Ana"],0,1.2,30);
-  comp3.Normalize(1);
-  comp3.SetHistName1(title1);
-  comp3.SetHistName2(title2);
-  comp3.SetXTitle("(p_{T}^{j1}-p_{T}^{j2})/((p_{T}^{j1}+p_{T}^{j2})/2)");
-  comp3.SetYTitle("Arbitrary normalization");
-  comp3.SetLegend(0.45,0.80,0.75,0.9);
-  comp3.SetLegendHeader(header);
-  comp3.SetMaximum(8);
-  comp3.Draw2("E");
-  ccomp3->Print(Form("%s/dj/%s_Balance.gif",anaoutdir.Data(),mcAna.Tag.Data()));
-  */
+  AnaFrag mcj2Balance("mcj2","Balance",mcj2t3,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
+  AnaFrag mcj1Balance("mcj1","Balance",mcj1t0,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
+
+  TCanvas * cCompJDPhi = new TCanvas("cCompJDPhi","cCompJDPhi",500,500);
+  CPlot cpCompJDPhi("CompJDPhi","CompJDPhi","Leading Di-Jet d #phi","pdf");
+  cpCompJDPhi.AddHist1D(mcj1JDPhi.hRaw,"GenJet","Ehist",kRed,0);
+  cpCompJDPhi.AddHist1D(mcj2JDPhi.hRaw,"CaloJet","E",kBlack);
+  cpCompJDPhi.Draw(cCompJDPhi,true);
+
+  TCanvas * cCompBalance = new TCanvas("cCompBalance","cCompBalance",500,500);
+  CPlot cpCompBalance("CompBalance","CompBalance","(p_{T}^{j1}-p_{T}^{j2})/((p_{T}^{j1}+p_{T}^{j2})/2)","pdf");
+  cpCompBalance.SetYRange(0,7.5);
+  cpCompBalance.AddHist1D(mcj1Balance.hRaw,"GenJet","Ehist",kRed,0);
+  cpCompBalance.AddHist1D(mcj2Balance.hRaw,"CaloJet","E",kBlack);
+  cpCompBalance.Draw(cCompBalance,true);
 
   // Dijet Scales
   /*
