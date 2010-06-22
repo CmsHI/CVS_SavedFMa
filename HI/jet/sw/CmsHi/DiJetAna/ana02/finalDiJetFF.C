@@ -39,7 +39,44 @@ void finalDiJetFF(int doMC=1,
   cout << "Output dir: " << anaoutdir << endl;
   CPlot::sOutDir = anaoutdir+"/final";
   // Save output
-  TFile * outf = new TFile(Form("%s/finalDiJetTrk.root",anaoutdir.Data()),"RECREATE");
+  TFile * outf = new TFile(Form("%s/finalDiJetFF.root",anaoutdir.Data()),"RECREATE");
+
+  // === Get Histograms ===
+  HisTGroup<TH1D> hgMcGenTruthSigXi("hgMcGenTruthSigXi");
+  hgMcGenTruthSigXi.Add(inFile0,"hSig_mcGenTruthNrXi","Nr");
+  hgMcGenTruthSigXi.Add(inFile0,"hSig_mcGenTruthAwXi","Aw");
+  hgMcGenTruthSigXi.Average();
+
+  HisTGroup<TH1D> hgMcGenSigXi("hgMcGenSigXi");
+  hgMcGenSigXi.Add(inFile0,"hSig_mcGenNrXi","Nr");
+  hgMcGenSigXi.Add(inFile0,"hSig_mcGenAwXi","Aw");
+  hgMcGenSigXi.Average();
+
+  HisTGroup<TH1D> hgMcj2t0SigXi("hgMcj2t0SigXi");
+  hgMcj2t0SigXi.Add(inFile0,"hSig_mcj2t0NrXi","Nr");
+  hgMcj2t0SigXi.Add(inFile0,"hSig_mcj2t0AwXi","Aw");
+  hgMcj2t0SigXi.Average();
+
+  HisTGroup<TH1D> hgMcj2t0SelRefSigXi("hgMcj2t0SelRefSigXi");
+  hgMcj2t0SelRefSigXi.Add(inFile0,"hSig_mcj2t0SelRefNrXi","Nr");
+  hgMcj2t0SelRefSigXi.Add(inFile0,"hSig_mcj2t0SelRefAwXi","Aw");
+  hgMcj2t0SelRefSigXi.Average();
+
+  TH1D * hFrame = (TH1D*)hgMcGenTruthSigXi.GetH("Nr")->Clone("hFrame");
+  hFrame->Scale(0);
+
+  // -- plot --
+  TCanvas * cT0FF = new TCanvas("cT0FF","cT0FF",500,500);
+  CPlot cpT0FF("T0FF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  cpT0FF.SetYRange(0,6);
+  cpT0FF.AddHist1D(hFrame,"Centrality: 0-30\%","",0,0);
+  cpT0FF.AddHist1D(hFrame,"120GeV<p_{T}^{jet1}<170GeV","",0,0);
+  cpT0FF.AddHist1D(hgMcGenTruthSigXi.R("Ave"),"Signal: genjet1,2 + gentrk","histE",kRed,0);
+  cpT0FF.AddHist1D(hgMcGenSigXi.R("Ave"),"HI: genjet1,2 + gentrk","E",kRed+2,kOpenSquare);
+  cpT0FF.AddHist1D(hgMcj2t0SigXi.R("Ave"),"HI: calojet1,2 + gentrk","E",kBlue,kFullCircle);
+  cpT0FF.AddHist1D(hgMcj2t0SelRefSigXi.R("Ave"),"HI: calojet1,2 (genJES Sel)+ gentrk","E",kGreen-2,kOpenStar);
+  cpT0FF.SetLegend(0.194,0.64,0.52,0.94);
+  cpT0FF.Draw(cT0FF,true);
 
   // All done, save and exit
   outf->Write();
