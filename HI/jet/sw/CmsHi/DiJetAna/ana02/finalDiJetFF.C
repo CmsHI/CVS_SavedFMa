@@ -72,16 +72,12 @@ void finalDiJetFF(int doMC=1,
   TH1D * hFrame = (TH1D*)hgMcGenTruthSigXi.GetH("Nr")->Clone("hFrame");
   hFrame->Scale(0);
 
-  // FF comparison
+  // === FF comparison ===
   HisTGroup<TH1D> hgCompSigXi("hgCompSigXi");
   hgCompSigXi.Add(hgMcRecoSigXi.R("Ave"),"j2t3");
   hgCompSigXi.Add(hgMcj2t0SigXi.R("Ave"),"j2t1");
   hgCompSigXi.Add(hgMcRecoSigXi.R("Ave"),"j2t3Corr",1./0.7);
   hgCompSigXi.Divide("j2t3","j2t1");
-
-  // ratio
-  TH1D * hRecoDivGen = (TH1D*)hgMcRecoSigXi.R("Ave")->Clone("hRecoDivGen");
-  hRecoDivGen->Divide(hgMcj2t0SigXi.R("Ave"));
 
   TCanvas * cRecoDivGen = new TCanvas("cRecoDivGen","cRecoDivGen",500,500);
   CPlot cpRecoDivGen("RecoDivGen","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","FF_{RecoTrk}/FF_{GenTrk}");
@@ -92,7 +88,7 @@ void finalDiJetFF(int doMC=1,
   cpRecoDivGen.SetLegend(0.23,0.18,0.55,0.40);
   cpRecoDivGen.Draw(cRecoDivGen,true);
 
-  // -- plot --
+  // === FF Measurement Plots ===
   TCanvas * cT3FF = new TCanvas("cT3FF","cT3FF",500,500);
   CPlot cpT3FF("T3FF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
   cpT3FF.SetYRange(0,6);
@@ -101,7 +97,7 @@ void finalDiJetFF(int doMC=1,
   cpT3FF.AddHist1D(hgMcGenTruthSigXi.R("Ave"),"Signal: genjet1,2 + gentrk","histE",kRed,0);
   cpT3FF.AddHist1D(hgMcj2t0SigXi.R("Ave"),"HI: calojet1,2 + gentrk","E",kBlue,kFullCircle);
   cpT3FF.AddHist1D(hgMcRecoSigXi.R("Ave"),"HI: calojet1,2 + recotrk","E",kBlack,kFullCircle);
-  cpT3FF.AddHist1D(hgCompSigXi.R("j2t3Divj2t1"),"HI: (calojet1,2 + recotrk)/0.7","E",kBlue+2,kOpenSquare);
+  cpT3FF.AddHist1D(hgCompSigXi.H("j2t3Corr"),"HI: (calojet1,2 + recotrk)/0.7","E",kBlue+2,kOpenSquare);
   cpT3FF.SetLegend(0.194,0.64,0.52,0.94);
   cpT3FF.Draw(cT3FF,true);
 
