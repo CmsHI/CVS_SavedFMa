@@ -72,6 +72,13 @@ void finalDiJetFF(int doMC=1,
   TH1D * hFrame = (TH1D*)hgMcGenTruthSigXi.GetH("Nr")->Clone("hFrame");
   hFrame->Scale(0);
 
+  // FF comparison
+  HisTGroup<TH1D> hgCompSigXi("hgCompSigXi");
+  hgCompSigXi.Add(hgMcRecoSigXi.R("Ave"),"j2t3");
+  hgCompSigXi.Add(hgMcj2t0SigXi.R("Ave"),"j2t1");
+  hgCompSigXi.Add(hgMcRecoSigXi.R("Ave"),"j2t3Corr",1./0.7);
+  hgCompSigXi.Divide("j2t3","j2t1");
+
   // ratio
   TH1D * hRecoDivGen = (TH1D*)hgMcRecoSigXi.R("Ave")->Clone("hRecoDivGen");
   hRecoDivGen->Divide(hgMcj2t0SigXi.R("Ave"));
@@ -81,18 +88,9 @@ void finalDiJetFF(int doMC=1,
   cpRecoDivGen.SetYRange(0,1.2);
   cpRecoDivGen.AddHist1D(hFrame,"Centrality: 0-30\%","",0,0);
   cpRecoDivGen.AddHist1D(hFrame,"120GeV<p_{T}^{jet1}<170GeV","",0,0);
-  cpRecoDivGen.AddHist1D(hRecoDivGen,"HI: CaloJet FF(Raw-Bkg) Ratio","E",kBlue,kFullCircle);
+  cpRecoDivGen.AddHist1D(hgCompSigXi.R("j2t3Divj2t1"),"HI: CaloJet FF(Raw-Bkg) Ratio","E",kBlue,kFullCircle);
   cpRecoDivGen.SetLegend(0.23,0.18,0.55,0.40);
   cpRecoDivGen.Draw(cRecoDivGen,true);
-
-  // compare
-  HisTGroup<TH1D> hgCompSigXi("hgCompSigXi");
-  hgCompSigXi.Add(hgMcRecoSigXi.R("Ave"),"j2t3");
-  hgCompSigXi.Add(hgMcj2t0SigXi.R("Ave"),"j2t1");
-  hgCompSigXi.Add(hgMcRecoSigXi.R("Ave"),"j2t3sc",1./0.6);
-  hgCompSigXi.Average();
-  TH1D * hRecoSc = (TH1D*)hgMcRecoSigXi.R("Ave")->Clone("hRecoSc");
-  hRecoSc->Scale(1./0.7);
 
   // -- plot --
   TCanvas * cT3FF = new TCanvas("cT3FF","cT3FF",500,500);
@@ -103,7 +101,7 @@ void finalDiJetFF(int doMC=1,
   cpT3FF.AddHist1D(hgMcGenTruthSigXi.R("Ave"),"Signal: genjet1,2 + gentrk","histE",kRed,0);
   cpT3FF.AddHist1D(hgMcj2t0SigXi.R("Ave"),"HI: calojet1,2 + gentrk","E",kBlue,kFullCircle);
   cpT3FF.AddHist1D(hgMcRecoSigXi.R("Ave"),"HI: calojet1,2 + recotrk","E",kBlack,kFullCircle);
-  //cpT3FF.AddHist1D(hRecoSc,"HI: (calojet1,2 + recotrk)/0.7","E",kBlue+2,kOpenSquare);
+  cpT3FF.AddHist1D(hgCompSigXi.R("j2t3Divj2t1"),"HI: (calojet1,2 + recotrk)/0.7","E",kBlue+2,kOpenSquare);
   cpT3FF.SetLegend(0.194,0.64,0.52,0.94);
   cpT3FF.Draw(cT3FF,true);
 
