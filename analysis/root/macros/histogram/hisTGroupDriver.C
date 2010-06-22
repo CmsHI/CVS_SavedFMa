@@ -45,6 +45,7 @@ void hisTGroupDriver()
   hgDj2.H("NrAw")->Draw("colz");
 
   // Test get from file
+  /*
   HisTGroup<TH1D> hgSpec("Spec");
   hgSpec.Add(inFile0,"hJet0Pt","J0Pt");
   hgSpec.Add(inFile0,"hJet0Pt","PSJ0Pt",0.5);
@@ -52,6 +53,7 @@ void hisTGroupDriver()
   TCanvas * c6 = new TCanvas("c6","c6",500,500);
   hgSpec.H("J0Pt")->Draw("E");
   hgSpec.H("PSJ0Pt")->Draw("Esame");
+  */
 
   // Test Sum
   TH1D * h2 = new TH1D("h2","h2",10,0,10);
@@ -93,11 +95,20 @@ void hisTGroupDriver()
   TCanvas * c9 = new TCanvas("c9","c9",500,500);
   hgTestSum2D.R("Sum")->Draw("colz");
 
+  // Test Division
+  HisTGroup<TH1D> hgTestDiv("TestDiv");
+  hgTestDiv.Add(h1,"h1");
+  hgTestDiv.Add(h2,"h2");
+  hgTestDiv.Divide("h1","h2");
+  TCanvas * c10 = new TCanvas("c10","c10",500,500);
+  hgTestDiv.H("h1")->Draw("E");
+  hgTestDiv.H("h2")->Draw("histsame");
+
   // Test Save
   hgDj0.Save();
   hgDj1.Save();
   hgDj2.Save();
-  hgSpec.Save();
+  //hgSpec.Save();
   hgTestAve.Save();
   hgTestSum2D.Save();
 }
