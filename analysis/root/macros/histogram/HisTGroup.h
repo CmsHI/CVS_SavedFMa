@@ -26,10 +26,22 @@ class HisTGroup
     TData * Sum();
 
     // Accessors
-    TData * H(TString iname) const { return hm_.find(iname)->second; }
-    TData * R(TString iname) const { return hr_.find(iname)->second; }
-    const TData * GetH(TString iname) const { return hm_.find(iname)->second; }
-    const TData * GetR(TString iname) const { return hr_.find(iname)->second; }
+    TData * H(TString iname) const {
+      assert(hm_.find(iname)->second);
+      return hm_.find(iname)->second;
+    }
+    TData * R(TString iname) const {
+      assert(hr_.find(iname)->second);
+      return hr_.find(iname)->second;
+    }
+    const TData * GetH(TString iname) const {
+      assert(hm_.find(iname)->second);
+      return hm_.find(iname)->second;
+    }
+    const TData * GetR(TString iname) const {
+      assert(hr_.find(iname)->second);
+      return hr_.find(iname)->second;
+    }
 
     // data
     TString name_;
