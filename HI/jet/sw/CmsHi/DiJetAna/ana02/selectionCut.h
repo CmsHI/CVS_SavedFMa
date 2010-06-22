@@ -109,7 +109,8 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
       nrJetPtMin,nrJetPtMax,awJetPtMin,jetEtaMax,jetEtaMax,djDPhiMin);
 
   // Track Selections
-  Trk["Ana"] = ("ppt>0.3 && ppt<nljet");
+  Trk["Ana"] = ("ppt>0.3&&ppt<nljet");
+  Trk["Tight"] = ("ppt>1.&&ppt<nljet");
 
   CutWOVtxCut = TCut(Evt);
   Cut = TCut(Evt);
