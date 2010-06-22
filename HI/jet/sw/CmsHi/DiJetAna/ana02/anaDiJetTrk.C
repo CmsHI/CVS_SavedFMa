@@ -65,7 +65,7 @@ void anaDiJetTrk(int doMC=1,
   gSystem->mkdir(anaoutdir.Data(),kTRUE);
   CPlot::sOutDir = anaoutdir+"/djtrk";
   // Save output
-  TFile * outf = new TFile(Form("%s/anaDiJet.root",anaoutdir.Data()),"RECREATE");
+  TFile * outf = new TFile(Form("%s/anaDiJetTrk.root",anaoutdir.Data()),"RECREATE");
 
   // ============== pdf comparisons ===============
   AnaFrag mcj2t0JTrkDPhi("mcj2t0","JTrkDPhi",mcj2t0,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
