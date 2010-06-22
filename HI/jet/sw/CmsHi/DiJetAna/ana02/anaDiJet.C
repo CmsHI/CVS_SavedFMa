@@ -36,7 +36,7 @@ void anaDiJet(int doMC=1,
   inFile0->ls();
 
   // Define dijet selection
-  selectionCut mcAna(AnaName,doMC,1,120,170,90);
+  selectionCut mcAna(AnaName,doMC,1,110,170,90);
   selectionCut mcAnaLoose(AnaName,doMC,1,50,200,50);
 
   TTree *mcj2t3, *mcj2t3peri, *mcj2t0, *mcj1t0;
@@ -70,6 +70,7 @@ void anaDiJet(int doMC=1,
   AnaFrag mcj2Balance("mcj2","Balance",mcj2t3,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
   AnaFrag mcj1Balance("mcj1","Balance",mcj1t0,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
 
+  // -- plot --
   TCanvas * cCompJDPhi = new TCanvas("cCompJDPhi","cCompJDPhi",500,500);
   CPlot cpCompJDPhi("CompJDPhi","CompJDPhi","Leading Di-Jet d #phi","pdf");
   cpCompJDPhi.AddHist1D(mcj1JDPhi.hRaw,"GenJet","Ehist",kRed,0);
@@ -83,42 +84,29 @@ void anaDiJet(int doMC=1,
   cpCompBalance.AddHist1D(mcj2Balance.hRaw,"CaloJet","E",kBlack);
   cpCompBalance.Draw(cCompBalance,true);
 
-  // Dijet Scales
-  /*
-  TH2F * hJEtNrAwCalo = new TH2F("hJEtNrAwCalo","",50,0,200,50,0,200);
-  TH2F * hJEtNrAwGenMatCalo = (TH2F*)hJEtNrAwCalo->Clone("hJEtNrAwGenMatCalo");
-  TH2F * hJEtNrAwGen = (TH2F*)hJEtNrAwCalo->Clone("hJEtNrAwGen");
+  // ============== Dijet Scales ===============
+  HisTGroup<TH2F> hgDJEt("DJEt",50,0,200,50,0,200);
+  hgDJEt.Add2D("J2");
+  hgDJEt.Add2D("J2Mat");
+  hgDJEt.Add2D("J2SelRef");
+  hgDJEt.Add2D("J1");
 
-  mcj2t3->Draw("aljet:nljet>>hJEtNrAwCalo",mcAnaLoose.DJ["Ana"],"goff");
-  mcj1t0->Draw("aljet:nljet>>hJEtNrAwGen",mcAnaLoose.DJ["Ana"],"goff");
+  mcj2t3->Draw(Form("aljet:nljet>>%s",hgDJEt.GetH("J2")->GetName()),mcAnaLoose.DJ["Ana"],"goff");
+  mcj2t3->Draw(Form("aljet:nljet>>%s",hgDJEt.GetH("J2Mat")->GetName()),mcAnaLoose.DJ["AnaMatRef"],"goff");
+  mcj2t3->Draw(Form("aljet:nljet>>%s",hgDJEt.GetH("J2SelRef")->GetName()),mcAnaLoose.DJ["Ref"],"goff");
+  mcj1t0->Draw(Form("aljet:nljet>>%s",hgDJEt.GetH("J1")->GetName()),mcAnaLoose.DJ["Ana"],"goff");
 
-  // === Final Plots ===
-  TCanvas * cJEtNrAwCalo = new TCanvas("cJEtNrAwCalo","cJEtNrAwCalo",500,500);
-  CPlot cpJEtNrAwCalo("JEtNrAwCalo","FF","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
-  cpJEtNrAwCalo.SetXRange(0,200);
-  cpJEtNrAwCalo.SetYRange(0,200);
-  cpJEtNrAwCalo.AddHist2D(hJEtNrAwCalo,"colz");
-  cpJEtNrAwCalo.Draw(cJEtNrAwCalo,true);
-
-  TCanvas * cJEtNrAwGenMatCalo = new TCanvas("cJEtNrAwGenMatCalo","cJEtNrAwGenMatCalo",500,500);
-  mcj2t3->Draw("alrjet:nlrjet",mcMatAnaLoose.DJ,"goff");
-  */
-  /*
-  CPlot cpJEtNrAwGenMatCalo("JEtNrAwGenMatCalo","FF","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
-  cpJEtNrAwGenMatCalo.SetXRange(0,200);
-  cpJEtNrAwGenMatCalo.SetYRange(0,200);
-  cpJEtNrAwGenMatCalo.AddHist2D(hJEtNrAwGenMatCalo,"colz");
-  cpJEtNrAwGenMatCalo.Draw(cJEtNrAwGenMatCalo,true);
-  */
-
-  /*
-  TCanvas * cJEtNrAwGen = new TCanvas("cJEtNrAwGen","cJEtNrAwGen",500,500);
-  CPlot cpJEtNrAwGen("JEtNrAwGen","FF","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
-  cpJEtNrAwGen.SetXRange(0,200);
-  cpJEtNrAwGen.SetYRange(0,200);
-  cpJEtNrAwGen.AddHist2D(hJEtNrAwGen,"colz");
-  cpJEtNrAwGen.Draw(cJEtNrAwGen,true);
-  */
+  // -- plot --
+  TCanvas * cDJ2Et = new TCanvas("cDJ2Et","cDJ2Et",1000,500);
+  cDJ2Et->Divide(2,1);
+  cDJ2Et->cd(1);
+  CPlot cpDJ1Et("DJ1Et","DJ","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
+  cpDJ1Et.AddHist2D(hgDJEt.H("J1"),"colz");
+  cpDJ1Et.Draw((TPad*)cDJ2Et->GetPad(1),false);
+  cDJ2Et->cd(2);
+  CPlot cpDJ2Et("DJ2Et","DJ","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
+  cpDJ2Et.AddHist2D(hgDJEt.H("J2"),"colz");
+  cpDJ2Et.Draw((TPad*)cDJ2Et->GetPad(2),true);
 
   // All done, save and exit
   outf->Write();
