@@ -43,28 +43,28 @@ void finalDiJetFF(int doMC=1,
 
   // === Get Histograms ===
   //  -- t0 --
-  HisTGroup<TH1D> hgMcGenTruthSigXi("hgMcGenTruthSigXi");
+  HisTGroup<TH1D> hgMcGenTruthSigXi("McGenTruthSigXi");
   hgMcGenTruthSigXi.Add(inFile0,"hSig_mcGenTruthNrXi","Nr");
   hgMcGenTruthSigXi.Add(inFile0,"hSig_mcGenTruthAwXi","Aw");
   hgMcGenTruthSigXi.Average();
 
-  HisTGroup<TH1D> hgMcGenSigXi("hgMcGenSigXi");
+  HisTGroup<TH1D> hgMcGenSigXi("McGenSigXi");
   hgMcGenSigXi.Add(inFile0,"hSig_mcGenNrXi","Nr");
   hgMcGenSigXi.Add(inFile0,"hSig_mcGenAwXi","Aw");
   hgMcGenSigXi.Average();
 
-  HisTGroup<TH1D> hgMcj2t0SigXi("hgMcj2t0SigXi");
+  HisTGroup<TH1D> hgMcj2t0SigXi("Mcj2t0SigXi");
   hgMcj2t0SigXi.Add(inFile0,"hSig_mcj2t0NrXi","Nr");
   hgMcj2t0SigXi.Add(inFile0,"hSig_mcj2t0AwXi","Aw");
   hgMcj2t0SigXi.Average();
 
-  HisTGroup<TH1D> hgMcj2t0SelRefSigXi("hgMcj2t0SelRefSigXi");
+  HisTGroup<TH1D> hgMcj2t0SelRefSigXi("Mcj2t0SelRefSigXi");
   hgMcj2t0SelRefSigXi.Add(inFile0,"hSig_mcj2t0SelRefNrXi","Nr");
   hgMcj2t0SelRefSigXi.Add(inFile0,"hSig_mcj2t0SelRefAwXi","Aw");
   hgMcj2t0SelRefSigXi.Average();
 
   //  -- t3 --
-  HisTGroup<TH1D> hgMcRecoSigXi("hgMcRecoSigXi");
+  HisTGroup<TH1D> hgMcRecoSigXi("McRecoSigXi");
   hgMcRecoSigXi.Add(inFile0,"hSig_mcRecoNrXi","Nr");
   hgMcRecoSigXi.Add(inFile0,"hSig_mcRecoAwXi","Aw");
   hgMcRecoSigXi.Average();
@@ -73,7 +73,7 @@ void finalDiJetFF(int doMC=1,
   hFrame->Scale(0);
 
   // === FF comparison ===
-  HisTGroup<TH1D> hgCompSigXi("hgCompSigXi");
+  HisTGroup<TH1D> hgCompSigXi("CompSigXi");
   hgCompSigXi.Add(hgMcRecoSigXi.R("Ave"),"j2t3");
   hgCompSigXi.Add(hgMcj2t0SigXi.R("Ave"),"j2t1");
   hgCompSigXi.Add(hgMcRecoSigXi.R("Ave"),"j2t3Corr",1./0.7);
