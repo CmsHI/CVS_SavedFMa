@@ -75,16 +75,20 @@ void finalDiJetFF(int doMC=1,
   // === FF comparison ===
   HisTGroup<TH1D> hgCompSigXi("CompSigXi");
   hgCompSigXi.Add(hgMcRecoSigXi.R("Ave"),"j2t3");
-  hgCompSigXi.Add(hgMcj2t0SigXi.R("Ave"),"j2t1");
+  hgCompSigXi.Add(hgMcj2t0SigXi.R("Ave"),"j2t0");
+  hgCompSigXi.Add(hgMcGenSigXi.R("Ave"),"Gen");
+  hgCompSigXi.Add(hgMcj2t0SelRefSigXi.R("Ave"),"j2t0SelRef");
   hgCompSigXi.Add(hgMcRecoSigXi.R("Ave"),"j2t3Corr",1./0.7);
-  hgCompSigXi.Divide("j2t3","j2t1");
+  hgCompSigXi.Divide("j2t3","j2t0");
+  hgCompSigXi.Divide("j2t0","j2t0SelRef");
+  hgCompSigXi.Divide("j2t0SelRef","Gen");
 
   TCanvas * cRecoDivGen = new TCanvas("cRecoDivGen","cRecoDivGen",500,500);
   CPlot cpRecoDivGen("RecoDivGen","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","FF_{RecoTrk}/FF_{GenTrk}");
   cpRecoDivGen.SetYRange(0,1.2);
   cpRecoDivGen.AddHist1D(hFrame,"Centrality: 0-30\%","",0,0);
   cpRecoDivGen.AddHist1D(hFrame,"120GeV<p_{T}^{jet1}<170GeV","",0,0);
-  cpRecoDivGen.AddHist1D(hgCompSigXi.R("j2t3Divj2t1"),"HI: CaloJet FF(Raw-Bkg) Ratio","E",kBlue,kFullCircle);
+  cpRecoDivGen.AddHist1D(hgCompSigXi.R("j2t3Divj2t0"),"HI: CaloJet FF(Raw-Bkg) Ratio","E",kBlue,kFullCircle);
   cpRecoDivGen.SetLegend(0.23,0.18,0.55,0.40);
   cpRecoDivGen.Draw(cRecoDivGen,true);
 
