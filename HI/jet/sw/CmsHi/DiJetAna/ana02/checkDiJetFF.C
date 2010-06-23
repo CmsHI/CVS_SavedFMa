@@ -23,7 +23,7 @@ void checkDiJetFF(int doMC=1,
     TString header="Hydjet2.76TeV+DiJet(80-120GeV)",
     */
     const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
-    TString AnaName = "mcuq120V0",
+    TString AnaName = "mcuq120V2",
     TString header="Hydjet2.76TeV+DiJet(120-170GeV)",
     //
     TString title1="MC Calojet",
@@ -83,10 +83,20 @@ void checkDiJetFF(int doMC=1,
   AnaFrag mcGenMatAw("mcGenMat","AwXi",mcj1t0,mcAna.DJ["AnaMatRef"],mcAna.Trk["Ana"],"log(1/za)","padr<0.5","padrbg<0.5");
   AnaFrag mcj2t0MatNr("mcj2t0Mat","NrXi",mcj2t0,mcAna.DJ["AnaMatRef"],mcAna.Trk["Ana"],"log(1./zn)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcj2t0MatAw("mcj2t0Mat","AwXi",mcj2t0,mcAna.DJ["AnaMatRef"],mcAna.Trk["Ana"],"log(1./za)","padr<0.5","padrbg<0.5");
-  AnaFrag mcj2t0RefSelRefOrderRefNr("mcj2t0RefSelRefOrderRef","NrXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nljet/ppt)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcj2t0RefSelRefOrderRefAw("mcj2t0RefSelRefOrderRef","AwXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(aljet/ppt)","padr<0.5","padrbg<0.5");
-  AnaFrag mcj1t0RefSelRefOrderRefNr("mcj1t0RefSelRefOrderRef","NrXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nljet/ppt)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcj1t0RefSelRefOrderRefAw("mcj1t0RefSelRefOrderRef","AwXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(aljet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj2t0RefSelRefOrderRefNr("mcj2t0RefSelRefOrderRef","NrXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nlrjet/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcj2t0RefSelRefOrderRefAw("mcj2t0RefSelRefOrderRef","AwXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(alrjet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj1t0RefSelRefOrderRefNr("mcj1t0RefSelRefOrderRef","NrXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nlrjet/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcj1t0RefSelRefOrderRefAw("mcj1t0RefSelRefOrderRef","AwXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(alrjet/ppt)","padr<0.5","padrbg<0.5");
+
+  // Check Exlusive Effect of JES in FF calc
+  AnaFrag mcGenRefNr("mcGenRef","NrXi",mcj1t0,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(nlrjet/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcGenRefAw("mcGenRef","AwXi",mcj1t0,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(alrjet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj2t0RefNr("mcj2t0Ref","NrXi",mcj2t0,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(nlrjet/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcj2t0RefAw("mcj2t0Ref","AwXi",mcj2t0,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(alrjet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj2t0SelRefOrderRefNr("mcj2t0SelRefOrderRef","NrXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nljet/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcj2t0SelRefOrderRefAw("mcj2t0SelRefOrderRef","AwXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(aljet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj1t0SelRefOrderRefNr("mcj1t0SelRefOrderRef","NrXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nljet/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcj1t0SelRefOrderRefAw("mcj1t0SelRefOrderRef","AwXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(aljet/ppt)","padr<0.5","padrbg<0.5");
 
   // Reco jet + genp
   AnaFrag mcj2t0Nr("mcj2t0","NrXi",mcj2t0,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(1./zn)","pndr<0.5","pndrbg<0.5");
