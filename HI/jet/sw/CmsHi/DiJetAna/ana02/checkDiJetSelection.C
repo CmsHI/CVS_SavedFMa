@@ -64,6 +64,7 @@ void checkDiJetSelection(int doMC=1,
   TFile * outf = new TFile(Form("%s/checkDiJetSelection.root",anaoutdir.Data()),"RECREATE");
 
   //  ===== Check Reco Match Gen =====
+  cout << endl << "=== First check Gen Matche Reco ===" << endl;
   AnaFrag mcRecoEtNr("mcReco","EtNr",mcj2t3,mcAna.DJ["Ana"],"","nljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
   AnaFrag mcRecoEtAw("mcReco","EtAw",mcj2t3,mcAna.DJ["Ana"],"","aljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
 
@@ -101,6 +102,7 @@ void checkDiJetSelection(int doMC=1,
 
 
   //  ===== Check Gen Match Reco =====
+  cout << endl << "=== Now check Gen Matche Reco ===" << endl;
   AnaFrag mcGenEtNr("mcGen","EtNr",mcj1t0,mcAna.DJ["Ana"],"","nljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
   AnaFrag mcGenEtAw("mcGen","EtAw",mcj1t0,mcAna.DJ["Ana"],"","aljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
 
@@ -139,12 +141,26 @@ void checkDiJetSelection(int doMC=1,
 
   // Now we have checked that the complete matching is fine
   // Let's compare the eta, phi distributions of the completely matched jets
-  /*
-  AnaFrag mcJ1SelRLREtNr("mcJ1SelRLR","EtNr",mcj1t0,mcAna.DJ["RefOrderRef"],"","nrlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
-  AnaFrag mcJ1SelRLREtAw("mcJ1SelRLR","EtAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
-  AnaFrag mcJ2SelRLREtNr("mcJ2SelRLR","EtNr",mcj2t3,mcAna.DJ["RefOrderRef"],"","nrlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
-  AnaFrag mcJ2SelRLREtAw("mcJ2SelRLR","EtAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
-  */
+  cout << endl << "=== Now check completely matched jets' eta, phi ===" << endl;
+  AnaFrag mcRecoEtaNr("mcReco","EtaNr",mcj2t3,mcAna.DJ["Ana"],"","nljeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
+  AnaFrag mcRecoEtaAw("mcReco","EtaAw",mcj2t3,mcAna.DJ["Ana"],"","aljeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
+  AnaFrag mcGenEtaNr("mcGen","EtaNr",mcj1t0,mcAna.DJ["Ana"],"","nljeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
+  AnaFrag mcGenEtaAw("mcGen","EtaAw",mcj1t0,mcAna.DJ["Ana"],"","aljeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
+
+  AnaFrag mcJ1SelRLREtaNr("mcJ1SelRLR","EtaNr",mcj1t0,mcAna.DJ["RefOrderRef"],"","nrlrjeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
+  AnaFrag mcJ1SelRLREtaAw("mcJ1SelRLR","EtaAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arlrjeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
+  AnaFrag mcJ2SelRLREtaNr("mcJ2SelRLR","EtaNr",mcj2t3,mcAna.DJ["RefOrderRef"],"","nrlrjeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
+  AnaFrag mcJ2SelRLREtaAw("mcJ2SelRLR","EtaAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arlrjeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
+
+  AnaFrag mcRecoPhiNr("mcReco","PhiNr",mcj2t3,mcAna.DJ["Ana"],"","nljphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
+  AnaFrag mcRecoPhiAw("mcReco","PhiAw",mcj2t3,mcAna.DJ["Ana"],"","aljphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
+  AnaFrag mcGenPhiNr("mcGen","PhiNr",mcj1t0,mcAna.DJ["Ana"],"","nljphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
+  AnaFrag mcGenPhiAw("mcGen","PhiAw",mcj1t0,mcAna.DJ["Ana"],"","aljphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
+
+  AnaFrag mcJ1SelRLRPhiNr("mcJ1SelRLR","PhiNr",mcj1t0,mcAna.DJ["RefOrderRef"],"","nrlrjphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
+  AnaFrag mcJ1SelRLRPhiAw("mcJ1SelRLR","PhiAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arlrjphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
+  AnaFrag mcJ2SelRLRPhiNr("mcJ2SelRLR","PhiNr",mcj2t3,mcAna.DJ["RefOrderRef"],"","nrlrjphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
+  AnaFrag mcJ2SelRLRPhiAw("mcJ2SelRLR","PhiAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arlrjphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
 
   // All done, save and exit
   outf->Write();
