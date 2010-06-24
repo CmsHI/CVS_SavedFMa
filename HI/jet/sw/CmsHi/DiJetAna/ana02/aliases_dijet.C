@@ -33,6 +33,11 @@ void aliases_dijet(TTree * djTree)
   djTree->SetAlias("nrlrjeta","(nlrjeta*NrRefLead+alrjeta*AwRefLead)");
   djTree->SetAlias("arlrjeta","(alrjeta*NrRefLead+nlrjeta*AwRefLead)");
 
+  djTree->SetAlias("nrljphi","(nljphi*NrRefLead+aljphi*AwRefLead)");
+  djTree->SetAlias("arljphi","(aljphi*NrRefLead+nljphi*AwRefLead)");
+  djTree->SetAlias("nrlrjphi","(nlrjphi*NrRefLead+alrjphi*AwRefLead)");
+  djTree->SetAlias("arlrjphi","(alrjphi*NrRefLead+nlrjphi*AwRefLead)");
+
   djTree->SetAlias("prlndr","(pndr*NrRefLead+padr*AwRefLead)");
   djTree->SetAlias("prlndrbg","(pndrbg*NrRefLead+padrbg*AwRefLead)");
   djTree->SetAlias("prladr","(padr*NrRefLead+pndr*AwRefLead)");
