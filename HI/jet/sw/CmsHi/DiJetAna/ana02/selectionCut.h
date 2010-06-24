@@ -43,7 +43,6 @@ class selectionCut
     int hisJEtBins;
     float hisJEtMin;
     float hisJEtMax;
-    int numJEtBin;
     float nrJEtMin;
     float nrJEtMax;
     float awJEtMin;
@@ -70,7 +69,6 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
   hisJEtBins(50),
   hisJEtMin(0),
   hisJEtMax(200),
-  numJEtBin(20),
   nrJEtMin(NrJetMin),
   nrJEtMax(NrJetMax),
   awJEtMin(AwJetMin),
