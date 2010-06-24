@@ -37,7 +37,7 @@ void checkDiJetSelection(int doMC=1,
 
   // Define dijet selection
   selectionCut mcAna(AnaName,doMC,1,120,170,80);
-  selectionCut mcAnaLoose(AnaName,doMC,1,50,200,50);
+  //selectionCut mcAna(AnaName,doMC,1,50,200,50); // loose
 
   TTree *mcj2t3, *mcj2t3peri, *mcj2t0, *mcj1t0;
   inFile0->GetObject("dijetAna_mc/djTree",mcj2t3);
@@ -63,11 +63,10 @@ void checkDiJetSelection(int doMC=1,
   // Save output
   TFile * outf = new TFile(Form("%s/checkDiJetSelection.root",anaoutdir.Data()),"RECREATE");
 
-  // ============== pdf comparisons ===============
+  //  ===== Check Reco Match Gen =====
   AnaFrag mcRecoEtNr("mcReco","EtNr",mcj2t3,mcAna.DJ["Ana"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
   AnaFrag mcRecoEtAw("mcReco","EtAw",mcj2t3,mcAna.DJ["Ana"],"","aljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
 
-  //  ------- Check Reco Match Gen -------
   AnaFrag mcRecoMatEtNr("mcRecoMat","EtNr",mcj2t3,mcAna.DJ["AnaMatRef"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
   AnaFrag mcRecoMatEtAw("mcRecoMat","EtAw",mcj2t3,mcAna.DJ["AnaMatRef"],"","aljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
   AnaFrag mcJ1SelREtNr("mcJ1SelR","EtNr",mcj1t0,mcAna.DJ["Ref"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
@@ -76,29 +75,65 @@ void checkDiJetSelection(int doMC=1,
   AnaFrag mcJ1SelRLREtAw("mcJ1SelRLR","EtAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arlrjet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
 
   //  -- histograms, all normalized to # of sel calojets --
-  HisTGroup<TH1D> hgMcCompEt("McCompEt");
-  hgMcCompEt.Add(mcRecoEtNr.hRaw,"RecoNr");
-  hgMcCompEt.Add(mcRecoEtAw.hRaw,"RecoAw");
-  hgMcCompEt.Add(mcRecoMatEtNr.hRaw,"RecoMatNr",(Double_t)mcRecoMatEtNr.numDJ/mcRecoEtNr.numDJ);
-  hgMcCompEt.Add(mcRecoMatEtAw.hRaw,"RecoMatAw",(Double_t)mcRecoMatEtNr.numDJ/mcRecoEtNr.numDJ);
-  hgMcCompEt.Add(mcJ1SelREtNr.hRaw,"J1SelRNr",(Double_t)mcJ1SelREtNr.numDJ/mcRecoEtNr.numDJ);
-  hgMcCompEt.Add(mcJ1SelREtAw.hRaw,"J1SelRAw",(Double_t)mcJ1SelREtNr.numDJ/mcRecoEtNr.numDJ);
-  hgMcCompEt.Add(mcJ1SelRLREtNr.hRaw,"J1SelRLRNr",(Double_t)mcJ1SelRLREtNr.numDJ/mcRecoEtNr.numDJ);
-  hgMcCompEt.Add(mcJ1SelRLREtAw.hRaw,"J1SelRLRAw",(Double_t)mcJ1SelRLREtNr.numDJ/mcRecoEtNr.numDJ);
+  HisTGroup<TH1D> hgMcRecoCompEt("McCompEt");
+  hgMcRecoCompEt.Add(mcRecoEtNr.hRaw,"RecoNr");
+  hgMcRecoCompEt.Add(mcRecoEtAw.hRaw,"RecoAw");
+  hgMcRecoCompEt.Add(mcRecoMatEtNr.hRaw,"RecoMatNr",(Double_t)mcRecoMatEtNr.numDJ/mcRecoEtNr.numDJ);
+  hgMcRecoCompEt.Add(mcRecoMatEtAw.hRaw,"RecoMatAw",(Double_t)mcRecoMatEtNr.numDJ/mcRecoEtNr.numDJ);
+  hgMcRecoCompEt.Add(mcJ1SelREtNr.hRaw,"J1SelRNr",(Double_t)mcJ1SelREtNr.numDJ/mcRecoEtNr.numDJ);
+  hgMcRecoCompEt.Add(mcJ1SelREtAw.hRaw,"J1SelRAw",(Double_t)mcJ1SelREtNr.numDJ/mcRecoEtNr.numDJ);
+  hgMcRecoCompEt.Add(mcJ1SelRLREtNr.hRaw,"J1SelRLRNr",(Double_t)mcJ1SelRLREtNr.numDJ/mcRecoEtNr.numDJ);
+  hgMcRecoCompEt.Add(mcJ1SelRLREtAw.hRaw,"J1SelRLRAw",(Double_t)mcJ1SelRLREtNr.numDJ/mcRecoEtNr.numDJ);
 
   // -- final plot --
   TCanvas * cCompRecoMat = new TCanvas("cCompRecoMat","cCompRecoMat",800,800);
   CPlot cpCompRecoMat("CompRecoMat","CompRecoMat","E_{T}^{jet}","pdf");
-  cpCompRecoMat.AddHist1D(hgMcCompEt.H("RecoNr"),"CaloJet Nr","E",kBlack,kFullCircle);
-  cpCompRecoMat.AddHist1D(hgMcCompEt.H("RecoAw"),"CaloJet Aw","E",kGray+2,kFullCircle);
-  cpCompRecoMat.AddHist1D(hgMcCompEt.H("RecoMatNr"),"CaloJet Nr (Matched)","histE",kGreen+3,0);
-  cpCompRecoMat.AddHist1D(hgMcCompEt.H("RecoMatAw"),"CaloJet Aw (Matched)","histE",kGreen-7,0);
-  //cpCompRecoMat.AddHist1D(hgMcCompEt.H("J1SelRNr"),"GenJetRef (SelRef) Nr","E",kMagenta+2,kOpenStar);
-  //cpCompRecoMat.AddHist1D(hgMcCompEt.H("J1SelRAw"),"GenJetRef (SelRef) Aw","E",kMagenta-7,kOpenStar);
-  cpCompRecoMat.AddHist1D(hgMcCompEt.H("J1SelRLRNr"),"GenJetRef (SelRefOrderRef) Nr","E",kOrange+1,kOpenSquare);
-  cpCompRecoMat.AddHist1D(hgMcCompEt.H("J1SelRLRAw"),"GenJetRef (SelRefOrderRef) Aw","E",kOrange-9,kOpenSquare);
-  cpCompRecoMat.SetLegend(0.20,0.66,0.53,0.90);
+  cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("RecoNr"),"CaloJet Nr","E",kBlack,kFullCircle);
+  cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("RecoAw"),"CaloJet Aw","E",kGray+2,kFullCircle);
+  cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("RecoMatNr"),"CaloJet Nr (Matched)","histE",kGreen+3,0);
+  cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("RecoMatAw"),"CaloJet Aw (Matched)","histE",kGreen-7,0);
+  //cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("J1SelRNr"),"GenJetRef (SelRef) Nr","E",kMagenta+2,kOpenStar);
+  //cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("J1SelRAw"),"GenJetRef (SelRef) Aw","E",kMagenta-7,kOpenStar);
+  cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("J1SelRLRNr"),"GenJetRef (SelRefOrderRef) Nr","E",kOrange,kOpenSquare);
+  cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("J1SelRLRAw"),"GenJetRef (SelRefOrderRef) Aw","E",kOrange+8,kOpenSquare);
+  cpCompRecoMat.SetLegend(0.16,0.75,0.44,0.94);
   cpCompRecoMat.Draw(cCompRecoMat,true);
+
+  //  ===== Check Gen Match Reco =====
+  AnaFrag mcGenEtNr("mcGen","EtNr",mcj1t0,mcAna.DJ["Ana"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+  AnaFrag mcGenEtAw("mcGen","EtAw",mcj1t0,mcAna.DJ["Ana"],"","aljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+
+  AnaFrag mcGenMatEtNr("mcGenMat","EtNr",mcj1t0,mcAna.DJ["AnaMatRef"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+  AnaFrag mcGenMatEtAw("mcGenMat","EtAw",mcj1t0,mcAna.DJ["AnaMatRef"],"","aljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+  AnaFrag mcJ2SelREtNr("mcJ2SelR","EtNr",mcj2t3,mcAna.DJ["Ref"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+  AnaFrag mcJ2SelREtAw("mcJ2SelR","EtAw",mcj2t3,mcAna.DJ["Ref"],"","aljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+  AnaFrag mcJ2SelRLREtNr("mcJ2SelRLR","EtNr",mcj2t3,mcAna.DJ["RefOrderRef"],"","nrlrjet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+  AnaFrag mcJ2SelRLREtAw("mcJ2SelRLR","EtAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arlrjet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+
+  //  -- histograms, all normalized to # of sel calojets --
+  HisTGroup<TH1D> hgMcGenCompEt("McCompEt");
+  hgMcGenCompEt.Add(mcGenEtNr.hRaw,"GenNr");
+  hgMcGenCompEt.Add(mcGenEtAw.hRaw,"GenAw");
+  hgMcGenCompEt.Add(mcGenMatEtNr.hRaw,"GenMatNr",(Double_t)mcGenMatEtNr.numDJ/mcGenEtNr.numDJ);
+  hgMcGenCompEt.Add(mcGenMatEtAw.hRaw,"GenMatAw",(Double_t)mcGenMatEtNr.numDJ/mcGenEtNr.numDJ);
+  hgMcGenCompEt.Add(mcJ2SelREtNr.hRaw,"J2SelRNr",(Double_t)mcJ2SelREtNr.numDJ/mcGenEtNr.numDJ);
+  hgMcGenCompEt.Add(mcJ2SelREtAw.hRaw,"J2SelRAw",(Double_t)mcJ2SelREtNr.numDJ/mcGenEtNr.numDJ);
+  hgMcGenCompEt.Add(mcJ2SelRLREtNr.hRaw,"J2SelRLRNr",(Double_t)mcJ2SelRLREtNr.numDJ/mcGenEtNr.numDJ);
+  hgMcGenCompEt.Add(mcJ2SelRLREtAw.hRaw,"J2SelRLRAw",(Double_t)mcJ2SelRLREtNr.numDJ/mcGenEtNr.numDJ);
+
+  // -- final plot --
+  TCanvas * cCompGenMat = new TCanvas("cCompGenMat","cCompGenMat",800,800);
+  CPlot cpCompGenMat("CompGenMat","CompGenMat","E_{T}^{jet}","pdf");
+  cpCompGenMat.AddHist1D(hgMcGenCompEt.H("GenNr"),"GenJet Nr","E",kBlack,kFullCircle);
+  cpCompGenMat.AddHist1D(hgMcGenCompEt.H("GenAw"),"GenJet Aw","E",kGray+2,kFullCircle);
+  cpCompGenMat.AddHist1D(hgMcGenCompEt.H("GenMatNr"),"GenJet Nr (Matched)","histE",kGreen+3,0);
+  cpCompGenMat.AddHist1D(hgMcGenCompEt.H("GenMatAw"),"GenJet Aw (Matched)","histE",kGreen-7,0);
+  //cpCompGenMat.AddHist1D(hgMcGenCompEt.H("J2SelRNr"),"CaloJetRef (SelRef) Nr","E",kMagenta+2,kOpenStar);
+  //cpCompGenMat.AddHist1D(hgMcGenCompEt.H("J2SelRAw"),"CaloJetRef (SelRef) Aw","E",kMagenta-7,kOpenStar);
+  cpCompGenMat.AddHist1D(hgMcGenCompEt.H("J2SelRLRNr"),"CaloJetRef (SelRefOrderRef) Nr","E",kOrange,kOpenSquare);
+  cpCompGenMat.AddHist1D(hgMcGenCompEt.H("J2SelRLRAw"),"CaloJetRef (SelRefOrderRef) Aw","E",kOrange+8,kOpenSquare);
+  cpCompGenMat.SetLegend(0.16,0.75,0.44,0.94);
+  cpCompGenMat.Draw(cCompGenMat,true);
 
   // All done, save and exit
   outf->Write();
