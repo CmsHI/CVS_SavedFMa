@@ -40,9 +40,9 @@ class selectionCut
     TString AnaTag;
 
     // jet
-    int histJetPtBins;
-    float histJetPtMin;
-    float histJetPtMax;
+    int hisJEtBins;
+    float hisJEtMin;
+    float hisJEtMax;
     int numJetPtBin;
     float nrJetPtMin;
     float nrJetPtMax;
@@ -67,9 +67,9 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
   Name(name),
   selType(sel),
   runNum(runnum),
-  histJetPtBins(50),
-  histJetPtMin(0),
-  histJetPtMax(200),
+  hisJEtBins(50),
+  hisJEtMin(0),
+  hisJEtMax(200),
   numJetPtBin(20),
   nrJetPtMin(NrJetMin),
   nrJetPtMax(NrJetMax),

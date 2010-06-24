@@ -64,15 +64,15 @@ void checkDiJetSelection(int doMC=1,
   TFile * outf = new TFile(Form("%s/checkDiJetSelection.root",anaoutdir.Data()),"RECREATE");
 
   //  ===== Check Reco Match Gen =====
-  AnaFrag mcRecoEtNr("mcReco","EtNr",mcj2t3,mcAna.DJ["Ana"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
-  AnaFrag mcRecoEtAw("mcReco","EtAw",mcj2t3,mcAna.DJ["Ana"],"","aljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+  AnaFrag mcRecoEtNr("mcReco","EtNr",mcj2t3,mcAna.DJ["Ana"],"","nljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcRecoEtAw("mcReco","EtAw",mcj2t3,mcAna.DJ["Ana"],"","aljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
 
-  AnaFrag mcRecoMatEtNr("mcRecoMat","EtNr",mcj2t3,mcAna.DJ["AnaMatRef"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
-  AnaFrag mcRecoMatEtAw("mcRecoMat","EtAw",mcj2t3,mcAna.DJ["AnaMatRef"],"","aljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
-  AnaFrag mcJ1SelREtNr("mcJ1SelR","EtNr",mcj1t0,mcAna.DJ["Ref"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
-  AnaFrag mcJ1SelREtAw("mcJ1SelR","EtAw",mcj1t0,mcAna.DJ["Ref"],"","aljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
-  AnaFrag mcJ1SelRLREtNr("mcJ1SelRLR","EtNr",mcj1t0,mcAna.DJ["RefOrderRef"],"","nrlrjet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
-  AnaFrag mcJ1SelRLREtAw("mcJ1SelRLR","EtAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arlrjet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+  AnaFrag mcRecoMatEtNr("mcRecoMat","EtNr",mcj2t3,mcAna.DJ["AnaMatRef"],"","nljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcRecoMatEtAw("mcRecoMat","EtAw",mcj2t3,mcAna.DJ["AnaMatRef"],"","aljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcJ1SelREtNr("mcJ1SelR","EtNr",mcj1t0,mcAna.DJ["Ref"],"","nljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcJ1SelREtAw("mcJ1SelR","EtAw",mcj1t0,mcAna.DJ["Ref"],"","aljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcJ1SelRLREtNr("mcJ1SelRLR","EtNr",mcj1t0,mcAna.DJ["RefOrderRef"],"","nrlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcJ1SelRLREtAw("mcJ1SelRLR","EtAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
 
   //  -- histograms, all normalized to # of sel calojets --
   HisTGroup<TH1D> hgMcRecoCompEt("McCompEt");
@@ -99,18 +99,17 @@ void checkDiJetSelection(int doMC=1,
   cpCompRecoMatEt.SetLegend(0.16,0.75,0.44,0.94);
   cpCompRecoMatEt.Draw(cCompRecoMatEt,true);
 
-  // --- repeat for eta ---
 
   //  ===== Check Gen Match Reco =====
-  AnaFrag mcGenEtNr("mcGen","EtNr",mcj1t0,mcAna.DJ["Ana"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
-  AnaFrag mcGenEtAw("mcGen","EtAw",mcj1t0,mcAna.DJ["Ana"],"","aljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+  AnaFrag mcGenEtNr("mcGen","EtNr",mcj1t0,mcAna.DJ["Ana"],"","nljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcGenEtAw("mcGen","EtAw",mcj1t0,mcAna.DJ["Ana"],"","aljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
 
-  AnaFrag mcGenMatEtNr("mcGenMat","EtNr",mcj1t0,mcAna.DJ["AnaMatRef"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
-  AnaFrag mcGenMatEtAw("mcGenMat","EtAw",mcj1t0,mcAna.DJ["AnaMatRef"],"","aljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
-  AnaFrag mcJ2SelREtNr("mcJ2SelR","EtNr",mcj2t3,mcAna.DJ["Ref"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
-  AnaFrag mcJ2SelREtAw("mcJ2SelR","EtAw",mcj2t3,mcAna.DJ["Ref"],"","aljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
-  AnaFrag mcJ2SelRLREtNr("mcJ2SelRLR","EtNr",mcj2t3,mcAna.DJ["RefOrderRef"],"","nrlrjet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
-  AnaFrag mcJ2SelRLREtAw("mcJ2SelRLR","EtAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arlrjet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
+  AnaFrag mcGenMatEtNr("mcGenMat","EtNr",mcj1t0,mcAna.DJ["AnaMatRef"],"","nljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcGenMatEtAw("mcGenMat","EtAw",mcj1t0,mcAna.DJ["AnaMatRef"],"","aljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcJ2SelREtNr("mcJ2SelR","EtNr",mcj2t3,mcAna.DJ["Ref"],"","nljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcJ2SelREtAw("mcJ2SelR","EtAw",mcj2t3,mcAna.DJ["Ref"],"","aljet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcJ2SelRLREtNr("mcJ2SelRLR","EtNr",mcj2t3,mcAna.DJ["RefOrderRef"],"","nrlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcJ2SelRLREtAw("mcJ2SelRLR","EtAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
 
   //  -- histograms, all normalized to # of sel calojets --
   HisTGroup<TH1D> hgMcGenCompEt("McCompEt");
@@ -136,6 +135,16 @@ void checkDiJetSelection(int doMC=1,
   cpCompGenMatEt.AddHist1D(hgMcGenCompEt.H("J2SelRLRAw"),"CaloJetRef (SelRefOrderRef) Aw","E",kOrange+8,kOpenSquare);
   cpCompGenMatEt.SetLegend(0.16,0.75,0.44,0.94);
   cpCompGenMatEt.Draw(cCompGenMatEt,true);
+
+
+  // Now we have checked that the complete matching is fine
+  // Let's compare the eta, phi distributions of the completely matched jets
+  /*
+  AnaFrag mcJ1SelRLREtNr("mcJ1SelRLR","EtNr",mcj1t0,mcAna.DJ["RefOrderRef"],"","nrlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcJ1SelRLREtAw("mcJ1SelRLR","EtAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcJ2SelRLREtNr("mcJ2SelRLR","EtNr",mcj2t3,mcAna.DJ["RefOrderRef"],"","nrlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  AnaFrag mcJ2SelRLREtAw("mcJ2SelRLR","EtAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
+  */
 
   // All done, save and exit
   outf->Write();
