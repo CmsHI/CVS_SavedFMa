@@ -147,41 +147,49 @@ void checkDiJetSelection(int doMC=1,
   AnaFrag mcGenEtaNr("mcGen","EtaNr",mcj1t0,mcAna.DJ["Ana"],"","nljeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
   AnaFrag mcGenEtaAw("mcGen","EtaAw",mcj1t0,mcAna.DJ["Ana"],"","aljeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
 
-  AnaFrag mcJ1SelRLREtaNr("mcJ1SelRLR","EtaNr",mcj1t0,mcAna.DJ["RefOrderRef"],"","nrlrjeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
-  AnaFrag mcJ1SelRLREtaAw("mcJ1SelRLR","EtaAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arlrjeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
-  AnaFrag mcJ2SelRLREtaNr("mcJ2SelRLR","EtaNr",mcj2t3,mcAna.DJ["RefOrderRef"],"","nrlrjeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
-  AnaFrag mcJ2SelRLREtaAw("mcJ2SelRLR","EtaAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arlrjeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
-
   AnaFrag mcRecoPhiNr("mcReco","PhiNr",mcj2t3,mcAna.DJ["Ana"],"","nljphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
   AnaFrag mcRecoPhiAw("mcReco","PhiAw",mcj2t3,mcAna.DJ["Ana"],"","aljphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
   AnaFrag mcGenPhiNr("mcGen","PhiNr",mcj1t0,mcAna.DJ["Ana"],"","nljphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
   AnaFrag mcGenPhiAw("mcGen","PhiAw",mcj1t0,mcAna.DJ["Ana"],"","aljphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
 
-  AnaFrag mcJ1SelRLRPhiNr("mcJ1SelRLR","PhiNr",mcj1t0,mcAna.DJ["RefOrderRef"],"","nrlrjphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
-  AnaFrag mcJ1SelRLRPhiAw("mcJ1SelRLR","PhiAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arlrjphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
-  AnaFrag mcJ2SelRLRPhiNr("mcJ2SelRLR","PhiNr",mcj2t3,mcAna.DJ["RefOrderRef"],"","nrlrjphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
-  AnaFrag mcJ2SelRLRPhiAw("mcJ2SelRLR","PhiAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arlrjphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
+  AnaFrag mcJ1SelRLEtaNr("mcJ1SelRL","EtaNr",mcj1t0,mcAna.DJ["RefOrderRef"],"","nrljeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
+  AnaFrag mcJ1SelRLEtaAw("mcJ1SelRL","EtaAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arljeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
+  AnaFrag mcJ2SelRLEtaNr("mcJ2SelRL","EtaNr",mcj2t3,mcAna.DJ["RefOrderRef"],"","nrljeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
+  AnaFrag mcJ2SelRLEtaAw("mcJ2SelRL","EtaAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arljeta","","",mcAna.hisJEtaBins,mcAna.hisJEtaMin,mcAna.hisJEtaMax);
+
+  AnaFrag mcJ1SelRLPhiNr("mcJ1SelRL","PhiNr",mcj1t0,mcAna.DJ["RefOrderRef"],"","nrljphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
+  AnaFrag mcJ1SelRLPhiAw("mcJ1SelRL","PhiAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arljphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
+  AnaFrag mcJ2SelRLPhiNr("mcJ2SelRL","PhiNr",mcj2t3,mcAna.DJ["RefOrderRef"],"","nrljphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
+  AnaFrag mcJ2SelRLPhiAw("mcJ2SelRL","PhiAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arljphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
 
   //  -- histograms, all normalized to # of sel calojets --
   HisTGroup<TH1D> hgMcCompEta("McCompEta");
   hgMcCompEta.Add(mcGenEtaNr.hRaw,"GenNr");
   hgMcCompEta.Add(mcGenEtaAw.hRaw,"GenAw");
-  hgMcCompEta.Add(mcJ2SelRLREtaNr.hRaw,"J2SelRLRNr",(Double_t)mcJ2SelRLREtaNr.numDJ/mcGenEtaNr.numDJ);
-  hgMcCompEta.Add(mcJ2SelRLREtaAw.hRaw,"J2SelRLRAw",(Double_t)mcJ2SelRLREtaNr.numDJ/mcGenEtaNr.numDJ);
+  hgMcCompEta.Add(mcRecoEtaNr.hRaw,"RecoNr");
+  hgMcCompEta.Add(mcRecoEtaAw.hRaw,"RecoAw");
+  hgMcCompEta.Add(mcJ2SelRLEtaNr.hRaw,"J2SelRLNr",(Double_t)mcJ2SelRLEtaNr.numDJ/mcGenEtaNr.numDJ);
+  hgMcCompEta.Add(mcJ2SelRLEtaAw.hRaw,"J2SelRLAw",(Double_t)mcJ2SelRLEtaNr.numDJ/mcGenEtaNr.numDJ);
+  hgMcCompEta.Add(mcJ1SelRLEtaNr.hRaw,"J1SelRLNr",(Double_t)mcJ1SelRLEtaNr.numDJ/mcGenEtaNr.numDJ);
+  hgMcCompEta.Add(mcJ1SelRLEtaAw.hRaw,"J1SelRLAw",(Double_t)mcJ1SelRLEtaNr.numDJ/mcGenEtaNr.numDJ);
 
   HisTGroup<TH1D> hgMcCompPhi("McCompPhi");
   hgMcCompPhi.Add(mcGenPhiNr.hRaw,"GenNr");
   hgMcCompPhi.Add(mcGenPhiAw.hRaw,"GenAw");
-  hgMcCompPhi.Add(mcJ2SelRLRPhiNr.hRaw,"J2SelRLRNr",(Double_t)mcJ2SelRLRPhiNr.numDJ/mcGenPhiNr.numDJ);
-  hgMcCompPhi.Add(mcJ2SelRLRPhiAw.hRaw,"J2SelRLRAw",(Double_t)mcJ2SelRLRPhiNr.numDJ/mcGenPhiNr.numDJ);
+  hgMcCompPhi.Add(mcRecoPhiNr.hRaw,"RecoNr");
+  hgMcCompPhi.Add(mcRecoPhiAw.hRaw,"RecoAw");
+  hgMcCompPhi.Add(mcJ2SelRLPhiNr.hRaw,"J2SelRLNr",(Double_t)mcJ2SelRLPhiNr.numDJ/mcGenPhiNr.numDJ);
+  hgMcCompPhi.Add(mcJ2SelRLPhiAw.hRaw,"J2SelRLAw",(Double_t)mcJ2SelRLPhiNr.numDJ/mcGenPhiNr.numDJ);
+  hgMcCompPhi.Add(mcJ1SelRLPhiNr.hRaw,"J1SelRLNr",(Double_t)mcJ1SelRLPhiNr.numDJ/mcGenPhiNr.numDJ);
+  hgMcCompPhi.Add(mcJ1SelRLPhiAw.hRaw,"J1SelRLAw",(Double_t)mcJ1SelRLPhiNr.numDJ/mcGenPhiNr.numDJ);
 
   // -- final plot --
   TCanvas * cCompMatEta = new TCanvas("cCompMatEta","cCompMatEta",800,800);
   CPlot cpCompMatEta("CompMatEta","CompMatEta","#eta^{jet}","pdf");
   cpCompMatEta.AddHist1D(hgMcCompEta.H("GenNr"),"GenJet Nr","E",kBlack,kFullCircle);
   cpCompMatEta.AddHist1D(hgMcCompEta.H("GenAw"),"GenJet Aw","E",kGray+2,kFullCircle);
-  cpCompMatEta.AddHist1D(hgMcCompEta.H("J2SelRLRNr"),"CaloJetRef (SelRefOrderRef) Nr","E",kOrange+8,kOpenSquare);
-  cpCompMatEta.AddHist1D(hgMcCompEta.H("J2SelRLRAw"),"CaloJetRef (SelRefOrderRef) Aw","E",kOrange,kOpenSquare);
+  cpCompMatEta.AddHist1D(hgMcCompEta.H("J2SelRLNr"),"CaloJet (SelRefOrderRef) Nr","E",kOrange+8,kOpenSquare);
+  cpCompMatEta.AddHist1D(hgMcCompEta.H("J2SelRLAw"),"CaloJet (SelRefOrderRef) Aw","E",kOrange,kOpenSquare);
   cpCompMatEta.SetLegend(0.33,0.15,0.61,0.34);
   cpCompMatEta.Draw(cCompMatEta,true);
 
@@ -190,8 +198,8 @@ void checkDiJetSelection(int doMC=1,
   cpCompMatPhi.SetYRange(0,0.3);
   cpCompMatPhi.AddHist1D(hgMcCompPhi.H("GenNr"),"GenJet Nr","E",kBlack,kFullCircle);
   cpCompMatPhi.AddHist1D(hgMcCompPhi.H("GenAw"),"GenJet Aw","E",kGray+2,kFullCircle);
-  cpCompMatPhi.AddHist1D(hgMcCompPhi.H("J2SelRLRNr"),"CaloJetRef (SelRefOrderRef) Nr","E",kOrange+8,kOpenSquare);
-  cpCompMatPhi.AddHist1D(hgMcCompPhi.H("J2SelRLRAw"),"CaloJetRef (SelRefOrderRef) Aw","E",kOrange,kOpenSquare);
+  cpCompMatPhi.AddHist1D(hgMcCompPhi.H("J2SelRLNr"),"CaloJet (SelRefOrderRef) Nr","E",kOrange+8,kOpenSquare);
+  cpCompMatPhi.AddHist1D(hgMcCompPhi.H("J2SelRLAw"),"CaloJet (SelRefOrderRef) Aw","E",kOrange,kOpenSquare);
   cpCompMatPhi.SetLegend(0.33,0.15,0.61,0.34);
   cpCompMatPhi.Draw(cCompMatPhi,true);
 
