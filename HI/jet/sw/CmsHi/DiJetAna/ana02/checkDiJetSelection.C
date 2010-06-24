@@ -37,7 +37,7 @@ void checkDiJetSelection(int doMC=1,
 
   // Define dijet selection
   selectionCut mcAna(AnaName,doMC,1,120,170,80);
-  //selectionCut mcAna(AnaName,doMC,1,50,200,50); // loose
+  //selectionCut mcAna(AnaName,doMC,1,60,200,60); // loose
 
   TTree *mcj2t3, *mcj2t3peri, *mcj2t0, *mcj1t0;
   inFile0->GetObject("dijetAna_mc/djTree",mcj2t3);
