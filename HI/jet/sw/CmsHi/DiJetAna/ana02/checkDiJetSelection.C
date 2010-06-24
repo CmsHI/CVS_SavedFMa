@@ -194,7 +194,7 @@ void checkDiJetSelection(int doMC=1,
   cpCompMatEta.Draw(cCompMatEta,true);
 
   TCanvas * cCompMatPhi = new TCanvas("cCompMatPhi","cCompMatPhi",800,800);
-  CPlot cpCompMatPhi("CompMatPhi","CompMatPhi","#eta^{jet}","pdf");
+  CPlot cpCompMatPhi("CompMatPhi","CompMatPhi","#phi^{jet}","pdf");
   cpCompMatPhi.SetYRange(0,0.3);
   cpCompMatPhi.AddHist1D(hgMcCompPhi.H("GenNr"),"GenJet Nr","E",kBlack,kFullCircle);
   cpCompMatPhi.AddHist1D(hgMcCompPhi.H("GenAw"),"GenJet Aw","E",kGray+2,kFullCircle);
