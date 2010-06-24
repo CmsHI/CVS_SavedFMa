@@ -76,7 +76,7 @@ void checkDiJetSelection(int doMC=1,
   AnaFrag mcJ1SelRLREtAw("mcJ1SelRLR","EtAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
 
   //  -- histograms, all normalized to # of sel calojets --
-  HisTGroup<TH1D> hgMcRecoCompEt("McCompEt");
+  HisTGroup<TH1D> hgMcRecoCompEt("McRecoCompEt");
   hgMcRecoCompEt.Add(mcRecoEtNr.hRaw,"RecoNr");
   hgMcRecoCompEt.Add(mcRecoEtAw.hRaw,"RecoAw");
   hgMcRecoCompEt.Add(mcRecoMatEtNr.hRaw,"RecoMatNr",(Double_t)mcRecoMatEtNr.numDJ/mcRecoEtNr.numDJ);
@@ -114,7 +114,7 @@ void checkDiJetSelection(int doMC=1,
   AnaFrag mcJ2SelRLREtAw("mcJ2SelRLR","EtAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arlrjet","","",mcAna.hisJEtBins,mcAna.hisJEtMin,mcAna.hisJEtMax);
 
   //  -- histograms, all normalized to # of sel calojets --
-  HisTGroup<TH1D> hgMcGenCompEt("McCompEt");
+  HisTGroup<TH1D> hgMcGenCompEt("McGenCompEt");
   hgMcGenCompEt.Add(mcGenEtNr.hRaw,"GenNr");
   hgMcGenCompEt.Add(mcGenEtAw.hRaw,"GenAw");
   hgMcGenCompEt.Add(mcGenMatEtNr.hRaw,"GenMatNr",(Double_t)mcGenMatEtNr.numDJ/mcGenEtNr.numDJ);
@@ -161,6 +161,17 @@ void checkDiJetSelection(int doMC=1,
   AnaFrag mcJ1SelRLRPhiAw("mcJ1SelRLR","PhiAw",mcj1t0,mcAna.DJ["RefOrderRef"],"","arlrjphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
   AnaFrag mcJ2SelRLRPhiNr("mcJ2SelRLR","PhiNr",mcj2t3,mcAna.DJ["RefOrderRef"],"","nrlrjphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
   AnaFrag mcJ2SelRLRPhiAw("mcJ2SelRLR","PhiAw",mcj2t3,mcAna.DJ["RefOrderRef"],"","arlrjphi","","",mcAna.hisJPhiBins,mcAna.hisJPhiMin,mcAna.hisJPhiMax);
+
+  //  -- histograms, all normalized to # of sel calojets --
+  HisTGroup<TH1D> hgMcCompEta("McCompEta");
+  hgMcCompEta.Add(mcGenEtNr.hRaw,"GenNr");
+  hgMcCompEta.Add(mcGenEtAw.hRaw,"GenAw");
+  hgMcCompEta.Add(mcGenMatEtNr.hRaw,"GenMatNr",(Double_t)mcGenMatEtNr.numDJ/mcGenEtNr.numDJ);
+  hgMcCompEta.Add(mcGenMatEtAw.hRaw,"GenMatAw",(Double_t)mcGenMatEtNr.numDJ/mcGenEtNr.numDJ);
+  hgMcCompEta.Add(mcJ2SelREtNr.hRaw,"J2SelRNr",(Double_t)mcJ2SelREtNr.numDJ/mcGenEtNr.numDJ);
+  hgMcCompEta.Add(mcJ2SelREtAw.hRaw,"J2SelRAw",(Double_t)mcJ2SelREtNr.numDJ/mcGenEtNr.numDJ);
+  hgMcCompEta.Add(mcJ2SelRLREtNr.hRaw,"J2SelRLRNr",(Double_t)mcJ2SelRLREtNr.numDJ/mcGenEtNr.numDJ);
+  hgMcCompEta.Add(mcJ2SelRLREtAw.hRaw,"J2SelRLRAw",(Double_t)mcJ2SelRLREtNr.numDJ/mcGenEtNr.numDJ);
 
   // All done, save and exit
   outf->Write();
