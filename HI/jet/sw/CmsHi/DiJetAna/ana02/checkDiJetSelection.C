@@ -86,18 +86,20 @@ void checkDiJetSelection(int doMC=1,
   hgMcRecoCompEt.Add(mcJ1SelRLREtAw.hRaw,"J1SelRLRAw",(Double_t)mcJ1SelRLREtNr.numDJ/mcRecoEtNr.numDJ);
 
   // -- final plot --
-  TCanvas * cCompRecoMat = new TCanvas("cCompRecoMat","cCompRecoMat",800,800);
-  CPlot cpCompRecoMat("CompRecoMat","CompRecoMat","E_{T}^{jet}","pdf");
-  cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("RecoNr"),"CaloJet Nr","E",kBlack,kFullCircle);
-  cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("RecoAw"),"CaloJet Aw","E",kGray+2,kFullCircle);
-  cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("RecoMatNr"),"CaloJet Nr (Matched)","histE",kGreen+3,0);
-  cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("RecoMatAw"),"CaloJet Aw (Matched)","histE",kGreen-7,0);
-  //cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("J1SelRNr"),"GenJetRef (SelRef) Nr","E",kMagenta+2,kOpenStar);
-  //cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("J1SelRAw"),"GenJetRef (SelRef) Aw","E",kMagenta-7,kOpenStar);
-  cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("J1SelRLRNr"),"GenJetRef (SelRefOrderRef) Nr","E",kOrange,kOpenSquare);
-  cpCompRecoMat.AddHist1D(hgMcRecoCompEt.H("J1SelRLRAw"),"GenJetRef (SelRefOrderRef) Aw","E",kOrange+8,kOpenSquare);
-  cpCompRecoMat.SetLegend(0.16,0.75,0.44,0.94);
-  cpCompRecoMat.Draw(cCompRecoMat,true);
+  TCanvas * cCompRecoMatEt = new TCanvas("cCompRecoMatEt","cCompRecoMatEt",800,800);
+  CPlot cpCompRecoMatEt("CompRecoMatEt","CompRecoMatEt","E_{T}^{jet}","pdf");
+  cpCompRecoMatEt.AddHist1D(hgMcRecoCompEt.H("RecoNr"),"CaloJet Nr","E",kBlack,kFullCircle);
+  cpCompRecoMatEt.AddHist1D(hgMcRecoCompEt.H("RecoAw"),"CaloJet Aw","E",kGray+2,kFullCircle);
+  cpCompRecoMatEt.AddHist1D(hgMcRecoCompEt.H("RecoMatNr"),"CaloJet Nr (Matched)","histE",kGreen+3,0);
+  cpCompRecoMatEt.AddHist1D(hgMcRecoCompEt.H("RecoMatAw"),"CaloJet Aw (Matched)","histE",kGreen-7,0);
+  //cpCompRecoMatEt.AddHist1D(hgMcRecoCompEt.H("J1SelRNr"),"GenJetRef (SelRef) Nr","E",kMagenta+2,kOpenStar);
+  //cpCompRecoMatEt.AddHist1D(hgMcRecoCompEt.H("J1SelRAw"),"GenJetRef (SelRef) Aw","E",kMagenta-7,kOpenStar);
+  cpCompRecoMatEt.AddHist1D(hgMcRecoCompEt.H("J1SelRLRNr"),"GenJetRef (SelRefOrderRef) Nr","E",kOrange,kOpenSquare);
+  cpCompRecoMatEt.AddHist1D(hgMcRecoCompEt.H("J1SelRLRAw"),"GenJetRef (SelRefOrderRef) Aw","E",kOrange+8,kOpenSquare);
+  cpCompRecoMatEt.SetLegend(0.16,0.75,0.44,0.94);
+  cpCompRecoMatEt.Draw(cCompRecoMatEt,true);
+
+  // --- repeat for eta ---
 
   //  ===== Check Gen Match Reco =====
   AnaFrag mcGenEtNr("mcGen","EtNr",mcj1t0,mcAna.DJ["Ana"],"","nljet","","",mcAna.histJetPtBins,mcAna.histJetPtMin,mcAna.histJetPtMax);
@@ -122,18 +124,18 @@ void checkDiJetSelection(int doMC=1,
   hgMcGenCompEt.Add(mcJ2SelRLREtAw.hRaw,"J2SelRLRAw",(Double_t)mcJ2SelRLREtNr.numDJ/mcGenEtNr.numDJ);
 
   // -- final plot --
-  TCanvas * cCompGenMat = new TCanvas("cCompGenMat","cCompGenMat",800,800);
-  CPlot cpCompGenMat("CompGenMat","CompGenMat","E_{T}^{jet}","pdf");
-  cpCompGenMat.AddHist1D(hgMcGenCompEt.H("GenNr"),"GenJet Nr","E",kBlack,kFullCircle);
-  cpCompGenMat.AddHist1D(hgMcGenCompEt.H("GenAw"),"GenJet Aw","E",kGray+2,kFullCircle);
-  cpCompGenMat.AddHist1D(hgMcGenCompEt.H("GenMatNr"),"GenJet Nr (Matched)","histE",kGreen+3,0);
-  cpCompGenMat.AddHist1D(hgMcGenCompEt.H("GenMatAw"),"GenJet Aw (Matched)","histE",kGreen-7,0);
-  //cpCompGenMat.AddHist1D(hgMcGenCompEt.H("J2SelRNr"),"CaloJetRef (SelRef) Nr","E",kMagenta+2,kOpenStar);
-  //cpCompGenMat.AddHist1D(hgMcGenCompEt.H("J2SelRAw"),"CaloJetRef (SelRef) Aw","E",kMagenta-7,kOpenStar);
-  cpCompGenMat.AddHist1D(hgMcGenCompEt.H("J2SelRLRNr"),"CaloJetRef (SelRefOrderRef) Nr","E",kOrange,kOpenSquare);
-  cpCompGenMat.AddHist1D(hgMcGenCompEt.H("J2SelRLRAw"),"CaloJetRef (SelRefOrderRef) Aw","E",kOrange+8,kOpenSquare);
-  cpCompGenMat.SetLegend(0.16,0.75,0.44,0.94);
-  cpCompGenMat.Draw(cCompGenMat,true);
+  TCanvas * cCompGenMatEt = new TCanvas("cCompGenMatEt","cCompGenMatEt",800,800);
+  CPlot cpCompGenMatEt("CompGenMatEt","CompGenMatEt","E_{T}^{jet}","pdf");
+  cpCompGenMatEt.AddHist1D(hgMcGenCompEt.H("GenNr"),"GenJet Nr","E",kBlack,kFullCircle);
+  cpCompGenMatEt.AddHist1D(hgMcGenCompEt.H("GenAw"),"GenJet Aw","E",kGray+2,kFullCircle);
+  cpCompGenMatEt.AddHist1D(hgMcGenCompEt.H("GenMatNr"),"GenJet Nr (Matched)","histE",kGreen+3,0);
+  cpCompGenMatEt.AddHist1D(hgMcGenCompEt.H("GenMatAw"),"GenJet Aw (Matched)","histE",kGreen-7,0);
+  //cpCompGenMatEt.AddHist1D(hgMcGenCompEt.H("J2SelRNr"),"CaloJetRef (SelRef) Nr","E",kMagenta+2,kOpenStar);
+  //cpCompGenMatEt.AddHist1D(hgMcGenCompEt.H("J2SelRAw"),"CaloJetRef (SelRef) Aw","E",kMagenta-7,kOpenStar);
+  cpCompGenMatEt.AddHist1D(hgMcGenCompEt.H("J2SelRLRNr"),"CaloJetRef (SelRefOrderRef) Nr","E",kOrange,kOpenSquare);
+  cpCompGenMatEt.AddHist1D(hgMcGenCompEt.H("J2SelRLRAw"),"CaloJetRef (SelRefOrderRef) Aw","E",kOrange+8,kOpenSquare);
+  cpCompGenMatEt.SetLegend(0.16,0.75,0.44,0.94);
+  cpCompGenMatEt.Draw(cCompGenMatEt,true);
 
   // All done, save and exit
   outf->Write();
