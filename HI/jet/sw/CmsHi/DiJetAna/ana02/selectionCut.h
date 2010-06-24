@@ -40,21 +40,23 @@ class selectionCut
     TString AnaTag;
 
     // jet
-    int hisJEtBins;
-    float hisJEtMin;
-    float hisJEtMax;
+    // -- ana ranges --
     float nrJEtMin;
     float nrJEtMax;
     float awJEtMin;
-    float djDPhiMin;
-    int histJetEtaBins;
-    float histJetEtaMin;
-    float histJetEtaMax;
     float jetEtaMin;
     float jetEtaMax;
-    int histJetPhiBins;
-    float histJetPhiMin;
-    float histJetPhiMax;
+    float djDPhiMin;
+    // -- draw ranges --
+    int	  hisJEtBins;
+    float hisJEtMin;
+    float hisJEtMax;
+    int	  hisJEtaBins;
+    float hisJEtaMin;
+    float hisJEtaMax;
+    int	  hisJPhiBins;
+    float hisJPhiMin;
+    float hisJPhiMax;
 
     // trk
     int numTrkPtBin;
@@ -66,21 +68,21 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
   Name(name),
   selType(sel),
   runNum(runnum),
-  hisJEtBins(50),
-  hisJEtMin(0),
-  hisJEtMax(200),
   nrJEtMin(NrJetMin),
   nrJEtMax(NrJetMax),
   awJEtMin(AwJetMin),
-  djDPhiMin(3.14*5/6),
-  histJetEtaBins(40),
-  histJetEtaMin(-3.0),
-  histJetEtaMax(3.0),
   jetEtaMin(0.),
   jetEtaMax(2.),
-  histJetPhiBins(40),
-  histJetPhiMin(-3.14),
-  histJetPhiMax(3.14)
+  djDPhiMin(3.14*5/6),
+  hisJEtBins(50),
+  hisJEtMin(0),
+  hisJEtMax(200),
+  hisJEtaBins(40),
+  hisJEtaMin(-3.0),
+  hisJEtaMax(3.0),
+  hisJPhiBins(40),
+  hisJPhiMin(-3.14),
+  hisJPhiMax(3.14)
 {
   // some default setup
   VzRangeL = -30; 
