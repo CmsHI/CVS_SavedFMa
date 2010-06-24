@@ -1,6 +1,7 @@
 #include "TH1.h"
 #include <TCut.h>
 #include <TString.h>
+#include "TMath.h"
 #include <iostream>
 #include <iomanip>
 #include <map>
@@ -73,7 +74,7 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
   awJEtMin(AwJetMin),
   jetEtaMin(0.),
   jetEtaMax(2.),
-  djDPhiMin(3.14*5/6),
+  djDPhiMin(TMath::Pi()*5/6),
   hisJEtBins(50),
   hisJEtMin(0),
   hisJEtMax(200),
@@ -81,8 +82,8 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
   hisJEtaMin(-3.0),
   hisJEtaMax(3.0),
   hisJPhiBins(40),
-  hisJPhiMin(-3.14),
-  hisJPhiMax(3.14)
+  hisJPhiMin(-1*TMath::Pi()),
+  hisJPhiMax(TMath::Pi())
 {
   // some default setup
   VzRangeL = -30; 
