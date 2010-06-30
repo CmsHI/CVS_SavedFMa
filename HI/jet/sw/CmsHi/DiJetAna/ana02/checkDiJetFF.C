@@ -117,8 +117,8 @@ void checkDiJetFF(int doMC=1,
   AnaFrag mcj1t0SelRLRAnaRLNr("mcj1t0SelRLRAnaRL","NrXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nrljet/ppt)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcj1t0SelRLRAnaRLAw("mcj1t0SelRLRAnaRL","AwXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(arljet/ppt)","padr<0.5","padrbg<0.5");
 
-  AnaFrag mcj2t0AnaRNr("mcj2t0AnaR","NrXi",mcj2t0,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(nlrjet/ppt)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcj2t0AnaRAw("mcj2t0AnaR","AwXi",mcj2t0,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(alrjet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj2t0AnaRNr("mcj2t0AnaR","NrXi",mcj2t0,mcAna.DJ["AnaMatRef"],mcAna.Trk["Ana"],"log(nlrjet/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcj2t0AnaRAw("mcj2t0AnaR","AwXi",mcj2t0,mcAna.DJ["AnaMatRef"],mcAna.Trk["Ana"],"log(alrjet/ppt)","padr<0.5","padrbg<0.5");
 
   // ====== Beginning (1) = chk0.2: j2t0SelRLRAnaRL ======
   // === Check Selection Effects on top of JES in FF Calc ===
