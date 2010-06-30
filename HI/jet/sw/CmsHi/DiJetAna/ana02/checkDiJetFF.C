@@ -23,7 +23,7 @@ void checkDiJetFF(int doMC=1,
     TString header="Hydjet2.76TeV+DiJet(80-120GeV)",
     */
     const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
-    TString AnaName = "mcuq120V3",
+    TString AnaName = "mcuq120V3_1",
     TString header="Hydjet2.76TeV+DiJet(120-170GeV)",
     //
     TString title1="MC Calojet",
@@ -123,11 +123,11 @@ void checkDiJetFF(int doMC=1,
   // ====== Beginning (1) = chk0.2: j2t0SelRLRAnaRL ======
   // === Check Selection Effects on top of JES in FF Calc ===
   // -chk2.0
-  AnaFrag mcj2t0SelRLAnaNr("mcj2t0SelRLAna","NrXi",mcj2t0,mcAna.DJ["AnaOrderRef"],mcAna.Trk["Ana"],"log(nljet/ppt)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcj2t0SelRLAnaAw("mcj2t0SelRLAna","AwXi",mcj2t0,mcAna.DJ["AnaOrderRef"],mcAna.Trk["Ana"],"log(aljet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj2t0SelRLNr("mcj2t0SelRL","NrXi",mcj2t0,mcAna.DJ["AnaOrderRef"],mcAna.Trk["Ana"],"log(nljet/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcj2t0SelRLAw("mcj2t0SelRL","AwXi",mcj2t0,mcAna.DJ["AnaOrderRef"],mcAna.Trk["Ana"],"log(aljet/ppt)","padr<0.5","padrbg<0.5");
   // -chk2.1
-  AnaFrag mcj2t0SelRAnaNr("mcj2t0SelRAna","NrXi",mcj2t0,mcAna.DJ["Ref"],mcAna.Trk["Ana"],"log(nljet/ppt)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcj2t0SelRAnaAw("mcj2t0SelRAna","AwXi",mcj2t0,mcAna.DJ["Ref"],mcAna.Trk["Ana"],"log(aljet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj2t0SelRNr("mcj2t0SelR","NrXi",mcj2t0,mcAna.DJ["Ref"],mcAna.Trk["Ana"],"log(nljet/ppt)","pndr<0.5","pndrbg<0.5");
+  AnaFrag mcj2t0SelRAw("mcj2t0SelR","AwXi",mcj2t0,mcAna.DJ["Ref"],mcAna.Trk["Ana"],"log(aljet/ppt)","padr<0.5","padrbg<0.5");
 
   // === Reco jet + genp ===
   AnaFrag mcj2t0Nr("mcj2t0","NrXi",mcj2t0,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(1./zn)","pndr<0.5","pndrbg<0.5");
