@@ -102,8 +102,8 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
   DJ["Ana"] = Form("nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
       nrJEtMin,nrJEtMax,awJEtMin,jetEtaMax,jetEtaMax,djDPhiMin);
   DJ["AnaMatRef"] = DJ["Ana"] && "nlrjet>20&&alrjet>20";
-  DJ["AnaOrderRef"] = Form("nrljet>%.1f&&nrljet<%.1f&&arljet>%.1f&&abs(nrljeta)<%.1f&&abs(arljeta)<%.1f&&jdphi>%.2f",
-      nrJEtMin,nrJEtMax,awJEtMin,jetEtaMax,jetEtaMax,djDPhiMin) && "nlrjet>20&&alrjet>20";
+  DJ["AnaOrderRef"] = TCut(Form("nrljet>%.1f&&nrljet<%.1f&&arljet>%.1f&&abs(nrljeta)<%.1f&&abs(arljeta)<%.1f&&jdphi>%.2f",
+      nrJEtMin,nrJEtMax,awJEtMin,jetEtaMax,jetEtaMax,djDPhiMin)) && "nlrjet>20&&alrjet>20";
   DJ["Ref"] = Form("nlrjet>%.1f&&nlrjet<%.1f&&alrjet>%.1f&&abs(nlrjeta)<%.1f&&abs(alrjeta)<%.1f&&rjdphi>%.2f",
       nrJEtMin,nrJEtMax,awJEtMin,jetEtaMax,jetEtaMax,djDPhiMin);
   DJ["RefOrderRef"] = Form("nrlrjet>%.1f&&nrlrjet<%.1f&&arlrjet>%.1f&&abs(nrlrjeta)<%.1f&&abs(arlrjeta)<%.1f&&rjdphi>%.2f",
