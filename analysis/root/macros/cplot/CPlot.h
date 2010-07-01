@@ -120,6 +120,8 @@ public:
     assert(fLeg);
     fLeg->SetHeader(header);
   }
+  // Legend Style
+  void SetLegendStyle(double tsize, double tfont=0) { fLegendLabelSize=tsize; fLegendLabelFont=tfont; }
   
   // Set stats box position
   void SetStats(double x, double y) { fStatsX = x; fStatsY = y; }
@@ -136,7 +138,7 @@ public:
   void SetYTitle(TString str)              { fYTitle = str; }              // y-axis title
   void SetXRange(double xmin, double xmax) { fXmin = xmin; fXmax = xmax; } // x-axis range
   void SetYRange(double ymin, double ymax) { fYmin = ymin; fYmax = ymax; } // y-axis range
-  void SetAxisLabeling(int labsize, int labfont, int titsize, int titfont, int xoffset, int yoffset) // axis labeling
+  void SetAxisLabeling(double labsize, double labfont, double titsize, double titfont, double xoffset, double yoffset) // axis labeling
   { fAxisLabelSize=labsize; fAxisLabelFont=labfont; fAxisTitleSize=titsize; fAxisTitleFont=titfont; fXAxisTitleOffset=xoffset; fYAxisTitleOffset=yoffset; }
   void SetLogx(int value=1)                { fLogx = value; }              // toggle logscale x-axis
   void SetLogy(int value=1)                { fLogy = value; }              // toggle logscale y-axis
@@ -163,21 +165,24 @@ protected:
   TString fYTitle;                 // y-axis title
   double fXmin, fXmax;             // x-axis range
   double fYmin, fYmax;             // y-axis range
-  int fAxisLabelFont, fAxisLabelSize, fAxisTitleFont, fAxisTitleSize, fXAxisTitleOffset, fYAxisTitleOffset; // axis labelling
+  double fAxisLabelFont, fAxisLabelSize, fAxisTitleFont, fAxisTitleSize, fXAxisTitleOffset, fYAxisTitleOffset; // axis labelling
   int fLogx, fLogy;                // logscale axes
   int fGridx, fGridy;              // grid lines
   int fRebin;                      // grouping for histogram re-bin
   TLegend *fLeg;                   // legend object
   int fShowStats;                  // whether to display statistics
   int fShowLegend;                  // whether to display legend
+  double fLegendLabelFont, fLegendLabelSize;
   double fStatsX, fStatsY;         // x,y coordinates of top left corner of stats box
   
 //  RooPlot *fRooPlot;
   
   static int sCount;               // number of CPlot instances
+  static int sPlotStyle;
 };
 
 int CPlot::sCount = 0;
+int CPlot::sPlotStyle = 0;
 TString CPlot::sOutDir = ".";
 
 #endif

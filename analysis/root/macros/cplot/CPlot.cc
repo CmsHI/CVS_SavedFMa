@@ -28,6 +28,7 @@ fRebin(1),
 fLeg(0),
 fShowStats(0),
 fShowLegend(1),
+fLegendLabelSize(0.03),
 fStatsX(0.63),
 fStatsY(0.90)//,
 //fRooPlot(0)
@@ -654,7 +655,7 @@ void CPlot::Draw(TPad *c, bool doSave, TString format)
   if(fShowLegend && fLeg) {
     fLeg->SetFillStyle(0);
     fLeg->SetBorderSize(0);
-    fLeg->SetTextSize(0.03);
+    fLeg->SetTextSize(fLegendLabelSize);
     fLeg->Draw();
   }
   
@@ -730,6 +731,18 @@ void CPlot::Draw(TPad *c, bool doSave, TString format)
   for(uint i=0; i<fTextBoxes.size(); i++)
     fTextBoxes[i]->Draw();    
   
+  //
+  // Draw Styles
+  //
+  if (sPlotStyle==50) {
+    TLatex * styleTex;
+    styleTex = new TLatex(0.62,0.88,"CMS Preliminary");
+    styleTex->SetTextSize(0.04);
+    styleTex->SetLineWidth(2);
+    styleTex->SetNDC();
+    styleTex->Draw();
+  }
+
   //
   // Set log scale if necessary
   // 
