@@ -52,22 +52,18 @@ void plotCheckDiJetFF(int doMC=1,
   hFrame->Scale(0);
   hFrame->SetTitle("");
 
+  //   - Gen -
   HisTGroup<TH1D> hgMcGenSigXi("McGenSigXi");
   hgMcGenSigXi.Add(inFile0,"hSig_mcGenNrXi","Nr");
   hgMcGenSigXi.Add(inFile0,"hSig_mcGenAwXi","Aw");
   hgMcGenSigXi.Average();
 
-  //   - check trees -
   HisTGroup<TH1D> hgMcGenMatSigXi("McGenMatSigXi");
   hgMcGenMatSigXi.Add(inFile0,"hSig_mcGenMatNrXi","Nr");
   hgMcGenMatSigXi.Add(inFile0,"hSig_mcGenMatAwXi","Aw");
   hgMcGenMatSigXi.Average();
 
-  HisTGroup<TH1D> hgMcj2t0MatSigXi("Mcj2t0MatSigXi");
-  hgMcj2t0MatSigXi.Add(inFile0,"hSig_mcj2t0MatNrXi","Nr");
-  hgMcj2t0MatSigXi.Add(inFile0,"hSig_mcj2t0MatAwXi","Aw");
-  hgMcj2t0MatSigXi.Average();
-
+  //   - check trees -
   HisTGroup<TH1D> hgMcj2t0SelRLRAnaRLRSigXi("Mcj2t0SelRLRAnaRLRSigXi");
   hgMcj2t0SelRLRAnaRLRSigXi.Add(inFile0,"hSig_mcj2t0SelRLRAnaRLRNrXi","Nr");
   hgMcj2t0SelRLRAnaRLRSigXi.Add(inFile0,"hSig_mcj2t0SelRLRAnaRLRAwXi","Aw");
@@ -78,21 +74,44 @@ void plotCheckDiJetFF(int doMC=1,
   hgMcj1t0SelRLRAnaRLRSigXi.Add(inFile0,"hSig_mcj1t0SelRLRAnaRLRAwXi","Aw");
   hgMcj1t0SelRLRAnaRLRSigXi.Average();
 
+  // === Reco Jet ====
+  HisTGroup<TH1D> hgMcj2t0SigXi("Mcj2t0SigXi");
+  hgMcj2t0SigXi.Add(inFile0,"hSig_mcj2t0NrXi","Nr");
+  hgMcj2t0SigXi.Add(inFile0,"hSig_mcj2t0AwXi","Aw");
+  hgMcj2t0SigXi.Average();
+
+  HisTGroup<TH1D> hgMcj2t0MatSigXi("Mcj2t0MatSigXi");
+  hgMcj2t0MatSigXi.Add(inFile0,"hSig_mcj2t0MatNrXi","Nr");
+  hgMcj2t0MatSigXi.Add(inFile0,"hSig_mcj2t0MatAwXi","Aw");
+  hgMcj2t0MatSigXi.Average();
+
   // === FF comparison ===
   HisTGroup<TH1D> hgCompSigXi("CompSigXi");
 
   // === Check Tree j1t0 ===
-  TCanvas * cT0FF = new TCanvas("cT0FF","cT0FF",500,500);
-  CPlot cpT0FF("T0FF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
-  cpT0FF.SetYRange(0,6);
-  cpT0FF.AddHist1D(hFrame,"Centrality: 0-30\%","",0,0);
-  cpT0FF.AddHist1D(hFrame,"120GeV<p_{T}^{jet1}<170GeV","",0,0);
-  cpT0FF.AddHist1D(hgMcGenTruthSigXi.R("Ave"),"Signal: genjet1,2 + gentrk","histE",kRed,0);
-  cpT0FF.AddHist1D(hgMcGenSigXi.R("Ave"),"HI: getjet1,2 + gentrk","E",kGreen-2,kOpenStar);
-  cpT0FF.AddHist1D(hgMcGenMatSigXi.R("Ave"),"HI: genjet1,2 (Mat) + gentrk","E",kRed+2,kOpenSquare);
-  cpT0FF.AddHist1D(hgMcj2t0SelRLRAnaRLRSigXi.R("Ave"),"HI: calojet1,2 SelRLRAnaRLR + gentrk","E",kBlue,kFullCircle);
-  cpT0FF.SetLegend(0.194,0.64,0.52,0.94);
-  cpT0FF.Draw(cT0FF,true);
+  TCanvas * cChkTreeJ1T0 = new TCanvas("cChkTreeJ1T0","cChkTreeJ1T0",500,500);
+  CPlot cpChkTreeJ1T0("ChkTreeJ1T0","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  cpChkTreeJ1T0.SetYRange(0,6);
+  cpChkTreeJ1T0.AddHist1D(hFrame,"Centrality: 0-30\%","",0,0);
+  cpChkTreeJ1T0.AddHist1D(hFrame,"120GeV<p_{T}^{jet1}<170GeV","",0,0);
+  cpChkTreeJ1T0.AddHist1D(hgMcGenTruthSigXi.R("Ave"),"Signal: genjet1,2 + gentrk","histE",kRed,0);
+  cpChkTreeJ1T0.AddHist1D(hgMcGenSigXi.R("Ave"),"HI: getjet1,2 + gentrk","E",kGreen-2,kOpenStar);
+  cpChkTreeJ1T0.AddHist1D(hgMcGenMatSigXi.R("Ave"),"HI: genjet1,2 (Mat) + gentrk","E",kRed+2,kOpenSquare);
+  cpChkTreeJ1T0.AddHist1D(hgMcj2t0SelRLRAnaRLRSigXi.R("Ave"),"HI: calojet1,2 SelRLRAnaRLR + gentrk","E",kBlue,kFullCircle);
+  cpChkTreeJ1T0.SetLegend(0.194,0.64,0.52,0.94);
+  cpChkTreeJ1T0.Draw(cChkTreeJ1T0,true);
+
+  // === Check Tree j2t0 ===
+  TCanvas * cChkTreeJ2T0 = new TCanvas("cChkTreeJ2T0","cChkTreeJ2T0",500,500);
+  CPlot cpChkTreeJ2T0("ChkTreeJ2T0","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  cpChkTreeJ2T0.SetYRange(0,6);
+  cpChkTreeJ2T0.AddHist1D(hFrame,"Centrality: 0-30\%","",0,0);
+  cpChkTreeJ2T0.AddHist1D(hFrame,"120GeV<p_{T}^{jet1}<170GeV","",0,0);
+  cpChkTreeJ2T0.AddHist1D(hgMcj2t0SigXi.R("Ave"),"HI: calojet1,2 + gentrk","E",kGreen-2,kOpenStar);
+  cpChkTreeJ2T0.AddHist1D(hgMcj2t0MatSigXi.R("Ave"),"HI: calojet1,2 Mat + gentrk","E",kRed+2,kOpenSquare);
+  cpChkTreeJ2T0.AddHist1D(hgMcj1t0SelRLRAnaRLRSigXi.R("Ave"),"HI: genjet1,2 SelRLRAnaRLR + gentrk","E",kBlue,kFullCircle);
+  cpChkTreeJ2T0.SetLegend(0.194,0.64,0.52,0.94);
+  cpChkTreeJ2T0.Draw(cChkTreeJ2T0,true);
 
   // All done, save and exit
   outf->Write();
