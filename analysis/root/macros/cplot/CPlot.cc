@@ -65,7 +65,7 @@ fRooPlot(frame)
 */
 
 //--------------------------------------------------------------------------------------------------
-void CPlot::AddHist1D(TH1D *h, TString drawopt, int color, int mksty, int linesty, int fillsty)
+void CPlot::AddHist1D(TH1D *h, TString drawopt, int color, int mksty, float mksz, int linesty, int fillsty)
 {
   if(!h)
     return;
@@ -75,6 +75,7 @@ void CPlot::AddHist1D(TH1D *h, TString drawopt, int color, int mksty, int linest
   h->SetFillColor(color);
   h->SetFillStyle(fillsty);
   h->SetMarkerStyle(mksty);
+  if (mksz>=0) h->SetMarkerSize(mksz);
   h->SetMarkerColor(color);
   
   CPlotItem item;
@@ -83,7 +84,7 @@ void CPlot::AddHist1D(TH1D *h, TString drawopt, int color, int mksty, int linest
   fItems.push_back(item);
 }
 
-void CPlot::AddHist1D(TH1D *h, TString label, TString drawopt, int color, int mksty, int linesty, int fillsty)
+void CPlot::AddHist1D(TH1D *h, TString label, TString drawopt, int color, int mksty, float mksz, int linesty, int fillsty)
 {
   if(!h)
     return;
@@ -101,25 +102,25 @@ void CPlot::AddHist1D(TH1D *h, TString label, TString drawopt, int color, int mk
     else          fLeg->AddEntry(h,label,"L");
   } 
   
-  AddHist1D(h,drawopt,color,mksty,linesty,fillsty);
+  AddHist1D(h,drawopt,color,mksty,mksz,linesty,fillsty);
 }
 
-void CPlot::AddHist1D(TFile *f, TString histName, TString drawopt, int color, int mksty, int linesty, int fillsty)
+void CPlot::AddHist1D(TFile *f, TString histName, TString drawopt, int color, int mksty, float mksz, int linesty, int fillsty)
 {
   if(!f)
     return;
   
   TH1D *h = (TH1D*)f->FindObjectAny(histName);
-  AddHist1D(h,drawopt,color,mksty,linesty,fillsty);
+  AddHist1D(h,drawopt,color,mksty,mksz,linesty,fillsty);
 }
 
-void CPlot::AddHist1D(TFile *f, TString histName, TString label, TString drawopt, int color, int mksty, int linesty, int fillsty)
+void CPlot::AddHist1D(TFile *f, TString histName, TString label, TString drawopt, int color, int mksty, float mksz, int linesty, int fillsty)
 {
   if(!f)
     return;
   
   TH1D *h = (TH1D*)f->FindObjectAny(histName);
-  AddHist1D(h,label,drawopt,color,mksty,linesty,fillsty);
+  AddHist1D(h,label,drawopt,color,mksty,mksz,linesty,fillsty);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -132,7 +133,7 @@ void CPlot::AddToStack(TH1D *h, int color)
     fStack = new THStack(fName+TString("_stack"),"");
   
   fStack->Add(h);
-  AddHist1D(h,"",color,20,1,1001);
+  AddHist1D(h,"",color,20,-1.,1,1001);
 }
 
 void CPlot::AddToStack(TH1D *h, TString label, int color)
@@ -144,7 +145,7 @@ void CPlot::AddToStack(TH1D *h, TString label, int color)
     fStack = new THStack(fName+TString("_stack"),"");
   
   fStack->Add(h);
-  AddHist1D(h,label,"",color,20,1,1001);
+  AddHist1D(h,label,"",color,20,-1.,1,1001);
 }
 
 void CPlot::AddToStack(TFile *f, TString histName, int color)
@@ -191,7 +192,7 @@ void CPlot::AddHist2D(TFile *f, TString histName, TString drawopt, int fillcolor
 }
 
 //--------------------------------------------------------------------------------------------------
-void CPlot::AddGraph(TGraph *gr, TString drawopt, int color, int marksty, int linesty)
+void CPlot::AddGraph(TGraph *gr, TString drawopt, int color, int marksty, float mksz, int linesty)
 {
   if(!gr)
     return;
@@ -201,7 +202,7 @@ void CPlot::AddGraph(TGraph *gr, TString drawopt, int color, int marksty, int li
   gr->SetLineStyle(linesty);
   gr->SetLineWidth(2);
   gr->SetMarkerStyle(marksty);
-  gr->SetMarkerSize(0.9);
+  if (mksz>=0) gr->SetMarkerSize(mksz);
   
   CPlotItem item;
   item.graph = gr;
@@ -209,7 +210,7 @@ void CPlot::AddGraph(TGraph *gr, TString drawopt, int color, int marksty, int li
   fItems.push_back(item);
 }
 
-void CPlot::AddGraph(TGraph *gr, TString label, TString drawopt, int color, int marksty, int linesty)
+void CPlot::AddGraph(TGraph *gr, TString label, TString drawopt, int color, int marksty, float mksz, int linesty)
 {
   if(!gr)
     return;
@@ -225,29 +226,29 @@ void CPlot::AddGraph(TGraph *gr, TString label, TString drawopt, int color, int 
     fLeg->AddEntry(gr,label,"P"); 
   }
   
-  AddGraph(gr,drawopt,color,marksty,linesty);
+  AddGraph(gr,drawopt,color,marksty,mksz,linesty);
 }
 
-void CPlot::AddGraph(TFile *f, TString grName, TString drawopt, int color, int marksty, int linesty)
+void CPlot::AddGraph(TFile *f, TString grName, TString drawopt, int color, int marksty, float mksz, int linesty)
 {
   if(!f)
     return;
   
   TGraph *gr = (TGraph*)f->FindObjectAny(grName);
-  AddGraph(gr,drawopt,color,marksty,linesty);
+  AddGraph(gr,drawopt,color,marksty,mksz,linesty);
 }
 
-void CPlot::AddGraph(TFile *f, TString grName, TString label, TString drawopt, int color, int marksty, int linesty)
+void CPlot::AddGraph(TFile *f, TString grName, TString label, TString drawopt, int color, int marksty, float mksz, int linesty)
 {
   if(!f)
     return;
   
   TGraph *gr = (TGraph*)f->FindObjectAny(grName);
-  AddGraph(gr,label,drawopt,color,marksty,linesty);
+  AddGraph(gr,label,drawopt,color,marksty,mksz,linesty);
 }
 
 //--------------------------------------------------------------------------------------------------
-void CPlot::AddProfile(TProfile *pr, TString drawopt, int color, int marksty, int linesty)
+void CPlot::AddProfile(TProfile *pr, TString drawopt, int color, int marksty, float mksz, int linesty)
 {
   if(!pr)
     return;
@@ -257,7 +258,7 @@ void CPlot::AddProfile(TProfile *pr, TString drawopt, int color, int marksty, in
   pr->SetLineStyle(linesty);
   pr->SetLineWidth(2);
   pr->SetMarkerStyle(marksty);
-  pr->SetMarkerSize(0.9);
+  if (mksz>=0) pr->SetMarkerSize(mksz);
   
   CPlotItem item;
   item.prof = pr;
@@ -265,7 +266,7 @@ void CPlot::AddProfile(TProfile *pr, TString drawopt, int color, int marksty, in
   fItems.push_back(item);
 }
 
-void CPlot::AddProfile(TProfile *pr, TString label, TString drawopt, int color, int marksty, int linesty)
+void CPlot::AddProfile(TProfile *pr, TString label, TString drawopt, int color, int marksty, float mksz, int linesty)
 {
   if(!pr)
     return;
@@ -277,25 +278,25 @@ void CPlot::AddProfile(TProfile *pr, TString label, TString drawopt, int color, 
     
   fLeg->AddEntry(pr,label,"LP");
   
-  AddProfile(pr,drawopt,color,marksty,linesty);
+  AddProfile(pr,drawopt,color,marksty,mksz,linesty);
 }
 
-void CPlot::AddProfile(TFile *f, TString prName, TString drawopt, int color, int marksty, int linesty)
+void CPlot::AddProfile(TFile *f, TString prName, TString drawopt, int color, int marksty, float mksz, int linesty)
 {
   if(!f)
     return;
   
   TProfile *pr = (TProfile*)f->FindObjectAny(prName);
-  AddProfile(pr,drawopt,color,marksty,linesty);
+  AddProfile(pr,drawopt,color,marksty,mksz,linesty);
 }
 
-void CPlot::AddProfile(TFile *f, TString prName, TString label, TString drawopt, int color, int marksty, int linesty)
+void CPlot::AddProfile(TFile *f, TString prName, TString label, TString drawopt, int color, int marksty, float mksz, int linesty)
 {
   if(!f)
     return;
   
   TProfile *pr = (TProfile*)f->FindObjectAny(prName);
-  AddProfile(pr,label,drawopt,color,marksty,linesty);
+  AddProfile(pr,label,drawopt,color,marksty,mksz,linesty);
 }
 
 
@@ -337,6 +338,14 @@ void CPlot::AddTextBox(double x1, double y1, double x2, double y2,
   fTextBoxes.push_back(tb);  
 }
 
+void CPlot::AddText(TString text,double x1, double y1, double txtsz, double lnwd)
+{
+  TLatex * tex = new TLatex(x1,y1,text);
+  tex->SetNDC();
+  tex->SetTextSize(txtsz);
+  tex->SetLineWidth(lnwd);
+  tex->Draw();
+}
 //--------------------------------------------------------------------------------------------------
 void CPlot::AddLine(double x1, double y1, double x2, double y2, int color, int style)
 {

@@ -63,10 +63,10 @@ public:
   void Draw(TPad *c, bool doSave=false, TString format="gif");
   
   // Adding a 1D histogram to the plot
-  void AddHist1D(TH1D *h, TString drawopt="", int color=kBlack, int mksty=20, int linesty=1, int fillsty=0);    
-  void AddHist1D(TH1D *h, TString label, TString drawopt, int color=kBlack, int mksty=20, int linesty=1, int fillsty=0);
-  void AddHist1D(TFile *f, TString histName, TString drawopt="", int color=kBlack, int mksty=20, int linesty=1, int fillsty=0);
-  void AddHist1D(TFile *f, TString histName, TString label, TString drawopt, int color=kBlack, int mksty=20, int linesty=1, int fillsty=0);
+  void AddHist1D(TH1D *h, TString drawopt="", int color=kBlack, int mksty=20, float mksz=-1, int linesty=1, int fillsty=0);    
+  void AddHist1D(TH1D *h, TString label, TString drawopt, int color=kBlack, int mksty=20, float mksz=-1, int linesty=1, int fillsty=0);
+  void AddHist1D(TFile *f, TString histName, TString drawopt="", int color=kBlack, int mksty=20, float mksz=-1, int linesty=1, int fillsty=0);
+  void AddHist1D(TFile *f, TString histName, TString label, TString drawopt, int color=kBlack, int mksty=20, float mksz=-1, int linesty=1, int fillsty=0);
   
   // Adding a 1D histogram to a histogram stack
   void AddToStack(TH1D *h, int color);
@@ -79,22 +79,23 @@ public:
   void AddHist2D(TFile *f, TString histName, TString drawopt="", int fillcolor=kWhite, int linecolor=kBlack);
 
   // Adding a graph (with error bars) to the plot
-  void AddGraph(TGraph *gr, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, int linesty=1);    
-  void AddGraph(TGraph *gr, TString label, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, int linesty=1);
-  void AddGraph(TFile *f, TString grName, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, int linesty=1);
-  void AddGraph(TFile *f, TString grName, TString label, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, int linesty=1);
+  void AddGraph(TGraph *gr, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, float mksz=-1, int linesty=1);    
+  void AddGraph(TGraph *gr, TString label, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, float mksz=-1, int linesty=1);
+  void AddGraph(TFile *f, TString grName, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, float mksz=-1, int linesty=1);
+  void AddGraph(TFile *f, TString grName, TString label, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, float mksz=-1, int linesty=1);
 
   // Adding a profile histogram to the plot
-  void AddProfile(TProfile *gr, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, int linesty=1);    
-  void AddProfile(TProfile *gr, TString label, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, int linesty=1);
-  void AddProfile(TFile *f, TString prName, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, int linesty=1);
-  void AddProfile(TFile *f, TString prName, TString label, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, int linesty=1);
+  void AddProfile(TProfile *gr, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, float mksz=-1, int linesty=1);    
+  void AddProfile(TProfile *gr, TString label, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, float mksz=-1, int linesty=1);
+  void AddProfile(TFile *f, TString prName, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, float mksz=-1, int linesty=1);
+  void AddProfile(TFile *f, TString prName, TString label, TString drawopt, int color=kBlack, int marksty=kFullDotLarge, float mksz=-1, int linesty=1);
   
   // Adding a text box to the plot
   void AddTextBox(TString text, double x1, double y1, double x2, double y2,
                   int bordersize=1, int textcolor=kBlack, int fillcolor=kWhite);
   void AddTextBox(double x1, double y1, double x2, double y2, 
                   int bordersize, int textcolor, int fillcolor, int nlines, ...);		  
+  void AddText(TString text,double x1, double y1, double txtsz=0.04, double lnwd=2);
   
   // Add a line between two points (x1,y1) and (x2,y2)
   void AddLine(double x1, double y1, double x2, double y2, int color=kBlack, int style=1);
