@@ -74,6 +74,22 @@ void plotCheckDiJetFF(int doMC=1,
   hgMcj1t0SelRLRAnaRLRSigXi.Add(inFile0,"hSig_mcj1t0SelRLRAnaRLRAwXi","Aw");
   hgMcj1t0SelRLRAnaRLRSigXi.Average();
 
+  // === Chk 0 ===
+  HisTGroup<TH1D> hgMcj1t0AnaRSigXi("Mcj1t0AnaRSigXi");
+  hgMcj1t0AnaRSigXi.Add(inFile0,"hSig_mcj1t0AnaRNrXi","Nr");
+  hgMcj1t0AnaRSigXi.Add(inFile0,"hSig_mcj1t0AnaRAwXi","Aw");
+  hgMcj1t0AnaRSigXi.Average();
+
+  HisTGroup<TH1D> hgMcj2t0SelRLRSigXi("Mcj2t0SelRLRSigXi");
+  hgMcj2t0SelRLRSigXi.Add(inFile0,"hSig_mcj2t0SelRLRNrXi","Nr");
+  hgMcj2t0SelRLRSigXi.Add(inFile0,"hSig_mcj2t0SelRLRAwXi","Aw");
+  hgMcj2t0SelRLRSigXi.Average();
+
+  HisTGroup<TH1D> hgMcj2t0SelRLRAnaRLSigXi("Mcj2t0SelRLRAnaRLSigXi");
+  hgMcj2t0SelRLRAnaRLSigXi.Add(inFile0,"hSig_mcj2t0SelRLRAnaRLNrXi","Nr");
+  hgMcj2t0SelRLRAnaRLSigXi.Add(inFile0,"hSig_mcj2t0SelRLRAnaRLAwXi","Aw");
+  hgMcj2t0SelRLRAnaRLSigXi.Average();
+
   // === Reco Jet ====
   HisTGroup<TH1D> hgMcj2t0SigXi("Mcj2t0SigXi");
   hgMcj2t0SigXi.Add(inFile0,"hSig_mcj2t0NrXi","Nr");
@@ -112,6 +128,19 @@ void plotCheckDiJetFF(int doMC=1,
   cpChkTreeJ2T0.AddHist1D(hgMcj1t0SelRLRAnaRLRSigXi.R("Ave"),"HI: genjet1,2 SelRLRAnaRLR + gentrk","E",kBlue,kFullCircle);
   cpChkTreeJ2T0.SetLegend(0.194,0.64,0.52,0.94);
   cpChkTreeJ2T0.Draw(cChkTreeJ2T0,true);
+
+  // === Exclusive Check of JES on FF Calc ===
+  TCanvas * cChk0Jes = new TCanvas("cChk0Jes","cChk0Jes",500,500);
+  CPlot cpChk0Jes("Chk0Jes","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  cpChk0Jes.SetYRange(0,6);
+  cpChk0Jes.AddHist1D(hFrame,"Centrality: 0-30\%","",0,0);
+  cpChk0Jes.AddHist1D(hFrame,"120GeV<p_{T}^{jet1}<170GeV","",0,0);
+  cpChk0Jes.AddHist1D(hgMcGenMatSigXi.R("Ave"),"HI: genjet1,2 (Mat) + gentrk","histE",kRed,0,0,7);
+  cpChk0Jes.AddHist1D(hgMcj1t0AnaRSigXi.R("Ave"),"HI: genjet1,2 AnaR + gentrk (FF: calo JES)","E",kGreen-2,kOpenStar,1.2);
+  cpChk0Jes.AddHist1D(hgMcj2t0SelRLRAnaRLSigXi.R("Ave"),"HI: calojet1,2 SelRLRAnaRL + gentrk","E",kRed+2,kOpenSquare);
+  cpChk0Jes.AddHist1D(hgMcj2t0SelRLRSigXi.R("Ave"),"HI: calojet1,2 SelRLR + gentrk","E",kBlue,kFullCircle);
+  cpChk0Jes.SetLegend(0.194,0.64,0.52,0.94);
+  cpChk0Jes.Draw(cChk0Jes,true);
 
   // All done, save and exit
   outf->Write();
