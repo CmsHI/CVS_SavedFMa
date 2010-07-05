@@ -11,7 +11,7 @@ process.maxEvents = cms.untracked.PSet(
     )
 
 process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
-from PhysicsTools.PatAlgos.tools.heavyIonTools import *
+from Saved.PatAlgos.tools.heavyIonTools import *
 configureHeavyIons(process)
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
