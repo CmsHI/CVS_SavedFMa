@@ -18,7 +18,7 @@ using namespace std;
 
 void plotCheckDiJetFF(int doMC=1,
     const char * inFile0Name="checkDiJetFF.root",
-    TString AnaName = "mcuq120V3/a2",
+    TString AnaName = "mcuq120V3/a3",
     TString header="Hydjet2.76TeV+DiJet(120-170GeV)",
     //
     TString title1="MC Calojet",
@@ -75,10 +75,10 @@ void plotCheckDiJetFF(int doMC=1,
   hgMcj1t0SelRLRAnaRLRSigXi.Average();
 
   // === Chk 0 ===
-  HisTGroup<TH1D> hgMcj1t0AnaRSigXi("Mcj1t0AnaRSigXi");
-  hgMcj1t0AnaRSigXi.Add(inFile0,"hSig_mcj1t0AnaRNrXi","Nr");
-  hgMcj1t0AnaRSigXi.Add(inFile0,"hSig_mcj1t0AnaRAwXi","Aw");
-  hgMcj1t0AnaRSigXi.Average();
+  HisTGroup<TH1D> hgMcj1t0MatAnaRSigXi("Mcj1t0MatAnaRSigXi");
+  hgMcj1t0MatAnaRSigXi.Add(inFile0,"hSig_mcj1t0MatAnaRNrXi","Nr");
+  hgMcj1t0MatAnaRSigXi.Add(inFile0,"hSig_mcj1t0MatAnaRAwXi","Aw");
+  hgMcj1t0MatAnaRSigXi.Average();
 
   HisTGroup<TH1D> hgMcj2t0SelRLRSigXi("Mcj2t0SelRLRSigXi");
   hgMcj2t0SelRLRSigXi.Add(inFile0,"hSig_mcj2t0SelRLRNrXi","Nr");
@@ -136,7 +136,7 @@ void plotCheckDiJetFF(int doMC=1,
   cpChk0Jes.AddHist1D(hFrame,"Centrality: 0-30\%","",0,0);
   cpChk0Jes.AddHist1D(hFrame,"120GeV<p_{T}^{jet1}<170GeV","",0,0);
   cpChk0Jes.AddHist1D(hgMcGenMatSigXi.R("Ave"),"HI: genjet1,2 (Mat) + gentrk","histE",kRed,0,0,7);
-  cpChk0Jes.AddHist1D(hgMcj1t0AnaRSigXi.R("Ave"),"HI: genjet1,2 AnaR + gentrk (FF: calo JES)","E",kGreen-2,kOpenStar,1.2);
+  cpChk0Jes.AddHist1D(hgMcj1t0MatAnaRSigXi.R("Ave"),"HI: genjet1,2 AnaR + gentrk (FF: calo JES)","E",kGreen-2,kOpenStar,1.2);
   cpChk0Jes.AddHist1D(hgMcj2t0SelRLRAnaRLSigXi.R("Ave"),"HI: calojet1,2 SelRLRAnaRL + gentrk","E",kRed+2,kOpenSquare);
   cpChk0Jes.AddHist1D(hgMcj2t0SelRLRSigXi.R("Ave"),"HI: calojet1,2 SelRLR + gentrk","E",kBlue,kFullCircle);
   cpChk0Jes.SetLegend(0.194,0.64,0.52,0.94);
