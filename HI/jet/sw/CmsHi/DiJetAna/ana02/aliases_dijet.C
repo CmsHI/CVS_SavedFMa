@@ -23,6 +23,7 @@ void aliases_dijet(TTree * djTree)
   // refjet leading vars
   djTree->SetAlias("NrRefLead","(nlrjet>=alrjet)");
   djTree->SetAlias("AwRefLead","(nlrjet<alrjet)");
+
   djTree->SetAlias("nrljet","(nljet*NrRefLead+aljet*AwRefLead)");
   djTree->SetAlias("arljet","(aljet*NrRefLead+nljet*AwRefLead)");
   djTree->SetAlias("nrlrjet","(nlrjet*NrRefLead+alrjet*AwRefLead)");
@@ -38,10 +39,11 @@ void aliases_dijet(TTree * djTree)
   djTree->SetAlias("nrlrjphi","(nlrjphi*NrRefLead+alrjphi*AwRefLead)");
   djTree->SetAlias("arlrjphi","(alrjphi*NrRefLead+nlrjphi*AwRefLead)");
 
-  djTree->SetAlias("prlndr","(pndr*NrRefLead+padr*AwRefLead)");
-  djTree->SetAlias("prlndrbg","(pndrbg*NrRefLead+padrbg*AwRefLead)");
-  djTree->SetAlias("prladr","(padr*NrRefLead+pndr*AwRefLead)");
-  djTree->SetAlias("prladrbg","(padrbg*NrRefLead+pndrbg*AwRefLead)");
-  djTree->SetAlias("zrln","(zn*NrRefLead+za*AwRefLead)");
-  djTree->SetAlias("zrla","(za*NrRefLead+zn*AwRefLead)");
+  djTree->SetAlias("pnrldr","(pndr*NrRefLead+padr*AwRefLead)");
+  djTree->SetAlias("pnrldrbg","(pndrbg*NrRefLead+padrbg*AwRefLead)");
+  djTree->SetAlias("parldr","(padr*NrRefLead+pndr*AwRefLead)");
+  djTree->SetAlias("parldrbg","(padrbg*NrRefLead+pndrbg*AwRefLead)");
+  
+  djTree->SetAlias("znrl","(zn*NrRefLead+za*AwRefLead)");
+  djTree->SetAlias("zarl","(za*NrRefLead+zn*AwRefLead)");
 }
