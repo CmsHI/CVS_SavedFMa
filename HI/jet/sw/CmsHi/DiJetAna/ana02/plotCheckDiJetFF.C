@@ -18,7 +18,7 @@ using namespace std;
 
 void plotCheckDiJetFF(int doMC=1,
     const char * inFile0Name="checkDiJetFF.root",
-    TString AnaName = "mcuq120V3_1",
+    TString AnaName = "mcuq120V3/a2",
     TString header="Hydjet2.76TeV+DiJet(120-170GeV)",
     //
     TString title1="MC Calojet",

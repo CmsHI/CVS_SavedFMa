@@ -23,7 +23,7 @@ void checkDiJetFF(int doMC=1,
     TString header="Hydjet2.76TeV+DiJet(80-120GeV)",
     */
     const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
-    TString AnaName = "mcuq120V3_1",
+    TString AnaName = "mcuq120V3/a2",
     TString header="Hydjet2.76TeV+DiJet(120-170GeV)",
     //
     TString title1="MC Calojet",
@@ -82,11 +82,11 @@ void checkDiJetFF(int doMC=1,
 
   // === Check trees ===
   // - chk0.0
-  AnaFrag mcj2t0SelRLRAnaRLRNr("mcj2t0SelRLRAnaRLR","NrXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nrlrjet/ppt)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcj2t0SelRLRAnaRLRAw("mcj2t0SelRLRAnaRLR","AwXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(arlrjet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj2t0SelRLRAnaRLRNr("mcj2t0SelRLRAnaRLR","NrXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nrlrjet/ppt)","pnrldr<0.5","pnrldrbg<0.5");
+  AnaFrag mcj2t0SelRLRAnaRLRAw("mcj2t0SelRLRAnaRLR","AwXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(arlrjet/ppt)","parldr<0.5","parldrbg<0.5");
 
-  AnaFrag mcj1t0SelRLRAnaRLRNr("mcj1t0SelRLRAnaRLR","NrXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nrlrjet/ppt)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcj1t0SelRLRAnaRLRAw("mcj1t0SelRLRAnaRLR","AwXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(arlrjet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj1t0SelRLRAnaRLRNr("mcj1t0SelRLRAnaRLR","NrXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nrlrjet/ppt)","pnrldr<0.5","pnrldrbg<0.5");
+  AnaFrag mcj1t0SelRLRAnaRLRAw("mcj1t0SelRLRAnaRLR","AwXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(arlrjet/ppt)","parldr<0.5","parldrbg<0.5");
 
   //
   // Systematic checks
@@ -100,8 +100,8 @@ void checkDiJetFF(int doMC=1,
   AnaFrag mcj2t0SelRLRNr("mcj2t0SelRLR","NrXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nljet/ppt)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcj2t0SelRLRAw("mcj2t0SelRLR","AwXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(aljet/ppt)","padr<0.5","padrbg<0.5");
   // - chkchk0.2
-  AnaFrag mcj2t0SelRLRAnaRLNr("mcj2t0SelRLRAnaRL","NrXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nrljet/ppt)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcj2t0SelRLRAnaRLAw("mcj2t0SelRLRAnaRL","AwXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(arljet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj2t0SelRLRAnaRLNr("mcj2t0SelRLRAnaRL","NrXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nrljet/ppt)","pnrldr<0.5","pnrldrbg<0.5");
+  AnaFrag mcj2t0SelRLRAnaRLAw("mcj2t0SelRLRAnaRL","AwXi",mcj2t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(arljet/ppt)","parldr<0.5","parldrbg<0.5");
 
   // === Check Exlusive Effect of JES in DJ Selection===
   // - chk1.0
@@ -114,8 +114,8 @@ void checkDiJetFF(int doMC=1,
   AnaFrag mcj1t0SelRLRNr("mcj1t0SelRLR","NrXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nljet/ppt)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcj1t0SelRLRAw("mcj1t0SelRLR","AwXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(aljet/ppt)","padr<0.5","padrbg<0.5");
   // - chkchk1.2
-  AnaFrag mcj1t0SelRLRAnaRLNr("mcj1t0SelRLRAnaRL","NrXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nrljet/ppt)","pndr<0.5","pndrbg<0.5");
-  AnaFrag mcj1t0SelRLRAnaRLAw("mcj1t0SelRLRAnaRL","AwXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(arljet/ppt)","padr<0.5","padrbg<0.5");
+  AnaFrag mcj1t0SelRLRAnaRLNr("mcj1t0SelRLRAnaRL","NrXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(nrljet/ppt)","pnrldr<0.5","pnrldrbg<0.5");
+  AnaFrag mcj1t0SelRLRAnaRLAw("mcj1t0SelRLRAnaRL","AwXi",mcj1t0,mcAna.DJ["RefOrderRef"],mcAna.Trk["Ana"],"log(arljet/ppt)","parldr<0.5","parldrbg<0.5");
 
   AnaFrag mcj2t0AnaRNr("mcj2t0AnaR","NrXi",mcj2t0,mcAna.DJ["AnaMatRef"],mcAna.Trk["Ana"],"log(nlrjet/ppt)","pndr<0.5","pndrbg<0.5");
   AnaFrag mcj2t0AnaRAw("mcj2t0AnaR","AwXi",mcj2t0,mcAna.DJ["AnaMatRef"],mcAna.Trk["Ana"],"log(alrjet/ppt)","padr<0.5","padrbg<0.5");
