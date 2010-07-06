@@ -9,7 +9,7 @@
 #include "TH2D.h"
 #include "TF1.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
-#include "CmsHi/DiJetAna/interface/TreeDiJetEventData.h"
+#include "Saved/DiJetAna/interface/TreeDiJetEventData.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/TrackReco/interface/Track.h"

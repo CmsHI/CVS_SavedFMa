@@ -14,7 +14,7 @@ process.source = cms.Source("PoolSource",
     )
 
 #================ DiJet Ana ==========================
-process.load("CmsHi.DiJetAna.dijetAna_cfi")
+process.load("Saved.DiJetAna.dijetAna_cfi")
 print process.dijetAna_mc.dumpPython()
 
 #anaOutName = "dijetAna_anaJet%d_refJet%d.root" % (process.dijetAna.anaJetType.value(),process.dijetAna.refJetType.value())

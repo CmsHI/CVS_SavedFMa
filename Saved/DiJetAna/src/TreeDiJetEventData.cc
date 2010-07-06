@@ -1,4 +1,4 @@
-#include "CmsHi/DiJetAna/interface/TreeDiJetEventData.h"
+#include "Saved/DiJetAna/interface/TreeDiJetEventData.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/Math/interface/deltaPhi.h"

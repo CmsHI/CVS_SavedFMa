@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.54 2010/05/27 17:00:53 frankma Exp $
+// $Id: DiJetAna.cc,v 1.1 2010/07/06 09:19:15 frankma Exp $
 //
 //
 
@@ -34,7 +34,7 @@ Implementation:
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 // ana
-#include "CmsHi/DiJetAna/interface/DiJetAna.h"
+#include "Saved/DiJetAna/interface/DiJetAna.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "RecoJets/JetAlgorithms/interface/JetAlgoHelper.h"
@@ -51,7 +51,7 @@ Implementation:
 #include "TMath.h"
 #include "TStopwatch.h"
 
-#include "CmsHi/DiJetAna/interface/TreeDiJetEventData.h"
+#include "Saved/DiJetAna/interface/TreeDiJetEventData.h"
 #include "DataFormats/HeavyIonEvent/interface/Centrality.h"
 #include "SimDataFormats/HiGenData/interface/GenHIEvent.h"
 

@@ -8,10 +8,10 @@
 #include "TLegend.h"
 #include "TSystem.h"
 #include "TMath.h"
-#include "CmsHi/DiJetAna/ana02/aliases_dijet.C"
-#include "CmsHi/DiJetAna/ana02/selectionCut.h"
-#include "CmsHi/DiJetAna/ana02/AnaFrag.h"
-#include "CmsHi/DiJetAna/ana02/compareHist.h"
+#include "Saved/DiJetAna/ana02/aliases_dijet.C"
+#include "Saved/DiJetAna/ana02/selectionCut.h"
+#include "Saved/DiJetAna/ana02/AnaFrag.h"
+#include "Saved/DiJetAna/ana02/compareHist.h"
 #include "analysis/root/macros/cplot/CPlot.h"           // helper class for plots
 #include "analysis/root/macros/histogram/HisTGroup.h"
 using namespace std;
