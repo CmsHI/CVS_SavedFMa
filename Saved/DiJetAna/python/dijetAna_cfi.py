@@ -23,16 +23,10 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     anaTrkType = cms.untracked.int32(3),
     # HI Event Selection: top 30% centrality
     centBinBeg = cms.untracked.int32(0),
-    centBinEnd = cms.untracked.int32(6)
+    centBinEnd = cms.untracked.int32(20)
     )
 
-dijetAna_mc_periph = dijetAna_mc.clone(
-    # HI Event Selection: peripheral bins
-    centBinBeg = cms.untracked.int32(0),
-    centBinEnd = cms.untracked.int32(18)
-    )
-
-# -- Data --
+# === Data ===
 dijetAna_data_allcbin = dijetAna_mc.clone(
     isMC = cms.untracked.bool(False),
     centLabel = cms.string("HFhits20_DataJulyExercise_Hydjet2760GeV_MC_37Y_V5_v0"),
