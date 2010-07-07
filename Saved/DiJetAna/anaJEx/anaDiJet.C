@@ -8,26 +8,20 @@
 #include "TLegend.h"
 #include "TSystem.h"
 #include "TMath.h"
-#include "Saved/DiJetAna/ana02/aliases_dijet.C"
-#include "Saved/DiJetAna/ana02/selectionCut.h"
-#include "Saved/DiJetAna/ana02/AnaFrag.h"
-#include "Saved/DiJetAna/ana02/compareHist.h"
+#include "Saved/DiJetAna/macros/aliases_dijet.C"
+#include "Saved/DiJetAna/anaJEx/selectionCut.h"
+#include "Saved/DiJetAna/anaJEx/AnaFrag.h"
 #include "analysis/root/macros/cplot/CPlot.h"           // helper class for plots
 #include "analysis/root/macros/histogram/HisTGroup.h"
 using namespace std;
 
-void anaDiJet(int doMC=1,
-    /*
-    const char * inFile0Name="../process_aod/outputs/McUqDj80to120_DJes002_10k.root",
-    TString outdir = "plots/mcuq80to120_10k",
-    TString header="Hydjet2.76TeV+DiJet(80-120GeV)",
-    */
-    const char * inFile0Name="../process_aod/outputs/McUqDj120to170_DJes002_10k.root",
-    TString AnaName = "mcuq120V0",
-    TString header="Hydjet2.76TeV+DiJet(120-170GeV)",
+void anaDiJet(int doMC=0,
+    const char * inFile0Name="../process_aod/outputs/dijetAna_Hard4_Data1_14k.root",
+    TString AnaName = "dataHd4/a0",
+    TString header="July Data (Hard Triggered)",
     //
-    TString title1="MC Calojet",
-    TString title2="MC Genjet")
+    TString title1="Data",
+    TString title2="MC")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -36,23 +30,34 @@ void anaDiJet(int doMC=1,
   inFile0->ls();
 
   // Define dijet selection
-  selectionCut mcAna(AnaName,doMC,1,110,170,90);
-  selectionCut mcAnaLoose(AnaName,doMC,1,50,200,50);
+  selectionCut mcAna(AnaName,doMC,1,80,120,70);
+  selectionCut mcAnaLoose(AnaName,doMC,1,40,200,40);
 
-  TTree *mcj2t3, *mcj2t3peri, *mcj2t0, *mcj1t0;
-  inFile0->GetObject("dijetAna_mc/djTree",mcj2t3);
-  aliases_dijet(mcj2t3);
-  inFile0->GetObject("dijetAna_mc_genjet_genp/djTree",mcj1t0);
-  aliases_dijet(mcj1t0);
+  TTree *dataj2, *mcj2t3, *mcj2t3peri, *mcj2t0, *mcj1t0;
+  if (!doMC) {
+    inFile0->GetObject("dijetAna_data_allcbin/djTree",dataj2);
+    aliases_dijet(dataj2,0);
+  } else {
+    inFile0->GetObject("dijetAna_mc/djTree",mcj2t3);
+    aliases_dijet(mcj2t3,1);
+    inFile0->GetObject("dijetAna_mc_genjet_genp/djTree",mcj1t0);
+    aliases_dijet(mcj1t0,1);
+  }
 
+  /*
   TString djSelTag("Ana");
   TString trkSelTag("Ana");
   cout << endl << "====== DJ Selection: " << djSelTag << " ======" << endl;
-  cout << "DJ selection: " << TString(mcAna.DJ[djSelTag]) << endl;
-  cout << "dijetAna_mc/mcj2t3 # entries: " << mcj2t3->GetEntries() << endl;
-  cout << "# DJ events passed: " << mcj2t3->GetEntries(mcAna.DJ[djSelTag]) << endl;
-  cout << "dijetAna_mc/mcj1t0 # entries: " << mcj1t0->GetEntries() << endl;
-  cout << "# DJ events passed: " << mcj1t0->GetEntries(mcAna.DJ[djSelTag]) << endl;
+  if (!doMC) {
+    cout << "DJ selection: " << TString(mcAna.DJ[djSelTag]) << endl;
+    cout << "dijetAna_data_allcbin/djTree # entries: " << dataj2->GetEntries() << endl;
+  } else {
+    cout << "DJ selection: " << TString(mcAna.DJ[djSelTag]) << endl;
+    cout << "dijetAna_mc/mcj2t3 # entries: " << mcj2t3->GetEntries() << endl;
+    cout << "# DJ events passed: " << mcj2t3->GetEntries(mcAna.DJ[djSelTag]) << endl;
+    cout << "dijetAna_mc/mcj1t0 # entries: " << mcj1t0->GetEntries() << endl;
+    cout << "# DJ events passed: " << mcj1t0->GetEntries(mcAna.DJ[djSelTag]) << endl;
+  }
 
   // Define Output
   cout << "======= Output Dir: ========" << endl;
@@ -110,4 +115,5 @@ void anaDiJet(int doMC=1,
 
   // All done, save and exit
   outf->Write();
+  */
 }
