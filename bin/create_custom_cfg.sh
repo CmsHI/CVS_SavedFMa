@@ -33,7 +33,6 @@ else
       echo "add_custom_cfg.sh $newcfg $1" >> $script
       shift
    done
-   echo "add_custom_cfg.sh $newcfg mySeq/mycustom_options.py" >> $script
    echo "add_custom_cfg.sh $newcfg mySeq/output_cfg_summary.py" >> $script
 fi
 
