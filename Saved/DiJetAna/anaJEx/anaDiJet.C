@@ -141,6 +141,15 @@ void anaDiJet(int doMC=0,
     cpDJ2Et.Draw((TPad*)cDJ2Et->GetPad(2),true);
   }
 
+  // DJ vs Centrality
+  AnaFrag dataj2DJCent("dataj2","DJCent",dataj2,mcAna.DJ["Ana"],"","cbin*5","","",20,0,100);
+  TCanvas * cCompDJCent = new TCanvas("cCompDJCent","cCompDJCent",500,500);
+  CPlot cpCompDJCent("CompDJCent","CompDJCent","Centrality [%]","frac of (tight) DiJets");
+  if (!doMC) {
+    cpCompDJCent.AddHist1D(dataj2DJCent.hRaw,"July Data","E",kBlack,kFullCircle);
+  }
+  cpCompDJCent.Draw(cCompDJCent,true);
+
   // All done, save and exit
   outf->Write();
 }
