@@ -8,11 +8,13 @@
 #include "TLegend.h"
 #include "TSystem.h"
 #include "TMath.h"
+
 #include "Saved/DiJetAna/macros/aliases_dijet.C"
-#include "Saved/DiJetAna/anaJEx/selectionCut.h"
-#include "Saved/DiJetAna/anaJEx/AnaFrag.h"
+#include "Saved/DiJetAna/macros/AnaFrag.h"
 #include "analysis/root/macros/cplot/CPlot.h"           // helper class for plots
 #include "analysis/root/macros/histogram/HisTGroup.h"
+
+#include "Saved/DiJetAna/anaJEx/selectionCut.h"
 using namespace std;
 
 void anaDiJet(int doMC=0,
