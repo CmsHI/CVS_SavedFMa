@@ -15,8 +15,11 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     JECLab1 = cms.string("abs"),
     JECLab2Nr = cms.string(""),
     JECLab2Aw = cms.string(""),
-    nearJetPtMin = cms.untracked.double(40.0),
-    awayJetPtMin = cms.untracked.double(40.0),
+    # dphi cut
+    nearJetPtMin = cms.untracked.double(20.0),
+    awayJetPtMin = cms.untracked.double(20.0),
+    djDPhiMin = cms.double(1.),
+    # trk cut
     trkPtMin = cms.untracked.double(0.3),
     anaJetType = cms.untracked.int32(2),
     refJetType = cms.untracked.int32(11),
