@@ -73,6 +73,8 @@ void anaDiJet(int doMC=0,
   // ============== pdf comparisons ===============
   AnaFrag dataj2JDPhi("dataj2","JDPhi",dataj2,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
   AnaFrag dataj2Balance("dataj2","Balance",dataj2,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
+  AnaFrag dataj2LooseJDPhi("dataj2Loose","JDPhi",dataj2,mcAnaLoose.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
+  AnaFrag dataj2LooseBalance("dataj2Loose","Balance",dataj2,mcAnaLoose.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
   if (doMC) {
     AnaFrag mcj2JDPhi("mcj2","JDPhi",mcj2t3,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
     AnaFrag mcj1JDPhi("mcj1","JDPhi",mcj1t0,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
@@ -85,44 +87,60 @@ void anaDiJet(int doMC=0,
   TCanvas * cCompJDPhi = new TCanvas("cCompJDPhi","cCompJDPhi",500,500);
   CPlot cpCompJDPhi("CompJDPhi","CompJDPhi","Leading Di-Jet d #phi","pdf");
   if (!doMC) {
-    cpCompJDPhi.AddHist1D(dataj2JDPhi.hRaw,"Data CaloJet","Ehist",kRed,0);
+    cpCompJDPhi.AddHist1D(dataj2LooseJDPhi.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
+    cpCompJDPhi.AddHist1D(dataj2JDPhi.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
   }
+  cpCompJDPhi.SetLegend(0.21,0.75,0.54,0.87);
   cpCompJDPhi.Draw(cCompJDPhi,true);
 
   TCanvas * cCompBalance = new TCanvas("cCompBalance","cCompBalance",500,500);
   CPlot cpCompBalance("CompBalance","CompBalance","(p_{T}^{j1}-p_{T}^{j2})/((p_{T}^{j1}+p_{T}^{j2})/2)","pdf");
   cpCompBalance.SetYRange(0,7.5);
   if (!doMC) {
-    cpCompBalance.AddHist1D(dataj2Balance.hRaw,"Data CaloJet","E",kBlack);
+    cpCompBalance.AddHist1D(dataj2LooseBalance.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
+    cpCompBalance.AddHist1D(dataj2Balance.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
   }
   cpCompBalance.Draw(cCompBalance,true);
 
-  /*
   // ============== Dijet Scales ===============
-  HisTGroup<TH2F> hgDJEt("DJEt",50,0,200,50,0,200);
-  hgDJEt.Add2D("J2");
-  hgDJEt.Add2D("J2Mat");
-  hgDJEt.Add2D("J2SelRef");
-  hgDJEt.Add2D("J1");
+  HisTGroup<TH2F> hgDataDJEt("DataDJEt",50,0,200,50,0,200);
+  hgDataDJEt.Add2D("J2");
 
-  mcj2t3->Draw(Form("aljet:nljet>>%s",hgDJEt.GetH("J2")->GetName()),mcAnaLoose.DJ["Ana"],"goff");
-  mcj2t3->Draw(Form("aljet:nljet>>%s",hgDJEt.GetH("J2Mat")->GetName()),mcAnaLoose.DJ["AnaMatRef"],"goff");
-  mcj2t3->Draw(Form("aljet:nljet>>%s",hgDJEt.GetH("J2SelRef")->GetName()),mcAnaLoose.DJ["Ref"],"goff");
-  mcj1t0->Draw(Form("aljet:nljet>>%s",hgDJEt.GetH("J1")->GetName()),mcAnaLoose.DJ["Ana"],"goff");
+  HisTGroup<TH2F> hgMcDJEt("McDJEt",50,0,200,50,0,200);
+  hgMcDJEt.Add2D("J2");
+  hgMcDJEt.Add2D("J2Mat");
+  hgMcDJEt.Add2D("J2SelRef");
+  hgMcDJEt.Add2D("J1");
+
+  if (!doMC) {
+    dataj2->Draw(Form("aljet:nljet>>%s",hgDataDJEt.GetH("J2")->GetName()),mcAnaLoose.DJ["Ana"],"goff");
+  } else {
+    mcj2t3->Draw(Form("aljet:nljet>>%s",hgMcDJEt.GetH("J2")->GetName()),mcAnaLoose.DJ["Ana"],"goff");
+    mcj2t3->Draw(Form("aljet:nljet>>%s",hgMcDJEt.GetH("J2Mat")->GetName()),mcAnaLoose.DJ["AnaMatRef"],"goff");
+    mcj2t3->Draw(Form("aljet:nljet>>%s",hgMcDJEt.GetH("J2SelRef")->GetName()),mcAnaLoose.DJ["Ref"],"goff");
+    mcj1t0->Draw(Form("aljet:nljet>>%s",hgMcDJEt.GetH("J1")->GetName()),mcAnaLoose.DJ["Ana"],"goff");
+  }
 
   // -- plot --
-  TCanvas * cDJ2Et = new TCanvas("cDJ2Et","cDJ2Et",1000,500);
-  cDJ2Et->Divide(2,1);
-  cDJ2Et->cd(1);
-  CPlot cpDJ1Et("DJ1Et","DJ","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
-  cpDJ1Et.AddHist2D(hgDJEt.H("J1"),"colz");
-  cpDJ1Et.Draw((TPad*)cDJ2Et->GetPad(1),false);
-  cDJ2Et->cd(2);
-  CPlot cpDJ2Et("DJ2Et","DJ","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
-  cpDJ2Et.AddHist2D(hgDJEt.H("J2"),"colz");
-  cpDJ2Et.Draw((TPad*)cDJ2Et->GetPad(2),true);
+  if (!doMC) {
+    TCanvas * cDataDJ2Et = new TCanvas("cDataDJ2Et","cDataDJ2Et",700,700);
+    cDataDJ2Et->SetLogz();
+    CPlot cpDataDJ2Et("DataDataDJ2Et","DJ","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
+    cpDataDJ2Et.AddHist2D(hgDataDJEt.H("J2"),"colz");
+    cpDataDJ2Et.Draw(cDataDJ2Et,true);
+  } else {
+    TCanvas * cDJ2Et = new TCanvas("cDJ2Et","cDJ2Et",1000,500);
+    cDJ2Et->Divide(2,1);
+    cDJ2Et->cd(1);
+    CPlot cpDJ1Et("DJ1Et","DJ","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
+    cpDJ1Et.AddHist2D(hgMcDJEt.H("J1"),"colz");
+    cpDJ1Et.Draw((TPad*)cDJ2Et->GetPad(1),false);
+    cDJ2Et->cd(2);
+    CPlot cpDJ2Et("DJ2Et","DJ","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
+    cpDJ2Et.AddHist2D(hgMcDJEt.H("J2"),"colz");
+    cpDJ2Et.Draw((TPad*)cDJ2Et->GetPad(2),true);
+  }
 
   // All done, save and exit
   outf->Write();
-  */
 }
