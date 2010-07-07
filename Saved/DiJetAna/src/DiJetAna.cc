@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.1 2010/07/06 09:19:15 frankma Exp $
+// $Id: DiJetAna.cc,v 1.2 2010/07/06 09:47:34 frankma Exp $
 //
 //
 
@@ -81,11 +81,15 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   JECLab1_ = iConfig.getParameter<string>("JECLab1");
   JECLab2Nr_ = iConfig.getParameter<string>("JECLab2Nr");
   JECLab2Aw_ = iConfig.getParameter<string>("JECLab2Aw");
+  // dijet
   nearJetPtMin_ = iConfig.getUntrackedParameter<double>("nearJetPtMin", 50);
   awayJetPtMin_ = iConfig.getUntrackedParameter<double>("awayJetPtMin", 50);
+  djDPhiMin_ = iConfig.getParameter<double>("djDPhiMin");
+  // trk
   trkPtMin_ = iConfig.getUntrackedParameter<double>("trkPtMin", 0.3);
   anaJetType_ = iConfig.getUntrackedParameter<int>("anaJetType", 2);
   refJetType_ = iConfig.getUntrackedParameter<int>("refJetType", 11);
+  // centrality
   anaTrkType_ = iConfig.getUntrackedParameter<int>("anaTrkType", 3);
   centBinBeg_ = iConfig.getUntrackedParameter<int>("centBinBeg", 0);
   centBinEnd_ = iConfig.getUntrackedParameter<int>("centBinEnd", 6);
@@ -441,7 +445,7 @@ Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
       Double_t jdphi = TMath::Abs(reco::deltaPhi(NrJet.phi(),jet.phi()));
-      if (jdphi < TMath::Pi()*2./3.) continue; // not too close to near jet in dphi
+      if (jdphi < djDPhiMin_) continue; // not too close to near jet in dphi
 
       Double_t corrPt = jet.pt();
       if (corrPt>AwayPtMax) {
