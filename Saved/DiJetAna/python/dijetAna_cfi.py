@@ -27,7 +27,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     )
 
 # === Data ===
-dijetAna_data_allcbin = dijetAna_mc.clone(
+dijetAna_data = dijetAna_mc.clone(
     isMC = cms.untracked.bool(False),
     centLabel = cms.string("HFhits20_DataJulyExercise_Hydjet2760GeV_MC_37Y_V5_v0"),
     refJetType = cms.untracked.int32(-1),
@@ -59,7 +59,7 @@ dijetAna_mc_genjet_genp = dijetAna_mc.clone(
 
 # Analysis Sequences
 dijetAna_data_seq = cms.Sequence(
-    dijetAna_data_allcbin
+    dijetAna_data
     )
 
 dijetAna_mc_seq = cms.Sequence(
