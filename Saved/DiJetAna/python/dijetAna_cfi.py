@@ -1,5 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
+# === Full Reco ===
 # Dijet Ana Modules
 dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     isMC = cms.untracked.bool(True),
@@ -27,9 +28,22 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
 
 dijetAna_mc_periph = dijetAna_mc.clone(
     # HI Event Selection: peripheral bins
-    centBinBeg = cms.untracked.int32(12),
+    centBinBeg = cms.untracked.int32(0),
     centBinEnd = cms.untracked.int32(18)
     )
+
+# -- Data --
+dijetAna_data_allcbin = dijetAna_mc.clone(
+    isMC = cms.untracked.bool(False),
+    centLabel = cms.string("HFhits20_DataJulyExercise_Hydjet2760GeV_MC_37Y_V5_v0"),
+    refJetType = cms.untracked.int32(-1),
+    # Select all centralities for Data to first look before cut
+    centBinBeg = cms.untracked.int32(0),
+    centBinEnd = cms.untracked.int32(20)
+    )
+
+
+# === Systematic Studies ===
 
 dijetAna_mc_genjet_trk = dijetAna_mc.clone(
     jetsrc = cms.untracked.InputTag("iterativeCone5HiGenJets"),
@@ -49,13 +63,9 @@ dijetAna_mc_genjet_genp = dijetAna_mc.clone(
     anaTrkType = cms.untracked.int32(0)
     )
 
-dijetAna_data = dijetAna_mc.clone(
-    isMC = cms.untracked.bool(False)
-    )
-
 # Analysis Sequences
 dijetAna_data_seq = cms.Sequence(
-    dijetAna_data
+    dijetAna_data_allcbin
     )
 
 dijetAna_mc_seq = cms.Sequence(
