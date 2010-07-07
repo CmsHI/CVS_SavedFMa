@@ -74,7 +74,7 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
   awJEtMin(AwJetMin),
   jetEtaMin(0.),
   jetEtaMax(2.),
-  djDPhiMin(TMath::Pi()*5/6),
+  djDPhiMin(TMath::Pi()*3/6),
   hisJEtBins(50),
   hisJEtMin(0),
   hisJEtMax(200),
