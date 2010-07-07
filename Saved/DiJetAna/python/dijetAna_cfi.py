@@ -64,7 +64,6 @@ dijetAna_data_seq = cms.Sequence(
 
 dijetAna_mc_seq = cms.Sequence(
     dijetAna_mc *
-    dijetAna_mc_periph *
     #dijetAna_mc_genjet_trk *
     dijetAna_mc_calojet_genp *
     dijetAna_mc_genjet_genp
