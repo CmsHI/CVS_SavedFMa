@@ -12,6 +12,7 @@
 
 #--- Setup Root env using script ---
 . /net/hisrv0001/home/frankma/UserCode/SavedFMa/bin/cgate/set_root.sh
+#. /net/hisrv0001/home/frankma/UserCode/SavedFMa/bin/cgate/set_root_5_22.sh
 
 #--- Setup hiroot env ---
 source /opt/bin/sh/sethirootpath.sh $HOME/work/hiroot
