@@ -32,7 +32,7 @@ void anaDiJet(int doMC=0,
   inFile0->ls();
 
   // Define dijet selection
-  selectionCut mcAna(AnaName,doMC,1,80,120,70);
+  selectionCut mcAna(AnaName,doMC,1,70,120,60);
   selectionCut mcAnaLoose(AnaName,doMC,1,40,200,40);
 
   TTree *dataj2, *mcj2t3, *mcj2t3peri, *mcj2t0, *mcj1t0;
@@ -46,13 +46,13 @@ void anaDiJet(int doMC=0,
     aliases_dijet(mcj1t0,1);
   }
 
-  /*
   TString djSelTag("Ana");
   TString trkSelTag("Ana");
   cout << endl << "====== DJ Selection: " << djSelTag << " ======" << endl;
   if (!doMC) {
     cout << "DJ selection: " << TString(mcAna.DJ[djSelTag]) << endl;
     cout << "dijetAna_data_allcbin/djTree # entries: " << dataj2->GetEntries() << endl;
+    cout << "# DJ events passed: " << dataj2->GetEntries(mcAna.DJ[djSelTag]) << endl;
   } else {
     cout << "DJ selection: " << TString(mcAna.DJ[djSelTag]) << endl;
     cout << "dijetAna_mc/mcj2t3 # entries: " << mcj2t3->GetEntries() << endl;
@@ -71,26 +71,33 @@ void anaDiJet(int doMC=0,
   TFile * outf = new TFile(Form("%s/anaDiJet.root",anaoutdir.Data()),"RECREATE");
 
   // ============== pdf comparisons ===============
-  AnaFrag mcj2JDPhi("mcj2","JDPhi",mcj2t3,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
-  AnaFrag mcj1JDPhi("mcj1","JDPhi",mcj1t0,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
+  AnaFrag dataj2JDPhi("dataj2","JDPhi",dataj2,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
+  AnaFrag dataj2Balance("dataj2","Balance",dataj2,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
+  if (doMC) {
+    AnaFrag mcj2JDPhi("mcj2","JDPhi",mcj2t3,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
+    AnaFrag mcj1JDPhi("mcj1","JDPhi",mcj1t0,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
 
-  AnaFrag mcj2Balance("mcj2","Balance",mcj2t3,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
-  AnaFrag mcj1Balance("mcj1","Balance",mcj1t0,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
+    AnaFrag mcj2Balance("mcj2","Balance",mcj2t3,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
+    AnaFrag mcj1Balance("mcj1","Balance",mcj1t0,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
+  }
 
   // -- plot --
   TCanvas * cCompJDPhi = new TCanvas("cCompJDPhi","cCompJDPhi",500,500);
   CPlot cpCompJDPhi("CompJDPhi","CompJDPhi","Leading Di-Jet d #phi","pdf");
-  cpCompJDPhi.AddHist1D(mcj1JDPhi.hRaw,"GenJet","Ehist",kRed,0);
-  cpCompJDPhi.AddHist1D(mcj2JDPhi.hRaw,"CaloJet","E",kBlack);
+  if (!doMC) {
+    cpCompJDPhi.AddHist1D(dataj2JDPhi.hRaw,"Data CaloJet","Ehist",kRed,0);
+  }
   cpCompJDPhi.Draw(cCompJDPhi,true);
 
   TCanvas * cCompBalance = new TCanvas("cCompBalance","cCompBalance",500,500);
   CPlot cpCompBalance("CompBalance","CompBalance","(p_{T}^{j1}-p_{T}^{j2})/((p_{T}^{j1}+p_{T}^{j2})/2)","pdf");
   cpCompBalance.SetYRange(0,7.5);
-  cpCompBalance.AddHist1D(mcj1Balance.hRaw,"GenJet","Ehist",kRed,0);
-  cpCompBalance.AddHist1D(mcj2Balance.hRaw,"CaloJet","E",kBlack);
+  if (!doMC) {
+    cpCompBalance.AddHist1D(dataj2Balance.hRaw,"Data CaloJet","E",kBlack);
+  }
   cpCompBalance.Draw(cCompBalance,true);
 
+  /*
   // ============== Dijet Scales ===============
   HisTGroup<TH2F> hgDJEt("DJEt",50,0,200,50,0,200);
   hgDJEt.Add2D("J2");
