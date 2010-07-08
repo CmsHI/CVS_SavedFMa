@@ -127,10 +127,11 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
 
 void selectionCut::And(std::map<TString,TCut> & mp, TCut cut)
 {
-  cout << "add cut: " << TString(cut) << " to: " << endl;
+  //cout << "add cut: " << TString(cut) << " to: " << endl;
   for (std::map<TString, TCut>::iterator 
       iter=mp.begin(); iter != mp.end(); ++iter) {
-    std::cout << std::setw(15) << iter->first << ": " << TString(iter->second) << std::endl;
+    //std::cout << std::setw(15) << iter->first << ": " << TString(iter->second) << std::endl;
+    iter->second = iter->second && cut;
   }
 }
 
