@@ -96,6 +96,7 @@ void anaDiJet(int doMC=0,
     cpCompJDPhi.AddHist1D(dataj2JDPhi.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
   }
   cpCompJDPhi.SetLegend(0.21,0.75,0.54,0.87);
+  cpCompJDPhi.SetLegendHeader(header);
   cpCompJDPhi.Draw(cCompJDPhi,true);
 
   TCanvas * cCompBalance = new TCanvas("cCompBalance","cCompBalance",500,500);
@@ -105,6 +106,7 @@ void anaDiJet(int doMC=0,
     cpCompBalance.AddHist1D(dataj2LooseBalance.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
     cpCompBalance.AddHist1D(dataj2Balance.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
   }
+  cpCompBalance.SetLegendHeader(header);
   cpCompBalance.Draw(cCompBalance,true);
 
   // ============== Dijet Scales ===============
@@ -132,6 +134,7 @@ void anaDiJet(int doMC=0,
     cDataDJ2Et->SetLogz();
     CPlot cpDataDJ2Et("DataDataDJ2Et","DJ","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
     cpDataDJ2Et.AddHist2D(hgDataDJEt.H("J2"),"colz");
+    //cpDataDJ2Et.SetLegendHeader(header);
     cpDataDJ2Et.Draw(cDataDJ2Et,true);
   } else {
     TCanvas * cDJ2Et = new TCanvas("cDJ2Et","cDJ2Et",1000,500);
@@ -153,6 +156,7 @@ void anaDiJet(int doMC=0,
   if (!doMC) {
     cpCompDJCent.AddHist1D(dataj2DJCent.hRaw,"July Data","E",kBlack,kFullCircle);
   }
+  cpCompDJCent.SetLegendHeader(header);
   cpCompDJCent.Draw(cCompDJCent,true);
 
   // All done, save and exit
