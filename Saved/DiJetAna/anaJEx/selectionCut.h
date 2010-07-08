@@ -11,6 +11,10 @@ class selectionCut
   public:
     selectionCut(TString name, bool isMC, int sel, float NrJetMin=80, float NrJetMax=120, float AwJetMin=70, int runnum=-1, int nLumiL=0, int nLumiH=10000);
     ~selectionCut(){}
+
+    // memeber functions
+    void And(std::map<TString,TCut> & mp, TCut ct);
+    void DJAnd(TCut ct);
     void Print();
 
     // ana setup
@@ -119,9 +123,13 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
 
   // Analysis Tag
   AnaTag = Form("Sel%d_N%0.fto%.0f_A%.0f",selType,nrJEtMin,nrJEtMax,awJEtMin);
+}
 
-  // Check
-  Print();
+void selectionCut::And(std::map<TString,TCut> & mp, TCut ct)
+{
+}
+void selectionCut::DJAnd(TCut ct)
+{
 }
 
 void selectionCut::Print()
