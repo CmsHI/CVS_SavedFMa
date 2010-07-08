@@ -13,8 +13,8 @@ class selectionCut
     ~selectionCut(){}
 
     // memeber functions
-    void And(std::map<TString,TCut> & mp, TCut ct);
-    void DJAnd(TCut ct);
+    void And(std::map<TString,TCut> & mp, TCut cut);
+    void DJAnd(TCut cut) { And(DJ,cut); }
     void Print();
 
     // ana setup
@@ -125,11 +125,13 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
   AnaTag = Form("Sel%d_N%0.fto%.0f_A%.0f",selType,nrJEtMin,nrJEtMax,awJEtMin);
 }
 
-void selectionCut::And(std::map<TString,TCut> & mp, TCut ct)
+void selectionCut::And(std::map<TString,TCut> & mp, TCut cut)
 {
-}
-void selectionCut::DJAnd(TCut ct)
-{
+  cout << "add cut: " << TString(cut) << " to: " << endl;
+  for (std::map<TString, TCut>::iterator 
+      iter=mp.begin(); iter != mp.end(); ++iter) {
+    std::cout << std::setw(15) << iter->first << ": " << TString(iter->second) << std::endl;
+  }
 }
 
 void selectionCut::Print()
