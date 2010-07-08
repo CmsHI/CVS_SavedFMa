@@ -18,8 +18,8 @@
 using namespace std;
 
 void anaDiJet(int doMC=0,
-    const char * inFile0Name="../process_aod/outputs/dijetAna_Hard4_Data1_14k.root",
-    TString AnaName = "dataHd4/a0",
+    const char * inFile0Name="../process_aod/outputs/dijetaAna_JulyHard4_try4.root",
+    TString AnaName = "dataHd4p4/a0",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
@@ -33,11 +33,11 @@ void anaDiJet(int doMC=0,
 
   // Define dijet selection
   selectionCut mcAna(AnaName,doMC,1,70,120,60);
-  selectionCut mcAnaLoose(AnaName,doMC,1,40,200,40);
+  selectionCut mcAnaLoose(AnaName,doMC,1,20,200,20);
 
   TTree *dataj2, *mcj2t3, *mcj2t3peri, *mcj2t0, *mcj1t0;
   if (!doMC) {
-    inFile0->GetObject("dijetAna_data_allcbin/djTree",dataj2);
+    inFile0->GetObject("dijetAna_data/djTree",dataj2);
     aliases_dijet(dataj2,0);
   } else {
     inFile0->GetObject("dijetAna_mc/djTree",mcj2t3);
@@ -51,7 +51,7 @@ void anaDiJet(int doMC=0,
   cout << endl << "====== DJ Selection: " << djSelTag << " ======" << endl;
   if (!doMC) {
     cout << "DJ selection: " << TString(mcAna.DJ[djSelTag]) << endl;
-    cout << "dijetAna_data_allcbin/djTree # entries: " << dataj2->GetEntries() << endl;
+    cout << "dijetAna_data/djTree # entries: " << dataj2->GetEntries() << endl;
     cout << "# DJ events passed: " << dataj2->GetEntries(mcAna.DJ[djSelTag]) << endl;
   } else {
     cout << "DJ selection: " << TString(mcAna.DJ[djSelTag]) << endl;
