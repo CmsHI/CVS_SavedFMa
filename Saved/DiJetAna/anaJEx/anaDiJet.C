@@ -36,7 +36,7 @@ void anaDiJet(int doMC=0,
   TFile * inFile0 = new TFile(inFile0Name);
   inFile0->ls();
 
-  // Define dijet selection
+  // === Define dijet selection ===
   selectionCut mcAna(AnaName,doMC,1,70,120,60);
   mcAna.DJAnd(TCut("(5*cbin)<20"));
   // check
@@ -45,6 +45,7 @@ void anaDiJet(int doMC=0,
   selectionCut mcAnaLoose(AnaName,doMC,1,20,200,20);
   mcAnaLoose.DJAnd(TCut("(5*cbin)<20"));
 
+  // === Get Trees ===
   TTree *dataj2, *mcj2t3, *mcj2t3peri, *mcj2t0, *mcj1t0;
   if (!doMC) {
     inFile0->GetObject("dijetAna_data/djTree",dataj2);
