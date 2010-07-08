@@ -94,7 +94,7 @@ void anaDiJetTrk(int doMC=0,
   CPlot cpCompJTrkDPhi("CompJTrkDPhi","CompJTrkDPhi","#Delta#phi(trk,j1)","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{d#Delta#phi}");
   cpCompJTrkDPhi.SetYRange(0,550);
   cpCompJTrkDPhi.AddHist1D(j2t3JTrkDPhi.hRaw,"hiSelectedTrk (p_{T}>1GeV)","E",kBlack,kFullCircle);
-  cpCompJTrkDPhi.AddHist1D(j2t3JTrkTight5DPhi.hRaw,"hiSelectedTrk (p_{T}>7GeV)","E",kBlue,kOpenCircle);
+  cpCompJTrkDPhi.AddHist1D(j2t3JTrkTight5DPhi.hRaw,"hiSelectedTrk (p_{T}>5GeV)","E",kBlue,kOpenCircle);
   cpCompJTrkDPhi.SetLegend(0.41,0.76,0.71,0.86);
   cpCompJTrkDPhi.SetLegendHeader(header);
   cpCompJTrkDPhi.Draw(cCompJTrkDPhi,true);
