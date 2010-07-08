@@ -82,6 +82,7 @@ void anaDiJetTrk(int doMC=0,
 
   // ============== pdf comparisons ===============
   AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
+  AnaFrag j2t3JTrkTight5DPhi("j2t3","JTrkTight5DPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight5"],"pndphi","","",30,0,TMath::Pi());
   if (doMC) {
     AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
     AnaFrag j2t0JTrkDPhi("j2t0","JTrkDPhi",j2t0,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
@@ -90,10 +91,12 @@ void anaDiJetTrk(int doMC=0,
 
   // -- plot --
   TCanvas * cCompJTrkDPhi = new TCanvas("cCompJTrkDPhi","cCompJTrkDPhi",500,500);
-  CPlot cpCompJTrkDPhi("CompJTrkDPhi","CompJTrkDPhi","d #phi(j1,trk)","pdf per sel evt");
+  CPlot cpCompJTrkDPhi("CompJTrkDPhi","CompJTrkDPhi","#Delta#phi(trk,j1)","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{d#Delta#phi}");
   cpCompJTrkDPhi.SetYRange(0,550);
   cpCompJTrkDPhi.AddHist1D(j2t3JTrkDPhi.hRaw,"hiSelectedTrk (p_{T}>1GeV)","E",kBlack,kFullCircle);
-  cpCompJTrkDPhi.SetLegend(0.41,0.27,0.71,0.37);
+  cpCompJTrkDPhi.AddHist1D(j2t3JTrkTight5DPhi.hRaw,"hiSelectedTrk (p_{T}>7GeV)","E",kBlue,kOpenCircle);
+  cpCompJTrkDPhi.SetLegend(0.41,0.76,0.71,0.86);
+  cpCompJTrkDPhi.SetLegendHeader(header);
   cpCompJTrkDPhi.Draw(cCompJTrkDPhi,true);
 
   // All done, save and exit

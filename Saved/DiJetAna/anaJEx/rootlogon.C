@@ -30,6 +30,7 @@
   // styles
   gROOT->Macro("$CMSSW_BASE/src/analysis/root/logon/rootlogon_dNdEtaBase.C+");
   //gStyle->SetOptStat(1111);
+  gStyle->SetPadLeftMargin(0.2);
 
   // helper classes
   gROOT->Macro("$CMSSW_BASE/src/analysis/root/macros/cplot/CPlot.cc+");
