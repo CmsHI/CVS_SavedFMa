@@ -33,6 +33,8 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
 dijetAna_data = dijetAna_mc.clone(
     isMC = cms.untracked.bool(False),
     centLabel = cms.string("HFhits20_DataJulyExercise_Hydjet2760GeV_MC_37Y_V5_v0"),
+    trksrc = cms.untracked.InputTag("hiSelectedTracks"),
+    anaTrkType = cms.untracked.int32(2),
     refJetType = cms.untracked.int32(-1),
     # Select all centralities for Data to first look before cut
     centBinBeg = cms.untracked.int32(0),
