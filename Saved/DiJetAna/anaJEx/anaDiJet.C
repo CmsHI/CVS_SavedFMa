@@ -18,9 +18,14 @@
 using namespace std;
 
 void anaDiJet(int doMC=0,
+    const char * inFile0Name="../process_aod/outputs/dijetaAna_JulyMb4_try4.root",
+    TString AnaName = "dataMb4p4/a0",
+    TString header="July Data (MB)",
+    /*
     const char * inFile0Name="../process_aod/outputs/dijetaAna_JulyHard4_try4.root",
     TString AnaName = "dataHd4p4/a0",
     TString header="July Data (Hard Triggered)",
+    */
     //
     TString title1="Data",
     TString title2="MC")
