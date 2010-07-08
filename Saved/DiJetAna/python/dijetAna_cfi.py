@@ -32,7 +32,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
 # === Data ===
 dijetAna_data = dijetAna_mc.clone(
     isMC = cms.untracked.bool(False),
-    centLabel = cms.string("HFhits20_DataJulyExercise_Hydjet2760GeV_MC_37Y_V5_v0"),
+    centLabel = cms.string("HFhits20_DataJulyExercise_Hydjet2760GeV_MC_37Y_V5_NZS_v0"),
     trksrc = cms.untracked.InputTag("hiSelectedTracks"),
     anaTrkType = cms.untracked.int32(2),
     refJetType = cms.untracked.int32(-1),
