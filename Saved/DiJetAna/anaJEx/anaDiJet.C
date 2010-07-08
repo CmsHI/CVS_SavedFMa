@@ -18,14 +18,14 @@
 using namespace std;
 
 void anaDiJet(int doMC=0,
+    /*
     const char * inFile0Name="../process_aod/outputs/dijetaAna_JulyMb4_try4.root",
     TString AnaName = "dataMb4p4/a0",
     TString header="July Data (MB)",
-    /*
+    */
     const char * inFile0Name="../process_aod/outputs/dijetaAna_JulyHard4_try4.root",
     TString AnaName = "dataHd4p4/a0",
     TString header="July Data (Hard Triggered)",
-    */
     //
     TString title1="Data",
     TString title2="MC")
@@ -77,20 +77,21 @@ void anaDiJet(int doMC=0,
 
   // ============== pdf comparisons ===============
   AnaFrag dataj2JDPhi("dataj2","JDPhi",dataj2,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
-  AnaFrag dataj2Balance("dataj2","Balance",dataj2,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
+  AnaFrag dataj2Balance("dataj2","Balance",dataj2,mcAna.DJ["Ana"],"","(nljet-aljet)/nljet","","",30,0,1.);
   AnaFrag dataj2LooseJDPhi("dataj2Loose","JDPhi",dataj2,mcAnaLoose.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
-  AnaFrag dataj2LooseBalance("dataj2Loose","Balance",dataj2,mcAnaLoose.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
+  AnaFrag dataj2LooseBalance("dataj2Loose","Balance",dataj2,mcAnaLoose.DJ["Ana"],"","(nljet-aljet)/nljet","","",30,0,1.);
   if (doMC) {
     AnaFrag mcj2JDPhi("mcj2","JDPhi",mcj2t3,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
     AnaFrag mcj1JDPhi("mcj1","JDPhi",mcj1t0,mcAna.DJ["Ana"],"","jdphi","","",30,0,TMath::Pi());
 
-    AnaFrag mcj2Balance("mcj2","Balance",mcj2t3,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
-    AnaFrag mcj1Balance("mcj1","Balance",mcj1t0,mcAna.DJ["Ana"],"","2*(nljet-aljet)/(nljet+aljet)","","",30,0,1.);
+    AnaFrag mcj2Balance("mcj2","Balance",mcj2t3,mcAna.DJ["Ana"],"","(nljet-aljet)/(nljet)","","",30,0,1.);
+    AnaFrag mcj1Balance("mcj1","Balance",mcj1t0,mcAna.DJ["Ana"],"","(nljet-aljet)/(nljet)","","",30,0,1.);
   }
 
   // -- plot --
   TCanvas * cCompJDPhi = new TCanvas("cCompJDPhi","cCompJDPhi",500,500);
   CPlot cpCompJDPhi("CompJDPhi","CompJDPhi","Leading Di-Jet d #phi","pdf");
+  cpCompJDPhi.SetYRange(0,4);
   if (!doMC) {
     cpCompJDPhi.AddHist1D(dataj2LooseJDPhi.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
     cpCompJDPhi.AddHist1D(dataj2JDPhi.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
@@ -100,7 +101,7 @@ void anaDiJet(int doMC=0,
   cpCompJDPhi.Draw(cCompJDPhi,true);
 
   TCanvas * cCompBalance = new TCanvas("cCompBalance","cCompBalance",500,500);
-  CPlot cpCompBalance("CompBalance","CompBalance","(p_{T}^{j1}-p_{T}^{j2})/((p_{T}^{j1}+p_{T}^{j2})/2)","pdf");
+  CPlot cpCompBalance("CompBalance","CompBalance","(p_{T}^{j1}-p_{T}^{j2})/(p_{T}^{j1})","pdf");
   cpCompBalance.SetYRange(0,7.5);
   if (!doMC) {
     cpCompBalance.AddHist1D(dataj2LooseBalance.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
