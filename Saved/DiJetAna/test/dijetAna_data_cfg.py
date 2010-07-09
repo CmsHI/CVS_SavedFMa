@@ -15,6 +15,7 @@ process.source = cms.Source("PoolSource",
 
 #================ DiJet Ana ==========================
 process.load("Saved.DiJetAna.dijetAna_cfi")
+process.dijetAna_data.centLabel = cms.string("HFhits20_DataJulyExercise_Hydjet2760GeV_MC_37Y_V5_v0")
 #process.dijetAna_data.djDPhiMin = 2.5
 print process.dijetAna_data.dumpPython()
 
