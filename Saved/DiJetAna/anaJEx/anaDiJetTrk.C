@@ -19,12 +19,12 @@ using namespace std;
 
 void anaDiJetTrk(int doMC=0,
     /*
-    const char * inFile0Name="../process_aod/outputs/dijetaAna_JulyMb4_try4.root",
-    TString AnaName = "dataMb4p4/a0",
-    TString header="July Data (MB)",
-    */
-    const char * inFile0Name="../process_aod/outputs/dijetaAna_JulyHard4_try4.root",
-    TString AnaName = "dataHd4p4/a0",
+       const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_MB_proc0_all.root",
+       TString AnaName = "ZSMb/dphi25/a0",
+       TString header="July Data (MB)",
+     */
+    const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc0_all.root",
+    TString AnaName = "ZSHd/dp25/a0",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
@@ -37,12 +37,12 @@ void anaDiJetTrk(int doMC=0,
   inFile0->ls();
 
   // === Define dijet selection ===
-  selectionCut mcAna(AnaName,doMC,1,70,120,60);
+  selectionCut mcAna(AnaName,doMC,1,100,200,50,2.5);
   mcAna.DJAnd(TCut("(5*cbin)<20"));
   // check
   mcAna.Print();
   // loose
-  selectionCut mcAnaLoose(AnaName,doMC,1,20,200,20);
+  selectionCut mcAnaLoose(AnaName,doMC,1,20,200,20,2.5);
   mcAnaLoose.DJAnd(TCut("(5*cbin)<20"));
 
   // === Get Trees ===
@@ -81,6 +81,9 @@ void anaDiJetTrk(int doMC=0,
   TFile * outf = new TFile(Form("%s/anaDiJetTrk.root",anaoutdir.Data()),"RECREATE");
 
   // ============== pdf comparisons ===============
+  Double_t histTrkPtMax=60;
+  AnaFrag j2t3TrkPt("j2t3","TrkPt",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"ppt","","",histTrkPtMax*2,0,histTrkPtMax);
+  AnaFrag j2t3JCTrkPt("j2t3","JCTrkPt",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"]&&"pndr<0.5||padr<0.5","ppt","","",histTrkPtMax*2,0,histTrkPtMax);
   AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
   AnaFrag j2t3JTrkTight5DPhi("j2t3","JTrkTight5DPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight5"],"pndphi","","",30,0,TMath::Pi());
   if (doMC) {
@@ -90,6 +93,15 @@ void anaDiJetTrk(int doMC=0,
   }
 
   // -- plot --
+  TCanvas * cCompTrkPt = new TCanvas("cCompTrkPt","cCompTrkPt",500,500);
+  CPlot cpCompTrkPt("CompTrkPt","CompTrkPt","p_{T}^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dp_{T}}");
+  cpCompTrkPt.AddHist1D(j2t3TrkPt.hRaw,"hiSelectedTrk","E",kBlack,kFullCircle);
+  cpCompTrkPt.AddHist1D(j2t3JCTrkPt.hRaw,"hiSelectedTrk","E",kBlue,kOpenSquare);
+  cpCompTrkPt.SetLegend(0.41,0.76,0.71,0.86);
+  cpCompTrkPt.SetLegendHeader(header);
+  cpCompTrkPt.SetLogy();
+  cpCompTrkPt.Draw(cCompTrkPt,true);
+
   TCanvas * cCompJTrkDPhi = new TCanvas("cCompJTrkDPhi","cCompJTrkDPhi",500,500);
   CPlot cpCompJTrkDPhi("CompJTrkDPhi","CompJTrkDPhi","#Delta#phi(trk,j1)","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{d#Delta#phi}");
   cpCompJTrkDPhi.SetYRange(0,550);
