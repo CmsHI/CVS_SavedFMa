@@ -38,7 +38,7 @@ void anaDiJetFF(int doMC=0,
 
   // === Define dijet selection ===
   selectionCut mcAna(AnaName,doMC,1,90,200,50,2.5);
-  mcAna.DJAnd(TCut("(5*cbin)>=30"));
+  mcAna.DJAnd(TCut("(5*cbin)<20"));
   // check
   mcAna.Print();
   // loose
