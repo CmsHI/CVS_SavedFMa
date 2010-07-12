@@ -20,11 +20,11 @@ using namespace std;
 void anaDiJet(int doMC=0,
     /*
     const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_MB_proc0_all.root",
-    TString AnaName = "ZSMb/dphi25/a0",
+    TString AnaName = "ZSMb/dp25/a0",
     TString header="July Data (MB)",
     */
     const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc0_all.root",
-    TString AnaName = "ZSHd/dphi25/a0",
+    TString AnaName = "ZSHd/dp25/a0",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
