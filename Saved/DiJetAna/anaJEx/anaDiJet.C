@@ -19,12 +19,12 @@ using namespace std;
 
 void anaDiJet(int doMC=0,
     /*
-    const char * inFile0Name="../process_aod/outputs/dijetaAna_JulyMb4_try4.root",
-    TString AnaName = "dataMb4p4/a0",
+    const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_MB_proc0_all.root",
+    TString AnaName = "ZSMb/dphi25/a0",
     TString header="July Data (MB)",
     */
-    const char * inFile0Name="../process_aod/outputs/dijetaAna_JulyHard4_try4.root",
-    TString AnaName = "dataHd4p4/a0",
+    const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc0_all.root",
+    TString AnaName = "ZSHd/dphi25/a0",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
@@ -37,12 +37,12 @@ void anaDiJet(int doMC=0,
   inFile0->ls();
 
   // === Define dijet selection ===
-  selectionCut mcAna(AnaName,doMC,1,70,120,60);
+  selectionCut mcAna(AnaName,doMC,1,100,200,50,2.5);
   mcAna.DJAnd(TCut("(5*cbin)<20"));
   // check
   mcAna.Print();
   // loose
-  selectionCut mcAnaLoose(AnaName,doMC,1,20,200,20);
+  selectionCut mcAnaLoose(AnaName,doMC,1,20,200,20,2.5);
   mcAnaLoose.DJAnd(TCut("(5*cbin)<20"));
 
   // === Get Trees ===
