@@ -9,7 +9,7 @@
 class selectionCut
 {  
   public:
-    selectionCut(TString name, bool isMC, int sel, float NrJetMin=80, float NrJetMax=120, float AwJetMin=70, int runnum=-1, int nLumiL=0, int nLumiH=10000);
+    selectionCut(TString name, bool isMC, int sel, float NrJetMin=80, float NrJetMax=120, float AwJetMin=70, float jdphi=2.5, int runnum=-1, int nLumiL=0, int nLumiH=10000);
     ~selectionCut(){}
 
     // memeber functions
@@ -69,7 +69,7 @@ class selectionCut
     float trkPtMax;
 };
 
-selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, float NrJetMax, float AwJetMin, int runnum, int nLumiL, int nLumiH) :
+selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, float NrJetMax, float AwJetMin, float jdphi, int runnum, int nLumiL, int nLumiH) :
   Name(name),
   selType(sel),
   runNum(runnum),
@@ -78,7 +78,7 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
   awJEtMin(AwJetMin),
   jetEtaMin(0.),
   jetEtaMax(2.),
-  djDPhiMin(1.),
+  djDPhiMin(jdphi),
   hisJEtBins(50),
   hisJEtMin(0),
   hisJEtMax(200),
