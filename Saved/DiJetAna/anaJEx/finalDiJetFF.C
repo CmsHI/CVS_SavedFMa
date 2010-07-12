@@ -26,7 +26,7 @@ void finalDiJetFF(int doMC=0,
     TString title2="MC")
 {
   // Define Inputs
-  selectionCut mcAna(AnaName,doMC,1,100,200,50,2.5);
+  selectionCut mcAna(AnaName,doMC,1,90,200,50,2.5);
   cout << "======= Inputs: ========" << endl;
   TString indir = Form("plots/%s/%s",AnaName.Data(),mcAna.AnaTag.Data());
   TString inFile0Path = indir+"/"+inFile0Name;
@@ -90,28 +90,30 @@ void finalDiJetFF(int doMC=0,
 
   // === FF QA Plots ===
   TCanvas * cRecoFFNrSub = new TCanvas("cRecoFFNrSub","cRecoFFNrSub",500,500);
-  CPlot cpRecoFFNrSub("RecoFFNrSub","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  CPlot cpRecoFFNrSub("RecoFFNrSub","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
   cpRecoFFNrSub.SetXRange(0,6);
   cpRecoFFNrSub.SetYRange(0.001,1000);
+  cpRecoFFNrSub.AddHist1D(hFrame,"July Hard: Reco DiJetFF","",0,0);
   cpRecoFFNrSub.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
   cpRecoFFNrSub.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<200GeV, 50GeV<p_{T}^{jet2}","",0,0);
-  cpRecoFFNrSub.AddHist1D(hgRecoRawXi.H("Nr"),"July Hard: Reco DiJet FF Nr (Raw)","E",kGreen+2,kOpenSquare);
-  cpRecoFFNrSub.AddHist1D(hgRecoBkgXi.H("Nr"),"July Hard: Reco DiJet FF Nr (Bkg)","E",kBlue,kOpenCircle);
-  cpRecoFFNrSub.AddHist1D(hgRecoSigXi.H("Nr"),"July Hard: Reco DiJet FF Nr (Sig)","E",kBlack,kFullCircle);
-  cpRecoFFNrSub.SetLegend(0.194,0.74,0.52,0.94);
+  cpRecoFFNrSub.AddHist1D(hgRecoRawXi.H("Nr"),"Near (Raw)","E",kGreen+2,kOpenSquare);
+  cpRecoFFNrSub.AddHist1D(hgRecoBkgXi.H("Nr"),"Near (Bkg)","E",kBlue,kOpenCircle);
+  cpRecoFFNrSub.AddHist1D(hgRecoSigXi.H("Nr"),"Near (Sig)","E",kBlack,kFullCircle);
+  cpRecoFFNrSub.SetLegend(0.194,0.7,0.52,0.94);
   cpRecoFFNrSub.SetLogy();
   cpRecoFFNrSub.Draw(cRecoFFNrSub,true);
 
   TCanvas * cRecoFFAwSub = new TCanvas("cRecoFFAwSub","cRecoFFAwSub",500,500);
-  CPlot cpRecoFFAwSub("RecoFFAwSub","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  CPlot cpRecoFFAwSub("RecoFFAwSub","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
   cpRecoFFAwSub.SetXRange(0,6);
   cpRecoFFAwSub.SetYRange(0.001,1000);
+  cpRecoFFAwSub.AddHist1D(hFrame,"July Hard: Reco DiJetFF","",0,0);
   cpRecoFFAwSub.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
   cpRecoFFAwSub.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<200GeV, 50GeV<p_{T}^{jet2}","",0,0);
-  cpRecoFFAwSub.AddHist1D(hgRecoRawXi.H("Aw"),"July Hard: Reco DiJet FF Aw (Raw)","E",kGreen+2,kOpenSquare);
-  cpRecoFFAwSub.AddHist1D(hgRecoBkgXi.H("Aw"),"July Hard: Reco DiJet FF Aw (Bkg)","E",kBlue,kOpenCircle);
-  cpRecoFFAwSub.AddHist1D(hgRecoSigXi.H("Aw"),"July Hard: Reco DiJet FF Aw (Sig)","E",kBlack,kFullCircle);
-  cpRecoFFAwSub.SetLegend(0.194,0.74,0.52,0.94);
+  cpRecoFFAwSub.AddHist1D(hgRecoRawXi.H("Aw"),"Away (Raw)","E",kGreen+2,kOpenSquare);
+  cpRecoFFAwSub.AddHist1D(hgRecoBkgXi.H("Aw"),"Away (Bkg)","E",kBlue,kOpenCircle);
+  cpRecoFFAwSub.AddHist1D(hgRecoSigXi.H("Aw"),"Away (Sig)","E",kBlack,kFullCircle);
+  cpRecoFFAwSub.SetLegend(0.194,0.7,0.52,0.94);
   cpRecoFFAwSub.SetLogy();
   cpRecoFFAwSub.Draw(cRecoFFAwSub,true);
 
@@ -120,9 +122,10 @@ void finalDiJetFF(int doMC=0,
   CPlot cpFinalFF("FinalFF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
   cpFinalFF.SetXRange(0,6);
   cpFinalFF.SetYRange(0,6);
+  cpFinalFF.AddHist1D(hFrame,"July Hard: Reco DiJetFF","",0,0);
   cpFinalFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
   cpFinalFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<200GeV, 50GeV<p_{T}^{jet2}","",0,0);
-  cpFinalFF.AddHist1D(hgRecoSigXi.R("Ave"),"July Hard: Reco DiJet FF","E",kBlack,kFullCircle);
+  cpFinalFF.AddHist1D(hgRecoSigXi.R("Ave"),"Near,Away","E",kBlack,kFullCircle);
   cpFinalFF.SetLegend(0.194,0.74,0.52,0.94);
   cpFinalFF.Draw(cFinalFF,true);
 
