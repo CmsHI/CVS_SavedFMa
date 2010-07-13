@@ -81,13 +81,16 @@ void anaDiJetTrk(int doMC=0,
   TFile * outf = new TFile(Form("%s/anaDiJetTrk.root",anaoutdir.Data()),"RECREATE");
 
   // ============== pdf comparisons ===============
-  Double_t histTrkPtMax=60;
+  Double_t histTrkPtMax=50;
   Double_t histTrkNHitsMax=30;
   // === Event Level ===
-  AnaFrag j2t3TrkPt("j2t3","TrkPt",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"ppt","","",histTrkPtMax*2,0,histTrkPtMax);
-  AnaFrag j2t3JCTrkPt("j2t3","JCTrkPt",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"]&&"pndr<0.5||padr<0.5","ppt","","",histTrkPtMax*2,0,histTrkPtMax);
+  AnaFrag j2t3TrkPt("j2t3","TrkPt",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"ppt","","",histTrkPtMax,0,histTrkPtMax);
+  AnaFrag j2t3JCTrkPt("j2t3","JCTrkPt",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"]&&"pndr<0.5||padr<0.5","ppt","","",histTrkPtMax,0,histTrkPtMax);
   AnaFrag j2t3TrkNHits("j2t3","TrkNHits",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"trkNHits","","",histTrkNHitsMax,0,histTrkNHitsMax);
   // === Jet Level ===
+  AnaFrag j2t3NrTrkPt("j2t3","NrTrkPt",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"ppt","pndr<0.5","pndrbg<0.5",histTrkPtMax,0,histTrkPtMax);
+  AnaFrag j2t3AwTrkPt("j2t3","AwTrkPt",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"ppt","pndr<0.5","pndrbg<0.5",histTrkPtMax,0,histTrkPtMax);
+
   // === Jet Strip ===
   AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
   AnaFrag j2t3JTrkTight5DPhi("j2t3","JTrkTight5DPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight5"],"pndphi","","",30,0,TMath::Pi());
@@ -114,10 +117,31 @@ void anaDiJetTrk(int doMC=0,
   cpCompTrkNHits.AddHist1D(j2t3TrkNHits.hRaw,"hiSelectedTrk","E",kBlack,kFullCircle);
   cpCompTrkNHits.SetLegend(0.41,0.76,0.71,0.86);
   cpCompTrkNHits.SetLegendHeader(header);
-  cpCompTrkNHits.SetLogy();
   cpCompTrkNHits.Draw(cCompTrkNHits,true);
 
   // === Jet Level ===
+  TCanvas * cCompNrTrkPt = new TCanvas("cCompNrTrkPt","cCompNrTrkPt",500,500);
+  CPlot cpCompNrTrkPt("CompNrTrkPt","CompNrTrkPt","p_{T}^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dp_{T}}");
+  cpCompNrTrkPt.AddHist1D(j2t3NrTrkPt.hRaw,"Raw","E",kGreen+2,kOpenSquare);
+  cpCompNrTrkPt.AddHist1D(j2t3NrTrkPt.hBkg,"Bkg","E",kBlue,kOpenCircle);
+  cpCompNrTrkPt.AddHist1D(j2t3NrTrkPt.hSig,"Subtracted","E",kBlack,kFullCircle);
+  cpCompNrTrkPt.SetLegend(0.61,0.82,0.91,0.92);
+  cpCompNrTrkPt.SetLegendHeader(header);
+  cpCompNrTrkPt.SetLogx();
+  cpCompNrTrkPt.SetLogy();
+  cpCompNrTrkPt.Draw(cCompNrTrkPt,true);
+
+  TCanvas * cCompAwTrkPt = new TCanvas("cCompAwTrkPt","cCompAwTrkPt",500,500);
+  CPlot cpCompAwTrkPt("CompAwTrkPt","CompAwTrkPt","p_{T}^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dp_{T}}");
+  cpCompAwTrkPt.AddHist1D(j2t3AwTrkPt.hRaw,"Raw","E",kGreen+2,kOpenSquare);
+  cpCompAwTrkPt.AddHist1D(j2t3AwTrkPt.hBkg,"Bkg","E",kBlue,kOpenCircle);
+  cpCompAwTrkPt.AddHist1D(j2t3AwTrkPt.hSig,"Subtracted","E",kBlack,kFullCircle);
+  cpCompAwTrkPt.SetLegend(0.61,0.82,0.91,0.92);
+  cpCompAwTrkPt.SetLegendHeader(header);
+  cpCompAwTrkPt.SetLogx();
+  cpCompAwTrkPt.SetLogy();
+  cpCompAwTrkPt.Draw(cCompAwTrkPt,true);
+
   // === Jet Strip ===
   TCanvas * cCompJTrkDPhi = new TCanvas("cCompJTrkDPhi","cCompJTrkDPhi",500,500);
   CPlot cpCompJTrkDPhi("CompJTrkDPhi","CompJTrkDPhi","#Delta#phi(trk,j1)","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{d#Delta#phi}");
