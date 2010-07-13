@@ -67,6 +67,11 @@ class selectionCut
     int numTrkPtBin;
     float trkPtMin;
     float trkPtMax;
+
+    // xi
+    int histXiBins;
+    float histXiMin;
+    float histXiMax;
 };
 
 selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, float NrJetMax, float AwJetMin, float jdphi, int runnum, int nLumiL, int nLumiH) :
@@ -87,7 +92,10 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
   hisJEtaMax(3.0),
   hisJPhiBins(40),
   hisJPhiMin(-1*TMath::Pi()),
-  hisJPhiMax(TMath::Pi())
+  hisJPhiMax(TMath::Pi()),
+  histXiBins(10),
+  histXiMin(0),
+  histXiMax(6)
 {
   // some default setup
   VzRangeL = -30; 
@@ -114,7 +122,7 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
       nrJEtMin,nrJEtMax,awJEtMin,jetEtaMax,jetEtaMax,djDPhiMin);
 
   // Track Selections
-  Trk["Ana"] = ("ppt>1.&&ppt<nljet");
+  Trk["Ana"] = ("ppt>1.2&&ppt<nljet");
   Trk["TightNH"] = ("ppt>1.5&&ppt<nljet&&trkNHits>14");
   Trk["Tight5"] = ("ppt>5.&&ppt<nljet");
   Trk["Tight7"] = ("ppt>7.&&ppt<nljet");

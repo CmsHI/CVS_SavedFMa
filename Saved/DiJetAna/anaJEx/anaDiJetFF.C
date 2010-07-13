@@ -83,8 +83,8 @@ void anaDiJetFF(int doMC=0,
   // ============= dijet FF ================
   cout << endl << "==================== DiJet Ana ===================" << endl;
   // Reco
-  AnaFrag recoNr("reco","NrXi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(1./zn)","pndr<0.5","pndrbg<0.5");
-  AnaFrag recoAw("reco","AwXi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(1./za)","padr<0.5","padrbg<0.5");
+  AnaFrag recoNr("reco","NrXi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(1./zn)","pndr<0.5","pndrbg<0.5",mcAna.histXiBins,mcAna.histXiMin,mcAna.histXiMax);
+  AnaFrag recoAw("reco","AwXi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(1./za)","padr<0.5","padrbg<0.5",mcAna.histXiBins,mcAna.histXiMin,mcAna.histXiMax);
 
   if (doMC) {
     // Reco jet + genp
