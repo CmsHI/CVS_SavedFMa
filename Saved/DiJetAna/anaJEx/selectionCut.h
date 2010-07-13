@@ -77,7 +77,7 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
   nrJEtMax(NrJetMax),
   awJEtMin(AwJetMin),
   jetEtaMin(0.),
-  jetEtaMax(1.),
+  jetEtaMax(2.),
   djDPhiMin(jdphi),
   hisJEtBins(50),
   hisJEtMin(0),
@@ -114,8 +114,8 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
       nrJEtMin,nrJEtMax,awJEtMin,jetEtaMax,jetEtaMax,djDPhiMin);
 
   // Track Selections
-  Trk["Ana"] = ("ppt>1.5&&ppt<nljet");
-  Trk["Tight"] = ("ppt>1.&&ppt<nljet");
+  Trk["Ana"] = ("ppt>0.3&&ppt<nljet");
+  Trk["TightNH"] = ("ppt>1.5&&ppt<nljet&&trkNHits>14");
   Trk["Tight5"] = ("ppt>5.&&ppt<nljet");
   Trk["Tight7"] = ("ppt>7.&&ppt<nljet");
   Trk["AnaSig"] = Trk["Ana"]&&"psube==0";
