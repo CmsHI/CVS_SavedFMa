@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.3 2010/07/07 14:54:38 frankma Exp $
+// $Id: DiJetAna.cc,v 1.4 2010/07/13 08:02:41 frankma Exp $
 //
 //
 
@@ -70,6 +70,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
 {
   //now do what ever initialization is needed
   isMC_ = iConfig.getUntrackedParameter<bool>("isMC", true);
+  fillL1Corr_ = iConfig.getUntrackedParameter<bool>("fillL1Corr", true);
   centFile_ = iConfig.getParameter<string>("centFile");
   centLabel_ = iConfig.getParameter<string>("centLabel");
   vtxsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("vtxsrc",edm::InputTag("hiSelectedVertex"));
@@ -163,7 +164,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
   Double_t hf	  = cent->EtHFhitSum();
   Int_t cbin	  = HFhitBinMap_[1]->getBin(hf);
-  cout << "cbin: " << cbin << endl;
+  //cout << "cbin: " << cbin << endl;
   if (cbin<centBinBeg_ || cbin>=centBinEnd_) return;
   ++numHiEvtSel_;
 
@@ -175,6 +176,30 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //
   // Check Inclusive Jets Before DJ Selection
   InclJetAna(iEvent,anaJetType_,hJetPtPreSel_,hJetEtaPreSel_,hJetPhiPreSel_);
+
+
+  // Grab L1 Corrections if doing fastJet-style PU
+  if(fillL1Corr_){
+    edm::Handle<std::vector<double> > rs;
+    iEvent.getByLabel(edm::InputTag("kt4CaloJets","rhos"),rs);
+   
+    double puCent[11] = {-5,-4,-3,-2,-1,0,1,2,3,4,5};
+    
+    double ymin, ymax;
+    
+    int rsize = rs->size();
+
+    for(int j = 0; j < rsize-11; j++){
+      
+      //     cout<<j<<"    "<<rs->at(j+11)<<endl;
+      ymin=puCent[j]-0.5;
+      ymax=puCent[j]+0.5;
+      double medianpt=rs->at(j+11);
+      medianPtkt[j]=medianpt;
+      //    cout<<" ymin  "<<ymin<<"  ymax "<<ymax<<endl;         
+      
+    }
+  }
 
   //
   // ===== DiJet Ana =====
@@ -345,12 +370,52 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     jd.aljrawet_	= (*jets)[iAway_].correctedP4("raw").pt();
 
     jd.njec_[0]		= (*jets)[iNear_].corrFactor("raw");
+
+    if(fabs((*jets)[iNear_].eta())<=3 && fillL1Corr_){
+
+      double rho=-999;
+      
+      if ((*jets)[iNear_].eta()<-2.5 && (*jets)[iNear_].eta()>-3.5)rho=medianPtkt[2];
+      if ((*jets)[iNear_].eta()<-1.5 && (*jets)[iNear_].eta()>-2.5)rho=medianPtkt[3];
+      if ((*jets)[iNear_].eta()<-0.5 && (*jets)[iNear_].eta()>-1.5)rho=medianPtkt[4];
+      if ((*jets)[iNear_].eta()<0.5 && (*jets)[iNear_].eta()>-0.5)rho=medianPtkt[5];
+      if ((*jets)[iNear_].eta()<1.5 && (*jets)[iNear_].eta()>0.5)rho=medianPtkt[6];
+      if ((*jets)[iNear_].eta()<2.5 && (*jets)[iNear_].eta()>1.5)rho=medianPtkt[7];
+      if ((*jets)[iNear_].eta()<3.5 && (*jets)[iNear_].eta()>2.5)rho=medianPtkt[8];
+      
+            
+      double jetarea=(*jets)[iNear_].jetArea();
+      //jd.njec_[1]=(*jets)[iNear_].et()-jetarea*rho;
+      jd.njec_[1]=1.0-jetarea*rho/(*jets)[iNear_].et();
+    }
+    else jd.njec_[1]=1.;
+
     jd.njec_[2]		= (*jets)[iNear_].corrFactor("rel");
     jd.njec_[3]		= (*jets)[iNear_].corrFactor("abs");
     jd.njec_[5]		= (*jets)[iNear_].corrFactor("had","uds");
     jd.njec_[7]		= (*jets)[iNear_].corrFactor("part","uds");
 
     jd.ajec_[0]		= (*jets)[iAway_].corrFactor("raw");
+
+    if(fabs((*jets)[iAway_].eta())<=3 && fillL1Corr_){
+
+      double rho=-999;
+      
+      if ((*jets)[iAway_].eta()<-2.5 && (*jets)[iAway_].eta()>-3.5)rho=medianPtkt[2];
+      if ((*jets)[iAway_].eta()<-1.5 && (*jets)[iAway_].eta()>-2.5)rho=medianPtkt[3];
+      if ((*jets)[iAway_].eta()<-0.5 && (*jets)[iAway_].eta()>-1.5)rho=medianPtkt[4];
+      if ((*jets)[iAway_].eta()<0.5 && (*jets)[iAway_].eta()>-0.5)rho=medianPtkt[5];
+      if ((*jets)[iAway_].eta()<1.5 && (*jets)[iAway_].eta()>0.5)rho=medianPtkt[6];
+      if ((*jets)[iAway_].eta()<2.5 && (*jets)[iAway_].eta()>1.5)rho=medianPtkt[7];
+      if ((*jets)[iAway_].eta()<3.5 && (*jets)[iAway_].eta()>2.5)rho=medianPtkt[8];
+      
+            
+      double jetarea=(*jets)[iAway_].jetArea();
+      //jd.njec_[1]=(*jets)[iAway_].et()-jetarea*rho;
+      jd.ajec_[1]=1.0-jetarea*rho/(*jets)[iAway_].et();
+    }
+    else jd.ajec_[1]=1.;
+
     jd.ajec_[2]		= (*jets)[iAway_].corrFactor("rel");
     jd.ajec_[3]		= (*jets)[iAway_].corrFactor("abs");
     jd.ajec_[5]		= (*jets)[iAway_].corrFactor("had","glu");

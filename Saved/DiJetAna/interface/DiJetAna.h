@@ -64,6 +64,7 @@ class DiJetAna : public edm::EDAnalyzer {
     edm::InputTag trksrc_;
     // ana setup
     Bool_t	  isMC_;
+    Bool_t	  fillL1Corr_;
     Double_t	  jetEtaMax_;
     Int_t	  nVtxTrkCut_;
     std::string	  JECLab1_;
@@ -116,6 +117,10 @@ class DiJetAna : public edm::EDAnalyzer {
 
     TTree	  *djTree_;
     TreeDiJetEventData djEvt_;
+
+
+    double medianPtkt[12];
+
 };
 
 //
