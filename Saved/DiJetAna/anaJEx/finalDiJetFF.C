@@ -20,7 +20,7 @@ using namespace std;
 void finalDiJetFF(int doMC=0,
     const char * inFile0Name="anaDiJetFF.root",
     TString AnaName = "ZSHd1/dp25/a1",
-    TString Ana2Name = "/net/hisrv0001/home/mnguyen/CMSSW_3_7_0_patch4/src/Saved/DiJetAna/macros/plots/JEXMockDataHard_cent020_ZS_AK5_TightDphi",
+    TString Ana2Name = "/net/hisrv0001/home/mnguyen/CMSSW_3_7_0_patch4/src/Saved/DiJetAna/macros/plots/JEXMockDataHard_cent020_ZS_KT4_TightDphi",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
@@ -148,9 +148,9 @@ void finalDiJetFF(int doMC=0,
   cpFinalFF.SetYRange(0,6);
   cpFinalFF.AddHist1D(hFrame,"July Hard: Reco DiJetFF","",0,0);
   cpFinalFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
-  cpFinalFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<200GeV, 50GeV<p_{T}^{jet2}","",0,0);
+  cpFinalFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
   cpFinalFF.AddHist1D(hgRecoSigXi.R("Ave"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
-  cpFinalFF.AddHist1D(hgReco2SigXi.R("Ave"),"Near+Away (FastJet Ak5 PuSub)","E",kBlue,kFullCircle);
+  cpFinalFF.AddHist1D(hgReco2SigXi.R("Ave"),"Near+Away (FastJet Kt5 PuSub)","E",kBlue,kOpenSquare);
   cpFinalFF.SetLegend(0.194,0.74,0.52,0.94);
   cpFinalFF.Draw(cFinalFF,true);
 
