@@ -23,9 +23,8 @@ void anaDiJetTrk(int doMC=0,
        TString AnaName = "ZSMb/dphi25/a0",
        TString header="July Data (MB)",
      */
-    //const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc0_all.root",
-    const char * inFile0Name="../process_aod/outputs/dijetAna_JEx_ZP_Hard_proc1_all.root",
-    TString AnaName = "ZSHd/dp10/a0",
+    const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc1_all.root",
+    TString AnaName = "ZSHd1/dp25/a1",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
@@ -38,7 +37,7 @@ void anaDiJetTrk(int doMC=0,
   inFile0->ls();
 
   // === Define dijet selection ===
-  selectionCut mcAna(AnaName,doMC,1,100,200,50,2.5);
+  selectionCut mcAna(AnaName,doMC,1,100,170,50,2.5);
   mcAna.DJAnd(TCut("(5*cbin)<20"));
   // check
   mcAna.Print();
@@ -84,12 +83,15 @@ void anaDiJetTrk(int doMC=0,
   // ============== pdf comparisons ===============
   Double_t histTrkPtMax=60;
   Double_t histTrkNHitsMax=30;
+  // === Event Level ===
   AnaFrag j2t3TrkPt("j2t3","TrkPt",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"ppt","","",histTrkPtMax*2,0,histTrkPtMax);
   AnaFrag j2t3JCTrkPt("j2t3","JCTrkPt",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"]&&"pndr<0.5||padr<0.5","ppt","","",histTrkPtMax*2,0,histTrkPtMax);
   AnaFrag j2t3TrkNHits("j2t3","TrkNHits",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"trkNHits","","",histTrkNHitsMax,0,histTrkNHitsMax);
-  AnaFrag j2t3JCTrkNHits("j2t3","JCTrkNHits",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"]&&"pndr<0.5||padr<0.5","trkNHits","","",histTrkNHitsMax,0,histTrkNHitsMax);
+  // === Jet Level ===
+  // === Jet Strip ===
   AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
   AnaFrag j2t3JTrkTight5DPhi("j2t3","JTrkTight5DPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight5"],"pndphi","","",30,0,TMath::Pi());
+
   if (doMC) {
     AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
     AnaFrag j2t0JTrkDPhi("j2t0","JTrkDPhi",j2t0,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
@@ -97,6 +99,7 @@ void anaDiJetTrk(int doMC=0,
   }
 
   // -- plot --
+  // === Event Level ===
   TCanvas * cCompTrkPt = new TCanvas("cCompTrkPt","cCompTrkPt",500,500);
   CPlot cpCompTrkPt("CompTrkPt","CompTrkPt","p_{T}^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dp_{T}}");
   cpCompTrkPt.AddHist1D(j2t3TrkPt.hRaw,"hiSelectedTrk","E",kBlack,kFullCircle);
@@ -109,12 +112,13 @@ void anaDiJetTrk(int doMC=0,
   TCanvas * cCompTrkNHits = new TCanvas("cCompTrkNHits","cCompTrkNHits",500,500);
   CPlot cpCompTrkNHits("CompTrkNHits","CompTrkNHits","NHits^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dNHits}");
   cpCompTrkNHits.AddHist1D(j2t3TrkNHits.hRaw,"hiSelectedTrk","E",kBlack,kFullCircle);
-  cpCompTrkNHits.AddHist1D(j2t3JCTrkNHits.hRaw,"hiSelectedTrk","E",kBlue,kOpenSquare);
   cpCompTrkNHits.SetLegend(0.41,0.76,0.71,0.86);
   cpCompTrkNHits.SetLegendHeader(header);
   cpCompTrkNHits.SetLogy();
   cpCompTrkNHits.Draw(cCompTrkNHits,true);
 
+  // === Jet Level ===
+  // === Jet Strip ===
   TCanvas * cCompJTrkDPhi = new TCanvas("cCompJTrkDPhi","cCompJTrkDPhi",500,500);
   CPlot cpCompJTrkDPhi("CompJTrkDPhi","CompJTrkDPhi","#Delta#phi(trk,j1)","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{d#Delta#phi}");
   cpCompJTrkDPhi.SetYRange(0,550);
