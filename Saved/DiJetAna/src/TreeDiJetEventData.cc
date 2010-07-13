@@ -195,8 +195,7 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("zn",this->zn_,"zn[evtnp]/F");
   tree_->Branch("za",this->za_,"za[evtnp]/F");
 
-  //tree_->Branch("trkHP",this->trkHP_,"trkHP[evtnp]/I");
-  //tree_->Branch("trkNHits",this->trkNHits_,"trkNHits[evtnp]/I");
+  tree_->Branch("trkNHits",this->trkNHits_,"trkNHits[evtnp]/I");
   //tree_->Branch("trkPtErr",this->trkPtErr_,"trkPtErr[evtnp]/F");
   //tree_->Branch("trkdz",this->trkdz_,"trkdz[evtnp]/F");
   //tree_->Branch("trkdxy",this->trkdxy_,"trkdxy[evtnp]/F");

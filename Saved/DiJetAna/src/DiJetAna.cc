@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.2 2010/07/06 09:47:34 frankma Exp $
+// $Id: DiJetAna.cc,v 1.3 2010/07/07 14:54:38 frankma Exp $
 //
 //
 
@@ -378,7 +378,7 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
       // Trk Selection
       if (!GoodAnaTrk(trk)) continue;
       // fill frag candidates basic info
-      //jd.trkNHits_[selTrkCt]	       = trk.numberOfValidHits();
+      jd.trkNHits_[selTrkCt]	       = trk.numberOfValidHits();
       // make trk-jet calcuations
       math::PtEtaPhiMLorentzVector tcand(trk.pt(),trk.eta(),trk.phi(),0.13957); // assume it's pi+/-
       jd.CalcTrkVars(isMC_,anajets,tcand,selTrkCt);
