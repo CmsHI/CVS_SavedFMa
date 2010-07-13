@@ -50,6 +50,7 @@ void finalDiJetFF(int doMC=0,
   TFile * outf = new TFile(Form("%s/finalDiJetFF.root",anaoutdir.Data()),"RECREATE");
 
   // === Get Histograms ===
+  // -- Ana --
   HisTGroup<TH1D> hgRecoRawXi("RecoRawXi");
   hgRecoRawXi.Add(inFile0,"hRaw_recoNrXi","Nr");
   hgRecoRawXi.Add(inFile0,"hRaw_recoAwXi","Aw");
@@ -67,6 +68,22 @@ void finalDiJetFF(int doMC=0,
 
   TH1D * hFrame = (TH1D*)hgRecoSigXi.GetH("Nr")->Clone("hFrame");
   hFrame->Scale(0);
+
+  // -- Compare --
+  HisTGroup<TH1D> hgReco2RawXi("Reco2RawXi");
+  hgReco2RawXi.Add(inFile2,"hRaw_mcRecoNrXi","Nr");
+  hgReco2RawXi.Add(inFile2,"hRaw_mcRecoAwXi","Aw");
+  hgReco2RawXi.Average();
+
+  HisTGroup<TH1D> hgReco2BkgXi("Reco2BkgXi");
+  hgReco2BkgXi.Add(inFile2,"hBkg_mcRecoNrXi","Nr");
+  hgReco2BkgXi.Add(inFile2,"hBkg_mcRecoAwXi","Aw");
+  hgReco2BkgXi.Average();
+
+  HisTGroup<TH1D> hgReco2SigXi("Reco2SigXi");
+  hgReco2SigXi.Add(inFile2,"hSig_mcRecoNrXi","Nr");
+  hgReco2SigXi.Add(inFile2,"hSig_mcRecoAwXi","Aw");
+  hgReco2SigXi.Average();
 
   if (doMC) {
     //  -- t0 --
@@ -132,7 +149,8 @@ void finalDiJetFF(int doMC=0,
   cpFinalFF.AddHist1D(hFrame,"July Hard: Reco DiJetFF","",0,0);
   cpFinalFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
   cpFinalFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<200GeV, 50GeV<p_{T}^{jet2}","",0,0);
-  cpFinalFF.AddHist1D(hgRecoSigXi.R("Ave"),"Near,Away","E",kBlack,kFullCircle);
+  cpFinalFF.AddHist1D(hgRecoSigXi.R("Ave"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
+  cpFinalFF.AddHist1D(hgReco2SigXi.R("Ave"),"Near+Away (FastJet Ak5 PuSub)","E",kBlue,kFullCircle);
   cpFinalFF.SetLegend(0.194,0.74,0.52,0.94);
   cpFinalFF.Draw(cFinalFF,true);
 
