@@ -19,20 +19,27 @@ using namespace std;
 
 void finalDiJetFF(int doMC=0,
     const char * inFile0Name="anaDiJetFF.root",
-    TString AnaName = "ZSHd/dp25/a0",
+    TString AnaName = "ZSHd1/dp25/a1",
+    TString Ana2Name = "/net/hisrv0001/home/mnguyen/CMSSW_3_7_0_patch4/src/Saved/DiJetAna/macros/plots/JEXMockDataHard_cent020_ZS_AK5_TightDphi",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
     TString title2="MC")
 {
   // Define Inputs
-  selectionCut mcAna(AnaName,doMC,1,90,200,50,2.5);
+  selectionCut mcAna(AnaName,doMC,1,100,170,50,2.5);
   cout << "======= Inputs: ========" << endl;
   TString indir = Form("plots/%s/%s",AnaName.Data(),mcAna.AnaTag.Data());
   TString inFile0Path = indir+"/"+inFile0Name;
   cout << inFile0Path << endl;
   TFile * inFile0 = new TFile(inFile0Path);
   inFile0->ls();
+
+  TString indir2 = Form("%s/%s",Ana2Name.Data(),mcAna.AnaTag.Data());
+  TString inFile2Path = indir2+"/"+inFile0Name;
+  cout << inFile2Path << endl;
+  TFile * inFile2 = new TFile(inFile2Path);
+  inFile2->ls();
 
   // Define Output
   cout << "======= Output Dir: ========" << endl;
