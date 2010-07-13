@@ -23,8 +23,8 @@ void anaDiJetFF(int doMC=0,
        TString AnaName = "ZSMb/dphi25/a0",
        TString header="July Data (MB)",
      */
-    const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc0_all.root",
-    TString AnaName = "ZSHd/dp25/a0",
+    const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc1_all.root",
+    TString AnaName = "ZSHd1/dp25/a1",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
@@ -37,7 +37,7 @@ void anaDiJetFF(int doMC=0,
   inFile0->ls();
 
   // === Define dijet selection ===
-  selectionCut mcAna(AnaName,doMC,1,90,200,50,2.5);
+  selectionCut mcAna(AnaName,doMC,1,100,170,50,2.5);
   mcAna.DJAnd(TCut("(5*cbin)<20"));
   // check
   mcAna.Print();
