@@ -37,7 +37,7 @@ void anaDiJetFF(int doMC=0,
   inFile0->ls();
 
   // === Define dijet selection ===
-  selectionCut mcAna(AnaName,doMC,1,100,170,50,2.5);
+  selectionCut mcAna(AnaName,doMC,1,90,170,50,2.5);
   mcAna.DJAnd(TCut("(5*cbin)<20"));
   // check
   mcAna.Print();
