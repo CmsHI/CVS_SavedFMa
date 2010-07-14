@@ -123,9 +123,9 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
 
   // Track Selections
   Trk["Ana"] = ("ppt>1.2&&ppt<nljet");
-  Trk["TightNH"] = ("ppt>1.5&&ppt<nljet&&trkNHits>14");
+  Trk["Tight3"] = ("ppt>3.&&ppt<nljet");
   Trk["Tight5"] = ("ppt>5.&&ppt<nljet");
-  Trk["Tight7"] = ("ppt>7.&&ppt<nljet");
+  Trk["TightNH"] = ("ppt>1.5&&ppt<nljet&&trkNHits>14");
   Trk["AnaSig"] = Trk["Ana"]&&"psube==0";
 
   CutWOVtxCut = TCut(Evt);

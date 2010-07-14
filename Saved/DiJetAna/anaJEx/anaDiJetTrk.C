@@ -92,8 +92,8 @@ void anaDiJetTrk(int doMC=0,
   AnaFrag j2t3AwTrkPt("j2t3","AwTrkPt",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"ppt","pndr<0.5","pndrbg<0.5",histTrkPtMax,0,histTrkPtMax);
 
   // === Jet Strip ===
-  AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
-  AnaFrag j2t3JTrkTight5DPhi("j2t3","JTrkTight5DPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight5"],"pndphi","","",30,0,TMath::Pi());
+  AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"]&&"abs(peta-nljeta)<0.5||abs(peta-aljeta)<0.5","pndphi","","",15,0,TMath::Pi());
+  AnaFrag j2t3JTrkTight3DPhi("j2t3","JTrkTight3DPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight3"]&&"abs(peta-nljeta)<0.5||abs(peta-aljeta)<0.5","pndphi","","",15,0,TMath::Pi());
 
   if (doMC) {
     AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
@@ -106,7 +106,7 @@ void anaDiJetTrk(int doMC=0,
   TCanvas * cCompTrkPt = new TCanvas("cCompTrkPt","cCompTrkPt",500,500);
   CPlot cpCompTrkPt("CompTrkPt","CompTrkPt","p_{T}^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dp_{T}}");
   cpCompTrkPt.AddHist1D(j2t3TrkPt.hRaw,"hiSelectedTrk","E",kBlack,kFullCircle);
-  cpCompTrkPt.AddHist1D(j2t3JCTrkPt.hRaw,"hiSelectedTrk","E",kBlue,kOpenSquare);
+  cpCompTrkPt.AddHist1D(j2t3JCTrkPt.hRaw,"hiSelectedTrk (in jet)","E",kBlue,kOpenSquare);
   cpCompTrkPt.SetLegend(0.41,0.76,0.71,0.86);
   cpCompTrkPt.SetLegendHeader(header);
   cpCompTrkPt.SetLogy();
@@ -125,7 +125,7 @@ void anaDiJetTrk(int doMC=0,
   cpCompNrTrkPt.AddHist1D(j2t3NrTrkPt.hRaw,"Raw","E",kGreen+2,kOpenSquare);
   cpCompNrTrkPt.AddHist1D(j2t3NrTrkPt.hBkg,"Bkg","E",kBlue,kOpenCircle);
   cpCompNrTrkPt.AddHist1D(j2t3NrTrkPt.hSig,"Subtracted","E",kBlack,kFullCircle);
-  cpCompNrTrkPt.SetLegend(0.61,0.82,0.91,0.92);
+  cpCompNrTrkPt.SetLegend(0.23,0.81,0.53,0.90);
   cpCompNrTrkPt.SetLegendHeader(header);
   cpCompNrTrkPt.SetLogx();
   cpCompNrTrkPt.SetLogy();
@@ -144,10 +144,10 @@ void anaDiJetTrk(int doMC=0,
 
   // === Jet Strip ===
   TCanvas * cCompJTrkDPhi = new TCanvas("cCompJTrkDPhi","cCompJTrkDPhi",500,500);
-  CPlot cpCompJTrkDPhi("CompJTrkDPhi","CompJTrkDPhi","#Delta#phi(trk,j1)","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{d#Delta#phi}");
-  cpCompJTrkDPhi.SetYRange(0,550);
-  cpCompJTrkDPhi.AddHist1D(j2t3JTrkDPhi.hRaw,"hiSelectedTrk (p_{T}>1GeV)","E",kBlack,kFullCircle);
-  cpCompJTrkDPhi.AddHist1D(j2t3JTrkTight5DPhi.hRaw,"hiSelectedTrk (p_{T}>5GeV)","E",kBlue,kOpenCircle);
+  CPlot cpCompJTrkDPhi("CompJTrkDPhi","CompJTrkDPhi","#Delta#phi(trk,j1)","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{d#Delta#phi} #cbar_{|#Delta#eta(trk,jet)|<0.5}");
+  cpCompJTrkDPhi.SetYRange(0,130);
+  cpCompJTrkDPhi.AddHist1D(j2t3JTrkDPhi.hRaw,"hiSelectedTrk (p_{T}>1.2GeV)","E",kBlack,kFullCircle);
+  cpCompJTrkDPhi.AddHist1D(j2t3JTrkTight3DPhi.hRaw,"hiSelectedTrk (p_{T}>3GeV)","E",kBlue,kOpenCircle);
   cpCompJTrkDPhi.SetLegend(0.41,0.76,0.71,0.86);
   cpCompJTrkDPhi.SetLegendHeader(header);
   cpCompJTrkDPhi.Draw(cCompJTrkDPhi,true);
