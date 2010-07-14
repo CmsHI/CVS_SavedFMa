@@ -14,7 +14,7 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/TrackReco/interface/Track.h"
 #include "DataFormats/HeavyIonEvent/interface/CentralityBins.h"
-
+#include "DataFormats/PatCandidates/interface/Jet.h"
 
 //
 // class declaration
@@ -26,27 +26,31 @@ class DiJetAna : public edm::EDAnalyzer {
     ~DiJetAna();
 
     // class methods
-    void InclJetAna(const edm::Event& iEvent, Int_t jetType,
+    void InclJetAna(const edm::Event& iEvent, Int_t jetType,std::vector<double>L1Corrs,
 	TH1D * hPt, TH1D * hEta, TH1D * hPhi);
     void InclTrkAna(const edm::Event& iEvent, Int_t trkType);
     void FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd);
     void FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
+		   std::vector<double> L1Corrs,
 	std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t anajetType,
-	std::vector<math::PtEtaPhiMLorentzVector> & refjets, Int_t refjetType=-1);
+		  std::vector<math::PtEtaPhiMLorentzVector> & refjets, Int_t refjetType=-1);
     void  FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	std::vector<math::PtEtaPhiMLorentzVector> & anajets,
 	std::vector<math::PtEtaPhiMLorentzVector> & refjets,
 	Int_t trkType);
-    Int_t FindNearJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType);
-    Int_t FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType, Int_t iNr);
-    void FindDiJet(const edm::Event& iEvent, const edm::InputTag & jsrc,
-	std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType,
-	Double_t & nrjetPt, Int_t & iNr, Double_t & awjetPt, Int_t & iAw); 
+    Int_t FindNearJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType, std::vector<double> L1Corrs);
+    Int_t FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType, Int_t iNr, std::vector<double> L1Corrs);
+    // for data, where L1 correction is present
+    void FindDiJet(const edm::Event& iEvent, const edm::InputTag & jsrc, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, std::vector<double> L1Corrs, Double_t & nrjetPt, Int_t & iNr, Double_t & awjetPt, Int_t & iAw); 
     void FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets); 
     Bool_t GoodAnaTrk(const reco::Track & trk);
     Bool_t GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType);
     void PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType=2, Int_t trkType=2);
     void PrintTrks(const edm::Event& iEvent, Int_t trkType=2);
+
+    std::vector<double> 
+      FillL1Corrs(edm::Handle<std::vector<pat::Jet> > jets);
+    
 
   private:
     virtual void beginJob() ;

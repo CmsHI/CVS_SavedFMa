@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.4 2010/07/13 08:02:41 frankma Exp $
+// $Id: DiJetAna.cc,v 1.5 2010/07/13 14:19:20 mnguyen Exp $
 //
 //
 
@@ -44,7 +44,6 @@ Implementation:
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-#include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
@@ -171,11 +170,6 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Done with Event Pre-Selection
   // Fill Event info
 
-  //
-  // ---------------------------- Jet Analysis ---------------------------------
-  //
-  // Check Inclusive Jets Before DJ Selection
-  InclJetAna(iEvent,anaJetType_,hJetPtPreSel_,hJetEtaPreSel_,hJetPhiPreSel_);
 
 
   // Grab L1 Corrections if doing fastJet-style PU
@@ -201,27 +195,41 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
   }
 
+
+  Handle<vector<pat::Jet> > jets;
+  iEvent.getByLabel(jetsrc_,jets);
+  
+  std::vector<double> L1Corrs =  FillL1Corrs(jets);
+
+  //
+  // ---------------------------- Jet Analysis ---------------------------------
+  //
+  // Check Inclusive Jets Before DJ Selection
+  InclJetAna(iEvent,anaJetType_,L1Corrs,hJetPtPreSel_,hJetEtaPreSel_,hJetPhiPreSel_);
+
   //
   // ===== DiJet Ana =====
   //
+
+
   nearJetPt_ = -99; awayJetPt_ = -99;
-  FindDiJet(iEvent,jetsrc_,anaJets_,anaJetType_,nearJetPt_,iNear_,awayJetPt_,iAway_);
+  FindDiJet(iEvent,jetsrc_,anaJets_,anaJetType_,L1Corrs,nearJetPt_,iNear_,awayJetPt_,iAway_);
 
   // === basic dijet selection to simulate jet trigger ===
   if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) return;
   ++numDJEvtSel_;
   if (numDJEvtSel_<=20) PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
   // Check Inclusive Jets After DJ Selection
-  InclJetAna(iEvent,anaJetType_,hJetPtDJSel_,hJetEtaDJSel_,hJetPhiDJSel_);
+  InclJetAna(iEvent,anaJetType_,L1Corrs,hJetPtDJSel_,hJetEtaDJSel_,hJetPhiDJSel_);
 
   // -- Get Ref jets to the selected dijet (if MC) --
   if (isMC_)FindRefJets(iEvent,refJetType_,refJets_);
 
   // -- Fill DiJet Event info --
   FillEventInfo(iEvent,djEvt_);
-  if (!isMC_) FillJets(iEvent,djEvt_,anaJets_,2,refJets_,-1);
+  if (!isMC_) FillJets(iEvent,djEvt_,L1Corrs,anaJets_,2,refJets_,-1);
   else { 
-    FillJets(iEvent,djEvt_,anaJets_,anaJetType_,refJets_,refJetType_);
+    FillJets(iEvent,djEvt_,L1Corrs,anaJets_,anaJetType_,refJets_,refJetType_);
   }
 
   //
@@ -277,7 +285,7 @@ DiJetAna::endJob() {
 
 // ==================== Member Methods ===========================
 // ------------ Inclusive Ana -------------
-void DiJetAna::InclJetAna(const edm::Event& iEvent, Int_t jetType,
+void DiJetAna::InclJetAna(const edm::Event& iEvent, Int_t jetType, std::vector<double>L1Corrs,
     TH1D * hPt, TH1D * hEta, TH1D * hPhi)
 {
   if (jetType<=2) {
@@ -285,15 +293,17 @@ void DiJetAna::InclJetAna(const edm::Event& iEvent, Int_t jetType,
     iEvent.getByLabel(jetsrc_,jets);
     for (unsigned int j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
-      Double_t corrPt=jet.pt();
+      Double_t corrPt=jet.pt()*L1Corrs[j];
       if (jetType==2) {
 	Handle<vector<pat::Jet> > patjets;
 	iEvent.getByLabel(jetsrc_,patjets);
-	corrPt = (*patjets)[j].correctedP4(JECLab1_).pt();
+	corrPt = (*patjets)[j].correctedP4(JECLab1_).pt()*L1Corrs[j];
       }
-      hPt->Fill(corrPt);
-      hEta->Fill(jet.eta());
-      hPhi->Fill(jet.phi());
+      if(abs(jet.eta())<2.){
+	hPt->Fill(corrPt);
+	hEta->Fill(jet.eta());
+	hPhi->Fill(jet.phi());
+      }
     }
   }
 }
@@ -351,9 +361,49 @@ void DiJetAna::FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
   }
 }
 
+
+vector<double> 
+DiJetAna::FillL1Corrs(edm::Handle<vector<pat::Jet> > jets)
+{
+  
+  vector<double> L1Corrs;
+
+  for (unsigned j=0; j<(*jets).size();++j) {
+    
+
+    const pat::Jet & jet = (*jets)[j];    
+
+    if(fabs(jet.eta())<=3 && fillL1Corr_){
+      
+      double rho=-999;
+      
+      if (jet.eta()<-2.5 && jet.eta()>-3.5)rho=medianPtkt[2];
+      if (jet.eta()<-1.5 && jet.eta()>-2.5)rho=medianPtkt[3];
+      if (jet.eta()<-0.5 && jet.eta()>-1.5)rho=medianPtkt[4];
+      if (jet.eta()<0.5 && jet.eta()>-0.5)rho=medianPtkt[5];
+      if (jet.eta()<1.5 && jet.eta()>0.5)rho=medianPtkt[6];
+      if (jet.eta()<2.5 && jet.eta()>1.5)rho=medianPtkt[7];
+      if (jet.eta()<3.5 && jet.eta()>2.5)rho=medianPtkt[8];
+      
+      double jetarea=jet.jetArea();
+      double jetcorr=1.0-jetarea*rho/jet.et();
+      L1Corrs.push_back(jetcorr);
+    }
+    else  L1Corrs.push_back(1.);
+    
+  }
+  
+  return L1Corrs;
+
+}
+
+
 void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
-    std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t anajetType,
-    std::vector<math::PtEtaPhiMLorentzVector> & refjets, Int_t refjetType)
+			 std::vector<double>L1Corrs,
+			 std::vector<math::PtEtaPhiMLorentzVector> & anajets, 
+			 Int_t anajetType,
+			 std::vector<math::PtEtaPhiMLorentzVector> & refjets, 
+			 Int_t refjetType)
 {
   // Calc dijet vars for ana jets
   jd.CalcDJVars(isMC_,anajets,refjets);
@@ -370,52 +420,14 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     jd.aljrawet_	= (*jets)[iAway_].correctedP4("raw").pt();
 
     jd.njec_[0]		= (*jets)[iNear_].corrFactor("raw");
-
-    if(fabs((*jets)[iNear_].eta())<=3 && fillL1Corr_){
-
-      double rho=-999;
-      
-      if ((*jets)[iNear_].eta()<-2.5 && (*jets)[iNear_].eta()>-3.5)rho=medianPtkt[2];
-      if ((*jets)[iNear_].eta()<-1.5 && (*jets)[iNear_].eta()>-2.5)rho=medianPtkt[3];
-      if ((*jets)[iNear_].eta()<-0.5 && (*jets)[iNear_].eta()>-1.5)rho=medianPtkt[4];
-      if ((*jets)[iNear_].eta()<0.5 && (*jets)[iNear_].eta()>-0.5)rho=medianPtkt[5];
-      if ((*jets)[iNear_].eta()<1.5 && (*jets)[iNear_].eta()>0.5)rho=medianPtkt[6];
-      if ((*jets)[iNear_].eta()<2.5 && (*jets)[iNear_].eta()>1.5)rho=medianPtkt[7];
-      if ((*jets)[iNear_].eta()<3.5 && (*jets)[iNear_].eta()>2.5)rho=medianPtkt[8];
-      
-            
-      double jetarea=(*jets)[iNear_].jetArea();
-      //jd.njec_[1]=(*jets)[iNear_].et()-jetarea*rho;
-      jd.njec_[1]=1.0-jetarea*rho/(*jets)[iNear_].et();
-    }
-    else jd.njec_[1]=1.;
-
+    jd.njec_[1]         = L1Corrs[iNear_];
     jd.njec_[2]		= (*jets)[iNear_].corrFactor("rel");
     jd.njec_[3]		= (*jets)[iNear_].corrFactor("abs");
     jd.njec_[5]		= (*jets)[iNear_].corrFactor("had","uds");
     jd.njec_[7]		= (*jets)[iNear_].corrFactor("part","uds");
 
     jd.ajec_[0]		= (*jets)[iAway_].corrFactor("raw");
-
-    if(fabs((*jets)[iAway_].eta())<=3 && fillL1Corr_){
-
-      double rho=-999;
-      
-      if ((*jets)[iAway_].eta()<-2.5 && (*jets)[iAway_].eta()>-3.5)rho=medianPtkt[2];
-      if ((*jets)[iAway_].eta()<-1.5 && (*jets)[iAway_].eta()>-2.5)rho=medianPtkt[3];
-      if ((*jets)[iAway_].eta()<-0.5 && (*jets)[iAway_].eta()>-1.5)rho=medianPtkt[4];
-      if ((*jets)[iAway_].eta()<0.5 && (*jets)[iAway_].eta()>-0.5)rho=medianPtkt[5];
-      if ((*jets)[iAway_].eta()<1.5 && (*jets)[iAway_].eta()>0.5)rho=medianPtkt[6];
-      if ((*jets)[iAway_].eta()<2.5 && (*jets)[iAway_].eta()>1.5)rho=medianPtkt[7];
-      if ((*jets)[iAway_].eta()<3.5 && (*jets)[iAway_].eta()>2.5)rho=medianPtkt[8];
-      
-            
-      double jetarea=(*jets)[iAway_].jetArea();
-      //jd.njec_[1]=(*jets)[iAway_].et()-jetarea*rho;
-      jd.ajec_[1]=1.0-jetarea*rho/(*jets)[iAway_].et();
-    }
-    else jd.ajec_[1]=1.;
-
+    jd.ajec_[1]         = L1Corrs[iAway_];
     jd.ajec_[2]		= (*jets)[iAway_].corrFactor("rel");
     jd.ajec_[3]		= (*jets)[iAway_].corrFactor("abs");
     jd.ajec_[5]		= (*jets)[iAway_].corrFactor("had","glu");
@@ -479,7 +491,7 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
 }
 
 // ------------ Find DiJet ----------------
-Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType)
+Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType, std::vector<double> L1Corrs)
 {
   Int_t iNear = -99;
   Double_t NearPtMax=-99;
@@ -489,7 +501,7 @@ Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, const edm::InputTag & jsrc
     iEvent.getByLabel(jsrc,jets);
     for (unsigned int j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
-      Double_t corrPt = jet.pt();
+      Double_t corrPt = jet.pt()*L1Corrs[j];
       if (corrPt>NearPtMax) {
 	NearPtMax=corrPt;
 	iNear=j;
@@ -499,7 +511,7 @@ Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, const edm::InputTag & jsrc
   return iNear;
 }
 
-Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType, Int_t iNr)
+Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType, Int_t iNr, std::vector<double> L1Corrs)
 {
   Int_t      iAway=-99;
   Double_t   AwayPtMax=-99;
@@ -512,7 +524,7 @@ Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc
       Double_t jdphi = TMath::Abs(reco::deltaPhi(NrJet.phi(),jet.phi()));
       if (jdphi < djDPhiMin_) continue; // not too close to near jet in dphi
 
-      Double_t corrPt = jet.pt();
+      Double_t corrPt = jet.pt()*L1Corrs[j];
       if (corrPt>AwayPtMax) {
 	AwayPtMax=corrPt;
 	iAway=j;
@@ -522,13 +534,11 @@ Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc
   return iAway;
 }
 
-void DiJetAna::FindDiJet(const edm::Event& iEvent, const edm::InputTag & jsrc,
-    std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType,
-    Double_t & nrjetPt, Int_t & iNr, Double_t & awjetPt, Int_t & iAw) 
+void DiJetAna::FindDiJet(const edm::Event& iEvent, const edm::InputTag & jsrc, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, std::vector<double> L1Corrs, Double_t & nrjetPt, Int_t & iNr, Double_t & awjetPt, Int_t & iAw) 
 {
   anajets.clear();
 
-  iNr = FindNearJet(iEvent,jsrc,jetType);
+  iNr = FindNearJet(iEvent,jsrc,jetType, L1Corrs);
   if (iNr<0) return;
 
   // Establish JES for reco jet
@@ -536,14 +546,14 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, const edm::InputTag & jsrc,
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jsrc,jets);
     const pat::Jet & NrJet = (*jets)[iNr];
-    nrjetPt = (*jets)[iNr].correctedP4(JECLab1_,JECLab2Nr_).pt();
+    nrjetPt = (*jets)[iNr].correctedP4(JECLab1_,JECLab2Nr_).pt()*L1Corrs[iNr];
     anajets.push_back(math::PtEtaPhiMLorentzVector(nrjetPt,NrJet.eta(),NrJet.phi(),NrJet.mass()));
 
-    iAw = FindAwayJet(iEvent,jsrc,jetType,iNr);
+    iAw = FindAwayJet(iEvent,jsrc,jetType,iNr,L1Corrs);
     if (iAw<0) return;
 
     const pat::Jet & AwJet = (*jets)[iAw];
-    awjetPt = (*jets)[iAw].correctedP4(JECLab1_,JECLab2Aw_).pt();
+    awjetPt = (*jets)[iAw].correctedP4(JECLab1_,JECLab2Aw_).pt()*L1Corrs[iAw];
     anajets.push_back(math::PtEtaPhiMLorentzVector(awjetPt,AwJet.eta(),AwJet.phi(),AwJet.mass()));
   }
 
@@ -555,7 +565,7 @@ void DiJetAna::FindDiJet(const edm::Event& iEvent, const edm::InputTag & jsrc,
     nrjetPt = NrJet.pt();
     anajets.push_back(math::PtEtaPhiMLorentzVector(nrjetPt,NrJet.eta(),NrJet.phi(),NrJet.mass()));
     
-    iAw = FindAwayJet(iEvent,jsrc,jetType,iNr);
+    iAw = FindAwayJet(iEvent,jsrc,jetType,iNr,L1Corrs);
     if (iAw<0) return;
 
     const reco::Candidate & AwJet = (*jets)[iAw];
@@ -569,12 +579,21 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
 {
   refjets.clear();
 
+
+  // For matching use patjet matched
+  Handle<vector<pat::Jet> > jets;
+  iEvent.getByLabel(refjetsrc_,jets);
+
+  // Just make a dummy L1 Correction for refjets for the moment
+  vector<double> L1Corr_dum;
+  for (unsigned j=0; j<(*jets).size();++j) L1Corr_dum.push_back(1.);
+
   // Find DJ from refjet collection
   nearRefJetPt_ = -99; awayRefJetPt_ = -99;
   if (refjetType<10)
-    FindDiJet(iEvent,refjetsrc_,refjets,refjetType,nearRefJetPt_,iNearRef_,awayRefJetPt_,iAwayRef_);
+    FindDiJet(iEvent,refjetsrc_,refjets,refjetType,L1Corr_dum,nearRefJetPt_,iNearRef_,awayRefJetPt_,iAwayRef_);
   else
-    FindDiJet(iEvent,refjetsrc_,refjets,2,nearRefJetPt_,iNearRef_,awayRefJetPt_,iAwayRef_);
+    FindDiJet(iEvent,refjetsrc_,refjets,2,L1Corr_dum,nearRefJetPt_,iNearRef_,awayRefJetPt_,iAwayRef_);
   if (refjets.size()<2) return;
 
   // Print some refjet info
@@ -588,9 +607,7 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
   // If not matching, we're done
   if (refjetType<10) return;
 
-  // For matching use patjet matched
-  Handle<vector<pat::Jet> > jets;
-  iEvent.getByLabel(refjetsrc_,jets);
+
   if (refjetType<20) {
     // genjet matching
     const reco::GenJet * NrGJet = (*jets)[iNearRef_].genJet();
