@@ -27,7 +27,7 @@ void finalDiJetFF(int doMC=0,
     TString title2="MC")
 {
   // Define Inputs
-  selectionCut mcAna(AnaName,doMC,1,90,170,50,2.5);
+  selectionCut mcAna(AnaName,doMC,1,100,170,50,2.5);
   cout << "======= Inputs: ========" << endl;
   TString indir = Form("plots/%s/%s",AnaName.Data(),mcAna.AnaTag.Data());
   TString inFile0Path = indir+"/"+inFile0Name;
@@ -121,7 +121,7 @@ void finalDiJetFF(int doMC=0,
   cpRecoFFNrSub.SetYRange(0.001,1000);
   cpRecoFFNrSub.AddHist1D(hFrame,"July Hard: Reco DiJetFF","",0,0);
   cpRecoFFNrSub.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
-  cpRecoFFNrSub.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<200GeV, 50GeV<p_{T}^{jet2}","",0,0);
+  cpRecoFFNrSub.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170GeV, 50GeV<p_{T}^{jet2}","",0,0);
   cpRecoFFNrSub.AddHist1D(hgRecoRawXi.H("Nr"),"Near (Raw)","E",kGreen+2,kOpenSquare);
   cpRecoFFNrSub.AddHist1D(hgRecoBkgXi.H("Nr"),"Near (Bkg)","E",kBlue,kOpenCircle);
   cpRecoFFNrSub.AddHist1D(hgRecoSigXi.H("Nr"),"Near (Sig)","E",kBlack,kFullCircle);
@@ -135,7 +135,7 @@ void finalDiJetFF(int doMC=0,
   cpRecoFFAwSub.SetYRange(0.001,1000);
   cpRecoFFAwSub.AddHist1D(hFrame,"July Hard: Reco DiJetFF","",0,0);
   cpRecoFFAwSub.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
-  cpRecoFFAwSub.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<200GeV, 50GeV<p_{T}^{jet2}","",0,0);
+  cpRecoFFAwSub.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170GeV, 50GeV<p_{T}^{jet2}","",0,0);
   cpRecoFFAwSub.AddHist1D(hgRecoRawXi.H("Aw"),"Away (Raw)","E",kGreen+2,kOpenSquare);
   cpRecoFFAwSub.AddHist1D(hgRecoBkgXi.H("Aw"),"Away (Bkg)","E",kBlue,kOpenCircle);
   cpRecoFFAwSub.AddHist1D(hgRecoSigXi.H("Aw"),"Away (Sig)","E",kBlack,kFullCircle);
