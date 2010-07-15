@@ -114,12 +114,12 @@ void finalDiJetFF(int doMC=0,
   HisTGroup<TH1D> hgGen("Gen");
   HisTGroup<TH1D> hgGenTruth("GenTruth");
   if (doCompare) {
-    hgGen.Add(inFile3,"hRaw_mcGenNrXi","Nr");
-    hgGen.Add(inFile3,"hRaw_mcGenAwXi","Aw");
+    hgGen.Add(inFile3,"hSig_mcGenNrXi","Nr");
+    hgGen.Add(inFile3,"hSig_mcGenAwXi","Aw");
     hgGen.Average();
 
-    hgGenTruth.Add(inFile3,"hRaw_mcGenTruthNrXi","Nr");
-    hgGenTruth.Add(inFile3,"hRaw_mcGenTruthAwXi","Aw");
+    hgGenTruth.Add(inFile3,"hSig_mcGenTruthNrXi","Nr");
+    hgGenTruth.Add(inFile3,"hSig_mcGenTruthAwXi","Aw");
     hgGenTruth.Average();
   }
 
@@ -208,7 +208,7 @@ void finalDiJetFF(int doMC=0,
   TCanvas * cFinalCorrFF = new TCanvas("cFinalCorrFF","cFinalCorrFF",500,500);
   CPlot cpFinalCorrFF("FinalCorrFF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
   cpFinalCorrFF.SetXRange(0,6);
-  cpFinalCorrFF.SetYRange(0,15);
+  cpFinalCorrFF.SetYRange(0,9);
   cpFinalCorrFF.AddHist1D(hFrame,"July Hard: Corrected Reco DiJetFF","",0,0);
   cpFinalCorrFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
   cpFinalCorrFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
@@ -219,7 +219,7 @@ void finalDiJetFF(int doMC=0,
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5TrkLower"),"Trk Eff * 0.95","hist",kMagenta,0);
   if (doCompare) cpFinalCorrFF.AddHist1D(hgCorrXi.H("Kt4"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
   if (doCompare==3) {
-    cpFinalCorrFF.AddHist1D(hgGen.R("Ave"),"Gen","histE",kRed,kOpenSquare);
+    //cpFinalCorrFF.AddHist1D(hgGen.R("Ave"),"Gen","histE",kRed,kOpenSquare);
     cpFinalCorrFF.AddHist1D(hgGenTruth.R("Ave"),"GenTruth","E",kRed,kOpenStar);
   }
   cpFinalCorrFF.SetLegend(0.194,0.71,0.52,0.94);
