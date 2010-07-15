@@ -2,6 +2,7 @@
 #include "TTree.h"
 #include "TH1D.h"
 #include "TString.h"
+#include <cassert>
 #include "TCut.h"
 
 class AnaFrag
@@ -33,6 +34,8 @@ AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TStr
 {
   trDj = tree;
   tag+=t;
+  if (!trDj) cout << tag << ": tree not found" << endl;
+  assert(trDj);
 
   // Normalization
   numDJ = trDj->Draw("nljet>>hCountDJ",djCut,"goff");
