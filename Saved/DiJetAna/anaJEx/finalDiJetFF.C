@@ -134,6 +134,8 @@ void finalDiJetFF(int doMC=0,
   hgCorrXi.Add(hgRecoSigXi.R("Ave"),"ICPu5",1./0.65);
   hgCorrXi.Add(hgRecoUpperSigXi.R("Ave"),"UpperICPu5",1./0.65);
   hgCorrXi.Add(hgRecoLowerSigXi.R("Ave"),"LowerICPu5",1./0.65);
+  hgCorrXi.Add(hgRecoSigXi.R("Ave"),"ICPu5TrkUpper",1./(0.65*1.05));
+  hgCorrXi.Add(hgRecoSigXi.R("Ave"),"ICPu5TrkLower",1./(0.65*0.95));
   if (doCompare) hgCorrXi.Add(hgReco2SigXi.R("Ave"),"Kt4",1./0.65);
 
   // === FF QA Plots ===
@@ -192,6 +194,8 @@ void finalDiJetFF(int doMC=0,
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("LowerICPu5"),"JES*0.86","hist",kYellow+1,0);
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("UpperICPu5"),"JES*1.14","hist",kGreen+1,0);
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
+  cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5TrkUpper"),"Trk Eff * 1.05","hist",kBlue,0);
+  cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5TrkLower"),"Trk Eff * 0.95","hist",kMagenta,0);
   if (doCompare) cpFinalCorrFF.AddHist1D(hgCorrXi.H("Kt4"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
   cpFinalCorrFF.SetLegend(0.194,0.71,0.52,0.94);
   cpFinalCorrFF.Draw(cFinalCorrFF,true);
