@@ -112,7 +112,12 @@ void finalDiJetFF(int doMC=0,
 
 
   // === FF comparison ===
-  HisTGroup<TH1D> hgCompSigXi("CompSigXi");
+  HisTGroup<TH1D> hgCompXi("CompXi");
+
+  // === FF Corrections ===
+  HisTGroup<TH1D> hgCorrXi("CorrXi");
+  hgCorrXi.Add(hgRecoSigXi.R("Ave"),"ICPu5",1./0.65);
+  hgCorrXi.Add(hgReco2SigXi.R("Ave"),"Kt4",1./0.65);
 
   // === FF QA Plots ===
   TCanvas * cRecoFFNrSub = new TCanvas("cRecoFFNrSub","cRecoFFNrSub",500,500);
@@ -144,17 +149,31 @@ void finalDiJetFF(int doMC=0,
   cpRecoFFAwSub.Draw(cRecoFFAwSub,true);
 
   // === FF Measurement Plots ===
-  TCanvas * cFinalFF = new TCanvas("cFinalFF","cFinalFF",500,500);
-  CPlot cpFinalFF("FinalFF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
-  cpFinalFF.SetXRange(0,6);
-  cpFinalFF.SetYRange(0,6);
-  cpFinalFF.AddHist1D(hFrame,"July Hard: Reco DiJetFF","",0,0);
-  cpFinalFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
-  cpFinalFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
-  cpFinalFF.AddHist1D(hgRecoSigXi.R("Ave"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
-  if (inFile2->IsOpen()) cpFinalFF.AddHist1D(hgReco2SigXi.R("Ave"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
-  cpFinalFF.SetLegend(0.194,0.74,0.52,0.94);
-  cpFinalFF.Draw(cFinalFF,true);
+  // -- Raw --
+  TCanvas * cFinalRawFF = new TCanvas("cFinalRawFF","cFinalRawFF",500,500);
+  CPlot cpFinalRawFF("FinalRawFF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  cpFinalRawFF.SetXRange(0,6);
+  cpFinalRawFF.SetYRange(0,7.5);
+  cpFinalRawFF.AddHist1D(hFrame,"July Hard: Reco DiJetFF","",0,0);
+  cpFinalRawFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
+  cpFinalRawFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
+  cpFinalRawFF.AddHist1D(hgRecoSigXi.R("Ave"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
+  if (inFile2->IsOpen()) cpFinalRawFF.AddHist1D(hgReco2SigXi.R("Ave"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
+  cpFinalRawFF.SetLegend(0.194,0.74,0.52,0.94);
+  cpFinalRawFF.Draw(cFinalRawFF,true);
+
+  // -- Corrected --
+  TCanvas * cFinalCorrFF = new TCanvas("cFinalCorrFF","cFinalCorrFF",500,500);
+  CPlot cpFinalCorrFF("FinalCorrFF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  cpFinalCorrFF.SetXRange(0,6);
+  cpFinalCorrFF.SetYRange(0,7.5);
+  cpFinalCorrFF.AddHist1D(hFrame,"July Hard: Corrected Reco DiJetFF","",0,0);
+  cpFinalCorrFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
+  cpFinalCorrFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
+  cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
+  if (inFile2->IsOpen()) cpFinalCorrFF.AddHist1D(hgCorrXi.H("Kt4"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
+  cpFinalCorrFF.SetLegend(0.194,0.74,0.52,0.94);
+  cpFinalCorrFF.Draw(cFinalCorrFF,true);
 
   // All done, save and exit
   outf->Write();
