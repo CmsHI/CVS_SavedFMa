@@ -23,9 +23,10 @@ void anaDiJetFF(int doMC=0,
        TString AnaName = "ZSMb/dphi25/a0",
        TString header="July Data (MB)",
      */
-    //const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc1_all.root",
-    const char * inFile0Name="../matttrees/dijetAna_anaJet_HardEnriched_ZS_KT4_TightDPhi.root",
-    TString AnaName = "ZSHdfj0/dp25/a1",
+    const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc1_all.root",
+    TString AnaName = "ZSHd1/dp25/a3",
+    //const char * inFile0Name="../matttrees/dijetAna_anaJet_HardEnriched_ZS_KT4_TightDPhi.root",
+    //TString AnaName = "ZSHdfj0/dp25/a2",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
@@ -86,6 +87,13 @@ void anaDiJetFF(int doMC=0,
   // Reco
   AnaFrag recoNr("reco","NrXi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(1./zn)","pndr<0.5","pndrbg<0.5",mcAna.histXiBins,mcAna.histXiMin,mcAna.histXiMax);
   AnaFrag recoAw("reco","AwXi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"log(1./za)","padr<0.5","padrbg<0.5",mcAna.histXiBins,mcAna.histXiMin,mcAna.histXiMax);
+
+  // Systematics
+  AnaFrag recoUpperNr("reco","UpperNrXi",j2t3,mcAna.DJ["AnaUpper"],mcAna.Trk["Ana"],"log(nljet*1.14/ppt)","pndr<0.5","pndrbg<0.5",mcAna.histXiBins,mcAna.histXiMin,mcAna.histXiMax);
+  AnaFrag recoUpperAw("reco","UpperAwXi",j2t3,mcAna.DJ["AnaUpper"],mcAna.Trk["Ana"],"log(aljet*1.14/ppt)","padr<0.5","padrbg<0.5",mcAna.histXiBins,mcAna.histXiMin,mcAna.histXiMax);
+
+  AnaFrag recoLowerNr("reco","LowerNrXi",j2t3,mcAna.DJ["AnaLower"],mcAna.Trk["Ana"],"log(nljet*0.86/ppt)","pndr<0.5","pndrbg<0.5",mcAna.histXiBins,mcAna.histXiMin,mcAna.histXiMax);
+  AnaFrag recoLowerAw("reco","LowerAwXi",j2t3,mcAna.DJ["AnaLower"],mcAna.Trk["Ana"],"log(aljet*0.86/ppt)","padr<0.5","padrbg<0.5",mcAna.histXiBins,mcAna.histXiMin,mcAna.histXiMax);
 
   if (doMC) {
     // Reco jet + genp

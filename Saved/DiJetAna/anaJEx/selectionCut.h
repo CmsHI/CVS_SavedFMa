@@ -120,6 +120,11 @@ selectionCut::selectionCut(TString name, bool isMC, int sel, float NrJetMin, flo
       nrJEtMin,nrJEtMax,awJEtMin,jetEtaMax,jetEtaMax,djDPhiMin);
   DJ["RefOrderRef"] = Form("nrlrjet>%.1f&&nrlrjet<%.1f&&arlrjet>%.1f&&abs(nrlrjeta)<%.1f&&abs(arlrjeta)<%.1f&&rjdphi>%.2f",
       nrJEtMin,nrJEtMax,awJEtMin,jetEtaMax,jetEtaMax,djDPhiMin);
+  // - sysetmatics -
+  DJ["AnaUpper"] = Form("nljet*1.14>%.1f&&nljet*1.14<%.1f&&aljet*1.14>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
+      nrJEtMin,nrJEtMax,awJEtMin,jetEtaMax,jetEtaMax,djDPhiMin);
+  DJ["AnaLower"] = Form("nljet*0.86>%.1f&&nljet*0.86<%.1f&&aljet*0.86>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
+      nrJEtMin,nrJEtMax,awJEtMin,jetEtaMax,jetEtaMax,djDPhiMin);
 
   // Track Selections
   Trk["Ana"] = ("ppt>1.2&&ppt<nljet");
