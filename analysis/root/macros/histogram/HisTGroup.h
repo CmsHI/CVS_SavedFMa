@@ -81,6 +81,7 @@ HisTGroup<TData>::HisTGroup(TString name,
 template <typename TData>
 void HisTGroup<TData>::Add(TData * h1, TString iname, Double_t sc)
 {
+  if (!h1) cout << name_ << ": " << iname << " hist not found" << endl;
   assert(h1);
   scales_[iname] = sc;
 
