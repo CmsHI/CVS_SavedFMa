@@ -19,8 +19,8 @@ using namespace std;
 
 void finalDiJetFF(int doMC=0,
     const char * inFile0Name="anaDiJetFF.root",
-    TString AnaName = "ZSHd1/dp25/a1",
-    TString Ana2Name = "ZSHdfj0/dp25/a1",
+    TString AnaName = "ZSHd1/dp25/a3",
+    TString Ana2Name = "ZSHdfj0/dp25/a3",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
@@ -35,11 +35,15 @@ void finalDiJetFF(int doMC=0,
   TFile * inFile0 = new TFile(inFile0Path);
   inFile0->ls();
 
-  TString indir2 = Form("plots/%s/%s",Ana2Name.Data(),mcAna.AnaTag.Data());
-  TString inFile2Path = indir2+"/"+inFile0Name;
-  cout << inFile2Path << endl;
-  TFile * inFile2 = new TFile(inFile2Path);
-  inFile2->ls();
+  TFile * inFile2;
+  bool doCompare = false;
+  if (doCompare) {
+    TString indir2 = Form("plots/%s/%s",Ana2Name.Data(),mcAna.AnaTag.Data());
+    TString inFile2Path = indir2+"/"+inFile0Name;
+    cout << inFile2Path << endl;
+    inFile2 = new TFile(inFile2Path);
+    inFile2->ls();
+  }
 
   // Define Output
   cout << "======= Output Dir: ========" << endl;
@@ -73,7 +77,7 @@ void finalDiJetFF(int doMC=0,
   HisTGroup<TH1D> hgReco2RawXi("Reco2RawXi");
   HisTGroup<TH1D> hgReco2BkgXi("Reco2BkgXi");
   HisTGroup<TH1D> hgReco2SigXi("Reco2SigXi");
-  if (inFile2->IsOpen()) {
+  if (doCompare) {
     hgReco2RawXi.Add(inFile2,"hRaw_recoNrXi","Nr");
     hgReco2RawXi.Add(inFile2,"hRaw_recoAwXi","Aw");
     hgReco2RawXi.Average();
@@ -117,7 +121,7 @@ void finalDiJetFF(int doMC=0,
   // === FF Corrections ===
   HisTGroup<TH1D> hgCorrXi("CorrXi");
   hgCorrXi.Add(hgRecoSigXi.R("Ave"),"ICPu5",1./0.65);
-  hgCorrXi.Add(hgReco2SigXi.R("Ave"),"Kt4",1./0.65);
+  if (doCompare) hgCorrXi.Add(hgReco2SigXi.R("Ave"),"Kt4",1./0.65);
 
   // === FF QA Plots ===
   TCanvas * cRecoFFNrSub = new TCanvas("cRecoFFNrSub","cRecoFFNrSub",500,500);
@@ -158,7 +162,7 @@ void finalDiJetFF(int doMC=0,
   cpFinalRawFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
   cpFinalRawFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
   cpFinalRawFF.AddHist1D(hgRecoSigXi.R("Ave"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
-  if (inFile2->IsOpen()) cpFinalRawFF.AddHist1D(hgReco2SigXi.R("Ave"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
+  if (doCompare) cpFinalRawFF.AddHist1D(hgReco2SigXi.R("Ave"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
   cpFinalRawFF.SetLegend(0.194,0.74,0.52,0.94);
   cpFinalRawFF.Draw(cFinalRawFF,true);
 
@@ -171,7 +175,7 @@ void finalDiJetFF(int doMC=0,
   cpFinalCorrFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
   cpFinalCorrFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
-  if (inFile2->IsOpen()) cpFinalCorrFF.AddHist1D(hgCorrXi.H("Kt4"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
+  if (doCompare) cpFinalCorrFF.AddHist1D(hgCorrXi.H("Kt4"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
   cpFinalCorrFF.SetLegend(0.194,0.74,0.52,0.94);
   cpFinalCorrFF.Draw(cFinalCorrFF,true);
 
