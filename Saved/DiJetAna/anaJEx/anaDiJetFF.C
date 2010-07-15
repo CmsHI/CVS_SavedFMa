@@ -22,12 +22,15 @@ void anaDiJetFF(int doMC=0,
        const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_MB_proc0_all.root",
        TString AnaName = "ZSMb/dphi25/a0",
        TString header="July Data (MB)",
-     */
     const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc1_all.root",
     TString AnaName = "ZSHd1/dp25/a3",
     //const char * inFile0Name="../matttrees/dijetAna_anaJet_HardEnriched_ZS_KT4_TightDPhi.root",
     //TString AnaName = "ZSHdfj0/dp25/a2",
     TString header="July Data (Hard Triggered)",
+     */
+    const char * inFile0Name="../matttrees/dijetAna_anaJet_HydJet.root",
+    TString AnaName = "hyjNZSDJ/dp25/a3",
+    TString header="Hydjet 2.76 GeV (DiJet Imbedded)",
     //
     TString title1="Data",
     TString title2="MC")
