@@ -23,8 +23,9 @@ void anaDiJetFF(int doMC=0,
        TString AnaName = "ZSMb/dphi25/a0",
        TString header="July Data (MB)",
      */
-    const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc1_all.root",
-    TString AnaName = "ZSHd1/dp25/a1",
+    //const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc1_all.root",
+    const char * inFile0Name="../matttrees/dijetAna_anaJet_HardEnriched_ZS_KT4_TightDPhi.root",
+    TString AnaName = "ZSHdfj0/dp25/a1",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",

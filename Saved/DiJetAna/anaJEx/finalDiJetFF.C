@@ -20,7 +20,7 @@ using namespace std;
 void finalDiJetFF(int doMC=0,
     const char * inFile0Name="anaDiJetFF.root",
     TString AnaName = "ZSHd1/dp25/a1",
-    TString Ana2Name = "/net/hisrv0001/home/mnguyen/CMSSW_3_7_0_patch4/src/Saved/DiJetAna/macros/plots/JEXMockDataHard_cent020_ZS_KT4_TightDphi",
+    TString Ana2Name = "ZSHdfj0/dp25/a1",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
@@ -35,11 +35,11 @@ void finalDiJetFF(int doMC=0,
   TFile * inFile0 = new TFile(inFile0Path);
   inFile0->ls();
 
-  TString indir2 = Form("%s/%s",Ana2Name.Data(),mcAna.AnaTag.Data());
+  TString indir2 = Form("plots/%s/%s",Ana2Name.Data(),mcAna.AnaTag.Data());
   TString inFile2Path = indir2+"/"+inFile0Name;
   cout << inFile2Path << endl;
   TFile * inFile2 = new TFile(inFile2Path);
-  //inFile2->ls();
+  inFile2->ls();
 
   // Define Output
   cout << "======= Output Dir: ========" << endl;
@@ -70,20 +70,20 @@ void finalDiJetFF(int doMC=0,
   hFrame->Scale(0);
 
   // -- Compare --
+  HisTGroup<TH1D> hgReco2RawXi("Reco2RawXi");
+  HisTGroup<TH1D> hgReco2BkgXi("Reco2BkgXi");
+  HisTGroup<TH1D> hgReco2SigXi("Reco2SigXi");
   if (inFile2->IsOpen()) {
-    HisTGroup<TH1D> hgReco2RawXi("Reco2RawXi");
-    hgReco2RawXi.Add(inFile2,"hRaw_mcRecoNrXi","Nr");
-    hgReco2RawXi.Add(inFile2,"hRaw_mcRecoAwXi","Aw");
+    hgReco2RawXi.Add(inFile2,"hRaw_recoNrXi","Nr");
+    hgReco2RawXi.Add(inFile2,"hRaw_recoAwXi","Aw");
     hgReco2RawXi.Average();
 
-    HisTGroup<TH1D> hgReco2BkgXi("Reco2BkgXi");
-    hgReco2BkgXi.Add(inFile2,"hBkg_mcRecoNrXi","Nr");
-    hgReco2BkgXi.Add(inFile2,"hBkg_mcRecoAwXi","Aw");
+    hgReco2BkgXi.Add(inFile2,"hBkg_recoNrXi","Nr");
+    hgReco2BkgXi.Add(inFile2,"hBkg_recoAwXi","Aw");
     hgReco2BkgXi.Average();
 
-    HisTGroup<TH1D> hgReco2SigXi("Reco2SigXi");
-    hgReco2SigXi.Add(inFile2,"hSig_mcRecoNrXi","Nr");
-    hgReco2SigXi.Add(inFile2,"hSig_mcRecoAwXi","Aw");
+    hgReco2SigXi.Add(inFile2,"hSig_recoNrXi","Nr");
+    hgReco2SigXi.Add(inFile2,"hSig_recoAwXi","Aw");
     hgReco2SigXi.Average();
   }
 
@@ -152,7 +152,7 @@ void finalDiJetFF(int doMC=0,
   cpFinalFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
   cpFinalFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
   cpFinalFF.AddHist1D(hgRecoSigXi.R("Ave"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
-  //cpFinalFF.AddHist1D(hgReco2SigXi.R("Ave"),"Near+Away (FastJet Kt5 PuSub)","E",kBlue,kOpenSquare);
+  if (inFile2->IsOpen()) cpFinalFF.AddHist1D(hgReco2SigXi.R("Ave"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
   cpFinalFF.SetLegend(0.194,0.74,0.52,0.94);
   cpFinalFF.Draw(cFinalFF,true);
 
