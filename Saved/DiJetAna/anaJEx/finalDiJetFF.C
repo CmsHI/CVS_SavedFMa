@@ -191,7 +191,7 @@ void finalDiJetFF(int doMC=0,
   // === FF Measurement Plots ===
   // -- Raw --
   TCanvas * cFinalRawFF = new TCanvas("cFinalRawFF","cFinalRawFF",500,500);
-  CPlot cpFinalRawFF("FinalRawFF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  CPlot cpFinalRawFF("FinalRawFF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Subtracted)");
   cpFinalRawFF.SetXRange(0,6);
   cpFinalRawFF.SetYRange(0,9);
   cpFinalRawFF.AddHist1D(hFrame,"July Hard: Reco DiJetFF","",0,0);
@@ -206,7 +206,7 @@ void finalDiJetFF(int doMC=0,
 
   // -- Corrected --
   TCanvas * cFinalCorrFF = new TCanvas("cFinalCorrFF","cFinalCorrFF",500,500);
-  CPlot cpFinalCorrFF("FinalCorrFF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Raw-Bkg)");
+  CPlot cpFinalCorrFF("FinalCorrFF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Subtracted)");
   cpFinalCorrFF.SetXRange(0,6);
   cpFinalCorrFF.SetYRange(0,9);
   cpFinalCorrFF.AddHist1D(hFrame,"July Hard: Corrected Reco DiJetFF","",0,0);
@@ -220,7 +220,7 @@ void finalDiJetFF(int doMC=0,
   if (doCompare) cpFinalCorrFF.AddHist1D(hgCorrXi.H("Kt4"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
   if (doCompare==3) {
     //cpFinalCorrFF.AddHist1D(hgGen.R("Ave"),"Gen","histE",kRed,kOpenSquare);
-    cpFinalCorrFF.AddHist1D(hgGenTruth.R("Ave"),"GenTruth","E",kRed,kOpenStar);
+    cpFinalCorrFF.AddHist1D(hgGenTruth.R("Ave"),"Signal: GenTruth","E",kRed,kOpenStar);
   }
   cpFinalCorrFF.SetLegend(0.194,0.71,0.52,0.94);
   cpFinalCorrFF.Draw(cFinalCorrFF,true);
