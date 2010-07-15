@@ -20,7 +20,7 @@ using namespace std;
 void finalDiJetFF(int doMC=0,
     const char * inFile0Name="anaDiJetFF.root",
     TString AnaName = "ZSHd1/dp25/a3",
-    TString Ana2Name = "ZSHdfj0/dp25/a3",
+    TString Ana2Name = "ZSHdfj0/dp25/a1",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
@@ -36,7 +36,7 @@ void finalDiJetFF(int doMC=0,
   inFile0->ls();
 
   TFile * inFile2;
-  bool doCompare = false;
+  bool doCompare = true;
   if (doCompare) {
     TString indir2 = Form("plots/%s/%s",Ana2Name.Data(),mcAna.AnaTag.Data());
     TString inFile2Path = indir2+"/"+inFile0Name;
@@ -72,6 +72,17 @@ void finalDiJetFF(int doMC=0,
 
   TH1D * hFrame = (TH1D*)hgRecoSigXi.GetH("Nr")->Clone("hFrame");
   hFrame->Scale(0);
+
+  // -- Systematics --
+  HisTGroup<TH1D> hgRecoUpperSigXi("RecoUpperSigXi");
+  hgRecoUpperSigXi.Add(inFile0,"hSig_recoUpperNrXi","Nr");
+  hgRecoUpperSigXi.Add(inFile0,"hSig_recoUpperAwXi","Aw");
+  hgRecoUpperSigXi.Average();
+
+  HisTGroup<TH1D> hgRecoLowerSigXi("RecoLowerSigXi");
+  hgRecoLowerSigXi.Add(inFile0,"hSig_recoLowerNrXi","Nr");
+  hgRecoLowerSigXi.Add(inFile0,"hSig_recoLowerAwXi","Aw");
+  hgRecoLowerSigXi.Average();
 
   // -- Compare --
   HisTGroup<TH1D> hgReco2RawXi("Reco2RawXi");
@@ -162,6 +173,8 @@ void finalDiJetFF(int doMC=0,
   cpFinalRawFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
   cpFinalRawFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
   cpFinalRawFF.AddHist1D(hgRecoSigXi.R("Ave"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
+  cpFinalRawFF.AddHist1D(hgRecoUpperSigXi.R("Ave"),"JES*1.14","hist",kGreen+1,0);
+  cpFinalRawFF.AddHist1D(hgRecoLowerSigXi.R("Ave"),"JES*0.86","hist",kYellow+1,0);
   if (doCompare) cpFinalRawFF.AddHist1D(hgReco2SigXi.R("Ave"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
   cpFinalRawFF.SetLegend(0.194,0.74,0.52,0.94);
   cpFinalRawFF.Draw(cFinalRawFF,true);
