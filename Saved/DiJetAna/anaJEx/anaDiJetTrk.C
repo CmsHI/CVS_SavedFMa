@@ -22,10 +22,13 @@ void anaDiJetTrk(int doMC=0,
        const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_MB_proc0_all.root",
        TString AnaName = "ZSMb/dphi25/a0",
        TString header="July Data (MB)",
-     */
     const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc1_all.root",
     TString AnaName = "ZSHd1/dp25/a1",
     TString header="July Data (Hard Triggered)",
+     */
+    const char * inFile0Name="../matttrees/dijetAna_anaJet_Truth.root",
+    TString AnaName = "true/dp25/a3",
+    TString header="July Data (Gen)",
     //
     TString title1="Data",
     TString title2="MC")
@@ -38,7 +41,8 @@ void anaDiJetTrk(int doMC=0,
 
   // === Define dijet selection ===
   selectionCut mcAna(AnaName,doMC,1,100,170,50,2.5);
-  mcAna.DJAnd(TCut("(5*cbin)<20"));
+  //mcAna.DJAnd(TCut("(5*cbin)<20"));
+  mcAna.DJAnd(TCut("npart>=300"));
   // check
   mcAna.Print();
   // loose
@@ -48,7 +52,8 @@ void anaDiJetTrk(int doMC=0,
   // === Get Trees ===
   TTree *j2t3, *j2t0, *j1t0;
   if (!doMC) {
-    inFile0->GetObject("dijetAna_data/djTree",j2t3);
+    //inFile0->GetObject("dijetAna_data/djTree",j2t3);
+    inFile0->GetObject("dijetAna_mc_genjet_genp/djTree",j2t3);
   }
   else {
     inFile0->GetObject("dijetAna_mc/djTree",j2t3);
