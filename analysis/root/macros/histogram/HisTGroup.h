@@ -27,18 +27,22 @@ class HisTGroup
 
     // Accessors
     TData * H(TString iname) const {
+      if (!hm_.find(iname)->second) cout << name_ << ": " << iname << " not found" << endl;
       assert(hm_.find(iname)->second);
       return hm_.find(iname)->second;
     }
     TData * R(TString iname) const {
+      if (!hr_.find(iname)->second) cout << name_ << ": " << iname << " not found" << endl;
       assert(hr_.find(iname)->second);
       return hr_.find(iname)->second;
     }
     const TData * GetH(TString iname) const {
+      if (!hm_.find(iname)->second) cout << name_ << ": " << iname << " not found" << endl;
       assert(hm_.find(iname)->second);
       return hm_.find(iname)->second;
     }
     const TData * GetR(TString iname) const {
+      if (!hr_.find(iname)->second) cout << name_ << ": " << iname << " not found" << endl;
       assert(hr_.find(iname)->second);
       return hr_.find(iname)->second;
     }
