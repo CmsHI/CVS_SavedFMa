@@ -150,7 +150,7 @@ void anaDiJetTrk(int doMC=0,
   // === Jet Strip ===
   TCanvas * cCompJTrkDPhi = new TCanvas("cCompJTrkDPhi","cCompJTrkDPhi",500,500);
   CPlot cpCompJTrkDPhi("CompJTrkDPhi","CompJTrkDPhi","#Delta#phi(trk,j1)","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{d#Delta#phi} #cbar_{|#Delta#eta(trk,jet)|<0.5}");
-  cpCompJTrkDPhi.SetYRange(0,130);
+  cpCompJTrkDPhi.SetYRange(0,200);
   cpCompJTrkDPhi.AddHist1D(j2t3JTrkDPhi.hRaw,"hiSelectedTrk (p_{T}>1.2GeV)","E",kBlack,kFullCircle);
   cpCompJTrkDPhi.AddHist1D(j2t3JTrkTight3DPhi.hRaw,"hiSelectedTrk (p_{T}>3GeV)","E",kBlue,kOpenCircle);
   cpCompJTrkDPhi.SetLegend(0.41,0.76,0.71,0.86);
