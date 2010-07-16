@@ -147,9 +147,6 @@ void finalDiJetFF(int doMC=0,
   }
 
 
-  // === FF comparison ===
-  HisTGroup<TH1D> hgCompXi("CompXi");
-
   // === FF Corrections ===
   HisTGroup<TH1D> hgCorrXi("CorrXi");
   hgCorrXi.Add(hgRecoSigXi.R("Ave"),"ICPu5",1./0.65);
@@ -158,6 +155,14 @@ void finalDiJetFF(int doMC=0,
   hgCorrXi.Add(hgRecoSigXi.R("Ave"),"ICPu5TrkUpper",1./(0.65*1.05));
   hgCorrXi.Add(hgRecoSigXi.R("Ave"),"ICPu5TrkLower",1./(0.65*0.95));
   if (doCompare) hgCorrXi.Add(hgReco2SigXi.R("Ave"),"Kt4",1./0.65);
+
+  // === FF comparison ===
+  HisTGroup<TH1D> hgCompXi("CompXi");
+  hgCompXi.Add(hgCorrXi.H("ICPu5"),"ICPu5");
+  hgCompXi.Add(hgCorrXi.H("Kt4"),"Kt4");
+  hgCompXi.Add(hgGenTruth.R("Ave"),"GenTruth");
+  hgCompXi.Divide("ICPu5","GenTruth");
+  hgCompXi.Divide("Kt4","GenTruth");
 
   // === FF QA Plots ===
   TCanvas * cRecoFFNrSub = new TCanvas("cRecoFFNrSub","cRecoFFNrSub",500,500);
@@ -217,14 +222,26 @@ void finalDiJetFF(int doMC=0,
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5TrkUpper"),"Trk Eff * 1.05","hist",kBlue,0);
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5TrkLower"),"Trk Eff * 0.95","hist",kMagenta,0);
-  if (doCompare) cpFinalCorrFF.AddHist1D(hgCorrXi.H("Kt4"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
+  if (doCompare) cpFinalCorrFF.AddHist1D(hgCorrXi.H("Kt4"),"Near+Away (Kt4 FJPu)","E",kBlue,kOpenSquare);
   if (doCompare==3) {
     //cpFinalCorrFF.AddHist1D(hgGen.R("Ave"),"Gen","histE",kRed,kOpenSquare);
     cpFinalCorrFF.AddHist1D(hgGenTruth.R("Ave"),"Signal: GenTruth","E",kRed,kOpenStar);
   }
-  cpFinalCorrFF.SetLegend(0.194,0.71,0.52,0.94);
+  cpFinalCorrFF.SetLegend(0.194,0.65,0.52,0.94);
   cpFinalCorrFF.Draw(cFinalCorrFF,true);
 
+  // -- Compare final FF --
+  TCanvas * cCompFF = new TCanvas("cCompFF","cCompFF",500,500);
+  CPlot cpCompFF("CompFF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","(Corrected Reco)/(Gen Truth)");
+  cpCompFF.SetXRange(0,6);
+  cpCompFF.SetYRange(0,2);
+  cpCompFF.AddHist1D(hFrame,"July Hard: Corrected Reco DiJetFF","",0,0);
+  cpCompFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
+  cpCompFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
+  if (doCompare) cpCompFF.AddHist1D(hgCompXi.R("ICPu5DivGenTruth"),"iConePu5","E",kBlack,kFullCircle);
+  if (doCompare==3) cpCompFF.AddHist1D(hgCompXi.R("Kt4DivGenTruth"),"Kt4 FJPu","E",kRed,kOpenSquare);
+  cpCompFF.SetLegend(0.23,0.18,0.55,0.37);
+  cpCompFF.Draw(cCompFF,true);
   // All done, save and exit
   outf->Write();
 }
