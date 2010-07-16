@@ -8,7 +8,7 @@
 class AnaFrag
 {
   public:
-    AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TCut dRSig, TCut dRBkg,int nx=20,double min=0,double max=7);
+    AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TCut dRSig, TCut dRBkg,int nx=10,double min=0,double max=6);
 
     TString tag;
     TTree * trDj;
