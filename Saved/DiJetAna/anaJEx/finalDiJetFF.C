@@ -199,11 +199,11 @@ void finalDiJetFF(int doMC=0,
   CPlot cpFinalRawFF("FinalRawFF","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (Subtracted)");
   cpFinalRawFF.SetXRange(0,6);
   cpFinalRawFF.SetYRange(0,9);
-  cpFinalRawFF.AddHist1D(hFrame,"July Hard: Reco DiJetFF","",0,0);
+  cpFinalRawFF.AddHist1D(hFrame,"July Hard: Raw Reco DiJetFF","",0,0);
   cpFinalRawFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
   cpFinalRawFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
-  cpFinalRawFF.AddHist1D(hgRecoLowerSigXi.R("Ave"),"JES*0.86","hist",kYellow+1,0);
-  cpFinalRawFF.AddHist1D(hgRecoUpperSigXi.R("Ave"),"JES*1.14","hist",kGreen+1,0);
+  //cpFinalRawFF.AddHist1D(hgRecoLowerSigXi.R("Ave"),"JES*0.86","hist",kYellow+1,0);
+  //cpFinalRawFF.AddHist1D(hgRecoUpperSigXi.R("Ave"),"JES*1.14","hist",kGreen+1,0);
   cpFinalRawFF.AddHist1D(hgRecoSigXi.R("Ave"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
   if (doCompare) cpFinalRawFF.AddHist1D(hgReco2SigXi.R("Ave"),"Near+Away (FastJet Kt4 PuSub)","E",kBlue,kOpenSquare);
   cpFinalRawFF.SetLegend(0.194,0.71,0.52,0.94);
