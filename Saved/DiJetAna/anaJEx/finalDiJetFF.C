@@ -23,6 +23,7 @@ void finalDiJetFF(int doMC=0,
     TString Ana2Name = "ZSHdfj0/dp25/a1",
     TString Ana3Name = "true/dp25/a4",
     TString header="July Data (Hard Triggered)",
+    TString finalsdir="fin2",
     //
     TString title1="Data",
     TString title2="MC")
@@ -57,7 +58,7 @@ void finalDiJetFF(int doMC=0,
   cout << "======= Output Dir: ========" << endl;
   TString anaoutdir = indir;
   cout << "Output dir: " << anaoutdir << endl;
-  CPlot::sOutDir = anaoutdir+"/final";
+  CPlot::sOutDir = anaoutdir+"/"+finalsdir;
   // Save output
   TFile * outf = new TFile(Form("%s/finalDiJetFF.root",anaoutdir.Data()),"RECREATE");
 
