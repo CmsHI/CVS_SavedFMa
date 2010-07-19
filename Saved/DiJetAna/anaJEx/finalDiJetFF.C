@@ -21,7 +21,7 @@ void finalDiJetFF(int doMC=0,
     const char * inFile0Name="anaDiJetFF.root",
     TString AnaName = "ZSHd1/dp25/a3",
     TString Ana2Name = "ZSHdfj0/dp25/a1",
-    TString Ana3Name = "true/dp25/a3",
+    TString Ana3Name = "true/dp25/a4",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
@@ -225,7 +225,7 @@ void finalDiJetFF(int doMC=0,
   if (doCompare) cpFinalCorrFF.AddHist1D(hgCorrXi.H("Kt4"),"Near+Away (Kt4 FJPu)","E",kBlue,kOpenSquare);
   if (doCompare==3) {
     //cpFinalCorrFF.AddHist1D(hgGen.R("Ave"),"Gen","histE",kRed,kOpenSquare);
-    cpFinalCorrFF.AddHist1D(hgGenTruth.R("Ave"),"Signal: GenTruth","E",kRed,kOpenStar);
+    cpFinalCorrFF.AddHist1D(hgGenTruth.R("Ave"),"Signal: GenTruth (npart>216)","E",kRed,kOpenStar);
   }
   cpFinalCorrFF.SetLegend(0.194,0.65,0.52,0.94);
   cpFinalCorrFF.Draw(cFinalCorrFF,true);

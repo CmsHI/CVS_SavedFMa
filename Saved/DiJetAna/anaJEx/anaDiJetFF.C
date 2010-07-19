@@ -32,7 +32,7 @@ void anaDiJetFF(int doMC=0,
     TString header="Hydjet 2.76 GeV (DiJet Imbedded)",
      */
     const char * inFile0Name="../matttrees/dijetAna_anaJet_Truth.root",
-    TString AnaName = "true/dp25/a3",
+    TString AnaName = "true/dp25/a4",
     //
     TString title1="Data",
     TString title2="MC")
@@ -46,13 +46,13 @@ void anaDiJetFF(int doMC=0,
   // === Define dijet selection ===
   selectionCut mcAna(AnaName,doMC,1,100,170,50,2.5);
   if (doMC==0||doMC==2) mcAna.DJAnd(TCut("(5*cbin)<20"));
-  if (doMC==1) mcAna.DJAnd(TCut("(npart)>=300"));
+  if (doMC==1) mcAna.DJAnd(TCut("(npart)>216"));
   // check
   mcAna.Print();
   // loose
   selectionCut mcAnaLoose(AnaName,doMC,1,20,200,20,2.5);
   if (doMC==0||doMC==2) mcAnaLoose.DJAnd(TCut("(5*cbin)<20"));
-  if (doMC==1) mcAnaLoose.DJAnd(TCut("(npart)>=300"));
+  if (doMC==1) mcAnaLoose.DJAnd(TCut("(npart)>216"));
 
   // === Get Trees ===
   TTree *j2t3, *j2t0, *j1t0;

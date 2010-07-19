@@ -42,7 +42,7 @@ void anaDiJetTrk(int doMC=0,
   // === Define dijet selection ===
   selectionCut mcAna(AnaName,doMC,1,100,170,50,2.5);
   //mcAna.DJAnd(TCut("(5*cbin)<20"));
-  mcAna.DJAnd(TCut("npart>=300"));
+  mcAna.DJAnd(TCut("npart>216"));
   // check
   mcAna.Print();
   // loose
