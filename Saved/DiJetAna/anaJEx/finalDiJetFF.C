@@ -39,6 +39,7 @@ void finalDiJetFF(int doMC=0,
 
   TFile *inFile2, *inFile3;
   int doCompare = 3;
+  bool doFJ = true;
   if (doCompare) {
     TString indir2 = Form("plots/%s/%s",Ana2Name.Data(),mcAna.AnaTag.Data());
     TString inFile2Path = indir2+"/"+inFile0Name;
@@ -46,7 +47,7 @@ void finalDiJetFF(int doMC=0,
     inFile2 = new TFile(inFile2Path);
     inFile2->ls();
   }
-  if (doCompare==3) {
+  if (doCompare>=3) {
     TString indir3 = Form("plots/%s/%s",Ana3Name.Data(),mcAna.AnaTag.Data());
     TString inFile3Path = indir3+"/"+inFile0Name;
     cout << inFile3Path << endl;
@@ -114,7 +115,7 @@ void finalDiJetFF(int doMC=0,
   // -- Compare3 --
   HisTGroup<TH1D> hgGen("Gen");
   HisTGroup<TH1D> hgGenTruth("GenTruth");
-  if (doCompare) {
+  if (doCompare>=3) {
     hgGen.Add(inFile3,"hSig_mcGenNrXi","Nr");
     hgGen.Add(inFile3,"hSig_mcGenAwXi","Aw");
     hgGen.Average();
@@ -161,9 +162,11 @@ void finalDiJetFF(int doMC=0,
   HisTGroup<TH1D> hgCompXi("CompXi");
   hgCompXi.Add(hgCorrXi.H("ICPu5"),"ICPu5");
   hgCompXi.Add(hgCorrXi.H("Kt4"),"Kt4");
-  hgCompXi.Add(hgGenTruth.R("Ave"),"GenTruth");
-  hgCompXi.Divide("ICPu5","GenTruth");
-  hgCompXi.Divide("Kt4","GenTruth");
+  if (doCompare>=3) {
+    hgCompXi.Add(hgGenTruth.R("Ave"),"GenTruth");
+    hgCompXi.Divide("ICPu5","GenTruth");
+    hgCompXi.Divide("Kt4","GenTruth");
+  }
 
   // === FF QA Plots ===
   TCanvas * cRecoFFNrSub = new TCanvas("cRecoFFNrSub","cRecoFFNrSub",500,500);
@@ -224,7 +227,7 @@ void finalDiJetFF(int doMC=0,
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5TrkUpper"),"Trk Eff * 1.05","hist",kBlue,0);
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5TrkLower"),"Trk Eff * 0.95","hist",kMagenta,0);
   if (doCompare) cpFinalCorrFF.AddHist1D(hgCorrXi.H("Kt4"),"Near+Away (Kt4 FJPu)","E",kBlue,kOpenSquare);
-  if (doCompare==3) {
+  if (doCompare>=3) {
     //cpFinalCorrFF.AddHist1D(hgGen.R("Ave"),"Gen","histE",kRed,kOpenSquare);
     cpFinalCorrFF.AddHist1D(hgGenTruth.R("Ave"),"Signal: GenTruth (npart>216)","E",kRed,kOpenStar);
   }
@@ -240,7 +243,7 @@ void finalDiJetFF(int doMC=0,
   cpCompFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
   cpCompFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
   if (doCompare) cpCompFF.AddHist1D(hgCompXi.R("ICPu5DivGenTruth"),"iConePu5","E",kBlack,kFullCircle);
-  if (doCompare==3) cpCompFF.AddHist1D(hgCompXi.R("Kt4DivGenTruth"),"Kt4 FJPu","E",kRed,kOpenSquare);
+  if (doCompare>=3&&doFJ) cpCompFF.AddHist1D(hgCompXi.R("Kt4DivGenTruth"),"Kt4 FJPu","E",kRed,kOpenSquare);
   cpCompFF.SetLegend(0.23,0.18,0.55,0.37);
   cpCompFF.Draw(cCompFF,true);
   // All done, save and exit
