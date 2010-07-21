@@ -4,7 +4,8 @@ import FWCore.ParameterSet.Config as cms
 # Dijet Ana Modules
 dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     isMC = cms.untracked.bool(True),
-    fillL1Corr = cms.untracked.bool(False),
+    fillL1Corr = cms.untracked.bool(False),                         
+    genOnly = cms.untracked.bool(False),
     centFile = cms.string("CentralityTables.root"),
     centLabel = cms.string("HFhits20_MC_Hydjet2760GeV_MC_3XY_V24_v0"),
     vtxsrc = cms.untracked.InputTag("hiSelectedVertex"),
