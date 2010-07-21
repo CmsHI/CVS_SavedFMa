@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.5 2010/07/13 14:19:20 mnguyen Exp $
+// $Id: DiJetAna.cc,v 1.6 2010/07/14 18:56:26 mnguyen Exp $
 //
 //
 
@@ -69,6 +69,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
 {
   //now do what ever initialization is needed
   isMC_ = iConfig.getUntrackedParameter<bool>("isMC", true);
+  genOnly_ = iConfig.getUntrackedParameter<bool>("genOnly", true);
   fillL1Corr_ = iConfig.getUntrackedParameter<bool>("fillL1Corr", true);
   centFile_ = iConfig.getParameter<string>("centFile");
   centLabel_ = iConfig.getParameter<string>("centLabel");
@@ -127,45 +128,50 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   const string qualityString = "highPurity";
   djEvt_.Clear();
 
-  //-----------------------  Preselection (This part will be in an EDFilter later)  
-  // get vtx collection 
-  Handle<vector<Vertex> > vertices;
-  iEvent.getByLabel(vtxsrc_, vertices);
-  Int_t numVtx = (Int_t)vertices->size();
-  hNumVtx_->Fill(numVtx);
-  if(numVtx<1) return; // at least one vtx
-
-  Int_t numFake=0, maxtracks=0;
-  double bestndof=-999.9,bestvz=-999.9, bestvx=-999.9, bestvy=-999.9, bestNchi2=999.9;
-  for(UInt_t it=0; it<vertices->size(); ++it) {
-    const reco::Vertex & vtx = (*vertices)[it];
-    // check if valid vertex
-    if(vtx.isFake()) {
-      ++numFake;
-      continue;
+  if(!isMC_){
+    //-----------------------  Preselection (This part will be in an EDFilter later)  
+    // get vtx collection 
+    Handle<vector<Vertex> > vertices;
+    iEvent.getByLabel(vtxsrc_, vertices);
+    Int_t numVtx = (Int_t)vertices->size();
+    hNumVtx_->Fill(numVtx);
+    if(numVtx<1) return; // at least one vtx
+    
+    Int_t numFake=0, maxtracks=0;
+    double bestndof=-999.9,bestvz=-999.9, bestvx=-999.9, bestvy=-999.9, bestNchi2=999.9;
+    for(UInt_t it=0; it<vertices->size(); ++it) {
+      const reco::Vertex & vtx = (*vertices)[it];
+      // check if valid vertex
+      if(vtx.isFake()) {
+	++numFake;
+	continue;
+      }
+      // update best vertex
+      if(numVtx > maxtracks || (numVtx == maxtracks && vtx.normalizedChi2() < bestNchi2) ) {
+	maxtracks = vtx.tracksSize();
+	bestvz = vtx.z(); bestvx = vtx.x(); bestvy = vtx.y();
+	bestNchi2 = vtx.normalizedChi2();
+	bestndof = vtx.ndof();
+      } 
     }
-    // update best vertex
-    if(numVtx > maxtracks || (numVtx == maxtracks && vtx.normalizedChi2() < bestNchi2) ) {
-      maxtracks = vtx.tracksSize();
-      bestvz = vtx.z(); bestvx = vtx.x(); bestvy = vtx.y();
-      bestNchi2 = vtx.normalizedChi2();
-      bestndof = vtx.ndof();
-    } 
+    hVtxNumTrksPreSel_->Fill(maxtracks);
+    if(maxtracks<nVtxTrkCut_) return; // vtx quality selection
+    hVtxNumTrksEvtSel_->Fill(maxtracks);
+    hVtxZEvtSel_->Fill(bestvz);
+    ++numPreEvtSel_;
   }
-  hVtxNumTrksPreSel_->Fill(maxtracks);
-  if(maxtracks<nVtxTrkCut_) return; // vtx quality selection
-  hVtxNumTrksEvtSel_->Fill(maxtracks);
-  hVtxZEvtSel_->Fill(bestvz);
-  ++numPreEvtSel_;
 
   //-----------------------  HI Evt election (This part will be in an EDFilter later)  
-  edm::Handle<reco::Centrality> cent;
-  iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
-  Double_t hf	  = cent->EtHFhitSum();
-  Int_t cbin	  = HFhitBinMap_[1]->getBin(hf);
-  //cout << "cbin: " << cbin << endl;
-  if (cbin<centBinBeg_ || cbin>=centBinEnd_) return;
-  ++numHiEvtSel_;
+  if(!genOnly_){
+    edm::Handle<reco::Centrality> cent;
+    iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
+    Double_t hf	  = cent->EtHFhitSum();
+    Int_t cbin	  = HFhitBinMap_[1]->getBin(hf);
+    //cout << "cbin: " << cbin << endl;
+    if (cbin<centBinBeg_ || cbin>=centBinEnd_) return;
+  }
+    ++numHiEvtSel_;
+
 
   // Done with Event Pre-Selection
   // Fill Event info
@@ -195,11 +201,15 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
   }
 
+  std::vector<double> L1Corrs;
 
-  Handle<vector<pat::Jet> > jets;
-  iEvent.getByLabel(jetsrc_,jets);
-  
-  std::vector<double> L1Corrs =  FillL1Corrs(jets);
+  // only grab correction for pat jets (not gen)
+  if(anaJetType_==2){
+    Handle<vector<pat::Jet> > jets;
+    iEvent.getByLabel(jetsrc_,jets);
+    
+    L1Corrs =  FillL1Corrs(jets);
+  }
 
   //
   // ---------------------------- Jet Analysis ---------------------------------
@@ -223,11 +233,11 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   InclJetAna(iEvent,anaJetType_,L1Corrs,hJetPtDJSel_,hJetEtaDJSel_,hJetPhiDJSel_);
 
   // -- Get Ref jets to the selected dijet (if MC) --
-  if (isMC_)FindRefJets(iEvent,refJetType_,refJets_);
+  if (isMC_&&!genOnly_)FindRefJets(iEvent,refJetType_,refJets_);
 
   // -- Fill DiJet Event info --
   FillEventInfo(iEvent,djEvt_);
-  if (!isMC_) FillJets(iEvent,djEvt_,L1Corrs,anaJets_,2,refJets_,-1);
+  if (!isMC_&&!genOnly_) FillJets(iEvent,djEvt_,L1Corrs,anaJets_,2,refJets_,-1);
   else { 
     FillJets(iEvent,djEvt_,L1Corrs,anaJets_,anaJetType_,refJets_,refJetType_);
   }
@@ -293,7 +303,8 @@ void DiJetAna::InclJetAna(const edm::Event& iEvent, Int_t jetType, std::vector<d
     iEvent.getByLabel(jetsrc_,jets);
     for (unsigned int j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
-      Double_t corrPt=jet.pt()*L1Corrs[j];
+      Double_t corrPt=jet.pt();
+      
       if (jetType==2) {
 	Handle<vector<pat::Jet> > patjets;
 	iEvent.getByLabel(jetsrc_,patjets);
@@ -345,12 +356,13 @@ void DiJetAna::FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
   jd.evt_	  = iEvent.id().event();
   jd.lumi_	  = iEvent.luminosityBlock();
 
-  // HI Event info
-  edm::Handle<reco::Centrality> cent;
-  iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
-  Double_t hf	  = cent->EtHFhitSum();
-  jd.cbin_	  = HFhitBinMap_[1]->getBin(hf);
-
+  if(!genOnly_){
+    // HI Event info
+    edm::Handle<reco::Centrality> cent;
+    iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
+    Double_t hf	  = cent->EtHFhitSum();
+    jd.cbin_	  = HFhitBinMap_[1]->getBin(hf);
+  }
 
   if (isMC_) {
     edm::Handle<edm::GenHIEvent> mchievt;
@@ -415,7 +427,7 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
     // -- jec --
-    cout << "Current JEC Step: " << "Nr: " << (*jets)[iNear_].corrStep() << " Aw: " <<  (*jets)[iAway_].corrStep() << endl;
+    //cout << "Current JEC Step: " << "Nr: " << (*jets)[iNear_].corrStep() << " Aw: " <<  (*jets)[iAway_].corrStep() << endl;
     jd.nljrawet_	= (*jets)[iNear_].correctedP4("raw").pt();
     jd.aljrawet_	= (*jets)[iAway_].correctedP4("raw").pt();
 
@@ -501,7 +513,8 @@ Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, const edm::InputTag & jsrc
     iEvent.getByLabel(jsrc,jets);
     for (unsigned int j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
-      Double_t corrPt = jet.pt()*L1Corrs[j];
+      Double_t corrPt = jet.pt();
+      if(jetType==2)corrPt *= L1Corrs[j];
       if (corrPt>NearPtMax) {
 	NearPtMax=corrPt;
 	iNear=j;
@@ -524,7 +537,8 @@ Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc
       Double_t jdphi = TMath::Abs(reco::deltaPhi(NrJet.phi(),jet.phi()));
       if (jdphi < djDPhiMin_) continue; // not too close to near jet in dphi
 
-      Double_t corrPt = jet.pt()*L1Corrs[j];
+      Double_t corrPt = jet.pt();
+      if(jetType==2)corrPt *= L1Corrs[j];
       if (corrPt>AwayPtMax) {
 	AwayPtMax=corrPt;
 	iAway=j;
@@ -583,7 +597,6 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
   // For matching use patjet matched
   Handle<vector<pat::Jet> > jets;
   iEvent.getByLabel(refjetsrc_,jets);
-
   // Just make a dummy L1 Correction for refjets for the moment
   vector<double> L1Corr_dum;
   for (unsigned j=0; j<(*jets).size();++j) L1Corr_dum.push_back(1.);
