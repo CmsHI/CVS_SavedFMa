@@ -2,7 +2,21 @@ import FWCore.ParameterSet.Config as cms
 
 from Saved.DiJetAna.dijetAna_cfi import *
 
-# different jet reco
+# different jet reco - mc
+dijetAna_mc_kt4 = dijetAna_mc.clone(
+    jetsrc = cms.untracked.InputTag("kt4patJets"),
+    fillL1Corr = cms.untracked.bool(True),
+    refjetsrc = cms.untracked.InputTag("kt4patJets"),
+    trksrc = cms.untracked.InputTag("allTracks"),
+    anaTrkType = cms.untracked.int32(3)
+    )
+
+dijetAna_mc_ak5 = dijetAna_mc_kt4.clone(
+    jetsrc = cms.untracked.InputTag("ak5patJets"),
+    refjetsrc = cms.untracked.InputTag("ak5patJets"),
+    )
+
+# different jet reco - data
 dijetAna_data_kt4 = dijetAna_data.clone(
     jetsrc = cms.untracked.InputTag("kt4patJets"),
     fillL1Corr = cms.untracked.bool(True),
