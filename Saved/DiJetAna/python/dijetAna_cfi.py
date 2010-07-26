@@ -1,7 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-# === Full Reco ===
-# Dijet Ana Modules
+# === MC Reco ===
 dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     isMC = cms.untracked.bool(True),
     fillL1Corr = cms.untracked.bool(False),                         
@@ -31,7 +30,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     centBinEnd = cms.untracked.int32(20)
     )
 
-# === Data ===
+# === Data Reco ===
 dijetAna_data = dijetAna_mc.clone(
     isMC = cms.untracked.bool(False),
     centLabel = cms.string("HFhits20_DataJulyExercise_AMPT2760GeV_MC_37Y_V5_ZS_v0"),
@@ -44,8 +43,7 @@ dijetAna_data = dijetAna_mc.clone(
     )
 
 
-# === Systematic Studies ===
-
+# === MC Gen+Reco ===
 dijetAna_mc_genjet_trk = dijetAna_mc.clone(
     jetsrc = cms.untracked.InputTag("iterativeCone5HiGenJets"),
     anaJetType = cms.untracked.int32(1),
@@ -63,16 +61,4 @@ dijetAna_mc_genjet_genp = dijetAna_mc.clone(
     trksrc = cms.untracked.InputTag("hiGenParticles"),
     refJetType = cms.untracked.int32(12),
     anaTrkType = cms.untracked.int32(0)
-    )
-
-# Analysis Sequences
-dijetAna_data_seq = cms.Sequence(
-    dijetAna_data
-    )
-
-dijetAna_mc_seq = cms.Sequence(
-    dijetAna_mc *
-    #dijetAna_mc_genjet_trk *
-    dijetAna_mc_calojet_genp *
-    dijetAna_mc_genjet_genp
     )
