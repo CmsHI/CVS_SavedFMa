@@ -40,6 +40,7 @@ def mycustomise(process):
   # process.output
   try:
     if ('default_output' not in options.output):
+      process.TFileService.fileName = process.TFileService.fileName.value().split('.')[0]
       process.TFileService.fileName = process.TFileService.fileName.value() + "_" + options.output
   except:
     print "no output module with the given name"

@@ -20,7 +20,7 @@ process.dijetAna_data.trksrc = "allTracks"
 process.dijetAna_data.anaTrkType = 3
 print process.dijetAna_data.dumpPython()
 
-anaOutName = "dijetAna_%s" % (process.dijetAna_data.jetsrc.value())
+anaOutName = "dijetAna_%s.root" % (process.dijetAna_data.jetsrc.value())
 print "AnaOutput: ", anaOutName
 
 process.TFileService = cms.Service('TFileService',
