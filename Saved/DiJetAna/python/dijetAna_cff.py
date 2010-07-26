@@ -13,7 +13,7 @@ dijetAna_mc_kt4 = dijetAna_mc.clone(
 
 dijetAna_mc_ak5 = dijetAna_mc_kt4.clone(
     jetsrc = cms.untracked.InputTag("ak5patJets"),
-    refjetsrc = cms.untracked.InputTag("ak5patJets"),
+    refjetsrc = cms.untracked.InputTag("ak5patJets")
     )
 
 # different jet reco - data
