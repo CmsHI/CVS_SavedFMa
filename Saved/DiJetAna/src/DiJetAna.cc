@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.6 2010/07/14 18:56:26 mnguyen Exp $
+// $Id: DiJetAna.cc,v 1.7 2010/07/21 16:07:01 mnguyen Exp $
 //
 //
 
@@ -94,6 +94,8 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   anaTrkType_ = iConfig.getUntrackedParameter<int>("anaTrkType", 3);
   centBinBeg_ = iConfig.getUntrackedParameter<int>("centBinBeg", 0);
   centBinEnd_ = iConfig.getUntrackedParameter<int>("centBinEnd", 6);
+  // verbosity
+  verbosity_ = iConfig.getUntrackedParameter<int>("verbosity", 0);
 
   // Setup centrality
   TFile * centFile = new TFile(centFile_.c_str());
@@ -128,7 +130,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   const string qualityString = "highPurity";
   djEvt_.Clear();
 
-  if(!isMC_){
+  if(!anaJetType_==2){
     //-----------------------  Preselection (This part will be in an EDFilter later)  
     // get vtx collection 
     Handle<vector<Vertex> > vertices;
@@ -170,13 +172,11 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //cout << "cbin: " << cbin << endl;
     if (cbin<centBinBeg_ || cbin>=centBinEnd_) return;
   }
-    ++numHiEvtSel_;
-
+  ++numHiEvtSel_;
 
   // Done with Event Pre-Selection
   // Fill Event info
-
-
+  FillEventInfo(iEvent,djEvt_);
 
   // Grab L1 Corrections if doing fastJet-style PU
   if(fillL1Corr_){
@@ -202,12 +202,10 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   std::vector<double> L1Corrs;
-
   // only grab correction for pat jets (not gen)
   if(anaJetType_==2){
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
-    
     L1Corrs =  FillL1Corrs(jets);
   }
 
@@ -218,35 +216,35 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   InclJetAna(iEvent,anaJetType_,L1Corrs,hJetPtPreSel_,hJetEtaPreSel_,hJetPhiPreSel_);
 
   //
-  // ===== DiJet Ana =====
+  // ============================= DiJet Ana =============================
   //
-
-
   nearJetPt_ = -99; awayJetPt_ = -99;
   FindDiJet(iEvent,jetsrc_,anaJets_,anaJetType_,L1Corrs,nearJetPt_,iNear_,awayJetPt_,iAway_);
 
   // === basic dijet selection to simulate jet trigger ===
   if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) return;
   ++numDJEvtSel_;
-  if (numDJEvtSel_<=20) PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
+  if (verbosity_>=1 && numDJEvtSel_<=7) PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
   // Check Inclusive Jets After DJ Selection
   InclJetAna(iEvent,anaJetType_,L1Corrs,hJetPtDJSel_,hJetEtaDJSel_,hJetPhiDJSel_);
 
   // -- Get Ref jets to the selected dijet (if MC) --
   if (isMC_&&!genOnly_)FindRefJets(iEvent,refJetType_,refJets_);
 
-  // -- Fill DiJet Event info --
-  FillEventInfo(iEvent,djEvt_);
+  // -- Fill DiJet info --
   if (!isMC_&&!genOnly_) FillJets(iEvent,djEvt_,L1Corrs,anaJets_,2,refJets_,-1);
   else { 
     FillJets(iEvent,djEvt_,L1Corrs,anaJets_,anaJetType_,refJets_,refJetType_);
   }
 
   //
-  // ------------------------------- Tracks ------------------------------
+  // =============================== Tracks ==============================
   //
   // Inclusive Trk ana
   InclTrkAna(iEvent,anaTrkType_);
+
+  // Print Tracks
+  if (verbosity_>=10 && numDJEvtSel_<=7) PrintTrks(iEvent,anaTrkType_);
 
   // -- Jet-Track Correlations ---
   FillTrks(iEvent,djEvt_,anaJets_,refJets_,anaTrkType_);
@@ -286,6 +284,10 @@ void
 DiJetAna::endJob() {
   // ===== Done =====
   cout << endl << "================ Ana Process Summaries =============" << endl;
+  cout << "Centrality: " << centLabel_ << endl;
+  cout << "AnaJet: " << jetsrc_;
+  if (refJetType_>=0) cout << " RefJet: " << refjetsrc_;
+  cout << "  AnaTrk: " << trksrc_ << endl;
   cout << "Number of events pre-selected : "<< numPreEvtSel_ <<endl;
   cout << "Number of HI events selected : "<< numHiEvtSel_<<endl;
   cout << "Number of dijet events selected : "<< numDJEvtSel_<<endl;
@@ -691,9 +693,6 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
     << " leading dijet - iNear: " << iNear_ << " " <<": "<< anajets[0]
     << "  iAway: " << iAway_ << " " << anajets[1] << endl;
   cout << "DiJet dphi: " << ljdphi << endl;
-
-  // Print Tracks
-  if ((jetType+trkType)==5 || (jetType+trkType)==1) PrintTrks(iEvent,trkType);
 }
 
 void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)

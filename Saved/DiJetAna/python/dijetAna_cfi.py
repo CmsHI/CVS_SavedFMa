@@ -31,7 +31,9 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     # trk selection
     trksrc = cms.untracked.InputTag("allTracks"),
     anaTrkType = cms.untracked.int32(3),
-    trkPtMin = cms.untracked.double(0.7)
+    trkPtMin = cms.untracked.double(0.7),
+    # debug
+    verbosity = cms.untracked.int32(1)
     )
 
 # === Data Reco ===

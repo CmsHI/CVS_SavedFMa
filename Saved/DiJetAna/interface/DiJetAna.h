@@ -99,6 +99,8 @@ class DiJetAna : public edm::EDAnalyzer {
     CentralityBins::RunMap HFhitBinMap_;
     Int_t	  centBinBeg_;
     Int_t	  centBinEnd_;
+    // debug
+    Int_t	  verbosity_;
     // jec studies
     TF1		  *funcGaus_; //! Function parametrizing the jes uncertainty
 
