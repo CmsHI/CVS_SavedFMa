@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.12 2010/07/27 15:53:34 frankma Exp $
+// $Id: DiJetAna.cc,v 1.13 2010/07/27 16:31:08 frankma Exp $
 //
 //
 
@@ -130,14 +130,6 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   const string qualityString = "highPurity";
   djEvt_.Clear();
 
-  // Begin Ana
-  if (verbosity_>=1) {
-    cout << endl << "=== Ana setup: ===" << endl;
-    cout << "AnaJet: " << jetsrc_ << " with anaJetType: " << anaJetType_ << endl;
-    cout << "RefJet: " << refjetsrc_ << " with refJetType: " << refJetType_ << endl;
-    cout << "AnaTrk: " << trksrc_ << " with anaTrkType: " << anaTrkType_ << endl;
-  }
-
   if(anaJetType_==2){
     //-----------------------  Preselection (This part will be in an EDFilter later)  
     // get vtx collection 
@@ -177,7 +169,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
     Double_t hf	  = cent->EtHFhitSum();
     Int_t cbin	  = HFhitBinMap_[1]->getBin(hf);
-    //cout << "cbin: " << cbin << endl;
+    if (verbosity_>=3) cout << "cbin: " << cbin << endl;
     if (cbin<centBinBeg_ || cbin>=centBinEnd_) return;
   }
   ++numHiEvtSel_;
@@ -204,11 +196,19 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //
   nearJetPt_ = -99; awayJetPt_ = -99;
   FindDiJet(iEvent,jetsrc_,anaJets_,anaJetType_,anaJECs_,nearJetPt_,iNear_,awayJetPt_,iAway_);
+  // Begin DiJet Ana
+  if (verbosity_>=2 && (numDJEvtSel_<5 || nearJetPt_>100)) {
+    cout << endl << "=== Ana setup: ===" << endl;
+    cout << "AnaJet: " << jetsrc_ << " with anaJetType: " << anaJetType_ << endl;
+    cout << "RefJet: " << refjetsrc_ << " with refJetType: " << refJetType_ << endl;
+    cout << "AnaTrk: " << trksrc_ << " with anaTrkType: " << anaTrkType_ << endl;
+  }
+
 
   // === basic dijet selection to simulate jet trigger ===
   if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) return;
   ++numDJEvtSel_;
-  if (verbosity_>=1 && numDJEvtSel_<=7) PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
+  if (verbosity_>=2 && (numDJEvtSel_<5 || nearJetPt_>100)) PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
   // Check Inclusive Jets After DJ Selection
   InclJetAna(iEvent,anaJetType_,anaJECs_,hJetPtDJSel_,hJetEtaDJSel_,hJetPhiDJSel_);
 
@@ -431,7 +431,6 @@ void DiJetAna::FillLAnaJECs(const edm::Event & iEvent, const vector<pat::Jet> & 
     edm::Handle<std::vector<double> > rs;
     iEvent.getByLabel(edm::InputTag("kt4CaloJets","rhos"),rs);
     //double puCent[11] = {-5,-4,-3,-2,-1,0,1,2,3,4,5};
-    //cout << "rhos size: " << rs->size() << endl;
     for(unsigned int j = 0; j < rs->size()-11; j++){
       double medianpt=(*rs)[j+11];
       medianPtKt.push_back(medianpt);
@@ -439,13 +438,11 @@ void DiJetAna::FillLAnaJECs(const edm::Event & iEvent, const vector<pat::Jet> & 
   }
 
   // Fill Final Analysis Level Jet Energy Corrections
-  cout << "size of jets to fill for anaJEC: " << jets.size() << endl;
   for (unsigned j=0; j<jets.size();++j) {
     double anaCorr = 1;
     if (applyLAnaJEC_==1) anaCorr *= GetFJL1Corr(medianPtKt,jets[j]);
     JECs.push_back(anaCorr);
   }
-  cout << "size anaJEC after fill: " << jets.size() << endl;
 }
 
 void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
@@ -609,7 +606,7 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
   if (refjets.size()<2) return;
 
   // Print some refjet info
-  if (numDJEvtSel_<=20) {
+  if (verbosity_>=3 && numDJEvtSel_<=20) {
     cout << "Ref Jets (j"<<refjetType<<"): " << endl;
     cout << " refjetsrc_: " << refjetsrc_ << endl;
     cout << " sel nearRefJetPt_: " << nearRefJetPt_ << " iNearRef_: " << iNearRef_
