@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.11 2010/07/27 15:03:33 frankma Exp $
+// $Id: DiJetAna.cc,v 1.12 2010/07/27 15:53:34 frankma Exp $
 //
 //
 
@@ -291,6 +291,7 @@ void DiJetAna::InclJetAna(const edm::Event& iEvent, Int_t jetType, const std::ve
     iEvent.getByLabel(jetsrc_,jets);
     for (unsigned int j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
+      if (fabs(jet.eta())>jetEtaMax_) continue; // only jets within analysis eta
       Double_t corrPt=jet.pt();
       
       if (jetType==2) {
@@ -509,6 +510,7 @@ Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, const edm::InputTag & jsrc
     iEvent.getByLabel(jsrc,jets);
     for (unsigned int j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
+      if (fabs(jet.eta())>jetEtaMax_) continue; // only leading jet within analysis eta
       Double_t corrPt = jet.pt();
       if(jetType==2)corrPt *= anaJECs[j];
       if (corrPt>NearPtMax) {
@@ -530,6 +532,7 @@ Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc
     const reco::Candidate & NrJet = (*jets)[iNr];
     for (unsigned int j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
+      if (fabs(jet.eta())>jetEtaMax_) continue; // only away jet within analysis eta 
       Double_t jdphi = TMath::Abs(reco::deltaPhi(NrJet.phi(),jet.phi()));
       if (jdphi < djDPhiMin_) continue; // not too close to near jet in dphi
 
@@ -675,7 +678,8 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
     cout << "jetType " << jetType << ", # jets: " << (*jets).size() << ". trkType " << trkType << endl;
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
-      if (jet.pt()>(nearJetPtMin_/2.)) {
+      if (fabs(jet.eta())>jetEtaMax_) continue; // only jets within analysis eta
+      if (jet.pt()*anaJECs_[j]>(nearJetPtMin_/2.)) {
 	cout << "jet " << j;
 	if (applyLAnaJEC_) cout << "  L1CorrEt: "<< jet.pt()*anaJECs_[j];
 	cout <<" et|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
