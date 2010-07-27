@@ -15,7 +15,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     # jet reco
     jetsrc = cms.untracked.InputTag("patJets"),
     anaJetType = cms.untracked.int32(2),
-    applyLAnaJEC = cms.untracked.bool(False),                         
+    applyLAnaJEC = cms.int32(0),                         
     jetEtaMax = cms.untracked.double(3.0),
     # jet energy correction
     JECLab1 = cms.string("abs"),
