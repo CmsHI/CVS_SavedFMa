@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.9 2010/07/27 12:41:46 frankma Exp $
+// $Id: DiJetAna.cc,v 1.10 2010/07/27 14:03:29 frankma Exp $
 //
 //
 
@@ -203,7 +203,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       ymin=puCent[j]-0.5;
       ymax=puCent[j]+0.5;
       double medianpt=rs->at(j+11);
-      medianPtkt[j]=medianpt;
+      medianPtKt_[j]=medianpt;
       //    cout<<" ymin  "<<ymin<<"  ymax "<<ymax<<endl;         
       
     }
@@ -216,6 +216,12 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByLabel(jetsrc_,jets);
     L1Corrs =  FillL1Corrs(jets);
     FillLAnaJECs(iEvent,*jets,anaJECs_);
+
+    cout << "=== FJ L1 Corr: === " << endl;
+    cout << "Old size: " << L1Corrs.size() << " New size: " << anaJECs_.size() << endl;
+    for (unsigned int i=0; i<L1Corrs.size(); ++i) {
+      cout << " jet " << i << ": Old: " << L1Corrs[i] << "  New: " << anaJECs_[i] << endl;
+    }
   }
 
   //
@@ -386,6 +392,24 @@ void DiJetAna::FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
   }
 }
 
+double DiJetAna::GetFJL1Corr(const vector<double> & medianPt, const pat::Jet & jet)
+{
+  double jetcorr=1.;
+  if(fabs(jet.eta())<3 && applyLAnaJEC_==1){
+    double rho=-999;
+    if (jet.eta()<-2.5 && jet.eta()>-3.5)rho=medianPt[2];
+    if (jet.eta()<-1.5 && jet.eta()>-2.5)rho=medianPt[3];
+    if (jet.eta()<-0.5 && jet.eta()>-1.5)rho=medianPt[4];
+    if (jet.eta()<0.5 && jet.eta()>-0.5)rho=medianPt[5];
+    if (jet.eta()<1.5 && jet.eta()>0.5)rho=medianPt[6];
+    if (jet.eta()<2.5 && jet.eta()>1.5)rho=medianPt[7];
+    if (jet.eta()<3.5 && jet.eta()>2.5)rho=medianPt[8];
+    double jetarea=jet.jetArea();
+    jetcorr=1.0-jetarea*rho/jet.et();
+  }
+  return jetcorr;
+}
+
 
 vector<double> 
 DiJetAna::FillL1Corrs(edm::Handle<vector<pat::Jet> > jets)
@@ -402,13 +426,13 @@ DiJetAna::FillL1Corrs(edm::Handle<vector<pat::Jet> > jets)
       
       double rho=-999;
       
-      if (jet.eta()<-2.5 && jet.eta()>-3.5)rho=medianPtkt[2];
-      if (jet.eta()<-1.5 && jet.eta()>-2.5)rho=medianPtkt[3];
-      if (jet.eta()<-0.5 && jet.eta()>-1.5)rho=medianPtkt[4];
-      if (jet.eta()<0.5 && jet.eta()>-0.5)rho=medianPtkt[5];
-      if (jet.eta()<1.5 && jet.eta()>0.5)rho=medianPtkt[6];
-      if (jet.eta()<2.5 && jet.eta()>1.5)rho=medianPtkt[7];
-      if (jet.eta()<3.5 && jet.eta()>2.5)rho=medianPtkt[8];
+      if (jet.eta()<-2.5 && jet.eta()>-3.5)rho=medianPtKt_[2];
+      if (jet.eta()<-1.5 && jet.eta()>-2.5)rho=medianPtKt_[3];
+      if (jet.eta()<-0.5 && jet.eta()>-1.5)rho=medianPtKt_[4];
+      if (jet.eta()<0.5 && jet.eta()>-0.5)rho=medianPtKt_[5];
+      if (jet.eta()<1.5 && jet.eta()>0.5)rho=medianPtKt_[6];
+      if (jet.eta()<2.5 && jet.eta()>1.5)rho=medianPtKt_[7];
+      if (jet.eta()<3.5 && jet.eta()>2.5)rho=medianPtKt_[8];
       
       double jetarea=jet.jetArea();
       double jetcorr=1.0-jetarea*rho/jet.et();
@@ -464,22 +488,31 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
   }
 }
 
-void DiJetAna::FillLAnaJECs(const edm::Event & iEvent, const vector<pat::Jet> & jets, vector<double> JECs)
+void DiJetAna::FillLAnaJECs(const edm::Event & iEvent, const vector<pat::Jet> & jets, vector<double> & JECs)
 {
   JECs.clear();
 
   // FJ rho subtraction
+  vector<double> medianPtKt;
   if(applyLAnaJEC_==1){
     edm::Handle<std::vector<double> > rs;
     iEvent.getByLabel(edm::InputTag("kt4CaloJets","rhos"),rs);
-   
-    double puCent[11] = {-5,-4,-3,-2,-1,0,1,2,3,4,5};
-    cout << "rhos size: " << rs->size() << endl;
+    //double puCent[11] = {-5,-4,-3,-2,-1,0,1,2,3,4,5};
+    //cout << "rhos size: " << rs->size() << endl;
     for(unsigned int j = 0; j < rs->size()-11; j++){
       double medianpt=(*rs)[j+11];
-      medianPtkt[j]=medianpt;
+      medianPtKt.push_back(medianpt);
     }
   }
+
+  // Fill Final Analysis Level Jet Energy Corrections
+  cout << "size of jets to fill for anaJEC: " << jets.size() << endl;
+  for (unsigned j=0; j<jets.size();++j) {
+    double anaCorr = 1;
+    if (applyLAnaJEC_==1) anaCorr *= GetFJL1Corr(medianPtKt,jets[j]);
+    JECs.push_back(anaCorr);
+  }
+  cout << "size anaJEC after fill: " << jets.size() << endl;
 }
 
 void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,

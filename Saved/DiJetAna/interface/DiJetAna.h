@@ -30,11 +30,12 @@ class DiJetAna : public edm::EDAnalyzer {
 	TH1D * hPt, TH1D * hEta, TH1D * hPhi);
     void InclTrkAna(const edm::Event& iEvent, Int_t trkType);
     void FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd);
+    double GetFJL1Corr(const std::vector<double> & medianPt, const pat::Jet & jet);
     void FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 		   std::vector<double> L1Corrs,
 	std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t anajetType,
 		  std::vector<math::PtEtaPhiMLorentzVector> & refjets, Int_t refjetType=-1);
-    void FillLAnaJECs(const edm::Event & iEvent, const std::vector<pat::Jet> & jets, std::vector<double> anaJECs);
+    void FillLAnaJECs(const edm::Event & iEvent, const std::vector<pat::Jet> & jets, std::vector<double> & anaJECs);
     void  FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	std::vector<math::PtEtaPhiMLorentzVector> & anajets,
 	std::vector<math::PtEtaPhiMLorentzVector> & refjets,
@@ -105,7 +106,7 @@ class DiJetAna : public edm::EDAnalyzer {
     // jec studies
     TF1		  *funcGaus_; //! Function parametrizing the jes uncertainty
     std::vector<double> anaJECs_;
-    double medianPtkt[11];
+    double medianPtKt_[11];
 
     // ana data
     // -- evt --
