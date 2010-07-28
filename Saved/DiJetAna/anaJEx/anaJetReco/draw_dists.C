@@ -6,14 +6,12 @@ void draw_dists(int pt_eta_phi=0){
 
   gStyle->SetOptStat(1);
 
-  TFile *fIC5 = new TFile("dijetAnaTightDPhi_JEx_ZP_Hard_proc1_all.root");
-  TFile *fKT4 = new TFile("dijetAna_anaJet_HardEnriched_ZS_KT4_TightDPhi.root");
-  TFile *fAK5 = new TFile("dijetAna_anaJet_HardEnriched_ZS_AK5_TightDPhi.root");
+  TFile *fReco = new TFile("../../process_aod1/fullJetAlgo/dijetAna_patJets_FJ0Tr1.root");
 
   
-  TTree *trIC5 = (TTree*) fIC5->Get("dijetAna_data/djTree");
-  TTree *trKT4 = (TTree*) fKT4->Get("dijetAna_data/djTree");
-  TTree *trAK5 = (TTree*) fAK5->Get("dijetAna_data/djTree");
+  TTree *trIC5 = (TTree*) fReco->Get("dijetAna_data/djTree");
+  TTree *trKT4 = (TTree*) fReco->Get("dijetAna_data_kt4/djTree");
+  TTree *trAK5 = (TTree*) fReco->Get("dijetAna_data_ak5/djTree");
   
   TH1F *hIC5, *kKT4, *AK5;
 
@@ -64,8 +62,8 @@ void draw_dists(int pt_eta_phi=0){
   TCanvas *c=new TCanvas("c","c",1);
   c->SetLogy();
 
-  hKT4->SetLineColor(kblue);
-  hAK5->SetLineColor(kred);
+  hKT4->SetLineColor(kBlue);
+  hAK5->SetLineColor(kRed);
   
   hIC5->Draw();
   if(draw_kt4)hKT4->Draw("sames");
@@ -76,8 +74,8 @@ void draw_dists(int pt_eta_phi=0){
     TPaveStats *st1 = (TPaveStats*)hKT4->FindObject("stats");                                                            
     st1->SetY1NDC(st1->GetY1NDC()-0.18);                                                                        
     st1->SetY2NDC(st1->GetY2NDC()-0.18);                                                                        
-    st1->SetLineColor(kblue);                                                                                      
-    st1->SetTextColor(kblue);                                                                                      
+    st1->SetLineColor(kBlue);                                                                                      
+    st1->SetTextColor(kBlue);                                                                                      
     st1->Draw();  
   }
 
@@ -86,8 +84,8 @@ void draw_dists(int pt_eta_phi=0){
     TPaveStats *st2 = (TPaveStats*)hAK5->FindObject("stats");                                                            
     st2->SetY1NDC(st2->GetY1NDC()-0.36);                                                                        
     st2->SetY2NDC(st2->GetY2NDC()-0.36);                                                                        
-    st2->SetLineColor(kred);                                                                                      
-    st2->SetTextColor(kred);                                                                                      
+    st2->SetLineColor(kRed);                                                                                      
+    st2->SetTextColor(kRed);                                                                                      
     st2->Draw();  
   }
 
@@ -99,4 +97,5 @@ void draw_dists(int pt_eta_phi=0){
   if(draw_ak5)t->AddEntry(hAK5,"AK5","l");
   if(draw_kt4||draw_ak5) t->Draw();
 
+  c->Print(Form("pt_eta_phi_%d.gif",pt_eta_phi));
 }
