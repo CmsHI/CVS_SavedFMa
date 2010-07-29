@@ -24,16 +24,17 @@ void anaDiJetFF(int doMC=0,
        TString header="July Data (MB)",
     const char * inFile0Name="../process_aod/outputs/dijetAnaTightDPhi_JEx_ZP_Hard_proc1_all.root",
     TString AnaName = "ZSHd1/dp25/a3",
-    //const char * inFile0Name="../matttrees/dijetAna_anaJet_HardEnriched_ZS_KT4_TightDPhi.root",
-    //TString AnaName = "ZSHdfj0/dp25/a2",
     TString header="July Data (Hard Triggered)",
     const char * inFile0Name="../matttrees/dijetAna_anaJet_HydJet.root",
     TString AnaName = "hyjNZSDJ/dp25/a3",
     TString header="Hydjet 2.76 GeV (DiJet Imbedded)",
-     */
     const char * inFile0Name="../matttrees/dijetAna_anaJet_Truth.root",
     TString AnaName = "true/dp25/a4",
+     */
     //
+    const char * inFile0Name="../process_aod1/fullJetAlgo/outputs/dijetAna_patJets_FJ0Tr1_try14_20k.root",
+    TString AnaName = "ZSHdFJ0Tr1/ic5pu/dp25/a3",
+    TString AnaMod = "dijetAna_data",
     TString title1="Data",
     TString title2="MC")
 {
@@ -57,7 +58,7 @@ void anaDiJetFF(int doMC=0,
   // === Get Trees ===
   TTree *j2t3, *j2t0, *j1t0;
   if (!doMC) {
-    inFile0->GetObject("dijetAna_data/djTree",j2t3);
+    inFile0->GetObject(Form("%s/djTree",AnaMod.Data()),j2t3);
   } else if (doMC==1) {
     // gen only
     inFile0->GetObject("dijetAna_mc_genjet_genp/djTree",j1t0); aliases_dijet(j1t0);
