@@ -4,28 +4,28 @@ from Saved.DiJetAna.dijetAna_cfi import *
 
 # different jet reco - mc
 dijetAna_mc_kt4 = dijetAna_mc.clone(
-    jetsrc = cms.untracked.InputTag("kt4patJets"),
-    applyLAnaJEC = cms.int32(1),
-    refjetsrc = cms.untracked.InputTag("kt4patJets"),
-    trksrc = cms.untracked.InputTag("allTracks"),
-    anaTrkType = cms.untracked.int32(3)
+    jetsrc = cms.InputTag("kt4patJets"),
+    applyAnaJEC = cms.int32(1),
+    refjetsrc = cms.InputTag("kt4patJets"),
+    trksrc = cms.InputTag("allTracks"),
+    anaTrkType = cms.int32(3)
     )
 
 dijetAna_mc_ak5 = dijetAna_mc_kt4.clone(
-    jetsrc = cms.untracked.InputTag("ak5patJets"),
-    refjetsrc = cms.untracked.InputTag("ak5patJets")
+    jetsrc = cms.InputTag("ak5patJets"),
+    refjetsrc = cms.InputTag("ak5patJets")
     )
 
 # different jet reco - data
 dijetAna_data_kt4 = dijetAna_data.clone(
-    jetsrc = cms.untracked.InputTag("kt4patJets"),
-    applyLAnaJEC = cms.int32(1),
-    trksrc = cms.untracked.InputTag("allTracks"),
-    anaTrkType = cms.untracked.int32(3)
+    jetsrc = cms.InputTag("kt4patJets"),
+    applyAnaJEC = cms.int32(1),
+    trksrc = cms.InputTag("allTracks"),
+    anaTrkType = cms.int32(3)
     )
 
 dijetAna_data_ak5 = dijetAna_data_kt4.clone(
-    jetsrc = cms.untracked.InputTag("ak5patJets")
+    jetsrc = cms.InputTag("ak5patJets")
     )
 
 # Analysis Sequences

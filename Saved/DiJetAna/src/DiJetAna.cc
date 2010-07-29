@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.14 2010/07/27 17:26:34 frankma Exp $
+// $Id: DiJetAna.cc,v 1.15 2010/07/29 17:07:03 frankma Exp $
 //
 //
 
@@ -67,33 +67,38 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   numHiEvtSel_(0),
   numDJEvtSel_(0)
 {
-  //now do what ever initialization is needed
-  isMC_ = iConfig.getUntrackedParameter<bool>("isMC", true);
-  genOnly_ = iConfig.getUntrackedParameter<bool>("genOnly", true);
-  applyAnaJEC_ = iConfig.getParameter<int>("applyLAnaJEC");
+  // Event source
+  isMC_ = iConfig.getParameter<bool>("isMC");
+  genOnly_ = iConfig.getUntrackedParameter<bool>("genOnly", false);
+  // Ana Mode
+  evtAnaOnly_ = iConfig.getUntrackedParameter<bool>("evtAnaOnly", false);
+  // Event Selection
   centFile_ = iConfig.getParameter<string>("centFile");
   centLabel_ = iConfig.getParameter<string>("centLabel");
-  vtxsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("vtxsrc",edm::InputTag("hiSelectedVertex"));
-  jetsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("jetsrc",edm::InputTag("patJets"));
-  refjetsrc_ = iConfig.getUntrackedParameter<edm::InputTag>("refjetsrc",edm::InputTag("patJets"));
-  trksrc_ = iConfig.getUntrackedParameter<edm::InputTag>("trksrc",edm::InputTag("hiSelectTracks"));
-  jetEtaMax_ = iConfig.getUntrackedParameter<double>("jetEtaMax", 2.0);
-  nVtxTrkCut_ = iConfig.getUntrackedParameter<int>("nVtxTrkCut", 3);
+  centBinBeg_ = iConfig.getParameter<int>("centBinBeg");
+  centBinEnd_ = iConfig.getParameter<int>("centBinEnd");
+  vtxsrc_ = iConfig.getParameter<edm::InputTag>("vtxsrc");
+  nVtxTrkCut_ = iConfig.getParameter<int>("nVtxTrkCut");
+  // jet reco
+  jetsrc_ = iConfig.getParameter<edm::InputTag>("jetsrc");
+  anaJetType_ = iConfig.getParameter<int>("anaJetType");
+  applyAnaJEC_ = iConfig.getParameter<int>("applyAnaJEC");
+  jetEtaMax_ = iConfig.getParameter<double>("jetEtaMax");
+  // jet energy correction
   JECLab1_ = iConfig.getParameter<string>("JECLab1");
   JECLab2Nr_ = iConfig.getParameter<string>("JECLab2Nr");
   JECLab2Aw_ = iConfig.getParameter<string>("JECLab2Aw");
-  // dijet
-  nearJetPtMin_ = iConfig.getUntrackedParameter<double>("nearJetPtMin", 50);
-  awayJetPtMin_ = iConfig.getUntrackedParameter<double>("awayJetPtMin", 50);
+  // jet mc matching
+  refjetsrc_ = iConfig.getParameter<edm::InputTag>("refjetsrc");
+  refJetType_ = iConfig.getParameter<int>("refJetType");
+  // di-jet reco
+  nearJetPtMin_ = iConfig.getParameter<double>("nearJetPtMin");
+  awayJetPtMin_ = iConfig.getParameter<double>("awayJetPtMin");
   djDPhiMin_ = iConfig.getParameter<double>("djDPhiMin");
-  // trk
-  trkPtMin_ = iConfig.getUntrackedParameter<double>("trkPtMin", 0.3);
-  anaJetType_ = iConfig.getUntrackedParameter<int>("anaJetType", 2);
-  refJetType_ = iConfig.getUntrackedParameter<int>("refJetType", 11);
-  // centrality
-  anaTrkType_ = iConfig.getUntrackedParameter<int>("anaTrkType", 3);
-  centBinBeg_ = iConfig.getUntrackedParameter<int>("centBinBeg", 0);
-  centBinEnd_ = iConfig.getUntrackedParameter<int>("centBinEnd", 6);
+  // trk selection
+  trksrc_ = iConfig.getParameter<edm::InputTag>("trksrc");
+  anaTrkType_ = iConfig.getParameter<int>("anaTrkType");
+  trkPtMin_ = iConfig.getParameter<double>("trkPtMin");
   // verbosity
   verbosity_ = iConfig.getUntrackedParameter<int>("verbosity", 0);
 
@@ -201,7 +206,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   DiJetP4(iEvent,jetsrc_,anaJets_,anaJetType_,anaJECs_,nearJetPt_,iNear_,awayJetPt_,iAway_);
   //cout << "leadings: " << anaJets_.size() << " Nr: " << nearJetPt_ << " Aw " << awayJetPt_ << endl;
   // Begin DiJet Ana
-  if (verbosity_>=2 && (numDJEvtSel_<5 || nearJetPt_>100)) {
+  if (verbosity_>=2 && (numDJEvtSel_<7 || nearJetPt_>100)) {
     cout << endl << "=== Ana setup: (DJ Evt " << numDJEvtSel_ << ")===" << endl;
     cout << "AnaJet: " << jetsrc_ << " with anaJetType: " << anaJetType_ << endl;
     cout << "RefJet: " << refjetsrc_ << " with refJetType: " << refJetType_ << endl;
@@ -297,12 +302,7 @@ void DiJetAna::InclJetAna(const edm::Event& iEvent, Int_t jetType, const std::ve
       const reco::Candidate & jet = (*jets)[j];
       if (fabs(jet.eta())>jetEtaMax_) continue; // only jets within analysis eta
       Double_t corrPt=jet.pt();
-      
-      if (jetType==2) {
-	Handle<vector<pat::Jet> > patjets;
-	iEvent.getByLabel(jetsrc_,patjets);
-	corrPt = (*patjets)[j].correctedP4(JECLab1_).pt()*anaJECs[j];
-      }
+      if (jetType==2) corrPt *= anaJECs[j];
       if(abs(jet.eta())<2.){
 	hPt->Fill(corrPt);
 	hEta->Fill(jet.eta());
