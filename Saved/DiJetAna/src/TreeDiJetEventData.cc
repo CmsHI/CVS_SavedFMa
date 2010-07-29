@@ -3,6 +3,7 @@
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "TMath.h"
+using namespace std;
 
 // Defaults
 void TreeDiJetEventData::SetDefaults()

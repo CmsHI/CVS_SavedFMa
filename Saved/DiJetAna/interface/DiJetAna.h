@@ -30,12 +30,12 @@ class DiJetAna : public edm::EDAnalyzer {
 	TH1D * hPt, TH1D * hEta, TH1D * hPhi);
     void InclTrkAna(const edm::Event& iEvent, Int_t trkType);
     void FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd);
-    double GetFJL1Corr(const std::vector<double> & medianPt, const pat::Jet & jet);
+    double CalcFJL1Corr(const std::vector<double> & medianPt, const pat::Jet & jet);
     void FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	const std::vector<double> & anaJECs,
 	std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t anajetType,
 	std::vector<math::PtEtaPhiMLorentzVector> & refjets, Int_t refjetType=-1);
-    void FillLAnaJECs(const edm::Event & iEvent, const std::vector<pat::Jet> & jets, std::vector<double> & anaJECs);
+    void LoadAnaJECs(const edm::Event & iEvent, const std::vector<pat::Jet> & jets, std::vector<double> & anaJECs);
     void  FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	std::vector<math::PtEtaPhiMLorentzVector> & anajets,
 	std::vector<math::PtEtaPhiMLorentzVector> & refjets,
@@ -43,7 +43,7 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t FindNearJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType, const std::vector<double> & anaJECs);
     Int_t FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType, Int_t iNr, const std::vector<double> & anaJECs);
     // for data, where L1 correction is present
-    void FindDiJet(const edm::Event& iEvent, const edm::InputTag & jsrc, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, const std::vector<double> & anaJECs, Double_t & nrjetPt, Int_t & iNr, Double_t & awjetPt, Int_t & iAw); 
+    void DiJetP4(const edm::Event& iEvent, const edm::InputTag & jsrc, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, const std::vector<double> & anaJECs, Double_t & nrjetPt, Int_t & iNr, Double_t & awjetPt, Int_t & iAw); 
     void FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets); 
     Bool_t GoodAnaTrk(const reco::Track & trk);
     Bool_t GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType);
@@ -67,7 +67,7 @@ class DiJetAna : public edm::EDAnalyzer {
     // ana setup
     Bool_t	  isMC_;
     Bool_t	  genOnly_;
-    Bool_t	  applyLAnaJEC_;
+    Bool_t	  applyAnaJEC_;
     Double_t	  jetEtaMax_;
     Int_t	  nVtxTrkCut_;
     std::string	  JECLab1_;
