@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.16 2010/07/29 17:41:13 frankma Exp $
+// $Id: DiJetAna.cc,v 1.17 2010/07/29 18:00:53 frankma Exp $
 //
 //
 
@@ -133,6 +133,22 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   djEvt_.Clear();
 
+  //-----------------------  HI Evt election (This part will be in an EDFilter later)  
+  if(!genOnly_){
+    edm::Handle<reco::Centrality> cent;
+    iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
+    Double_t hf	  = cent->EtHFhitSum();
+    Int_t cbin	  = HFhitBinMap_[1]->getBin(hf);
+    if (verbosity_>=3) cout << "cbin: " << cbin << endl;
+    if (cbin<centBinBeg_ || cbin>=centBinEnd_) return;
+  }
+  ++numHiEvtSel_;
+
+  // Done with Event Pre-Selection
+  // Fill Event info
+  FillEventInfo(iEvent,djEvt_);
+  if (evtAnaOnly_) { djTree_->Fill(); return; }
+
   if(!genOnly_){
     //-----------------------  Preselection (This part will be in an EDFilter later)  
     // get vtx collection 
@@ -166,32 +182,16 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
   ++numPreEvtSel_;
 
-  //-----------------------  HI Evt election (This part will be in an EDFilter later)  
-  if(!genOnly_){
-    edm::Handle<reco::Centrality> cent;
-    iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
-    Double_t hf	  = cent->EtHFhitSum();
-    Int_t cbin	  = HFhitBinMap_[1]->getBin(hf);
-    if (verbosity_>=3) cout << "cbin: " << cbin << endl;
-    if (cbin<centBinBeg_ || cbin>=centBinEnd_) return;
-  }
-  ++numHiEvtSel_;
-
-  // Done with Event Pre-Selection
-  // Fill Event info
-  FillEventInfo(iEvent,djEvt_);
-  if (evtAnaOnly_) { djTree_->Fill(); return; }
-
-  // Additional Analysis level jet energy corrections pat jets (not gen)
+  //
+  // ---------------------------- Jet Analysis ---------------------------------
+  //
+  // Additional Analysis level jet energy corrections on pat jets (not gen)
   if(anaJetType_==2){
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
     LoadAnaJECs(iEvent,*jets,anaJECs_);
   }
 
-  //
-  // ---------------------------- Jet Analysis ---------------------------------
-  //
   // Check Inclusive Jets Before DJ Selection
   InclJetAna(iEvent,anaJetType_,anaJECs_,hJetPtPreSel_,hJetEtaPreSel_,hJetPhiPreSel_);
 
@@ -283,8 +283,8 @@ DiJetAna::endJob() {
     cout << "AnaJet: " << jetsrc_;
     if (refJetType_>=0) cout << " RefJet: " << refjetsrc_;
     cout << "  AnaTrk: " << trksrc_ << endl;
-    cout << "Number of events pre-selected : "<< numPreEvtSel_ <<endl;
     cout << "Number of HI events selected : "<< numHiEvtSel_<<endl;
+    cout << "Number of events pre-selected : "<< numPreEvtSel_ <<endl;
     cout << "Number of dijet events selected : "<< numDJEvtSel_<<endl;
   }
 }
