@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.15 2010/07/29 17:07:03 frankma Exp $
+// $Id: DiJetAna.cc,v 1.16 2010/07/29 17:41:13 frankma Exp $
 //
 //
 
@@ -180,6 +180,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Done with Event Pre-Selection
   // Fill Event info
   FillEventInfo(iEvent,djEvt_);
+  if (evtAnaOnly_) { djTree_->Fill(); return; }
 
   // Additional Analysis level jet energy corrections pat jets (not gen)
   if(anaJetType_==2){
