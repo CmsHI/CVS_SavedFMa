@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.23 2010/07/30 10:58:55 frankma Exp $
+// $Id: DiJetAna.cc,v 1.24 2010/07/30 13:50:12 frankma Exp $
 //
 //
 
@@ -238,7 +238,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if (verbosity_>=10 && numDJEvtSel_<=7) PrintTrks(iEvent,anaTrkType_);
 
   // -- Jet-Track Correlations ---
-  FillTrks(iEvent,djEvt_,anaJets_,refJets_,anaTrkType_);
+  FillTrks(iEvent,djEvt_,anaJets_,anaTrkType_);
 
   // All done
   djTree_->Fill();
@@ -451,8 +451,7 @@ void DiJetAna::LoadAnaJECs(const edm::Event & iEvent, const vector<pat::Jet> & j
 }
 
 void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
-    std::vector<math::PtEtaPhiMLorentzVector> & anajets,
-    std::vector<math::PtEtaPhiMLorentzVector> & refjets,
+    const std::vector<math::PtEtaPhiMLorentzVector> & anajets,
     Int_t trkType)
 {
   if (anajets.size()<2) return;
@@ -498,7 +497,6 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
     }
     jd.evtnp_			 = selTrkCt;
   }
-
 }
 
 // ------------ Find DiJet ----------------
