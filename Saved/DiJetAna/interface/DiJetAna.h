@@ -33,8 +33,8 @@ class DiJetAna : public edm::EDAnalyzer {
     double CalcFJL1Corr(const std::vector<double> & medianPt, const pat::Jet & jet);
     void FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	const std::vector<double> & anaJECs,
-	std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t anajetType,
-	std::vector<math::PtEtaPhiMLorentzVector> & refjets, Int_t refjetType=-1);
+	const std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t anajetType,
+	const std::vector<math::PtEtaPhiMLorentzVector> & refjets, Int_t refjetType=-1);
     void LoadAnaJECs(const edm::Event & iEvent, const std::vector<pat::Jet> & jets, std::vector<double> & anaJECs);
     void  FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	std::vector<math::PtEtaPhiMLorentzVector> & anajets,

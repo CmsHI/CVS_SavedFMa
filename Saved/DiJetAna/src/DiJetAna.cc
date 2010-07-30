@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.20 2010/07/30 10:07:39 frankma Exp $
+// $Id: DiJetAna.cc,v 1.21 2010/07/30 10:14:35 frankma Exp $
 //
 //
 
@@ -379,9 +379,9 @@ double DiJetAna::CalcFJL1Corr(const vector<double> & medianPt, const pat::Jet & 
 
 void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 			 const std::vector<double> & anaJECs,
-			 std::vector<math::PtEtaPhiMLorentzVector> & anajets, 
+			 const std::vector<math::PtEtaPhiMLorentzVector> & anajets, 
 			 Int_t anajetType,
-			 std::vector<math::PtEtaPhiMLorentzVector> & refjets, 
+			 const std::vector<math::PtEtaPhiMLorentzVector> & refjets, 
 			 Int_t refjetType)
 {
   // Calc dijet vars for ana jets
