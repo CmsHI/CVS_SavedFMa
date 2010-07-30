@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.22 2010/07/30 10:23:51 frankma Exp $
+// $Id: DiJetAna.cc,v 1.23 2010/07/30 10:58:55 frankma Exp $
 //
 //
 
@@ -137,7 +137,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
     Double_t hf	  = cent->EtHFhitSum();
     Int_t cbin	  = HFhitBinMap_[1]->getBin(hf);
-    if (verbosity_>=3) cout << "cbin: " << cbin << endl;
+    if (verbosity_>=2) cout << endl << "cbin: " << cbin << endl;
     if (cbin<centBinBeg_ || cbin>=centBinEnd_) return;
   }
   ++numHiEvtSel_;
@@ -154,9 +154,10 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByLabel(vtxsrc_, vertices);
     Int_t numVtx = (Int_t)vertices->size();
     hNumVtx_->Fill(numVtx);
+    if (verbosity_>=2) cout << "# vertices in event: " << numVtx << endl;
     if(numVtx<1) return; // at least one vtx
     
-    Int_t numFake=0, maxtracks=0;
+    Int_t numFake=0, maxtracks=-99;
     double bestndof=-999.9,bestvz=-999.9, bestvx=-999.9, bestvy=-999.9, bestNchi2=999.9;
     for(UInt_t it=0; it<vertices->size(); ++it) {
       const reco::Vertex & vtx = (*vertices)[it];
@@ -166,13 +167,15 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	continue;
       }
       // update best vertex
-      if(numVtx > maxtracks || (numVtx == maxtracks && vtx.normalizedChi2() < bestNchi2) ) {
+      int vtxntrks = vtx.tracksSize();
+      if(vtxntrks > maxtracks || (vtxntrks == maxtracks && vtx.normalizedChi2() < bestNchi2) ) {
 	maxtracks = vtx.tracksSize();
 	bestvz = vtx.z(); bestvx = vtx.x(); bestvy = vtx.y();
 	bestNchi2 = vtx.normalizedChi2();
 	bestndof = vtx.ndof();
       } 
     }
+    if (verbosity_>=2) cout << "best non-fake vertex ntracks: " << maxtracks << endl;
     hVtxNumTrksPreSel_->Fill(maxtracks);
     if(maxtracks<nVtxTrkCut_) return; // vtx quality selection
     hVtxNumTrksEvtSel_->Fill(maxtracks);
@@ -205,13 +208,9 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   DiJetP4(iEvent,jetsrc_,anaJets_,anaJetType_,anaJECs_,nearJetPt_,iNear_,awayJetPt_,iAway_);
   //cout << "leadings: " << anaJets_.size() << " Nr: " << nearJetPt_ << " Aw " << awayJetPt_ << endl;
   // Begin DiJet Ana
-  if (verbosity_>=2 && (numDJEvtSel_<7 || nearJetPt_>100)) {
+  if (verbosity_>=2 && (numPreEvtSel_<=30 || nearJetPt_>100)) {
     PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
   }
-
-  // === basic dijet selection to simulate jet trigger ===
-  if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) return;
-  ++numDJEvtSel_;
 
   // Check Inclusive Jets After DJ Selection
   InclJetAna(iEvent,anaJetType_,anaJECs_,hJetPtDJSel_,hJetEtaDJSel_,hJetPhiDJSel_);
@@ -228,6 +227,10 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //
   // =============================== Tracks ==============================
   //
+  // -- leading jet event selection for tracks --
+  if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) { djTree_->Fill(); return; }
+  ++numDJEvtSel_;
+
   // Inclusive Trk ana
   InclTrkAna(iEvent,anaTrkType_);
 
@@ -657,7 +660,7 @@ Bool_t DiJetAna::GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType)
 }
 void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, Int_t trkType)
 {
-  cout << endl << "=== Ana setup: (DJ Evt " << numDJEvtSel_ << ")===" << endl;
+  cout << "=== Ana setup: (PreSel Evt " << numPreEvtSel_ << ")===" << endl;
   cout << "AnaJet: " << jetsrc_ << " with anaJetType: " << anaJetType_ << endl;
   if (refJetType_>=0) cout << "RefJet: " << refjetsrc_ << " with refJetType: " << refJetType_ << endl;
   cout << "AnaTrk: " << trksrc_ << " with anaTrkType: " << anaTrkType_ << endl;
@@ -670,7 +673,7 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
       if (fabs(jet.eta())>jetEtaMax_) continue; // only jets within analysis eta
       double corrPt = jet.pt();
       if (jetType==2) corrPt *= anaJECs_[j];
-      if (corrPt<20.) continue; // make print not too crowded
+      if (verbosity_<3 && corrPt<20.) continue; // make print not too crowded
       cout << "jet " << j;
       if (jetType==2 && applyAnaJEC_) cout << "  L1CorrEt: "<< jet.pt()*anaJECs_[j];
       cout <<" et|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
