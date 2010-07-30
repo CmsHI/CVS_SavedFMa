@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.24 2010/07/30 13:50:12 frankma Exp $
+// $Id: DiJetAna.cc,v 1.25 2010/07/30 16:43:41 frankma Exp $
 //
 //
 
@@ -227,13 +227,12 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //
   // =============================== Tracks ==============================
   //
-  // -- leading jet event selection for tracks --
-  if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) { djTree_->Fill(); return; }
-  ++numDJEvtSel_;
-
   // Inclusive Trk ana
   InclTrkAna(iEvent,anaTrkType_);
 
+  // -- leading jet event selection for tracks --
+  if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) { djTree_->Fill(); return; }
+  ++numDJEvtSel_;
   // Print Tracks
   if (verbosity_>=10 && numDJEvtSel_<=7) PrintTrks(iEvent,anaTrkType_);
 
