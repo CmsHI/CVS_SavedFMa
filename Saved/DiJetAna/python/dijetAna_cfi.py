@@ -18,8 +18,6 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     jetEtaMax = cms.double(3.0),
     # jet energy correction
     JECLab1 = cms.string("abs"),
-    JECLab2Nr = cms.string(""),
-    JECLab2Aw = cms.string(""),
     # jet mc matching
     refjetsrc = cms.InputTag("patJets"),
     refJetType = cms.int32(11),

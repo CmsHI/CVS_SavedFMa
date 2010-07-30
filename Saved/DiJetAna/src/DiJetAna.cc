@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.19 2010/07/30 09:26:02 frankma Exp $
+// $Id: DiJetAna.cc,v 1.20 2010/07/30 10:07:39 frankma Exp $
 //
 //
 
@@ -86,8 +86,6 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   jetEtaMax_ = iConfig.getParameter<double>("jetEtaMax");
   // jet energy correction
   JECLab1_ = iConfig.getParameter<string>("JECLab1");
-  JECLab2Nr_ = iConfig.getParameter<string>("JECLab2Nr");
-  JECLab2Aw_ = iConfig.getParameter<string>("JECLab2Aw");
   // jet mc matching
   refjetsrc_ = iConfig.getParameter<edm::InputTag>("refjetsrc");
   refJetType_ = iConfig.getParameter<int>("refJetType");
