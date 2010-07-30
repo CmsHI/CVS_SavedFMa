@@ -115,9 +115,9 @@ class DiJetAna : public edm::EDAnalyzer {
     TH1D	  *hJetEtaDJSel_;
     TH1D	  *hJetPhiDJSel_;
     // -- trk --
-    TH1D	  *hTrkPtDJEvtSel_;
-    TH1D	  *hTrkEtaDJEvtSel_;
-    TH2D	  *hTrkPtEtaDJEvtSel_;
+    TH1D	  *hTrkPtEvtPreSel_;
+    TH1D	  *hTrkEtaEvtPreSel_;
+    TH2D	  *hTrkPtEtaEvtPreSel_;
 
     TTree	  *djTree_;
     TreeDiJetEventData djEvt_;

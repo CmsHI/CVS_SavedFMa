@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.25 2010/07/30 16:43:41 frankma Exp $
+// $Id: DiJetAna.cc,v 1.26 2010/07/30 16:47:19 frankma Exp $
 //
 //
 
@@ -260,9 +260,9 @@ void DiJetAna::beginJob()
   hJetEtaDJSel_ = fs->make<TH1D>("hJetEtaDJSel",";#eta^{jet};#", 50, -1.5*jetEtaMax_, 1.5*jetEtaMax_);
   hJetPhiDJSel_ = fs->make<TH1D>("hJetPhiDJSel",";#phi^{jet};#", 50, -1*TMath::Pi(), TMath::Pi());
   // trks
-  hTrkPtDJEvtSel_ = fs->make<TH1D>("hTrkPtDJEvtSel",";p_{T}^{trk} [GeV/c];#", 200, 0.0, 100.0);
-  hTrkEtaDJEvtSel_ = fs->make<TH1D>("hTrkEtaDJEvtSel",";#eta^{trk};#", 50, -3., 3.);
-  hTrkPtEtaDJEvtSel_ = fs->make<TH2D>("hTrkPtEtaDJEvtSel",";#eta^{trk};p_{T}^{trk} [GeV/c]", 50, -3., 3.,200,0,100.);
+  hTrkPtEvtPreSel_ = fs->make<TH1D>("hTrkPtEvtPreSel",";p_{T}^{trk} [GeV/c];#", 200, 0.0, 100.0);
+  hTrkEtaEvtPreSel_ = fs->make<TH1D>("hTrkEtaEvtPreSel",";#eta^{trk};#", 50, -3., 3.);
+  hTrkPtEtaEvtPreSel_ = fs->make<TH2D>("hTrkPtEtaEvtPreSel",";#eta^{trk};p_{T}^{trk} [GeV/c]", 50, -3., 3.,200,0,100.);
   // trees
   djTree_ = fs->make<TTree>("djTree","dijet tree");
   djEvt_.SetTree(djTree_);
@@ -315,9 +315,9 @@ void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
       const reco::Track & trk = (*tracks)[it];
       // trk selection
       if (!GoodAnaTrk(trk)) continue;
-      hTrkPtDJEvtSel_->Fill(trk.pt());
-      hTrkEtaDJEvtSel_->Fill(trk.eta());
-      hTrkPtEtaDJEvtSel_->Fill(trk.eta(),trk.pt());
+      hTrkPtEvtPreSel_->Fill(trk.pt());
+      hTrkEtaEvtPreSel_->Fill(trk.eta());
+      hTrkPtEtaEvtPreSel_->Fill(trk.eta(),trk.pt());
     }
   }
 
@@ -329,9 +329,9 @@ void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
       // select charged stable particles
       if (!GoodAnaTrkParticle(trk,trkType)) continue;
 
-      hTrkPtDJEvtSel_->Fill(trk.pt());
-      hTrkEtaDJEvtSel_->Fill(trk.eta());
-      hTrkPtEtaDJEvtSel_->Fill(trk.eta(),trk.pt());
+      hTrkPtEvtPreSel_->Fill(trk.pt());
+      hTrkEtaEvtPreSel_->Fill(trk.eta());
+      hTrkPtEtaEvtPreSel_->Fill(trk.eta(),trk.pt());
     }
   }
 }
