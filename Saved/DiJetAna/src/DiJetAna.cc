@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.17 2010/07/29 18:00:53 frankma Exp $
+// $Id: DiJetAna.cc,v 1.18 2010/07/29 18:08:55 frankma Exp $
 //
 //
 
@@ -63,8 +63,8 @@ using namespace reco;
 // constructors and destructor
 //
 DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
-  numPreEvtSel_(0),
   numHiEvtSel_(0),
+  numPreEvtSel_(0),
   numDJEvtSel_(0)
 {
   // Event source
@@ -196,7 +196,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   InclJetAna(iEvent,anaJetType_,anaJECs_,hJetPtPreSel_,hJetEtaPreSel_,hJetPhiPreSel_);
 
   //
-  // ============================= DiJet Ana =============================
+  // ===== DiJet Ana =====
   //
   // Find Dijet in Event
   iNear_ = FindNearJet(iEvent,jetsrc_,anaJetType_, anaJECs_);
@@ -304,11 +304,9 @@ void DiJetAna::InclJetAna(const edm::Event& iEvent, Int_t jetType, const std::ve
       if (fabs(jet.eta())>jetEtaMax_) continue; // only jets within analysis eta
       Double_t corrPt=jet.pt();
       if (jetType==2) corrPt *= anaJECs[j];
-      if(abs(jet.eta())<2.){
-	hPt->Fill(corrPt);
-	hEta->Fill(jet.eta());
-	hPhi->Fill(jet.phi());
-      }
+      hPt->Fill(corrPt);
+      hEta->Fill(jet.eta());
+      hPhi->Fill(jet.phi());
     }
   }
 }

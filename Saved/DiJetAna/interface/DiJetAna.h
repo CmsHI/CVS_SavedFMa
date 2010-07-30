@@ -82,8 +82,8 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t	  refJetType_;
     Int_t	  anaTrkType_;
     // ana vars
-    Int_t	  numPreEvtSel_;
     Int_t	  numHiEvtSel_;
+    Int_t	  numPreEvtSel_;
     Int_t	  numDJEvtSel_;
     std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
     std::vector<math::PtEtaPhiMLorentzVector> refJets_;
