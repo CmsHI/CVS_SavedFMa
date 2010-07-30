@@ -37,27 +37,35 @@ void TreeDiJetEventData::CalcDJVars(Bool_t isMC,
     const std::vector<math::PtEtaPhiMLorentzVector> & anajets,
     const std::vector<math::PtEtaPhiMLorentzVector> & refjets)
 {
+  // check if lead jet found, if not just use defaults
+  if (anajets.size()<1) return;
+
   // near/away info     
   nljet_	      = anajets[0].pt();
   nljeta_	      = anajets[0].eta();
   nljphi_	      = anajets[0].phi();
-  aljet_	      = anajets[1].pt();
-  aljeta_	      = anajets[1].eta();
-  aljphi_	      = anajets[1].phi();
+  if (anajets.size()>=2) {
+    aljet_	      = anajets[1].pt();
+    aljeta_	      = anajets[1].eta();
+    aljphi_	      = anajets[1].phi();
 
-  // dijet info
-  jdphi_	      = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
-  djmass_	      = (anajets[0]+anajets[1]).M();
+    // dijet info
+    jdphi_	      = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
+    djmass_	      = (anajets[0]+anajets[1]).M();
+  }
 
   // Done if data
   if (!isMC) return;
 
   // refjets
-  if (refjets.size()>0) {
-    // near/away info     
-    nlrjet_	      = refjets[0].pt();
-    nlrjeta_	      = refjets[0].eta();
-    nlrjphi_          = refjets[0].phi();
+  // check if there is matched jets, if not just use defaults
+  if (refjets.size()<1) return;
+
+  // near/away info     
+  nlrjet_	      = refjets[0].pt();
+  nlrjeta_	      = refjets[0].eta();
+  nlrjphi_	      = refjets[0].phi();
+  if (refjets.size()>=2) {
     alrjet_           = refjets[1].pt();
     alrjeta_          = refjets[1].eta();
     alrjphi_          = refjets[1].phi();

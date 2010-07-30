@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.21 2010/07/30 10:14:35 frankma Exp $
+// $Id: DiJetAna.cc,v 1.22 2010/07/30 10:23:51 frankma Exp $
 //
 //
 
@@ -384,11 +384,15 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 			 const std::vector<math::PtEtaPhiMLorentzVector> & refjets, 
 			 Int_t refjetType)
 {
+  // if no leading jet found in event, then nothing to do
+  if (anajets.size()<1) return;
+
   // Calc dijet vars for ana jets
   jd.CalcDJVars(isMC_,anajets,refjets);
+
   // -- jec studies --
-  jd.njec_[10]	= funcGaus_->GetRandom();
-  jd.ajec_[10]	= funcGaus_->GetRandom();
+  jd.njec_[10]				= funcGaus_->GetRandom();
+  if (anajets.size()>=2) jd.ajec_[10]	= funcGaus_->GetRandom();
 
   if (anajetType==2) {
     Handle<vector<pat::Jet> > jets;
@@ -396,8 +400,6 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     // -- jec --
     //cout << "Current JEC Step: " << "Nr: " << (*jets)[iNear_].corrStep() << " Aw: " <<  (*jets)[iAway_].corrStep() << endl;
     jd.nljrawet_	= (*jets)[iNear_].correctedP4("raw").pt();
-    jd.aljrawet_	= (*jets)[iAway_].correctedP4("raw").pt();
-
     jd.njec_[0]		= (*jets)[iNear_].corrFactor("raw");
     jd.njec_[1]         = anaJECs[iNear_];
     jd.njec_[2]		= (*jets)[iNear_].corrFactor("rel");
@@ -405,16 +407,18 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     jd.njec_[5]		= (*jets)[iNear_].corrFactor("had","uds");
     jd.njec_[7]		= (*jets)[iNear_].corrFactor("part","uds");
 
-    jd.ajec_[0]		= (*jets)[iAway_].corrFactor("raw");
-    jd.ajec_[1]         = anaJECs[iAway_];
-    jd.ajec_[2]		= (*jets)[iAway_].corrFactor("rel");
-    jd.ajec_[3]		= (*jets)[iAway_].corrFactor("abs");
-    jd.ajec_[5]		= (*jets)[iAway_].corrFactor("had","glu");
-    jd.ajec_[7]		= (*jets)[iAway_].corrFactor("part","glu");
-
+    if (anajets.size()>=2) {
+      jd.aljrawet_	= (*jets)[iAway_].correctedP4("raw").pt();
+      jd.ajec_[0]	= (*jets)[iAway_].corrFactor("raw");
+      jd.ajec_[1]       = anaJECs[iAway_];
+      jd.ajec_[2]	= (*jets)[iAway_].corrFactor("rel");
+      jd.ajec_[3]	= (*jets)[iAway_].corrFactor("abs");
+      jd.ajec_[5]	= (*jets)[iAway_].corrFactor("had","glu");
+      jd.ajec_[7]	= (*jets)[iAway_].corrFactor("part","glu");
+    }
     // -- jet id --
-    jd.nljemf_		= (*jets)[iNear_].emEnergyFraction();
-    jd.aljemf_		= (*jets)[iAway_].emEnergyFraction();
+    jd.nljemf_					= (*jets)[iNear_].emEnergyFraction();
+    if (anajets.size()>=2) jd.aljemf_		= (*jets)[iAway_].emEnergyFraction();
   }
 }
 
