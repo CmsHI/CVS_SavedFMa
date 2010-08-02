@@ -111,7 +111,7 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
   zn_[it]		= ppt_[it]/anajets[0].pt();
 
   if (anajets.size()<2) {
-    padphi_[it]=-99; padeta_[it]=-99; padrbg_[it]=-99;
+    padphi_[it]=-99; padr_[it]=-99; padrbg_[it]=-99;
     return;
   }
   // Relations to away jet
