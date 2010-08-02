@@ -100,13 +100,13 @@ void anaDiJetTrk(int doMC=0,
   AnaFrag j2t3AwTrkPt("j2t3","AwTrkPt",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"],"ppt","pndr<0.5","pndrbg<0.5",histTrkPtMax,0,histTrkPtMax);
 
   // === Jet Strip ===
-  AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"]&&"abs(peta-nljeta)<0.5||abs(peta-aljeta)<0.5","pndphi","","",15,0,TMath::Pi());
-  AnaFrag j2t3JTrkTight3DPhi("j2t3","JTrkTight3DPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight3"]&&"abs(peta-nljeta)<0.5||abs(peta-aljeta)<0.5","pndphi","","",15,0,TMath::Pi());
+  AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Ana"]&&"abs(peta-nljeta)<0.5||abs(peta-aljeta)<0.5","pndphi","","",20,-1*TMath::Pi(),TMath::Pi());
+  AnaFrag j2t3JTrkTight3DPhi("j2t3","JTrkTight3DPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight3"]&&"abs(peta-nljeta)<0.5||abs(peta-aljeta)<0.5","pndphi","","",20,-1*TMath::Pi(),TMath::Pi());
 
   if (doMC) {
-    AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
-    AnaFrag j2t0JTrkDPhi("j2t0","JTrkDPhi",j2t0,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
-    AnaFrag j1t0JTrkDPhi("j1t0","JTrkDPhi",j1t0,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",30,0,TMath::Pi());
+    AnaFrag j2t3JTrkDPhi("j2t3","JTrkDPhi",j2t3,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",20,-1*TMath::Pi(),TMath::Pi());
+    AnaFrag j2t0JTrkDPhi("j2t0","JTrkDPhi",j2t0,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",20,-1*TMath::Pi(),TMath::Pi());
+    AnaFrag j1t0JTrkDPhi("j1t0","JTrkDPhi",j1t0,mcAna.DJ["Ana"],mcAna.Trk["Tight"],"pndphi","","",20,-1*TMath::Pi(),TMath::Pi());
   }
 
   // -- plot --
