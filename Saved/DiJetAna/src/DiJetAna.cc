@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.35 2010/08/02 18:15:21 frankma Exp $
+// $Id: DiJetAna.cc,v 1.36 2010/08/02 20:47:48 frankma Exp $
 //
 //
 
@@ -570,68 +570,44 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
 {
   refjets.clear();
 
+  if (anaJets_.size()<1) return;
+  Handle<vector<pat::Jet> > matjets;
+  iEvent.getByLabel(refjetsrc_,matjets);
 
-  /*
-  // For matching use patjet matched
-  Handle<vector<pat::Jet> > jets;
-  iEvent.getByLabel(refjetsrc_,jets);
-  // Just make a dummy L1 Correction for refjets for the moment
-  vector<double> L1Corr_dum;
-  for (unsigned j=0; j<(*jets).size();++j) L1Corr_dum.push_back(1.);
-
-  // Find DJ from refjet collection
-  nearRefJetPt_ = -99; awayRefJetPt_ = -99;
-  if (refjetType<10)
-    DiJetP4(iEvent,refjetsrc_,refjets,refjetType,L1Corr_dum,nearRefJetPt_,iNearRef_,awayRefJetPt_,iAwayRef_);
-  else
-    DiJetP4(iEvent,refjetsrc_,refjets,2,L1Corr_dum,nearRefJetPt_,iNearRef_,awayRefJetPt_,iAwayRef_);
-  if (refjets.size()<2) return;
-
-  // Print some refjet info
-  if (verbosity_>=3 && numJetEvtSel_<=20) {
-    cout << "Ref Jets (j"<<refjetType<<"): " << endl;
-    cout << " refjetsrc_: " << refjetsrc_ << endl;
-    cout << " sel nearRefJetPt_: " << nearRefJetPt_ << " iNearRef_: " << iNearRef_
-      << " sel awayRefJetPt_: " << awayRefJetPt_ << " iAwayRef_: " << iAwayRef_ << endl;
+  // calojet to genjet
+  if (refjetType==21) {
+    const reco::GenJet * NrGJet = (*matjets)[iNear_].genJet();
+    if (NrGJet) refjets.push_back(math::PtEtaPhiMLorentzVector(NrGJet->pt(),NrGJet->eta(),NrGJet->phi(),NrGJet->mass()));
+    if (anaJets_.size()>=2) {
+      const reco::GenJet * AwGJet = (*matjets)[iAway_].genJet();
+      if (AwGJet) refjets.push_back(math::PtEtaPhiMLorentzVector(AwGJet->pt(),AwGJet->eta(),AwGJet->phi(),AwGJet->mass()));
+    }
+    return; // done with case 21
   }
 
-  // If not matching, we're done
-  if (refjetType<10) return;
-
-
-  if (refjetType<20) {
-    // genjet matching
-    const reco::GenJet * NrGJet = (*jets)[iNearRef_].genJet();
-    const reco::GenJet * AwGJet = (*jets)[iAwayRef_].genJet();
-    if (NrGJet && AwGJet) {
-      // got matched jets
-      if (refjetType==11) {
-	// just use the pat matching directly
-	refjets.clear();
-	refjets.push_back(math::PtEtaPhiMLorentzVector(NrGJet->pt(),NrGJet->eta(),NrGJet->phi(),NrGJet->mass()));
-	refjets.push_back(math::PtEtaPhiMLorentzVector(AwGJet->pt(),AwGJet->eta(),AwGJet->phi(),AwGJet->mass()));
-      } else if (refjetType==12) {
-	// check genjets matched to leading calojets are the same as
-	// the current leading genjets
-	if (anaJets_.size()<2) { cout << "warning no anajets" << endl; return; }// just safety
-	Double_t dPt0 = TMath::Abs(anaJets_[0].pt()-TMath::Max(NrGJet->pt(),AwGJet->pt()));
-	Double_t dPt1 = TMath::Abs(anaJets_[1].pt()-TMath::Min(NrGJet->pt(),AwGJet->pt()));
-	//cout << " matched anaJetPt-refJetPt Nr: " << dPt0 << endl;
-	//cout << " matched anaJetPt-refJetPt Aw: " << dPt1 << endl;
-	if (dPt0>0.01||dPt1>0.01) { refjets.clear(); } // the calojet matched genjets are not the leading genjets
-	else if (NrGJet->pt()<AwGJet->pt()) {
-	  // with matched genjets to calo, we can use the found leading calojets
-	  // just make sure the ordering is following genjet
-	  std::swap(refjets[0],refjets[1]);
+  // genjet to calojet
+  // * anajets are the genjets, and we have the nr/aw
+  // * rejets are the patjets with matching
+  if (refjetType==12) {
+    // loop through patjets to get matching and compare to the found near/away genjet
+    for (unsigned i=0; i<anaJets_.size(); ++i) {
+      for (unsigned j=0; j<(*matjets).size();++j) {
+	const pat::Jet & matjet = (*matjets)[j];
+	const reco::GenJet * GJet = matjet.genJet();
+	if (GJet) {
+	  double dPt = TMath::Abs(anaJets_[i].pt()-GJet->pt());
+	  double dPhi = TMath::Abs(anaJets_[i].phi()-GJet->phi());
+	  if (dPt<0.01 && dPhi<0.01) {
+	    refjets.push_back(math::PtEtaPhiMLorentzVector(matjet.pt(),matjet.eta(),matjet.phi(),matjet.mass()));
+	    // correct b/c it's a calojet
+	    refjets[i] *= anaJECs_[j];
+	    break;
+	  }
 	}
       }
-      // printout patjet based match result
-      if (numJetEvtSel_<20) cout << " Matched: nearRefJet: " << refjets[0] << " awayRefJet: " << refjets[1] << endl;
-    } else { // no match
-      refjets.clear();
     }
+    return; // done with case 12
   }
-  */
 }
 
 // ------------- Helpers ------------------
