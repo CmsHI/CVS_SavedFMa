@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.29 2010/08/02 15:21:05 frankma Exp $
+// $Id: DiJetAna.cc,v 1.30 2010/08/02 15:44:53 frankma Exp $
 //
 //
 
@@ -233,7 +233,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
   ++numDJEvtSel_;
   // Print Tracks
-  if (verbosity_>=10 && numDJEvtSel_<=7) PrintTrks(iEvent,anaTrkType_);
+  if (verbosity_>=10 && numDJEvtSel_<=25) PrintTrks(iEvent,anaTrkType_);
 
   // -- Jet-Track Correlations ---
   FillTrks(iEvent,djEvt_,anaJets_,anaTrkType_);
@@ -660,7 +660,10 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
     cout << "jetType " << jetType << ", # jets: " << (*jets).size() << ". trkType " << trkType << endl;
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
-      if (fabs(jet.eta())>jetEtaMax_) continue; // only jets within analysis eta
+      if (fabs(jet.eta())>jetEtaMax_) {
+	if (verbosity_<3) continue; // only jets within analysis eta
+	cout << " out of ana eta range --> ";
+      }
       double corrPt = jet.pt();
       if (jetType==2) corrPt *= anaJECs_[j];
       if (verbosity_<3 && corrPt<20.) continue; // make print not too crowded
@@ -672,7 +675,7 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
   if (anajets.size()<1) return;
   cout << "JEC: " << JECLab1_ << " leading dijet - iNear: " << iNear_ << " " <<": "<< anajets[0]
     << "  iAway: " << iAway_;
-  if (anajets.size()<2) return;
+  if (anajets.size()<2) { cout << endl; return; }
   Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
   cout << " " << anajets[1] << endl;
   cout << "DiJet dphi: " << ljdphi << endl;

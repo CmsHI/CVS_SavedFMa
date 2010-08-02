@@ -22,14 +22,14 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     refjetsrc = cms.InputTag("patJets"),
     refJetType = cms.int32(11),
     # di-jet reco
-    nearJetPtMin = cms.double(20.0),
     djDPhiMin = cms.double(2.5),
     # trk selection
+    nearJetPtMin = cms.double(-1),
     trksrc = cms.InputTag("allTracks"),
     anaTrkType = cms.int32(3),
     trkPtMin = cms.double(0.7),
     # debug
-    verbosity = cms.untracked.int32(2)
+    verbosity = cms.untracked.int32(10)
     )
 
 # === Data Reco ===
