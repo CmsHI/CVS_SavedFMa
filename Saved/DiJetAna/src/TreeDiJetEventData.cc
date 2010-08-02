@@ -182,6 +182,7 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("nljrawet", &(this->nljrawet_), "nljrawet/F");
   tree_->Branch("nljeta", &(this->nljeta_), "nljeta/F");
   tree_->Branch("nljphi", &(this->nljphi_), "nljphi/F");
+  tree_->Branch("nljarea", &(this->nljarea_), "nljarea/F");
   tree_->Branch("nljemf", &(this->nljemf_), "nljemf/F");
   tree_->Branch("nljN90hits", &(this->nljN90hits_), "nljN90hits/I");
 
@@ -190,6 +191,7 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("aljeta", &(this->aljeta_), "aljeta/F");
   tree_->Branch("aljphi", &(this->aljphi_), "aljphi/F");
   tree_->Branch("aljemf", &(this->aljemf_), "aljemf/F");
+  tree_->Branch("aljarea", &(this->aljarea_), "aljarea/F");
   tree_->Branch("aljN90hits", &(this->aljN90hits_), "aljN90hits/I");
 
   tree_->Branch("jdphi", &(this->jdphi_), "jdphi/F");
@@ -258,6 +260,8 @@ void TreeDiJetEventData::Clear()
   // jet
   nljet_	  = -99;
   aljet_	  = -99;
+  nljarea_	  = -99;
+  aljarea_	  = -99;
   nlrjet_	  = -99;
   alrjet_	  = -99;
   nlrjid_	  = 0;
