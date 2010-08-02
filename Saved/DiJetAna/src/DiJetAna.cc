@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.34 2010/08/02 18:00:41 frankma Exp $
+// $Id: DiJetAna.cc,v 1.35 2010/08/02 18:15:21 frankma Exp $
 //
 //
 
@@ -189,6 +189,10 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(maxtracks<nVtxTrkCut_) return; // vtx quality selection
     hVtxNumTrksEvtSel_->Fill(maxtracks);
     hVtxZEvtSel_->Fill(bestvz);
+    djEvt_.nvtx_ = numVtx;
+    djEvt_.vtxntrks_ = maxtracks;
+    djEvt_.vtxchi2_ = bestNchi2;
+    djEvt_.vz_ = bestvz;
   }
   ++numEvtSel_;
 
