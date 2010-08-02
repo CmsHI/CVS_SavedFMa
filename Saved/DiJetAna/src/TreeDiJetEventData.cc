@@ -85,7 +85,10 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
   peta_[it]		= anaTrk.eta();
   pphi_[it]		= anaTrk.phi();
 
-  if (anajets.size()<1) return;
+  if (anajets.size()<1) {
+    pndphi_[it]=-99; pndr_[it]=-99; pndrbg_[it]=-99;
+    return;
+  }
   // Relations to near jet
   pndphi_[it]		= TMath::Abs(reco::deltaPhi(pphi_[it],anajets[0].phi()));
   pndeta_[it]		= peta_[it] - anajets[0].eta();
@@ -107,7 +110,10 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
   // will change to dijet frame soon
   zn_[it]		= ppt_[it]/anajets[0].pt();
 
-  if (anajets.size()<2) return;
+  if (anajets.size()<2) {
+    padphi_[it]=-99; padeta_[it]=-99; padrbg_[it]=-99;
+    return;
+  }
   // Relations to away jet
   padphi_[it]		= TMath::Abs(reco::deltaPhi(pphi_[it],anajets[1].phi()));
   padeta_[it]		= peta_[it] - anajets[1].eta();
