@@ -72,7 +72,6 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t	  nVtxTrkCut_;
     std::string	  JECLab1_;
     Double_t	  nearJetPtMin_;
-    Double_t	  awayJetPtMin_;
     Double_t	  djDPhiMin_;
     Double_t	  trkPtMin_;
     Int_t	  anaJetType_;

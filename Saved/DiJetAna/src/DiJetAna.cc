@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.28 2010/08/02 13:24:38 frankma Exp $
+// $Id: DiJetAna.cc,v 1.29 2010/08/02 15:21:05 frankma Exp $
 //
 //
 
@@ -91,7 +91,6 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   refJetType_ = iConfig.getParameter<int>("refJetType");
   // di-jet reco
   nearJetPtMin_ = iConfig.getParameter<double>("nearJetPtMin");
-  awayJetPtMin_ = iConfig.getParameter<double>("awayJetPtMin");
   djDPhiMin_ = iConfig.getParameter<double>("djDPhiMin");
   // trk selection
   trksrc_ = iConfig.getParameter<edm::InputTag>("trksrc");
@@ -229,8 +228,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // -- leading jet event selection for tracks --
   if (nearJetPtMin_>=0) {
-    if (anaJets_.size()<2 ||
-	(anaJets_.size()>=2 && (anaJets_[0].pt()<nearJetPtMin_||anaJets_[1].pt()<awayJetPtMin_)))
+    if (anaJets_.size()==0 || (anaJets_.size()>0 && anaJets_[0].pt()<nearJetPtMin_))
     { djTree_->Fill(); return; }
   }
   ++numDJEvtSel_;
@@ -454,8 +452,6 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
     const std::vector<math::PtEtaPhiMLorentzVector> & anajets,
     Int_t trkType)
 {
-  if (anajets.size()<2) return;
-
   if (trkType==2) {
     Handle<vector<Track> > tracks;
     iEvent.getByLabel(trksrc_, tracks);

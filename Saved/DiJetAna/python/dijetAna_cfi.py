@@ -23,7 +23,6 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     refJetType = cms.int32(11),
     # di-jet reco
     nearJetPtMin = cms.double(20.0),
-    awayJetPtMin = cms.double(20.0),
     djDPhiMin = cms.double(2.5),
     # trk selection
     trksrc = cms.InputTag("allTracks"),
