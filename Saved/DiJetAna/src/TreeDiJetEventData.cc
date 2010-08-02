@@ -87,6 +87,7 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
 
   if (anajets.size()<1) {
     pndphi_[it]=-99; pndr_[it]=-99; pndrbg_[it]=-99;
+    padphi_[it]=-99; padr_[it]=-99; padrbg_[it]=-99;
     return;
   }
   // Relations to near jet
