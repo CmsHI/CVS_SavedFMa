@@ -32,7 +32,7 @@ class TreeDiJetEventData
 
     // ===== Ana Data =====
     //  --- event level ---
-    Int_t run_, evt_, lumi_,nvtx_,vtxntrks_;
+    Int_t run_, evt_, lumi_,nvtx_,vtxntrks_,njets_,ntrks_;
     Float_t vtxndof_,vtxchi2_,vz_;
     // -- HI Event variables --
     Float_t		    b_;

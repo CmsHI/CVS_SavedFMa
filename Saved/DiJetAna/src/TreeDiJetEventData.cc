@@ -149,6 +149,8 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("vtxndof", &(this->vtxndof_), "vtxndof/F");
   tree_->Branch("vtxchi2", &(this->vtxchi2_), "vtxchi2/F");
   tree_->Branch("vz", &(this->vz_), "vz/F");
+  tree_->Branch("njets", &(this->njets_), "njets/I");
+  tree_->Branch("ntrks", &(this->ntrks_), "ntrks/I");
   // -- hi event var's --
   tree_->Branch("b", &(this->b_), "b/F");
   tree_->Branch("npart", &(this->npart_), "npart/I");
@@ -238,12 +240,16 @@ void TreeDiJetEventData::SetBranches()
 void TreeDiJetEventData::Clear()
 {
   // event
-  run_	  = -99;
-  evt_	  = -99;
-  nvtx_	  = -99;
+  run_		  = -99;
+  evt_		  = -99;
+  lumi_		  = -99;
+  cbin_		  = -99;
+  nvtx_		  = -99;
   vtxntrks_	  = -99;
   vtxndof_	  = -99;
   vz_		  = -99;
+  njets_	  = -99;
+  ntrks_	  = -99;
   // di-jet
   djmass_	  = -99;
   rdjmass_	  = -99;
@@ -252,10 +258,12 @@ void TreeDiJetEventData::Clear()
   // jet
   nljet_	  = -99;
   aljet_	  = -99;
-  alrjid_	  = 0;
-  alrjstat_	  = -99;
   nlrjet_	  = -99;
   alrjet_	  = -99;
+  nlrjid_	  = 0;
+  nlrjstat_	  = -99;
+  alrjid_	  = 0;
+  alrjstat_	  = -99;
   // jet constituents
   evtnp_      = 0;
 
