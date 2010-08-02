@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.31 2010/08/02 16:26:47 frankma Exp $
+// $Id: DiJetAna.cc,v 1.32 2010/08/02 17:07:18 frankma Exp $
 //
 //
 
@@ -133,6 +133,20 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Fill Event info
   FillEventInfo(iEvent,djEvt_);
 
+  // -------------------- Inclusive Distributions --------------------------
+  // Additional Analysis level jet energy corrections on pat jets (not gen)
+  if(anaJetType_==2){
+    Handle<vector<pat::Jet> > jets;
+    iEvent.getByLabel(jetsrc_,jets);
+    LoadAnaJECs(iEvent,*jets,anaJECs_);
+  }
+
+  // Check Inclusive Jets Before Event Selection
+  InclJetAna(iEvent,anaJetType_,anaJECs_,hJetPtEvtPreSel_,hJetEtaEvtPreSel_,hJetPhiEvtPreSel_);
+
+  // Inclusive Trk ana
+  InclTrkAna(iEvent,anaTrkType_);
+
   //-----------------------  HI Evt election (This part will be in an EDFilter later)  
   if(!genOnly_){
     Int_t cbin	  = djEvt_.cbin_;
@@ -177,25 +191,12 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     hVtxZEvtSel_->Fill(bestvz);
   }
   ++numEvtSel_;
-  // Done with Event Pre-Selection
 
+  // Done with Base Event Selection
   //
-  // ---------------------------- Jet Analysis ---------------------------------
+  // ---------------------------- Di Jet Analysis ---------------------------------
   //
-  // Additional Analysis level jet energy corrections on pat jets (not gen)
-  if(anaJetType_==2){
-    Handle<vector<pat::Jet> > jets;
-    iEvent.getByLabel(jetsrc_,jets);
-    LoadAnaJECs(iEvent,*jets,anaJECs_);
-  }
-
-  // Check Inclusive Jets Before Event Selection
-  InclJetAna(iEvent,anaJetType_,anaJECs_,hJetPtEvtPreSel_,hJetEtaEvtPreSel_,hJetPhiEvtPreSel_);
-
-  //
-  // ===== DiJet Ana =====
-  //
-  // Find Dijet in Event
+  // ==== Find Dijet in Event ===
   iNear_ = FindNearJet(iEvent,jetsrc_,anaJetType_, anaJECs_);
   iAway_ = FindAwayJet(iEvent,jetsrc_,anaJetType_,iNear_,anaJECs_);
   //cout << "iNr: " << iNear_ << " iAw_ " << iAway_ << endl;
@@ -218,11 +219,8 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   //
-  // =============================== Tracks ==============================
+  // === Tracks ===
   //
-  // Inclusive Trk ana
-  InclTrkAna(iEvent,anaTrkType_);
-
   // -- leading jet event selection for tracks --
   if (nearJetPtMin_>=0) {
     if (anaJets_.size()==0 || (anaJets_.size()>0 && anaJets_[0].pt()<nearJetPtMin_))
