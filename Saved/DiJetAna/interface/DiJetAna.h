@@ -79,8 +79,8 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t	  anaTrkType_;
     // ana vars
     Int_t	  numHiEvtSel_;
-    Int_t	  numPreEvtSel_;
-    Int_t	  numDJEvtSel_;
+    Int_t	  numEvtSel_;
+    Int_t	  numJetEvtSel_;
     std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
     std::vector<math::PtEtaPhiMLorentzVector> refJets_;
     Int_t	  iNear_;
@@ -99,16 +99,13 @@ class DiJetAna : public edm::EDAnalyzer {
     // ana data
     // -- evt --
     TH1D	  *hNumVtx_;
+    TH1D	  *hVtxNumTrksEvtPreSel_;
     TH1D	  *hVtxZEvtSel_;
-    TH1D	  *hVtxNumTrksPreSel_;
     TH1D	  *hVtxNumTrksEvtSel_;
     // -- jet --
-    TH1D	  *hJetPtPreSel_;
-    TH1D	  *hJetEtaPreSel_;
-    TH1D	  *hJetPhiPreSel_;
-    TH1D	  *hJetPtDJSel_;
-    TH1D	  *hJetEtaDJSel_;
-    TH1D	  *hJetPhiDJSel_;
+    TH1D	  *hJetPtEvtPreSel_;
+    TH1D	  *hJetEtaEvtPreSel_;
+    TH1D	  *hJetPhiEvtPreSel_;
     // -- trk --
     TH1D	  *hTrkPtEvtPreSel_;
     TH1D	  *hTrkEtaEvtPreSel_;

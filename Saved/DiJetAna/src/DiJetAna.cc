@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.30 2010/08/02 15:44:53 frankma Exp $
+// $Id: DiJetAna.cc,v 1.31 2010/08/02 16:26:47 frankma Exp $
 //
 //
 
@@ -64,8 +64,8 @@ using namespace reco;
 //
 DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   numHiEvtSel_(0),
-  numPreEvtSel_(0),
-  numDJEvtSel_(0)
+  numEvtSel_(0),
+  numJetEvtSel_(0)
 {
   // Event source
   isMC_ = iConfig.getParameter<bool>("isMC");
@@ -132,7 +132,6 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // Fill Event info
   FillEventInfo(iEvent,djEvt_);
-  if (evtAnaOnly_) { djTree_->Fill(); return; }
 
   //-----------------------  HI Evt election (This part will be in an EDFilter later)  
   if(!genOnly_){
@@ -141,6 +140,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (cbin<centBinBeg_ || cbin>=centBinEnd_) return;
   }
   ++numHiEvtSel_;
+  if (evtAnaOnly_) { djTree_->Fill(); return; }
 
   if(!genOnly_){
     //-----------------------  Preselection (This part will be in an EDFilter later)  
@@ -171,12 +171,12 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       } 
     }
     if (verbosity_>=2) cout << "best non-fake vertex ntracks: " << maxtracks << endl;
-    hVtxNumTrksPreSel_->Fill(maxtracks);
+    hVtxNumTrksEvtPreSel_->Fill(maxtracks);
     if(maxtracks<nVtxTrkCut_) return; // vtx quality selection
     hVtxNumTrksEvtSel_->Fill(maxtracks);
     hVtxZEvtSel_->Fill(bestvz);
   }
-  ++numPreEvtSel_;
+  ++numEvtSel_;
   // Done with Event Pre-Selection
 
   //
@@ -189,8 +189,8 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     LoadAnaJECs(iEvent,*jets,anaJECs_);
   }
 
-  // Check Inclusive Jets Before DJ Selection
-  InclJetAna(iEvent,anaJetType_,anaJECs_,hJetPtPreSel_,hJetEtaPreSel_,hJetPhiPreSel_);
+  // Check Inclusive Jets Before Event Selection
+  InclJetAna(iEvent,anaJetType_,anaJECs_,hJetPtEvtPreSel_,hJetEtaEvtPreSel_,hJetPhiEvtPreSel_);
 
   //
   // ===== DiJet Ana =====
@@ -204,12 +204,9 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   DiJetP4(iEvent,jetsrc_,anaJets_,anaJetType_,anaJECs_,iNear_,iAway_);
   //cout << "leadings: " << anaJets_.size() << endl;
   // Begin DiJet Ana
-  if (verbosity_>=2 && (numPreEvtSel_<=30 || (anaJets_.size()>0 && anaJets_[0].pt()>100))) {
+  if (verbosity_>=2 && (numEvtSel_<=30 || (anaJets_.size()>0 && anaJets_[0].pt()>100))) {
     PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
   }
-
-  // Check Inclusive Jets After DJ Selection
-  InclJetAna(iEvent,anaJetType_,anaJECs_,hJetPtDJSel_,hJetEtaDJSel_,hJetPhiDJSel_);
 
   // -- Get Ref jets to the selected dijet (if MC) --
   if (isMC_&&!genOnly_)FindRefJets(iEvent,refJetType_,refJets_);
@@ -231,9 +228,9 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (anaJets_.size()==0 || (anaJets_.size()>0 && anaJets_[0].pt()<nearJetPtMin_))
     { djTree_->Fill(); return; }
   }
-  ++numDJEvtSel_;
+  ++numJetEvtSel_;
   // Print Tracks
-  if (verbosity_>=10 && numDJEvtSel_<=25) PrintTrks(iEvent,anaTrkType_);
+  if (verbosity_>=10 && numJetEvtSel_<=25) PrintTrks(iEvent,anaTrkType_);
 
   // -- Jet-Track Correlations ---
   FillTrks(iEvent,djEvt_,anaJets_,anaTrkType_);
@@ -246,23 +243,21 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 // ------------ method called once each job just before starting event loop  ------------
 void DiJetAna::beginJob()
 {
-  // histos
+  // -- histos --
+  // event
   hNumVtx_ = fs->make<TH1D>("hNumVtx","; # vtx;#",20,0,20);
+  hVtxNumTrksEvtPreSel_ = fs->make<TH1D>("hVtxNumTrksEvtPreSel",";# trks in best vtx (pre evt sel);#",100,0,100);
   hVtxZEvtSel_ = fs->make<TH1D>("hVtxZEvtSel","z position of best reconstructed hi selected vertex;vz [cm];best vz;#", 80,-20,20);
-  hVtxNumTrksPreSel_ = fs->make<TH1D>("hVtxNumTrksPreSel",";# trks in best vtx (pre evt sel);#",100,0,100);
   hVtxNumTrksEvtSel_ = fs->make<TH1D>("hVtxNumTrksEvtSel",";# trks in best vtx;#",100,0,100);
   // jets
-  hJetPtPreSel_ = fs->make<TH1D>("hJetPtPreSel",";p_{T}^{corr. jet} [GeV/c];#", 200, 0.0, 200.0);
-  hJetEtaPreSel_ = fs->make<TH1D>("hJetEtaPreSel",";#eta^{jet};#", 50, -1.5*jetEtaMax_, 1.5*jetEtaMax_);
-  hJetPhiPreSel_ = fs->make<TH1D>("hJetPhiPreSel",";#phi^{jet};#", 50, -1*TMath::Pi(), TMath::Pi());
-  hJetPtDJSel_ = fs->make<TH1D>("hJetPtDJSel",";p_{T}^{corr. jet} [GeV/c];#", 200, 0.0, 200.0);
-  hJetEtaDJSel_ = fs->make<TH1D>("hJetEtaDJSel",";#eta^{jet};#", 50, -1.5*jetEtaMax_, 1.5*jetEtaMax_);
-  hJetPhiDJSel_ = fs->make<TH1D>("hJetPhiDJSel",";#phi^{jet};#", 50, -1*TMath::Pi(), TMath::Pi());
+  hJetPtEvtPreSel_ = fs->make<TH1D>("hJetPtEvtPreSel",";p_{T}^{corr. jet} [GeV/c];#", 200, 0.0, 200.0);
+  hJetEtaEvtPreSel_ = fs->make<TH1D>("hJetEtaEvtPreSel",";#eta^{jet};#", 50, -1.5*jetEtaMax_, 1.5*jetEtaMax_);
+  hJetPhiEvtPreSel_ = fs->make<TH1D>("hJetPhiEvtPreSel",";#phi^{jet};#", 50, -1*TMath::Pi(), TMath::Pi());
   // trks
   hTrkPtEvtPreSel_ = fs->make<TH1D>("hTrkPtEvtPreSel",";p_{T}^{trk} [GeV/c];#", 200, 0.0, 100.0);
   hTrkEtaEvtPreSel_ = fs->make<TH1D>("hTrkEtaEvtPreSel",";#eta^{trk};#", 50, -3., 3.);
   hTrkPtEtaEvtPreSel_ = fs->make<TH2D>("hTrkPtEtaEvtPreSel",";#eta^{trk};p_{T}^{trk} [GeV/c]", 50, -3., 3.,200,0,100.);
-  // trees
+  // -- trees --
   djTree_ = fs->make<TTree>("djTree","dijet tree");
   djEvt_.SetTree(djTree_);
   djEvt_.SetBranches();
@@ -278,9 +273,9 @@ DiJetAna::endJob() {
     cout << "AnaJet: " << jetsrc_;
     if (refJetType_>=0) cout << " RefJet: " << refjetsrc_;
     cout << "  AnaTrk: " << trksrc_ << endl;
-    cout << "Number of HI events selected : "<< numHiEvtSel_<<endl;
-    cout << "Number of events pre-selected : "<< numPreEvtSel_ <<endl;
-    cout << "Number of dijet events selected : "<< numDJEvtSel_<<endl;
+    cout << "HI Event Selection : "<< numHiEvtSel_<< " evts" << endl;
+    cout << "Base Event Selection : "<< numEvtSel_ << " evts" << endl;
+    cout << "Jet Event Selection : "<< numJetEvtSel_<< " evts" << endl;
   }
 }
 
@@ -586,7 +581,7 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
   if (refjets.size()<2) return;
 
   // Print some refjet info
-  if (verbosity_>=3 && numDJEvtSel_<=20) {
+  if (verbosity_>=3 && numJetEvtSel_<=20) {
     cout << "Ref Jets (j"<<refjetType<<"): " << endl;
     cout << " refjetsrc_: " << refjetsrc_ << endl;
     cout << " sel nearRefJetPt_: " << nearRefJetPt_ << " iNearRef_: " << iNearRef_
@@ -624,7 +619,7 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
 	}
       }
       // printout patjet based match result
-      if (numDJEvtSel_<20) cout << " Matched: nearRefJet: " << refjets[0] << " awayRefJet: " << refjets[1] << endl;
+      if (numJetEvtSel_<20) cout << " Matched: nearRefJet: " << refjets[0] << " awayRefJet: " << refjets[1] << endl;
     } else { // no match
       refjets.clear();
     }
@@ -650,7 +645,7 @@ Bool_t DiJetAna::GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType)
 }
 void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, Int_t trkType)
 {
-  cout << "=== Ana setup: (PreSel Evt " << numPreEvtSel_ << ")===" << endl;
+  cout << "=== Ana setup: (Base Sel Evt " << numEvtSel_ << ")===" << endl;
   cout << "AnaJet: " << jetsrc_ << " with anaJetType: " << anaJetType_ << endl;
   if (refJetType_>=0) cout << "RefJet: " << refjetsrc_ << " with refJetType: " << refJetType_ << endl;
   cout << "AnaTrk: " << trksrc_ << " with anaTrkType: " << anaTrkType_ << endl;
