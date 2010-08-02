@@ -42,7 +42,7 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t FindNearJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType, const std::vector<double> & anaJECs);
     Int_t FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType, Int_t iNr, const std::vector<double> & anaJECs);
     // for data, where L1 correction is present
-    void DiJetP4(const edm::Event& iEvent, const edm::InputTag & jsrc, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, const std::vector<double> & anaJECs, Double_t & nrjetPt, Int_t & iNr, Double_t & awjetPt, Int_t & iAw); 
+    void DiJetP4(const edm::Event& iEvent, const edm::InputTag & jsrc, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, const std::vector<double> & anaJECs, Int_t & iNr, Int_t & iAw); 
     void FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets); 
     Bool_t GoodAnaTrk(const reco::Track & trk);
     Bool_t GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType);
@@ -85,13 +85,9 @@ class DiJetAna : public edm::EDAnalyzer {
     std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
     std::vector<math::PtEtaPhiMLorentzVector> refJets_;
     Int_t	  iNear_;
-    Double_t	  nearJetPt_;
     Int_t	  iAway_;
-    Double_t	  awayJetPt_;
     Int_t	  iNearRef_;
-    Double_t	  nearRefJetPt_;
     Int_t	  iAwayRef_;
-    Double_t	  awayRefJetPt_;
     CentralityBins::RunMap HFhitBinMap_;
     Int_t	  centBinBeg_;
     Int_t	  centBinEnd_;

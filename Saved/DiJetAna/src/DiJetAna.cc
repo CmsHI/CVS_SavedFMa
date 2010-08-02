@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.27 2010/07/30 16:55:05 frankma Exp $
+// $Id: DiJetAna.cc,v 1.28 2010/08/02 13:24:38 frankma Exp $
 //
 //
 
@@ -202,10 +202,10 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //cout << "iNr: " << iNear_ << " iAw_ " << iAway_ << endl;
 
   // Save DiJet into lorentz vectors, and apply high level JES correction if RecoJet
-  DiJetP4(iEvent,jetsrc_,anaJets_,anaJetType_,anaJECs_,nearJetPt_,iNear_,awayJetPt_,iAway_);
-  //cout << "leadings: " << anaJets_.size() << " Nr: " << nearJetPt_ << " Aw " << awayJetPt_ << endl;
+  DiJetP4(iEvent,jetsrc_,anaJets_,anaJetType_,anaJECs_,iNear_,iAway_);
+  //cout << "leadings: " << anaJets_.size() << endl;
   // Begin DiJet Ana
-  if (verbosity_>=2 && (numPreEvtSel_<=30 || nearJetPt_>100)) {
+  if (verbosity_>=2 && (numPreEvtSel_<=30 || (anaJets_.size()>0 && anaJets_[0].pt()>100))) {
     PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
   }
 
@@ -228,7 +228,11 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   InclTrkAna(iEvent,anaTrkType_);
 
   // -- leading jet event selection for tracks --
-  if (nearJetPt_<nearJetPtMin_ || awayJetPt_<awayJetPtMin_) { djTree_->Fill(); return; }
+  if (nearJetPtMin_>=0) {
+    if (anaJets_.size()<2 ||
+	(anaJets_.size()>=2 && (anaJets_[0].pt()<nearJetPtMin_||anaJets_[1].pt()<awayJetPtMin_)))
+    { djTree_->Fill(); return; }
+  }
   ++numDJEvtSel_;
   // Print Tracks
   if (verbosity_>=10 && numDJEvtSel_<=7) PrintTrks(iEvent,anaTrkType_);
@@ -545,24 +549,20 @@ Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc
   return iAway;
 }
 
-void DiJetAna::DiJetP4(const edm::Event& iEvent, const edm::InputTag & jsrc, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, const std::vector<double> & anaJECs, Double_t & nrjetPt, Int_t & iNr, Double_t & awjetPt, Int_t & iAw) 
+void DiJetAna::DiJetP4(const edm::Event& iEvent, const edm::InputTag & jsrc, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, const std::vector<double> & anaJECs, Int_t & iNr, Int_t & iAw) 
 {
-  nrjetPt=-99; awjetPt=-99;
   anajets.clear();
-  if (iNr<0) return;
 
+  if (iNr<0) return;
   edm::Handle<reco::CandidateView> jets;
   iEvent.getByLabel(jsrc,jets);
+
   const reco::Candidate & NrJet = (*jets)[iNr];
-  nrjetPt = NrJet.pt();
-  if (jetType==2) nrjetPt *= anaJECs[iNr];
   anajets.push_back(math::PtEtaPhiMLorentzVector(NrJet.pt(),NrJet.eta(),NrJet.phi(),NrJet.mass()));
   if (jetType==2) anajets[0] *= anaJECs[iNr];
 
   if (iAw<0) return;
   const reco::Candidate & AwJet = (*jets)[iAw];
-  awjetPt = AwJet.pt();
-  if (jetType==2) awjetPt *= anaJECs[iAw];
   anajets.push_back(math::PtEtaPhiMLorentzVector(AwJet.pt(),AwJet.eta(),AwJet.phi(),AwJet.mass()));
   if (jetType==2) anajets[1] *= anaJECs[iAw];
 }
