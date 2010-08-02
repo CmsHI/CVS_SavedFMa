@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.32 2010/08/02 17:07:18 frankma Exp $
+// $Id: DiJetAna.cc,v 1.33 2010/08/02 17:29:39 frankma Exp $
 //
 //
 
@@ -287,6 +287,7 @@ void DiJetAna::InclJetAna(const edm::Event& iEvent, Int_t jetType, const std::ve
   if (jetType<=2) {
     edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
+    djEvt_.njets_ = (*jets).size();
     for (unsigned int j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
       if (fabs(jet.eta())>jetEtaMax_) continue; // only jets within analysis eta
@@ -303,6 +304,7 @@ void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
   if (trkType==2) {
     Handle<vector<Track> > tracks;
     iEvent.getByLabel(trksrc_, tracks);
+    djEvt_.ntrks_ = tracks->size();
     for(unsigned it=0; it<tracks->size(); ++it){
       const reco::Track & trk = (*tracks)[it];
       // trk selection
@@ -316,6 +318,7 @@ void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
   if (trkType==0||trkType==3) {
     edm::Handle<reco::CandidateView> trks;
     iEvent.getByLabel(trksrc_,trks);
+    djEvt_.ntrks_ = (*trks).size();
     for (unsigned int it=0; it<(*trks).size();++it) {
       const reco::Candidate & trk = (*trks)[it];
       // select charged stable particles
