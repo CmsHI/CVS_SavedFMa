@@ -52,4 +52,4 @@ fi
 
 # check if job crashed already
 sleep 1
-tail -n 20 log/$outf
+tail -n 10 log/$outf
