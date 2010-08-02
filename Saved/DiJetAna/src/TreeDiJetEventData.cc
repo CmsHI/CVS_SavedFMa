@@ -91,13 +91,13 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
     return;
   }
   // Relations to near jet
-  pndphi_[it]		= TMath::Abs(reco::deltaPhi(pphi_[it],anajets[0].phi()));
+  pndphi_[it]		= reco::deltaPhi(pphi_[it],anajets[0].phi());
   pndeta_[it]		= peta_[it] - anajets[0].eta();
   pndr_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[0].eta(),anajets[0].phi());
   //  - background variables-
   pndrbg_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[0].eta(),anajets[0].phi()+TMath::PiOver2());
   // jet cone info
-  if (ppt_[it]>0.5 && ppt_[it]<anajets[0].pt()){
+  if (ppt_[it]>1.2 && ppt_[it]<anajets[0].pt()){
     if (pndr_[it]<0.5) {
       ++nljC5NP_;
       nljC5Pt_+=ppt_[it];
@@ -116,13 +116,13 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
     return;
   }
   // Relations to away jet
-  padphi_[it]		= TMath::Abs(reco::deltaPhi(pphi_[it],anajets[1].phi()));
+  padphi_[it]		= reco::deltaPhi(pphi_[it],anajets[1].phi());
   padeta_[it]		= peta_[it] - anajets[1].eta();
   padr_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[1].eta(),anajets[1].phi());
   //  - background variables-
   padrbg_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[1].eta(),anajets[1].phi()+TMath::PiOver2());
   // jet cone info
-  if (ppt_[it]>0.5 && ppt_[it]<anajets[0].pt()){
+  if (ppt_[it]>1.2 && ppt_[it]<anajets[0].pt()){
     if (padr_[it]<0.5) {
       ++aljC5NP_;
       aljC5Pt_+=ppt_[it];
