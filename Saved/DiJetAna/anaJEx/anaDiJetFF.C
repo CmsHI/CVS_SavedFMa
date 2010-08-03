@@ -31,13 +31,14 @@ void anaDiJetFF(int doMC=0,
     const char * inFile0Name="../matttrees/dijetAna_anaJet_Truth.root",
     TString AnaName = "true/dp25/a4",
     //
-    const char * inFile0Name="../process_aod1/fullJetAlgo/outputs/dijetAna_patJets_FJ0Tr4_try42_20k.root",
-    TString AnaName = "ZSHdFJ0Tr4/ic5pu/dp25/a3",
-     */
     const char * inFile0Name="../process_aod1/mcJulyEx/outputs/dijetAna_patJets_JExMcZSTr4.root",
-    TString AnaName = "GRZSHdTr4/ic5pu/dp25/a3",
-    TString AnaMod = "dijetAna_mc",
+    TString AnaName = "GRZSHdTr4/SelGic5puGen/dp25/a3",
+    TString AnaMod = "dijetAna_mc_genjet_genp",
+     */
+    const char * inFile0Name="../process_aod1/fullJetAlgo/outputs/dijetAna_patJets_FJ0Tr4_try42_20k.root",
+    TString AnaName = "ZSHdFJ0Tr4/kt4/dp25/a3",
     TString title1="Data",
+    TString AnaMod = "dijetAna_data_kt4",
     TString title2="MC")
 {
   // Define Inputs

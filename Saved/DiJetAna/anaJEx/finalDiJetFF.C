@@ -20,8 +20,8 @@ using namespace std;
 void finalDiJetFF(int doMC=0,
     const char * inFile0Name="anaDiJetFF.root",
     TString AnaName = "ZSHdFJ0Tr4/ic5pu/dp25/a3",
-    TString Ana2Name = "GRZSHdTr4/ic5pu/dp25/a3",
-    TString Ana3Name = "true/dp25/a4",
+    TString Ana2Name = "ZSHdFJ0Tr4/kt4/dp25/a3",
+    TString Ana3Name = "GRZSHdTr4/SelGic5puGen/dp25/a3",
     TString header="July Data (Hard Triggered)",
     TString finalsdir="fin5",
     //
