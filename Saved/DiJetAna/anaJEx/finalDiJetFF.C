@@ -20,10 +20,10 @@ using namespace std;
 void finalDiJetFF(int doMC=0,
     const char * inFile0Name="anaDiJetFF.root",
     TString AnaName = "ZSHdFJ0Tr4/ic5pu/dp25/a3",
-    TString Ana2Name = "ZSHdFJ0Tr4/kt4/dp25/a3",
+    TString Ana2Name = "Hy80to120Tr4/ic5pu/dp25/a3",
     TString Ana3Name = "GRZSHdTr4/SelGic5puGen/dp25/a3",
     TString header="July Data (Hard Triggered)",
-    TString finalsdir="fin5",
+    TString finalsdir="f6CompHydUQ",
     //
     TString title1="Data",
     TString title2="MC")
@@ -226,7 +226,7 @@ void finalDiJetFF(int doMC=0,
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5"),"Near+Away (iConePu5)","E",kBlack,kFullCircle);
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5TrkUpper"),"Trk Eff * 1.05","hist",kBlue,0);
   cpFinalCorrFF.AddHist1D(hgCorrXi.H("ICPu5TrkLower"),"Trk Eff * 0.95","hist",kMagenta,0);
-  if (doCompare) cpFinalCorrFF.AddHist1D(hgCorrXi.H("Kt4"),"Near+Away (Kt4 FJPu)","E",kBlue,kOpenSquare);
+  if (doCompare) cpFinalCorrFF.AddHist1D(hgCorrXi.H("Kt4"),"Near+Away (Hydjet+Unquen-DiJet)","E",kGreen+2,kOpenSquare);
   if (doCompare>=3) {
     //cpFinalCorrFF.AddHist1D(hgGen.R("Ave"),"Gen","histE",kRed,kOpenSquare);
     cpFinalCorrFF.AddHist1D(hgGenTruth.R("Ave"),"Signal: GenTruth (npart>216)","E",kRed,kOpenStar);
@@ -243,7 +243,7 @@ void finalDiJetFF(int doMC=0,
   cpCompFF.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
   cpCompFF.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170, 50GeV<p_{T}^{jet2}","",0,0);
   if (doCompare) cpCompFF.AddHist1D(hgCompXi.R("ICPu5DivGenTruth"),"iConePu5","E",kBlack,kFullCircle);
-  if (doCompare>=3&&doFJ) cpCompFF.AddHist1D(hgCompXi.R("Kt4DivGenTruth"),"Kt4 FJPu","E",kRed,kOpenSquare);
+  if (doCompare>=3&&doFJ) cpCompFF.AddHist1D(hgCompXi.R("Kt4DivGenTruth"),"Hydjet+Unquen-DiJet","E",kRed,kOpenSquare);
   cpCompFF.SetLegend(0.23,0.18,0.55,0.37);
   cpCompFF.Draw(cCompFF,true);
   // All done, save and exit
