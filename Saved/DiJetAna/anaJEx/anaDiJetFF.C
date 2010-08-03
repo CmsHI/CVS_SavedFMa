@@ -30,11 +30,13 @@ void anaDiJetFF(int doMC=0,
     TString header="Hydjet 2.76 GeV (DiJet Imbedded)",
     const char * inFile0Name="../matttrees/dijetAna_anaJet_Truth.root",
     TString AnaName = "true/dp25/a4",
-     */
     //
-    const char * inFile0Name="../process_aod1/fullJetAlgo/outputs/dijetAna_patJets_FJ0Tr1_try14_20k.root",
-    TString AnaName = "ZSHdFJ0Tr1/ic5pu/dp25/a3",
-    TString AnaMod = "dijetAna_data",
+    const char * inFile0Name="../process_aod1/fullJetAlgo/outputs/dijetAna_patJets_FJ0Tr4_try42_20k.root",
+    TString AnaName = "ZSHdFJ0Tr4/ic5pu/dp25/a3",
+     */
+    const char * inFile0Name="../process_aod1/mcJulyEx/outputs/dijetAna_patJets_JExMcZSTr4.root",
+    TString AnaName = "GRZSHdTr4/ic5pu/dp25/a3",
+    TString AnaMod = "dijetAna_mc",
     TString title1="Data",
     TString title2="MC")
 {
