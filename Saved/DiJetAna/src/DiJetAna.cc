@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.36 2010/08/02 20:47:48 frankma Exp $
+// $Id: DiJetAna.cc,v 1.37 2010/08/02 22:20:46 frankma Exp $
 //
 //
 
@@ -139,6 +139,10 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
     LoadAnaJECs(iEvent,*jets,anaJECs_);
+  } else if(isMC_ && !genOnly_ && refJetType_%10==2){
+    Handle<vector<pat::Jet> > jets;
+    iEvent.getByLabel(refjetsrc_,jets);
+    LoadAnaJECs(iEvent,*jets,anaJECs_);
   }
 
   // Check Inclusive Jets Before Event Selection
@@ -208,13 +212,14 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Save DiJet into lorentz vectors, and apply high level JES correction if RecoJet
   DiJetP4(iEvent,jetsrc_,anaJets_,anaJetType_,anaJECs_,iNear_,iAway_);
   //cout << "leadings: " << anaJets_.size() << endl;
-  // Begin DiJet Ana
-  if (verbosity_>=2 && (numEvtSel_<=30 || (anaJets_.size()>0 && anaJets_[0].pt()>100))) {
-    PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
-  }
 
   // -- Get Ref jets to the selected dijet (if MC) --
   if (isMC_&&!genOnly_)FindRefJets(iEvent,refJetType_,refJets_);
+
+  // -- some printout --
+  if (verbosity_>=2 && (numEvtSel_<=30 || (anaJets_.size()>0 && anaJets_[0].pt()>100))) {
+    PrintDJEvent(iEvent,anaJets_,anaJetType_,anaTrkType_);
+  }
 
   // -- Fill DiJet info --
   if (!isMC_&&!genOnly_) FillJets(iEvent,djEvt_,anaJECs_,anaJets_,2,refJets_,-1);
@@ -597,6 +602,7 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
 	if (GJet) {
 	  double dPt = TMath::Abs(anaJets_[i].pt()-GJet->pt());
 	  double dPhi = TMath::Abs(anaJets_[i].phi()-GJet->phi());
+	  //cout << "dPt: " << dPt << " dPhi: " << dPhi << endl;
 	  if (dPt<0.01 && dPhi<0.01) {
 	    refjets.push_back(math::PtEtaPhiMLorentzVector(matjet.pt(),matjet.eta(),matjet.phi(),matjet.mass()));
 	    // correct b/c it's a calojet
@@ -635,7 +641,8 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
   if (jetType<=2 && verbosity_>=2) {
     edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
-    cout << "jetType " << jetType << ", # jets: " << (*jets).size() << ". trkType " << trkType << endl;
+    cout << "jetType " << jetType << ", # jets: " << (*jets).size() << ". trkType, " << trkType
+      << " # trks: " << djEvt_.ntrks_ << ". cbin: " << djEvt_.cbin_ << endl;
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
       if (fabs(jet.eta())>jetEtaMax_) {
@@ -650,13 +657,21 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
       cout <<" et|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
     }
   }
-  if (anajets.size()<1) return;
-  cout << "JEC: " << JECLab1_ << " leading dijet - iNear: " << iNear_ << " " <<": "<< anajets[0]
-    << "  iAway: " << iAway_;
-  if (anajets.size()<2) { cout << endl; return; }
-  Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
-  cout << " " << anajets[1] << endl;
-  cout << "DiJet dphi: " << ljdphi << endl;
+  // Print found leading dijet
+  if (anajets.size()>=1) {
+    cout << "JEC: " << JECLab1_ << " leading dijet - iNear: " << iNear_ << " " <<": "<< anajets[0]
+      << "  iAway: " << iAway_;
+  }
+  if (anajets.size()==1) cout << endl;
+  if (anajets.size()>=2) { 
+    cout << " " << anajets[1] << endl;
+    Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
+    cout << "DiJet dphi: " << ljdphi << endl;
+  }
+  // Print matched refjets
+  for (unsigned int i=0; i<refJets_.size(); ++i) {
+    cout << "refjet " << i << ": " << refJets_[i] << endl;
+  }
 }
 
 void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
