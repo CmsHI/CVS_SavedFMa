@@ -6,7 +6,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     isMC = cms.bool(True),
     # Event Selection
     centFile = cms.string("CentralityTables.root"),
-    centLabel = cms.string("HFhits20_DataJulyExercise_AMPT2760GeV_MC_37Y_V5_ZS_v0"),
+    centLabel = cms.string("HFhits20_MC_Hydjet2760GeV_MC_3XY_V24_NoZS_v0"),
     centBinBeg = cms.int32(0),
     centBinEnd = cms.int32(20), # Take all centrality at the moment
     vtxsrc = cms.InputTag("hiSelectedVertex"),
@@ -14,13 +14,13 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     # jet reco
     jetsrc = cms.InputTag("patJets"),
     anaJetType = cms.int32(2),
-    applyAnaJEC = cms.int32(0),                         
     jetEtaMax = cms.double(3.0),
     # jet energy correction
     JECLab1 = cms.string("abs"),
+    applyAnaJEC = cms.int32(0), # this is ana level JEC on top of the pp default JEC
     # jet mc matching
-    refjetsrc = cms.InputTag("patJets"),
-    refJetType = cms.int32(11),
+    refjetsrc = cms.InputTag("patJets"), # careful: this should be same collection as anajets, if anajets is patjet
+    refJetType = cms.int32(21),
     # di-jet reco
     djDPhiMin = cms.double(2.5),
     # trk selection
