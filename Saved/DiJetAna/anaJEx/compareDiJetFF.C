@@ -19,8 +19,8 @@ using namespace std;
 
 void compareDiJetFF(int doMC=0,
     const char * inFile0Name="anaDiJetFF.root",
-    TString AnaName = "ZSHd1/dp25/a3",
-    TString Ana2Name = "hyjNZSDJ/dp25/a3",
+    TString AnaName = "ZSHdFJ0Tr4/ic5pu/dp25/a3",
+    TString Ana2Name = "Hy80to120Tr4/ic5pu/dp25/a3",
     TString header="July Data (Hard Triggered)",
     //
     TString title1="Data",
