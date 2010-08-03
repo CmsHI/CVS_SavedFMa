@@ -7,18 +7,19 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.source = cms.Source("PoolSource",
-    # replace 'myfile.root' with the source file you want to use
     fileNames = cms.untracked.vstring(
       'file:jetAnaSkim.root'
       )
     )
 
 #================ DiJet Ana ==========================
-process.load("Saved.DiJetAna.dijetAna_cfi")
+process.load("Saved.DiJetAna.dijetAna_cff")
+# -- sample specific configs --
+process.dijetAna_mc.trksrc = "allTracks"
+process.dijetAna_mc.anaTrkType = 3
 print process.dijetAna_mc.dumpPython()
 
-#anaOutName = "dijetAna_anaJet%d_refJet%d.root" % (process.dijetAna.anaJetType.value(),process.dijetAna.refJetType.value())
-anaOutName = "dijetAna_anaJet_Mc%d.root" % (process.dijetAna_mc.isMC.value())
+anaOutName = "dijetAna_%s.root" % (process.dijetAna_mc.jetsrc.value())
 print "AnaOutput: ", anaOutName
 
 process.TFileService = cms.Service('TFileService',
