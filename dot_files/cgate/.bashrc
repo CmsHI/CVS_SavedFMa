@@ -10,7 +10,8 @@ fi
 #--------------------------------cmsusr bash env------------------------------------
 #===My top paths===
 export mit=$HOME/mit
-export scratch=/net/pstore01/d00/scratch/frankma
+#export scratch=/net/pstore01/d00/scratch/frankma
+export scratch=/net/hibat0003/d00/scratch/frankma
 export work=$HOME/work
 export cmsswarea=$work/cmssw
 export hiroot=$work/hiroot
@@ -52,10 +53,15 @@ export jet31Xrun=$scratch/HI/jet/cmssw310pre10
 alias t9='ssh -Y t2srv0009'
 alias t1='ssh -Y t2srv0001'
 alias t8='ssh -Y t2srv0008'
+alias hibat1='ssh -Y hibat0001'
 alias hibat2='ssh -Y hibat0002'
 alias hibat3='ssh -Y hibat0003'
-alias hibat4='ssh -Y hibat0004'
-alias hibat5='ssh -Y hibat0005'
+#alias hibat4='ssh -Y hibat0004'
+#alias hibat5='ssh -Y hibat0005'
+alias hibat7='ssh -Y hibat0007'
+alias hissh1='ssh -Y hissh0001'
+alias hissh2='ssh -Y hissh0002'
+
 #-- T2 report--
 alias daily='vi tier2/report/daily_operation/2008_daily_report.txt'
 #-- my CMSSW local settings --
