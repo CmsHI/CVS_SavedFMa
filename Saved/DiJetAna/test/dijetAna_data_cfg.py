@@ -12,8 +12,13 @@ process.source = cms.Source("PoolSource",
       )
     )
 
+# ===== Centrality =====
 from Saved.DiJetAna.customise_cfi import *
 loadCentralityDB(process,'HFhits40_DataJulyExercise_AMPT2760GeV_MC_37Y_V5_ZS_v0')
+
+process.load("RecoHI.HiCentralityAlgos.CentralityFilter_cfi")
+process.centralityFilter.centralityBase = "HF"
+process.centralityFilter.selectedBins = range(40)
 
 #================ DiJet Ana ==========================
 process.load("Saved.DiJetAna.dijetAna_cff")
@@ -33,5 +38,7 @@ process.TFileService = cms.Service('TFileService',
 
 # =============== Final Paths =====================
 process.ana = cms.Path(#process.chargedCandidates *
-   process.dijetAna_data_seq
-   )
+    process.evtAna_data +
+    process.centralityFilter *
+    process.dijetAna_data_seq
+    )
