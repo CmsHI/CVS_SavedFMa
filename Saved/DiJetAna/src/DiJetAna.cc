@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.37 2010/08/02 22:20:46 frankma Exp $
+// $Id: DiJetAna.cc,v 1.38 2010/08/03 00:05:14 frankma Exp $
 //
 //
 
@@ -65,7 +65,8 @@ using namespace reco;
 DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   numHiEvtSel_(0),
   numEvtSel_(0),
-  numJetEvtSel_(0)
+  numJetEvtSel_(0),
+  cbins_(0)
 {
   // Event source
   isMC_ = iConfig.getParameter<bool>("isMC");
@@ -73,8 +74,8 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   // Ana Mode
   evtAnaOnly_ = iConfig.getUntrackedParameter<bool>("evtAnaOnly", false);
   // Event Selection
-  centFile_ = iConfig.getParameter<string>("centFile");
-  centLabel_ = iConfig.getParameter<string>("centLabel");
+  centFile_ = iConfig.getUntrackedParameter<string>("centFile","CentralityTables.root");
+  centLabel_ = iConfig.getUntrackedParameter<string>("centLabel","HFhits40_MC_Hydjet2760GeV_MC_3XY_V24_NoZS_v0");
   centBinBeg_ = iConfig.getParameter<int>("centBinBeg");
   centBinEnd_ = iConfig.getParameter<int>("centBinEnd");
   vtxsrc_ = iConfig.getParameter<edm::InputTag>("vtxsrc");
@@ -98,10 +99,6 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   trkPtMin_ = iConfig.getParameter<double>("trkPtMin");
   // verbosity
   verbosity_ = iConfig.getUntrackedParameter<int>("verbosity", 0);
-
-  // Setup centrality
-  TFile * centFile = new TFile(centFile_.c_str());
-  HFhitBinMap_ = getCentralityFromFile(centFile,centLabel_.c_str(),0,99);
 
   // jec studies
   funcGaus_ = new TF1("funcGaus_","gaus",-1,3);
@@ -131,7 +128,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   djEvt_.Clear();
 
   // Fill Event info
-  FillEventInfo(iEvent,djEvt_);
+  FillEventInfo(iEvent,iSetup,djEvt_);
 
   // -------------------- Inclusive Distributions --------------------------
   // Additional Analysis level jet energy corrections on pat jets (not gen)
@@ -341,7 +338,7 @@ void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
 }
 
 // ------------ Tree Filling --------------
-void DiJetAna::FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
+void DiJetAna::FillEventInfo(const edm::Event& iEvent, const edm::EventSetup& iSetup, TreeDiJetEventData & jd)
 {
   // General Info
   jd.run_	  = iEvent.id().run();
@@ -353,7 +350,9 @@ void DiJetAna::FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
     edm::Handle<reco::Centrality> cent;
     iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
     Double_t hf	  = cent->EtHFhitSum();
-    jd.cbin_	  = HFhitBinMap_[1]->getBin(hf);
+    // Get Centrality bin
+    cbins_ = getCentralityBinsFromDB(iSetup);
+    jd.cbin_ = cbins_->getBin(hf);
   }
 
   if (isMC_) {

@@ -5,8 +5,6 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     # Event source
     isMC = cms.bool(True),
     # Event Selection
-    centFile = cms.string("CentralityTables.root"),
-    centLabel = cms.string("HFhits20_MC_Hydjet2760GeV_MC_3XY_V24_NoZS_v0"),
     centBinBeg = cms.int32(0),
     centBinEnd = cms.int32(20), # Take all centrality at the moment
     vtxsrc = cms.InputTag("hiSelectedVertex"),

@@ -29,7 +29,7 @@ class DiJetAna : public edm::EDAnalyzer {
     void InclJetAna(const edm::Event& iEvent, Int_t jetType, const std::vector<double> & anaJECs,
 	TH1D * hPt, TH1D * hEta, TH1D * hPhi);
     void InclTrkAna(const edm::Event& iEvent, Int_t trkType);
-    void FillEventInfo(const edm::Event& iEvent, TreeDiJetEventData & jd);
+    void FillEventInfo(const edm::Event& iEvent, const edm::EventSetup& iSetup, TreeDiJetEventData & jd);
     double CalcFJL1Corr(const std::vector<double> & medianPt, const pat::Jet & jet);
     void FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	const std::vector<double> & anaJECs,
@@ -87,7 +87,7 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t	  iAway_;
     Int_t	  iNearRef_;
     Int_t	  iAwayRef_;
-    CentralityBins::RunMap HFhitBinMap_;
+    const CentralityBins * cbins_;
     Int_t	  centBinBeg_;
     Int_t	  centBinEnd_;
     // debug
