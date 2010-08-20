@@ -35,7 +35,6 @@ dijetAna_data = dijetAna_mc.clone(
     # Event source
     isMC = cms.bool(False),
     # Event Selection
-    centLabel = cms.string("HFhits20_DataJulyExercise_AMPT2760GeV_MC_37Y_V5_ZS_v0"),
     centBinBeg = cms.int32(0),
     centBinEnd = cms.int32(20),
     # no jet mc matching

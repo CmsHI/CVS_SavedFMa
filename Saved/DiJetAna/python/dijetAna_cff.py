@@ -30,8 +30,8 @@ dijetAna_data_ak5 = dijetAna_data_kt4.clone(
 
 # different ana modes
 evtAna_data = dijetAna_data.clone(
-    trksrc = cms.InputTag("allTracks"),
-    anaTrkType = cms.int32(3)
+    #trksrc = cms.InputTag("allTracks"),
+    #anaTrkType = cms.int32(3)
     )
 evtAna_data.evtAnaOnly = cms.untracked.bool(True)
 
