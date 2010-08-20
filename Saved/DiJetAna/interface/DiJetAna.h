@@ -57,8 +57,6 @@ class DiJetAna : public edm::EDAnalyzer {
     // ----------member data ---------------------------
     edm::Service<TFileService> fs;
 
-    std::string centFile_;
-    std::string centLabel_;
     edm::InputTag vtxsrc_;
     edm::InputTag jetsrc_;
     edm::InputTag refjetsrc_;
@@ -88,8 +86,6 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t	  iNearRef_;
     Int_t	  iAwayRef_;
     const CentralityBins * cbins_;
-    Int_t	  centBinBeg_;
-    Int_t	  centBinEnd_;
     // debug
     Int_t	  verbosity_;
     // jec studies

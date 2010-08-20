@@ -37,7 +37,6 @@ evtAna_data.evtAnaOnly = cms.untracked.bool(True)
 
 # Analysis Sequences
 dijetAna_data_seq = cms.Sequence(
-    evtAna_data +
     dijetAna_data
     )
 

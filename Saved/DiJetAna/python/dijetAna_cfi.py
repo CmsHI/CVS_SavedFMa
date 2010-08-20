@@ -5,8 +5,6 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     # Event source
     isMC = cms.bool(True),
     # Event Selection
-    centBinBeg = cms.int32(0),
-    centBinEnd = cms.int32(100), # Take all centrality at the moment
     vtxsrc = cms.InputTag("hiSelectedVertex"),
     nVtxTrkCut = cms.int32(3),
     # jet reco
@@ -34,9 +32,6 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
 dijetAna_data = dijetAna_mc.clone(
     # Event source
     isMC = cms.bool(False),
-    # Event Selection
-    centBinBeg = cms.int32(0),
-    centBinEnd = cms.int32(100),
     # no jet mc matching
     refJetType = cms.int32(-1),
     # trk selection

@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.39 2010/08/20 21:45:24 frankma Exp $
+// $Id: DiJetAna.cc,v 1.40 2010/08/20 22:55:05 frankma Exp $
 //
 //
 
@@ -74,10 +74,6 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   // Ana Mode
   evtAnaOnly_ = iConfig.getUntrackedParameter<bool>("evtAnaOnly", false);
   // Event Selection
-  centFile_ = iConfig.getUntrackedParameter<string>("centFile","CentralityTables.root");
-  centLabel_ = iConfig.getUntrackedParameter<string>("centLabel","HFhits40_MC_Hydjet2760GeV_MC_3XY_V24_NoZS_v0");
-  centBinBeg_ = iConfig.getParameter<int>("centBinBeg");
-  centBinEnd_ = iConfig.getParameter<int>("centBinEnd");
   vtxsrc_ = iConfig.getParameter<edm::InputTag>("vtxsrc");
   nVtxTrkCut_ = iConfig.getParameter<int>("nVtxTrkCut");
   // jet reco
@@ -148,12 +144,6 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Inclusive Trk ana
   InclTrkAna(iEvent,anaTrkType_);
 
-  //-----------------------  HI Evt election (This part will be in an EDFilter later)  
-  if(!genOnly_){
-    float cent	  = djEvt_.cent_;
-    if (verbosity_>=2) cout << endl << "cent: " << cent << endl;
-    if (cent<centBinBeg_ || cent>=centBinEnd_) return;
-  }
   ++numHiEvtSel_;
   if (evtAnaOnly_) { djTree_->Fill(); return; }
 
@@ -273,7 +263,6 @@ DiJetAna::endJob() {
   // ===== Done =====
   if (verbosity_>=1) {
     cout << endl << "================ Ana Process Summaries =============" << endl;
-    cout << "Centrality: " << centLabel_ << endl;
     cout << "AnaJet: " << jetsrc_;
     if (refJetType_>=0) cout << " RefJet: " << refjetsrc_;
     cout << "  AnaTrk: " << trksrc_ << endl;
