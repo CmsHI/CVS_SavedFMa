@@ -13,7 +13,7 @@ process.source = cms.Source("PoolSource",
     )
 
 from Saved.DiJetAna.customise_cfi import *
-loadCentralityDB(process)
+loadCentralityDB(process,'HFhits40_DataJulyExercise_AMPT2760GeV_MC_37Y_V5_ZS_v0')
 
 
 #================ DiJet Ana ==========================
