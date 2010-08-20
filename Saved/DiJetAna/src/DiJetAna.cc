@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.38 2010/08/03 00:05:14 frankma Exp $
+// $Id: DiJetAna.cc,v 1.39 2010/08/20 21:45:24 frankma Exp $
 //
 //
 
@@ -150,9 +150,9 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   //-----------------------  HI Evt election (This part will be in an EDFilter later)  
   if(!genOnly_){
-    Int_t cbin	  = djEvt_.cbin_;
-    if (verbosity_>=2) cout << endl << "cbin: " << cbin << endl;
-    if (cbin<centBinBeg_ || cbin>=centBinEnd_) return;
+    float cent	  = djEvt_.cent_;
+    if (verbosity_>=2) cout << endl << "cent: " << cent << endl;
+    if (cent<centBinBeg_ || cent>=centBinEnd_) return;
   }
   ++numHiEvtSel_;
   if (evtAnaOnly_) { djTree_->Fill(); return; }
@@ -352,7 +352,7 @@ void DiJetAna::FillEventInfo(const edm::Event& iEvent, const edm::EventSetup& iS
     Double_t hf	  = cent->EtHFhitSum();
     // Get Centrality bin
     cbins_ = getCentralityBinsFromDB(iSetup);
-    jd.cbin_ = cbins_->getBin(hf);
+    jd.cent_ = cbins_->getBin(hf)*(100./cbins_->getNbins());
   }
 
   if (isMC_) {
@@ -641,7 +641,7 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
     edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
     cout << "jetType " << jetType << ", # jets: " << (*jets).size() << ". trkType, " << trkType
-      << " # trks: " << djEvt_.ntrks_ << ". cbin: " << djEvt_.cbin_ << endl;
+      << " # trks: " << djEvt_.ntrks_ << ". centrality: " << djEvt_.cent_ << endl;
     for (unsigned j=0; j<(*jets).size();++j) {
       const reco::Candidate & jet = (*jets)[j];
       if (fabs(jet.eta())>jetEtaMax_) {
