@@ -23,8 +23,8 @@ process.centralityFilter.selectedBins = range(40)
 #================ DiJet Ana ==========================
 process.load("Saved.DiJetAna.dijetAna_cff")
 # -- sample specific configs --
-process.dijetAna_mc.trksrc = "allTracks"
-process.dijetAna_mc.anaTrkType = 3
+process.dijetAna_mc.trksrc = "hiSelectedTracks"
+process.dijetAna_mc.anaTrkType = 2
 print process.dijetAna_mc.dumpPython()
 
 anaOutName = "dijetAna_%s.root" % (process.dijetAna_mc.jetsrc.value())
