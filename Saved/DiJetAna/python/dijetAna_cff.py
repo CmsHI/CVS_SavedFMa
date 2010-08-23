@@ -5,7 +5,7 @@ from Saved.DiJetAna.dijetAna_cfi import *
 # different jet reco - mc
 dijetAna_mc_kt4 = dijetAna_mc.clone(
     jetsrc = cms.InputTag("kt4patJets"),
-    applyAnaJEC = cms.int32(1),
+    doFJL1Corr = cms.bool(True),
     refjetsrc = cms.InputTag("kt4patJets"),
     trksrc = cms.InputTag("allTracks"),
     anaTrkType = cms.int32(3)
@@ -19,7 +19,7 @@ dijetAna_mc_ak5 = dijetAna_mc_kt4.clone(
 # different jet reco - data
 dijetAna_data_kt4 = dijetAna_data.clone(
     jetsrc = cms.InputTag("kt4patJets"),
-    applyAnaJEC = cms.int32(1),
+    doFJL1Corr = cms.bool(True),
     trksrc = cms.InputTag("allTracks"),
     anaTrkType = cms.int32(3)
     )

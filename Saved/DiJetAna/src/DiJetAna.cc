@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.40 2010/08/20 22:55:05 frankma Exp $
+// $Id: DiJetAna.cc,v 1.41 2010/08/20 23:30:46 frankma Exp $
 //
 //
 
@@ -79,7 +79,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   // jet reco
   jetsrc_ = iConfig.getParameter<edm::InputTag>("jetsrc");
   anaJetType_ = iConfig.getParameter<int>("anaJetType");
-  applyAnaJEC_ = iConfig.getParameter<int>("applyAnaJEC");
+  doFJL1Corr_ = iConfig.getParameter<bool>("doFJL1Corr");
   jetEtaMax_ = iConfig.getParameter<double>("jetEtaMax");
   // jet energy correction
   JECLab1_ = iConfig.getParameter<string>("JECLab1");
@@ -424,7 +424,7 @@ void DiJetAna::LoadAnaJECs(const edm::Event & iEvent, const vector<pat::Jet> & j
 
   // FJ rho subtraction
   vector<double> medianPtKt;
-  if(applyAnaJEC_==1){
+  if(doFJL1Corr_){
     edm::Handle<std::vector<double> > rs;
     iEvent.getByLabel(edm::InputTag("kt4CaloJets","rhos"),rs);
     //double puCent[11] = {-5,-4,-3,-2,-1,0,1,2,3,4,5};
@@ -438,7 +438,7 @@ void DiJetAna::LoadAnaJECs(const edm::Event & iEvent, const vector<pat::Jet> & j
   for (unsigned j=0; j<jets.size();++j) {
     double anaCorr = 1;
     anaCorr *= jets[j].corrFactor(JECLab1_);
-    if (applyAnaJEC_==1) anaCorr *= CalcFJL1Corr(medianPtKt,jets[j]);
+    if (doFJL1Corr_) anaCorr *= CalcFJL1Corr(medianPtKt,jets[j]);
     JECs.push_back(anaCorr);
   }
 }
@@ -641,7 +641,7 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
       if (jetType==2) corrPt *= anaJECs_[j];
       if (verbosity_<3 && corrPt<20.) continue; // make print not too crowded
       cout << "jet " << j;
-      if (jetType==2 && applyAnaJEC_) cout << "  L1CorrEt: "<< jet.pt()*anaJECs_[j];
+      if (jetType==2 && doFJL1Corr_) cout << "  L1CorrEt: "<< jet.pt()*anaJECs_[j];
       cout <<" et|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
     }
   }

@@ -13,7 +13,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     jetEtaMax = cms.double(3.0),
     # jet energy correction
     JECLab1 = cms.string("abs"),
-    applyAnaJEC = cms.int32(0), # this is ana level JEC on top of the pp default JEC
+    doFJL1Corr = cms.bool(False), # currently on top of the pp default JEC
     # jet mc matching
     refjetsrc = cms.InputTag("patJets"), # careful: this should be same collection as anajets, if anajets is patjet
     refJetType = cms.int32(21),
