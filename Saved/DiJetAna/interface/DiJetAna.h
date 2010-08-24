@@ -64,24 +64,32 @@ class DiJetAna : public edm::EDAnalyzer {
     // ----------member data ---------------------------
     edm::Service<TFileService> fs;
 
-    edm::InputTag vtxsrc_;
-    edm::InputTag jetsrc_;
-    edm::InputTag refjetsrc_;
-    edm::InputTag trksrc_;
-    // ana setup
+    // === Ana setup ===
     Bool_t	  isMC_;
     Bool_t	  genOnly_;
-    Bool_t	  doFJL1Corr_;
-    Double_t	  jetEtaMax_;
-    Int_t	  nVtxTrkCut_;
-    std::string	  JECLab1_;
-    Double_t	  nearJetPtMin_;
-    Double_t	  djDPhiMin_;
-    Double_t	  trkPtMin_;
+    // Event Info
+    edm::InputTag vtxsrc_;
+    // Jet
+    edm::InputTag jetsrc_;
     Int_t	  anaJetType_;
+    Double_t	  jetEtaMax_;
+    // jet energy correction
+    std::string	  JECLab1_;
+    Bool_t	  doFJL1Corr_;
+    // jet mc matching
+    edm::InputTag refjetsrc_;
     Int_t	  refJetType_;
+    // di-jet
+    Double_t	  djDPhiMin_;
+    // trk selection
+    Double_t	  nearJetPtMin_;
+    edm::InputTag trksrc_;
     Int_t	  anaTrkType_;
-    // ana vars
+    Double_t	  trkPtMin_;
+    // debug
+    Int_t	  verbosity_;
+
+    // Ana vars
     Int_t	  numHiEvtSel_;
     Int_t	  numEvtSel_;
     Int_t	  numJetEvtSel_;
@@ -92,18 +100,16 @@ class DiJetAna : public edm::EDAnalyzer {
     Int_t	  iNearRef_;
     Int_t	  iAwayRef_;
     const CentralityBins * cbins_;
-    // debug
-    Int_t	  verbosity_;
+
     // jec studies
     TF1		  *funcGaus_; //! Function parametrizing the jes uncertainty
     std::vector<double> anaJECs_;
 
-    // ana data
+    // === Ana data ===
     // -- evt --
     TH1D	  *hNumVtx_;
     TH1D	  *hVtxNumTrksEvtPreSel_;
-    TH1D	  *hVtxZEvtSel_;
-    TH1D	  *hVtxNumTrksEvtSel_;
+    TH1D	  *hVtxZEvtPreSel_;
     // -- jet --
     TH1D	  *hJetPtEvtPreSel_;
     TH1D	  *hJetEtaEvtPreSel_;

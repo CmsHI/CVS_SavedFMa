@@ -4,9 +4,8 @@ import FWCore.ParameterSet.Config as cms
 dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     # Event source
     isMC = cms.bool(True),
-    # Event Selection
+    # Event Info
     vtxsrc = cms.InputTag("hiSelectedVertex"),
-    nVtxTrkCut = cms.int32(3),
     # jet reco
     jetsrc = cms.InputTag("patJets"),
     anaJetType = cms.int32(2),

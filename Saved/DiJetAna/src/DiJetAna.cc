@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.44 2010/08/24 02:10:15 frankma Exp $
+// $Id: DiJetAna.cc,v 1.45 2010/08/24 17:15:35 frankma Exp $
 //
 //
 
@@ -71,27 +71,26 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   // Event source
   isMC_ = iConfig.getParameter<bool>("isMC");
   genOnly_ = iConfig.getUntrackedParameter<bool>("genOnly", false);
-  // Event Selection
+  // Event Info
   vtxsrc_ = iConfig.getParameter<edm::InputTag>("vtxsrc");
-  nVtxTrkCut_ = iConfig.getParameter<int>("nVtxTrkCut");
   // jet reco
   jetsrc_ = iConfig.getParameter<edm::InputTag>("jetsrc");
   anaJetType_ = iConfig.getParameter<int>("anaJetType");
-  doFJL1Corr_ = iConfig.getParameter<bool>("doFJL1Corr");
   jetEtaMax_ = iConfig.getParameter<double>("jetEtaMax");
   // jet energy correction
   JECLab1_ = iConfig.getParameter<string>("JECLab1");
+  doFJL1Corr_ = iConfig.getParameter<bool>("doFJL1Corr");
   // jet mc matching
   refjetsrc_ = iConfig.getParameter<edm::InputTag>("refjetsrc");
   refJetType_ = iConfig.getParameter<int>("refJetType");
   // di-jet reco
-  nearJetPtMin_ = iConfig.getParameter<double>("nearJetPtMin");
   djDPhiMin_ = iConfig.getParameter<double>("djDPhiMin");
   // trk selection
+  nearJetPtMin_ = iConfig.getParameter<double>("nearJetPtMin");
   trksrc_ = iConfig.getParameter<edm::InputTag>("trksrc");
   anaTrkType_ = iConfig.getParameter<int>("anaTrkType");
   trkPtMin_ = iConfig.getParameter<double>("trkPtMin");
-  // verbosity
+  // debug
   verbosity_ = iConfig.getUntrackedParameter<int>("verbosity", 0);
 
   // jec studies
@@ -124,7 +123,6 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Fill Event info
   FillEventInfo(iEvent,iSetup,djEvt_);
 
-  // -------------------- Inclusive Distributions --------------------------
   // Additional Analysis level jet energy corrections on pat jets (not gen)
   if(anaJetType_==2){
     Handle<vector<pat::Jet> > jets;
@@ -136,23 +134,21 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     LoadAnaJECs(iEvent,*jets,anaJECs_);
   }
 
-  // Check Inclusive Jets Before Event Selection
+  // Inclusive Jets Ana
   InclJetAna(iEvent,anaJetType_,anaJECs_,hJetPtEvtPreSel_,hJetEtaEvtPreSel_,hJetPhiEvtPreSel_);
 
-  // Inclusive Trk ana
+  // Inclusive Trk Ana
   InclTrkAna(iEvent,anaTrkType_);
-
   ++numHiEvtSel_;
 
+  // ==== Vtx Ana ====
   if(!genOnly_){
-    //-----------------------  Preselection (This part will be in an EDFilter later)  
     // get vtx collection 
     Handle<vector<Vertex> > vertices;
     iEvent.getByLabel(vtxsrc_, vertices);
     Int_t numVtx = (Int_t)vertices->size();
     hNumVtx_->Fill(numVtx);
     if (verbosity_>=2) cout << "# vertices in event: " << numVtx << endl;
-    //if(numVtx<1) return; // at least one vtx
     
     Int_t numFake=0, maxtracks=-99;
     double bestndof=-999.9,bestvz=-999.9, bestvx=-999.9, bestvy=-999.9, bestNchi2=999.9;
@@ -174,9 +170,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
     if (verbosity_>=2) cout << "best non-fake vertex ntracks: " << maxtracks << endl;
     hVtxNumTrksEvtPreSel_->Fill(maxtracks);
-    //if(maxtracks<nVtxTrkCut_) return; // vtx quality selection
-    hVtxNumTrksEvtSel_->Fill(maxtracks);
-    hVtxZEvtSel_->Fill(bestvz);
+    hVtxZEvtPreSel_->Fill(bestvz);
     djEvt_.nvtx_ = numVtx;
     djEvt_.vtxntrks_ = maxtracks;
     djEvt_.vtxchi2_ = bestNchi2;
@@ -184,7 +178,6 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
   ++numEvtSel_;
 
-  // Done with Base Event Selection
   //
   // ---------------------------- Di Jet Analysis ---------------------------------
   //
@@ -238,8 +231,7 @@ void DiJetAna::beginJob()
   // event
   hNumVtx_ = fs->make<TH1D>("hNumVtx","; # vtx;#",20,0,20);
   hVtxNumTrksEvtPreSel_ = fs->make<TH1D>("hVtxNumTrksEvtPreSel",";# trks in best vtx (pre evt sel);#",100,0,100);
-  hVtxZEvtSel_ = fs->make<TH1D>("hVtxZEvtSel","z position of best reconstructed hi selected vertex;vz [cm];best vz;#", 80,-20,20);
-  hVtxNumTrksEvtSel_ = fs->make<TH1D>("hVtxNumTrksEvtSel",";# trks in best vtx;#",100,0,100);
+  hVtxZEvtPreSel_ = fs->make<TH1D>("hVtxZEvtSel","z position of best reconstructed hi selected vertex;vz [cm];best vz;#", 80,-20,20);
   // jets
   hJetPtEvtPreSel_ = fs->make<TH1D>("hJetPtEvtPreSel",";p_{T}^{corr. jet} [GeV/c];#", 200, 0.0, 200.0);
   hJetEtaEvtPreSel_ = fs->make<TH1D>("hJetEtaEvtPreSel",";#eta^{jet};#", 50, -1.5*jetEtaMax_, 1.5*jetEtaMax_);
@@ -260,12 +252,12 @@ DiJetAna::endJob() {
   // ===== Done =====
   if (verbosity_>=1) {
     cout << endl << "================ Ana Process Summaries =============" << endl;
-    cout << "AnaJet: " << jetsrc_;
-    if (refJetType_>=0) cout << " RefJet: " << refjetsrc_;
-    cout << "  AnaTrk: " << trksrc_ << endl;
-    cout << "HI Event Selection : "<< numHiEvtSel_<< " evts" << endl;
-    cout << "Base Event Selection : "<< numEvtSel_ << " evts" << endl;
-    cout << "Jet Event Selection : "<< numJetEvtSel_<< " evts" << endl;
+    cout << " AnaJet: " << jetsrc_ << endl;
+    if (refJetType_>=0) cout << " RefJet: " << refjetsrc_ << endl;
+    cout << " AnaTrk: " << trksrc_ << endl;
+    cout << "# HI Events : "<< numHiEvtSel_<< endl;
+    cout << "# Base Events: "<< numEvtSel_ << endl;
+    cout << "# Jet Events: "<< numJetEvtSel_<< endl;
   }
 }
 
@@ -625,9 +617,9 @@ void DiJetAna::LoadAnaJECs(const edm::Event & iEvent, const vector<pat::Jet> & j
 void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, Int_t trkType)
 {
   cout << "=== Ana setup: (Base Sel Evt " << numEvtSel_ << ")===" << endl;
-  cout << "AnaJet: " << jetsrc_ << " with anaJetType: " << anaJetType_ << endl;
-  if (refJetType_>=0) cout << "RefJet: " << refjetsrc_ << " with refJetType: " << refJetType_ << endl;
-  cout << "AnaTrk: " << trksrc_ << " with anaTrkType: " << anaTrkType_ << endl;
+  cout << "AnaJet: " << jetsrc_ << ". With anaJetType: " << anaJetType_ << endl;
+  if (refJetType_>=0) cout << "RefJet: " << refjetsrc_ << ". With refJetType: " << refJetType_ << endl;
+  cout << "AnaTrk: " << trksrc_ << ". With anaTrkType: " << anaTrkType_ << endl;
   if (jetType<=2 && verbosity_>=2) {
     edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
