@@ -6,6 +6,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     isMC = cms.bool(True),
     # Event Info
     vtxsrc = cms.InputTag("hiSelectedVertex"),
+    hltsrc = cms.InputTag("TriggerResults","","HISIGNAL3"),
     # jet reco
     jetsrc = cms.InputTag("patJets"),
     anaJetType = cms.int32(2),
@@ -24,7 +25,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     anaTrkType = cms.int32(3),
     trkPtMin = cms.double(0.7),
     # debug
-    verbosity = cms.untracked.int32(2)
+    verbosity = cms.untracked.int32(3)
     )
 
 # === Data Reco ===

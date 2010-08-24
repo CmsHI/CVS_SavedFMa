@@ -71,6 +71,7 @@ class DiJetAna : public edm::EDAnalyzer {
     Bool_t	  genOnly_;
     // Event Info
     edm::InputTag vtxsrc_;
+    edm::InputTag hltsrc_;
     // Jet
     edm::InputTag jetsrc_;
     Int_t	  anaJetType_;

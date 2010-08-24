@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.47 2010/08/24 18:10:51 frankma Exp $
+// $Id: DiJetAna.cc,v 1.48 2010/08/24 18:56:34 frankma Exp $
 //
 //
 
@@ -73,6 +73,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   genOnly_ = iConfig.getUntrackedParameter<bool>("genOnly", false);
   // Event Info
   vtxsrc_ = iConfig.getParameter<edm::InputTag>("vtxsrc");
+  hltsrc_ = iConfig.getParameter<edm::InputTag>("hltsrc");
   // jet reco
   jetsrc_ = iConfig.getParameter<edm::InputTag>("jetsrc");
   anaJetType_ = iConfig.getParameter<int>("anaJetType");
@@ -345,6 +346,19 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 
 void DiJetAna::FillTrigInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
 {
+  // get hlt bit
+  Handle<edm::TriggerResults> triggerResults;
+  iEvent.getByLabel(hltsrc_, triggerResults);
+  const edm::TriggerNames triggerNames = iEvent.triggerNames(*triggerResults); 
+  // check hlt paths if verbose
+  if (verbosity_ >= 3) {
+    for (unsigned i=0; i<triggerNames.size(); i++) { 
+      std::string hltName = triggerNames.triggerName(i);
+      unsigned int index = triggerNames.triggerIndex(hltName);
+      cout << "HLT: " << hltName << " fired? " << triggerResults->accept(index) << endl;
+    }
+  }
+
   jd.hlt_.push_back(true);
   jd.hlt_.push_back(false);
   jd.hlt_.push_back(true);
