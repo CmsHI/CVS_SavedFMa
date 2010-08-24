@@ -6,7 +6,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     isMC = cms.bool(True),
     # Event Info
     vtxsrc = cms.InputTag("hiSelectedVertex"),
-    hltsrc = cms.InputTag("TriggerResults","","HISIGNAL3"),
+    hltsrc = cms.InputTag("TriggerResults","","HLT"),
     hltNames = cms.untracked.vstring(
       "HLT_HIMinBiasCalo",
       "HLT_HIJet35U",
