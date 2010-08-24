@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.41 2010/08/20 23:30:46 frankma Exp $
+// $Id: DiJetAna.cc,v 1.42 2010/08/23 22:47:13 frankma Exp $
 //
 //
 
@@ -155,7 +155,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     Int_t numVtx = (Int_t)vertices->size();
     hNumVtx_->Fill(numVtx);
     if (verbosity_>=2) cout << "# vertices in event: " << numVtx << endl;
-    if(numVtx<1) return; // at least one vtx
+    //if(numVtx<1) return; // at least one vtx
     
     Int_t numFake=0, maxtracks=-99;
     double bestndof=-999.9,bestvz=-999.9, bestvx=-999.9, bestvy=-999.9, bestNchi2=999.9;
@@ -177,7 +177,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
     if (verbosity_>=2) cout << "best non-fake vertex ntracks: " << maxtracks << endl;
     hVtxNumTrksEvtPreSel_->Fill(maxtracks);
-    if(maxtracks<nVtxTrkCut_) return; // vtx quality selection
+    //if(maxtracks<nVtxTrkCut_) return; // vtx quality selection
     hVtxNumTrksEvtSel_->Fill(maxtracks);
     hVtxZEvtSel_->Fill(bestvz);
     djEvt_.nvtx_ = numVtx;
