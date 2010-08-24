@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.45 2010/08/24 17:15:35 frankma Exp $
+// $Id: DiJetAna.cc,v 1.46 2010/08/24 17:59:01 frankma Exp $
 //
 //
 
@@ -141,41 +141,8 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   InclTrkAna(iEvent,anaTrkType_);
   ++numHiEvtSel_;
 
-  // ==== Vtx Ana ====
-  if(!genOnly_){
-    // get vtx collection 
-    Handle<vector<Vertex> > vertices;
-    iEvent.getByLabel(vtxsrc_, vertices);
-    Int_t numVtx = (Int_t)vertices->size();
-    hNumVtx_->Fill(numVtx);
-    if (verbosity_>=2) cout << "# vertices in event: " << numVtx << endl;
-    
-    Int_t numFake=0, maxtracks=-99;
-    double bestndof=-999.9,bestvz=-999.9, bestvx=-999.9, bestvy=-999.9, bestNchi2=999.9;
-    for(UInt_t it=0; it<vertices->size(); ++it) {
-      const reco::Vertex & vtx = (*vertices)[it];
-      // check if valid vertex
-      if(vtx.isFake()) {
-	++numFake;
-	continue;
-      }
-      // update best vertex
-      int vtxntrks = vtx.tracksSize();
-      if(vtxntrks > maxtracks || (vtxntrks == maxtracks && vtx.normalizedChi2() < bestNchi2) ) {
-	maxtracks = vtx.tracksSize();
-	bestvz = vtx.z(); bestvx = vtx.x(); bestvy = vtx.y();
-	bestNchi2 = vtx.normalizedChi2();
-	bestndof = vtx.ndof();
-      } 
-    }
-    if (verbosity_>=2) cout << "best non-fake vertex ntracks: " << maxtracks << endl;
-    hVtxNumTrksEvtPreSel_->Fill(maxtracks);
-    hVtxZEvtPreSel_->Fill(bestvz);
-    djEvt_.nvtx_ = numVtx;
-    djEvt_.vtxntrks_ = maxtracks;
-    djEvt_.vtxchi2_ = bestNchi2;
-    djEvt_.vz_ = bestvz;
-  }
+  // Vertex Ana
+  FillVtx(iEvent,djEvt_);
   ++numEvtSel_;
 
   //
@@ -419,6 +386,45 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
       ++selTrkCt;
     }
     jd.evtnp_			 = selTrkCt;
+  }
+}
+
+void DiJetAna::FillVtx(const edm::Event& iEvent, TreeDiJetEventData & jd)
+{
+  // reco vtx
+  if(!genOnly_){
+    // get vtx collection 
+    Handle<vector<Vertex> > vertices;
+    iEvent.getByLabel(vtxsrc_, vertices);
+    Int_t numVtx = (Int_t)vertices->size();
+    hNumVtx_->Fill(numVtx);
+    if (verbosity_>=2) cout << "# vertices in event: " << numVtx << endl;
+    
+    Int_t numFake=0, maxtracks=-99;
+    double bestndof=-999.9,bestvz=-999.9, bestvx=-999.9, bestvy=-999.9, bestNchi2=999.9;
+    for(UInt_t it=0; it<vertices->size(); ++it) {
+      const reco::Vertex & vtx = (*vertices)[it];
+      // check if valid vertex
+      if(vtx.isFake()) {
+	++numFake;
+	continue;
+      }
+      // update best vertex
+      int vtxntrks = vtx.tracksSize();
+      if(vtxntrks > maxtracks || (vtxntrks == maxtracks && vtx.normalizedChi2() < bestNchi2) ) {
+	maxtracks = vtx.tracksSize();
+	bestvz = vtx.z(); bestvx = vtx.x(); bestvy = vtx.y();
+	bestNchi2 = vtx.normalizedChi2();
+	bestndof = vtx.ndof();
+      } 
+    }
+    if (verbosity_>=2) cout << "best non-fake vertex ntracks: " << maxtracks << endl;
+    hVtxNumTrksEvtPreSel_->Fill(maxtracks);
+    hVtxZEvtPreSel_->Fill(bestvz);
+    jd.nvtx_ = numVtx;
+    jd.vtxntrks_ = maxtracks;
+    jd.vtxchi2_ = bestNchi2;
+    jd.vz_ = bestvz;
   }
 }
 
