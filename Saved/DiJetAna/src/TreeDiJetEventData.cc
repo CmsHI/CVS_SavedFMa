@@ -270,6 +270,8 @@ void TreeDiJetEventData::Clear()
   nlrjstat_	  = -99;
   alrjid_	  = 0;
   alrjstat_	  = -99;
+  // jec
+  numJec_	  = 0;
   // jet constituents
   evtnp_      = 0;
 
