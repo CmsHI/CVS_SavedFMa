@@ -38,7 +38,6 @@ process.TFileService = cms.Service('TFileService',
 
 # =============== Final Paths =====================
 process.ana = cms.Path(#process.chargedCandidates *
-    process.evtAna_data +
     process.centralityFilter *
     process.dijetAna_data_seq
     )

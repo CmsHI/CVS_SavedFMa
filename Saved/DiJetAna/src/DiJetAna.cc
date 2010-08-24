@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.42 2010/08/23 22:47:13 frankma Exp $
+// $Id: DiJetAna.cc,v 1.43 2010/08/24 00:49:13 frankma Exp $
 //
 //
 
@@ -71,8 +71,6 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   // Event source
   isMC_ = iConfig.getParameter<bool>("isMC");
   genOnly_ = iConfig.getUntrackedParameter<bool>("genOnly", false);
-  // Ana Mode
-  evtAnaOnly_ = iConfig.getUntrackedParameter<bool>("evtAnaOnly", false);
   // Event Selection
   vtxsrc_ = iConfig.getParameter<edm::InputTag>("vtxsrc");
   nVtxTrkCut_ = iConfig.getParameter<int>("nVtxTrkCut");
@@ -145,7 +143,6 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   InclTrkAna(iEvent,anaTrkType_);
 
   ++numHiEvtSel_;
-  if (evtAnaOnly_) { djTree_->Fill(); return; }
 
   if(!genOnly_){
     //-----------------------  Preselection (This part will be in an EDFilter later)  

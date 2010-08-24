@@ -64,7 +64,6 @@ class DiJetAna : public edm::EDAnalyzer {
     // ana setup
     Bool_t	  isMC_;
     Bool_t	  genOnly_;
-    Bool_t	  evtAnaOnly_;
     Bool_t	  doFJL1Corr_;
     Double_t	  jetEtaMax_;
     Int_t	  nVtxTrkCut_;
