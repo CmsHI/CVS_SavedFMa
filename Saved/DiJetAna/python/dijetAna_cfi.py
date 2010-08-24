@@ -25,7 +25,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     # di-jet reco
     djDPhiMin = cms.double(2.5),
     # trk selection
-    nearJetPtMin = cms.double(-1),
+    nearJetPtMin = cms.double(-1), # Note: this is only for deciding whether to save the tracks in event
     trksrc = cms.InputTag("allTracks"),
     anaTrkType = cms.int32(3),
     trkPtMin = cms.double(0.7),
