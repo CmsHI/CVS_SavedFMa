@@ -23,6 +23,7 @@ process.centralityFilter.selectedBins = range(40)
 #================ DiJet Ana ==========================
 process.load("Saved.DiJetAna.dijetAna_cff")
 # -- sample specific configs --
+process.dijetAna_mc.hltsrc = cms.InputTag("TriggerResults","","HLT")
 process.dijetAna_mc.trksrc = "hiSelectedTracks"
 process.dijetAna_mc.anaTrkType = 2
 # - thresholds -
