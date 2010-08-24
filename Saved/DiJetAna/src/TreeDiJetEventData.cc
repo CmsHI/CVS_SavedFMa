@@ -144,6 +144,7 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("run", &(this->run_), "run/I");
   tree_->Branch("evt", &(this->evt_), "evt/I");
   tree_->Branch("lumi", &(this->lumi_), "lumi/I");
+  tree_->Branch("hlt", &hlt_);
   tree_->Branch("nvtx", &(this->nvtx_), "nvtx/I");
   tree_->Branch("vtxntrks", &(this->vtxntrks_), "vtxntrks/I");
   tree_->Branch("vtxndof", &(this->vtxndof_), "vtxndof/F");
@@ -245,6 +246,7 @@ void TreeDiJetEventData::Clear()
   run_		  = -99;
   evt_		  = -99;
   lumi_		  = -99;
+  hlt_.clear();
   cent_		  = -99;
   nvtx_		  = -99;
   vtxntrks_	  = -99;

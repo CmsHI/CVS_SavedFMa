@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.46 2010/08/24 17:59:01 frankma Exp $
+// $Id: DiJetAna.cc,v 1.47 2010/08/24 18:10:51 frankma Exp $
 //
 //
 
@@ -122,6 +122,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // Fill Event info
   FillEventInfo(iEvent,iSetup,djEvt_);
+  FillTrigInfo(iEvent,djEvt_);
 
   // Additional Analysis level jet energy corrections on pat jets (not gen)
   if(anaJetType_==2){
@@ -340,6 +341,13 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     if (anajets.size()>=2) jd.aljemf_		= (*jets)[iAway_].emEnergyFraction();
     if (anajets.size()>=2) jd.aljarea_		= (*jets)[iAway_].jetArea();
   }
+}
+
+void DiJetAna::FillTrigInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
+{
+  jd.hlt_.push_back(true);
+  jd.hlt_.push_back(false);
+  jd.hlt_.push_back(true);
 }
 
 void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,

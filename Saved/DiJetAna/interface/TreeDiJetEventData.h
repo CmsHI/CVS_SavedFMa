@@ -7,6 +7,7 @@
 #include <vector>
 #include "TTree.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
+#include <vector>
 
 const Int_t MAXTRK = 100000;
 const Int_t MAXJEC = 15;
@@ -37,6 +38,7 @@ class TreeDiJetEventData
     // -- HI Event variables --
     Float_t		    b_,cent_;
     Int_t		    npart_,ncoll_;
+    std::vector<Bool_t>	    hlt_;
 
     // --- DiJet variables ---
     Float_t		    djmass_,cmeta_,rdjmass_;
