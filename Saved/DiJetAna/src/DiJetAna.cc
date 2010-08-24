@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.43 2010/08/24 00:49:13 frankma Exp $
+// $Id: DiJetAna.cc,v 1.44 2010/08/24 02:10:15 frankma Exp $
 //
 //
 
@@ -270,60 +270,46 @@ DiJetAna::endJob() {
 }
 
 
-
 // ==================== Member Methods ===========================
-// ------------ Inclusive Ana -------------
-void DiJetAna::InclJetAna(const edm::Event& iEvent, Int_t jetType, const std::vector<double> & anaJECs,
-    TH1D * hPt, TH1D * hEta, TH1D * hPhi)
+double DiJetAna::CalcFJL1Corr(const vector<double> & medianPt, const pat::Jet & jet)
 {
-  if (jetType<=2) {
-    edm::Handle<reco::CandidateView> jets;
-    iEvent.getByLabel(jetsrc_,jets);
-    djEvt_.njets_ = (*jets).size();
-    for (unsigned int j=0; j<(*jets).size();++j) {
-      const reco::Candidate & jet = (*jets)[j];
-      if (fabs(jet.eta())>jetEtaMax_) continue; // only jets within analysis eta
-      Double_t corrPt=jet.pt();
-      if (jetType==2) corrPt *= anaJECs[j];
-      hPt->Fill(corrPt);
-      hEta->Fill(jet.eta());
-      hPhi->Fill(jet.phi());
-    }
+  double jetcorr=1.;
+  if(fabs(jet.eta())<3){
+    double rho=-999;
+    if (jet.eta()<-2.5 && jet.eta()>-3.5)rho=medianPt[2];
+    if (jet.eta()<-1.5 && jet.eta()>-2.5)rho=medianPt[3];
+    if (jet.eta()<-0.5 && jet.eta()>-1.5)rho=medianPt[4];
+    if (jet.eta()<0.5 && jet.eta()>-0.5)rho=medianPt[5];
+    if (jet.eta()<1.5 && jet.eta()>0.5)rho=medianPt[6];
+    if (jet.eta()<2.5 && jet.eta()>1.5)rho=medianPt[7];
+    if (jet.eta()<3.5 && jet.eta()>2.5)rho=medianPt[8];
+    double jetarea=jet.jetArea();
+    jetcorr=1.0-jetarea*rho/jet.et();
   }
-}
-void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
-{
-  if (trkType==2) {
-    Handle<vector<Track> > tracks;
-    iEvent.getByLabel(trksrc_, tracks);
-    djEvt_.ntrks_ = tracks->size();
-    for(unsigned it=0; it<tracks->size(); ++it){
-      const reco::Track & trk = (*tracks)[it];
-      // trk selection
-      if (!GoodAnaTrk(trk)) continue;
-      hTrkPtEvtPreSel_->Fill(trk.pt());
-      hTrkEtaEvtPreSel_->Fill(trk.eta());
-      hTrkPtEtaEvtPreSel_->Fill(trk.eta(),trk.pt());
-    }
-  }
-
-  if (trkType==0||trkType==3) {
-    edm::Handle<reco::CandidateView> trks;
-    iEvent.getByLabel(trksrc_,trks);
-    djEvt_.ntrks_ = (*trks).size();
-    for (unsigned int it=0; it<(*trks).size();++it) {
-      const reco::Candidate & trk = (*trks)[it];
-      // select charged stable particles
-      if (!GoodAnaTrkParticle(trk,trkType)) continue;
-
-      hTrkPtEvtPreSel_->Fill(trk.pt());
-      hTrkEtaEvtPreSel_->Fill(trk.eta());
-      hTrkPtEtaEvtPreSel_->Fill(trk.eta(),trk.pt());
-    }
-  }
+  return jetcorr;
 }
 
-// ------------ Tree Filling --------------
+
+void DiJetAna::DiJetP4(const edm::Event& iEvent, const edm::InputTag & jsrc, std::vector<math::PtEtaPhiMLorentzVector> & anajets,
+    Int_t jetType, const std::vector<double> & anaJECs, Int_t & iNr, Int_t & iAw) 
+{
+  anajets.clear();
+
+  if (iNr<0) return;
+  edm::Handle<reco::CandidateView> jets;
+  iEvent.getByLabel(jsrc,jets);
+
+  const reco::Candidate & NrJet = (*jets)[iNr];
+  anajets.push_back(math::PtEtaPhiMLorentzVector(NrJet.pt(),NrJet.eta(),NrJet.phi(),NrJet.mass()));
+  if (jetType==2) anajets[0] *= anaJECs[iNr];
+
+  if (iAw<0) return;
+  const reco::Candidate & AwJet = (*jets)[iAw];
+  anajets.push_back(math::PtEtaPhiMLorentzVector(AwJet.pt(),AwJet.eta(),AwJet.phi(),AwJet.mass()));
+  if (jetType==2) anajets[1] *= anaJECs[iAw];
+}
+
+
 void DiJetAna::FillEventInfo(const edm::Event& iEvent, const edm::EventSetup& iSetup, TreeDiJetEventData & jd)
 {
   // General Info
@@ -348,24 +334,6 @@ void DiJetAna::FillEventInfo(const edm::Event& iEvent, const edm::EventSetup& iS
     jd.npart_	  = mchievt->Npart();
     jd.ncoll_	  = mchievt->Ncoll();
   }
-}
-
-double DiJetAna::CalcFJL1Corr(const vector<double> & medianPt, const pat::Jet & jet)
-{
-  double jetcorr=1.;
-  if(fabs(jet.eta())<3){
-    double rho=-999;
-    if (jet.eta()<-2.5 && jet.eta()>-3.5)rho=medianPt[2];
-    if (jet.eta()<-1.5 && jet.eta()>-2.5)rho=medianPt[3];
-    if (jet.eta()<-0.5 && jet.eta()>-1.5)rho=medianPt[4];
-    if (jet.eta()<0.5 && jet.eta()>-0.5)rho=medianPt[5];
-    if (jet.eta()<1.5 && jet.eta()>0.5)rho=medianPt[6];
-    if (jet.eta()<2.5 && jet.eta()>1.5)rho=medianPt[7];
-    if (jet.eta()<3.5 && jet.eta()>2.5)rho=medianPt[8];
-    double jetarea=jet.jetArea();
-    jetcorr=1.0-jetarea*rho/jet.et();
-  }
-  return jetcorr;
 }
 
 void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
@@ -412,31 +380,6 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     jd.nljarea_					= (*jets)[iNear_].jetArea();
     if (anajets.size()>=2) jd.aljemf_		= (*jets)[iAway_].emEnergyFraction();
     if (anajets.size()>=2) jd.aljarea_		= (*jets)[iAway_].jetArea();
-  }
-}
-
-void DiJetAna::LoadAnaJECs(const edm::Event & iEvent, const vector<pat::Jet> & jets, vector<double> & JECs)
-{
-  JECs.clear();
-
-  // FJ rho subtraction
-  vector<double> medianPtKt;
-  if(doFJL1Corr_){
-    edm::Handle<std::vector<double> > rs;
-    iEvent.getByLabel(edm::InputTag("kt4CaloJets","rhos"),rs);
-    //double puCent[11] = {-5,-4,-3,-2,-1,0,1,2,3,4,5};
-    for(unsigned int j = 0; j < rs->size()-11; j++){
-      double medianpt=(*rs)[j+11];
-      medianPtKt.push_back(medianpt);
-    }
-  }
-
-  // Fill Analysis Level Jet Energy Corrections
-  for (unsigned j=0; j<jets.size();++j) {
-    double anaCorr = 1;
-    anaCorr *= jets[j].corrFactor(JECLab1_);
-    if (doFJL1Corr_) anaCorr *= CalcFJL1Corr(medianPtKt,jets[j]);
-    JECs.push_back(anaCorr);
   }
 }
 
@@ -487,7 +430,7 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
   }
 }
 
-// ------------ Find DiJet ----------------
+
 Int_t DiJetAna::FindNearJet(const edm::Event& iEvent, const edm::InputTag & jsrc, Int_t jetType, const std::vector<double> & anaJECs)
 {
   Int_t iNear = -99;
@@ -537,25 +480,6 @@ Int_t DiJetAna::FindAwayJet(const edm::Event& iEvent, const edm::InputTag & jsrc
   return iAway;
 }
 
-void DiJetAna::DiJetP4(const edm::Event& iEvent, const edm::InputTag & jsrc, std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, const std::vector<double> & anaJECs, Int_t & iNr, Int_t & iAw) 
-{
-  anajets.clear();
-
-  if (iNr<0) return;
-  edm::Handle<reco::CandidateView> jets;
-  iEvent.getByLabel(jsrc,jets);
-
-  const reco::Candidate & NrJet = (*jets)[iNr];
-  anajets.push_back(math::PtEtaPhiMLorentzVector(NrJet.pt(),NrJet.eta(),NrJet.phi(),NrJet.mass()));
-  if (jetType==2) anajets[0] *= anaJECs[iNr];
-
-  if (iAw<0) return;
-  const reco::Candidate & AwJet = (*jets)[iAw];
-  anajets.push_back(math::PtEtaPhiMLorentzVector(AwJet.pt(),AwJet.eta(),AwJet.phi(),AwJet.mass()));
-  if (jetType==2) anajets[1] *= anaJECs[iAw];
-}
-
-// ------------- Reference Jets ---------------
 void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vector<math::PtEtaPhiMLorentzVector> & refjets)
 {
   refjets.clear();
@@ -601,13 +525,14 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
   }
 }
 
-// ------------- Helpers ------------------
+
 Bool_t DiJetAna::GoodAnaTrk(const reco::Track & trk)
 {
   //if(!trk.quality(reco::TrackBase::qualityByName(qualityString))) continue;
   if (trk.pt()<trkPtMin_) return false;
   return true;
 }
+
 Bool_t DiJetAna::GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType)
 {
   if (trkType==0) {
@@ -617,6 +542,86 @@ Bool_t DiJetAna::GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType)
   if (p.pt()<trkPtMin_) return false;
   return true;
 }
+
+
+void DiJetAna::InclJetAna(const edm::Event& iEvent, Int_t jetType, const std::vector<double> & anaJECs,
+    TH1D * hPt, TH1D * hEta, TH1D * hPhi)
+{
+  if (jetType<=2) {
+    edm::Handle<reco::CandidateView> jets;
+    iEvent.getByLabel(jetsrc_,jets);
+    djEvt_.njets_ = (*jets).size();
+    for (unsigned int j=0; j<(*jets).size();++j) {
+      const reco::Candidate & jet = (*jets)[j];
+      if (fabs(jet.eta())>jetEtaMax_) continue; // only jets within analysis eta
+      Double_t corrPt=jet.pt();
+      if (jetType==2) corrPt *= anaJECs[j];
+      hPt->Fill(corrPt);
+      hEta->Fill(jet.eta());
+      hPhi->Fill(jet.phi());
+    }
+  }
+}
+
+void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
+{
+  if (trkType==2) {
+    Handle<vector<Track> > tracks;
+    iEvent.getByLabel(trksrc_, tracks);
+    djEvt_.ntrks_ = tracks->size();
+    for(unsigned it=0; it<tracks->size(); ++it){
+      const reco::Track & trk = (*tracks)[it];
+      // trk selection
+      if (!GoodAnaTrk(trk)) continue;
+      hTrkPtEvtPreSel_->Fill(trk.pt());
+      hTrkEtaEvtPreSel_->Fill(trk.eta());
+      hTrkPtEtaEvtPreSel_->Fill(trk.eta(),trk.pt());
+    }
+  }
+
+  if (trkType==0||trkType==3) {
+    edm::Handle<reco::CandidateView> trks;
+    iEvent.getByLabel(trksrc_,trks);
+    djEvt_.ntrks_ = (*trks).size();
+    for (unsigned int it=0; it<(*trks).size();++it) {
+      const reco::Candidate & trk = (*trks)[it];
+      // select charged stable particles
+      if (!GoodAnaTrkParticle(trk,trkType)) continue;
+
+      hTrkPtEvtPreSel_->Fill(trk.pt());
+      hTrkEtaEvtPreSel_->Fill(trk.eta());
+      hTrkPtEtaEvtPreSel_->Fill(trk.eta(),trk.pt());
+    }
+  }
+}
+
+
+void DiJetAna::LoadAnaJECs(const edm::Event & iEvent, const vector<pat::Jet> & jets, vector<double> & JECs)
+{
+  JECs.clear();
+
+  // FJ rho subtraction
+  vector<double> medianPtKt;
+  if(doFJL1Corr_){
+    edm::Handle<std::vector<double> > rs;
+    iEvent.getByLabel(edm::InputTag("kt4CaloJets","rhos"),rs);
+    //double puCent[11] = {-5,-4,-3,-2,-1,0,1,2,3,4,5};
+    for(unsigned int j = 0; j < rs->size()-11; j++){
+      double medianpt=(*rs)[j+11];
+      medianPtKt.push_back(medianpt);
+    }
+  }
+
+  // Fill Analysis Level Jet Energy Corrections
+  for (unsigned j=0; j<jets.size();++j) {
+    double anaCorr = 1;
+    anaCorr *= jets[j].corrFactor(JECLab1_);
+    if (doFJL1Corr_) anaCorr *= CalcFJL1Corr(medianPtKt,jets[j]);
+    JECs.push_back(anaCorr);
+  }
+}
+
+
 void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::PtEtaPhiMLorentzVector> & anajets, Int_t jetType, Int_t trkType)
 {
   cout << "=== Ana setup: (Base Sel Evt " << numEvtSel_ << ")===" << endl;
