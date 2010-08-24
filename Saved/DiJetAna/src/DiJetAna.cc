@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.48 2010/08/24 18:56:34 frankma Exp $
+// $Id: DiJetAna.cc,v 1.49 2010/08/24 19:35:00 frankma Exp $
 //
 //
 
@@ -74,6 +74,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   // Event Info
   vtxsrc_ = iConfig.getParameter<edm::InputTag>("vtxsrc");
   hltsrc_ = iConfig.getParameter<edm::InputTag>("hltsrc");
+  hltNames_ = iConfig.getUntrackedParameter<std::vector <std::string> >("hltNames");
   // jet reco
   jetsrc_ = iConfig.getParameter<edm::InputTag>("jetsrc");
   anaJetType_ = iConfig.getParameter<int>("anaJetType");
@@ -346,6 +347,8 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 
 void DiJetAna::FillTrigInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
 {
+  if (hltsrc_.label()=="None"||hltsrc_.label()=="none") return;
+
   // get hlt bit
   Handle<edm::TriggerResults> triggerResults;
   iEvent.getByLabel(hltsrc_, triggerResults);
@@ -359,9 +362,19 @@ void DiJetAna::FillTrigInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
     }
   }
 
-  jd.hlt_.push_back(true);
-  jd.hlt_.push_back(false);
-  jd.hlt_.push_back(true);
+  // Save HLT
+  for(unsigned i=0; i<hltNames_.size(); i++) { 
+    unsigned index = triggerNames.triggerIndex(hltNames_[i]);
+    if(index < triggerResults->size())
+      jd.hlt_.push_back(triggerResults->accept(index));
+    else {
+      edm::LogWarning("TrackSpectraAnalyzer")
+	<< "Index returned by TriggerNames object for trigger '"
+	<< hltNames_[i]
+	<< "' is out of range (" 
+	<< index << " >= " << triggerResults->size() << ")";
+    }
+  }
 }
 
 void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,

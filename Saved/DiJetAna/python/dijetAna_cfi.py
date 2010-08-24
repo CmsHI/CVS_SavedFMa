@@ -7,6 +7,11 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     # Event Info
     vtxsrc = cms.InputTag("hiSelectedVertex"),
     hltsrc = cms.InputTag("TriggerResults","","HISIGNAL3"),
+    hltNames = cms.untracked.vstring(
+      "HLT_HIMinBiasCalo",
+      "HLT_HIJet35U",
+      "HLT_HIPhoton15"
+      ),
     # jet reco
     jetsrc = cms.InputTag("patJets"),
     anaJetType = cms.int32(2),
@@ -42,6 +47,7 @@ dijetAna_data = dijetAna_mc.clone(
 
 # === MC Gen+Reco ===
 dijetAna_mc_genjet_trk = dijetAna_mc.clone(
+    hltsrc = cms.InputTag("None"),
     # jet reco
     jetsrc = cms.InputTag("iterativeCone5HiGenJets"),
     anaJetType = cms.int32(1),
@@ -50,12 +56,14 @@ dijetAna_mc_genjet_trk = dijetAna_mc.clone(
     )
 
 dijetAna_mc_calojet_genp = dijetAna_mc.clone(
+    hltsrc = cms.InputTag("None"),
     # trk selection
     trksrc = cms.InputTag("hiGenParticles"),
     anaTrkType = cms.int32(0)
     )
 
 dijetAna_mc_genjet_genp = dijetAna_mc.clone(
+    hltsrc = cms.InputTag("None"),
     # jet reco
     jetsrc = cms.InputTag("iterativeCone5HiGenJets"),
     anaJetType = cms.int32(1),
