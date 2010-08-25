@@ -265,11 +265,19 @@ void TreeDiJetEventData::Clear()
   aljet_	  = -99;
   nljrawet_	  = -99;
   aljrawet_	  = -99;
+  nljeta_	  = -99;
+  nljphi_	  = -99;
+  aljeta_	  = -99;
+  aljphi_	  = -99;
   nljarea_	  = -99;
   aljarea_	  = -99;
   // refjet
   nlrjet_	  = -99;
   alrjet_	  = -99;
+  nlrjeta_	  = -99;
+  nlrjphi_	  = -99;
+  alrjeta_	  = -99;
+  alrjphi_	  = -99;
   nlrjid_	  = 0;
   nlrjstat_	  = -99;
   alrjid_	  = 0;
