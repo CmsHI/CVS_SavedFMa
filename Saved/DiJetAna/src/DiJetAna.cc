@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.50 2010/08/24 20:05:18 frankma Exp $
+// $Id: DiJetAna.cc,v 1.51 2010/08/24 20:22:35 frankma Exp $
 //
 //
 
@@ -321,7 +321,6 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     // -- jec --
     //cout << "Current JEC Step: " << "Nr: " << (*jets)[iNear_].corrStep() << " Aw: " <<  (*jets)[iAway_].corrStep() << endl;
     jd.nljrawet_	= (*jets)[iNear_].correctedP4("raw").pt();
-    jd.numJec_		= MAXJEC;
     jd.njec_[0]		= (*jets)[iNear_].corrFactor("raw");
     jd.njec_[1]         = anaJECs[iNear_];
     jd.njec_[2]		= (*jets)[iNear_].corrFactor("rel");

@@ -162,7 +162,7 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("djmass", &(this->djmass_), "djmass/F");
   tree_->Branch("rdjmass", &(this->rdjmass_), "rdjmass/F");
   tree_->Branch("cmeta", &(this->cmeta_), "cmeta/F");
-  tree_->Branch("lajmul", &(this->leadAwayMul_), "lajmul/I");
+  //tree_->Branch("lajmul", &(this->leadAwayMul_), "lajmul/I");
   // --ref jet info--
   tree_->Branch("nlrjid", &(this->nlrjid_), "nlrjid/I");
   tree_->Branch("nlrjstat", &(this->nlrjstat_), "nlrjstat/I");
@@ -251,6 +251,7 @@ void TreeDiJetEventData::Clear()
   nvtx_		  = -99;
   vtxntrks_	  = -99;
   vtxndof_	  = -99;
+  vtxchi2_	  = -99;
   vz_		  = -99;
   njets_	  = -99;
   ntrks_	  = -99;
@@ -273,8 +274,7 @@ void TreeDiJetEventData::Clear()
   nlrjstat_	  = -99;
   alrjid_	  = 0;
   alrjstat_	  = -99;
-  // jec
-  numJec_	  = 0;
+  rjdphi_	  = -99;
   // jet constituents
   evtnp_      = 0;
 
@@ -293,6 +293,6 @@ void TreeDiJetEventData::Clear()
     njec_[i]=1;
     ajec_[i]=1;
   }
-  meanppt_	  = -99;
+  //meanppt_	  = -99;
 }
 
