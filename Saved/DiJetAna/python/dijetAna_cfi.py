@@ -30,7 +30,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     anaTrkType = cms.int32(3),
     trkPtMin = cms.double(0.7),
     # debug
-    verbosity = cms.untracked.int32(3)
+    verbosity = cms.untracked.int32(2)
     )
 
 # === Data Reco ===

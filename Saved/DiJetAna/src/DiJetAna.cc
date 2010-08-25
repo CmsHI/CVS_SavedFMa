@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.51 2010/08/24 20:22:35 frankma Exp $
+// $Id: DiJetAna.cc,v 1.52 2010/08/25 00:21:05 frankma Exp $
 //
 //
 
@@ -354,7 +354,7 @@ void DiJetAna::FillTrigInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
   iEvent.getByLabel(hltsrc_, triggerResults);
   const edm::TriggerNames triggerNames = iEvent.triggerNames(*triggerResults); 
   // check hlt paths if verbose
-  if (verbosity_ >= 3) {
+  if (verbosity_ >= 2) {
     for (unsigned i=0; i<triggerNames.size(); i++) { 
       std::string hltName = triggerNames.triggerName(i);
       unsigned int index = triggerNames.triggerIndex(hltName);
@@ -661,6 +661,23 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
   cout << "AnaJet: " << jetsrc_ << ". With anaJetType: " << anaJetType_ << endl;
   if (refJetType_>=0) cout << "RefJet: " << refjetsrc_ << ". With refJetType: " << refJetType_ << endl;
   cout << "AnaTrk: " << trksrc_ << ". With anaTrkType: " << anaTrkType_ << endl;
+  cout << " JEC: " << JECLab1_ << ", doFJCorr: " << doFJL1Corr_ << endl;
+  // Print found leading dijet
+  if (anajets.size()>=1) {
+    cout << "Leading dijet - iNear: " << iNear_ << " " <<": "<< anajets[0]
+      << "  iAway: " << iAway_;
+  }
+  if (anajets.size()==1) cout << endl;
+  if (anajets.size()>=2) { 
+    cout << " " << anajets[1] << endl;
+    Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
+    cout << " DiJet dphi: " << ljdphi << endl;
+  }
+  // Print matched refjets
+  for (unsigned int i=0; i<refJets_.size(); ++i) {
+    cout << "refjet " << i << ": " << refJets_[i] << endl;
+  }
+  // Print all jets
   if (jetType<=2 && verbosity_>=2) {
     edm::Handle<reco::CandidateView> jets;
     iEvent.getByLabel(jetsrc_,jets);
@@ -675,25 +692,9 @@ void DiJetAna::PrintDJEvent(const edm::Event& iEvent, const std::vector<math::Pt
       double corrPt = jet.pt();
       if (jetType==2) corrPt *= anaJECs_[j];
       if (verbosity_<3 && corrPt<20.) continue; // make print not too crowded
-      cout << "jet " << j;
-      if (jetType==2 && doFJL1Corr_) cout << "  L1CorrEt: "<< jet.pt()*anaJECs_[j];
+      cout << "jet " << j << "  anaCorrEt: "<< corrPt;
       cout <<" et|eta|phi: " << jet.pt() << "|" << jet.eta() << "|" << jet.phi() << endl;
     }
-  }
-  // Print found leading dijet
-  if (anajets.size()>=1) {
-    cout << "JEC: " << JECLab1_ << " leading dijet - iNear: " << iNear_ << " " <<": "<< anajets[0]
-      << "  iAway: " << iAway_;
-  }
-  if (anajets.size()==1) cout << endl;
-  if (anajets.size()>=2) { 
-    cout << " " << anajets[1] << endl;
-    Double_t ljdphi = TMath::Abs(reco::deltaPhi(anajets[0].phi(),anajets[1].phi()));
-    cout << "DiJet dphi: " << ljdphi << endl;
-  }
-  // Print matched refjets
-  for (unsigned int i=0; i<refJets_.size(); ++i) {
-    cout << "refjet " << i << ": " << refJets_[i] << endl;
   }
 }
 
