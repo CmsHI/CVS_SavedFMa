@@ -99,7 +99,7 @@ HLTHcalSimpleRecHitFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSe
     
     bool accept = false ; 
 
-    int hitCount=0, nHitsNeg=0, nHitsPos=0;
+    int nHitsNeg=0, nHitsPos=0;
     for ( HFRecHitCollection::const_iterator hitItr = crudeHits->begin(); hitItr != crudeHits->end(); ++hitItr ) {     
        HFRecHit hit = (*hitItr);
      
@@ -108,15 +108,11 @@ HLTHcalSimpleRecHitFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSe
        result = find( maskedList_.begin(), maskedList_.end(), HcalDetId(hit.id()).hashed_index() );    
        if  (result != maskedList_.end()) 
            continue; 
-       //std::cout << " HF hit " << hitCount << " (ieta|iphi): (" << hit.id().ieta() << "|" << hit.id().iphi() << ") "
-       //	       << " side: " << hit.id().zside() << " energy: " << hit.energy() << std::endl;
-       ++hitCount;
        
        // only count tower above threshold
        if ( hit.energy() < threshold_ ) continue;
-//            edm::LogInfo("HcalFilter")  << "at evet: " << iEvent.id().event() 
-//                                           << " and run: " << iEvent.id().run() 
-//                                           << " signal above threshold found: " << ampli_ ;
+
+       // count
        if (hit.id().zside()<0) ++nHitsNeg;
        else ++nHitsPos;
     }
@@ -124,7 +120,9 @@ HLTHcalSimpleRecHitFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSe
     // Logic
     if (!doCoincidence_) accept = (nHitsNeg>=minNHitsNeg_) || (nHitsPos>=minNHitsPos_);
     else accept = (nHitsNeg>=minNHitsNeg_) && (nHitsPos>=minNHitsPos_);
-    std::cout << "Event: " << iEvent.id().event() << " - Total HF hits: " << hitCount << " nNeg: " << nHitsNeg << " nPos " << nHitsPos << " doCoinc: " << doCoincidence_ << " accept: " << accept << std::endl;
+//            edm::LogInfo("HcalFilter")  << "at evet: " << iEvent.id().event() 
+//                                           << " and run: " << iEvent.id().run()
+//					  << "Total HF hits: " << crudeHits->size() << " Abose Threshold - nNeg: " << nHitsNeg << " nPos " << nHitsPos << " doCoinc: " << doCoincidence_ << " accept: " << accept << std::endl;
 
     // result
     return accept; 
