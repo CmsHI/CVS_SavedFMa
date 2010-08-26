@@ -48,6 +48,9 @@ private:
     // ----------member data ---------------------------
     edm::InputTag HcalRecHitCollection_;
     double threshold_;
+    int minNHitsNeg_;
+    int minNHitsPos_;
+    bool doCoincidence_;
     std::vector<int> maskedList_;
     
 };
@@ -59,6 +62,9 @@ HLTHcalSimpleRecHitFilter::HLTHcalSimpleRecHitFilter(const edm::ParameterSet& iC
 {
     //now do what ever initialization is needed
     threshold_     = iConfig.getParameter<double>("threshold");
+    minNHitsNeg_     = iConfig.getParameter<int>("minNHitsNeg");
+    minNHitsPos_     = iConfig.getParameter<int>("minNHitsPos");
+    doCoincidence_     = iConfig.getParameter<bool>("doCoincidence");
     maskedList_    = iConfig.getParameter<std::vector<int> >("maskedChannels"); //this is using the hashed index
     HcalRecHitCollection_ = iConfig.getParameter<edm::InputTag>("HFRecHitCollection");
     
@@ -91,8 +97,9 @@ HLTHcalSimpleRecHitFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSe
         edm::LogWarning("HLTHcalSimpleRecHitFilter") << HcalRecHitCollection_ << " not available";
     }
     
-    bool aboveThreshold = false ; 
+    bool accept = false ; 
 
+    int hitCount=0, nHitsNeg=0, nHitsPos=0;
     for ( HFRecHitCollection::const_iterator hitItr = crudeHits->begin(); hitItr != crudeHits->end(); ++hitItr ) {     
        HFRecHit hit = (*hitItr);
      
@@ -101,18 +108,26 @@ HLTHcalSimpleRecHitFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSe
        result = find( maskedList_.begin(), maskedList_.end(), HcalDetId(hit.id()).hashed_index() );    
        if  (result != maskedList_.end()) 
            continue; 
+       //std::cout << " HF hit " << hitCount << " (ieta|iphi): (" << hit.id().ieta() << "|" << hit.id().iphi() << ") "
+       //	       << " side: " << hit.id().zside() << " energy: " << hit.energy() << std::endl;
+       ++hitCount;
        
-       float ampli_ = hit.energy();
-       
-       if ( ampli_ >= threshold_ ) {
-           aboveThreshold = true;
+       // only count tower above threshold
+       if ( hit.energy() < threshold_ ) continue;
 //            edm::LogInfo("HcalFilter")  << "at evet: " << iEvent.id().event() 
 //                                           << " and run: " << iEvent.id().run() 
-//                                           << " signal above threshold found: " << ampli_ ; 
-           break ;
-       }
+//                                           << " signal above threshold found: " << ampli_ ;
+       if (hit.id().zside()<0) ++nHitsNeg;
+       else ++nHitsPos;
     }
-    return aboveThreshold ; 
+
+    // Logic
+    if (!doCoincidence_) accept = (nHitsNeg>=minNHitsNeg_) || (nHitsPos>=minNHitsPos_);
+    else accept = (nHitsNeg>=minNHitsNeg_) && (nHitsPos>=minNHitsPos_);
+    std::cout << "Event: " << iEvent.id().event() << " - Total HF hits: " << hitCount << " nNeg: " << nHitsNeg << " nPos " << nHitsPos << " doCoinc: " << doCoincidence_ << " accept: " << accept << std::endl;
+
+    // result
+    return accept; 
 }
 
 //define this as a plug-in
