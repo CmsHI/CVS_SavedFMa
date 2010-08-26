@@ -120,9 +120,10 @@ HLTHcalSimpleRecHitFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSe
     // Logic
     if (!doCoincidence_) accept = (nHitsNeg>=minNHitsNeg_) || (nHitsPos>=minNHitsPos_);
     else accept = (nHitsNeg>=minNHitsNeg_) && (nHitsPos>=minNHitsPos_);
-//            edm::LogInfo("HcalFilter")  << "at evet: " << iEvent.id().event() 
-//                                           << " and run: " << iEvent.id().run()
-//					  << "Total HF hits: " << crudeHits->size() << " Abose Threshold - nNeg: " << nHitsNeg << " nPos " << nHitsPos << " doCoinc: " << doCoincidence_ << " accept: " << accept << std::endl;
+//  edm::LogInfo("HcalFilter")  << "at evet: " << iEvent.id().event() 
+//    << " and run: " << iEvent.id().run()
+//    << " Total HF hits: " << crudeHits->size() << " Above Threshold - nNeg: " << nHitsNeg << " nPos " << nHitsPos
+//    << " doCoinc: " << doCoincidence_ << " accept: " << accept << std::endl;
 
     // result
     return accept; 
