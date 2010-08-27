@@ -37,13 +37,13 @@ void anaDiJet(int doMC=0,
 
   // === Declare selection ===
   selectionCut anaSel(SrcName,doMC,"S0",100,200,50,2.5);
-  anaSel.DJCutType = "Ref";
+  anaSel.DJCutType = "Ana";
   anaSel.TrkCutType = "Ana";
   anaSel.SetCut();
   //anaSel.DJAnd("aljet/nljet<0.7");
   // loose
   selectionCut anaSelLoose(SrcName,doMC,"S0",20,200,20,2.5);
-  anaSelLoose.DJCutType = "Ref";
+  anaSelLoose.DJCutType = "Ana";
   anaSelLoose.SetCut();
 
   // -- analysis selections --
@@ -64,17 +64,17 @@ void anaDiJet(int doMC=0,
 
   // ============== pdf comparisons ===============
   cout << endl << "======= anaDiJet ========" << endl;
-  AnaFrag djTreeJDPhi("djTree","JDPhi",djTree,anaSel.FinDJCut(),"","jdphi","","",30,0,TMath::Pi());
-  AnaFrag djTreeLooseJDPhi("djTreeLoose","JDPhi",djTree,anaSelLoose.FinDJCut(),"","jdphi","","",30,0,TMath::Pi());
-  AnaFrag djTreeBalance("djTree","Balance",djTree,anaSel.FinDJCut(),"","aljet/nljet","","",30,0,1.);
-  AnaFrag djTreeLooseBalance("djTreeLoose","Balance",djTree,anaSelLoose.FinDJCut(),"","aljet/nljet","","",30,0,1.);
+  AnaFrag JDPhi("Ana","JDPhi",djTree,anaSel.FinDJCut(),"","jdphi","","",30,0,TMath::Pi());
+  AnaFrag LooseJDPhi("Loose","JDPhi",djTree,anaSelLoose.FinDJCut(),"","jdphi","","",30,0,TMath::Pi());
+  AnaFrag Balance("Ana","Balance",djTree,anaSel.FinDJCut(),"","aljet/nljet","","",30,0,1.);
+  AnaFrag LooseBalance("Loose","Balance",djTree,anaSelLoose.FinDJCut(),"","aljet/nljet","","",30,0,1.);
 
   // -- plot --
   TCanvas * cCompJDPhi = new TCanvas("cCompJDPhi","cCompJDPhi",500,500);
   CPlot cpCompJDPhi("CompJDPhi"+anaSel.DJCutType,"CompJDPhi","Leading Di-Jet d #phi","pdf");
   cpCompJDPhi.SetYRange(0,5);
-  cpCompJDPhi.AddHist1D(djTreeLooseJDPhi.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
-  cpCompJDPhi.AddHist1D(djTreeJDPhi.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
+  cpCompJDPhi.AddHist1D(LooseJDPhi.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
+  cpCompJDPhi.AddHist1D(JDPhi.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
   cpCompJDPhi.SetLegend(0.21,0.75,0.54,0.87);
   cpCompJDPhi.SetLegendHeader(header);
   cpCompJDPhi.Draw(cCompJDPhi,true);
@@ -82,8 +82,8 @@ void anaDiJet(int doMC=0,
   TCanvas * cCompBalance = new TCanvas("cCompBalance","cCompBalance",500,500);
   CPlot cpCompBalance("CompBalance"+anaSel.DJCutType,"CompBalance","E_{T}^{j2}/E_{T}^{j1}","pdf");
   cpCompBalance.SetYRange(0,7.5);
-  cpCompBalance.AddHist1D(djTreeLooseBalance.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
-  cpCompBalance.AddHist1D(djTreeBalance.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
+  cpCompBalance.AddHist1D(LooseBalance.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
+  cpCompBalance.AddHist1D(Balance.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
   cpCompBalance.SetLegendHeader(header);
   cpCompBalance.Draw(cCompBalance,true);
 
@@ -108,11 +108,11 @@ void anaDiJet(int doMC=0,
   centSel.VtxCut = "";
   centSel.SetDJEt(80,200,40);
   centSel.SetCut();
-  AnaFrag djTreeDJCent("djTree","DJCent",djTree,centSel.FinDJCut(),"","cent","","",20,0,100);
+  AnaFrag DJCent("Ana","DJCent",djTree,centSel.FinDJCut(),"","cent","","",20,0,100);
   TCanvas * cDJCent = new TCanvas("cDJCent","cDJCent",500,500);
   CPlot cpDJCent("DJCent"+centSel.DJCutType,"DJCent","Centrality [%]","frac of (tight) DiJets");
   cpDJCent.SetYRange(0,0.07);
-  cpDJCent.AddHist1D(djTreeDJCent.hRaw,"HF based Centrality","E",kBlack,kFullCircle);
+  cpDJCent.AddHist1D(DJCent.hRaw,"HF based Centrality","E",kBlack,kFullCircle);
   cpDJCent.SetLegendHeader(header);
   cpDJCent.Draw(cDJCent,true);
 

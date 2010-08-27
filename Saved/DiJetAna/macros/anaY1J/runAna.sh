@@ -5,6 +5,6 @@ try=$1
 
 # anaDiJet
 ./runAnaDiJet.sh 0 $inputHard JExHdMc a1 dj JulyData-Hard dijetAna_mc $try
-#./runAnaDiJet.sh 0 $inputMB JExMbMc a1 dj JulyData-MB dijetAna_mc $try
+./runAnaDiJet.sh 0 $inputMB JExMbMc a1 dj JulyData-MB dijetAna_mc $try
 
 exit
