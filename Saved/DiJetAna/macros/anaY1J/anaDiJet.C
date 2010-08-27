@@ -36,13 +36,14 @@ void anaDiJet(int doMC=0,
   cout << " # entries: " << djTree->GetEntries() << endl;
 
   // === Declare selection ===
-  selectionCut anaSel(SrcName,doMC,"S0",110,200,50,2.5);
-  anaSel.DJCutType = "Ana";
+  selectionCut anaSel(SrcName,doMC,"S0",100,200,50,2.5);
+  anaSel.DJCutType = "Ref";
   anaSel.TrkCutType = "Ana";
   anaSel.SetCut();
   //anaSel.DJAnd("aljet/nljet<0.7");
   // loose
   selectionCut anaSelLoose(SrcName,doMC,"S0",20,200,20,2.5);
+  anaSelLoose.DJCutType = "Ref";
   anaSelLoose.SetCut();
 
   // -- analysis selections --
@@ -62,6 +63,7 @@ void anaDiJet(int doMC=0,
   TFile * outf = new TFile(Form("%s/anaDiJet.root",anaoutdir.Data()),"RECREATE");
 
   // ============== pdf comparisons ===============
+  cout << endl << "======= anaDiJet ========" << endl;
   AnaFrag djTreeJDPhi("djTree","JDPhi",djTree,anaSel.FinDJCut(),"","jdphi","","",30,0,TMath::Pi());
   AnaFrag djTreeLooseJDPhi("djTreeLoose","JDPhi",djTree,anaSelLoose.FinDJCut(),"","jdphi","","",30,0,TMath::Pi());
   AnaFrag djTreeBalance("djTree","Balance",djTree,anaSel.FinDJCut(),"","aljet/nljet","","",30,0,1.);
