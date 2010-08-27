@@ -9,7 +9,7 @@
 class selectionCut
 {  
   public:
-    selectionCut(TString name, int doMC, TString base="S0", float NrJetMin=100, float NrJetMax=170, float AwJetMin=50, float jdphi=2.5);
+    selectionCut(TString name, int doMC, TString base="S0", double NrJetMin=100, double NrJetMax=170, double AwJetMin=50, double jdphi=2.5);
     ~selectionCut(){}
 
     // memeber functions
@@ -25,7 +25,7 @@ class selectionCut
     TCut FinDJCut() const { return BaseCut && DJCut(); }
     TCut FinDJTrkCut() const { return FinDJCut() && TrkCut(); }
     // mutators
-    void SetDJEt(float nrMin, float nrMax, float awMin)
+    void SetDJEt(double nrMin, double nrMax, double awMin)
     { NrJEtMin=nrMin; NrJEtMax=nrMax; AwJEtMin=awMin; }
 
     // ana setup
@@ -48,37 +48,37 @@ class selectionCut
     int RunNum;
 
     // evt
-    float VzMin;
-    float VzMax;
+    double VzMin;
+    double VzMax;
 
     // jet
     // -- ana ranges --
-    float NrJEtMin;
-    float NrJEtMax;
-    float AwJEtMin;
-    float JEtaMin;
-    float JEtaMax;
-    float DjDPhiMin;
+    double NrJEtMin;
+    double NrJEtMax;
+    double AwJEtMin;
+    double JEtaMin;
+    double JEtaMax;
+    double DjDPhiMin;
     // -- draw ranges --
     int	  numJEtBins;
-    float hisJEtMin;
-    float hisJEtMax;
+    double hisJEtMin;
+    double hisJEtMax;
     int	  numJEtaBins;
-    float hisJEtaMin;
-    float hisJEtaMax;
+    double hisJEtaMin;
+    double hisJEtaMax;
     int	  hisJPhiBins;
-    float hisJPhiMin;
-    float hisJPhiMax;
+    double hisJPhiMin;
+    double hisJPhiMax;
 
     // trk
     int	  numTrkPtBins;
-    float hisTrkPtMin;
-    float hisTrkPtMax;
+    double hisTrkPtMin;
+    double hisTrkPtMax;
 
     // xi
     int numXiBins;
-    float hisXiMin;
-    float hisXiMax;
+    double hisXiMin;
+    double hisXiMax;
 
   protected:
     std::map<TString,TCut> Evt;
@@ -86,7 +86,7 @@ class selectionCut
     std::map<TString,TCut> Trk;
 };
 
-selectionCut::selectionCut(TString name, int mc, TString base, float NrEtMin, float NrEtMax, float AwEtMin, float jdphi) :
+selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, double NrEtMax, double AwEtMin, double jdphi) :
   // setup
   Name(name),
   doMC(mc),
@@ -107,6 +107,10 @@ selectionCut::selectionCut(TString name, int mc, TString base, float NrEtMin, fl
   JEtaMin(0.),
   JEtaMax(2.),
   DjDPhiMin(jdphi),
+  // trk
+  numTrkPtBins(30),
+  hisTrkPtMin(0),
+  hisTrkPtMax(60),
   // plot
   numJEtBins(50),
   hisJEtMin(0),
