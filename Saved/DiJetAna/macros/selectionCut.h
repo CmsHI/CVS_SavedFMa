@@ -18,6 +18,11 @@ class selectionCut
     void EvtAnd(TCut cut) { And(Evt,cut); }
     void Print(int verbosity=2);
     void SetCut();
+    // accessors
+    TCut DJCut() { return DJ[DJCutType]; }
+    TCut TrkCut() { return Trk[TrkCutType]; }
+    TCut FinDJCut() { return BaseCut && DJCut(); }
+    TCut FinDJTrkCut() { return FinDJCut() && TrkCut(); }
 
     // ana setup
     TString Name;
@@ -34,11 +39,6 @@ class selectionCut
     TCut Trigger;
     TCut CentCut;
     TCut VtxCut;
-    TCut DJCut;
-    TCut TrkCut;
-    std::map<TString,TCut> Evt;
-    std::map<TString,TCut> DJ;
-    std::map<TString,TCut> Trk;
 
     // run info
     int RunNum;
@@ -75,6 +75,11 @@ class selectionCut
     int numXiBins;
     float hisXiMin;
     float hisXiMax;
+
+  protected:
+    std::map<TString,TCut> Evt;
+    std::map<TString,TCut> DJ;
+    std::map<TString,TCut> Trk;
 };
 
 selectionCut::selectionCut(TString name, int mc, TString base, float NrEtMin, float NrEtMax, float AwEtMin, float jdphi) :
@@ -115,7 +120,7 @@ selectionCut::selectionCut(TString name, int mc, TString base, float NrEtMin, fl
   TH1::SetDefaultSumw2();
 
   RunCut = Form("run==%d",RunNum);
-  VtxCut = Form("vz[1]<%.1f&&vz[1]>%.1f",VzMin,VzMax);
+  VtxCut = Form("vz>%.1f&&vz<%.1f",VzMin,VzMax);
 }
 
 void selectionCut::SetCut()
@@ -141,16 +146,12 @@ void selectionCut::SetCut()
   DJ["AnaLower"] = Form("nljet*0.86>%.1f&&nljet*0.86<%.1f&&aljet*0.86>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
       NrJEtMin,NrJEtMax,AwJEtMin,JEtaMax,JEtaMax,DjDPhiMin);
 
-  DJCut = DJ[DJCutType];
-
   // Track Selections
   Trk["Ana"] = ("ppt>1.2&&ppt<nljet");
   Trk["Tight3"] = ("ppt>3.&&ppt<nljet");
   Trk["Tight5"] = ("ppt>5.&&ppt<nljet");
   Trk["TightNH"] = ("ppt>1.5&&ppt<nljet&&trkNHits>14");
   Trk["AnaSig"] = Trk["Ana"]&&"psube==0";
-
-  TrkCut = Trk[TrkCutType];
 
   Tag = Form("%s_%0.f_%.0f_%.0f",BaseCutType.Data(),NrJEtMin,NrJEtMax,AwJEtMin);
   Print(1);
@@ -171,8 +172,8 @@ void selectionCut::Print(int verbosity)
   std::cout << std::endl << "Ana: " << Name << "/" << Tag << std::endl;
   std::cout << std::setw(15) << "Evt" << ": " << TString(BaseCut) << std::endl;
   if (verbosity==1) {
-    std::cout << std::setw(15) << DJCutType << ": " << TString(DJCut) << std::endl;
-    std::cout << std::setw(15) << TrkCutType << ": " << TString(TrkCut) << std::endl;
+    std::cout << std::setw(15) << DJCutType << ": " << TString(DJCut()) << std::endl;
+    std::cout << std::setw(15) << TrkCutType << ": " << TString(TrkCut()) << std::endl;
   }
   if (verbosity==2) {
     std::cout << " -- DJ cut -- " << std::endl;
