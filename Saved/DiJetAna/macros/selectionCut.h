@@ -153,7 +153,7 @@ void selectionCut::SetCut()
   Trk["TightNH"] = ("ppt>1.5&&ppt<nljet&&trkNHits>14");
   Trk["AnaSig"] = Trk["Ana"]&&"psube==0";
 
-  Tag = Form("%s_%0.f_%.0f_%.0f",BaseCutType.Data(),NrJEtMin,NrJEtMax,AwJEtMin);
+  Tag = Form("%s_%0.f_%.0f_%.0f_%.0f",BaseCutType.Data(),NrJEtMin,NrJEtMax,AwJEtMin,DjDPhiMin*10);
   Print(1);
 }
 
