@@ -21,9 +21,9 @@ using namespace std;
 void anaDiJet(int doMC=0,
     const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/JEx_Hard_GSR_ZS/mc0824_hlt/dijetAna_*.root",
     TString SrcName = "JExHdMc",
-    TString AnaVersion = "a0",
+    TString AnaVersion = "a1",
     TString AnaType = "dj",
-    TString header = "July Data (Hard Triggered)",
+    TString header = "JulyData-Hard",
     TString modName = "dijetAna_mc")
 {
   // Define Inputs
@@ -60,7 +60,7 @@ void anaDiJet(int doMC=0,
   gSystem->mkdir(anaoutdir.Data(),kTRUE);
   CPlot::sOutDir = anaoutdir+"/"+AnaType;
   // Save output
-  TFile * outf = new TFile(Form("%s/anaDiJet.root",anaoutdir.Data()),"RECREATE");
+  TFile * outf = new TFile(Form("%s/%s.root",anaoutdir.Data(),AnaType.Data()),"RECREATE");
 
   // ============== pdf comparisons ===============
   cout << endl << "======= anaDiJet ========" << endl;
