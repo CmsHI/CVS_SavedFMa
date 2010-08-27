@@ -37,13 +37,13 @@ void anaDiJet(int doMC=0,
 
   // === Declare selection ===
   selectionCut anaSel(SrcName,doMC,"S0",100,200,50,2.5);
-  anaSel.DJCutType = "Ref";
+  anaSel.DJCutType = "Ana";
   anaSel.TrkCutType = "Ana";
   anaSel.SetCut();
   //anaSel.DJAnd("aljet/nljet<0.7");
   // loose
   selectionCut anaSelLoose(SrcName,doMC,"S0",20,200,20,2.5);
-  anaSelLoose.DJCutType = "Ref";
+  anaSelLoose.DJCutType = "Ana";
   anaSelLoose.SetCut();
 
   // -- analysis selections --
@@ -71,7 +71,7 @@ void anaDiJet(int doMC=0,
 
   // -- plot --
   TCanvas * cCompJDPhi = new TCanvas("cCompJDPhi","cCompJDPhi",500,500);
-  CPlot cpCompJDPhi("CompJDPhi","CompJDPhi","Leading Di-Jet d #phi","pdf");
+  CPlot cpCompJDPhi("CompJDPhi"+anaSel.DJCutType,"CompJDPhi","Leading Di-Jet d #phi","pdf");
   cpCompJDPhi.SetYRange(0,5);
   cpCompJDPhi.AddHist1D(djTreeLooseJDPhi.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
   cpCompJDPhi.AddHist1D(djTreeJDPhi.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
@@ -80,7 +80,7 @@ void anaDiJet(int doMC=0,
   cpCompJDPhi.Draw(cCompJDPhi,true);
 
   TCanvas * cCompBalance = new TCanvas("cCompBalance","cCompBalance",500,500);
-  CPlot cpCompBalance("CompBalance","CompBalance","E_{T}^{j2}/E_{T}^{j1}","pdf");
+  CPlot cpCompBalance("CompBalance"+anaSel.DJCutType,"CompBalance","E_{T}^{j2}/E_{T}^{j1}","pdf");
   cpCompBalance.SetYRange(0,7.5);
   cpCompBalance.AddHist1D(djTreeLooseBalance.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
   cpCompBalance.AddHist1D(djTreeBalance.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
@@ -97,7 +97,7 @@ void anaDiJet(int doMC=0,
   // -- plot --
   TCanvas * cDJEt = new TCanvas("cDJEt","cDJEt",500,500);
   cDJEt->SetLogz();
-  CPlot cpDJEt("DataDJEt","DJ","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
+  CPlot cpDJEt("DataDJEt"+anaSel.DJCutType,"DJ","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
   cpDJEt.AddHist2D(hgDJEt.H(DJEtName0),"colz");
   cpDJEt.Draw(cDJEt,true);
 
@@ -108,7 +108,7 @@ void anaDiJet(int doMC=0,
   anaSel.SetCut();
   AnaFrag djTreeDJCent("djTree","DJCent",djTree,anaSel.FinDJCut(),"","cent","","",20,0,100);
   TCanvas * cDJCent = new TCanvas("cDJCent","cDJCent",500,500);
-  CPlot cpDJCent("DJCent","DJCent","Centrality [%]","frac of (tight) DiJets");
+  CPlot cpDJCent("DJCent"+anaSel.DJCutType,"DJCent","Centrality [%]","frac of (tight) DiJets");
   cpDJCent.SetYRange(0,0.07);
   cpDJCent.AddHist1D(djTreeDJCent.hRaw,"HF based Centrality","E",kBlack,kFullCircle);
   cpDJCent.SetLegendHeader(header);
