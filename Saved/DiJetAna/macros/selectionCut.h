@@ -23,6 +23,9 @@ class selectionCut
     TCut TrkCut() { return Trk[TrkCutType]; }
     TCut FinDJCut() { return BaseCut && DJCut(); }
     TCut FinDJTrkCut() { return FinDJCut() && TrkCut(); }
+    // mutators
+    void SetDJEt(float nrMin, float nrMax, float awMin)
+    { NrJEtMin=nrMin; NrJEtMax=nrMax; AwJEtMin=awMin; }
 
     // ana setup
     TString Name;
