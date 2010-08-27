@@ -37,13 +37,13 @@ void anaDiJet(int doMC=0,
 
   // === Declare selection ===
   selectionCut anaSel(SrcName,doMC,"S0",100,200,50,2.5);
-  anaSel.DJCutType = "Ana";
+  anaSel.DJCutType = "Ref";
   anaSel.TrkCutType = "Ana";
   anaSel.SetCut();
   //anaSel.DJAnd("aljet/nljet<0.7");
   // loose
   selectionCut anaSelLoose(SrcName,doMC,"S0",20,200,20,2.5);
-  anaSelLoose.DJCutType = "Ana";
+  anaSelLoose.DJCutType = "Ref";
   anaSelLoose.SetCut();
 
   // -- analysis selections --
@@ -102,13 +102,15 @@ void anaDiJet(int doMC=0,
   cpDJEt.Draw(cDJEt,true);
 
   // DJ vs Centrality
-  anaSel.Trigger = "";
-  anaSel.CentCut = "cent<100";
-  anaSel.VtxCut = "";
-  anaSel.SetCut();
-  AnaFrag djTreeDJCent("djTree","DJCent",djTree,anaSel.FinDJCut(),"","cent","","",20,0,100);
+  selectionCut centSel(anaSelLoose);
+  centSel.Trigger = "";
+  centSel.CentCut = "cent<100";
+  centSel.VtxCut = "";
+  centSel.SetDJEt(80,200,40);
+  centSel.SetCut();
+  AnaFrag djTreeDJCent("djTree","DJCent",djTree,centSel.FinDJCut(),"","cent","","",20,0,100);
   TCanvas * cDJCent = new TCanvas("cDJCent","cDJCent",500,500);
-  CPlot cpDJCent("DJCent"+anaSel.DJCutType,"DJCent","Centrality [%]","frac of (tight) DiJets");
+  CPlot cpDJCent("DJCent"+centSel.DJCutType,"DJCent","Centrality [%]","frac of (tight) DiJets");
   cpDJCent.SetYRange(0,0.07);
   cpDJCent.AddHist1D(djTreeDJCent.hRaw,"HF based Centrality","E",kBlack,kFullCircle);
   cpDJCent.SetLegendHeader(header);
