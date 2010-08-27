@@ -19,10 +19,11 @@ class selectionCut
     void Print(int verbosity=2);
     void SetCut();
     // accessors
-    TCut DJCut() { return DJ[DJCutType]; }
-    TCut TrkCut() { return Trk[TrkCutType]; }
-    TCut FinDJCut() { return BaseCut && DJCut(); }
-    TCut FinDJTrkCut() { return FinDJCut() && TrkCut(); }
+    TCut DJCut() const { return DJ.find(DJCutType)->second; }
+    TCut TrkCut() const { return Trk.find(TrkCutType)->second; }
+    TCut TrkCut(TString type) const { return Trk.find(type)->second; }
+    TCut FinDJCut() const { return BaseCut && DJCut(); }
+    TCut FinDJTrkCut() const { return FinDJCut() && TrkCut(); }
     // mutators
     void SetDJEt(float nrMin, float nrMax, float awMin)
     { NrJEtMin=nrMin; NrJEtMax=nrMax; AwJEtMin=awMin; }
