@@ -3,7 +3,7 @@
 
 scratch=/net/hidsk0001/d00/scratch/frankma
 job=JEx_Hard_GSR_ZS
-jobTag=mc0824_hlt
+jobTag=mc0827_hltall
 
 # ===================== JEx =====================
 inputList=../inputs/$job.txt

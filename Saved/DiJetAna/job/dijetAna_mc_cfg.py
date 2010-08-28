@@ -26,6 +26,8 @@ process.load("Saved.DiJetAna.dijetAna_cff")
 process.dijetAna_mc.hltsrc = cms.InputTag("TriggerResults","","HISIGNAL3")
 process.dijetAna_mc.trksrc = "hiSelectedTracks"
 process.dijetAna_mc.anaTrkType = 2
+process.dijetAna_mc_calojet_genp.hltsrc = cms.InputTag("TriggerResults","","HISIGNAL3")
+process.dijetAna_mc_genjet_genp.hltsrc = cms.InputTag("TriggerResults","","HISIGNAL3")
 # - thresholds -
 #process.dijetAna_mc.nearJetPtMin = 70
 #process.dijetAna_mc_calojet_genp.nearJetPtMin = 70
