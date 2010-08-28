@@ -8,7 +8,7 @@ try=$1
 #./runAnaDiJet.sh 0 $inputMB JExMbMc a1 dj JulyData-MB dijetAna_mc $try
 
 # anaDiJetTrk
-./runAnaDiJetTrk.sh 0 $inputHard JExHdMc a2 djtrk JulyData-Hard dijetAna_mc $try
-./runAnaDiJetTrk.sh 0 $inputMB JExMbMc a2 djtrk JulyData-MB dijetAna_mc $try
+./runAnaDiJetTrk.sh 0 $inputHard JExHdMc j1t0a2 djtrk JulyData-Hard dijetAna_mc_genjet_genp $try
+./runAnaDiJetTrk.sh 0 $inputMB JExMbMc j1t0a2 djtrk JulyData-MB dijetAna_mc_genjet_genp $try
 
 exit
