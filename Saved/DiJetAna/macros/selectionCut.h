@@ -107,10 +107,6 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   JEtaMin(0.),
   JEtaMax(2.),
   DjDPhiMin(jdphi),
-  // trk
-  numTrkPtBins(30),
-  hisTrkPtMin(0),
-  hisTrkPtMax(60),
   // plot
   numJEtBins(50),
   hisJEtMin(0),
@@ -121,6 +117,11 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   hisJPhiBins(40),
   hisJPhiMin(-1*TMath::Pi()),
   hisJPhiMax(TMath::Pi()),
+  // trk
+  numTrkPtBins(30),
+  hisTrkPtMin(0),
+  hisTrkPtMax(60),
+  // FF
   numXiBins(10),
   hisXiMin(0),
   hisXiMax(6)
