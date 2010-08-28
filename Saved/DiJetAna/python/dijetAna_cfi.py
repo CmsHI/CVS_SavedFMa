@@ -47,7 +47,6 @@ dijetAna_data = dijetAna_mc.clone(
 
 # === MC Gen+Reco ===
 dijetAna_mc_genjet_trk = dijetAna_mc.clone(
-    hltsrc = cms.InputTag("None"),
     # jet reco
     jetsrc = cms.InputTag("iterativeCone5HiGenJets"),
     anaJetType = cms.int32(1),
@@ -56,14 +55,12 @@ dijetAna_mc_genjet_trk = dijetAna_mc.clone(
     )
 
 dijetAna_mc_calojet_genp = dijetAna_mc.clone(
-    hltsrc = cms.InputTag("None"),
     # trk selection
     trksrc = cms.InputTag("hiGenParticles"),
     anaTrkType = cms.int32(0)
     )
 
 dijetAna_mc_genjet_genp = dijetAna_mc.clone(
-    hltsrc = cms.InputTag("None"),
     # jet reco
     jetsrc = cms.InputTag("iterativeCone5HiGenJets"),
     anaJetType = cms.int32(1),
