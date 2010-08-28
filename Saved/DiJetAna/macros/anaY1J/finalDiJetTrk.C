@@ -23,6 +23,8 @@ void finalDiJetTrk(int doMC=0,
   TFile * inFile0 = new TFile(inFile0Dir+"/"+AnaType+".root");
   inFile0->ls();
 
+  CPlot::sOutDir = inFile0Dir+"/"+AnaType;
+
   HisTGroup<TH1D> hg0("hg0");
   hg0.Add(inFile0,"hAnaTrkPt","TrkPt");
   hg0.Add(inFile0,"hAnaTrkNHits","TrkNHits");
