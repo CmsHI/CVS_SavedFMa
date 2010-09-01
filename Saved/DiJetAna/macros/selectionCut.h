@@ -135,7 +135,9 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
 void selectionCut::SetCut()
 {
   // Event level selections
-  Evt["S0"] = Trigger&&CentCut&&VtxCut;
+  Evt["S0"] = VtxCut;
+  Evt["S1"] = CentCut&&VtxCut;
+  Evt["S2"] = Trigger&&CentCut&&VtxCut;
 
   BaseCut = Evt[BaseCutType];
 
