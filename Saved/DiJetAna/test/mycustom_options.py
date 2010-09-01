@@ -1,7 +1,3 @@
-process.dijetAna_mc.hltsrc = cms.InputTag("TriggerResults","","HISIGNAL3")
-process.dijetAna_mc_calojet_genp.hltsrc = cms.InputTag("TriggerResults","","HISIGNAL3")
-process.dijetAna_mc_genjet_genp.hltsrc = cms.InputTag("TriggerResults","","HISIGNAL3")
-
 #
 # Python cfg Customization
 # - cf: https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideAboutPythonConfigFile#Passing_Command_Line_Arguments_T
