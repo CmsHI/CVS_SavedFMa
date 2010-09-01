@@ -47,6 +47,9 @@ void finalDiJetFF(int doMC=0,
   hg0.Add(inFile0,"hSig_TrkAw","AwPPtSig");
   hg0.Add(inFile0,"hTrk_Ave","PPtAve");
 
+  TH1D * hFrame = (TH1D*)hg0.GetH("NrXiSig")->Clone("hFrame");
+  hFrame->Scale(0);
+
   TCanvas * cXi = new TCanvas("Xi","Xi",500,500);
   CPlot cpXi("Xi","Xi","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
   cpXi.SetXRange(0,6);
@@ -75,4 +78,33 @@ void finalDiJetFF(int doMC=0,
   cpPPt.AddHist1D(hg0.H("AwPPtSig"),"j2","E",kBlue,kOpenSquare);
   cpPPt.AddHist1D(hg0.H("PPtAve"),"j1,j2","E",kBlack,kFullCircle);
   cpPPt.Draw(cPPt,false);
+
+  // check on bg sub
+  TCanvas * cNrSub = new TCanvas("cNrSub","cNrSub",500,500);
+  CPlot cpNrSub("NrSub","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
+  cpNrSub.SetXRange(0,6);
+  cpNrSub.SetYRange(0.001,1000);
+  cpNrSub.AddHist1D(hFrame,header,"",0,0);
+  cpNrSub.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
+  //cpNrSub.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170GeV, 50GeV<p_{T}^{jet2}","",0,0);
+  cpNrSub.AddHist1D(hg0.H("NrXiRaw"),"Near (Raw)","E",kGreen+2,kOpenSquare);
+  cpNrSub.AddHist1D(hg0.H("NrXiBkg"),"Near (Bkg)","E",kBlue,kOpenCircle);
+  cpNrSub.AddHist1D(hg0.H("NrXiSig"),"Near (Sig)","E",kBlack,kFullCircle);
+  cpNrSub.SetLegend(0.194,0.7,0.52,0.94);
+  cpNrSub.SetLogy();
+  cpNrSub.Draw(cNrSub,false);
+
+  TCanvas * cAwSub = new TCanvas("cAwSub","cAwSub",500,500);
+  CPlot cpAwSub("AwSub","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
+  cpAwSub.SetXRange(0,6);
+  cpAwSub.SetYRange(0.001,1000);
+  cpAwSub.AddHist1D(hFrame,header,"",0,0);
+  cpAwSub.AddHist1D(hFrame,"Centrality: 0-20\%","",0,0);
+  //cpAwSub.AddHist1D(hFrame,"100GeV<p_{T}^{jet1}<170GeV, 50GeV<p_{T}^{jet2}","",0,0);
+  cpAwSub.AddHist1D(hg0.H("AwXiRaw"),"Away (Raw)","E",kGreen+2,kOpenSquare);
+  cpAwSub.AddHist1D(hg0.H("AwXiBkg"),"Away (Bkg)","E",kBlue,kOpenCircle);
+  cpAwSub.AddHist1D(hg0.H("AwXiSig"),"Away (Sig)","E",kBlack,kFullCircle);
+  cpAwSub.SetLegend(0.194,0.7,0.52,0.94);
+  cpAwSub.SetLogy();
+  cpAwSub.Draw(cAwSub,true);
 }
