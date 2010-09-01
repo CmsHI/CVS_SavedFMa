@@ -21,10 +21,10 @@ using namespace std;
 void anaDiJetFF(int doMC=0,
     const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/JEx_Hard_GSR_ZS/mc0827_hltall/dijetAna_*.root",
     TString SrcName = "JExHdMcV2",
-    TString AnaVersion = "a5j1t0t",
+    TString AnaVersion = "a5",
     TString AnaType = "ff",
     TString header = "July Data (Hard Triggered)",
-    TString modName = "dijetAna_mc_genjet_genp")
+    TString modName = "dijetAna_mc")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -38,7 +38,7 @@ void anaDiJetFF(int doMC=0,
   // === Declare selection ===
   selectionCut anaSel(SrcName,doMC,"S1",100,200,50,2.5);
   anaSel.DJCutType = "Ana";
-  anaSel.TrkCutType = "AnaSig";
+  anaSel.TrkCutType = "Ana";
   anaSel.SetCut();
 
   // -- analysis selections --
@@ -56,13 +56,25 @@ void anaDiJetFF(int doMC=0,
 
   // ============== ana ===============
   cout << endl << "======= anaDiJetFF ========" << endl;
-    AnaFrag NrXi(anaSel.DJCutType,"NrXi",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"log(1./zn)","pndr<0.5","pndrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
-    AnaFrag AwXi(anaSel.DJCutType,"AwXi",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"log(1./za)","padr<0.5","padrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
-  HisTGroup<TH1D> hg0(anaSel.DJCutType+"Xi");
-  hg0.Add(NrXi.hSig,"Nr");
-  hg0.Add(AwXi.hSig,"Aw");
-  hg0.Average();
+  AnaFrag NrXi("Xi","Nr",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"log(1./zn)","pndr<0.5","pndrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
+  AnaFrag AwXi("Xi","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"log(1./za)","padr<0.5","padrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
+  HisTGroup<TH1D> hgXi("Xi");
+  hgXi.Add(NrXi.hSig,"Nr");
+  hgXi.Add(AwXi.hSig,"Aw");
+  hgXi.Average();
 
+  AnaFrag AwXi2("Xi2","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"log(1./zn)","padr<0.5","padrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
+  HisTGroup<TH1D> hgXi2("Xi2");
+  hgXi2.Add(NrXi.hSig,"Nr");
+  hgXi2.Add(AwXi2.hSig,"Aw");
+  hgXi2.Average();
+
+  AnaFrag NrTrk("Trk","Nr",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"ppt","pndr<0.5","pndrbg<0.5",anaSel.numTrkPtBins,anaSel.hisTrkPtMin,anaSel.hisTrkPtMax);
+  AnaFrag AwTrk("Trk","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"ppt","padr<0.5","padrbg<0.5",anaSel.numTrkPtBins,anaSel.hisTrkPtMin,anaSel.hisTrkPtMax);
+  HisTGroup<TH1D> hgTrk("Trk");
+  hgTrk.Add(NrTrk.hSig,"Nr");
+  hgTrk.Add(AwTrk.hSig,"Aw");
+  hgTrk.Average();
 
   // All done, save and exit
   outf->Write();
