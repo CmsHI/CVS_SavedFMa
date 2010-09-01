@@ -36,13 +36,13 @@ void anaDiJet(int doMC=0,
   cout << " # entries: " << djTree->GetEntries() << endl;
 
   // === Declare selection ===
-  selectionCut anaSel(SrcName,doMC,"S0",100,200,50,2.5);
+  selectionCut anaSel(SrcName,doMC,"S1",100,200,50,2.5);
   anaSel.DJCutType = "Ana";
   anaSel.TrkCutType = "Ana";
   anaSel.SetCut();
   //anaSel.DJAnd("aljet/nljet<0.7");
   // loose
-  selectionCut anaSelLoose(SrcName,doMC,"S0",20,200,20,2.5);
+  selectionCut anaSelLoose(SrcName,doMC,"S1",20,200,20,2.5);
   anaSelLoose.DJCutType = "Ana";
   anaSelLoose.SetCut();
 
