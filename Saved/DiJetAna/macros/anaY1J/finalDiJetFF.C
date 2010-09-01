@@ -27,27 +27,29 @@ void finalDiJetFF(int doCorr=0,
   CPlot::sOutDir = outdir;
   TFile * outf = new TFile(Form("%s/fff.root",outdir.Data()),"RECREATE");
 
+  Double_t trkEff=0.65,corr=1.;
+  if (doCorr==1) corr/=trkEff;
   HisTGroup<TH1D> hg0("hg0");
-  hg0.Add(inFile0,"hRaw_XiNr","NrXiRaw");
-  hg0.Add(inFile0,"hBkg_XiNr","NrXiBkg");
-  hg0.Add(inFile0,"hSig_XiNr","NrXiSig");
-  hg0.Add(inFile0,"hRaw_XiAw","AwXiRaw");
-  hg0.Add(inFile0,"hBkg_XiAw","AwXiBkg");
-  hg0.Add(inFile0,"hSig_XiAw","AwXiSig");
-  hg0.Add(inFile0,"hXi_Ave","XiAve");
+  hg0.Add(inFile0,"hRaw_XiNr","NrXiRaw",corr);
+  hg0.Add(inFile0,"hBkg_XiNr","NrXiBkg",corr);
+  hg0.Add(inFile0,"hSig_XiNr","NrXiSig",corr);
+  hg0.Add(inFile0,"hRaw_XiAw","AwXiRaw",corr);
+  hg0.Add(inFile0,"hBkg_XiAw","AwXiBkg",corr);
+  hg0.Add(inFile0,"hSig_XiAw","AwXiSig",corr);
+  hg0.Add(inFile0,"hXi_Ave","XiAve",corr);
 
-  hg0.Add(inFile0,"hRaw_Xi2Aw","AwXi2Raw");
-  hg0.Add(inFile0,"hBkg_Xi2Aw","AwXi2Bkg");
-  hg0.Add(inFile0,"hSig_Xi2Aw","AwXi2Sig");
-  hg0.Add(inFile0,"hXi2_Ave","Xi2Ave");
+  hg0.Add(inFile0,"hRaw_Xi2Aw","AwXi2Raw",corr);
+  hg0.Add(inFile0,"hBkg_Xi2Aw","AwXi2Bkg",corr);
+  hg0.Add(inFile0,"hSig_Xi2Aw","AwXi2Sig",corr);
+  hg0.Add(inFile0,"hXi2_Ave","Xi2Ave",corr);
 
-  hg0.Add(inFile0,"hRaw_TrkNr","NrPPtRaw");
-  hg0.Add(inFile0,"hBkg_TrkNr","NrPPtBkg");
-  hg0.Add(inFile0,"hSig_TrkNr","NrPPtSig");
-  hg0.Add(inFile0,"hRaw_TrkAw","AwPPtRaw");
-  hg0.Add(inFile0,"hBkg_TrkAw","AwPPtBkg");
-  hg0.Add(inFile0,"hSig_TrkAw","AwPPtSig");
-  hg0.Add(inFile0,"hTrk_Ave","PPtAve");
+  hg0.Add(inFile0,"hRaw_TrkNr","NrPPtRaw",corr);
+  hg0.Add(inFile0,"hBkg_TrkNr","NrPPtBkg",corr);
+  hg0.Add(inFile0,"hSig_TrkNr","NrPPtSig",corr);
+  hg0.Add(inFile0,"hRaw_TrkAw","AwPPtRaw",corr);
+  hg0.Add(inFile0,"hBkg_TrkAw","AwPPtBkg",corr);
+  hg0.Add(inFile0,"hSig_TrkAw","AwPPtSig",corr);
+  hg0.Add(inFile0,"hTrk_Ave","PPtAve",corr);
 
   TH1D * hFrame = (TH1D*)hg0.GetH("NrXiSig")->Clone("hFrame");
   hFrame->Scale(0);
