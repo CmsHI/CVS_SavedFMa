@@ -25,7 +25,8 @@ void finalDiJetFF(int doCorr=0,
 
   TString outdir = inFile0Dir+"/"+AnaType;
   CPlot::sOutDir = outdir;
-  TFile * outf = new TFile(Form("%s/fff.root",outdir.Data()),"RECREATE");
+  gSystem->mkdir(outdir.Data(),kTRUE);
+  TFile * outf = new TFile(Form("%s/fffCorr%d.root",outdir.Data(),doCorr),"RECREATE");
 
   Double_t trkEff=0.65,corr=1.;
   if (doCorr==1) corr/=trkEff;
