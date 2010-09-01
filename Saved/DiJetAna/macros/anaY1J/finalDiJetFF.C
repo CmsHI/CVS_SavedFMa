@@ -12,9 +12,9 @@
 
 using namespace std;
 
-void finalDiJetFF(int doMC=0,
-    TString inFile0Dir="out/JExHdMc/S0_100_200_50_25/a2",
-    TString AnaType="djtrk",
+void finalDiJetFF(int doCorr=0,
+    TString inFile0Dir="out/JExHdMcV2/S1_100_200_50_25/a5",
+    TString AnaType="ff",
     TString header="July Data (Hard Triggered)")
 {
   // Define Inputs
@@ -23,7 +23,9 @@ void finalDiJetFF(int doMC=0,
   TFile * inFile0 = new TFile(inFile0Dir+"/"+AnaType+".root");
   inFile0->ls();
 
-  CPlot::sOutDir = inFile0Dir+"/"+AnaType;
+  TString outdir = inFile0Dir+"/"+AnaType;
+  CPlot::sOutDir = outdir;
+  TFile * outf = new TFile(Form("%s/fff.root",outdir.Data()),"RECREATE");
 
   HisTGroup<TH1D> hg0("hg0");
   hg0.Add(inFile0,"hRaw_XiNr","NrXiRaw");
@@ -58,7 +60,7 @@ void finalDiJetFF(int doMC=0,
   cpXi.AddHist1D(hg0.H("AwXiSig"),"j2","E",kBlue,kOpenSquare);
   cpXi.AddHist1D(hg0.H("XiAve"),"j1,j2","E",kBlack,kFullCircle);
   cpXi.SetLegend(0.194,0.7,0.52,0.94);
-  cpXi.Draw(cXi,false);
+  cpXi.Draw(cXi,true);
 
   TCanvas * cXi2 = new TCanvas("Xi2","Xi2",500,500);
   CPlot cpXi2("Xi2","Xi2","#xi=ln(E_{T}^{Jet1}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
@@ -68,7 +70,7 @@ void finalDiJetFF(int doMC=0,
   cpXi2.AddHist1D(hg0.H("AwXi2Sig"),"j2","E",kBlue,kOpenSquare);
   cpXi2.AddHist1D(hg0.H("Xi2Ave"),"j1,j2","E",kBlack,kFullCircle);
   cpXi2.SetLegend(0.194,0.7,0.52,0.94);
-  cpXi2.Draw(cXi2,false);
+  cpXi2.Draw(cXi2,true);
 
   TCanvas * cPPt = new TCanvas("PPt","PPt",500,500);
   CPlot cpPPt("PPt","PPt","p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#p_{T}}");
@@ -77,7 +79,7 @@ void finalDiJetFF(int doMC=0,
   cpPPt.AddHist1D(hg0.H("NrPPtSig"),"j1","E",kRed,kOpenSquare);
   cpPPt.AddHist1D(hg0.H("AwPPtSig"),"j2","E",kBlue,kOpenSquare);
   cpPPt.AddHist1D(hg0.H("PPtAve"),"j1,j2","E",kBlack,kFullCircle);
-  cpPPt.Draw(cPPt,false);
+  cpPPt.Draw(cPPt,true);
 
   // check on bg sub
   TCanvas * cNrSub = new TCanvas("cNrSub","cNrSub",500,500);
@@ -92,7 +94,7 @@ void finalDiJetFF(int doMC=0,
   cpNrSub.AddHist1D(hg0.H("NrXiSig"),"Near (Sig)","E",kBlack,kFullCircle);
   cpNrSub.SetLegend(0.194,0.7,0.52,0.94);
   cpNrSub.SetLogy();
-  cpNrSub.Draw(cNrSub,false);
+  cpNrSub.Draw(cNrSub,true);
 
   TCanvas * cAwSub = new TCanvas("cAwSub","cAwSub",500,500);
   CPlot cpAwSub("AwSub","FF","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
@@ -107,4 +109,7 @@ void finalDiJetFF(int doMC=0,
   cpAwSub.SetLegend(0.194,0.7,0.52,0.94);
   cpAwSub.SetLogy();
   cpAwSub.Draw(cAwSub,true);
+
+  // All done, save and exit
+  outf->Write();
 }
