@@ -13,9 +13,9 @@
 using namespace std;
 
 void finalDiJetTrk(int doMC=0,
-    TString inFile0Dir="out/JExHdMc/S0_100_200_50_25/a2",
+    TString inFile0Dir="out/HydUQDJ80/S1_100_200_50_25/a5",
     TString AnaType="djtrk",
-    TString header="July Data (Hard Triggered)")
+    TString header = "Hydjet+UQDJ80to120")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -30,7 +30,7 @@ void finalDiJetTrk(int doMC=0,
   hg0.Add(inFile0,"hAnaTrkNHits","TrkNHits");
   hg0.Add(inFile0,"hAnaJTrkDPhi","JTrkDPhi");
   hg0.Add(inFile0,"hAnaJTrkTight3DPhi","JTrkTight3DPhi");
-  hg0.Add(inFile0,"hAnaJCTrkPt","JCTrkPt");
+  hg0.Add(inFile0,"hConePPt_Sum","ConePPt");
   hg0.Add(inFile0,"hRaw_AnaNrTrkPt","NrTrkPtRaw");
   hg0.Add(inFile0,"hBkg_AnaNrTrkPt","NrTrkPtBkg");
   hg0.Add(inFile0,"hSig_AnaNrTrkPt","NrTrkPtSig");
@@ -42,7 +42,7 @@ void finalDiJetTrk(int doMC=0,
   TCanvas * cCompTrkPt = new TCanvas("cCompTrkPt","cCompTrkPt",500,500);
   CPlot cpCompTrkPt("CompTrkPt","CompTrkPt","p_{T}^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dp_{T}}");
   cpCompTrkPt.AddHist1D(hg0.H("TrkPt"),"hiSelectedTrk","E",kBlack,kFullCircle);
-  cpCompTrkPt.AddHist1D(hg0.H("JCTrkPt"),"hiSelectedTrk (in jet cone)","E",kBlue,kOpenSquare);
+  cpCompTrkPt.AddHist1D(hg0.H("ConePPt"),"hiSelectedTrk (in jet1,2 cone)","E",kBlue,kOpenSquare);
   cpCompTrkPt.SetLegend(0.41,0.76,0.71,0.86);
   cpCompTrkPt.SetLegendHeader(header);
   cpCompTrkPt.SetLogy();

@@ -19,11 +19,11 @@
 using namespace std;
 
 void anaDiJetTrk(int doMC=0,
-    const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/JEx_Hard_GSR_ZS/mc0824_hlt/dijetAna_*.root",
-    TString SrcName = "JExHdMc",
-    TString AnaVersion = "a1",
+    const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/Hydj_Hard_GSR_NZS/UQDJ80_120_proc0831_10k.root",
+    TString SrcName = "HydUQDJ80",
+    TString AnaVersion = "a5",
     TString AnaType = "djtrk",
-    TString header = "July Data (Hard Triggered)",
+    TString header = "Hydjet+UQDJ80to120",
     TString modName = "dijetAna_mc")
 {
   // Define Inputs
@@ -59,25 +59,27 @@ void anaDiJetTrk(int doMC=0,
 
   Double_t histTrkNHitsMax=30;
   // === Inclusive ===
-  AnaFrag TrkPt("Ana","TrkPt",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),
+  AnaFrag TrkPt(anaSel.DJCutType,"TrkPt",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),
       "ppt","","",anaSel.numTrkPtBins,0,anaSel.hisTrkPtMax);
-  AnaFrag TrkNHits("Ana","TrkNHits",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),
+  AnaFrag TrkNHits(anaSel.DJCutType,"TrkNHits",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),
       "trkNHits","","",histTrkNHitsMax,0,histTrkNHitsMax);
 
   // === In Jet Eta Strip ===
-  AnaFrag JTrkDPhi("Ana","JTrkDPhi",djTree,anaSel.FinDJCut(),anaSel.TrkCut()&&"abs(peta-nljeta)<0.5||abs(peta-aljeta)<0.5",
+  AnaFrag JTrkDPhi(anaSel.DJCutType,"JTrkDPhi",djTree,anaSel.FinDJCut(),anaSel.TrkCut()&&"abs(peta-nljeta)<0.5||abs(peta-aljeta)<0.5",
       "pndphi","","",20,-1*TMath::Pi(),TMath::Pi());
-  AnaFrag JTrkTight3DPhi("Ana","JTrkTight3DPhi",djTree,anaSel.FinDJCut(),anaSel.TrkCut("Tight3")&&"abs(peta-nljeta)<0.5||abs(peta-aljeta)<0.5",
+  AnaFrag JTrkTight3DPhi(anaSel.DJCutType,"JTrkTight3DPhi",djTree,anaSel.FinDJCut(),anaSel.TrkCut("Tight3")&&"abs(peta-nljeta)<0.5||abs(peta-aljeta)<0.5",
       "pndphi","","",20,-1*TMath::Pi(),TMath::Pi());
 
   // === In Jet Cone ===
-  AnaFrag JCTrkPt("Ana","JCTrkPt",djTree,anaSel.FinDJCut(),anaSel.TrkCut()&&"pndr<0.5||padr<0.5",
-      "ppt","","",anaSel.numTrkPtBins,0,anaSel.hisTrkPtMax);
-  //  - bg subtracted -
-  AnaFrag NrTrkPt("Ana","NrTrkPt",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),
+  AnaFrag NrTrkPt(anaSel.DJCutType,"NrTrkPt",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),
       "ppt","pndr<0.5","pndrbg<0.5",anaSel.numTrkPtBins,0,anaSel.hisTrkPtMax);
-  AnaFrag AwTrkPt("Ana","AwTrkPt",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),
+  AnaFrag AwTrkPt(anaSel.DJCutType,"AwTrkPt",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),
       "ppt","padr<0.5","padrbg<0.5",anaSel.numTrkPtBins,0,anaSel.hisTrkPtMax);
+  HisTGroup<TH1D> hgCone("ConePPt");
+  hgCone.Add(NrTrkPt.hRaw,"Nr");
+  hgCone.Add(AwTrkPt.hRaw,"Aw");
+  hgCone.Sum();
+  hgCone.Average();
 
   // All done, save and exit
   outf->Write();
