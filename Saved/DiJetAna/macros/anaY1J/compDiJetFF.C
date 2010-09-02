@@ -13,11 +13,11 @@
 using namespace std;
 
 void compDiJetFF(
-    TString inFile0Dir="out/JExHdMcV2/S1_100_200_50_25/a5/ff",
-    TString inFile1Dir="out/JExHdMcV2/S1_100_200_50_25/a5j1t0/ff",
-    TString AnaType0="fffCorr0",
-    TString AnaType1="fffCorr1",
-    TString header="July Data (Hard Triggered)")
+    TString inFile0Dir="out/HydUQDJ80/S1_100_200_50_25/a5/ff",
+    TString inFile1Dir="out/HydUQDJ80/S1_100_200_50_25/a5j1t0/ff",
+    TString AnaType0="fffCorr1",
+    TString AnaType1="fffCorr0",
+    TString header="Hydjet+UQDiJet80to120")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
