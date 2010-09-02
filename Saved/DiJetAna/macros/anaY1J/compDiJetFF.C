@@ -60,7 +60,8 @@ void compDiJetFF(
   CPlot cpXi2("Xi2","Xi2","#xi=ln(E_{T}^{Jet1}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
   cpXi2.SetXRange(0,6);
   cpXi2.SetYRange(0.001,7);
-  cpXi2.AddHist1D(hg0.H("Xi2Ave"),"j1,j2","E",kBlack,kFullCircle);
+  cpXi2.AddHist1D(hg0.H("Xi2Ave"),"reco corr FF - j1,j2","E",kBlack,kFullCircle);
+  cpXi2.AddHist1D(hg1.H("Xi2Ave"),"gen FF - j1,j2","E",kRed,kOpenStar);
   cpXi2.SetLegend(0.194,0.7,0.52,0.94);
   cpXi2.Draw(cXi2,false);
 
@@ -68,6 +69,7 @@ void compDiJetFF(
   CPlot cpPPt("PPt","PPt","p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#p_{T}}");
   cpPPt.SetLogy();
   cpPPt.SetXRange(0,60);
-  cpPPt.AddHist1D(hg0.H("PPtAve"),"j1,j2","E",kBlack,kFullCircle);
+  cpPPt.AddHist1D(hg0.H("PPtAve"),"reco corr FF - j1,j2","E",kBlack,kFullCircle);
+  cpPPt.AddHist1D(hg1.H("PPtAve"),"gen FF - j1,j2","E",kRed,kOpenStar);
   cpPPt.Draw(cPPt,false);
 }
