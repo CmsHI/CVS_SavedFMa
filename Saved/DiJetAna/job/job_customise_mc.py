@@ -1,3 +1,11 @@
+# --- Job specific configs ---
+print "Job Final Cfg: "
+# - thresholds -
+#process.dijetAna_mc.nearJetPtMin = 50
+#process.dijetAna_mc_calojet_genp.nearJetPtMin = 50
+#process.dijetAna_mc_genjet_genp.nearJetPtMin = 50
+print process.dijetAna_mc.dumpPython()
+
 #
 # Python cfg Customization
 # - cf: https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideAboutPythonConfigFile#Passing_Command_Line_Arguments_T
