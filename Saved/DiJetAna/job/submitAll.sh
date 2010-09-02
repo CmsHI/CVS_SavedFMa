@@ -2,8 +2,8 @@
 ./create_custom_python_cfg.sh
 
 scratch=/net/hidsk0001/d00/scratch/frankma
-job=JEx_MB_GSR_ZS
-jobTag=mc0827_hltall
+job=JEx_Hard_GSR_ZS
+jobTag=mc0902_chcand
 
 # ===================== JEx =====================
 inputList=../inputs/$job.txt
