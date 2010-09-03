@@ -1,7 +1,7 @@
 #include "TTree.h"
 #include <cassert>
 
-void aliases_dijet(TTree * djTree, int doMC=1)
+void aliases_dijet(TTree * djTree, float pptMin=4.5, int doMC=1)
 { 
   if (!djTree) cout << "djTree not defined, please check" << endl;
   assert(djTree);
@@ -11,7 +11,7 @@ void aliases_dijet(TTree * djTree, int doMC=1)
   djTree->SetAlias("goodDJ2","nljet>10 && aljet>10 && abs(nljeta)<2 && abs(aljeta)<2 && jdphi>2.14 && nljemf>0.01 && aljemf>0.01");
 
   // track level
-  djTree->SetAlias("goodTrk","ppt>1.2 && ppt<nljet");
+  djTree->SetAlias("goodTrk",Form("ppt>%f && ppt<nljet",pptMin));
 
   // jet cone info
   djTree->SetAlias("NC5NP","Sum$(goodTrk && pndr<0.5)");
