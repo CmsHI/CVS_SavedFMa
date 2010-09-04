@@ -11,4 +11,7 @@ SrcName="HydUQDJ80"
 header="Hydjet+UQDJ80"
 AnaType="ff"
 
-root -b -q anaDiJetFF.C+\($doMC,\"$AnaVersion\",\"$modName\",\"$inFile0Name\",\"$SrcName\",\"$header\",\"$AnaType\"\)
+#root -b -q anaDiJetFF.C+\($doMC,\"$AnaVersion\",\"$modName\",\"$inFile0Name\",\"$SrcName\",\"$header\",\"$AnaType\"\)
+
+doCorr=0
+root -l finalDiJetFF.C+\($doCorr,\"out/HydUQDJ80/S1_100_200_50_25/$AnaVersion\",\"$header\",\"$AnaType\"\)
