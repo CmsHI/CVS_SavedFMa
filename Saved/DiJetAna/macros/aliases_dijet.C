@@ -11,18 +11,19 @@ void aliases_dijet(TTree * djTree, float pptMin=4.5, int doMC=1)
   djTree->SetAlias("goodDJ2","nljet>10 && aljet>10 && abs(nljeta)<2 && abs(aljeta)<2 && jdphi>2.14 && nljemf>0.01 && aljemf>0.01");
 
   // track level
-  djTree->SetAlias("goodTrk",Form("ppt>%f && ppt<nljet",pptMin));
+  djTree->SetAlias("goodTrk",Form("ppt>%f && ppt<nljet*1.5 &&psube==0",pptMin));
 
   // jet cone info
-  djTree->SetAlias("NC5NP","Sum$(goodTrk && pndr<0.5)");
-  djTree->SetAlias("AC5NP","Sum$(goodTrk && padr<0.5)");
-  djTree->SetAlias("NC5PEt","Sum$((goodTrk && pndr<0.5)*ppt)");
-  djTree->SetAlias("AC5PEt","Sum$((goodTrk && padr<0.5)*ppt)");
+  double dR=0.5;
+  djTree->SetAlias("NC5NP",Form("Sum$(goodTrk && pndr<%f)",dR));
+  djTree->SetAlias("AC5NP",Form("Sum$(goodTrk && padr<%f)",dR));
+  djTree->SetAlias("NC5Pt",Form("Sum$((goodTrk && pndr<%f)*ppt)",dR));
+  djTree->SetAlias("AC5Pt",Form("Sum$((goodTrk && padr<%f)*ppt)",dR));
 
-  djTree->SetAlias("NC5NPBg","Sum$(goodTrk && pndrbg<0.5)");
-  djTree->SetAlias("AC5NPBg","Sum$(goodTrk && padrbg<0.5)");
-  djTree->SetAlias("NC5PEtBg","Sum$((goodTrk && pndrbg<0.5)*ppt)");
-  djTree->SetAlias("AC5PEtBg","Sum$((goodTrk && padrbg<0.5)*ppt)");
+  djTree->SetAlias("NC5NPBg",Form("Sum$(goodTrk && pndrbg<%f)",dR));
+  djTree->SetAlias("AC5NPBg",Form("Sum$(goodTrk && padrbg<%f)",dR));
+  djTree->SetAlias("NC5PtBg",Form("Sum$((goodTrk && pndrbg<%f)*ppt)",dR));
+  djTree->SetAlias("AC5PtBg",Form("Sum$((goodTrk && padrbg<%f)*ppt)",dR));
 
   if (doMC==0) return;
 
