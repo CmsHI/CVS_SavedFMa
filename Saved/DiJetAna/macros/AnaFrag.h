@@ -39,7 +39,7 @@ AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TStr
 
   // Normalization
   numDJ = trDj->Draw("nljet>>hCountDJ",djCut,"goff");
-  std::cout << tag << ": number of selected dijets: " << numDJ << std::endl;
+  std::cout << "---" << tag << ": number of selected dijets: " << numDJ << std::endl;
 
   // Plot Histograms
   if (TString(dRBkg).Length()) {
