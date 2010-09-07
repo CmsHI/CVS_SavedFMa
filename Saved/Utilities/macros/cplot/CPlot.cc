@@ -479,8 +479,10 @@ void CPlot::Draw(TPad *c, bool doSave, TString format)
       hname += i;
     
       TH1D *h;     
-      if(fRebin>1)      
+      if(fRebin>1) { 
         h = (TH1D*)fItems[i].hist1D->Rebin(fRebin,hname);
+	h->Scale(1./fRebin);
+      }
       else
         h = (TH1D*)fItems[i].hist1D->Clone(hname);
   
