@@ -21,6 +21,14 @@ using namespace std;
 void anaDiJetFF(int doMC=0,
     TString AnaVersion = "a7j2t0",
     TString modName = "dijetAna_mc_calojet_genp",
+    Double_t NrJEtMin = 100,
+    Double_t NrJEtMax = 200,
+    Double_t AwJEtMin = 50,
+    Double_t AwJEtaMax = 2.,
+    TString DJCutType = "Ana",
+    TString TrkCutType = "Ana",
+    TString varXiNrJES = "log(1./zn)",
+    TString varXiAwJES = "log(1./za)",
     const char * inFile0Name="~/scratch01/ana/Hydj_Hard_GSR_NZS/UQDJ80_120_proc0831_10k.root",
     TString SrcName = "HydUQDJ80",
     TString header = "Hydjet+UQDJ80",
@@ -36,9 +44,10 @@ void anaDiJetFF(int doMC=0,
   cout << " # entries: " << djTree->GetEntries() << endl;
 
   // === Declare selection ===
-  selectionCut anaSel(SrcName,doMC,"S1",100,200,50,2.5);
-  anaSel.DJCutType = "Ana";
-  anaSel.TrkCutType = "Ana";
+  selectionCut anaSel(SrcName,doMC,"S1",NrJEtMin,NrJEtMax,AwJEtMin,2.5);
+  anaSel.AwJEtaMax = AwJEtaMax;
+  anaSel.DJCutType = DJCutType;
+  anaSel.TrkCutType = TrkCutType;
   anaSel.SetCut();
 
   // -- analysis selections --
@@ -56,14 +65,14 @@ void anaDiJetFF(int doMC=0,
 
   // ============== ana ===============
   cout << endl << "======= anaDiJetFF ========" << endl;
-  AnaFrag NrXi("Xi","Nr",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"log(1./zn)","pndr<0.5","pndrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
-  AnaFrag AwXi("Xi","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"log(1./za)","padr<0.5","padrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
+  AnaFrag NrXi("Xi","Nr",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),varXiNrJES,"pndr<0.5","pndrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
+  AnaFrag AwXi("Xi","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),varXiAwJES,"padr<0.5","padrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
   HisTGroup<TH1D> hgXi("Xi");
   hgXi.Add(NrXi.hSig,"Nr");
   hgXi.Add(AwXi.hSig,"Aw");
   hgXi.Average();
 
-  AnaFrag AwXiE1("XiE1","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"log(1./zn)","padr<0.5","padrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
+  AnaFrag AwXiE1("XiE1","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),varXiNrJES,"padr<0.5","padrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
   HisTGroup<TH1D> hgXiE1("XiE1");
   hgXiE1.Add(NrXi.hSig,"Nr");
   hgXiE1.Add(AwXiE1.hSig,"Aw");
