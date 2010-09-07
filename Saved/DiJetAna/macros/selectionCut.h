@@ -57,7 +57,8 @@ class selectionCut
     double NrJEtMax;
     double AwJEtMin;
     double JEtaMin;
-    double JEtaMax;
+    double NrJEtaMax;
+    double AwJEtaMax;
     double DjDPhiMin;
     // -- draw ranges --
     int	  numJEtBins;
@@ -105,7 +106,8 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   NrJEtMax(NrEtMax),
   AwJEtMin(AwEtMin),
   JEtaMin(0.),
-  JEtaMax(2.),
+  NrJEtaMax(2.),
+  AwJEtaMax(2.),
   DjDPhiMin(jdphi),
   // plot
   numJEtBins(50),
@@ -143,19 +145,19 @@ void selectionCut::SetCut()
 
   // Dijet selections
   DJ["Ana"] = Form("nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,JEtaMax,JEtaMax,DjDPhiMin);
+      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
   DJ["AnaMatRef"] = DJ["Ana"] && "nlrjet>10&&alrjet>10";
   DJ["AnaOrderRef"] = TCut(Form("nrljet>%.1f&&nrljet<%.1f&&arljet>%.1f&&abs(nrljeta)<%.1f&&abs(arljeta)<%.1f&&jdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,JEtaMax,JEtaMax,DjDPhiMin)) && "nlrjet>10&&alrjet>10";
+      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin)) && "nlrjet>10&&alrjet>10";
   DJ["Ref"] = Form("nlrjet>%.1f&&nlrjet<%.1f&&alrjet>%.1f&&abs(nlrjeta)<%.1f&&abs(alrjeta)<%.1f&&rjdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,JEtaMax,JEtaMax,DjDPhiMin);
+      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
   DJ["RefOrderRef"] = Form("nrlrjet>%.1f&&nrlrjet<%.1f&&arlrjet>%.1f&&abs(nrlrjeta)<%.1f&&abs(arlrjeta)<%.1f&&rjdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,JEtaMax,JEtaMax,DjDPhiMin);
+      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
   // - sysetmatics -
   DJ["AnaUpper"] = Form("nljet*1.14>%.1f&&nljet*1.14<%.1f&&aljet*1.14>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,JEtaMax,JEtaMax,DjDPhiMin);
+      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
   DJ["AnaLower"] = Form("nljet*0.86>%.1f&&nljet*0.86<%.1f&&aljet*0.86>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,JEtaMax,JEtaMax,DjDPhiMin);
+      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
 
   // Track Selections
   Trk["Ana"] = ("ppt>1.2&&ppt<nljet");
