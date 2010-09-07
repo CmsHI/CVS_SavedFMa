@@ -38,8 +38,17 @@ AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TStr
   assert(trDj);
 
   // Normalization
-  numDJ = trDj->Draw("nljet>>hCountDJ",djCut,"goff");
-  std::cout << "---" << tag << ": number of selected dijets: " << numDJ << std::endl;
+  numDJ = trDj->Draw("jdphi>>hDJDPhi",djCut,"goff");
+  std::cout << "--- " << tag << ": ---" << std::endl;
+  std::cout << " # of sel dijets: " << numDJ << std::endl;
+
+  // DJ selection control plots
+  if (tag=="XiE1Aw") {
+    trDj->Draw("nljet>>hNrJEt",djCut,"goff");
+    trDj->Draw("aljet>>hAwJEt",djCut,"goff");
+    trDj->Draw("nlrjet>>hNrRefJEt",djCut,"goff");
+    trDj->Draw("alrjet>>hAwRefJEt",djCut,"goff");
+  }
 
   // Plot Histograms
   if (TString(dRBkg).Length()) {

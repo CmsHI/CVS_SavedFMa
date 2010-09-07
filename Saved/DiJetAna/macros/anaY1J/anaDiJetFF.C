@@ -19,8 +19,8 @@
 using namespace std;
 
 void anaDiJetFF(int doMC=0,
-    TString AnaVersion = "a6",
-    TString modName = "dijetAna_mc",
+    TString AnaVersion = "a7j2t0",
+    TString modName = "dijetAna_mc_calojet_genp",
     const char * inFile0Name="~/scratch01/ana/Hydj_Hard_GSR_NZS/UQDJ80_120_proc0831_10k.root",
     TString SrcName = "HydUQDJ80",
     TString header = "Hydjet+UQDJ80",
