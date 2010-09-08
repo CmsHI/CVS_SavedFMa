@@ -22,7 +22,7 @@ os.system('echo '+logdir+' > '+logfile)
 # run ana
 from operator import itemgetter
 for sysana, [mod,NrJEtMin,NrJEtMax,AwJEtMin,AwJEtaMax,DJCutType,TrkCutType,varXiNrJES,varXiAwJES] in sorted(SysAnas.items()):
-  os.system('echo --- '+sysana+' --- >> '+logfile)
+  os.system('echo;echo;echo --- '+sysana+' --- >> '+logfile)
   cmd='root -l -b -q anaDiJetFF.C+\('
   cmd+=str(doMC)+','
   cmd+='\\"'+AnaV+'\\",'
