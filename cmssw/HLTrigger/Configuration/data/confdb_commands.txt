@@ -1,0 +1,2 @@
+# cff for inclusion
+hltGetConfiguration --process TEST --unprescale --cff --offline --mc /users/cer/HI_ActivityPaths/V3 > HIHLT_mc.py
