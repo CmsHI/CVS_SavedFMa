@@ -1,5 +1,6 @@
 #include <iostream>
 #include "TH1D.h"
+#include "TH1D.h"
 #include "TProfile.h"
 #include "TChain.h"
 #include "TFile.h"
@@ -40,6 +41,10 @@ void plotHltActivity(
   hgEffVsCent.Add1D("L1T40");
   hgEffVsCent.Add1D("L1T41");
 
+  HisTGroup<TH2F> hgTrig2Corr("Trig2Corr",2,0,2,2,0,2);
+  hgTrig2Corr.Add2D("L1T40_HFCoinc1");
+  hgTrig2Corr.Add2D("L1T41_HFCoinc2");
+
   // Analyze from tree
   ohTree->Draw(Form("HLT_ActivityHF3:hiBin*2.5>>%s",hgEffVsCent.GetH("HFAct3_1Hit")->GetName()),"","prof goff");
   ohTree->Draw(Form("HLT_ActivityHF3_Coinc1:hiBin*2.5>>%s",hgEffVsCent.GetH("HFAct3_Coinc1")->GetName()),"","prof goff");
@@ -47,11 +52,23 @@ void plotHltActivity(
   ohTree->Draw(Form("L1Tech_BSC_minBias_threshold1.v0:hiBin*2.5>>%s",hgEffVsCent.GetH("L1T40")->GetName()),"","prof goff");
   ohTree->Draw(Form("L1Tech_BSC_minBias_threshold2.v0:hiBin*2.5>>%s",hgEffVsCent.GetH("L1T41")->GetName()),"","prof goff");
 
+  TCanvas * cL1T40_HFCoinc1 = new TCanvas("L1T40_HFCoinc1","L1T40_HFCoinc1",500,500);
+  ohTree->Draw(Form("L1Tech_BSC_minBias_threshold1.v0:HLT_ActivityHF3_Coinc1>>%s",hgTrig2Corr.GetH("L1T40_HFCoinc1")->GetName()),"","box");
+  CPlot cpL1T40_HFCoinc1("L1T40_HFCoinc1","L1T40_HFCoinc1","ActivityHF3 (1Hit Coinc.)","L1T40");
+  cpL1T40_HFCoinc1.AddHist2D(hgTrig2Corr.H("L1T40_HFCoinc1"),"box");
+  cpL1T40_HFCoinc1.Draw(cL1T40_HFCoinc1,true);
+
+  TCanvas * cL1T41_HFCoinc2 = new TCanvas("L1T41_HFCoinc2","L1T41_HFCoinc2",500,500);
+  ohTree->Draw(Form("L1Tech_BSC_minBias_threshold2.v0:HLT_ActivityHF3_Coinc2>>%s",hgTrig2Corr.GetH("L1T41_HFCoinc2")->GetName()),"","goff");
+  CPlot cpL1T41_HFCoinc2("L1T41_HFCoinc2","L1T41_HFCoinc2","ActivityHF3 (2Hit Coinc.)","L1T41");
+  cpL1T41_HFCoinc2.AddHist2D(hgTrig2Corr.H("L1T41_HFCoinc2"),"box");
+  cpL1T41_HFCoinc2.Draw(cL1T41_HFCoinc2,true);
+
   // Plot
   TCanvas * cHltActEffVsCent = new TCanvas("HltActEffVsCent","HltActEffVsCent",500,500);
   CPlot cpHltActEffVsCent("HltActEffVsCent","HltActEffVsCent","Centrality","HLT Eff.");
   cpHltActEffVsCent.SetXRange(0,100);
-  cpHltActEffVsCent.SetYRange(0,1.2);
+  cpHltActEffVsCent.SetYRange(0,1.1);
   cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T40"),"L1 Bit 40","E",kGreen+2,kOpenCircle);
   cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T41"),"L1 Bit 41","E",kOrange+2,kOpenDiamond);
   cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("HFAct3_1Hit"),"ActivityHF3 (Any Hit)","E",kBlue,kOpenSquare);
