@@ -1,6 +1,6 @@
 import os,sys
 
-AnaV = "a7"
+AnaV = "a8"
 inFile0Name="~/scratch01/ana/Hydj_Hard_GSR_NZS/UQDJ80_120_proc0831_10k.root"
 doMC=1
 SrcName="HydUQDJ80"
@@ -12,7 +12,14 @@ SysAnas = {
     "s1":["dijetAna_mc_genjet_genp",100,200,0,2.,"Ana","AnaSig","log\(1./zn\)","log\(1./za\)"],
     "s2":["dijetAna_mc_genjet_genp",100,200,50,2.,"Ana","AnaSig","log\(1./zn\)","log\(1./za\)"],
     "s3":["dijetAna_mc_genjet_genp",100,200,50,2.,"Ana","Ana","log\(1./zn\)","log\(1./za\)"],
-    "s8":["dijetAna_mc_calojet_genp",100,200,50,2.,"Ana","Ana","log\(1./zn\)","log\(1./za\)"]
+    "s4":["dijetAna_mc_genjet_genp",100,200,50,2.,"AnaMatRefNr","Ana","log\(1./zn\)","log\(1./za\)"], # mat Nr
+    "s5":["dijetAna_mc_genjet_genp",100,200,50,2.,"AnaMatRef","Ana","log\(1./zn\)","log\(1./za\)"], # mat aw
+    "s6":["dijetAna_mc_calojet_genp",100,200,50,2.,"Ref","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # calo order
+    "s7":["dijetAna_mc_calojet_genp",100,200,50,2.,"RefAwAnaMatNr","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # cut on nr calo et, still matched
+    "s8":["dijetAna_mc_calojet_genp",100,200,50,2.,"AnaMatRef","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # cut on aw calo et, still matched
+    "s9":["dijetAna_mc_calojet_genp",100,200,50,2.,"AnaMatRefNr","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # no Aw mat
+    "s10":["dijetAna_mc_calojet_genp",100,200,50,2.,"Ana","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # no Nr mat
+    "s11":["dijetAna_mc_calojet_genp",100,200,50,2.,"Ana","Ana","log\(1./zn\)","log\(1./za\)"] # xi use Nr JES -- all calojet
     }
 
 # prepare ana
