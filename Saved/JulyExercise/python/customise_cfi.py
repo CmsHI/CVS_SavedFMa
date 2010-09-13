@@ -1,10 +1,10 @@
 # Turn of MC dependence in pat sequence
 def removePatMCMatch(process):
-  process.prod.remove(process.genPartons)
-  process.prod.remove(process.heavyIonCleanedGenJets)
-  process.prod.remove(process.hiPartons)
-  process.prod.remove(process.patJetGenJetMatch)
-  process.prod.remove(process.patJetPartonMatch)
+  process.makeHeavyIonJets.remove(process.genPartons)
+  process.makeHeavyIonJets.remove(process.heavyIonCleanedGenJets)
+  process.makeHeavyIonJets.remove(process.hiPartons)
+  process.makeHeavyIonJets.remove(process.patJetGenJetMatch)
+  process.makeHeavyIonJets.remove(process.patJetPartonMatch)
 
   process.patJets.addGenPartonMatch   = False
   process.patJets.embedGenPartonMatch = False
