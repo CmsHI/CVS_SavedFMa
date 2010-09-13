@@ -4,11 +4,12 @@
 #include "TString.h"
 #include <cassert>
 #include "TCut.h"
+#include "selectionCut.h"
 
 class AnaFrag
 {
   public:
-    AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TCut dRSig, TCut dRBkg,int nx=10,double min=0,double max=6);
+    AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TCut dRSig, TCut dRBkg,int nx=10,double min=0,double max=6, selectionCut * anaCut=0);
 
     TString tag;
     TTree * trDj;
@@ -24,7 +25,7 @@ class AnaFrag
     double xmax;
 };
 
-AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TString var, TCut dRSig, TCut dRBkg, int nx,double min,double max) :
+AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TString var, TCut dRSig, TCut dRBkg, int nx,double min,double max,selectionCut * anaSel) :
   tag(src),
   xtitle(t),
   numDJ(-1),
@@ -44,10 +45,13 @@ AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TStr
 
   // DJ selection control plots
   if (tag=="XiE1Aw") {
-    trDj->Draw("nljet>>hNrJEt",djCut,"goff");
-    trDj->Draw("aljet>>hAwJEt",djCut,"goff");
-    trDj->Draw("nlrjet>>hNrRefJEt",djCut,"goff");
-    trDj->Draw("alrjet>>hAwRefJEt",djCut,"goff");
+    if (!anaSel) cout << "no anaSel defined" << endl;
+    else {
+      trDj->Draw(Form("nljet>>hNrJEt(%d,%f,%f)",anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax),djCut,"goff");
+      trDj->Draw(Form("aljet>>hAwJEt(%d,%f,%f)",anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax),djCut,"goff");
+      trDj->Draw(Form("nlrjet>>hNrRefJEt(%d,%f,%f)",anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax),djCut,"goff");
+      trDj->Draw(Form("alrjet>>hAwRefJEt(%d,%f,%f)",anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax),djCut,"goff");
+    }
   }
 
   // Plot Histograms

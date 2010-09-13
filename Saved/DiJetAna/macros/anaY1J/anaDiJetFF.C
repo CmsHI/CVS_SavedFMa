@@ -65,21 +65,21 @@ void anaDiJetFF(int doMC=0,
 
   // ============== ana ===============
   cout << endl << "======= anaDiJetFF ========" << endl;
-  AnaFrag NrXi("Xi","Nr",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),varXiNrJES,"pndr<0.5","pndrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
-  AnaFrag AwXi("Xi","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),varXiAwJES,"padr<0.5","padrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
+  AnaFrag NrXi("Xi","Nr",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),varXiNrJES,"pndr<0.5","pndrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax,&anaSel);
+  AnaFrag AwXi("Xi","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),varXiAwJES,"padr<0.5","padrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax,&anaSel);
   HisTGroup<TH1D> hgXi("Xi");
   hgXi.Add(NrXi.hSig,"Nr");
   hgXi.Add(AwXi.hSig,"Aw");
   hgXi.Average();
 
-  AnaFrag AwXiE1("XiE1","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),varXiNrJES,"padr<0.5","padrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax);
+  AnaFrag AwXiE1("XiE1","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),varXiNrJES,"padr<0.5","padrbg<0.5",anaSel.numXiBins,anaSel.hisXiMin,anaSel.hisXiMax,&anaSel);
   HisTGroup<TH1D> hgXiE1("XiE1");
   hgXiE1.Add(NrXi.hSig,"Nr");
   hgXiE1.Add(AwXiE1.hSig,"Aw");
   hgXiE1.Average();
 
-  AnaFrag NrPPt("PPt","Nr",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"ppt","pndr<0.5","pndrbg<0.5",anaSel.numTrkPtBins,anaSel.hisTrkPtMin,anaSel.hisTrkPtMax);
-  AnaFrag AwPPt("PPt","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"ppt","padr<0.5","padrbg<0.5",anaSel.numTrkPtBins,anaSel.hisTrkPtMin,anaSel.hisTrkPtMax);
+  AnaFrag NrPPt("PPt","Nr",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"ppt","pndr<0.5","pndrbg<0.5",anaSel.numTrkPtBins,anaSel.hisTrkPtMin,anaSel.hisTrkPtMax,&anaSel);
+  AnaFrag AwPPt("PPt","Aw",djTree,anaSel.FinDJCut(),anaSel.TrkCut(),"ppt","padr<0.5","padrbg<0.5",anaSel.numTrkPtBins,anaSel.hisTrkPtMin,anaSel.hisTrkPtMax,&anaSel);
   HisTGroup<TH1D> hgPPt("PPt");
   hgPPt.Add(NrPPt.hSig,"Nr");
   hgPPt.Add(AwPPt.hSig,"Aw");

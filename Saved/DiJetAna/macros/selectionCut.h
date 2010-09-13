@@ -1,3 +1,6 @@
+#ifndef SelectionCut_H
+#define SelectionCut_H
+
 #include "TH1.h"
 #include <TCut.h>
 #include <TString.h>
@@ -201,3 +204,5 @@ void selectionCut::Print(int verbosity)
     }
   }
 }
+
+#endif
