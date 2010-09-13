@@ -47,11 +47,11 @@ process.output = cms.OutputModule("PoolOutputModule",
     splitLevel = cms.untracked.int32(0),
     #outputCommands = process.FEVTDEBUGHLTEventContent.outputCommands,
     outputCommands = cms.untracked.vstring('drop *','keep *_towerMaker_*_*'),
-    SelectEvents = cms.untracked.PSet(SelectEvents = cms.vstring('HLT_AcitivityHF3_Coinc1')),
+    SelectEvents = cms.untracked.PSet(SelectEvents = cms.vstring('HLT_ActivityHF3_Coinc1')),
     fileName = cms.untracked.string('RelVal_HLT_HIon.root'),
     dataset = cms.untracked.PSet(
         dataTier = cms.untracked.string('RAW-HLT'),
-        filterName = cms.untracked.string('HLT_AcitivityHF3_Coinc1')
+        filterName = cms.untracked.string('HI-Activity')
     )
 )
 # Path and EndPath definitions
