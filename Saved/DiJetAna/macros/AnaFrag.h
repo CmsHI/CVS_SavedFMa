@@ -47,10 +47,14 @@ AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TStr
   if (tag=="XiE1Aw") {
     if (!anaSel) cout << "no anaSel defined" << endl;
     else {
-      trDj->Draw(Form("nljet>>hNrJEt(%d,%f,%f)",anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax),djCut,"goff");
-      trDj->Draw(Form("aljet>>hAwJEt(%d,%f,%f)",anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax),djCut,"goff");
-      trDj->Draw(Form("nlrjet>>hNrRefJEt(%d,%f,%f)",anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax),djCut,"goff");
-      trDj->Draw(Form("alrjet>>hAwRefJEt(%d,%f,%f)",anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax),djCut,"goff");
+      TH1D * hJEtNr = new TH1D("hJEtNr",djCut,anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax);
+      TH1D * hJEtAw = new TH1D("hJEtAw",djCut,anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax);
+      TH1D * hRefJEtNr = new TH1D("hRefJEtNr",djCut,anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax);
+      TH1D * hRefJEtAw = new TH1D("hRefJEtAw",djCut,anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax);
+      trDj->Draw("nljet>>hJEtNr",djCut,"goff");
+      trDj->Draw("aljet>>hJEtAw",djCut,"goff");
+      trDj->Draw("nlrjet>>hRefJEtNr",djCut,"goff");
+      trDj->Draw("alrjet>>hRefJEtAw",djCut,"goff");
     }
   }
 
