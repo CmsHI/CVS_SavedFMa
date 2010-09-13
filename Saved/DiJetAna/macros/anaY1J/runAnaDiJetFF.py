@@ -8,8 +8,10 @@ header="Hydjet+UQDJ80"
 AnaType="ff"
 
 SysAnas = {
-    "s0":["dijetAna_mc_genjet_genp",100,200,0,3.,"Ana","Ana","log\(1./zn\)","log\(1./za\)"],
-    "s1":["dijetAna_mc_genjet_genp",100,200,0,2.,"Ana","Ana","log\(1./zn\)","log\(1./za\)"],
+    "s0":["dijetAna_mc_genjet_genp",100,200,0,3.,"Ana","AnaSig","log\(1./zn\)","log\(1./za\)"],
+    "s1":["dijetAna_mc_genjet_genp",100,200,0,2.,"Ana","AnaSig","log\(1./zn\)","log\(1./za\)"],
+    "s2":["dijetAna_mc_genjet_genp",100,200,50,2.,"Ana","AnaSig","log\(1./zn\)","log\(1./za\)"],
+    "s3":["dijetAna_mc_genjet_genp",100,200,50,2.,"Ana","Ana","log\(1./zn\)","log\(1./za\)"],
     "s8":["dijetAna_mc_calojet_genp",100,200,50,2.,"Ana","Ana","log\(1./zn\)","log\(1./za\)"]
     }
 
