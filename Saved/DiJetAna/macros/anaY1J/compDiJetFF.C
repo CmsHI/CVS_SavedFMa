@@ -13,10 +13,10 @@
 using namespace std;
 
 void compDiJetFF(
-    TString inFile0Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs00.root",
-    TString inFile1Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs01.root",
+    TString inFile0Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs01.root",
+    TString inFile1Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs00.root",
     TString outdir="out/HydUQDJ80/S1_100_200_50_25/a8/compare",
-    TString outTag="ffs0ffs1",
+    TString outTag="ffs1ffs0",
     TString JEtNr0="hJEtNr",
     TString JEtAw0="hJEtAw",
     TString JEtNr1="hJEtNr",
@@ -75,8 +75,8 @@ void compDiJetFF(
   cpXiNr.SetLegend(0.194,0.7,0.52,0.94);
   cXiNr->cd(1); cpXiNr.Draw((TPad*)cXiNr->GetPad(1),false);
   CPlot cpXiNrRat("XiNrRat","XiNrRat","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","Ana/Ref");
-  cpXiNrRat.AddHist1D(hgCm.R("XiNrDivCm1XiNr"));
-  cpXiNrRat.AddHist1D(hgCm.R("XiE1AwDivCm1XiE1Aw"),"j2(E1)^{Ana}/j2(E1)^{Ref}",kBlue,kOpenSquare);
+  cpXiNrRat.AddHist1D(hgCm.R("XiNrDivCm1XiNr"),"",kBlue,kOpenSquare);
+  cpXiNrRat.AddHist1D(hgCm.R("XiE1AwDivCm1XiE1Aw"),"",kBlack);
   cpXiNrRat.SetYRange(0,2);
   cXiNr->cd(2); cpXiNrRat.Draw((TPad*)cXiNr->GetPad(2),false);
 
@@ -113,4 +113,21 @@ void compDiJetFF(
   cpPPtRat.SetYRange(0,2);
   //cpPPtRat.Rebin(2);
   cPPt->cd(2); cpPPtRat.Draw((TPad*)cPPt->GetPad(2),false);
+
+  TCanvas * cJEt = new TCanvas("JEt","JEt",1000,500);
+  cJEt->Divide(2,1);
+  CPlot cpJEt("JEt","JEt","E_{T}^{jet}","#");
+  cpJEt.SetLogy();
+  cpJEt.AddHist1D(hgCm.H("Cm1JEtNr"),"Ref - j1","hist",kOrange+2,kOpenDiamond);
+  cpJEt.AddHist1D(hgCm.H("JEtNr"),"Ana - j1","E",kBlue,kOpenSquare);
+  cpJEt.AddHist1D(hgCm.H("Cm1JEtAw"),"Ref - j2","hist",kRed,kOpenStar);
+  cpJEt.AddHist1D(hgCm.H("JEtAw"),"Ana - j2","E",kBlack,kFullCircle);
+  cpJEt.SetLegend(0.21,0.74,0.54,0.94);
+  cJEt->cd(1); cpJEt.Draw((TPad*)cJEt->GetPad(1),false);
+  CPlot cpJEtRat("JEtRat","JEtRat","p_{T}^{jet}","Ana/Ref");
+  cpJEtRat.AddHist1D(hgCm.R("JEtNrDivCm1JEtNr"),"j1",kBlue,kOpenSquare);
+  cpJEtRat.AddHist1D(hgCm.R("JEtAwDivCm1JEtAw"),"j2");
+  cpJEtRat.SetYRange(0,2);
+  //cpJEtRat.Rebin(2);
+  cJEt->cd(2); cpJEtRat.Draw((TPad*)cJEt->GetPad(2),false);
 }
