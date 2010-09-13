@@ -29,11 +29,25 @@ process.HLT_ActivityHF3_Coinc2.replace(process.HLTHcalSimpleRecHitFilter,process
 process.hltanalysis.hltresults = cms.InputTag("TriggerResults::"+process.process)
 process.hltanalysis.HLTProcessName = process.process
 
+#process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
+#from PhysicsTools.PatAlgos.tools.heavyIonTools import *
+#configureHeavyIons(process)
+#from Saved.JulyExercise.customise_cfi import *
+#removePatMCMatch(process)
+#process.load("Saved.DiJetAna.dijetAna_cff")
+#process.dijetAna_data.hltsrc = cms.InputTag("TriggerResults::"+process.process)
+#process.dijetAna_data.hltNames = cms.untracked.vstring("HLT_ActivityHF3_Coinc1")
+#process.dijetAna_data.jetEtaMax = cms.double(5.)
+#process.dijetAna_data.trksrc = cms.InputTag("towerMaker")
+#process.dijetAna_data.anaTrkType = cms.int32(3)
+#process.jetana = cms.Path(process.makeHeavyIonJets*process.dijetAna_data)
+
 # Output definition
 process.output = cms.OutputModule("PoolOutputModule",
     splitLevel = cms.untracked.int32(0),
     #outputCommands = process.FEVTDEBUGHLTEventContent.outputCommands,
     outputCommands = cms.untracked.vstring('drop *','keep *_towerMaker_*_*'),
+    SelectEvents = cms.untracked.PSet(SelectEvents = cms.vstring('HLT_AcitivityHF3_Coinc1')),
     fileName = cms.untracked.string('RelVal_HLT_HIon.root'),
     dataset = cms.untracked.PSet(
         dataTier = cms.untracked.string('RAW-HLT'),
@@ -57,7 +71,8 @@ process.schedule = cms.Schedule(
     process.HLT_L1Tech_HCAL_HF,
     process.HLTriggerFinalPath,
     process.HLTAnalyzerEndpath,
-    process.analyzeThis
+    process.analyzeThis#,
+    #process.jetana
     )
 process.schedule.extend([process.out_step])
 
