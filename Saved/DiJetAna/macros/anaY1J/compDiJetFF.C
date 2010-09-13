@@ -13,47 +13,55 @@
 using namespace std;
 
 void compDiJetFF(
-    TString inFile0Dir="out/HydUQDJ80/S1_100_200_50_25/a5/ff",
-    TString inFile1Dir="out/HydUQDJ80/S1_100_200_50_25/a5j1t0/ff",
-    TString AnaType0="fffCorr1",
-    TString AnaType1="fffCorr0",
+    TString inFile0Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs00.root",
+    TString inFile1Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs01.root",
+    TString outdir="out/HydUQDJ80/S1_100_200_50_25/a8/compare",
+    TString outTag="ffs0ffs1",
+    TString JEtNr0="hJEtNr",
+    TString JEtAw0="hJEtAw",
+    TString JEtNr1="hJEtNr",
+    TString JEtAw1="hJEtAw",
     TString header="Hydjet+UQDiJet80to120")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
-  cout << inFile0Dir+"/"+AnaType0+".root" << endl;
-  TFile * inFile0 = new TFile(inFile0Dir+"/"+AnaType0+".root");
+  cout << inFile0Name << endl;
+  TFile * inFile0 = new TFile(inFile0Name);
   //inFile0->ls();
-  cout << inFile1Dir+"/"+AnaType1+".root" << endl;
-  TFile * inFile1 = new TFile(inFile1Dir+"/"+AnaType1+".root");
+  cout << inFile1Name << endl;
+  TFile * inFile1 = new TFile(inFile1Name);
 
   // === Define Output ===
-  TString outdir = inFile0Dir;
-  outdir.ReplaceAll("ff","compare");
   CPlot::sOutDir = outdir;
   gSystem->mkdir(outdir.Data(),kTRUE);
 
   HisTGroup<TH1D> hgCm("hgCm");
-  hgCm.Add(inFile0,"schSig_XiNr","XiNr");
-  hgCm.Add(inFile0,"schSig_XiAw","XiAw");
-  hgCm.Add(inFile0,"schSig_XiE1Aw","XiE1Aw");
-  hgCm.Add(inFile0,"schSig_PPtNr","PPtNr");
-  hgCm.Add(inFile0,"schSig_PPtAw","PPtAw");
+  hgCm.Add(inFile0,"hSig_XiNr","XiNr");
+  hgCm.Add(inFile0,"hSig_XiAw","XiAw");
+  hgCm.Add(inFile0,"hSig_XiE1Aw","XiE1Aw");
+  hgCm.Add(inFile0,"hSig_PPtNr","PPtNr");
+  hgCm.Add(inFile0,"hSig_PPtAw","PPtAw");
+  hgCm.Add(inFile0,JEtNr0,"JEtNr");
+  hgCm.Add(inFile0,JEtAw0,"JEtAw");
 
   TH1D * hFrame = (TH1D*)hgCm.GetH("XiE1Aw")->Clone("hFrame");
   hFrame->Scale(0);
 
   // === Comparison histograms ===
-  hgCm.Add(inFile1,"schSig_XiNr","Cm1XiNr");
-  hgCm.Add(inFile1,"schSig_XiAw","Cm1XiAw");
-  hgCm.Add(inFile1,"schSig_XiE1Aw","Cm1XiE1Aw");
-  hgCm.Add(inFile1,"schSig_PPtNr","Cm1PPtNr");
-  hgCm.Add(inFile1,"schSig_PPtAw","Cm1PPtAw");
+  hgCm.Add(inFile1,"hSig_XiNr","Cm1XiNr");
+  hgCm.Add(inFile1,"hSig_XiAw","Cm1XiAw");
+  hgCm.Add(inFile1,"hSig_XiE1Aw","Cm1XiE1Aw");
+  hgCm.Add(inFile1,"hSig_PPtNr","Cm1PPtNr");
+  hgCm.Add(inFile1,"hSig_PPtAw","Cm1PPtAw");
+  hgCm.Add(inFile1,JEtNr1,"Cm1JEtNr");
+  hgCm.Add(inFile1,JEtAw1,"Cm1JEtAw");
   hgCm.Divide("XiNr","Cm1XiNr");
   hgCm.Divide("XiAw","Cm1XiAw");
   hgCm.Divide("XiE1Aw","Cm1XiE1Aw");
   hgCm.Divide("PPtNr","Cm1PPtNr");
   hgCm.Divide("PPtAw","Cm1PPtAw");
+  hgCm.Divide("JEtNr","Cm1JEtNr");
+  hgCm.Divide("JEtAw","Cm1JEtAw");
 
   TCanvas * cXiNr = new TCanvas("XiNr","XiNr",1000,500);
   cXiNr->Divide(2,1);
@@ -74,14 +82,14 @@ void compDiJetFF(
   CPlot cpXiAw("XiAw","XiAw","#xi=ln(E_{T}^{Jet1}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
   cpXiAw.SetXRange(0,6);
   cpXiAw.SetYRange(0.001,7);
-  cpXiAw.AddHist1D(hgCm.H("XiAw"),"reco - j2E2","E",kGreen+2,kOpenTriangleUp);
-  cpXiAw.AddHist1D(hgCm.H("Cm1XiAw"),"gen - j2E2","E",kRed+2,kOpenDiamond);
+  //cpXiAw.AddHist1D(hgCm.H("XiAw"),"reco - j2E2","E",kGreen+2,kOpenTriangleUp);
+  //cpXiAw.AddHist1D(hgCm.H("Cm1XiAw"),"gen - j2E2","E",kRed+2,kOpenDiamond);
   cpXiAw.AddHist1D(hgCm.H("XiE1Aw"),"reco - j2","E",kBlack,kFullCircle);
   cpXiAw.AddHist1D(hgCm.H("Cm1XiE1Aw"),"gen - j2","E",kRed,kOpenStar);
   cpXiAw.SetLegend(0.194,0.7,0.52,0.94);
   cXiAw->cd(1); cpXiAw.Draw((TPad*)cXiAw->GetPad(1),false);
   CPlot cpXiAwRat("XiAwRat","XiAwRat","#xi=ln(E_{T}^{Jet1}/p_{T}^{trk})","reco/gen");
-  cpXiAwRat.AddHist1D(hgCm.R("XiAwDivCm1XiAw"),"j2E2^{reco}/j2E2^{gen}",kGreen+2,kOpenTriangleUp);
+  //cpXiAwRat.AddHist1D(hgCm.R("XiAwDivCm1XiAw"),"j2E2^{reco}/j2E2^{gen}",kGreen+2,kOpenTriangleUp);
   cpXiAwRat.AddHist1D(hgCm.R("XiE1AwDivCm1XiE1Aw"),"j2E1^{reco}/j2E1^{gen}",kBlack);
   cpXiAwRat.SetYRange(0,2);
   cXiAw->cd(2); cpXiAwRat.Draw((TPad*)cXiAw->GetPad(2),false);
