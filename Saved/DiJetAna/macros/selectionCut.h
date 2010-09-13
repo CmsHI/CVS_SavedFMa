@@ -149,9 +149,15 @@ void selectionCut::SetCut()
   // Dijet selections
   DJ["Ana"] = Form("nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
       NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
+  DJ["AnaMatRefNr"] = DJ["Ana"] && "nlrjet>10";
+  DJ["AnaMatRefAw"] = DJ["Ana"] && "alrjet>10";
   DJ["AnaMatRef"] = DJ["Ana"] && "nlrjet>10&&alrjet>10";
   DJ["AnaOrderRef"] = TCut(Form("nrljet>%.1f&&nrljet<%.1f&&arljet>%.1f&&abs(nrljeta)<%.1f&&abs(arljeta)<%.1f&&jdphi>%.2f",
       NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin)) && "nlrjet>10&&alrjet>10";
+  DJ["RefAwAnaMatNr"] = TCut(Form("nljet>%.1f&&nljet<%.1f&&alrjet>%.1f&&abs(nlrjeta)<%.1f&&abs(alrjeta)<%.1f&&rjdphi>%.2f",
+      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin)) && "nlrjet>10";
+  DJ["RefNrAnaMatAw"] = TCut(Form("nlrjet>%.1f&&nlrjet<%.1f&&aljet>%.1f&&abs(nlrjeta)<%.1f&&abs(alrjeta)<%.1f&&rjdphi>%.2f",
+      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin)) && "alrjet>10";
   DJ["Ref"] = Form("nlrjet>%.1f&&nlrjet<%.1f&&alrjet>%.1f&&abs(nlrjeta)<%.1f&&abs(alrjeta)<%.1f&&rjdphi>%.2f",
       NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
   DJ["RefOrderRef"] = Form("nrlrjet>%.1f&&nrlrjet<%.1f&&arlrjet>%.1f&&abs(nrlrjeta)<%.1f&&abs(arlrjeta)<%.1f&&rjdphi>%.2f",
