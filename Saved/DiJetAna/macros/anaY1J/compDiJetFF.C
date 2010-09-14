@@ -15,10 +15,10 @@ using namespace std;
 void compDiJetFF(
     TString inFile0Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs01.root",
     TString inFile1Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs00.root",
+    TString compTag="ffs01ffs00",
     TString JEtNr0="hJEtNr",
     TString JEtNr1="hJEtNr",
-    TString outdir="out/HydUQDJ80/S1_100_200_50_25/a8/compare",
-    TString compTag="ffs1ffs0",
+    TString outdir="out/HydUQDJ80/compare/a9",
     TString header="Hydjet+UQDiJet80to120")
 {
   // Define Inputs
@@ -73,12 +73,14 @@ void compDiJetFF(
   cpXiNr.AddHist1D(hgCm.H("Cm1XiE1Aw"),"Ref - j2(E1)","hist",kRed,kOpenStar);
   cpXiNr.AddHist1D(hgCm.H("XiE1Aw"),"Ana - j2(E1)","E",kBlack,kFullCircle);
   cpXiNr.SetLegend(0.194,0.7,0.52,0.94);
+  cpXiNr.SetLegendHeader(header);
   cXiNr->cd(1); cpXiNr.Draw((TPad*)cXiNr->GetPad(1),false);
   CPlot cpXiNrRat("XiNrRat","XiNrRat","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","Ana/Ref");
   cpXiNrRat.AddHist1D(hgCm.R("XiNrDivCm1XiNr"),"",kBlue,kOpenSquare);
   cpXiNrRat.AddHist1D(hgCm.R("XiE1AwDivCm1XiE1Aw"),"",kBlack);
   cpXiNrRat.SetYRange(0,2);
   cXiNr->cd(2); cpXiNrRat.Draw((TPad*)cXiNr->GetPad(2),false);
+  cXiNr->Print(outdir+"/XiNr"+compTag+".gif");
 
   TCanvas * cXiAw = new TCanvas("XiAw","XiAw",1000,500);
   cXiAw->Divide(2,1);
@@ -90,12 +92,14 @@ void compDiJetFF(
   cpXiAw.AddHist1D(hgCm.H("Cm1XiE1Aw"),"Ref - j2(E1)","hist",kRed,kOpenStar);
   cpXiAw.AddHist1D(hgCm.H("XiE1Aw"),"Ana - j2(E1)","E",kBlack,kFullCircle);
   cpXiAw.SetLegend(0.194,0.7,0.52,0.94);
+  cpXiAw.SetLegendHeader(header);
   cXiAw->cd(1); cpXiAw.Draw((TPad*)cXiAw->GetPad(1),false);
   CPlot cpXiAwRat("XiAwRat","XiAwRat","#xi=ln(E_{T}^{Jet1}/p_{T}^{trk})","Ana/Ref");
   //cpXiAwRat.AddHist1D(hgCm.R("XiAwDivCm1XiAw"),"j2E2^{reco}/j2E2^{Ref}",kGreen+2,kOpenTriangleUp);
   cpXiAwRat.AddHist1D(hgCm.R("XiE1AwDivCm1XiE1Aw"),"j2(E1)^{reco}/j2(E1)^{Ref}",kBlack);
   cpXiAwRat.SetYRange(0,2);
   cXiAw->cd(2); cpXiAwRat.Draw((TPad*)cXiAw->GetPad(2),false);
+  cXiAw->Print(outdir+"/XiAw"+compTag+".gif");
 
   TCanvas * cPPt = new TCanvas("PPt","PPt",1000,500);
   cPPt->Divide(2,1);
@@ -106,6 +110,7 @@ void compDiJetFF(
   cpPPt.AddHist1D(hgCm.H("PPtNr"),"Ana - j1","E",kBlue,kOpenSquare);
   cpPPt.AddHist1D(hgCm.H("Cm1PPtAw"),"Ref - j2","hist",kRed,kOpenStar);
   cpPPt.AddHist1D(hgCm.H("PPtAw"),"Ana - j2","E",kBlack,kFullCircle);
+  cpPPt.SetLegendHeader(header);
   cPPt->cd(1); cpPPt.Draw((TPad*)cPPt->GetPad(1),false);
   CPlot cpPPtRat("PPtRat","PPtRat","p_{T}^{trk}","Ana/Ref");
   cpPPtRat.AddHist1D(hgCm.R("PPtNrDivCm1PPtNr"),"j1",kBlue,kOpenSquare);
@@ -113,6 +118,7 @@ void compDiJetFF(
   cpPPtRat.SetYRange(0,2);
   //cpPPtRat.Rebin(2);
   cPPt->cd(2); cpPPtRat.Draw((TPad*)cPPt->GetPad(2),false);
+  cPPt->Print(outdir+"/PPt"+compTag+".gif");
 
   TCanvas * cJEt = new TCanvas("JEt","JEt",1000,500);
   cJEt->Divide(2,1);
@@ -123,6 +129,7 @@ void compDiJetFF(
   cpJEt.AddHist1D(hgCm.H("Cm1JEtAw"),"Ref - j2","hist",kRed,kOpenStar);
   cpJEt.AddHist1D(hgCm.H("JEtAw"),"Ana - j2","E",kBlack,kFullCircle);
   cpJEt.SetLegend(0.21,0.74,0.54,0.94);
+  cpJEt.SetLegendHeader(header);
   cJEt->cd(1); cpJEt.Draw((TPad*)cJEt->GetPad(1),false);
   CPlot cpJEtRat("JEtRat","JEtRat","E_{T}^{genjet}","Ana/Ref");
   cpJEtRat.AddHist1D(hgCm.R("JEtNrDivCm1JEtNr"),"j1",kBlue,kOpenSquare);
@@ -130,4 +137,5 @@ void compDiJetFF(
   cpJEtRat.SetYRange(0,2);
   //cpJEtRat.Rebin(2);
   cJEt->cd(2); cpJEtRat.Draw((TPad*)cJEt->GetPad(2),false);
+  cJEt->Print(outdir+"/JEt"+compTag+".gif");
 }
