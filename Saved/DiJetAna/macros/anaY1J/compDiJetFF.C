@@ -15,12 +15,10 @@ using namespace std;
 void compDiJetFF(
     TString inFile0Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs01.root",
     TString inFile1Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs00.root",
-    TString outdir="out/HydUQDJ80/S1_100_200_50_25/a8/compare",
-    TString outTag="ffs1ffs0",
     TString JEtNr0="hJEtNr",
-    TString JEtAw0="hJEtAw",
     TString JEtNr1="hJEtNr",
-    TString JEtAw1="hJEtAw",
+    TString outdir="out/HydUQDJ80/S1_100_200_50_25/a8/compare",
+    TString compTag="ffs1ffs0",
     TString header="Hydjet+UQDiJet80to120")
 {
   // Define Inputs
@@ -35,6 +33,7 @@ void compDiJetFF(
   CPlot::sOutDir = outdir;
   gSystem->mkdir(outdir.Data(),kTRUE);
 
+  TString JEtAw0(JEtNr0); JEtAw0.ReplaceAll("Nr","Aw");
   HisTGroup<TH1D> hgCm("hgCm");
   hgCm.Add(inFile0,"hSig_XiNr","XiNr");
   hgCm.Add(inFile0,"hSig_XiAw","XiAw");
@@ -48,6 +47,7 @@ void compDiJetFF(
   hFrame->Scale(0);
 
   // === Comparison histograms ===
+  TString JEtAw1(JEtNr1); JEtAw1.ReplaceAll("Nr","Aw");
   hgCm.Add(inFile1,"hSig_XiNr","Cm1XiNr");
   hgCm.Add(inFile1,"hSig_XiAw","Cm1XiAw");
   hgCm.Add(inFile1,"hSig_XiE1Aw","Cm1XiE1Aw");
@@ -65,7 +65,7 @@ void compDiJetFF(
 
   TCanvas * cXiNr = new TCanvas("XiNr","XiNr",1000,500);
   cXiNr->Divide(2,1);
-  CPlot cpXiNr("XiNr","XiNr","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
+  CPlot cpXiNr("XiNr","XiNr","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (bg subtracted)");
   cpXiNr.SetXRange(0,6);
   cpXiNr.SetYRange(0.001,7);
   cpXiNr.AddHist1D(hgCm.H("Cm1XiNr"),"Ref - j1","hist",kOrange+2,kOpenCircle);
@@ -82,7 +82,7 @@ void compDiJetFF(
 
   TCanvas * cXiAw = new TCanvas("XiAw","XiAw",1000,500);
   cXiAw->Divide(2,1);
-  CPlot cpXiAw("XiAw","XiAw","#xi=ln(E_{T}^{Jet1}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi}");
+  CPlot cpXiAw("XiAw","XiAw","#xi=ln(E_{T}^{Jet1}/p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#xi} (bg subtracted)");
   cpXiAw.SetXRange(0,6);
   cpXiAw.SetYRange(0.001,7);
   //cpXiAw.AddHist1D(hgCm.H("Cm1XiAw"),"Ref - j2E2","E",kOrange+2,kOpenDiamond);
@@ -99,7 +99,7 @@ void compDiJetFF(
 
   TCanvas * cPPt = new TCanvas("PPt","PPt",1000,500);
   cPPt->Divide(2,1);
-  CPlot cpPPt("PPt","PPt","p_{T}^{trk} in jet cone","#frac{1}{N_{jet}} #frac{dN}{dp_{T}}");
+  CPlot cpPPt("PPt","PPt","p_{T}^{trk} in jet cone","#frac{1}{N_{jet}} #frac{dN}{dp_{T}} (bg subtracted)");
   cpPPt.SetLogy();
   cpPPt.SetXRange(0,60);
   cpPPt.AddHist1D(hgCm.H("Cm1PPtNr"),"Ref - j1","hist",kOrange+2,kOpenDiamond);
@@ -116,7 +116,7 @@ void compDiJetFF(
 
   TCanvas * cJEt = new TCanvas("JEt","JEt",1000,500);
   cJEt->Divide(2,1);
-  CPlot cpJEt("JEt","JEt","E_{T}^{jet}","#");
+  CPlot cpJEt("JEt","JEt","E_{T}^{genjet}","##/4GeV");
   cpJEt.SetLogy();
   cpJEt.AddHist1D(hgCm.H("Cm1JEtNr"),"Ref - j1","hist",kOrange+2,kOpenDiamond);
   cpJEt.AddHist1D(hgCm.H("JEtNr"),"Ana - j1","E",kBlue,kOpenSquare);
@@ -124,7 +124,7 @@ void compDiJetFF(
   cpJEt.AddHist1D(hgCm.H("JEtAw"),"Ana - j2","E",kBlack,kFullCircle);
   cpJEt.SetLegend(0.21,0.74,0.54,0.94);
   cJEt->cd(1); cpJEt.Draw((TPad*)cJEt->GetPad(1),false);
-  CPlot cpJEtRat("JEtRat","JEtRat","p_{T}^{jet}","Ana/Ref");
+  CPlot cpJEtRat("JEtRat","JEtRat","E_{T}^{genjet}","Ana/Ref");
   cpJEtRat.AddHist1D(hgCm.R("JEtNrDivCm1JEtNr"),"j1",kBlue,kOpenSquare);
   cpJEtRat.AddHist1D(hgCm.R("JEtAwDivCm1JEtAw"),"j2");
   cpJEtRat.SetYRange(0,2);
