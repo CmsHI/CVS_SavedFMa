@@ -19,7 +19,9 @@ void compDiJetFF(
     TString JEtNr0="hJEtNr",
     TString JEtNr1="hJEtNr",
     TString outdir="out/HydUQDJ80/compare/a9",
-    TString header="Hydjet+UQDiJet80to120")
+    TString header="Hydjet+UQDiJet80to120",
+    TString finalMeas="hSig_XiE1Aw",
+    TString finalMeasTitle="j2(E1)")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -37,7 +39,7 @@ void compDiJetFF(
   HisTGroup<TH1D> hgCm("hgCm");
   hgCm.Add(inFile0,"hSig_XiNr","XiNr");
   hgCm.Add(inFile0,"hSig_XiAw","XiAw");
-  hgCm.Add(inFile0,"hSig_XiE1Aw","XiE1Aw");
+  hgCm.Add(inFile0,finalMeas,"XiE1Aw");
   hgCm.Add(inFile0,"hSig_PPtNr","PPtNr");
   hgCm.Add(inFile0,"hSig_PPtAw","PPtAw");
   hgCm.Add(inFile0,JEtNr0,"JEtNr");
@@ -50,7 +52,7 @@ void compDiJetFF(
   TString JEtAw1(JEtNr1); JEtAw1.ReplaceAll("Nr","Aw");
   hgCm.Add(inFile1,"hSig_XiNr","Cm1XiNr");
   hgCm.Add(inFile1,"hSig_XiAw","Cm1XiAw");
-  hgCm.Add(inFile1,"hSig_XiE1Aw","Cm1XiE1Aw");
+  hgCm.Add(inFile1,finalMeas,"Cm1XiE1Aw");
   hgCm.Add(inFile1,"hSig_PPtNr","Cm1PPtNr");
   hgCm.Add(inFile1,"hSig_PPtAw","Cm1PPtAw");
   hgCm.Add(inFile1,JEtNr1,"Cm1JEtNr");
@@ -70,8 +72,8 @@ void compDiJetFF(
   cpXiNr.SetYRange(0.001,7);
   cpXiNr.AddHist1D(hgCm.H("Cm1XiNr"),"Ref - j1","hist",kOrange+2,kOpenCircle);
   cpXiNr.AddHist1D(hgCm.H("XiNr"),"Ana - j1","E",kBlue,kOpenSquare);
-  cpXiNr.AddHist1D(hgCm.H("Cm1XiE1Aw"),"Ref - j2(E1)","hist",kRed,kOpenStar);
-  cpXiNr.AddHist1D(hgCm.H("XiE1Aw"),"Ana - j2(E1)","E",kBlack,kFullCircle);
+  cpXiNr.AddHist1D(hgCm.H("Cm1XiE1Aw"),"Ref - "+finalMeasTitle,"hist",kRed,kOpenStar);
+  cpXiNr.AddHist1D(hgCm.H("XiE1Aw"),"Ana - "+finalMeasTitle,"E",kBlack,kFullCircle);
   cpXiNr.SetLegend(0.194,0.7,0.52,0.94);
   cpXiNr.SetLegendHeader(header);
   cXiNr->cd(1); cpXiNr.Draw((TPad*)cXiNr->GetPad(1),false);
@@ -89,8 +91,8 @@ void compDiJetFF(
   cpXiAw.SetYRange(0.001,7);
   //cpXiAw.AddHist1D(hgCm.H("Cm1XiAw"),"Ref - j2E2","E",kOrange+2,kOpenDiamond);
   //cpXiAw.AddHist1D(hgCm.H("XiAw"),"Ana - j2E2","E",kGreen+2,kOpenTriangleUp);
-  cpXiAw.AddHist1D(hgCm.H("Cm1XiE1Aw"),"Ref - j2(E1)","hist",kRed,kOpenStar);
-  cpXiAw.AddHist1D(hgCm.H("XiE1Aw"),"Ana - j2(E1)","E",kBlack,kFullCircle);
+  cpXiAw.AddHist1D(hgCm.H("Cm1XiE1Aw"),"Ref - "+finalMeasTitle,"hist",kRed,kOpenStar);
+  cpXiAw.AddHist1D(hgCm.H("XiE1Aw"),"Ana - "+finalMeasTitle,"E",kBlack,kFullCircle);
   cpXiAw.SetLegend(0.194,0.7,0.52,0.94);
   cpXiAw.SetLegendHeader(header);
   cXiAw->cd(1); cpXiAw.Draw((TPad*)cXiAw->GetPad(1),false);
