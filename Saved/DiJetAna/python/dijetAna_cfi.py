@@ -74,5 +74,5 @@ dijetAna_mc_genjet_genp = dijetAna_mc.clone(
 dijetAna_mc_calojet_tower = dijetAna_mc.clone(
     # trk selection
     trksrc = cms.InputTag("towerMaker"),
-    trkPtMin = cms.double(0.)
+    trkPtMin = cms.double(-999)
     )
