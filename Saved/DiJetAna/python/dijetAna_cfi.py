@@ -70,3 +70,9 @@ dijetAna_mc_genjet_genp = dijetAna_mc.clone(
     trksrc = cms.InputTag("hiGenParticles"),
     anaTrkType = cms.int32(0)
     )
+
+dijetAna_mc_calojet_tower = dijetAna_mc.clone(
+    # trk selection
+    trksrc = cms.InputTag("towerMaker"),
+    trkPtMin = cms.double(0.)
+    )

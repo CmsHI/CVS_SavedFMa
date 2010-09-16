@@ -26,6 +26,7 @@ process.load("HeavyIonsAnalysis.Configuration.analysisProducers_cff")
 process.load("Saved.DiJetAna.dijetAna_cff")
 # -- sample specific configs --
 process.dijetAna_mc.hltsrc = cms.InputTag("None")
+process.dijetAna_mc_calojet_tower.hltsrc = cms.InputTag("None")
 process.dijetAna_mc_calojet_genp.hltsrc = cms.InputTag("None")
 process.dijetAna_mc_genjet_genp.hltsrc = cms.InputTag("None")
 #process.dijetAna_mc.trksrc = "hiSelectedTracks"
