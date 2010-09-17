@@ -6,7 +6,7 @@ for line in sys.stdin:
    words = line.split()
    for x in words:
       ct = ct + 1
-      print x
+      #print x
       sum = sum + float(x)
 print "sum:", sum
 
