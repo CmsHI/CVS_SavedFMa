@@ -1,29 +1,23 @@
 # === HLT Customization ===
-process.HLT_L1Tech_BSC_minBias.remove(process.hltL1sZeroBias)
-process.HLT_L1Tech_HCAL_HF.remove(process.hltL1sZeroBias)
-process.HLT_ZeroBiasPixel_SingleTrack.remove(process.hltL1sZeroBias)
+process.GlobalTag.globaltag = 'START38_V9::All'
 # - Activity Path tests -
-process.load("HLTrigger.Configuration.HLT_HIon_Activity_cff")
-process.HLT_HIActivityPixels.remove(process.hltL1sZeroBias)
-process.HLTHcalSimpleRecHitFilter = cms.EDFilter("HLTHcalSimpleRecHitFilter",
-    threshold = cms.double(3.0),
-    minNHitsNeg = cms.int32(1),
-    minNHitsPos = cms.int32(1),
-    doCoincidence = cms.bool(False),
-    maskedChannels = cms.vint32(),
-    HFRecHitCollection = cms.InputTag("hltHfreco")
-    )
-process.HLTHcalSimpleRecHitFilter_Coinc1 = process.HLTHcalSimpleRecHitFilter.clone(
-    doCoincidence = cms.bool(True)
-    )
-process.HLTHcalSimpleRecHitFilter_Coinc2 = process.HLTHcalSimpleRecHitFilter.clone(
+#process.load("HLTrigger.Configuration.HLT_HIon_Activity_cff")
+#process.HLT_HIActivityPixels.remove(process.hltL1sZeroBias)
+#process.HLTHcalSimpleRecHitFilter = cms.EDFilter("HLTHcalSimpleRecHitFilter",
+#    threshold = cms.double(3.0),
+#    minNHitsNeg = cms.int32(1),
+#    minNHitsPos = cms.int32(1),
+#    doCoincidence = cms.bool(False),
+#    maskedChannels = cms.vint32(),
+#    HFRecHitCollection = cms.InputTag("hltHfreco")
+#    )
+process.hltHcalSimpleRecHitFilterCoincidence2 = process.hltHcalSimpleRecHitFilterCoincidence.clone(
     minNHitsNeg = cms.int32(2),
     minNHitsPos = cms.int32(2),
     doCoincidence= cms.bool(True)
     )
-process.HLT_ActivityHF3_Coinc1.replace(process.HLTHcalSimpleRecHitFilter,process.HLTHcalSimpleRecHitFilter_Coinc1)
-process.HLT_ActivityHF3_Coinc2.replace(process.HLTHcalSimpleRecHitFilter,process.HLTHcalSimpleRecHitFilter_Coinc2)
-
+process.HLT_HIActivityHF_Coincidence3_2Hit = process.HLT_HIActivityHF_Coincidence3.expandAndClone();
+process.HLT_HIActivityHF_Coincidence3_2Hit.replace(process.hltHcalSimpleRecHitFilterCoincidence,process.hltHcalSimpleRecHitFilterCoincidence2)
 
 # analyzer customization
 process.hltanalysis.hltresults = cms.InputTag("TriggerResults::"+process.process)
@@ -61,14 +55,24 @@ process.out_step = cms.EndPath(process.output)
 process.schedule = cms.Schedule( 
     process.higen,
     process.HLTriggerFirstPath,
-    process.HLT_HIActivityPixels,
-    process.HLT_ActivityHF3,
-    process.HLT_ActivityHF3_Coinc1,
-    process.HLT_ActivityHF3_Coinc2,
-    process.HLT_L1DoubleMuOpen,
     process.HLT_ZeroBiasPixel_SingleTrack,
-    process.HLT_L1Tech_BSC_minBias,
+    process.HLT_HIMinBiasBSC,
+    process.HLT_HIMinBiasCalo,
+    process.HLT_MinBiasPixel_SingleTrack,
+    process.HLT_HIJet35U,
+    process.HLT_HIPhoton15,
+    process.HLT_L1DoubleMuOpen,
+    process.HLT_HIUpcEcal,
+    process.HLT_HIUpcMu,
     process.HLT_L1Tech_HCAL_HF,
+    process.HLT_L1Tech_BSC_minBias,
+    process.HLT_L1Tech_BSC_highmult,
+    process.HLT_HIActivityPixels,
+    process.HLT_HIActivityPixel_SingleTrack,
+    process.HLT_HIActivityHF_Single3,
+    process.HLT_HIActivityHF_Coincidence3,
+    process.HLT_HIActivityHF_Coincidence3_2Hit,
+    process.AlCa_HICentralityVeto,
     process.HLTriggerFinalPath,
     process.HLTAnalyzerEndpath,
     process.analyzeThis#,
@@ -80,9 +84,9 @@ process.schedule.extend([process.out_step])
 print "=== HLTHcalSimpleRecHitFilter cfg: ===\n"
 print process.HLTHcalSimpleRecHitFilter.dumpPython()
 print "=== HLTHcalSimpleRecHitFilter_Coinc1 cfg: ===\n"
-print process.HLTHcalSimpleRecHitFilter_Coinc1.dumpPython()
+print process.hltHcalSimpleRecHitFilterCoincidence.dumpPython()
 print "=== HLTHcalSimpleRecHitFilter_Coinc2 cfg: ===\n"
-print process.HLTHcalSimpleRecHitFilter_Coinc2.dumpPython()
+print process.hltHcalSimpleRecHitFilterCoincidence2.dumpPython()
 
 #
 # Python cfg Customization
