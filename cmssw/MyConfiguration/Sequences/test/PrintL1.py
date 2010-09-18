@@ -14,6 +14,8 @@ process = cms.Process('L1Ana')
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+process.load('HLTrigger.Configuration.HLT_1E31_cff')
+process.digi2raw = cms.Path(process.HLTL1UnpackerSequence)
 
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(10)
@@ -33,6 +35,7 @@ process.GlobalTag.globaltag = anaopt.gbt
 
 # Schedule definition
 process.schedule = cms.Schedule()
+process.schedule.append(process.digi2raw)
 
 # Automatic addition of the customisation function
 
@@ -41,7 +44,7 @@ def customise(process):
     process.options.wantSummary = cms.untracked.bool(True)
 
     process.load('L1Trigger.GlobalTriggerAnalyzer.l1GtTrigReport_cfi')
-    process.l1GtTrigReport.L1GtRecordInputTag = cms.InputTag( "simGtDigis" )
+    process.l1GtTrigReport.L1GtRecordInputTag = cms.InputTag( "hltGtDigis" )
 
     process.L1AnalyzerEndpath = cms.EndPath( process.l1GtTrigReport )
     process.schedule.append(process.L1AnalyzerEndpath)
