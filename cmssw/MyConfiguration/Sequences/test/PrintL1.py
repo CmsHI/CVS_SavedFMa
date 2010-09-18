@@ -1,4 +1,12 @@
 import FWCore.ParameterSet.Config as cms
+import FWCore.ParameterSet.VarParsing as VarParsing
+anaopt = VarParsing.VarParsing ('standard')
+anaopt.register ('gbt',
+    "MC_38Y_V9", # default value
+    VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+    VarParsing.VarParsing.varType.string,          # string, int, or float
+    "globaltag used for l1 menu")
+anaopt.parseArguments()
 
 process = cms.Process('L1Ana')
 
@@ -19,7 +27,7 @@ process.source = cms.Source("PoolSource",
 )
 
 # Other statements
-process.GlobalTag.globaltag = 'MC_38Y_V8::All'
+process.GlobalTag.globaltag = anaopt.gbt
 
 # Path and EndPath definitions
 
