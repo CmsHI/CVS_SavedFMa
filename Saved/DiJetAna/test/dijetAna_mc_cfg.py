@@ -25,10 +25,12 @@ process.centralityFilter.selectedBins = range(40)
 process.load("HeavyIonsAnalysis.Configuration.analysisProducers_cff")
 process.load("Saved.DiJetAna.dijetAna_cff")
 # -- sample specific configs --
-process.dijetAna_mc.hltsrc = cms.InputTag("None")
-process.dijetAna_mc_calojet_tower.hltsrc = cms.InputTag("None")
-process.dijetAna_mc_calojet_genp.hltsrc = cms.InputTag("None")
-process.dijetAna_mc_genjet_genp.hltsrc = cms.InputTag("None")
+for i,m in enumerate([process.dijetAna_mc,
+    process.dijetAna_mc_calojet_tower,
+    process.dijetAna_mc_calojet_genp,
+    process.dijetAna_mc_genjet_genp]):
+  m.hltsrc = cms.InputTag("TriggerResults","","DIGI2RAW")
+  print i, "hlt: ", m.hltsrc
 #process.dijetAna_mc.trksrc = "hiSelectedTracks"
 #process.dijetAna_mc.anaTrkType = 2
 print process.dijetAna_mc.dumpPython()
