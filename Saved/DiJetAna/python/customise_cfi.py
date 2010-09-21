@@ -13,7 +13,7 @@ def loadCentralityDB(process,centTag):
   #    )
 
   process.load("CondCore.DBCommon.CondDBCommon_cfi")
-  process.CondDBCommon.connect = "sqlite_file:CentralityTables.db"
+  process.CondDBCommon.connect = "sqlite_file:/net/hisrv0001/home/frankma/work/HI/jet/sw/Y1JAna_CMSSW_3_8_4/src/RecoHI/HiCentralityAlgos/data/CentralityTables.db"
   process.PoolDBESSource = cms.ESSource("PoolDBESSource",
       process.CondDBCommon,
       toGet = cms.VPSet(
@@ -22,3 +22,15 @@ def loadCentralityDB(process,centTag):
 	  )
 	)
       )
+
+
+def enableRECO(process):
+  # pat jet
+  process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
+  from PhysicsTools.PatAlgos.tools.heavyIonTools import configureHeavyIons
+  configureHeavyIons(process)
+  from PhysicsTools.PatAlgos.tools.jetTools import switchJECSet
+  #switchJECSet( process, "Spring10") # Spring10 is the new default
+  from Saved.Skim.customise_cfi import removePatMCMatch
+  #removePatMCMatch(process)
+  return process.makeHeavyIonJets

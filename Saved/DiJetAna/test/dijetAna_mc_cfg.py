@@ -43,8 +43,14 @@ process.TFileService = cms.Service('TFileService',
     )
 
 # =============== Final Paths =====================
+process.reco = cms.Path( process.centralityFilter * enableRECO(process) )
 process.ana = cms.Path(
    process.centralityFilter *
    #process.allTracks *
    process.dijetAna_mc_seq
    )
+
+process.schedule = cms.Schedule(
+  process.reco,
+  process.ana
+  )
