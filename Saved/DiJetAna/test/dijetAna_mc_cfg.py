@@ -31,8 +31,8 @@ for i,m in enumerate([process.dijetAna_mc,
     process.dijetAna_mc_genjet_genp]):
   m.hltsrc = cms.InputTag("TriggerResults","","DIGI2RAW")
   print i, "hlt: ", m.hltsrc
-#process.dijetAna_mc.trksrc = "hiSelectedTracks"
-#process.dijetAna_mc.anaTrkType = 2
+process.dijetAna_mc.trksrc = "hiSelectedTracks"
+process.dijetAna_mc.anaTrkType = 2
 print process.dijetAna_mc.dumpPython()
 
 anaOutName = "dijetAna_%s.root" % (process.dijetAna_mc.jetsrc.value())

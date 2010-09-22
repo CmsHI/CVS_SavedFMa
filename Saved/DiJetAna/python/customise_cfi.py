@@ -33,4 +33,5 @@ def enableRECO(process):
   #switchJECSet( process, "Spring10") # Spring10 is the new default
   from Saved.Skim.customise_cfi import removePatMCMatch
   #removePatMCMatch(process)
-  return process.makeHeavyIonJets
+  process.reco_extra = cms.Sequence(process.heavyIon*process.makeHeavyIonJets)
+  return process.reco_extra
