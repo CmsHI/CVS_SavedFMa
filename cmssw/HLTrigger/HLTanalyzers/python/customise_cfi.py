@@ -1,6 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
 def defineReco(process):
+  process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
+  process.load('Configuration.StandardSequences.MixingNoPileUp_cff')
   process.raw2digi_step = cms.Path(process.RawToDigi)
   process.reconstruction_step = cms.Path(process.reconstructionHeavyIons)
 
@@ -22,9 +24,11 @@ def defineExtraAna(process):
     m.hltsrc = cms.InputTag("TriggerResults","",process.process)
     m.hltNames = ["HLT_HIMinBiasBSC","HLT_HIActivityHF_Single3","HLT_HIActivityHF_Coincidence3","HLT_HIActivityHF_Coincidence3_2Hit"]
     print i, "hlt: ", m.hltsrc
-  process.dijetAna_mc.anaTrkType = cms.int32(3)
+  process.dijetAna_mc.trksrc = "hiSelectedTracks"
+  process.dijetAna_mc.anaTrkType = cms.int32(2)
   from Saved.DiJetAna.customise_cfi import enableRECO
   enableRECO(process)
-  process.extra_reco_step = cms.Path(process.reco_extra)
-  process.extra_ana_step = cms.Path(process.dijetAna_mc_seq)
+  process.reco_extra.remove(process.heavyIon)
+  process.extra_reco_step = cms.EndPath(process.reco_extra)
+  process.extra_ana_step = cms.EndPath(process.dijetAna_mc_seq)
 
