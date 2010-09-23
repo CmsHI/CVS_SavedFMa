@@ -19,12 +19,12 @@
 using namespace std;
 
 void anaDiJet(int doMC=0,
-    const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/JEx_Hard_GSR_ZS/mc0824_hlt/dijetAna_*.root",
-    TString SrcName = "JExHdMc",
-    TString AnaVersion = "a1",
+    const char * inFile0Name="/net/hibat0003/d00/scratch/frankma/HI/jet/Y1JAna_CMSSW_3_8_4/process_aod_mc/output/dijetAna_patJets_dijet30.root",
+    TString SrcName = "HydjQDJUQ30",
+    TString AnaVersion = "a0j1t0",
+    TString modName = "dijetAna_mc_genjet_genp",
     TString AnaType = "dj",
-    TString header = "JulyData-Hard",
-    TString modName = "dijetAna_mc")
+    TString header = "Hydjet+UnQuenDJ30")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -36,7 +36,7 @@ void anaDiJet(int doMC=0,
   cout << " # entries: " << djTree->GetEntries() << endl;
 
   // === Declare selection ===
-  selectionCut anaSel(SrcName,doMC,"S1",100,200,50,2.5);
+  selectionCut anaSel(SrcName,doMC,"S1",50,200,20,2.5);
   anaSel.DJCutType = "Ana";
   anaSel.TrkCutType = "Ana";
   anaSel.SetCut();
