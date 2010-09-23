@@ -44,6 +44,11 @@ dijetAna_data = dijetAna_mc.clone(
     anaTrkType = cms.int32(2)
     )
 
+dijetAna_data_calojet_tower = dijetAna_data.clone(
+    # trk selection
+    trksrc = cms.InputTag("towerMaker"),
+    trkPtMin = cms.double(-999)
+    )
 
 # === MC Gen+Reco ===
 dijetAna_mc_genjet_trk = dijetAna_mc.clone(
