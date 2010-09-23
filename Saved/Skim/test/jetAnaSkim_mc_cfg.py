@@ -50,7 +50,7 @@ process.prod = cms.Path(
     process.makeHeavyIonJets
     )
 
-from Saved.JulyExercise.customise_cfi import *
+#from Saved.Skim.customise_cfi import *
 #disableMC(process)
 
 process.out_step = cms.EndPath(process.output)
