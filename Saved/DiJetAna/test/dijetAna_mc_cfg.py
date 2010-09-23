@@ -29,7 +29,7 @@ for i,m in enumerate([process.dijetAna_mc,
     process.dijetAna_mc_calojet_tower,
     process.dijetAna_mc_calojet_genp,
     process.dijetAna_mc_genjet_genp]):
-  m.hltsrc = cms.InputTag("TriggerResults","","DIGI2RAW")
+  m.hltsrc = cms.InputTag("TriggerResults","","HISIGNAL")
   print i, "hlt: ", m.hltsrc
 process.dijetAna_mc.trksrc = "hiSelectedTracks"
 process.dijetAna_mc.anaTrkType = 2
