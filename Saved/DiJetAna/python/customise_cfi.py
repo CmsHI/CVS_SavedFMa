@@ -24,7 +24,7 @@ def loadCentralityDB(process,centTag):
       )
 
 
-def enableRECO(process):
+def enableRECO(process,mode="MC"):
   # pat jet
   process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
   from PhysicsTools.PatAlgos.tools.heavyIonTools import configureHeavyIons
@@ -32,6 +32,8 @@ def enableRECO(process):
   from PhysicsTools.PatAlgos.tools.jetTools import switchJECSet
   #switchJECSet( process, "Spring10") # Spring10 is the new default
   from Saved.Skim.customise_cfi import removePatMCMatch
-  #removePatMCMatch(process)
   process.reco_extra = cms.Sequence(process.heavyIon*process.makeHeavyIonJets)
+  if mode=="Data":
+    removePatMCMatch(process)
+    process.reco_extra.remove(process.heavyIon)
   return process.reco_extra
