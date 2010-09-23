@@ -53,13 +53,14 @@ process.schedule = cms.Schedule(
     process.HLT_HIActivityHF_Coincidence3,
     process.HLT_HIActivityHF_Coincidence3_2Hit,
     process.AlCa_HICentralityVeto,
-    process.HLTriggerFinalPath,
-    process.HLTAnalyzerEndpath
+    process.HLTriggerFinalPath
     )
 #defineReco(process)
 #process.schedule.extend([process.raw2digi_step])
+#process.schedule.extend([process.extra_reco_step])
+process.schedule.extend([process.HLTAnalyzerEndpath])
 process.schedule.extend([process.higen,process.analyzeThis])
-process.schedule.extend([process.extra_reco_step,process.extra_ana_step])
+#process.schedule.extend([process.extra_ana_step])
 process.schedule.extend([process.out_step])
 
 # print some config info
