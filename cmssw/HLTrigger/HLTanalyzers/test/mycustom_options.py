@@ -4,6 +4,11 @@ from HLTrigger.HLTanalyzers.customise_cfi import *
 defineExtraHlt(process)
 #defineReco(process)
 defineExtraAna(process)
+process.load("GeneratorInterface.HiGenCommon.HeavyIon_cff")
+process.higen = cms.Path(process.heavyIon+
+                         process.siPixelRecHits*
+                         process.hiCentrality*
+                         process.centralityBin)
 
 # analyzer customization
 process.hltanalysis.hltresults = cms.InputTag("TriggerResults::"+process.process)
@@ -51,9 +56,11 @@ process.schedule = cms.Schedule(
     process.HLT_HIActivityHF_Coincidence3_2Hit,
     process.AlCa_HICentralityVeto,
     process.HLTriggerFinalPath,
-    process.HLTAnalyzerEndpath
+    process.HLTAnalyzerEndpath,
+    process.analyzeThis
     )
-process.schedule.extend([process.extra_reco_step,process.analyzeThis,process.extra_ana_step,process.out_step])
+process.schedule.extend([process.extra_reco_step,process.extra_ana_step])
+process.schedule.extend([process.out_step])
 
 # print some config info
 print "=== HLTHcalSimpleRecHitFilter cfg: ===\n"
