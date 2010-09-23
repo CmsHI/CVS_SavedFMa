@@ -1,40 +1,17 @@
-# === HLT Customization ===
+# === HLT Ana Customization ===
 process.GlobalTag.globaltag = 'START38_V9::All'
-# - Activity Path tests -
-#process.load("HLTrigger.Configuration.HLT_HIon_Activity_cff")
-#process.HLT_HIActivityPixels.remove(process.hltL1sZeroBias)
-#process.HLTHcalSimpleRecHitFilter = cms.EDFilter("HLTHcalSimpleRecHitFilter",
-#    threshold = cms.double(3.0),
-#    minNHitsNeg = cms.int32(1),
-#    minNHitsPos = cms.int32(1),
-#    doCoincidence = cms.bool(False),
-#    maskedChannels = cms.vint32(),
-#    HFRecHitCollection = cms.InputTag("hltHfreco")
-#    )
-process.hltHcalSimpleRecHitFilterCoincidence2 = process.hltHcalSimpleRecHitFilterCoincidence.clone(
-    minNHitsNeg = cms.int32(2),
-    minNHitsPos = cms.int32(2),
-    doCoincidence= cms.bool(True)
-    )
-process.HLT_HIActivityHF_Coincidence3_2Hit = process.HLT_HIActivityHF_Coincidence3.expandAndClone();
-process.HLT_HIActivityHF_Coincidence3_2Hit.replace(process.hltHcalSimpleRecHitFilterCoincidence,process.hltHcalSimpleRecHitFilterCoincidence2)
+from HLTrigger.HLTanalyzers.customise_cfi import *
+defineExtraHlt(process)
+#defineReco(process)
+defineExtraAna(process)
 
 # analyzer customization
 process.hltanalysis.hltresults = cms.InputTag("TriggerResults::"+process.process)
 process.hltanalysis.HLTProcessName = process.process
 
-#process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
-#from PhysicsTools.PatAlgos.tools.heavyIonTools import *
-#configureHeavyIons(process)
-#from Saved.JulyExercise.customise_cfi import *
-#removePatMCMatch(process)
-#process.load("Saved.DiJetAna.dijetAna_cff")
-#process.dijetAna_data.hltsrc = cms.InputTag("TriggerResults::"+process.process)
-#process.dijetAna_data.hltNames = cms.untracked.vstring("HLT_ActivityHF3_Coinc1")
-#process.dijetAna_data.jetEtaMax = cms.double(5.)
-#process.dijetAna_data.trksrc = cms.InputTag("towerMaker")
-#process.dijetAna_data.anaTrkType = cms.int32(3)
-#process.jetana = cms.Path(process.makeHeavyIonJets*process.dijetAna_data)
+process.TFileService = cms.Service('TFileService',
+    fileName = cms.string("dijetAna.root")
+    )
 
 # Output definition
 process.output = cms.OutputModule("PoolOutputModule",
@@ -74,11 +51,9 @@ process.schedule = cms.Schedule(
     process.HLT_HIActivityHF_Coincidence3_2Hit,
     process.AlCa_HICentralityVeto,
     process.HLTriggerFinalPath,
-    process.HLTAnalyzerEndpath,
-    process.analyzeThis#,
-    #process.jetana
+    process.HLTAnalyzerEndpath
     )
-process.schedule.extend([process.out_step])
+process.schedule.extend([process.extra_reco_step,process.analyzeThis,process.extra_ana_step,process.out_step])
 
 # print some config info
 print "=== HLTHcalSimpleRecHitFilter cfg: ===\n"
