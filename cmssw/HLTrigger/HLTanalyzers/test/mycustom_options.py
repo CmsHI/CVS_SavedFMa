@@ -2,10 +2,9 @@
 process.GlobalTag.globaltag = 'START38_V9::All'
 from HLTrigger.HLTanalyzers.customise_cfi import *
 defineExtraHlt(process)
-#defineReco(process)
 defineExtraAna(process)
 process.load("GeneratorInterface.HiGenCommon.HeavyIon_cff")
-process.higen = cms.Path(process.heavyIon+
+process.higen = cms.EndPath(process.heavyIon+
                          process.siPixelRecHits*
                          process.hiCentrality*
                          process.centralityBin)
@@ -32,10 +31,9 @@ process.output = cms.OutputModule("PoolOutputModule",
 )
 # Path and EndPath definitions
 process.out_step = cms.EndPath(process.output)
-
+#
 # Redefine schedule
 process.schedule = cms.Schedule( 
-    process.higen,
     process.HLTriggerFirstPath,
     process.HLT_ZeroBiasPixel_SingleTrack,
     process.HLT_HIMinBiasBSC,
@@ -56,9 +54,11 @@ process.schedule = cms.Schedule(
     process.HLT_HIActivityHF_Coincidence3_2Hit,
     process.AlCa_HICentralityVeto,
     process.HLTriggerFinalPath,
-    process.HLTAnalyzerEndpath,
-    process.analyzeThis
+    process.HLTAnalyzerEndpath
     )
+#defineReco(process)
+#process.schedule.extend([process.raw2digi_step])
+process.schedule.extend([process.higen,process.analyzeThis])
 process.schedule.extend([process.extra_reco_step,process.extra_ana_step])
 process.schedule.extend([process.out_step])
 
