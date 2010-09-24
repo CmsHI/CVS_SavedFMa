@@ -16,7 +16,7 @@
 using namespace std;
 
 void plotHltActivity(
-    TString inFile0Name="../openhlt/output/openhlt_try2_1k.root",
+    TString inFile0Name="../openhlt/output/openhlt_Hydjet_BSC_HF_v2_100.root",
     TString header="Hydjet 2.76TeV"
     )
 {
@@ -28,7 +28,7 @@ void plotHltActivity(
   cout << " # entries: " << ohTree->GetEntries() << endl;
   
   // Define Output
-  TString outdir = "out/Hydj";
+  TString outdir = "out/Hydj/BSC_HF_L1Emul";
   CPlot::sOutDir = outdir;
   gSystem->mkdir(outdir.Data(),kTRUE);
   TFile * outf = new TFile(Form("%s/activity.root",outdir.Data()),"RECREATE");
@@ -46,20 +46,20 @@ void plotHltActivity(
   hgTrig2Corr.Add2D("L1T41_HFCoinc2");
 
   // Analyze from tree
-  ohTree->Draw(Form("HLT_ActivityHF3:hiBin*2.5>>%s",hgEffVsCent.GetH("HFAct3_1Hit")->GetName()),"","prof goff");
-  ohTree->Draw(Form("HLT_ActivityHF3_Coinc1:hiBin*2.5>>%s",hgEffVsCent.GetH("HFAct3_Coinc1")->GetName()),"","prof goff");
-  ohTree->Draw(Form("HLT_ActivityHF3_Coinc2:hiBin*2.5>>%s",hgEffVsCent.GetH("HFAct3_Coinc2")->GetName()),"","prof goff");
+  ohTree->Draw(Form("HLT_HIActivityHF_Single3:hiBin*2.5>>%s",hgEffVsCent.GetH("HFAct3_1Hit")->GetName()),"","prof goff");
+  ohTree->Draw(Form("HLT_HIActivityHF_Coincidence3:hiBin*2.5>>%s",hgEffVsCent.GetH("HFAct3_Coinc1")->GetName()),"","prof goff");
+  ohTree->Draw(Form("HLT_HIActivityHF_Coincidence3_2Hit:hiBin*2.5>>%s",hgEffVsCent.GetH("HFAct3_Coinc2")->GetName()),"","prof goff");
   ohTree->Draw(Form("L1Tech_BSC_minBias_threshold1.v0:hiBin*2.5>>%s",hgEffVsCent.GetH("L1T40")->GetName()),"","prof goff");
   ohTree->Draw(Form("L1Tech_BSC_minBias_threshold2.v0:hiBin*2.5>>%s",hgEffVsCent.GetH("L1T41")->GetName()),"","prof goff");
 
   TCanvas * cL1T40_HFCoinc1 = new TCanvas("L1T40_HFCoinc1","L1T40_HFCoinc1",500,500);
-  ohTree->Draw(Form("L1Tech_BSC_minBias_threshold1.v0:HLT_ActivityHF3_Coinc1>>%s",hgTrig2Corr.GetH("L1T40_HFCoinc1")->GetName()),"","box");
+  ohTree->Draw(Form("L1Tech_BSC_minBias_threshold1.v0:HLT_HIActivityHF_Coincidence3>>%s",hgTrig2Corr.GetH("L1T40_HFCoinc1")->GetName()),"","box");
   CPlot cpL1T40_HFCoinc1("L1T40_HFCoinc1","L1T40_HFCoinc1","ActivityHF3 (1Hit Coinc.)","L1T40");
   cpL1T40_HFCoinc1.AddHist2D(hgTrig2Corr.H("L1T40_HFCoinc1"),"box");
   cpL1T40_HFCoinc1.Draw(cL1T40_HFCoinc1,true);
 
   TCanvas * cL1T41_HFCoinc2 = new TCanvas("L1T41_HFCoinc2","L1T41_HFCoinc2",500,500);
-  ohTree->Draw(Form("L1Tech_BSC_minBias_threshold2.v0:HLT_ActivityHF3_Coinc2>>%s",hgTrig2Corr.GetH("L1T41_HFCoinc2")->GetName()),"","goff");
+  ohTree->Draw(Form("L1Tech_BSC_minBias_threshold2.v0:HLT_HIActivityHF_Coincidence3_2Hit>>%s",hgTrig2Corr.GetH("L1T41_HFCoinc2")->GetName()),"","goff");
   CPlot cpL1T41_HFCoinc2("L1T41_HFCoinc2","L1T41_HFCoinc2","ActivityHF3 (2Hit Coinc.)","L1T41");
   cpL1T41_HFCoinc2.AddHist2D(hgTrig2Corr.H("L1T41_HFCoinc2"),"box");
   cpL1T41_HFCoinc2.Draw(cL1T41_HFCoinc2,true);
