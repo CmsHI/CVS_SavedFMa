@@ -12,6 +12,7 @@
 
 #include "Saved/Utilities/macros/cplot/CPlot.h"           // helper class for plots
 #include "Saved/Utilities/macros/histogram/HisTGroup.h"
+#include "aliases_openhlt.C"
 
 using namespace std;
 
@@ -25,6 +26,7 @@ void plotHltActivity(
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
   TChain * ohTree = new TChain("HltTree","HI OpenHLT Tree");
+  aliases_openhlt(ohTree);
   ohTree->Add(inFile0Name);
   cout << " # entries: " << ohTree->GetEntries() << endl;
   
@@ -46,11 +48,11 @@ void plotHltActivity(
   hgTrig2Corr.Add2D("L1T41_HFCoinc2");
 
   // Analyze from tree
-  ohTree->Draw(Form("HLT_HIActivityHF_Single3:hiBin*2.5>>%s",hgEffVsCent.GetH("HFAct3_1Hit")->GetName()),"","prof goff");
-  ohTree->Draw(Form("HLT_HIActivityHF_Coincidence3:hiBin*2.5>>%s",hgEffVsCent.GetH("HFAct3_Coinc1")->GetName()),"","prof goff");
-  ohTree->Draw(Form("HLT_HIActivityHF_Coincidence3_2Hit:hiBin*2.5>>%s",hgEffVsCent.GetH("HFAct3_Coinc2")->GetName()),"","prof goff");
-  ohTree->Draw(Form("L1Tech_BSC_minBias_threshold1.v0:hiBin*2.5>>%s",hgEffVsCent.GetH("L1T40")->GetName()),"","prof goff");
-  ohTree->Draw(Form("L1Tech_BSC_minBias_threshold2.v0:hiBin*2.5>>%s",hgEffVsCent.GetH("L1T41")->GetName()),"","prof goff");
+  ohTree->Draw(Form("HLT_HIActivityHF_Single3:cent>>%s",hgEffVsCent.GetH("HFAct3_1Hit")->GetName()),"","prof goff");
+  ohTree->Draw(Form("HLT_HIActivityHF_Coincidence3:cent>>%s",hgEffVsCent.GetH("HFAct3_Coinc1")->GetName()),"","prof goff");
+  ohTree->Draw(Form("HLT_HIActivityHF_Coincidence3_2Hit:cent>>%s",hgEffVsCent.GetH("HFAct3_Coinc2")->GetName()),"","prof goff");
+  ohTree->Draw(Form("L1Tech_BSC_minBias_threshold1.v0:cent>>%s",hgEffVsCent.GetH("L1T40")->GetName()),"","prof goff");
+  ohTree->Draw(Form("L1Tech_BSC_minBias_threshold2.v0:cent>>%s",hgEffVsCent.GetH("L1T41")->GetName()),"","prof goff");
 
   TCanvas * cL1T40_HFCoinc1 = new TCanvas("L1T40_HFCoinc1","L1T40_HFCoinc1",500,500);
   ohTree->Draw(Form("L1Tech_BSC_minBias_threshold1.v0:HLT_HIActivityHF_Coincidence3>>%s",hgTrig2Corr.GetH("L1T40_HFCoinc1")->GetName()),"","box");
