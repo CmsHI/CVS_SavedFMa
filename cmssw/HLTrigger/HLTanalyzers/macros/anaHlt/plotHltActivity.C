@@ -16,7 +16,7 @@
 using namespace std;
 
 void plotHltActivity(
-    TString inFile0Name="../openhlt/output/openhlt_Hydjet_BSC_HF_v2_100.root",
+    TString inFile0Name="../openhlt/output/openhlt_Hydjet_BSC_HF_v2_800.root",
     TString outdir = "out/Hydj/BSC_HF_L1Emul",
     TString header="Hydjet 2.76TeV"
     )
