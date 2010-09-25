@@ -17,6 +17,7 @@ using namespace std;
 
 void plotHltActivity(
     TString inFile0Name="../openhlt/output/openhlt_Hydjet_BSC_HF_v2_100.root",
+    TString outdir = "out/Hydj/BSC_HF_L1Emul",
     TString header="Hydjet 2.76TeV"
     )
 {
@@ -28,7 +29,6 @@ void plotHltActivity(
   cout << " # entries: " << ohTree->GetEntries() << endl;
   
   // Define Output
-  TString outdir = "out/Hydj/BSC_HF_L1Emul";
   CPlot::sOutDir = outdir;
   gSystem->mkdir(outdir.Data(),kTRUE);
   TFile * outf = new TFile(Form("%s/activity.root",outdir.Data()),"RECREATE");
@@ -69,7 +69,7 @@ void plotHltActivity(
   CPlot cpHltActEffVsCent("HltActEffVsCent","HltActEffVsCent","Centrality","HLT Eff.");
   cpHltActEffVsCent.SetXRange(0,100);
   cpHltActEffVsCent.SetYRange(0,1.1);
-  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T40"),"L1 Bit 40","E",kGreen+2,kOpenCircle);
+  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T40"),"L1 Bit 40","hist",kGreen+2,kOpenCircle);
   cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T41"),"L1 Bit 41","E",kOrange+2,kOpenDiamond);
   cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("HFAct3_1Hit"),"ActivityHF3 (Any Hit)","E",kBlue,kOpenSquare);
   cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("HFAct3_Coinc1"),"ActivityHF3 (1 Hit Coinc.)","E",kBlack,kFullCircle);

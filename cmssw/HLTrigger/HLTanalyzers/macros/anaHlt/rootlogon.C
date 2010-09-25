@@ -29,6 +29,7 @@
   gROOT->Macro("$CMSSW_BASE/src/Saved/Utilities/macros/logon/rootlogon_dNdEtaBase.C+");
   //gStyle->SetOptStat(1111);
   gStyle->SetPadLeftMargin(0.2);
+  gStyle->SetMarkerSize(1.3);
 
   // helper classes
   gROOT->Macro("$CMSSW_BASE/src/Saved/Utilities/macros/cplot/CPlot.cc+");
