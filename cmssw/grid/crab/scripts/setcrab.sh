@@ -11,6 +11,10 @@
 #   according to the twiki instructions
 #
 
+# 0. go to the project sw directory
+startdir=`pwd`
+cd $CMSSW_BASE/src
+
 # 1. get access to a LCG User Interface (LCG UI). It will allow you to
 #    access WLCG-affiliated resources.
 source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env.sh
@@ -24,4 +28,4 @@ cmsenv
 # The lastest version:
 source /afs/cern.ch/cms/ccs/wm/scripts/Crab/crab.sh
 
-
+cd $startdir
