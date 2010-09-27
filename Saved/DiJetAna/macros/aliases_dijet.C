@@ -11,7 +11,8 @@ void aliases_dijet(TTree * djTree, float pptMin=4.5, int doMC=1)
   djTree->SetAlias("goodDJ2","nljet>10 && aljet>10 && abs(nljeta)<2 && abs(aljeta)<2 && jdphi>2.14 && nljemf>0.01 && aljemf>0.01");
 
   // track level
-  djTree->SetAlias("goodTrk",Form("ppt>%f && ppt<nljet*1.5 &&psube==0",pptMin));
+  // psube==0 for genp signal
+  djTree->SetAlias("goodTrk",Form("ppt>%f && ppt<nljet*1.5",pptMin));
 
   // jet cone info
   double dR=0.5;
@@ -24,6 +25,11 @@ void aliases_dijet(TTree * djTree, float pptMin=4.5, int doMC=1)
   djTree->SetAlias("AC5NPBg",Form("Sum$(goodTrk && padrbg<%f)",dR));
   djTree->SetAlias("NC5PtBg",Form("Sum$((goodTrk && pndrbg<%f)*ppt)",dR));
   djTree->SetAlias("AC5PtBg",Form("Sum$((goodTrk && padrbg<%f)*ppt)",dR));
+
+  djTree->SetAlias("NC5NPSub","(NC5NP-NC5NPBg)");
+  djTree->SetAlias("AC5NPSub","(AC5NP-AC5NPBg)");
+  djTree->SetAlias("NC5PtSub","(NC5Pt-NC5PtBg)");
+  djTree->SetAlias("AC5PtSub","(AC5Pt-AC5PtBg)");
 
   if (doMC==0) return;
 
