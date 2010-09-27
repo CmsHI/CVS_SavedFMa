@@ -39,6 +39,7 @@ class selectionCut
     TString BaseCutType; 
     TString DJCutType;
     TString TrkCutType;
+    TString Tag2;
 
     // Cuts
     TCut BaseCut;
@@ -97,6 +98,7 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   BaseCutType(base),
   DJCutType("Ana"),
   TrkCutType("Ana"),
+  Tag2("_J"+DJCutType+"T"+TrkCutType),
   // default cuts
   Trigger("hlt[0]"),
   CentCut("cent<20"),
@@ -191,7 +193,7 @@ void selectionCut::And(std::map<TString,TCut> & mp, TCut cut)
 
 void selectionCut::Print(int verbosity)
 {
-  std::cout << std::endl << "Ana: " << Name << "/" << Tag << std::endl;
+  std::cout << std::endl << "Ana: " << Name << "/" << Tag << "  Tag2: " << Tag2 << std::endl;
   std::cout << std::setw(15) << "Evt" << ": " << TString(BaseCut) << std::endl;
   if (verbosity==1) {
     std::cout << std::setw(15) << DJCutType << ": " << TString(DJCut()) << std::endl;
