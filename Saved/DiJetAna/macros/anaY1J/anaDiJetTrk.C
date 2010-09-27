@@ -18,13 +18,13 @@
 
 using namespace std;
 
-void anaDiJetTrk(int doMC=0,
-    const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/Hydj_Hard_GSR_NZS/UQDJ80_120_proc0831_10k.root",
-    TString SrcName = "HydUQDJ80",
-    TString AnaVersion = "a5",
-    TString AnaType = "djtrk",
-    TString header = "Hydjet+UQDJ80to120",
-    TString modName = "dijetAna_mc")
+void anaDiJetTrk(int doMC=1,
+    const char * inFile0Name="/net/hibat0003/d00/scratch/frankma/HI/jet/Y1JAna_CMSSW_3_8_4/process_aod_mc/output/dijetAna_patJets_dijet30.root",
+    TString AnaVersion = "a1",
+    TString modName = "dijetAna_mc",
+    TString SrcName = "HydjQDJQ30",
+    TString header = "HydjetQ+DJQuen30",
+    TString AnaType = "djtrk")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -36,9 +36,10 @@ void anaDiJetTrk(int doMC=0,
   cout << " # entries: " << djTree->GetEntries() << endl;
 
   // === Declare selection ===
-  selectionCut anaSel(SrcName,doMC,"S1",100,200,50,2.5);
+  selectionCut anaSel(SrcName,doMC,"S1",50,200,20,2.5);
   anaSel.DJCutType = "Ana";
   anaSel.TrkCutType = "Ana";
+  anaSel.Tag2+=TString("_"+modName);
   anaSel.SetCut();
 
   // -- analysis selections --
@@ -52,7 +53,7 @@ void anaDiJetTrk(int doMC=0,
   cout << "Output dir: " << anaoutdir << endl;
   gSystem->mkdir(anaoutdir.Data(),kTRUE);
   // Save output
-  TFile * outf = new TFile(Form("%s/%s.root",anaoutdir.Data(),AnaType.Data()),"RECREATE");
+  TFile * outf = new TFile(anaoutdir+"/"+AnaType+anaSel.Tag2+".root","RECREATE");
 
   // ============== pdf comparisons ===============
   cout << endl << "======= anaDiJetTrk ========" << endl;
