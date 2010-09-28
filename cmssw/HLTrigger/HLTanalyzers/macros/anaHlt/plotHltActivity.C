@@ -17,8 +17,8 @@
 using namespace std;
 
 void plotHltActivity(
-    TString inFile0Name="../openhlt/output/openhlt_Hydjet_BSC_HF_v2_800.root",
-    TString outdir = "out/Hydj/BSC_HF_L1Emul",
+    TString inFile0Name="~/scratch01/ana/Hydj_BSC_HF_L1Emul/oh0928_v2/openhlt_hiReco_RAW2DIGI_RECO_*_ohtree.root",
+    TString outdir = "out/Hydj/BSC_HF_L1Emul/devHLT381",
     TString header="Hydjet 2.76TeV"
     )
 {
@@ -71,11 +71,11 @@ void plotHltActivity(
   CPlot cpHltActEffVsCent("HltActEffVsCent","HltActEffVsCent","Centrality","HLT Eff.");
   cpHltActEffVsCent.SetXRange(0,100);
   cpHltActEffVsCent.SetYRange(0,1.1);
-  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T40"),"L1 Bit 40","hist",kGreen+2,kOpenCircle);
-  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T41"),"L1 Bit 41","E",kOrange+2,kOpenDiamond);
   cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("HFAct3_1Hit"),"ActivityHF3 (Any Hit)","E",kBlue,kOpenSquare);
   cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("HFAct3_Coinc1"),"ActivityHF3 (1 Hit Coinc.)","E",kBlack,kFullCircle);
   cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("HFAct3_Coinc2"),"ActivityHF3 (2 Hits Coinc.)","E",kRed,kOpenStar);
+  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T40"),"L1 Bit 40","hist",kGreen+2,kOpenCircle);
+  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T41"),"L1 Bit 41","E",kOrange+2,kOpenDiamond);
   cpHltActEffVsCent.SetLegend(0.29,0.21,0.62,0.43);
   cpHltActEffVsCent.SetLegendHeader(header);
   cpHltActEffVsCent.Draw(cHltActEffVsCent,true);
