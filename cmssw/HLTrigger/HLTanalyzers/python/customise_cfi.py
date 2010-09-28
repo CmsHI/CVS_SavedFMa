@@ -18,6 +18,7 @@ def defineExtraHlt(process):
   process.HLT_HIActivityHF_Coincidence3_2Hit.replace(process.hltHcalSimpleRecHitFilterCoincidence,process.hltHcalSimpleRecHitFilterCoincidence2)
 
 def defineExtraAna(process):
+  process.higen.remove(process.heavyIon)
   from Saved.DiJetAna.customise_cfi import enableRECO
   enableRECO(process,"Data")
   process.load("Saved.DiJetAna.dijetAna_cff")
