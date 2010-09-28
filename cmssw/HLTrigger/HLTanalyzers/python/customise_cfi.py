@@ -24,9 +24,9 @@ def defineExtraAna(process):
   process.load("Saved.DiJetAna.dijetAna_cff")
   for i,m in enumerate([process.dijetAna_data_calojet_tower]):
     m.hltsrc = cms.InputTag("TriggerResults","",process.process)
-    m.hltNames = ["HLT_ZeroBiasPixel_SingleTrack",
+    m.hltNames = ["HLT_HIZeroBiasPixel_SingleTrack",
 	"HLT_HIMinBiasBSC","HLT_HIMinBiasCalo",
-	"HLT_L1Tech_HCAL_HF","HLT_L1Tech_BSC_minBias",
+	"HLT_HIL1Tech_HCAL_HF","HLT_HIL1Tech_BSC_minBias",
 	"HLT_HIActivityHF_Single3","HLT_HIActivityHF_Coincidence3","HLT_HIActivityHF_Coincidence3_2Hit"]
     print i, "hlt: ", m.hltsrc
   process.dijetAna_data_calojet_tower.jetEtaMax = 5
