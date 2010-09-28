@@ -1,3 +1,3 @@
 # cff for inclusion
-hltGetConfiguration --process TEST --unprescale --cff --offline --mc /users/cer/HI_HLT_381p7/HIon/V9 > HLT_HIon_cff.py
+hltGetConfiguration --process TEST --unprescale --cff --offline --mc /dev/CMSSW_3_8_1/HIon/V33 > HLT_HIon_cff.py
 cp HLT_HIon_cff.py $CMSSW_BASE/src/HLTrigger/Configuration/pyton/
