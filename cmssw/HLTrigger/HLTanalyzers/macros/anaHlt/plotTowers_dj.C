@@ -10,21 +10,22 @@
 using namespace std;
 
 void plotTowers_dj(
-    TString infilename="../openhlt/output/dijetAna_Hydjet_BSC_HF_v2_800.root",
-    TString outdir = "out/Hydj/BSC_HF_L1Emul")
+    TString inFile0Name="~/scratch01/ana/Hydj_BSC_HF_L1Emul/oh0928_v2/openhlt_hiReco_RAW2DIGI_RECO_*_djana.root",
+    TString outdir = "out/Hydj/BSC_HF_L1Emul/devHLT381")
 {
   TChain * djTree = new TChain("dijetAna_data_calojet_tower/djTree");
-  djTree->Add(infilename);
+  djTree->Add(inFile0Name);
   aliases_dj(djTree);
+  cout << " # entries: " << djTree->GetEntries() << endl;
 
   gSystem->mkdir(outdir.Data(),kTRUE);
 
   pair<TString,TString> t = make_pair("name","cut");
   vector<pair<TString,TCut> > trigs;
   trigs.push_back(make_pair("All","1==1"));
-  trigs.push_back(make_pair("HfAnyHit","hlt[5]"));
-  trigs.push_back(make_pair("HfCoic1","hlt[6]"));
-  trigs.push_back(make_pair("HfCoic2","hlt[7]"));
+  trigs.push_back(make_pair("HfAnyHit","hlt[2]"));
+  trigs.push_back(make_pair("HfCoic1","hlt[3]"));
+  trigs.push_back(make_pair("HfCoic2","hlt[4]"));
 
   for (unsigned int i=0; i<trigs.size(); ++i) {
     TCanvas * cHfNvsP = new TCanvas("HfNvsP_"+trigs[i].first,"HfNvsP_"+trigs[i].first,500,500);
