@@ -1,13 +1,14 @@
 #include <iostream>
 #include <iomanip>
-#include <TFile.h>
-#include <TTree.h>
 #include <cmath>
 #include <string>
 #include <vector>
-#include <TH2.h>
-#include <TPaletteAxis.h>
-#include <TCanvas.h>
+#include "TFile.h"
+#include "TTree.h"
+#include "TChain.h"
+#include "TH2.h"
+#include "TPaletteAxis.h"
+#include "TCanvas.h"
 #include "TSystem.h"
 
 using namespace std;
@@ -136,14 +137,15 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
 }
 
 void trigAnaCorrelation(
-    char *infile="../openhlt/output/openhlt_Hydjet_BSC_HF_v2_800.root",
-    TString outdir = "out/Hydj/BSC_HF_L1Emul",
+    TString inFile0Name="~/scratch01/ana/Hydj_BSC_HF_L1Emul/oh0928_v2/openhlt_hiReco_RAW2DIGI_RECO_*_ohtree.root",
+    TString outdir = "out/Hydj/BSC_HF_L1Emul/devHLT381",
     char *projectTitle = "Hydjet2760GeV",
     string source="mc")
 {
   // Load input
-  TFile *inf = new TFile(infile);
-  TTree *HltTree =  (TTree*) inf->FindObjectAny("HltTree");
+  TChain * HltTree = new TChain("HltTree","HI OpenHLT Tree");
+  HltTree->Add(inFile0Name);
+  cout << " # entries: " << HltTree->GetEntries() << endl;
 
   gSystem->mkdir(outdir.Data(),kTRUE);
   goutdir=outdir;
