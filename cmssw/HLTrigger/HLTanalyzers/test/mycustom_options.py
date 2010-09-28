@@ -83,7 +83,8 @@ def mycustomise(process):
   # process.output
   try:
     if ('default_output' not in options.output):
-      process.output.fileName = cms.untracked.string(options.output)
+      process.hltanalysis.RunParameters.HistogramFile=options.output.replace(".root","_ohtree.root")
+      process.TFileService.fileName = options.output.replace(".root","_djana.root")
   except:
     print "no output module with the given name"
   # done
