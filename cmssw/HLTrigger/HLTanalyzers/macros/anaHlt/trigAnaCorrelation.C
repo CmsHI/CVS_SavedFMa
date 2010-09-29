@@ -68,8 +68,17 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
   effs.push_back(calcEff(HltTree,"L1Tech9",nEvt,Form("(%s)&&L1Tech_HCAL_HF_coincidence_PM.v1",cut)));
   effs.push_back(calcEff(HltTree,"L1Tech40",nEvt,Form("(%s)&&L1Tech_BSC_minBias_threshold1.v0",cut)));
   effs.push_back(calcEff(HltTree,"L1Tech41",nEvt,Form("(%s)&&L1Tech_BSC_minBias_threshold2.v0",cut)));
+  effs.push_back(calcEff(HltTree,"L1TechHighMul",nEvt,Form("(%s)&&L1Tech_BSC_HighMultiplicity.v0",cut)));
+  effs.push_back(calcEff(HltTree,"HLT_HIZeroBiasPixel_SingleTrack",nEvt,Form("(%s)&&HLT_HIZeroBiasPixel_SingleTrack",cut)));
   effs.push_back(calcEff(HltTree,"HLT_HIMinBiasBSC",nEvt,Form("(%s)&&HLT_HIMinBiasBSC",cut)));
   effs.push_back(calcEff(HltTree,"HLT_HIMinBiasCalo",nEvt,Form("(%s)&&HLT_HIMinBiasCalo",cut)));
+  effs.push_back(calcEff(HltTree,"HLT_HIMinBiasPixel_SingleTrack",nEvt,Form("(%s)&&HLT_HIMinBiasPixel_SingleTrack",cut)));
+  effs.push_back(calcEff(HltTree,"HLT_HIL1DoubleMuOpen",nEvt,Form("(%s)&&HLT_HIL1DoubleMuOpen",cut)));
+  effs.push_back(calcEff(HltTree,"HLT_HIL1ETT60",nEvt,Form("(%s)&&HLT_HIL1ETT60",cut)));
+  effs.push_back(calcEff(HltTree,"HLT_HIUpcEcal",nEvt,Form("(%s)&&HLT_HIUpcEcal",cut)));
+  effs.push_back(calcEff(HltTree,"HLT_HIUpcMu",nEvt,Form("(%s)&&HLT_HIUpcMu",cut)));
+  effs.push_back(calcEff(HltTree,"HLT_HIPhoton15",nEvt,Form("(%s)&&HLT_HIPhoton15",cut)));
+  effs.push_back(calcEff(HltTree,"HLT_HIJet35U",nEvt,Form("(%s)&&HLT_HIJet35U",cut)));
   effs.push_back(calcEff(HltTree,"HLT_HIActivityPixels",nEvt,Form("(%s)&&HLT_HIActivityPixels",cut)));
   effs.push_back(calcEff(HltTree,"HLT_HIActivityPixel_SingleTrack",nEvt,Form("(%s)&&HLT_HIActivityPixel_SingleTrack",cut)));
   effs.push_back(calcEff(HltTree,"HLT_HIActivityHF_Single3",nEvt,Form("(%s)&&HLT_HIActivityHF_Single3",cut)));
