@@ -90,15 +90,14 @@ void plotHltActivity(
   TCanvas * cCentVar = new TCanvas("cCentVar","CentVar",500,500);
   cCentVar->SetLogy();
   if (doLogx==2) cCentVar->SetLogx();
-  hCentVar->GetXaxis()->SetNdivisions(410);
   hCentVar->Draw("E");
+  hCentVar->SetNdivisions(405);
   cCentVar->Print(outdir+Form("/%s%d.gif",centVar.Data(),doLogx));
 
   TCanvas * cHltActEffVsCent = new TCanvas("HltActEffVsCent","HltActEffVsCent",500,500);
   CPlot cpHltActEffVsCent("HltActEffVsCent","HltActEffVsCent",centVarTitle,"Trigger Eff.");
-  cpHltActEffVsCent.SetXRange(0.3,2000);
+  cpHltActEffVsCent.SetXRange(0.3,20);
   cpHltActEffVsCent.SetYRange(0,1.1);
-  cpHltActEffVsCent.SetLogx();
   //cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("HFAct3_1Hit"),"ActivityHF3 (Any Hit)","E",kBlue,kOpenSquare);
   //cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("HFAct3_Coinc1"),"ActivityHF3 (1 Hit Coinc.)","E",kBlack,kFullCircle);
   //cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("HFAct3_Coinc2"),"ActivityHF3 (2 Hits Coinc.)","E",kRed,kOpenStar);
