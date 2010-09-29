@@ -19,6 +19,8 @@ void plotTowers_dj(
   cout << " # entries: " << djTree->GetEntries() << endl;
 
   gSystem->mkdir(outdir.Data(),kTRUE);
+  Int_t NTowerMax=70;
+
 
   pair<TString,TString> t = make_pair("name","cut");
   vector<pair<TString,TCut> > trigs;
@@ -29,12 +31,12 @@ void plotTowers_dj(
 
   for (unsigned int i=0; i<trigs.size(); ++i) {
     TCanvas * cHfNvsP = new TCanvas("HfNvsP_"+trigs[i].first,"HfNvsP_"+trigs[i].first,500,500);
-    cHfNvsP->SetLogx();
-    cHfNvsP->SetLogy();
-    TH2D * hHfNvsP = new TH2D("hHfNvsP"+trigs[i].first,"hHfNvsP_",100,0,100,100,0,100);
+    //cHfNvsP->SetLogx();
+    //cHfNvsP->SetLogy();
+    TH2D * hHfNvsP = new TH2D("hHfNvsP"+trigs[i].first,"hHfNvsP_",NTowerMax,0,NTowerMax,NTowerMax,0,NTowerMax);
     hHfNvsP->SetAxisRange(0.1,400,"X");
     hHfNvsP->SetAxisRange(0.1,400,"Y");
-    djTree->Draw("NHfN:NHfP>>hHfNvsP"+trigs[i].first,trigs[i].second,"box");
+    djTree->Draw("NHfN:NHfP>>hHfNvsP"+trigs[i].first,trigs[i].second,"colz");
     hHfNvsP->SetTitle("HF Towers;# HF+ Towers (E>3GeV);# HF- Towers (E>3GeV)");
     cHfNvsP->Print(Form("%s/trHfNvsP_%s.gif",outdir.Data(),trigs[i].first.Data()));
   }
