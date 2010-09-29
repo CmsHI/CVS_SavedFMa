@@ -35,34 +35,37 @@ void plotHltActivity(
   gSystem->mkdir(outdir.Data(),kTRUE);
   TFile * outf = new TFile(Form("%s/activity.root",outdir.Data()),"RECREATE");
 
-  // Book Histograms
-  HisTGroup<TProfile> hgEffVsCent("EffVsCent",900,0,900);
-  hgEffVsCent.Add1D("HFAct3_1Hit");
-  hgEffVsCent.Add1D("HFAct3_Coinc1");
-  hgEffVsCent.Add1D("HFAct3_Coinc2");
-  hgEffVsCent.Add1D("L1T34");
-  hgEffVsCent.Add1D("L1T40");
-  hgEffVsCent.Add1D("L1T41");
-  hgEffVsCent.Add1D("L1T8");
-  hgEffVsCent.Add1D("L1T9");
-  hgEffVsCent.Add1D("L1T10");
-  TH1D * hNTrks = new TH1D("hNTrks","hNTrks;# of Selected Trks;# Evt",25,0,100);
-
-  HisTGroup<TH2F> hgTrig2Corr("Trig2Corr",2,0,2,2,0,2);
-  hgTrig2Corr.Add2D("L1T40_HFCoinc1");
-  hgTrig2Corr.Add2D("L1T41_HFCoinc2");
-
-  // Analyze from tree
   //TString centVar("hiNtracks");
   //TString centVarTitle("# of Selected Trks");
   TString centVar("hiNpixelTracks");
   TString centVarTitle("# of Pixel Trks");
   //TString centVar("Ncharged");
   //TString centVarTitle("# of Charged Particles");
-  ohTree->Draw("hiNtracks>>hNTrks","","prof goff");
+
+  // Book Histograms
+  HisTGroup<TProfile> hgEffVsCent("EffVsCent",2000,0,2000);
+  hgEffVsCent.Add1D("HFAct3_1Hit");
+  hgEffVsCent.Add1D("HFAct3_Coinc1");
+  hgEffVsCent.Add1D("HFAct3_Coinc2");
+  hgEffVsCent.Add1D("L1_ETT30");
+  hgEffVsCent.Add1D("L1T34");
+  hgEffVsCent.Add1D("L1T40");
+  hgEffVsCent.Add1D("L1T41");
+  hgEffVsCent.Add1D("L1T8");
+  hgEffVsCent.Add1D("L1T9");
+  hgEffVsCent.Add1D("L1T10");
+  TH1D * hCentVar = new TH1D("hCentVar","hCentVar;"+centVarTitle+";# Evt",50,0,2000);
+
+  HisTGroup<TH2F> hgTrig2Corr("Trig2Corr",2,0,2,2,0,2);
+  hgTrig2Corr.Add2D("L1T40_HFCoinc1");
+  hgTrig2Corr.Add2D("L1T41_HFCoinc2");
+
+  // Analyze from tree
+  ohTree->Draw(Form("%s>>hCentVar",centVar.Data()),"","prof goff");
   ohTree->Draw(Form("HLT_HIActivityHF_Single3:%s>>%s",centVar.Data(),hgEffVsCent.GetH("HFAct3_1Hit")->GetName()),"","prof goff");
   ohTree->Draw(Form("HLT_HIActivityHF_Coincidence3:%s>>%s",centVar.Data(),hgEffVsCent.GetH("HFAct3_Coinc1")->GetName()),"","prof goff");
   ohTree->Draw(Form("HLT_HIActivityHF_Coincidence3_2Hit:%s>>%s",centVar.Data(),hgEffVsCent.GetH("HFAct3_Coinc2")->GetName()),"","prof goff");
+  ohTree->Draw(Form("L1_ETT30:%s>>%s",centVar.Data(),hgEffVsCent.GetH("L1_ETT30")->GetName()),"","prof goff");
   ohTree->Draw(Form("L1Tech_BSC_minBias_OR.v0:%s>>%s",centVar.Data(),hgEffVsCent.GetH("L1T34")->GetName()),"","prof goff");
   ohTree->Draw(Form("L1Tech_BSC_minBias_threshold1.v0:%s>>%s",centVar.Data(),hgEffVsCent.GetH("L1T40")->GetName()),"","prof goff");
   ohTree->Draw(Form("L1Tech_BSC_minBias_threshold2.v0:%s>>%s",centVar.Data(),hgEffVsCent.GetH("L1T41")->GetName()),"","prof goff");
@@ -83,25 +86,30 @@ void plotHltActivity(
   cpL1T41_HFCoinc2.Draw(cL1T41_HFCoinc2,true);
 
   // Plot
-  TCanvas * cNTrks = new TCanvas("cNTrks","NTrks",500,500);
-  cNTrks->SetLogy();
-  hNTrks->Draw("E");
-  cNTrks->Print(outdir+"/"+"NTrks.gif");
+  int doLogx = 0;
+  TCanvas * cCentVar = new TCanvas("cCentVar","CentVar",500,500);
+  cCentVar->SetLogy();
+  if (doLogx==2) cCentVar->SetLogx();
+  hCentVar->GetXaxis()->SetNdivisions(410);
+  hCentVar->Draw("E");
+  cCentVar->Print(outdir+Form("/%s%d.gif",centVar.Data(),doLogx));
 
   TCanvas * cHltActEffVsCent = new TCanvas("HltActEffVsCent","HltActEffVsCent",500,500);
   CPlot cpHltActEffVsCent("HltActEffVsCent","HltActEffVsCent",centVarTitle,"Trigger Eff.");
-  cpHltActEffVsCent.SetXRange(0,20);
+  cpHltActEffVsCent.SetXRange(0.3,2000);
   cpHltActEffVsCent.SetYRange(0,1.1);
+  cpHltActEffVsCent.SetLogx();
   //cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("HFAct3_1Hit"),"ActivityHF3 (Any Hit)","E",kBlue,kOpenSquare);
   //cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("HFAct3_Coinc1"),"ActivityHF3 (1 Hit Coinc.)","E",kBlack,kFullCircle);
   //cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("HFAct3_Coinc2"),"ActivityHF3 (2 Hits Coinc.)","E",kRed,kOpenStar);
-  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T8"),"L1 Bit 8","hist",kGreen+2,kOpenCircle);
-  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T34"),"L1 Bit 34","E",kRed,kOpenStar);
-  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T9"),"L1 Bit 9","E",kBlue,kOpenSquare);
-  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T10"),"L1 Bit 10","E",kBlue,kOpenCircle);
-  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T40"),"L1 Bit 40","E",kBlack,kFullCircle);
-  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T41"),"L1 Bit 41","E",kOrange+2,kOpenDiamond);
-  cpHltActEffVsCent.SetLegend(0.29,0.21,0.62,0.43);
+  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1_ETT30"),"L1_ETT30","E",kMagenta+2,kStar);
+  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T8"),"L1 Tech Bit 8","E",kGreen+2,kOpenTriangleUp);
+  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T9"),"L1 Tech Bit 9","E",kBlue,kOpenSquare);
+  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T10"),"L1 Tech Bit 10","E",kBlue,kOpenCircle);
+  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T34"),"L1 Tech Bit 34","E",kRed,kOpenStar);
+  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T40"),"L1 Tech Bit 40","E",kBlack,kFullCircle);
+  cpHltActEffVsCent.AddHist1D(hgEffVsCent.H("L1T41"),"L1 Tech Bit 41","E",kOrange+2,kOpenDiamond);
+  cpHltActEffVsCent.SetLegend(0.60,0.26,0.93,0.51);
   cpHltActEffVsCent.SetLegendHeader(header);
   cpHltActEffVsCent.Draw(cHltActEffVsCent,true);
 }
