@@ -2,26 +2,26 @@ import FWCore.ParameterSet.Config as cms
 
 # Setup centrality info from db
 def loadCentralityDB(process,centTag):
-  #process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-  #process.GlobalTag.globaltag = 'MC_38Y_V8::All'
+  process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
+  process.GlobalTag.globaltag = 'MC_38Y_V8::All'
 
-  #process.GlobalTag.toGet = cms.VPSet(
-  #    cms.PSet(record = cms.string("HeavyIonRcd"),
-  #      tag = cms.string("CentralityTable_HFhits40_AMPT2760GeV_v0_mc"),
-  #      connect = cms.untracked.string("frontier://FrontierPrep/CMS_COND_PHYSICSTOOLS")
-  #      )
-  #    )
-
-  process.load("CondCore.DBCommon.CondDBCommon_cfi")
-  process.CondDBCommon.connect = "sqlite_file:/net/hisrv0001/home/frankma/work/HI/jet/sw/Y1JAna_CMSSW_3_8_4/src/RecoHI/HiCentralityAlgos/data/CentralityTables.db"
-  process.PoolDBESSource = cms.ESSource("PoolDBESSource",
-      process.CondDBCommon,
-      toGet = cms.VPSet(
-	cms.PSet(record = cms.string('HeavyIonRcd'),
-	  tag = cms.string(centTag)
-	  )
+  process.GlobalTag.toGet = cms.VPSet(
+      cms.PSet(record = cms.string("HeavyIonRcd"),
+	tag = cms.string(centTag),
+	connect = cms.untracked.string("frontier://FrontierPrep/CMS_COND_PHYSICSTOOLS")
 	)
       )
+
+  #  process.load("CondCore.DBCommon.CondDBCommon_cfi")
+#  process.CondDBCommon.connect = "sqlite_file:/net/hisrv0001/home/frankma/work/HI/jet/sw/Y1JAna_CMSSW_3_8_4/src/RecoHI/HiCentralityAlgos/data/CentralityTables.db"
+#  process.PoolDBESSource = cms.ESSource("PoolDBESSource",
+#      process.CondDBCommon,
+#      toGet = cms.VPSet(
+#	cms.PSet(record = cms.string('HeavyIonRcd'),
+#	  tag = cms.string(centTag)
+#	  )
+#	)
+#      )
 
 
 def enableRECO(process,mode="MC"):
@@ -38,5 +38,10 @@ def enableRECO(process,mode="MC"):
     process.reco_extra.remove(process.heavyIon)
   return process.reco_extra
 
+# If sample is pp disable HI event related variables
 def enablePp(process):
   process.eventSelection.remove(process.hiEvtFilter)
+  process.dijetAna_mc.sampleType = 10
+  process.dijetAna_mc_calojet_tower.sampleType = 10
+  process.dijetAna_mc_calojet_genp.sampleType = 10
+  process.dijetAna_mc_genjet_genp.sampleType = 10
