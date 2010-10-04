@@ -1,5 +1,11 @@
 import FWCore.ParameterSet.Config as cms
 
+# Beam Basic
+physDeclFilter = cms.EDFilter("PhysDecl",
+    applyfilter = cms.untracked.bool(False),
+    HLTriggerResults = cms.InputTag("TriggerResults","","HLT")
+    )
+
 # Basic L1 Filters
 from L1TriggerConfig.L1GtConfigProducers.L1GtTriggerMaskTechTrigConfig_cff import *
 from L1Trigger.Skimmer.l1Filter_cfi import l1Filter
@@ -14,5 +20,5 @@ bscNoHalo = hltLevel1GTSeed.clone(
 from RecoHI.HiCentralityAlgos.CentralityFilter_cfi import *
 
 # Final Filter Sequences
-triggerSelection = cms.Sequence(bscNoHalo)
+triggerSelection = cms.Sequence(physDeclFilter)
 hiEvtFilter = cms.Sequence(centralityFilter)
