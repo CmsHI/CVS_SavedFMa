@@ -17,7 +17,7 @@ from Saved.DiJetAna.customise_cfi import *
 #loadCentralityDB(process,'HFhits40_DataJulyExercise_AMPT2760GeV_MC_37Y_V5_ZS_v0')
 loadCentralityDB(process,'HFhits40_MC_Hydjet2760GeV_MC_3XY_V24_v0')
 
-process.load("RecoHI.HiCentralityAlgos.CentralityFilter_cfi")
+process.load("Saved.DiJetAna.eventSelection_cff")
 process.centralityFilter.centralityBase = "HF"
 process.centralityFilter.selectedBins = range(40)
 
@@ -43,14 +43,17 @@ process.TFileService = cms.Service('TFileService',
     )
 
 # =============== Final Paths =====================
-process.reco = cms.Path( process.centralityFilter * enableRECO(process) )
+enableRECO(process)
+enablePp(process)
+
+process.reco = cms.Path( process.eventSelection * process.reco_extra)
 process.ana = cms.Path(
-   process.centralityFilter *
+   process.eventSelection *
    #process.allTracks *
    process.dijetAna_mc_seq
    )
 
 process.schedule = cms.Schedule(
-  process.reco,
+  #process.reco,
   process.ana
   )

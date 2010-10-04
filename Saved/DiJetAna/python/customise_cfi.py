@@ -37,3 +37,6 @@ def enableRECO(process,mode="MC"):
     removePatMCMatch(process)
     process.reco_extra.remove(process.heavyIon)
   return process.reco_extra
+
+def enablePp(process):
+  process.eventSelection.remove(process.hiEvtFilter)
