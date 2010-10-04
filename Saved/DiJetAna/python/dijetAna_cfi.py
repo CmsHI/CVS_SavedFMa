@@ -4,6 +4,7 @@ import FWCore.ParameterSet.Config as cms
 dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     # Event source
     isMC = cms.bool(True),
+    sampleType = cms.int32(0), # HI: 0, pp: 10
     # Event Info
     vtxsrc = cms.InputTag("hiSelectedVertex"),
     hltsrc = cms.InputTag("TriggerResults","","HLT"),

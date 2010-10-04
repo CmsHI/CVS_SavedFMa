@@ -68,6 +68,7 @@ class DiJetAna : public edm::EDAnalyzer {
 
     // === Ana setup ===
     Bool_t	  isMC_;
+    Int_t	  sampleType_;
     Bool_t	  genOnly_;
     // Event Info
     edm::InputTag vtxsrc_;

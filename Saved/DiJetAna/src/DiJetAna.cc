@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.52 2010/08/25 00:21:05 frankma Exp $
+// $Id: DiJetAna.cc,v 1.53 2010/08/25 01:07:20 frankma Exp $
 //
 //
 
@@ -70,6 +70,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
 {
   // Event source
   isMC_ = iConfig.getParameter<bool>("isMC");
+  sampleType_ = iConfig.getParameter<int>("sampleType");
   genOnly_ = iConfig.getUntrackedParameter<bool>("genOnly", false);
   // Event Info
   vtxsrc_ = iConfig.getParameter<edm::InputTag>("vtxsrc");
@@ -279,7 +280,7 @@ void DiJetAna::FillEventInfo(const edm::Event& iEvent, const edm::EventSetup& iS
   jd.evt_	  = iEvent.id().event();
   jd.lumi_	  = iEvent.luminosityBlock();
 
-  if(!genOnly_){
+  if(!genOnly_&&sampleType_<10){
     // HI Event info
     edm::Handle<reco::Centrality> cent;
     iEvent.getByLabel(edm::InputTag("hiCentrality"),cent);
@@ -289,7 +290,7 @@ void DiJetAna::FillEventInfo(const edm::Event& iEvent, const edm::EventSetup& iS
     jd.cent_ = cbins_->getBin(hf)*(100./cbins_->getNbins());
   }
 
-  if (isMC_) {
+  if (isMC_&&sampleType_<10) {
     edm::Handle<edm::GenHIEvent> mchievt;
     iEvent.getByLabel(edm::InputTag("heavyIon"),mchievt);
     jd.b_	  = mchievt->b();
