@@ -109,8 +109,8 @@ void compDiJetFF(
   cXiAw->cd(1); cpXiAw.Draw((TPad*)cXiAw->GetPad(1),false);
   CPlot cpXiAwRat("XiAwRat","XiAwRat","#xi=ln(E_{T}^{Jet1}/p_{T}^{trk})","Ana/Ref");
   //cpXiAwRat.AddHist1D(hgCm.R("XiAwDivCm1XiAw"),"j2E2^{reco}/j2E2^{Ref}",kGreen+2,kOpenTriangleUp);
-  //cpXiAwRat.AddHist1D(hgCm.R("XiE1AwDivCm1XiE1Aw"),"j2(E1)^{reco}/j2(E1)^{Ref}",kBlack);
-  cpXiAwRat.AddHist1D(hgCm.R("XiE1AwSubCm1XiE1Aw"),"j2(E1)^{reco}/j2(E1)^{Ref}",kBlack);
+  cpXiAwRat.AddHist1D(hgCm.R("XiE1AwDivCm1XiE1Aw"),"j2(E1)^{reco}/j2(E1)^{Ref}",kBlack);
+  //cpXiAwRat.AddHist1D(hgCm.R("XiE1AwSubCm1XiE1Aw"),"j2(E1)^{reco}/j2(E1)^{Ref}",kBlack);
   //cpXiAwRat.SetYRange(0,2);
   cXiAw->cd(2); cpXiAwRat.Draw((TPad*)cXiAw->GetPad(2),false);
   cXiAw->Print(outdir+"/XiAw"+compTag+".gif");
@@ -163,11 +163,12 @@ void compDiJetFF(
   cpC5NP.SetLegend(0.194,0.7,0.52,0.94);
   cpC5NP.SetLegendHeader(header);
   cpC5NP.Rebin(5);
+  cpC5NP.ShowStats(11111);
   cC5NP->cd(1); cpC5NP.Draw((TPad*)cC5NP->GetPad(1),false);
   CPlot cpC5NPRat("C5NPRat","C5NPRat","# of Trks (Bg Sub.) in Jet Cone","Ana/Ref");
-  cpC5NPRat.AddHist1D(hgCm.R("C5NPSubNrSubCm1C5NPSubNr"),"",kBlue,kOpenSquare);
-  cpC5NPRat.AddHist1D(hgCm.R("C5NPSubAwSubCm1C5NPSubAw"),"",kBlack);
-  cpC5NPRat.Rebin(5);
-  cC5NP->cd(2); cpC5NPRat.Draw((TPad*)cC5NP->GetPad(2),false);
+  //cpC5NPRat.AddHist1D(hgCm.R("C5NPSubNrSubCm1C5NPSubNr"),"",kBlue,kOpenSquare);
+  //cpC5NPRat.AddHist1D(hgCm.R("C5NPSubAwSubCm1C5NPSubAw"),"",kBlack);
+  //cpC5NPRat.Rebin(5);
+  //cC5NP->cd(2); cpC5NPRat.Draw((TPad*)cC5NP->GetPad(2),false);
   cC5NP->Print(outdir+"/C5NP"+compTag+".gif");
 }
