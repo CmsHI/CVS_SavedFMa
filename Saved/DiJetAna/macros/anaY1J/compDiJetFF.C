@@ -67,6 +67,7 @@ void compDiJetFF(
   hgCm.Divide("XiNr","Cm1XiNr");
   hgCm.Divide("XiAw","Cm1XiAw");
   hgCm.Divide("XiE1Aw","Cm1XiE1Aw");
+  hgCm.Add("XiE1Aw","Cm1XiE1Aw",1,-1);
   hgCm.Divide("PPtNr","Cm1PPtNr");
   hgCm.Divide("PPtAw","Cm1PPtAw");
   hgCm.Divide("JEtNr","Cm1JEtNr");
@@ -108,8 +109,9 @@ void compDiJetFF(
   cXiAw->cd(1); cpXiAw.Draw((TPad*)cXiAw->GetPad(1),false);
   CPlot cpXiAwRat("XiAwRat","XiAwRat","#xi=ln(E_{T}^{Jet1}/p_{T}^{trk})","Ana/Ref");
   //cpXiAwRat.AddHist1D(hgCm.R("XiAwDivCm1XiAw"),"j2E2^{reco}/j2E2^{Ref}",kGreen+2,kOpenTriangleUp);
-  cpXiAwRat.AddHist1D(hgCm.R("XiE1AwDivCm1XiE1Aw"),"j2(E1)^{reco}/j2(E1)^{Ref}",kBlack);
-  cpXiAwRat.SetYRange(0,2);
+  //cpXiAwRat.AddHist1D(hgCm.R("XiE1AwDivCm1XiE1Aw"),"j2(E1)^{reco}/j2(E1)^{Ref}",kBlack);
+  cpXiAwRat.AddHist1D(hgCm.R("XiE1AwSubCm1XiE1Aw"),"j2(E1)^{reco}/j2(E1)^{Ref}",kBlack);
+  //cpXiAwRat.SetYRange(0,2);
   cXiAw->cd(2); cpXiAwRat.Draw((TPad*)cXiAw->GetPad(2),false);
   cXiAw->Print(outdir+"/XiAw"+compTag+".gif");
 
