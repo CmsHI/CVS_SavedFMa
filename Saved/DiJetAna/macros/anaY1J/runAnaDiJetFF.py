@@ -1,15 +1,15 @@
 import os,sys
 
-AnaV = "a1"
-#inFile0Name="~/scratch01/ana/Hydj_Hard_GSR_NZS/UQDJ80_120_proc0831_10k.root"
-inFile0Name="/net/hibat0003/d00/scratch/frankma/HI/jet/Y1JAna_CMSSW_3_8_4/process_aod_mc/output/dijetAna_patJets_dijet30.root"
+AnaV = "a1006"
+RunV = sys.argv[1]
+inFile0Name="~/scratch01/ana/Hydj_Hard_GSR_NZS/UQDJ80_120_proc0831_10k.root"
 doMC=1
-SrcName="HydjQDJQ30"
-header="HydjetQ+DJQuen30"
+SrcName="HydjQDJUQ80"
+header="HydjetQ+DJUQuen80"
 AnaType="ff"
-NrJEtMin=50 #100
+NrJEtMin=100
 NrJEtMax=200
-AwJEtMin=20 #50
+AwJEtMin=50
 
 SysAnas = {
     "s00":["dijetAna_mc_genjet_genp",NrJEtMin,NrJEtMax,0,3.,"Ana","AnaSig","log\(1./zn\)","log\(1./za\)"],
@@ -29,7 +29,7 @@ SysAnas = {
 # prepare ana
 logdir='log/'+SrcName+'/'+AnaV
 os.system("mkdir -p "+logdir)
-logfile=logdir+"/ff_"+sys.argv[1]+'.txt'
+logfile=logdir+"/ff_"+RunV+'.txt'
 os.system('echo '+logdir+' > '+logfile)
 
 # run ana
@@ -38,7 +38,7 @@ for sysana, [mod,NrJEtMin,NrJEtMax,AwJEtMin,AwJEtaMax,DJCutType,TrkCutType,varXi
   os.system('echo;echo;echo --- '+sysana+' --- >> '+logfile)
   cmd='root -l -b -q anaDiJetFF.C+\('
   cmd+=str(doMC)+','
-  cmd+='\\"'+AnaV+'\\",'
+  cmd+='\\"'+AnaV+RunV+'\\",'
   cmd+='\\"'+mod+'\\",'
   cmd+=str(NrJEtMin)+','
   cmd+=str(NrJEtMax)+','

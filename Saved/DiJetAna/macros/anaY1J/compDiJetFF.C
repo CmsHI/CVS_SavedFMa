@@ -44,6 +44,9 @@ void compDiJetFF(
   hgCm.Add(inFile0,"hSig_PPtAw","PPtAw");
   hgCm.Add(inFile0,JEtNr0,"JEtNr");
   hgCm.Add(inFile0,JEtAw0,"JEtAw");
+  hgCm.Add(inFile0,"hC5NPSubNr","C5NPSubNr");
+  hgCm.Add(inFile0,"hC5NPSubAw","C5NPSubAw");
+  cout << "Got Ana Histograms" << endl;
 
   TH1D * hFrame = (TH1D*)hgCm.GetH("XiE1Aw")->Clone("hFrame");
   hFrame->Scale(0);
@@ -57,6 +60,10 @@ void compDiJetFF(
   hgCm.Add(inFile1,"hSig_PPtAw","Cm1PPtAw");
   hgCm.Add(inFile1,JEtNr1,"Cm1JEtNr");
   hgCm.Add(inFile1,JEtAw1,"Cm1JEtAw");
+  hgCm.Add(inFile1,"hC5NPSubNr","Cm1C5NPSubNr");
+  hgCm.Add(inFile1,"hC5NPSubAw","Cm1C5NPSubAw");
+  cout << "Got Comparison Histograms" << endl;
+
   hgCm.Divide("XiNr","Cm1XiNr");
   hgCm.Divide("XiAw","Cm1XiAw");
   hgCm.Divide("XiE1Aw","Cm1XiE1Aw");
@@ -64,6 +71,9 @@ void compDiJetFF(
   hgCm.Divide("PPtAw","Cm1PPtAw");
   hgCm.Divide("JEtNr","Cm1JEtNr");
   hgCm.Divide("JEtAw","Cm1JEtAw");
+  hgCm.Add("C5NPSubNr","Cm1C5NPSubNr",1,-1);
+  hgCm.Add("C5NPSubAw","Cm1C5NPSubAw",1,-1);
+  cout << "Finished Comparing Histograms" << endl;
 
   TCanvas * cXiNr = new TCanvas("XiNr","XiNr",1000,500);
   cXiNr->Divide(2,1);
@@ -140,4 +150,22 @@ void compDiJetFF(
   //cpJEtRat.Rebin(2);
   cJEt->cd(2); cpJEtRat.Draw((TPad*)cJEt->GetPad(2),false);
   cJEt->Print(outdir+"/JEt"+compTag+".gif");
+
+  TCanvas * cC5NP = new TCanvas("C5NP","C5NP",1000,500);
+  cC5NP->Divide(2,1);
+  CPlot cpC5NP("C5NP","C5NP","# of Trks (Bg Sub.) in Jet Cone","# of Jets");
+  cpC5NP.AddHist1D(hgCm.H("Cm1C5NPSubNr"),"Ref - j1","hist",kOrange+2,kOpenCircle);
+  cpC5NP.AddHist1D(hgCm.H("C5NPSubNr"),"Ana - j1","E",kBlue,kOpenSquare);
+  cpC5NP.AddHist1D(hgCm.H("Cm1C5NPSubAw"),"Ref - j2","hist",kRed,kOpenStar);
+  cpC5NP.AddHist1D(hgCm.H("C5NPSubAw"),"Ana - j2","E",kBlack,kFullCircle);
+  cpC5NP.SetLegend(0.194,0.7,0.52,0.94);
+  cpC5NP.SetLegendHeader(header);
+  cpC5NP.Rebin(5);
+  cC5NP->cd(1); cpC5NP.Draw((TPad*)cC5NP->GetPad(1),false);
+  CPlot cpC5NPRat("C5NPRat","C5NPRat","# of Trks (Bg Sub.) in Jet Cone","Ana/Ref");
+  cpC5NPRat.AddHist1D(hgCm.R("C5NPSubNrSubCm1C5NPSubNr"),"",kBlue,kOpenSquare);
+  cpC5NPRat.AddHist1D(hgCm.R("C5NPSubAwSubCm1C5NPSubAw"),"",kBlack);
+  cpC5NPRat.Rebin(5);
+  cC5NP->cd(2); cpC5NPRat.Draw((TPad*)cC5NP->GetPad(2),false);
+  cC5NP->Print(outdir+"/C5NP"+compTag+".gif");
 }
