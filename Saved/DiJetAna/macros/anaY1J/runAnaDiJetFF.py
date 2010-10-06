@@ -20,6 +20,7 @@ SysAnas = {
     "s05":["dijetAna_mc_genjet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRef","Ana","log\(1./zn\)","log\(1./za\)"], # mat aw
     "s06":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ref","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # calo order
     "s06b":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ref","Ana","log\(1./zn\)","log\(1./za\)"], # calo order, with calo jes in xi
+    "s06b2":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ref","Ana","log\(nlrjet*1.1/ppt\)","log\(alrjet/ppt\)"], # calo order
     #"s07":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"RefAwAnaMatNr","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # cut on nr calo et, still matched
     "s08":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRef","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # cut on aw calo et, still matched
     #"s09":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRefNr","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # no Aw mat
