@@ -20,6 +20,7 @@ class HisTGroup
     void Add2D(TString iname);
     void Add(TFile * inFile, TString hname,TString iname, Double_t sc=-1);
     TData * Average();
+    TData * Add(TString iname1, TString iname2, Double_t c1, Double_t c2);
     TData * Divide(TString iname1, TString iname2);
     void Print() const;
     void Save();
@@ -159,6 +160,17 @@ TData * HisTGroup<TData>::Average()
   hr_["Ave"] = (TData*)hr_["Sum"]->Clone("h"+name_+"_Ave");
   hr_["Ave"]->Scale(1./hm_.size());
   return hr_["Ave"];
+}
+
+template <typename TData>
+TData * HisTGroup<TData>::Add(TString iname1, TString iname2, Double_t c1, Double_t c2)
+{
+  TString sumIName = iname1+"Add"+iname2;
+  if (c2<0) sumIName = iname1+"Sub"+iname2;
+  TString sumHName = "h"+name_+"_"+sumIName;
+  hr_[sumIName] = (TData*)GetH(iname1)->Clone(sumHName);
+  hr_[sumIName]->Add(GetH(iname1),GetH(iname2),c1,c2);
+  return hr_[sumIName];
 }
 
 template <typename TData>
