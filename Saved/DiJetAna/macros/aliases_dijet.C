@@ -31,6 +31,16 @@ void aliases_dijet(TTree * djTree, float pptMin=4.5, int doMC=1)
   djTree->SetAlias("NC5PtSub","(NC5Pt-NC5PtBg)");
   djTree->SetAlias("AC5PtSub","(AC5Pt-AC5PtBg)");
 
+  // sum pt^2
+  djTree->SetAlias("NC5Pt2",Form("Sum$((goodTrk && pndr<%f)*ppt*ppt)",dR));
+  djTree->SetAlias("AC5Pt2",Form("Sum$((goodTrk && padr<%f)*ppt*ppt)",dR));
+
+  djTree->SetAlias("NC5Pt2Bg",Form("Sum$((goodTrk && pndrbg<%f)*ppt*ppt)",dR));
+  djTree->SetAlias("AC5Pt2Bg",Form("Sum$((goodTrk && padrbg<%f)*ppt*ppt)",dR));
+
+  djTree->SetAlias("NC5Pt2Sub","(NC5Pt2-NC5Pt2Bg)");
+  djTree->SetAlias("AC5Pt2Sub","(AC5Pt2-AC5Pt2Bg)");
+
   if (doMC==0) return;
 
   // refjet leading vars
