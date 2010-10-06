@@ -18,8 +18,8 @@
 
 using namespace std;
 
-void anaDiJetFF(int doMC=0,
-    TString AnaVersion = "a7j2t0",
+void anaDiJetFF(int doMC=1,
+    TString AnaVersion = "a1006",
     TString modName = "dijetAna_mc_calojet_genp",
     Double_t NrJEtMin = 100,
     Double_t NrJEtMax = 200,
@@ -30,7 +30,7 @@ void anaDiJetFF(int doMC=0,
     TString varXiNrJES = "log(1./zn)",
     TString varXiAwJES = "log(1./za)",
     const char * inFile0Name="~/scratch01/ana/Hydj_Hard_GSR_NZS/UQDJ80_120_proc0831_10k.root",
-    TString SrcName = "HydUQDJ80",
+    TString SrcName = "HydjUQDJ80",
     TString header = "Hydjet+UQDJ80",
     TString AnaType = "ff")
 {

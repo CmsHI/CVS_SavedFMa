@@ -74,6 +74,12 @@ class selectionCut
     int	  hisJPhiBins;
     double hisJPhiMin;
     double hisJPhiMax;
+    int	  numC5NPBins;
+    double hisC5NPMin;
+    double hisC5NPMax;
+    int	  numC5NPSubBins;
+    double hisC5NPSubMin;
+    double hisC5NPSubMax;
 
     // trk
     int	  numTrkPtBins;
@@ -124,6 +130,12 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   hisJPhiBins(40),
   hisJPhiMin(-1*TMath::Pi()),
   hisJPhiMax(TMath::Pi()),
+  numC5NPBins(100),
+  hisC5NPMin(0),
+  hisC5NPMax(100),
+  numC5NPSubBins(150),
+  hisC5NPSubMin(-50),
+  hisC5NPSubMax(100),
   // trk
   numTrkPtBins(30),
   hisTrkPtMin(0),

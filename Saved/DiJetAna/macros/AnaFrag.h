@@ -45,17 +45,34 @@ AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TStr
 
   // DJ selection control plots
   if (tag=="XiE1Aw") {
-    if (!anaSel) cout << "no anaSel defined" << endl;
-    else {
+    if (anaSel) {
+      // jet
       TH1D * hJEtNr = new TH1D("hJEtNr",djCut,anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax);
       TH1D * hJEtAw = new TH1D("hJEtAw",djCut,anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax);
       TH1D * hRefJEtNr = new TH1D("hRefJEtNr",djCut,anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax);
       TH1D * hRefJEtAw = new TH1D("hRefJEtAw",djCut,anaSel->numJEtBins,anaSel->hisJEtMin,anaSel->hisJEtMax);
+      // cone
+      TH1D * hC5NPNr = new TH1D("hC5NPNr",djCut,anaSel->numC5NPBins,anaSel->hisC5NPMin,anaSel->hisC5NPMax);
+      TH1D * hC5NPBgNr = new TH1D("hC5NPBgNr",djCut,anaSel->numC5NPBins,anaSel->hisC5NPMin,anaSel->hisC5NPMax);
+      TH1D * hC5NPSubNr = new TH1D("hC5NPSubNr",djCut,anaSel->numC5NPSubBins,anaSel->hisC5NPSubMin,anaSel->hisC5NPSubMax);
+      TH1D * hC5NPAw = new TH1D("hC5NPAw",djCut,anaSel->numC5NPBins,anaSel->hisC5NPMin,anaSel->hisC5NPMax);
+      TH1D * hC5NPBgAw = new TH1D("hC5NPBgAw",djCut,anaSel->numC5NPBins,anaSel->hisC5NPMin,anaSel->hisC5NPMax);
+      TH1D * hC5NPSubAw = new TH1D("hC5NPSubAw",djCut,anaSel->numC5NPSubBins,anaSel->hisC5NPSubMin,anaSel->hisC5NPSubMax);
+
       trDj->Draw("nljet>>hJEtNr",djCut,"goff");
       trDj->Draw("aljet>>hJEtAw",djCut,"goff");
       trDj->Draw("nlrjet>>hRefJEtNr",djCut,"goff");
       trDj->Draw("alrjet>>hRefJEtAw",djCut,"goff");
+
+      trDj->Draw("nljC5NP>>hC5NPNr",djCut,"goff");
+      trDj->Draw("nljC5NPBg>>hC5NPBgNr",djCut,"goff");
+      trDj->Draw("nljC5NP-nljC5NPBg>>hC5NPSubNr",djCut,"goff");
+
+      trDj->Draw("aljC5NP>>hC5NPAw",djCut,"goff");
+      trDj->Draw("aljC5NPBg>>hC5NPBgAw",djCut,"goff");
+      trDj->Draw("aljC5NP-aljC5NPBg>>hC5NPSubAw",djCut,"goff");
     }
+    else cout << "no anaSel defined" << endl;
   }
 
   // Plot Histograms
