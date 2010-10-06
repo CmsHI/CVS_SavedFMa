@@ -1,6 +1,6 @@
 import os,sys
 
-AnaV = "a1006"
+AnaV = "a1007"
 RunV = sys.argv[1]
 inFile0Name="~/scratch01/ana/Hydj_Hard_GSR_NZS/UQDJ80_120_proc0831_10k.root"
 doMC=1
@@ -16,12 +16,13 @@ SysAnas = {
     "s01":["dijetAna_mc_genjet_genp",NrJEtMin,NrJEtMax,0,2.,"Ana","AnaSig","log\(1./zn\)","log\(1./za\)"],
     "s02":["dijetAna_mc_genjet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ana","AnaSig","log\(1./zn\)","log\(1./za\)"],
     "s03":["dijetAna_mc_genjet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ana","Ana","log\(1./zn\)","log\(1./za\)"],
-    "s04":["dijetAna_mc_genjet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRefNr","Ana","log\(1./zn\)","log\(1./za\)"], # mat Nr
+    #"s04":["dijetAna_mc_genjet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRefNr","Ana","log\(1./zn\)","log\(1./za\)"], # mat Nr
     "s05":["dijetAna_mc_genjet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRef","Ana","log\(1./zn\)","log\(1./za\)"], # mat aw
     "s06":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ref","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # calo order
-    "s07":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"RefAwAnaMatNr","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # cut on nr calo et, still matched
+    "s06b":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ref","Ana","log\(1./zn\)","log\(1./za\)"], # calo order, with calo jes in xi
+    #"s07":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"RefAwAnaMatNr","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # cut on nr calo et, still matched
     "s08":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRef","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # cut on aw calo et, still matched
-    "s09":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRefNr","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # no Aw mat
+    #"s09":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRefNr","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # no Aw mat
     "s10":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ana","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # no Nr mat
     "s11":["dijetAna_mc_calojet_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ana","Ana","log\(1./zn\)","log\(1./za\)"] # xi use Nr JES -- all calojet
     }
