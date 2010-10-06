@@ -20,7 +20,7 @@ class HisTGroup
     void Add2D(TString iname);
     void Add(TFile * inFile, TString hname,TString iname, Double_t sc=-1);
     TData * Average();
-    TData * Add(TString iname1, TString iname2, Double_t c1, Double_t c2);
+    TData * Add(TString iname1, TString iname2, Double_t c1=1, Double_t c2=1);
     TData * Divide(TString iname1, TString iname2);
     void Print() const;
     void Save();
