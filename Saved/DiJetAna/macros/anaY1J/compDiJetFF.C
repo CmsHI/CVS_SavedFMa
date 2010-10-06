@@ -16,9 +16,9 @@ void compDiJetFF(
     TString inFile0Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs01.root",
     TString inFile1Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs00.root",
     TString compTag="ffs01ffs00",
+    TString outdir="out/HydUQDJ80/compare/a9",
     TString JEtNr0="hJEtNr",
     TString JEtNr1="hJEtNr",
-    TString outdir="out/HydUQDJ80/compare/a9",
     TString header="Hydjet+UQDiJet80to120",
     TString finalMeas="hSig_XiE1Aw",
     TString finalMeasTitle="j2(E1)")
@@ -91,7 +91,7 @@ void compDiJetFF(
   CPlot cpXiNrRat("XiNrRat","XiNrRat","#xi=ln(E_{T}^{Jet}/p_{T}^{trk})","Ana/Ref");
   cpXiNrRat.AddHist1D(hgCm.R("XiNrDivCm1XiNr"),"",kBlue,kOpenSquare);
   cpXiNrRat.AddHist1D(hgCm.R("XiE1AwDivCm1XiE1Aw"),"",kBlack);
-  cpXiNrRat.SetYRange(0,2);
+  cpXiNrRat.SetYRange(-0.5,2.5);
   cXiNr->cd(2); cpXiNrRat.Draw((TPad*)cXiNr->GetPad(2),false);
   cXiNr->Print(outdir+"/XiNr"+compTag+".gif");
 
@@ -111,7 +111,7 @@ void compDiJetFF(
   //cpXiAwRat.AddHist1D(hgCm.R("XiAwDivCm1XiAw"),"j2E2^{reco}/j2E2^{Ref}",kGreen+2,kOpenTriangleUp);
   cpXiAwRat.AddHist1D(hgCm.R("XiE1AwDivCm1XiE1Aw"),"j2(E1)^{reco}/j2(E1)^{Ref}",kBlack);
   //cpXiAwRat.AddHist1D(hgCm.R("XiE1AwSubCm1XiE1Aw"),"j2(E1)^{reco}/j2(E1)^{Ref}",kBlack);
-  //cpXiAwRat.SetYRange(0,2);
+  cpXiAwRat.SetYRange(-0.5,2.5);
   cXiAw->cd(2); cpXiAwRat.Draw((TPad*)cXiAw->GetPad(2),false);
   cXiAw->Print(outdir+"/XiAw"+compTag+".gif");
 
@@ -129,7 +129,7 @@ void compDiJetFF(
   CPlot cpPPtRat("PPtRat","PPtRat","p_{T}^{trk}","Ana/Ref");
   cpPPtRat.AddHist1D(hgCm.R("PPtNrDivCm1PPtNr"),"j1",kBlue,kOpenSquare);
   cpPPtRat.AddHist1D(hgCm.R("PPtAwDivCm1PPtAw"),"j2");
-  cpPPtRat.SetYRange(0,2);
+  cpPPtRat.SetYRange(-0.5,2.5);
   //cpPPtRat.Rebin(2);
   cPPt->cd(2); cpPPtRat.Draw((TPad*)cPPt->GetPad(2),false);
   cPPt->Print(outdir+"/PPt"+compTag+".gif");
@@ -148,7 +148,7 @@ void compDiJetFF(
   CPlot cpJEtRat("JEtRat","JEtRat","E_{T}^{genjet}","Ana/Ref");
   cpJEtRat.AddHist1D(hgCm.R("JEtNrDivCm1JEtNr"),"j1",kBlue,kOpenSquare);
   cpJEtRat.AddHist1D(hgCm.R("JEtAwDivCm1JEtAw"),"j2");
-  cpJEtRat.SetYRange(0,2);
+  cpJEtRat.SetYRange(-0.5,2.5);
   //cpJEtRat.Rebin(2);
   cJEt->cd(2); cpJEtRat.Draw((TPad*)cJEt->GetPad(2),false);
   cJEt->Print(outdir+"/JEt"+compTag+".gif");
