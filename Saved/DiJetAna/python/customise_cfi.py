@@ -24,18 +24,26 @@ def loadCentralityDB(process,centTag):
 #      )
 
 
-def enableRECO(process,mode="MC"):
-  # pat jet
-  process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
-  from PhysicsTools.PatAlgos.tools.heavyIonTools import configureHeavyIons
-  configureHeavyIons(process)
+def enableRECO(process,mode="MC",type="HI"):
+  if type=="HI":
+    # pat jet
+    process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
+    from PhysicsTools.PatAlgos.tools.heavyIonTools import configureHeavyIons
+    configureHeavyIons(process)
+    process.reco_extra = cms.Sequence(process.heavyIon*process.makeHeavyIonJets)
+    if mode=="Data":
+      from Saved.Skim.customise_cfi import removePatMCMatch
+      removePatMCMatch(process)
+      process.reco_extra.remove(process.heavyIon)
+  if type=="pp":
+    process.load('PhysicsTools.PatAlgos.patSequences_cff')
+    process.reco_extra = cms.Sequence(process.makePatJets)
+    if mode=="Data":
+      from PhysicsTools.PatAlgos.tools.coreTools import removeMCMatching
+      removeMCMatching(process, ['All']) # turn off MC matching for data
+  # JEC Set
   from PhysicsTools.PatAlgos.tools.jetTools import switchJECSet
   #switchJECSet( process, "Spring10") # Spring10 is the new default
-  from Saved.Skim.customise_cfi import removePatMCMatch
-  process.reco_extra = cms.Sequence(process.heavyIon*process.makeHeavyIonJets)
-  if mode=="Data":
-    removePatMCMatch(process)
-    process.reco_extra.remove(process.heavyIon)
   return process.reco_extra
 
 # If sample is pp disable HI event related variables
