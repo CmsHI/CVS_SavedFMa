@@ -1,6 +1,6 @@
 import os,sys
 
-AnaV = "a1007"
+AnaV = "a1007b"
 RunV = sys.argv[1]
 inFile0Name="~/scratch01/ana/Hydj_Hard_GSR_NZS/UQDJ80_120_proc0831_10k.root"
 doMC=1
@@ -8,7 +8,7 @@ SrcName="HydjQDJUQ80"
 header="HydjetQ+DJUQuen80"
 AnaType="ff"
 NrJEtMin=100
-NrJEtMax=200
+NrJEtMax=120
 AwJEtMin=50
 
 SysAnas = {
