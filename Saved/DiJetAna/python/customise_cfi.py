@@ -25,6 +25,7 @@ def loadCentralityDB(process,centTag):
 
 
 def enableRECO(process,mode="MC",type="HI"):
+  process.load('Saved.DiJetAna.TrackSelection_cff')
   if type=="HI":
     # pat jet
     process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
@@ -37,7 +38,7 @@ def enableRECO(process,mode="MC",type="HI"):
       process.reco_extra.remove(process.heavyIon)
   if type=="pp":
     process.load('PhysicsTools.PatAlgos.patSequences_cff')
-    process.reco_extra = cms.Sequence(process.makePatJets)
+    process.reco_extra = cms.Sequence(process.highPurityTracks*process.makePatJets)
     if mode=="Data":
       from PhysicsTools.PatAlgos.tools.coreTools import removeMCMatching
       removeMCMatching(process, ['All']) # turn off MC matching for data
@@ -49,7 +50,16 @@ def enableRECO(process,mode="MC",type="HI"):
 # If sample is pp disable HI event related variables
 def enablePp(process):
   process.eventSelection.remove(process.hiEvtFilter)
-  process.dijetAna_mc.sampleType = 10
-  process.dijetAna_mc_calojet_tower.sampleType = 10
-  process.dijetAna_mc_calojet_genp.sampleType = 10
-  process.dijetAna_mc_genjet_genp.sampleType = 10
+  for m in [process.dijetAna_mc,
+      process.dijetAna_mc_calojet_tower,
+      process.dijetAna_mc_calojet_genp,
+      process.dijetAna_mc_genjet_genp]:
+    m.sampleType = 10
+    m.hltsrc = cms.InputTag("TriggerResults","","REDIGI36X")
+    m.hltNames = ["HLT_Jet15U","HLT_Jet50U","HLT_Photon20_L1R"]
+    m.vtxsrc = "offlinePrimaryVertices"
+  process.dijetAna_mc.trksrc = "highPurityTracks"
+  process.dijetAna_mc.anaTrkType = 2
+  process.dijetAna_mc_calojet_genp.trksrc = "genParticles"
+  process.dijetAna_mc_genjet_genp.jetsrc = "ak5GenJets"
+  process.dijetAna_mc_genjet_genp.trksrc = "genParticles"
