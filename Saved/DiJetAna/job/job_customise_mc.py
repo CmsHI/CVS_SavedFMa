@@ -1,10 +1,10 @@
 # --- Job specific configs ---
 print "Job Final Cfg: "
 # - thresholds -
-#process.dijetAna_mc.nearJetPtMin = 50
-#process.dijetAna_mc_calojet_genp.nearJetPtMin = 50
-#process.dijetAna_mc_genjet_genp.nearJetPtMin = 50
-print process.dijetAna_mc.dumpPython()
+#process.djcalo.nearJetPtMin = 50
+#process.djcalo_genp.nearJetPtMin = 50
+#process.djgen.nearJetPtMin = 50
+print process.djcalo.dumpPython()
 
 #
 # Python cfg Customization

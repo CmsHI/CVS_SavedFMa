@@ -1,7 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-# === MC Reco ===
-dijetAna_mc = cms.EDAnalyzer('DiJetAna',
+djcalo = cms.EDAnalyzer('DiJetAna',
     # Event source
     isMC = cms.bool(True),
     sampleType = cms.int32(0), # HI: 0, pp: 10
@@ -34,25 +33,7 @@ dijetAna_mc = cms.EDAnalyzer('DiJetAna',
     verbosity = cms.untracked.int32(2)
     )
 
-# === Data Reco ===
-dijetAna_data = dijetAna_mc.clone(
-    # Event source
-    isMC = cms.bool(False),
-    # no jet mc matching
-    refJetType = cms.int32(-1),
-    # trk selection
-    trksrc = cms.InputTag("hiSelectedTracks"),
-    anaTrkType = cms.int32(2)
-    )
-
-dijetAna_data_calojet_tower = dijetAna_data.clone(
-    # trk selection
-    trksrc = cms.InputTag("towerMaker"),
-    trkPtMin = cms.double(-999)
-    )
-
-# === MC Gen+Reco ===
-dijetAna_mc_genjet_trk = dijetAna_mc.clone(
+djgen_trk = djcalo.clone(
     # jet reco
     jetsrc = cms.InputTag("iterativeCone5HiGenJets"),
     anaJetType = cms.int32(1),
@@ -60,13 +41,13 @@ dijetAna_mc_genjet_trk = dijetAna_mc.clone(
     refJetType = cms.int32(12)
     )
 
-dijetAna_mc_calojet_genp = dijetAna_mc.clone(
+djcalo_genp = djcalo.clone(
     # trk selection
     trksrc = cms.InputTag("hiGenParticles"),
     anaTrkType = cms.int32(0)
     )
 
-dijetAna_mc_genjet_genp = dijetAna_mc.clone(
+djgen = djcalo.clone(
     # jet reco
     jetsrc = cms.InputTag("iterativeCone5HiGenJets"),
     anaJetType = cms.int32(1),
@@ -77,8 +58,17 @@ dijetAna_mc_genjet_genp = dijetAna_mc.clone(
     anaTrkType = cms.int32(0)
     )
 
-dijetAna_mc_calojet_tower = dijetAna_mc.clone(
+djcalo_tower = djcalo.clone(
     # trk selection
     trksrc = cms.InputTag("towerMaker"),
     trkPtMin = cms.double(-999)
+    )
+
+# Analysis Sequences
+dijetAna_mc_seq = cms.Sequence(
+    djcalo *
+    djcalo_tower *
+    #djgen_trk *
+    djcalo_genp *
+    djgen
     )

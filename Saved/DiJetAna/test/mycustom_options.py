@@ -1,3 +1,7 @@
+# Print out cfg
+print process.djcalo.dumpPython()
+print "AnaOutput: ", anaOutName
+
 #
 # Python cfg Customization
 # - cf: https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideAboutPythonConfigFile#Passing_Command_Line_Arguments_T

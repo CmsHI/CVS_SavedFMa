@@ -50,16 +50,16 @@ def enableRECO(process,mode="MC",type="HI"):
 # If sample is pp disable HI event related variables
 def enablePp(process):
   process.eventSelection.remove(process.hiEvtFilter)
-  for m in [process.dijetAna_mc,
-      process.dijetAna_mc_calojet_tower,
-      process.dijetAna_mc_calojet_genp,
-      process.dijetAna_mc_genjet_genp]:
+  for m in [process.djcalo,
+      process.djcalo_tower,
+      process.djcalo_genp,
+      process.djgen]:
     m.sampleType = 10
     m.hltsrc = cms.InputTag("TriggerResults","","REDIGI36X")
     m.hltNames = ["HLT_Jet15U","HLT_Jet50U","HLT_Photon20_L1R"]
     m.vtxsrc = "offlinePrimaryVertices"
-  process.dijetAna_mc.trksrc = "highPurityTracks"
-  process.dijetAna_mc.anaTrkType = 2
-  process.dijetAna_mc_calojet_genp.trksrc = "genParticles"
-  process.dijetAna_mc_genjet_genp.jetsrc = "ak5GenJets"
-  process.dijetAna_mc_genjet_genp.trksrc = "genParticles"
+  process.djcalo.trksrc = "highPurityTracks"
+  process.djcalo.anaTrkType = 2
+  process.djcalo_genp.trksrc = "genParticles"
+  process.djgen.jetsrc = "ak5GenJets"
+  process.djgen.trksrc = "genParticles"
