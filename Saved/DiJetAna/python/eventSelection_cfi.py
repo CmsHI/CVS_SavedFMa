@@ -18,6 +18,8 @@ bscNoHalo = hltLevel1GTSeed.clone(
 
 # HI event Filters
 from RecoHI.HiCentralityAlgos.CentralityFilter_cfi import *
+centralityFilter.centralityBase = "HF"
+centralityFilter.selectedBins = range(40)
 
 # Final Filter Sequences
 triggerSelection = cms.Sequence(physDeclFilter)
