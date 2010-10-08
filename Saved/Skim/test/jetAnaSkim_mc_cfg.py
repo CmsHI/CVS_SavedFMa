@@ -31,14 +31,13 @@ process.load("HeavyIonsAnalysis.Configuration.analysisProducers_cff")
 process.load("HeavyIonsAnalysis.Configuration.analysisEventContent_cff")
 
 process.output = cms.OutputModule("PoolOutputModule",
-    process.jetTrkSkimContent,
+    process.jetTrkSkimContentMC,
     fileName = cms.untracked.string("jetAnaSkim.root")
     )
 process.output.outputCommands.extend([
   "keep recoVertexs_hiSelectedVertex__RECO",
   "keep edmTriggerResults_TriggerResults__*" ,
-  "keep triggerTriggerEvent_hltTriggerSummaryAOD__*",
-  "keep *_hiGenParticles_*_*",
+  "keep triggerTriggerEvent_hltTriggerSummaryAOD__*"
   ])
 #"keep recoTracks_hiSelectedTracks__RECO",
 
