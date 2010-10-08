@@ -20,11 +20,11 @@ using namespace std;
 
 void anaDiJet(int doMC=0,
     const char * inFile0Name="/net/hibat0003/d00/scratch/frankma/HI/jet/Y1JAna_CMSSW_3_8_4/process_aod_mc/output/dijetAna_patJets_dijet30.root",
-    TString AnaVersion = "a1",
+    TString SrcName = "HydjQDJUQ30",
+    TString AnaVersion = "a0j1t0",
     TString modName = "dijetAna_mc_genjet_genp",
-    TString SrcName = "HydjQDJQ30",
-    TString header = "HydjetQ+DJQuen30",
-    TString AnaType = "dj")
+    TString AnaType = "dj",
+    TString header = "Hydjet+UnQuenDJ30")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -39,7 +39,6 @@ void anaDiJet(int doMC=0,
   selectionCut anaSel(SrcName,doMC,"S1",50,200,20,2.5);
   anaSel.DJCutType = "Ana";
   anaSel.TrkCutType = "Ana";
-  anaSel.Tag2+=TString("_"+modName);
   anaSel.SetCut();
   //anaSel.DJAnd("aljet/nljet<0.7");
   // loose
@@ -59,9 +58,9 @@ void anaDiJet(int doMC=0,
   TString anaoutdir = Form("out/%s/%s/%s",SrcName.Data(),anaSel.Tag.Data(),AnaVersion.Data());
   cout << "Output dir: " << anaoutdir << endl;
   gSystem->mkdir(anaoutdir.Data(),kTRUE);
-  CPlot::sOutDir = anaoutdir;
+  CPlot::sOutDir = anaoutdir+"/"+AnaType;
   // Save output
-  TFile * outf = new TFile(anaoutdir+"/"+AnaType+anaSel.Tag2+".root","RECREATE");
+  TFile * outf = new TFile(Form("%s/%s.root",anaoutdir.Data(),AnaType.Data()),"RECREATE");
 
   // ============== pdf comparisons ===============
   cout << endl << "======= anaDiJet ========" << endl;
@@ -72,7 +71,7 @@ void anaDiJet(int doMC=0,
 
   // -- plot --
   TCanvas * cCompJDPhi = new TCanvas("cCompJDPhi","cCompJDPhi",500,500);
-  CPlot cpCompJDPhi("CompJDPhi"+anaSel.Tag2,"CompJDPhi","Leading Di-Jet d #phi","pdf");
+  CPlot cpCompJDPhi("CompJDPhi"+anaSel.DJCutType,"CompJDPhi","Leading Di-Jet d #phi","pdf");
   cpCompJDPhi.SetYRange(0,5);
   cpCompJDPhi.AddHist1D(LooseJDPhi.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
   cpCompJDPhi.AddHist1D(JDPhi.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
@@ -81,7 +80,7 @@ void anaDiJet(int doMC=0,
   cpCompJDPhi.Draw(cCompJDPhi,true);
 
   TCanvas * cCompBalance = new TCanvas("cCompBalance","cCompBalance",500,500);
-  CPlot cpCompBalance("CompBalance"+anaSel.Tag2,"CompBalance","E_{T}^{j2}/E_{T}^{j1}","pdf");
+  CPlot cpCompBalance("CompBalance"+anaSel.DJCutType,"CompBalance","E_{T}^{j2}/E_{T}^{j1}","pdf");
   cpCompBalance.SetYRange(0,7.5);
   cpCompBalance.AddHist1D(LooseBalance.hRaw,"Data DiJet Loose","E",kBlue,kOpenCircle);
   cpCompBalance.AddHist1D(Balance.hRaw,"Data DiJet Tight","E",kBlack,kFullCircle);
@@ -89,16 +88,17 @@ void anaDiJet(int doMC=0,
   cpCompBalance.Draw(cCompBalance,true);
 
   // ============== Dijet Scales ===============
+  TString DJEtName0 = modName+"_"+anaSel.DJCutType;
   HisTGroup<TH2F> hgDJEt("DJEt",50,0,200,50,0,200);
-  hgDJEt.Add2D(anaSel.DJCutType);
+  hgDJEt.Add2D(DJEtName0);
 
-  djTree->Draw(Form("aljet:nljet>>%s",hgDJEt.GetH(anaSel.DJCutType)->GetName()),anaSelLoose.FinDJCut(),"goff");
+  djTree->Draw(Form("aljet:nljet>>%s",hgDJEt.GetH(DJEtName0)->GetName()),anaSelLoose.FinDJCut(),"goff");
 
   // -- plot --
   TCanvas * cDJEt = new TCanvas("cDJEt","cDJEt",500,500);
   cDJEt->SetLogz();
-  CPlot cpDJEt("DataDJEt"+anaSel.Tag2,"DJ","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
-  cpDJEt.AddHist2D(hgDJEt.H(anaSel.DJCutType),"colz");
+  CPlot cpDJEt("DataDJEt"+anaSel.DJCutType,"DJ","Leading E_{T}^{jet} [GeV]","Away E_{T}^{jet} [GeV]");
+  cpDJEt.AddHist2D(hgDJEt.H(DJEtName0),"colz");
   cpDJEt.Draw(cDJEt,true);
 
   // DJ vs Centrality
@@ -110,7 +110,7 @@ void anaDiJet(int doMC=0,
   centSel.SetCut();
   AnaFrag DJCent("Ana","DJCent",djTree,centSel.FinDJCut(),"","cent","","",20,0,100);
   TCanvas * cDJCent = new TCanvas("cDJCent","cDJCent",500,500);
-  CPlot cpDJCent("DJCent"+anaSel.Tag2,"DJCent","Centrality [%]","frac of (tight) DiJets");
+  CPlot cpDJCent("DJCent"+centSel.DJCutType,"DJCent","Centrality [%]","frac of (tight) DiJets");
   cpDJCent.SetYRange(0,0.07);
   cpDJCent.AddHist1D(DJCent.hRaw,"HF based Centrality","E",kBlack,kFullCircle);
   cpDJCent.SetLegendHeader(header);

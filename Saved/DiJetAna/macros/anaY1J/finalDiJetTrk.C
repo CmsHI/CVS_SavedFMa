@@ -13,17 +13,17 @@
 using namespace std;
 
 void finalDiJetTrk(int doMC=0,
-    TString inFile0Dir="out/HydjQDJQ30/S1_50_200_20_25/a1",
-    TString outname="djtrk_JAnaTAna_dijetAna_mc",
-    TString header = "Hydjet+DJQuen30")
+    TString inFile0Dir="out/HydUQDJ80/S1_100_200_50_25/a5",
+    TString AnaType="djtrk",
+    TString header = "Hydjet+UQDJ80to120")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Dir << endl;
-  TFile * inFile0 = new TFile(inFile0Dir+"/"+outname+".root");
+  TFile * inFile0 = new TFile(inFile0Dir+"/"+AnaType+".root");
   inFile0->ls();
 
-  CPlot::sOutDir = inFile0Dir;
+  CPlot::sOutDir = inFile0Dir+"/"+AnaType;
 
   HisTGroup<TH1D> hg0("hg0");
   hg0.Add(inFile0,"hAnaTrkPt","TrkPt");
@@ -40,7 +40,7 @@ void finalDiJetTrk(int doMC=0,
 
   // === Event Level ===
   TCanvas * cCompTrkPt = new TCanvas("cCompTrkPt","cCompTrkPt",500,500);
-  CPlot cpCompTrkPt("CompTrkPt"+outname,"CompTrkPt","p_{T}^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dp_{T}}");
+  CPlot cpCompTrkPt("CompTrkPt","CompTrkPt","p_{T}^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dp_{T}}");
   cpCompTrkPt.AddHist1D(hg0.H("TrkPt"),"hiSelectedTrk","E",kBlack,kFullCircle);
   cpCompTrkPt.AddHist1D(hg0.H("ConePPt"),"hiSelectedTrk (in jet1,2 cone)","E",kBlue,kOpenSquare);
   cpCompTrkPt.SetLegend(0.41,0.76,0.71,0.86);
@@ -49,7 +49,7 @@ void finalDiJetTrk(int doMC=0,
   cpCompTrkPt.Draw(cCompTrkPt,true);
 
   TCanvas * cCompTrkNHits = new TCanvas("cCompTrkNHits","cCompTrkNHits",500,500);
-  CPlot cpCompTrkNHits("CompTrkNHits"+outname,"CompTrkNHits","NHits^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dNHits}");
+  CPlot cpCompTrkNHits("CompTrkNHits","CompTrkNHits","NHits^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dNHits}");
   cpCompTrkNHits.AddHist1D(hg0.H("TrkNHits"),"hiSelectedTrk","E",kBlack,kFullCircle);
   cpCompTrkNHits.SetLegend(0.26,0.76,0.56,0.86);
   cpCompTrkNHits.SetLegendHeader(header);
@@ -57,7 +57,7 @@ void finalDiJetTrk(int doMC=0,
 
   // === Jet Cone ===
   TCanvas * cCompNrTrkPt = new TCanvas("cCompNrTrkPt","cCompNrTrkPt",500,500);
-  CPlot cpCompNrTrkPt("CompNrTrkPt"+outname,"CompNrTrkPt","p_{T}^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dp_{T}}");
+  CPlot cpCompNrTrkPt("CompNrTrkPt","CompNrTrkPt","p_{T}^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dp_{T}}");
   cpCompNrTrkPt.AddHist1D(hg0.H("NrTrkPtRaw"),"Raw","E",kGreen+2,kOpenSquare);
   cpCompNrTrkPt.AddHist1D(hg0.H("NrTrkPtBkg"),"Bkg","E",kBlue,kOpenCircle);
   cpCompNrTrkPt.AddHist1D(hg0.H("NrTrkPtSig"),"Subtracted","E",kBlack,kFullCircle);
@@ -68,7 +68,7 @@ void finalDiJetTrk(int doMC=0,
   cpCompNrTrkPt.Draw(cCompNrTrkPt,true);
 
   TCanvas * cCompAwTrkPt = new TCanvas("cCompAwTrkPt","cCompAwTrkPt",500,500);
-  CPlot cpCompAwTrkPt("CompAwTrkPt"+outname,"CompAwTrkPt","p_{T}^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dp_{T}}");
+  CPlot cpCompAwTrkPt("CompAwTrkPt","CompAwTrkPt","p_{T}^{Trk}","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{dp_{T}}");
   cpCompAwTrkPt.AddHist1D(hg0.H("AwTrkPtRaw"),"Raw","E",kGreen+2,kOpenSquare);
   cpCompAwTrkPt.AddHist1D(hg0.H("AwTrkPtBkg"),"Bkg","E",kBlue,kOpenCircle);
   cpCompAwTrkPt.AddHist1D(hg0.H("AwTrkPtSig"),"Subtracted","E",kBlack,kFullCircle);
@@ -80,7 +80,7 @@ void finalDiJetTrk(int doMC=0,
 
   // === Jet Strip ===
   TCanvas * cCompJTrkDPhi = new TCanvas("cCompJTrkDPhi","cCompJTrkDPhi",500,500);
-  CPlot cpCompJTrkDPhi("CompJTrkDPhi"+outname,"CompJTrkDPhi","#Delta#phi(trk,j1)","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{d#Delta#phi} #cbar_{|#Delta#eta(trk,jet)|<0.5}");
+  CPlot cpCompJTrkDPhi("CompJTrkDPhi","CompJTrkDPhi","#Delta#phi(trk,j1)","#frac{1}{N^{DJ Evt}} #frac{dN^{Trk}}{d#Delta#phi} #cbar_{|#Delta#eta(trk,jet)|<0.5}");
   cpCompJTrkDPhi.SetYRange(0,100);
   cpCompJTrkDPhi.AddHist1D(hg0.H("JTrkDPhi"),"hiSelectedTrk (p_{T}>1.2GeV)","E",kBlack,kFullCircle);
   cpCompJTrkDPhi.AddHist1D(hg0.H("JTrkTight3DPhi"),"hiSelectedTrk (p_{T}>3GeV)","E",kBlue,kOpenCircle);
