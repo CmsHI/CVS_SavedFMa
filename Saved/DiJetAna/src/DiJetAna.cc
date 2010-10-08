@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.56 2010/10/08 03:39:51 frankma Exp $
+// $Id: DiJetAna.cc,v 1.57 2010/10/08 04:53:55 frankma Exp $
 //
 //
 
@@ -358,9 +358,15 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
       jd.ajec_[7]	= (*jets)[iAway_].corrFactor("part","glu");
     }
     // -- jet id --
-    jd.nljemf_					= (*jets)[iNear_].emEnergyFraction();
+    if ((*jets)[iNear_].isCaloJet()) {
+      jd.nljemf_					= (*jets)[iNear_].emEnergyFraction();
+    }
     jd.nljarea_					= (*jets)[iNear_].jetArea();
-    if (anajets.size()>=2) jd.aljemf_		= (*jets)[iAway_].emEnergyFraction();
+    if (anajets.size()>=2){
+      if ((*jets)[iAway_].isCaloJet()) {
+	jd.aljemf_		= (*jets)[iAway_].emEnergyFraction();
+      }
+    }
     if (anajets.size()>=2) jd.aljarea_		= (*jets)[iAway_].jetArea();
   }
 }
