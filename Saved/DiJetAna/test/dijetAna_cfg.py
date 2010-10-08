@@ -33,16 +33,15 @@ process.djcalo.trksrc = "hiSelectedTracks"
 process.djcalo.anaTrkType = 2
 process.djgen.jetsrc = "ak5HiGenJets"
 
-anaOutName = "dijetAna_%s.root" % (process.djcalo.jetsrc.value())
+anaOutName = "dj_%s.root" % (process.djcalo.jetsrc.value())
 process.TFileService = cms.Service('TFileService',
     fileName = cms.string(anaOutName)
     )
 
 # =============== Final Paths =====================
-enableRECO(process,"Data","pp")
+enableRECO(process,"MC","pp")
 enablePp(process)
-#process.dijetAna_seq.remove(process.djcalo_tower)
-enableData(process)
+#enableData(process)
 
 process.reco = cms.Path( process.eventSelection * process.reco_extra)
 process.ana = cms.Path( process.eventSelection *
