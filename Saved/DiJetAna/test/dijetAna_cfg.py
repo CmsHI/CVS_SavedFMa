@@ -39,14 +39,15 @@ process.TFileService = cms.Service('TFileService',
     )
 
 # =============== Final Paths =====================
-enableRECO(process,"MC","pp")
+enableRECO(process,"Data","pp")
 enablePp(process)
-#process.dijetAna_mc_seq.remove(process.djcalo_tower)
+#process.dijetAna_seq.remove(process.djcalo_tower)
+enableData(process)
 
 process.reco = cms.Path( process.eventSelection * process.reco_extra)
 process.ana = cms.Path( process.eventSelection *
    #process.allTracks *
-   process.dijetAna_mc_seq
+   process.dijetAna_seq
    )
 
 process.schedule = cms.Schedule(

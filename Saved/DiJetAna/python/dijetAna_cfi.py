@@ -65,7 +65,7 @@ djcalo_tower = djcalo.clone(
     )
 
 # Analysis Sequences
-dijetAna_mc_seq = cms.Sequence(
+dijetAna_seq = cms.Sequence(
     djcalo *
     djcalo_tower *
     #djgen_trk *

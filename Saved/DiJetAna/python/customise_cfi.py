@@ -63,3 +63,11 @@ def enablePp(process):
   process.djcalo_genp.trksrc = "genParticles"
   process.djgen.jetsrc = "ak5GenJets"
   process.djgen.trksrc = "genParticles"
+
+### If Data
+def enableData(process):
+  process.dijetAna_seq.remove(process.djcalo_genp)
+  process.dijetAna_seq.remove(process.djgen)
+  for m in [process.djcalo,process.djcalo_tower]:
+    m.isMC = False
+    m.refJetType = -1
