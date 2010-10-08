@@ -137,6 +137,20 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
   za_[it]		= ppt_[it]/anajets[1].pt();
 }
 
+// Leading Trk
+void TreeDiJetEventData::FindLeadingTrk(Int_t np, Float_t * dRs, Float_t * pTs)
+{
+  Double_t maxpt=-99;
+  Int_t imax=-99;
+  for (Int_t i=0; i<np; ++i) {
+    if (dRs[i]<0.5 && pTs[i]>maxpt) {
+      maxpt=pTs[i];
+      imax=i;
+    }
+  }
+  lppt_.push_back(maxpt);
+}
+
 // set brances
 void TreeDiJetEventData::SetBranches(Int_t jetType, Int_t trkType)
 {
@@ -246,6 +260,7 @@ void TreeDiJetEventData::SetBranches(Int_t jetType, Int_t trkType)
   tree_->Branch("nljC5PtBg", &(this->nljC5PtBg_), "nljC5PtBg/F");
   tree_->Branch("aljC5NPBg", &(this->aljC5NPBg_), "aljC5NPBg/I");
   tree_->Branch("aljC5PtBg", &(this->aljC5PtBg_), "aljC5PtBg/F");
+  tree_->Branch("lppt", &lppt_);
   
   // -- jes vars --
   //tree_->Branch("meanppt", &(this->meanppt_), "meanppt/F");
@@ -312,6 +327,7 @@ void TreeDiJetEventData::Clear()
   nljC5PtBg_	  = 0;
   aljC5NPBg_	  = 0;
   aljC5PtBg_	  = 0;
+  lppt_.clear();
 
   // jes vars
   for (Int_t i=0; i<numJec_; ++i) {

@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.55 2010/10/08 01:12:13 frankma Exp $
+// $Id: DiJetAna.cc,v 1.56 2010/10/08 03:39:51 frankma Exp $
 //
 //
 
@@ -189,6 +189,9 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // -- Jet-Track Correlations ---
   FillTrks(iEvent,djEvt_,anaJets_,anaTrkType_);
+
+  // -- Find Leading Trks --
+  djEvt_.FindLeadingTrks();
 
   // All done
   djTree_->Fill();

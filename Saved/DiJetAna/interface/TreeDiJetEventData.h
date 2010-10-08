@@ -30,6 +30,12 @@ class TreeDiJetEventData
     void CalcTrkVars(Bool_t isMC,
 	const std::vector<math::PtEtaPhiMLorentzVector> & anajets,
 	const math::PtEtaPhiMLorentzVector & anaTrk, Int_t it);
+    void FindLeadingTrk(Int_t np, Float_t * dRs, Float_t * pTs);
+    void FindLeadingTrks()
+    {
+      if (nljet_>0) FindLeadingTrk(evtnp_,pndr_,ppt_);
+      if (aljet_>0) FindLeadingTrk(evtnp_,padr_,ppt_);
+    }
 
     // ===== Ana Data =====
     //  --- event level ---
@@ -90,8 +96,14 @@ class TreeDiJetEventData
     Int_t		    aljC5NP_,aljC5NPBg_;
     Float_t	      	    aljC5Pt_,aljC5PtBg_;
 
+    std::vector<Float_t>    lppt_;
+
+    std::vector<Float_t>    lgppt_;
+    std::vector<Float_t>    lgppid_;
+    std::vector<Float_t>    lgpch_;
+
     // -- jes vars --
-    Float_t		   meanppt_;
+    Float_t		    meanppt_;
 
   private:
     TTree*                 tree_;
