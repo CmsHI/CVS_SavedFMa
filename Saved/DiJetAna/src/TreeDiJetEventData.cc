@@ -138,7 +138,7 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
 }
 
 // set brances
-void TreeDiJetEventData::SetBranches()
+void TreeDiJetEventData::SetBranches(Int_t jetType, Int_t trkType)
 {
   // --event level--
   tree_->Branch("run", &(this->run_), "run/I");
@@ -184,16 +184,20 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("nljeta", &(this->nljeta_), "nljeta/F");
   tree_->Branch("nljphi", &(this->nljphi_), "nljphi/F");
   tree_->Branch("nljarea", &(this->nljarea_), "nljarea/F");
-  tree_->Branch("nljemf", &(this->nljemf_), "nljemf/F");
-  tree_->Branch("nljN90hits", &(this->nljN90hits_), "nljN90hits/I");
 
   tree_->Branch("aljet", &(this->aljet_), "aljet/F");
   tree_->Branch("aljrawet", &(this->aljrawet_), "aljrawet/F");
   tree_->Branch("aljeta", &(this->aljeta_), "aljeta/F");
   tree_->Branch("aljphi", &(this->aljphi_), "aljphi/F");
-  tree_->Branch("aljemf", &(this->aljemf_), "aljemf/F");
   tree_->Branch("aljarea", &(this->aljarea_), "aljarea/F");
-  tree_->Branch("aljN90hits", &(this->aljN90hits_), "aljN90hits/I");
+
+  // -- jet id --
+  if (jetType==2) {
+    tree_->Branch("nljemf", &(this->nljemf_), "nljemf/F");
+    tree_->Branch("nljN90hits", &(this->nljN90hits_), "nljN90hits/I");
+    tree_->Branch("aljemf", &(this->aljemf_), "aljemf/F");
+    tree_->Branch("aljN90hits", &(this->aljN90hits_), "aljN90hits/I");
+  }
 
   tree_->Branch("jdphi", &(this->jdphi_), "jdphi/F");
 
@@ -205,8 +209,8 @@ void TreeDiJetEventData::SetBranches()
   // -- particle info --
   tree_->Branch("evtnp",&(this->evtnp_),"evtnp/I");
   tree_->Branch("psube",this->psube_,"psube[evtnp]/I");
-  tree_->Branch("ppid",this->ppid_,"ppid[evtnp]/I");
-  tree_->Branch("pch",this->pch_,"pch[evtnp]/I");
+  //tree_->Branch("ppid",this->ppid_,"ppid[evtnp]/I");
+  //tree_->Branch("pch",this->pch_,"pch[evtnp]/I");
   tree_->Branch("ppt",this->ppt_,"ppt[evtnp]/F");
   tree_->Branch("peta",this->peta_,"peta[evtnp]/F");
   tree_->Branch("pphi",this->pphi_,"pphi[evtnp]/F");
@@ -219,13 +223,17 @@ void TreeDiJetEventData::SetBranches()
   tree_->Branch("padr",this->padr_,"padr[evtnp]/F");
   tree_->Branch("padrbg",this->padrbg_,"padrbg[evtnp]/F");
 
-  tree_->Branch("zn",this->zn_,"zn[evtnp]/F");
-  tree_->Branch("za",this->za_,"za[evtnp]/F");
+  //tree_->Branch("zn",this->zn_,"zn[evtnp]/F");
+  //tree_->Branch("za",this->za_,"za[evtnp]/F");
 
-  tree_->Branch("trkNHits",this->trkNHits_,"trkNHits[evtnp]/I");
-  //tree_->Branch("trkPtErr",this->trkPtErr_,"trkPtErr[evtnp]/F");
-  //tree_->Branch("trkdz",this->trkdz_,"trkdz[evtnp]/F");
-  //tree_->Branch("trkdxy",this->trkdxy_,"trkdxy[evtnp]/F");
+  if (trkType==2) {
+    tree_->Branch("trkNHits",this->trkNHits_,"trkNHits[evtnp]/I");
+    //tree_->Branch("trkPtErr",this->trkPtErr_,"trkPtErr[evtnp]/F");
+    tree_->Branch("trkdz",this->trkdz_,"trkdz[evtnp]/F");
+    tree_->Branch("trkdze",this->trkdze_,"trkdze[evtnp]/F");
+    tree_->Branch("trkd0",this->trkd0_,"trkd0[evtnp]/F");
+    tree_->Branch("trkd0e",this->trkd0e_,"trkd0e[evtnp]/F");
+  }
 
   // -- jet cone info --
   tree_->Branch("nljC5NP", &(this->nljC5NP_), "nljC5NP/I");

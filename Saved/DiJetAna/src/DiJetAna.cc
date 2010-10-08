@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.53 2010/08/25 01:07:20 frankma Exp $
+// $Id: DiJetAna.cc,v 1.54 2010/10/04 16:52:23 frankma Exp $
 //
 //
 
@@ -214,7 +214,7 @@ void DiJetAna::beginJob()
   // -- trees --
   djTree_ = fs->make<TTree>("djTree","dijet tree");
   djEvt_.SetTree(djTree_);
-  djEvt_.SetBranches();
+  djEvt_.SetBranches(anaJetType_,anaTrkType_);
 }
 
 // ------------ method called once each job just after ending the event loop  ------------

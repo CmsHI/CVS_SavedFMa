@@ -22,7 +22,7 @@ class TreeDiJetEventData
     TreeDiJetEventData();
     TreeDiJetEventData(TTree * tree);
     void SetTree(TTree * t) { tree_=t; }
-    void SetBranches();
+    void SetBranches(Int_t jetType=2, Int_t trkType=3);
     void Clear();
     void CalcDJVars(Bool_t isMC,
 	const std::vector<math::PtEtaPhiMLorentzVector> & anajets,
@@ -81,7 +81,7 @@ class TreeDiJetEventData
 
     //  - track sel -
     Int_t	       	    trkNHits_[MAXTRK];
-    //Float_t	       	    trkPtErr_[MAXTRK],trkdz_[MAXTRK],trkdxy_[MAXTRK];
+    Float_t	       	    trkPtErr_[MAXTRK],trkdz_[MAXTRK],trkdze_[MAXTRK],trkd0_[MAXTRK],trkd0e_[MAXTRK];
 
     // -- jet cone info --
     Int_t		    nljC5NP_,nljC5NPBg_;
