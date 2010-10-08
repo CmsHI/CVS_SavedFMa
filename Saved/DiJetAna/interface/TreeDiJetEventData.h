@@ -55,11 +55,11 @@ class TreeDiJetEventData
 
     //  -- jet info --
     Float_t		    nljet_,nljrawet_,nljeta_,nljphi_;
-    Float_t		    nljarea_,nljemf_;
+    Float_t		    nljarea_,nljemf_,nljfhpd_;
     Int_t		    nljN90hits_;
 
     Float_t		    aljet_,aljrawet_,aljeta_,aljphi_;
-    Float_t		    aljarea_,aljemf_;
+    Float_t		    aljarea_,aljemf_,aljfhpd_;
     Int_t		    aljN90hits_;
 
     Float_t		    jdphi_;

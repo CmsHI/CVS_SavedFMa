@@ -195,8 +195,10 @@ void TreeDiJetEventData::SetBranches(Int_t jetType, Int_t trkType)
   if (jetType==2) {
     tree_->Branch("nljemf", &(this->nljemf_), "nljemf/F");
     tree_->Branch("nljN90hits", &(this->nljN90hits_), "nljN90hits/I");
+    tree_->Branch("nljfhpd", &(this->nljfhpd_), "nljfhpd/F");
     tree_->Branch("aljemf", &(this->aljemf_), "aljemf/F");
     tree_->Branch("aljN90hits", &(this->aljN90hits_), "aljN90hits/I");
+    tree_->Branch("aljfhpd", &(this->aljfhpd_), "aljfhpd/F");
   }
 
   tree_->Branch("jdphi", &(this->jdphi_), "jdphi/F");
@@ -279,6 +281,13 @@ void TreeDiJetEventData::Clear()
   aljphi_	  = -99;
   nljarea_	  = -99;
   aljarea_	  = -99;
+  // jet id
+  nljemf_	  = -99;
+  nljN90hits_	  = -99;
+  nljfhpd_	  = -99;
+  aljemf_	  = -99;
+  aljN90hits_	  = -99;
+  aljfhpd_	  = -99;
   // refjet
   nlrjet_	  = -99;
   alrjet_	  = -99;

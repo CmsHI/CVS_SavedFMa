@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.54 2010/10/04 16:52:23 frankma Exp $
+// $Id: DiJetAna.cc,v 1.55 2010/10/08 01:12:13 frankma Exp $
 //
 //
 
@@ -319,6 +319,22 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
   if (anajetType==2) {
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
+
+    // -- jet id --
+    if ((*jets)[iNear_].isCaloJet()) {
+      jd.nljemf_		= (*jets)[iNear_].emEnergyFraction();
+    }
+    jd.nljN90hits_	= (*jets)[iNear_].jetID().n90Hits;
+    jd.nljfhpd_		= (*jets)[iNear_].jetID().fHPD;
+
+    if (anajets.size()>=2) {
+      if ((*jets)[iAway_].isCaloJet()) {
+	jd.aljemf_		= (*jets)[iAway_].emEnergyFraction();
+      }
+      jd.aljN90hits_	= (*jets)[iAway_].jetID().n90Hits;
+      jd.aljfhpd_	= (*jets)[iAway_].jetID().fHPD;
+    }
+
     // -- jec --
     //cout << "Current JEC Step: " << "Nr: " << (*jets)[iNear_].corrStep() << " Aw: " <<  (*jets)[iAway_].corrStep() << endl;
     jd.nljrawet_	= (*jets)[iNear_].correctedP4("raw").pt();
@@ -355,7 +371,7 @@ void DiJetAna::FillTrigInfo(const edm::Event& iEvent, TreeDiJetEventData & jd)
   iEvent.getByLabel(hltsrc_, triggerResults);
   const edm::TriggerNames triggerNames = iEvent.triggerNames(*triggerResults); 
   // check hlt paths if verbose
-  if (verbosity_ >= 2) {
+  if (verbosity_ >= 3) {
     for (unsigned i=0; i<triggerNames.size(); i++) { 
       std::string hltName = triggerNames.triggerName(i);
       unsigned int index = triggerNames.triggerIndex(hltName);
