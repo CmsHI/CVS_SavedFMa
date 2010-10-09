@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.58 2010/10/08 09:33:13 mnguyen Exp $
+// $Id: DiJetAna.cc,v 1.59 2010/10/09 00:26:19 frankma Exp $
 //
 //
 
@@ -423,7 +423,15 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
     int selTrkCt = 0;
     for (unsigned int it=0; it<(*trks).size();++it) {
       const reco::Candidate & trk = (*trks)[it];
-      // select charged stable particles
+      // Find Leading particle before selection
+      for (UInt_t i=0; i<anajets.size(); ++i) {
+	if (trk.status()==1 && trk.pt()>jd.lgppt_[i] && deltaR(trk,anajets[i])<0.5 ) {
+	  jd.lgppt_[i] = trk.pt();
+	  jd.lgpch_[i] = trk.charge();
+	  jd.lgppid_[i] = trk.pdgId();
+	}
+      }
+      // Select charged stable particles
       if (!GoodAnaTrkParticle(trk,trkType)) continue;
       // fill subevent info if genp
       if (trkType==0) {
@@ -431,8 +439,8 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	jd.psube_[selTrkCt]	       = p.collisionId();
       }
       // fill frag candidates basic info
-      jd.ppid_[selTrkCt]	       = trk.pdgId();
-      jd.pch_[selTrkCt]		       = trk.charge();
+      //jd.ppid_[selTrkCt]	       = trk.pdgId();
+      //jd.pch_[selTrkCt]		       = trk.charge();
       // make trk-jet calcuations
       jd.CalcTrkVars(isMC_,anajets,trk.polarP4(),selTrkCt);
       ++selTrkCt;
