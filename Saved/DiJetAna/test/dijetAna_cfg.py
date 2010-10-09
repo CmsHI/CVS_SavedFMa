@@ -39,7 +39,7 @@ process.TFileService = cms.Service('TFileService',
 
 # =============== Final Paths =====================
 enableRECO(process,"MC","pp")
-enablePp(process)
+enablePp(process,"PpRECO") # options: "PpRECO", "HIRECO"
 #enableData(process)
 #process.reco_extra*=process.allTracks
 

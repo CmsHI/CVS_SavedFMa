@@ -46,7 +46,7 @@ def enableRECO(process,mode="MC",type="HI"):
   #switchJECSet( process, "Spring10") # Spring10 is the new default
 
 # If sample is pp disable HI event related variables
-def enablePp(process):
+def enablePp(process,recoMode="PpRECO"):
   process.eventSelection.remove(process.hiEvtFilter)
   for m in [process.djcalo,
       process.djcalo_tower,
@@ -55,7 +55,11 @@ def enablePp(process):
     m.sampleType = 10
     m.hltsrc = cms.InputTag("TriggerResults","","REDIGI36X")
     m.hltNames = ["HLT_Jet15U","HLT_Jet50U","HLT_Photon20_L1R"]
+    if recoMode=="HIRECO":
+      continue
     m.vtxsrc = "offlinePrimaryVertices"
+  if recoMode=="HIRECO":
+    return
   process.djcalo.trksrc = "highPurityTracks"
   process.djcalo.anaTrkType = 2
   process.djcalo_genp.trksrc = "genParticles"
