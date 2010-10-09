@@ -60,6 +60,7 @@ def enablePp(process,recoMode="PpRECO"):
     m.vtxsrc = "offlinePrimaryVertices"
   if recoMode=="HIRECO":
     return
+  process.highPurityTracks.src = "generalTracks"
   process.djcalo.trksrc = "highPurityTracks"
   process.djcalo.anaTrkType = 2
   process.djcalo_genp.trksrc = "genParticles"
