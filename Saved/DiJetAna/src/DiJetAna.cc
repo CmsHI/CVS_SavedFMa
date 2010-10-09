@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.57 2010/10/08 04:53:55 frankma Exp $
+// $Id: DiJetAna.cc,v 1.58 2010/10/08 09:33:13 mnguyen Exp $
 //
 //
 
@@ -323,19 +323,21 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     Handle<vector<pat::Jet> > jets;
     iEvent.getByLabel(jetsrc_,jets);
 
-    // -- jet id --
+    // -- jet properties --
     if ((*jets)[iNear_].isCaloJet()) {
-      jd.nljemf_		= (*jets)[iNear_].emEnergyFraction();
+      jd.nljemf_	= (*jets)[iNear_].emEnergyFraction();
     }
     jd.nljN90hits_	= (*jets)[iNear_].jetID().n90Hits;
     jd.nljfhpd_		= (*jets)[iNear_].jetID().fHPD;
+    jd.nljarea_		= (*jets)[iNear_].jetArea();
 
     if (anajets.size()>=2) {
       if ((*jets)[iAway_].isCaloJet()) {
-	jd.aljemf_		= (*jets)[iAway_].emEnergyFraction();
+	jd.aljemf_	= (*jets)[iAway_].emEnergyFraction();
       }
       jd.aljN90hits_	= (*jets)[iAway_].jetID().n90Hits;
       jd.aljfhpd_	= (*jets)[iAway_].jetID().fHPD;
+      jd.aljarea_	= (*jets)[iAway_].jetArea();
     }
 
     // -- jec --
@@ -357,17 +359,6 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
       jd.ajec_[5]	= (*jets)[iAway_].corrFactor("had","glu");
       jd.ajec_[7]	= (*jets)[iAway_].corrFactor("part","glu");
     }
-    // -- jet id --
-    if ((*jets)[iNear_].isCaloJet()) {
-      jd.nljemf_					= (*jets)[iNear_].emEnergyFraction();
-    }
-    jd.nljarea_					= (*jets)[iNear_].jetArea();
-    if (anajets.size()>=2){
-      if ((*jets)[iAway_].isCaloJet()) {
-	jd.aljemf_		= (*jets)[iAway_].emEnergyFraction();
-      }
-    }
-    if (anajets.size()>=2) jd.aljarea_		= (*jets)[iAway_].jetArea();
   }
 }
 
