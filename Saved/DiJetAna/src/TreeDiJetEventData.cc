@@ -16,20 +16,15 @@ void TreeDiJetEventData::SetDefaults()
   }
 }
 // constructors
-TreeDiJetEventData::TreeDiJetEventData()
+TreeDiJetEventData::TreeDiJetEventData() :
   //
   // We will call the default constructor of the event variables   
   //
+  lgppt_(2),
+  lgppid_(2),
+  lgpch_(2)
 {
   SetDefaults();
-}
-TreeDiJetEventData::TreeDiJetEventData(TTree * tree)
-  //
-  // We will call the default constructor of the event variables   
-  //
-{
-  SetDefaults();
-  tree_ = tree;
 }
 
 // ---------------- Helpers ------------------
@@ -261,6 +256,9 @@ void TreeDiJetEventData::SetBranches(Int_t jetType, Int_t trkType)
   tree_->Branch("aljC5NPBg", &(this->aljC5NPBg_), "aljC5NPBg/I");
   tree_->Branch("aljC5PtBg", &(this->aljC5PtBg_), "aljC5PtBg/F");
   tree_->Branch("lppt", &lppt_);
+  tree_->Branch("lgppt", &lgppt_);
+  tree_->Branch("lgpch", &lgpch_);
+  tree_->Branch("lgppid", &lgppid_);
   
   // -- jes vars --
   //tree_->Branch("meanppt", &(this->meanppt_), "meanppt/F");
@@ -328,6 +326,12 @@ void TreeDiJetEventData::Clear()
   aljC5NPBg_	  = 0;
   aljC5PtBg_	  = 0;
   lppt_.clear();
+
+  for (UInt_t i=0; i<2; ++i) {
+    lgppt_[i] =-99;
+    lgpch_[i] =-99;
+    lgppid_[i] =-99;
+  }
 
   // jes vars
   for (Int_t i=0; i<numJec_; ++i) {

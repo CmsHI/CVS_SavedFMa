@@ -20,7 +20,6 @@ class TreeDiJetEventData
     // ===== Class Methods =====
     void SetDefaults();
     TreeDiJetEventData();
-    TreeDiJetEventData(TTree * tree);
     void SetTree(TTree * t) { tree_=t; }
     void SetBranches(Int_t jetType=2, Int_t trkType=3);
     void Clear();
