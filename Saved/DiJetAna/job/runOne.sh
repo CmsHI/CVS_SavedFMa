@@ -6,12 +6,12 @@ if [ $# -eq 0 ]; then
 fi
 
 # input parameters
-cfg=custom_dijetAna_mc_cfg.py
+cfg=custom_dijetAna_cfg.py
 inputDir=$1
 inputFile=$2
 outputDir=$3
 maxEvents=$4
-swenv=/net/hibat0003/d00/scratch/frankma/HI/jet/Y1JAna_CMSSW_3_8_1_patch2/env.sh
+swenv=/net/hibat0003/d00/scratch/frankma/HI/jet/Y1JAna_CMSSW_3_8_4/env.sh
 
 # check
 if [ ! -e $cfg ]; then
@@ -22,7 +22,7 @@ fi
 # setup job parameters
 inputFileName=${inputFile##*/}
 echo $inputFileName
-outputFileName=dijetAna_mc_$inputFileName
+outputFileName=dj_$inputFileName
 echo $outputFileName
 outputFile=$outputDir/$outputFileName
 echo $outputFile

@@ -32,7 +32,7 @@ Log          = /tmp/frankma/$outfile.log
 Notify_user  = frankma@mit.edu
 
 +AccountingGroup = "group_cmshi.frankma"
-transfer_input_files = custom_dijetAna_mc_cfg.py,CentralityTables.db
+transfer_input_files = custom_dijetAna_cfg.py
 should_transfer_files   = YES
 when_to_transfer_output = ON_EXIT
 
