@@ -54,9 +54,13 @@ void anaJesFF(int doMC=1,
 
   // === ana ===
   TH2F * hLPPtVsGJEt = new TH2F("hLPPtVsGJEt","hLPPtVsJEt",50,0,250,50,0,250);
+  TH2F * hLPPtVsJEt = new TH2F("hLPPtVsJEt","hLPPtVsJEt",50,0,250,50,0,250);
   TProfile * hLzVsGJEtProf = new TProfile("hLzVsGJEtProf","hLzVsJEt",50,0,250);
+  TProfile * hLzVsJEtProf = new TProfile("hLzVsJEtProf","hLzVsJEt",50,0,250);
   djTree->Draw("lppt[0]:nlrjet>>hLPPtVsGJEt",anaSel.FinDJCut(),"goff");
-  djTree->Draw("lppt[0]/nljet:nlrjet>>hLzVsGJEtProf",anaSel.FinDJCut(),"prof");
+  djTree->Draw("lppt[0]:nljet>>hLPPtVsJEt",anaSel.FinDJCut(),"goff");
+  djTree->Draw("lppt[0]/nlrjet:nlrjet>>hLzVsGJEtProf",anaSel.FinDJCut(),"prof goff");
+  djTree->Draw("lppt[0]/nlrjet:nljet>>hLzVsJEtProf",anaSel.FinDJCut(),"prof goff");
 
   // -- plot --
   TCanvas * cLPPtVsGJEt = new TCanvas("cLPPtVsGJEt","cLPPtVsGJEt",500,500);
@@ -72,4 +76,11 @@ void anaJesFF(int doMC=1,
   cpLzVsGJEtProf.AddProfile(hLzVsGJEtProf,"j1","E");
   cpLzVsGJEtProf.SetLegend(053,31,86,37);
   cpLzVsGJEtProf.Draw(cLzVsGJEtProf,true);
+
+  TCanvas * cLzVsJEtProf = new TCanvas("LzVsJEtProf","LzVsJEtProf",500,500);
+  CPlot cpLzVsJEtProf("LzVsJEtProf","LzVsJEtProf","Leading E_{T}^{calojet} [GeV]","z^{lead trk} (in Jet Cone)");
+  cpLzVsJEtProf.SetYRange(0,0.3);
+  cpLzVsJEtProf.AddProfile(hLzVsJEtProf,"j1","E");
+  cpLzVsJEtProf.SetLegend(053,31,86,37);
+  cpLzVsJEtProf.Draw(cLzVsJEtProf,true);
 }
