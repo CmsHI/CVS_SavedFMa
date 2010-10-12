@@ -52,17 +52,24 @@ void anaJesFF(int doMC=1,
   CPlot::sOutDir = outdir;
   gSystem->mkdir(outdir.Data(),kTRUE);
 
-  // ============== Dijet Scales ===============
-  TH2F * hLPPtVsJEt = new TH2F("hLPPtVsJEt","hLPPtVsJEt",50,0,250,50,0,250);
-  TH2F * hLzVsJEt = new TH2F("hLzVsJEt","hLzVsJEt",50,0,250,50,-1,2);
-  djTree->Draw("lppt[0]:nlrjet>>hLPPtVsJEt",anaSel.FinDJCut(),"goff");
-  djTree->Draw("lppt[0]/nljet:nlrjet>>hLzVsJEt",anaSel.FinDJCut(),"prof");
+  // === ana ===
+  TH2F * hLPPtVsGJEt = new TH2F("hLPPtVsGJEt","hLPPtVsJEt",50,0,250,50,0,250);
+  TProfile * hLzVsGJEtProf = new TProfile("hLzVsGJEtProf","hLzVsJEt",50,0,250);
+  djTree->Draw("lppt[0]:nlrjet>>hLPPtVsGJEt",anaSel.FinDJCut(),"goff");
+  djTree->Draw("lppt[0]/nljet:nlrjet>>hLzVsGJEtProf",anaSel.FinDJCut(),"prof");
 
   // -- plot --
-  TCanvas * cLzVsJEt = new TCanvas("cLzVsJEt","cLzVsJEt",500,500);
-  cLzVsJEt->SetLogz();
-  CPlot cpLzVsJEt("LzVsJEt"+anaSel.Tag2,"DJ","Leading E_{T}^{genjet} [GeV]","Leading p_{T}^{trk} in Jet Cone [GeV]");
-  cpLzVsJEt.SetYRange(0,160);
-  cpLzVsJEt.AddHist2D(hLPPtVsJEt,"colz");
-  cpLzVsJEt.Draw(cLzVsJEt,true);
+  TCanvas * cLPPtVsGJEt = new TCanvas("cLPPtVsGJEt","cLPPtVsGJEt",500,500);
+  cLPPtVsGJEt->SetLogz();
+  CPlot cpLPPtVsGJEt("LPPtVsGJEt"+anaSel.Tag2,"DJ","Leading E_{T}^{genjet} [GeV]","Leading p_{T}^{trk} (in Jet Cone) [GeV]");
+  cpLPPtVsGJEt.SetYRange(0,160);
+  cpLPPtVsGJEt.AddHist2D(hLPPtVsGJEt,"colz");
+  cpLPPtVsGJEt.Draw(cLPPtVsGJEt,true);
+
+  TCanvas * cLzVsGJEtProf = new TCanvas("LzVsGJEtProf","LzVsGJEtProf",500,500);
+  CPlot cpLzVsGJEtProf("LzVsGJEtProf","LzVsGJEtProf","Leading E_{T}^{genjet} [GeV]","z^{lead trk} (in Jet Cone)");
+  cpLzVsGJEtProf.SetYRange(0,0.3);
+  cpLzVsGJEtProf.AddProfile(hLzVsGJEtProf,"j1","E");
+  cpLzVsGJEtProf.SetLegend(053,31,86,37);
+  cpLzVsGJEtProf.Draw(cLzVsGJEtProf,true);
 }
