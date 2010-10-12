@@ -1,6 +1,6 @@
 import os,sys
 
-AnaV = "a1011"
+AnaV = "a1012"
 RunV = sys.argv[1]
 #inFile0Name="~/scratch01/ana/Hydj_Hard_GSR_NZS/UQDJ80_120_proc0831_10k.root"
 inFile0Name="~/scratch01/ana/s10-dj80to120/dj1009_Y1JAna011/dj_*.root"
@@ -12,18 +12,19 @@ header="QCD-DiJet80to120"
 AnaType="ff"
 NrJEtMin=100
 NrJEtMax=200
-AwJEtMin=40
+AwJEtMin=50
 
 SysAnas = {
-    "s00":["djgen",NrJEtMin,NrJEtMax,0,3.,"Ana","AnaSig","log\(nljet/ppt\)","log\(aljet/ppt\)"],
-    "s01":["djgen",NrJEtMin,NrJEtMax,0,2.,"Ana","AnaSig","log\(nljet/ppt\)","log\(aljet/ppt\)"],
-    "s02":["djgen",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ana","AnaSig","log\(nljet/ppt\)","log\(aljet/ppt\)"],
+    #"s00":["djgen",NrJEtMin,NrJEtMax,0,3.,"Ana","AnaSig","log\(nljet/ppt\)","log\(aljet/ppt\)"],
+    #"s01":["djgen",NrJEtMin,NrJEtMax,0,2.,"Ana","AnaSig","log\(nljet/ppt\)","log\(aljet/ppt\)"],
+    #"s02":["djgen",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ana","AnaSig","log\(nljet/ppt\)","log\(aljet/ppt\)"],
     "s03":["djgen",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ana","Ana","log\(nljet/ppt\)","log\(aljet/ppt\)"],
     #"s04":["djgen",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRefNr","Ana","log\(nljet/ppt\)","log\(aljet/ppt\)"], # mat Nr
-    "s05":["djgen",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRef","Ana","log\(nljet/ppt\)","log\(aljet/ppt\)"], # mat aw
+    #"s05":["djgen",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRef","Ana","log\(nljet/ppt\)","log\(aljet/ppt\)"], # mat aw
+    "s05b":["djgen",NrJEtMin,NrJEtMax,AwJEtMin,2.,"RefOrderRef","Ana","log\(nljet/ppt\)","log\(aljet/ppt\)"], # mat aw
     "s06":["djcalo_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ref","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # calo order
-    "s06b":["djcalo_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ref","Ana","log\(nljet/ppt\)","log\(aljet/ppt\)"], # calo order, with calo jes in xi
-    "s06b2":["djcalo_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ref","Ana","log\(nlrjet*1.1/ppt\)","log\(alrjet/ppt\)"], # calo order
+    #"s06b":["djcalo_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ref","Ana","log\(nljet/ppt\)","log\(aljet/ppt\)"], # calo order, with calo jes in xi
+    #"s06b2":["djcalo_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"Ref","Ana","log\(nlrjet*1.1/ppt\)","log\(alrjet/ppt\)"], # calo order
     #"s07":["djcalo_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"RefAwAnaMatNr","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # cut on nr calo et, still matched
     "s08":["djcalo_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRef","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # cut on aw calo et, still matched
     #"s09":["djcalo_genp",NrJEtMin,NrJEtMax,AwJEtMin,2.,"AnaMatRefNr","Ana","log\(nlrjet/ppt\)","log\(alrjet/ppt\)"], # no Aw mat
