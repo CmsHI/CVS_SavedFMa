@@ -20,7 +20,7 @@ using namespace std;
 
 void anaDiJetFF(int doMC=1,
     TString AnaVersion = "a1006",
-    TString modName = "dijetAna_mc_calojet_genp",
+    TString modName = "djcalo_genp",
     Double_t NrJEtMin = 100,
     Double_t NrJEtMax = 200,
     Double_t AwJEtMin = 50,
