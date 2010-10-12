@@ -57,10 +57,12 @@ void anaJesFF(int doMC=1,
   TH2F * hLPPtVsJEt = new TH2F("hLPPtVsJEt","hLPPtVsJEt",50,0,250,50,0,250);
   TProfile * hLzVsGJEtProf = new TProfile("hLzVsGJEtProf","hLzVsJEt",50,0,250);
   TProfile * hLzVsJEtProf = new TProfile("hLzVsJEtProf","hLzVsJEt",50,0,250);
+  TProfile * hRespVsLzProf = new TProfile("hRespVsLzProf","hLzVsJEt",50,0,1);
   djTree->Draw("lppt[0]:nlrjet>>hLPPtVsGJEt",anaSel.FinDJCut(),"goff");
   djTree->Draw("lppt[0]:nljet>>hLPPtVsJEt",anaSel.FinDJCut(),"goff");
   djTree->Draw("lppt[0]/nlrjet:nlrjet>>hLzVsGJEtProf",anaSel.FinDJCut(),"prof goff");
   djTree->Draw("lppt[0]/nlrjet:nljet>>hLzVsJEtProf",anaSel.FinDJCut(),"prof goff");
+  djTree->Draw("nljet/nlrjet:lppt[0]/nlrjet>>hRespVsLzProf",anaSel.FinDJCut(),"prof");
 
   // -- plot --
   TCanvas * cLPPtVsGJEt = new TCanvas("cLPPtVsGJEt","cLPPtVsGJEt",500,500);
@@ -74,13 +76,21 @@ void anaJesFF(int doMC=1,
   CPlot cpLzVsGJEtProf("LzVsGJEtProf","LzVsGJEtProf","Leading E_{T}^{genjet} [GeV]","z^{lead trk} (in Jet Cone)");
   cpLzVsGJEtProf.SetYRange(0,0.3);
   cpLzVsGJEtProf.AddProfile(hLzVsGJEtProf,"j1","E");
-  cpLzVsGJEtProf.SetLegend(053,31,86,37);
+  cpLzVsGJEtProf.SetLegend(0.53,0.31,0.86,0.37);
   cpLzVsGJEtProf.Draw(cLzVsGJEtProf,true);
 
   TCanvas * cLzVsJEtProf = new TCanvas("LzVsJEtProf","LzVsJEtProf",500,500);
   CPlot cpLzVsJEtProf("LzVsJEtProf","LzVsJEtProf","Leading E_{T}^{calojet} [GeV]","z^{lead trk} (in Jet Cone)");
   cpLzVsJEtProf.SetYRange(0,0.3);
   cpLzVsJEtProf.AddProfile(hLzVsJEtProf,"j1","E");
-  cpLzVsJEtProf.SetLegend(053,31,86,37);
+  cpLzVsJEtProf.SetLegend(0.53,0.31,0.86,0.37);
   cpLzVsJEtProf.Draw(cLzVsJEtProf,true);
+
+  // -- response --
+  TCanvas * cRespVsLzProf = new TCanvas("RespVsLzProf","RespVsLzProf",500,500);
+  CPlot cpRespVsLzProf("RespVsLzProf","RespVsLzProf","Leading E_{T}^{calojet} [GeV]","z^{lead trk} (in Jet Cone)");
+  cpRespVsLzProf.SetYRange(0,1.5);
+  cpRespVsLzProf.AddProfile(hRespVsLzProf,"j1","E");
+  cpRespVsLzProf.SetLegend(0.53,0.31,0.86,0.37);
+  cpRespVsLzProf.Draw(cRespVsLzProf,true);
 }
