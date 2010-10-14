@@ -181,6 +181,13 @@ void selectionCut::SetCut()
       NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
   DJ["AnaLower"] = Form("nljet*0.86>%.1f&&nljet*0.86<%.1f&&aljet*0.86>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
       NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
+  // FF aware
+  DJ["AnaLz0"] = Form("(lppt[0]/nljet)>0&&(lppt[0]/nljet)<0.3&&nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
+      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
+  DJ["AnaLz1"] = Form("(lppt[0]/nljet)>0.3&&(lppt[0]/nljet)<0.6&&nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
+      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
+  DJ["AnaLz2"] = Form("(lppt[0]/nljet)>0.6&&(lppt[0]/nljet<0.9)&&nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
+      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
 
   // Track Selections
   Trk["Ana"] = ("ppt>1.2&&ppt<nljet");
