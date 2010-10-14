@@ -28,7 +28,7 @@ djcalo = cms.EDAnalyzer('DiJetAna',
     nearJetPtMin = cms.double(-1), # Note: this is only for deciding whether to save the tracks in event
     trksrc = cms.InputTag("allTracks"),
     anaTrkType = cms.int32(3),
-    trkPtMin = cms.double(0.7),
+    trkPtMin = cms.double(0.8),
     # debug
     verbosity = cms.untracked.int32(2)
     )
@@ -61,7 +61,7 @@ djgen = djcalo.clone(
 djcalo_tower = djcalo.clone(
     # trk selection
     trksrc = cms.InputTag("towerMaker"),
-    trkPtMin = cms.double(-999)
+    trkPtMin = cms.double(0.7)
     )
 
 # Analysis Sequences
