@@ -61,7 +61,7 @@ djgen = djcalo.clone(
 djcalo_tower = djcalo.clone(
     # trk selection
     trksrc = cms.InputTag("towerMaker"),
-    trkPtMin = cms.double(0.7)
+    trkPtMin = cms.double(0.8)
     )
 
 # Analysis Sequences
