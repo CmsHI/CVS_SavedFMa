@@ -54,7 +54,7 @@ def enablePp(process,recoMode="PpRECO"):
       process.djgen]:
     m.sampleType = 10
     m.hltsrc = cms.InputTag("TriggerResults","","REDIGI36X")
-    m.hltNames = ["HLT_Jet15U","HLT_Jet50U","HLT_Photon20_L1R"]
+    m.hltNames = ["HLT_MinBiasPixel_SingleTrack","HLT_Jet15U","HLT_Jet50U","HLT_Photon20_Cleaned_L1R"]
     if recoMode=="HIRECO":
       continue
     m.vtxsrc = "offlinePrimaryVertices"
@@ -72,5 +72,7 @@ def enableData(process):
   process.dijetAna_seq.remove(process.djcalo_genp)
   process.dijetAna_seq.remove(process.djgen)
   for m in [process.djcalo,process.djcalo_tower]:
+    m.jetsrc = "selectedPatJets"
+    m.hltsrc = cms.InputTag("TriggerResults","","HLT")
     m.isMC = False
     m.refJetType = -1
