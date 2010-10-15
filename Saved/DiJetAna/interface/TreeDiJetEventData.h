@@ -29,11 +29,11 @@ class TreeDiJetEventData
     void CalcTrkVars(Bool_t isMC,
 	const std::vector<math::PtEtaPhiMLorentzVector> & anajets,
 	const math::PtEtaPhiMLorentzVector & anaTrk, Int_t it);
-    void FindLeadingTrk(Int_t np, Float_t * dRs, Float_t * pTs);
+    void FindLeadingTrk(Int_t np, Float_t * dRs, Float_t * pTs, Int_t ijet);
     void FindLeadingTrks()
     {
-      if (nljet_>0) FindLeadingTrk(evtnp_,pndr_,ppt_);
-      if (aljet_>0) FindLeadingTrk(evtnp_,padr_,ppt_);
+      if (nljet_>0) FindLeadingTrk(evtnp_,pndr_,ppt_,0);
+      if (aljet_>0) FindLeadingTrk(evtnp_,padr_,ppt_,1);
     }
 
     // ===== Ana Data =====
@@ -96,6 +96,7 @@ class TreeDiJetEventData
     Float_t	      	    aljC5Pt_,aljC5PtBg_;
 
     std::vector<Float_t>    lppt_;
+    std::vector<Float_t>    lpjdr_;
 
     std::vector<Float_t>    lgppt_;
     std::vector<Float_t>    lgppid_;
