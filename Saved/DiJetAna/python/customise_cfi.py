@@ -47,7 +47,10 @@ def enableRECO(process,mode="MC",type="HI"):
 
 # If sample is pp disable HI event related variables
 def enablePp(process,recoMode="PpRECO"):
-  process.eventSelection.remove(process.hiEvtFilter)
+  try:
+    process.eventSelection.remove(process.hiEvtFilter)
+  except:
+    print "dijetAna: cfg does not have process.eventSelection"
   for m in [process.djcalo,
       process.djcalo_tower,
       process.djcalo_genp,
