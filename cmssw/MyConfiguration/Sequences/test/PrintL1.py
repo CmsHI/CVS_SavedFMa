@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 import FWCore.ParameterSet.VarParsing as VarParsing
 anaopt = VarParsing.VarParsing ('standard')
 anaopt.register ('gbt',
-    "MC_38Y_V9", # default value
+    "MC_39Y_V2::All", # default value
     VarParsing.VarParsing.multiplicity.singleton, # singleton or list
     VarParsing.VarParsing.varType.string,          # string, int, or float
     "globaltag used for l1 menu")
@@ -14,7 +14,7 @@ process = cms.Process('L1Ana')
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-process.load('HLTrigger.Configuration.HLT_1E31_cff')
+process.load('HLTrigger.Configuration.HLT_HIon_cff')
 process.digi2raw = cms.Path(process.HLTL1UnpackerSequence)
 
 process.maxEvents = cms.untracked.PSet(
