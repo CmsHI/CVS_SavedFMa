@@ -104,7 +104,6 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   BaseCutType(base),
   DJCutType("Ana"),
   TrkCutType("Ana"),
-  Tag2("_J"+DJCutType+"T"+TrkCutType),
   // default cuts
   Trigger("hlt[0]"),
   CentCut("cent<20"),
@@ -197,6 +196,7 @@ void selectionCut::SetCut()
   Trk["AnaSig"] = Trk["Ana"]&&"psube==0";
 
   Tag = Form("%s_%0.f_%.0f_%.0f_%.0f",BaseCutType.Data(),NrJEtMin,NrJEtMax,AwJEtMin,DjDPhiMin*10);
+  Tag2 = "_J"+DJCutType+"T"+TrkCutType;
   Print(1);
 }
 
