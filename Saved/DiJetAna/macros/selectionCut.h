@@ -197,7 +197,6 @@ void selectionCut::SetCut()
 
   Tag = Form("%s_%0.f_%.0f_%.0f_%.0f",BaseCutType.Data(),NrJEtMin,NrJEtMax,AwJEtMin,DjDPhiMin*10);
   Tag2 = "_J"+DJCutType+"T"+TrkCutType;
-  Print(1);
 }
 
 void selectionCut::And(std::map<TString,TCut> & mp, TCut cut)
