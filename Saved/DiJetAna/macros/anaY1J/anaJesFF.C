@@ -37,11 +37,13 @@ void anaJesFF(int doMC=1,
   cout << " # entries: " << djTree->GetEntries() << endl;
 
   // === Declare selection ===
-  selectionCut anaSel(SrcName,doMC,"S1",50,200,30,2.5);
+  selectionCut anaSel(SrcName,doMC,"S1",80,100,80,2.5);
   anaSel.DJCutType = "Ana";
   anaSel.TrkCutType = "Ana";
   anaSel.Tag2+=TString("_"+modName);
   anaSel.SetCut();
+  anaSel.DJAnd("nljC5Pt/nljet>0.5 && aljC5Pt/aljet>0.5");
+  anaSel.Print(1);
 
   // -- analysis selections --
   cout << endl << "====== DJ Selection: " << anaSel.DJCutType << " ======" << endl;
@@ -63,8 +65,8 @@ void anaJesFF(int doMC=1,
   djTree->Draw("lppt[0]:nljet>>hLPPtVsJEt",anaSel.FinDJCut(),"goff");
   djTree->Draw("lppt[0]/nlrjet:nlrjet>>hLzVsGJEtProf",anaSel.FinDJCut(),"prof goff");
   djTree->Draw("lppt[0]/nlrjet:nljet>>hLzVsJEtProf",anaSel.FinDJCut(),"prof goff");
-  djTree->Draw("nljet/nlrjet:lppt[0]/nlrjet>>hRespVsLzProf",anaSel.FinDJCut(),"prof");
-  djTree->Draw("aljet/alrjet:lppt[1]/alrjet>>hRespVsAzProf",anaSel.FinDJCut(),"prof");
+  djTree->Draw("nljet/nlrjet:lppt[0]/nlrjet>>hRespVsLzProf",anaSel.FinDJCut(),"prof goff");
+  djTree->Draw("aljet/alrjet:lppt[1]/alrjet>>hRespVsAzProf",anaSel.FinDJCut(),"prof goff");
 
   // -- plot --
   TCanvas * cLPPtVsGJEt = new TCanvas("cLPPtVsGJEt","cLPPtVsGJEt",500,500);
@@ -75,14 +77,14 @@ void anaJesFF(int doMC=1,
   cpLPPtVsGJEt.Draw(cLPPtVsGJEt,true);
 
   TCanvas * cLzVsGJEtProf = new TCanvas("LzVsGJEtProf","LzVsGJEtProf",500,500);
-  CPlot cpLzVsGJEtProf("LzVsGJEtProf","LzVsGJEtProf","Leading E_{T}^{genjet} [GeV]","z^{lead trk} (in Jet Cone)");
+  CPlot cpLzVsGJEtProf("LzVsGJEtProf"+anaSel.Tag2,"LzVsGJEtProf","Leading E_{T}^{genjet} [GeV]","z^{lead trk} (in Jet Cone)");
   cpLzVsGJEtProf.SetYRange(0,0.3);
   cpLzVsGJEtProf.AddProfile(hLzVsGJEtProf,"j1","E");
   cpLzVsGJEtProf.SetLegend(0.53,0.31,0.86,0.37);
   cpLzVsGJEtProf.Draw(cLzVsGJEtProf,true);
 
   TCanvas * cLzVsJEtProf = new TCanvas("LzVsJEtProf","LzVsJEtProf",500,500);
-  CPlot cpLzVsJEtProf("LzVsJEtProf","LzVsJEtProf","Leading E_{T}^{calojet} [GeV]","z^{lead trk} (in Jet Cone)");
+  CPlot cpLzVsJEtProf("LzVsJEtProf"+anaSel.Tag2,"LzVsJEtProf","Leading E_{T}^{calojet} [GeV]","z^{lead trk} (in Jet Cone)");
   cpLzVsJEtProf.SetYRange(0,0.3);
   cpLzVsJEtProf.AddProfile(hLzVsJEtProf,"j1","E");
   cpLzVsJEtProf.SetLegend(0.53,0.31,0.86,0.37);
@@ -90,7 +92,7 @@ void anaJesFF(int doMC=1,
 
   // -- response --
   TCanvas * cRespVsLzProf = new TCanvas("RespVsLzProf","RespVsLzProf",500,500);
-  CPlot cpRespVsLzProf("RespVsLzProf","RespVsLzProf","Leading E_{T}^{calojet} [GeV]","z^{lead trk} (in Jet Cone)");
+  CPlot cpRespVsLzProf("RespVsLzProf"+anaSel.Tag2,"RespVsLzProf","z^{lead trk} (in Jet Cone)","E_{T}^{calojet}/E_{T}^{genjet}");
   cpRespVsLzProf.SetYRange(0,1.5);
   cpRespVsLzProf.AddProfile(hRespVsLzProf,"j1","E");
   cpRespVsLzProf.AddProfile(hRespVsAzProf,"j2","E",kBlue);
