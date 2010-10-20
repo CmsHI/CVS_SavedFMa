@@ -42,7 +42,7 @@ void anaJesFF(int doMC=1,
   anaSel.TrkCutType = "Ana";
   anaSel.Tag2+=TString("_"+modName);
   anaSel.SetCut();
-  anaSel.DJAnd("nljC5Pt/nljet>0.5 && aljC5Pt/aljet>0.5");
+  //anaSel.DJAnd("nljC5Pt/nljet<0.5 && aljC5Pt/aljet<0.5");
   anaSel.Print(1);
 
   // -- analysis selections --
@@ -55,6 +55,11 @@ void anaJesFF(int doMC=1,
   gSystem->mkdir(outdir.Data(),kTRUE);
 
   // === ana ===
+  HisTGroup<TH2F> hgPPt_JEt("PPT_JEt",50,0,250,50,0,250);
+  hgPPt_JEt.Add2D("Nr");
+  hgPPt_JEt.Add2D("GJNr");
+  hgPPt_JEt.Add2D("Aw");
+  hgPPt_JEt.Add2D("GJAw");
   TH2F * hLPPtVsGJEt = new TH2F("hLPPtVsGJEt","hLPPtVsJEt",50,0,250,50,0,250);
   TH2F * hLPPtVsJEt = new TH2F("hLPPtVsJEt","hLPPtVsJEt",50,0,250,50,0,250);
   TProfile * hLzVsGJEtProf = new TProfile("hLzVsGJEtProf","hLzVsJEt",50,0,250);
@@ -95,7 +100,7 @@ void anaJesFF(int doMC=1,
   CPlot cpRespVsLzProf("RespVsLzProf"+anaSel.Tag2,"RespVsLzProf","z^{lead trk} (in Jet Cone)","E_{T}^{calojet}/E_{T}^{genjet}");
   cpRespVsLzProf.SetYRange(0,1.5);
   cpRespVsLzProf.AddProfile(hRespVsLzProf,"j1","E");
-  cpRespVsLzProf.AddProfile(hRespVsAzProf,"j2","E",kBlue);
+  cpRespVsLzProf.AddProfile(hRespVsAzProf,"j2","E",kBlue,kOpenSquare);
   cpRespVsLzProf.SetLegend(0.53,0.31,0.86,0.37);
   cpRespVsLzProf.Draw(cRespVsLzProf,true);
 }
