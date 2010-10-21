@@ -51,10 +51,7 @@ def enablePp(process,recoMode="PpRECO"):
     process.eventSelection.remove(process.hiEvtFilter)
   except:
     print "Notice: dijetAna will not modify process.eventSelection"
-  for m in [process.djcalo,
-      process.djcalo_tower,
-      process.djcalo_genp,
-      process.djgen]:
+  for m in [process.djcalo,process.djcalo_tower,process.djcalo_genp,process.djgen]:
     m.sampleType = 10
     m.hltsrc = cms.InputTag("TriggerResults","","REDIGI36X")
     m.hltNames = ["HLT_MinBiasPixel_SingleTrack","HLT_Jet15U","HLT_Jet50U","HLT_Photon20_Cleaned_L1R"]
@@ -80,3 +77,11 @@ def enableData(process):
     m.hltsrc = cms.InputTag("TriggerResults","","HLT")
     m.isMC = False
     m.refJetType = -1
+
+
+### Output levels
+djOutputThreshold = {
+  'FULL': -1,
+  'FF': 70,
+  'LIGHT': 99999
+  }
