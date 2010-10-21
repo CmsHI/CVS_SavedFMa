@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.59 2010/10/09 00:26:19 frankma Exp $
+// $Id: DiJetAna.cc,v 1.60 2010/10/09 01:36:57 frankma Exp $
 //
 //
 
@@ -178,12 +178,6 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //
   // === Tracks ===
   //
-  // -- leading jet event selection for tracks --
-  if (nearJetPtMin_>=0) {
-    if (anaJets_.size()==0 || (anaJets_.size()>0 && anaJets_[0].pt()<nearJetPtMin_))
-    { djTree_->Fill(); return; }
-  }
-  ++numJetEvtSel_;
   // Print Tracks
   if (verbosity_>=10 && numJetEvtSel_<=25) PrintTrks(iEvent,anaTrkType_);
 
@@ -192,6 +186,14 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // -- Find Leading Trks --
   djEvt_.FindLeadingTrks();
+
+  // -- leading jet event selection for tracks --
+  if (nearJetPtMin_>=0) {
+    if (anaJets_.size()==0 || (anaJets_.size()>0 && anaJets_[0].pt()<nearJetPtMin_)) {
+      djEvt_.evtnp_ = 0;
+      ++numJetEvtSel_;
+    }
+  }
 
   // All done
   djTree_->Fill();
