@@ -20,6 +20,14 @@ TreeDiJetEventData::TreeDiJetEventData() :
   //
   // We will call the default constructor of the event variables   
   //
+  ljcnp_(2),
+  ljcnpbg_(2),
+  ljcpt_(2),
+  ljcpt2_(2),
+  ljcptr_(2),
+  ljcptbg_(2),
+  ljcpt2bg_(2),
+  ljcptrbg_(2),
   lppt_(2),
   lpjdr_(2),
   lgppt_(2),
@@ -134,14 +142,32 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
   za_[it]		= ppt_[it]/anajets[1].pt();
 }
 
-// Leading Trk
-void TreeDiJetEventData::FindLeadingTrk(Int_t np, Float_t * dRs, Float_t * pTs, Int_t j)
+// Trks in Jet Cone
+void TreeDiJetEventData::AnaCone(Int_t ijet, Int_t np, Float_t * pTs, Float_t * dRs, Float_t * dRBgs)
 {
   for (Int_t i=0; i<np; ++i) {
-    if (pTs[i]>lppt_[j] && dRs[i]<0.5) {
-      lppt_[j]=pTs[i];
-      lpjdr_[j] = dRs[i];
+    // jet cone
+    if (dRs[i]<0.5) {
+      if (pTs[i]>lppt_[ijet]) {
+	lppt_[ijet]=pTs[i];
+	lpjdr_[ijet] = dRs[i];
+      }
+      if (pTs[i]>1.2) {
+	++ljcnp_[ijet];
+	ljcpt_[ijet]+=pTs[i];
+	ljcpt2_[ijet]+=pTs[i]*pTs[i];
+	ljcptr_[ijet]+=pTs[i]*dRs[i];
+      }
     }
+    // bg cone
+    if (dRBgs[i]<0.5) {
+      if (pTs[i]>1.2) {
+	++ljcnpbg_[ijet];
+	ljcptbg_[ijet]+=pTs[i];
+	ljcpt2bg_[ijet]+=pTs[i]*pTs[i];
+	ljcptrbg_[ijet]+=pTs[i]*dRs[i];
+      }
+    }// cone
   }
 }
 
@@ -254,6 +280,15 @@ void TreeDiJetEventData::SetBranches(Int_t jetType, Int_t trkType)
   tree_->Branch("nljC5PtBg", &(this->nljC5PtBg_), "nljC5PtBg/F");
   tree_->Branch("aljC5NPBg", &(this->aljC5NPBg_), "aljC5NPBg/I");
   tree_->Branch("aljC5PtBg", &(this->aljC5PtBg_), "aljC5PtBg/F");
+  tree_->Branch("ljcnp", &ljcnp_);
+  tree_->Branch("ljcnpbg", &ljcnpbg_);
+  tree_->Branch("ljcpt", &ljcpt_);
+  tree_->Branch("ljcpt2", &ljcpt2_);
+  tree_->Branch("ljcptr", &ljcptr_);
+  tree_->Branch("ljcptbg", &ljcptbg_);
+  tree_->Branch("ljcpt2bg", &ljcpt2bg_);
+  tree_->Branch("ljcptrbg", &ljcptrbg_);
+  // leading particle in cone
   tree_->Branch("lppt", &lppt_);
   tree_->Branch("lpjdr", &lpjdr_);
   tree_->Branch("lgppt", &lgppt_);
@@ -327,6 +362,15 @@ void TreeDiJetEventData::Clear()
   aljC5PtBg_	  = 0;
 
   for (UInt_t i=0; i<2; ++i) {
+    ljcnp_[i] = 0;
+    ljcnpbg_[i] = 0;
+    ljcpt_[i] = 0;
+    ljcpt2_[i] = 0;
+    ljcptr_[i] = 0;
+    ljcptbg_[i] = 0;
+    ljcpt2bg_[i] = 0;
+    ljcptrbg_[i] = 0;
+    // leading particle in cone
     lppt_[i] = -99;
     lpjdr_[i] = -99;
     lgppt_[i] =-99;

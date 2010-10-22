@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.60 2010/10/09 01:36:57 frankma Exp $
+// $Id: DiJetAna.cc,v 1.61 2010/10/21 12:14:57 frankma Exp $
 //
 //
 
@@ -185,7 +185,7 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   FillTrks(iEvent,djEvt_,anaJets_,anaTrkType_);
 
   // -- Find Leading Trks --
-  djEvt_.FindLeadingTrks();
+  djEvt_.AnaCones();
 
   // -- leading jet event selection for tracks --
   if (nearJetPtMin_>=0) {
