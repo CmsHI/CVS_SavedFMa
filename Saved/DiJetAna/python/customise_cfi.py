@@ -82,6 +82,6 @@ def enableData(process):
 ### Output levels
 djOutputThreshold = {
   'FULL': -1,
-  'FF': 80,
+  'FF': 60,
   'LIGHT': 99999
   }
