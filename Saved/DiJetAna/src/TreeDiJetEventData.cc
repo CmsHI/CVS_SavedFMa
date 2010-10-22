@@ -101,19 +101,7 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
   pndr_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[0].eta(),anajets[0].phi());
   //  - background variables-
   pndrbg_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[0].eta(),anajets[0].phi()+TMath::PiOver2());
-  // jet cone info
-  if (ppt_[it]>1.2 && ppt_[it]<anajets[0].pt()){
-    if (pndr_[it]<0.5) {
-      ++nljC5NP_;
-      nljC5Pt_+=ppt_[it];
-    }
-    if (pndrbg_[it]<0.5) {
-      ++nljC5NPBg_;
-      nljC5PtBg_+=ppt_[it];
-    }
-  }
-  // fragmentation variables
-  // will change to dijet frame soon
+  // fragmentation variables, will change to dijet frame soon
   zn_[it]		= ppt_[it]/anajets[0].pt();
 
   if (anajets.size()<2) {
@@ -126,19 +114,7 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
   padr_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[1].eta(),anajets[1].phi());
   //  - background variables-
   padrbg_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[1].eta(),anajets[1].phi()+TMath::PiOver2());
-  // jet cone info
-  if (ppt_[it]>1.2 && ppt_[it]<anajets[0].pt()){
-    if (padr_[it]<0.5) {
-      ++aljC5NP_;
-      aljC5Pt_+=ppt_[it];
-    }
-    if (padrbg_[it]<0.5) {
-      ++aljC5NPBg_;
-      aljC5PtBg_+=ppt_[it];
-    }
-  }
-  // fragmentation variables
-  // will change to dijet frame soon
+  // fragmentation variables, will change to dijet frame soon
   za_[it]		= ppt_[it]/anajets[1].pt();
 }
 
@@ -272,14 +248,6 @@ void TreeDiJetEventData::SetBranches(Int_t jetType, Int_t trkType)
   }
 
   // -- jet cone info --
-  tree_->Branch("nljC5NP", &(this->nljC5NP_), "nljC5NP/I");
-  tree_->Branch("nljC5Pt", &(this->nljC5Pt_), "nljC5Pt/F");
-  tree_->Branch("aljC5NP", &(this->aljC5NP_), "aljC5NP/I");
-  tree_->Branch("aljC5Pt", &(this->aljC5Pt_), "aljC5Pt/F");
-  tree_->Branch("nljC5NPBg", &(this->nljC5NPBg_), "nljC5NPBg/I");
-  tree_->Branch("nljC5PtBg", &(this->nljC5PtBg_), "nljC5PtBg/F");
-  tree_->Branch("aljC5NPBg", &(this->aljC5NPBg_), "aljC5NPBg/I");
-  tree_->Branch("aljC5PtBg", &(this->aljC5PtBg_), "aljC5PtBg/F");
   tree_->Branch("ljcnp", &ljcnp_);
   tree_->Branch("ljcnpbg", &ljcnpbg_);
   tree_->Branch("ljcpt", &ljcpt_);
@@ -352,15 +320,6 @@ void TreeDiJetEventData::Clear()
   evtnp_      = 0;
 
   // cone info
-  nljC5NP_	  = 0;
-  nljC5Pt_	  = 0;
-  aljC5NP_	  = 0;
-  aljC5Pt_	  = 0;
-  nljC5NPBg_	  = 0;
-  nljC5PtBg_	  = 0;
-  aljC5NPBg_	  = 0;
-  aljC5PtBg_	  = 0;
-
   for (UInt_t i=0; i<2; ++i) {
     ljcnp_[i] = 0;
     ljcnpbg_[i] = 0;
