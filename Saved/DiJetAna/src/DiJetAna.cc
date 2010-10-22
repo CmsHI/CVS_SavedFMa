@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.61 2010/10/21 12:14:57 frankma Exp $
+// $Id: DiJetAna.cc,v 1.62 2010/10/22 06:59:24 frankma Exp $
 //
 //
 
@@ -188,12 +188,11 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   djEvt_.AnaCones();
 
   // -- leading jet event selection for tracks --
-  if (nearJetPtMin_>=0) {
-    if (anaJets_.size()==0 || (anaJets_.size()>0 && anaJets_[0].pt()<nearJetPtMin_)) {
+  if (nearJetPtMin_>=0
+      && (anaJets_.size()==0 || (anaJets_.size()>0 && anaJets_[0].pt()<nearJetPtMin_))) {
       djEvt_.evtnp_ = 0;
+    } else
       ++numJetEvtSel_;
-    }
-  }
 
   // All done
   djTree_->Fill();
