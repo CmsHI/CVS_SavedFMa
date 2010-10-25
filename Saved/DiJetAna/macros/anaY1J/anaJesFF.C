@@ -19,15 +19,16 @@
 using namespace std;
 
 void anaJesFF(int doMC=1,
-    TString AnaVersion = "a1012",
+    TString SrcName = "su10Qcd80",
+    TString AnaVersion = "a1025",
+    TString CmpVersion = "c0",
     TString modName = "djcalo_genp",
-    TString outdir="out/s10Qcd80/compare/a1012c1",
-    const char * inFile0Name="~/scratch01/ana/s10-dj80to120/dj1009_Y1JAna011/dj_*.root",
-    TString SrcName = "s10Qcd80",
-    TString header = "QCD-DiJet80to120",
+    const char * inFile0Name="~/scratch01/mc/QCD/su10-qcd80-startup36v9_f500_proc1022_final/trkhists_*.root",
+    TString header = "QCD-DiJet80",
     TString AnaType = "dj")
 {
   // Define Inputs
+  TString outdir="out/"+SrcName+"/compare/"+AnaVersion+CmpVersion;
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
   cout << "Analyze: " << modName << endl;
