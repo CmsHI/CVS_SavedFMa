@@ -148,8 +148,8 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   // plot
   numJEtBins(50),
   hisJEtMin(0),
-  hisJEtMax(200),
-  numJEtaBins(40),
+  hisJEtMax(250),
+  numJEtaBins(50),
   hisJEtaMin(-3.0),
   hisJEtaMax(3.0),
   hisJPhiBins(40),
