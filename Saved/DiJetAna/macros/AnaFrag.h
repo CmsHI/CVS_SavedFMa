@@ -6,10 +6,15 @@
 #include "TCut.h"
 #include "selectionCut.h"
 
-class AnaFrag
+class AnaFragBase
 {
   public:
-    AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TCut dRSig, TCut dRBkg,int nx=10,double min=0,double max=6, selectionCut * anaCut=0);
+    int numDJ;
+    int nbin;
+    double xmin;
+    double xmax;
+
+    AnaFragBase(TString src, TString t,TTree *tree, int nx=10, double min=0, double max=6);
 
     TString tag;
     TTree * trDj;
@@ -18,30 +23,36 @@ class AnaFrag
     TH1D * hSig;
 
     TString xtitle;
-
-    int numDJ;
-    int nbin;
-    double xmin;
-    double xmax;
 };
 
-AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TString var, TCut dRSig, TCut dRBkg, int nx,double min,double max,selectionCut * anaSel) :
-  tag(src),
-  xtitle(t),
+AnaFragBase::AnaFragBase(TString src, TString t,TTree *tree, int nx, double min, double max) :
   numDJ(-1),
   nbin(nx),
   xmin(min),
   xmax(max)
 {
+  tag = src;
+  xtitle = t;
   trDj = tree;
   tag+=t;
   if (!trDj) cout << tag << ": tree not found" << endl;
   assert(trDj);
+}
 
+
+class AnaFrag : public AnaFragBase
+{
+  public:
+    AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TCut dRSig, TCut dRBkg,int nx=10,double min=0,double max=6, selectionCut * anaCut=0);
+};
+
+AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TString var, TCut dRSig, TCut dRBkg, int nx,double min,double max,selectionCut * anaSel) :
+  AnaFragBase(src,t,tree,nx,min,max)
+{
   // Normalization
   numDJ = trDj->Draw("jdphi>>hDJDPhi",djCut,"goff");
   std::cout << "--- " << tag << ": ---" << std::endl;
-  std::cout << " # of sel dijets: " << numDJ << std::endl;
+  std::cout << " # of sel jet events: " << numDJ << std::endl;
 
   // DJ selection control plots
   if (tag=="XiE1Aw") {

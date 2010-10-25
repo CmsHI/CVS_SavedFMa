@@ -78,6 +78,9 @@ void anaJesFF(int doMC=1,
   AnaFrag anaFragVarAw(fragVarTag,"Aw",djTree,anaSel.FinAJCut(),"",fragVar,"","",40,fragVarMin,fragVarMax);
 
   // correlations
+  //AnaFrag anaFragVar_JEt(fragVarTag+"_JEt","Nr",djTree);
+  //anaFragVar_JEt.PlotCorrelation(anaSel.FinLJCut(),fragVar,jetPlot,40,fragVarMin,fragVarMax,anaSel.num,anaSel.jmin,anaSel.jmax);
+
   djTree->Draw("lppt[0]:nlrjet>>hLPPtVsGJEt",anaSel.FinLJCut(),"goff");
   djTree->Draw("lppt[0]:nljet>>hLPPtVsJEt",anaSel.FinLJCut(),"goff");
   djTree->Draw("lppt[0]/nlrjet:nlrjet>>hLzVsGJEtProf",anaSel.FinLJCut(),"prof goff");
