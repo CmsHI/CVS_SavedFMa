@@ -22,6 +22,8 @@ class selectionCut
     void Print(int verbosity=2);
     void SetCut();
     // accessors
+    TCut LJCut() const { return LJ.find(DJCutType)->second; }
+    TCut AJCut() const { return AJ.find(DJCutType)->second; }
     TCut DJCut() const { return DJ.find(DJCutType)->second; }
     TCut TrkCut() const { return Trk.find(TrkCutType)->second; }
     TCut TrkCut(TString type) const { return Trk.find(type)->second; }
@@ -93,6 +95,8 @@ class selectionCut
 
   protected:
     std::map<TString,TCut> Evt;
+    std::map<TString,TCut> LJ;
+    std::map<TString,TCut> AJ;
     std::map<TString,TCut> DJ;
     std::map<TString,TCut> Trk;
 };
@@ -159,34 +163,48 @@ void selectionCut::SetCut()
 
   BaseCut = Evt[BaseCutType];
 
+  // Single Jet Selections
+  LJ["Ana"] = Form("nljet>%.1f&&nljet<%.1f&&abs(nljeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
+  AJ["Ana"] = Form("aljet>%.1f&&aljet<%.1f&&abs(aljeta)<%.1f",AwJEtMin,NrJEtMax,AwJEtaMax);
+
+  LJ["AnaMatRef"] = LJ["Ana"] && "nlrjet>10";
+  AJ["AnaMatRef"] = AJ["Ana"] && "alrjet>10";
+
+  LJ["Ref"] = Form("nlrjet>%.1f&&nlrjet<%.1f&&abs(nlrjeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
+  AJ["Ref"] = Form("alrjet>%.1f&&alrjet<%.1f&&abs(alrjeta)<%.1f",AwJEtMin,NrJEtMax,AwJEtaMax);
+
+  LJ["AnaOrderRef"] = Form("nrljet>%.1f&&nrljet<%.1f&&abs(nrljeta)<%.1f && nlrjet>10",NrJEtMin,NrJEtMax,NrJEtaMax);
+  AJ["AnaOrderRef"] = Form("arljet>%.1f&&arljet<%.1f&&abs(arljeta)<%.1f && alrjet>10",AwJEtMin,NrJEtMax,AwJEtaMax);
+
+  LJ["RefOrderRef"] = Form("nrlrjet>%.1f&&nrlrjet<%.1f&&abs(nrlrjeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
+  AJ["RefOrderRef"] = Form("arlrjet>%.1f&&arlrjet<%.1f&&abs(arlrjeta)<%.1f",AwJEtMin,NrJEtMax,AwJEtaMax);
+
+  LJ["AnaUpper"] = Form("nljet*1.14>%.1f&&nljet*1.14<%.1f&&abs(nljeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
+  AJ["AnaUpper"] = Form("aljet*1.14>%.1f&&aljet*1.14<%.1f&&abs(aljeta)<%.1f",AwJEtMin,NrJEtMax,AwJEtaMax);
+
+  LJ["AnaLower"] = Form("nljet*0.86>%.1f&&nljet*0.86<%.1f&&abs(nljeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
+  AJ["AnaLower"] = Form("aljet*0.86>%.1f&&aljet*0.86<%.1f&&abs(aljeta)<%.1f",AwJEtMin,NrJEtMax,AwJEtaMax);
+
   // Dijet selections
-  DJ["Ana"] = Form("nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
-  DJ["AnaMatRefNr"] = DJ["Ana"] && "nlrjet>10";
-  DJ["AnaMatRefAw"] = DJ["Ana"] && "alrjet>10";
-  DJ["AnaMatRef"] = DJ["Ana"] && "nlrjet>10&&alrjet>10";
-  DJ["AnaOrderRef"] = TCut(Form("nrljet>%.1f&&nrljet<%.1f&&arljet>%.1f&&abs(nrljeta)<%.1f&&abs(arljeta)<%.1f&&jdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin)) && "nlrjet>10&&alrjet>10";
-  DJ["RefAwAnaMatNr"] = TCut(Form("nljet>%.1f&&nljet<%.1f&&alrjet>%.1f&&abs(nlrjeta)<%.1f&&abs(alrjeta)<%.1f&&rjdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin)) && "nlrjet>10";
-  DJ["RefNrAnaMatAw"] = TCut(Form("nlrjet>%.1f&&nlrjet<%.1f&&aljet>%.1f&&abs(nlrjeta)<%.1f&&abs(alrjeta)<%.1f&&rjdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin)) && "alrjet>10";
-  DJ["Ref"] = Form("nlrjet>%.1f&&nlrjet<%.1f&&alrjet>%.1f&&abs(nlrjeta)<%.1f&&abs(alrjeta)<%.1f&&rjdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
-  DJ["RefOrderRef"] = Form("nrlrjet>%.1f&&nrlrjet<%.1f&&arlrjet>%.1f&&abs(nrlrjeta)<%.1f&&abs(arlrjeta)<%.1f&&rjdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
+  TCut JDPhiCut(Form("jdphi>%.2f",DjDPhiMin));
+  TCut RefJDPhiCut(Form("rjdphi>%.2f",DjDPhiMin));
+  DJ["Ana"]	      = LJ["Ana"]	  && AJ["Ana"]		&& JDPhiCut;
+  DJ["AnaMatRefNr"]   = LJ["AnaMatRef"]	  && AJ["Ana"]		&& JDPhiCut;
+  DJ["AnaMatRefAw"]   = LJ["Ana"]	  && AJ["AnaMatRef"]	&& JDPhiCut;
+  DJ["AnaMatRef"]     = LJ["AnaMatRef"]	  && AJ["AnaMatRef"]	&& JDPhiCut;
+  DJ["RefAwAnaMatNr"] = LJ["AnaMatRef"]	  && AJ["Ref"]		&& JDPhiCut;
+  DJ["RefNrAnaMatAw"] = LJ["Ref"]	  && AJ["AnaMatRef"]	&& JDPhiCut;
+  DJ["Ref"]	      = LJ["Ref"]	  && AJ["Ref"]		&& RefJDPhiCut;
+  // reorder lead vs aw
+  DJ["AnaOrderRef"]   = LJ["AnaOrderRef"] && AJ["AnaOrderRef"]	&& JDPhiCut;
+  DJ["RefOrderRef"]   = LJ["RefOrderRef"] && AJ["RefOrderRef"]	&& RefJDPhiCut;
   // - sysetmatics -
-  DJ["AnaUpper"] = Form("nljet*1.14>%.1f&&nljet*1.14<%.1f&&aljet*1.14>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
-  DJ["AnaLower"] = Form("nljet*0.86>%.1f&&nljet*0.86<%.1f&&aljet*0.86>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
+  DJ["AnaUpper"]      = LJ["AnaUpper"]	  && AJ["AnaUpper"]	&& JDPhiCut;
+  DJ["AnaLower"]      = LJ["AnaLower"]	  && AJ["AnaLower"]	&& JDPhiCut;
   // FF aware
-  DJ["AnaLz0"] = Form("(lppt[0]/nljet)>0&&(lppt[0]/nljet)<0.3&&nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
-  DJ["AnaLz1"] = Form("(lppt[0]/nljet)>0.3&&(lppt[0]/nljet)<0.6&&nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
-  DJ["AnaLz2"] = Form("(lppt[0]/nljet)>0.6&&(lppt[0]/nljet<0.9)&&nljet>%.1f&&nljet<%.1f&&aljet>%.1f&&abs(nljeta)<%.1f&&abs(aljeta)<%.1f&&jdphi>%.2f",
-      NrJEtMin,NrJEtMax,AwJEtMin,NrJEtaMax,AwJEtaMax,DjDPhiMin);
+  DJ["AnaLz0"]	      = LJ["Ana"]	  && AJ["Ana"]		&& JDPhiCut && "(lppt[0]/nljet)>0.0&&(lppt[0]/nljet)<0.3";
+  DJ["AnaLz1"]	      = LJ["Ana"]	  && AJ["Ana"]		&& JDPhiCut && "(lppt[0]/nljet)>0.3&&(lppt[0]/nljet)<0.6";
+  DJ["AnaLz2"]	      = LJ["Ana"]	  && AJ["Ana"]		&& JDPhiCut && "(lppt[0]/nljet)>0.6&&(lppt[0]/nljet)<0.9";
 
   // Track Selections
   Trk["Ana"] = ("ppt>1.2&&ppt<nljet");
