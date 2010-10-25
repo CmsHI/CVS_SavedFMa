@@ -53,7 +53,6 @@ def enablePp(process,recoMode="PpRECO"):
     print "Notice: dijetAna will not modify process.eventSelection"
   for m in [process.djcalo,process.djcalo_tower,process.djcalo_genp,process.djgen]:
     m.sampleType = 10
-    m.hltsrc = cms.InputTag("TriggerResults","","REDIGI36X")
     m.hltNames = ["HLT_MinBiasPixel_SingleTrack","HLT_Jet15U","HLT_Jet50U","HLT_Photon20_Cleaned_L1R"]
     if "tower" not in m.trksrc.moduleLabel.lower():
       m.trkPtMin = 0.5
