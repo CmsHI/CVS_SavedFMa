@@ -23,6 +23,10 @@ void anaJesFF(int doMC=1,
     TString AnaVersion = "a1025c",
     TString CmpVersion = "c0",
     TString modName = "djcalo_genp",
+    TString fragVar = "lppt[0]/nljet",
+    TString jetPlot = "nljet",
+    TString jetSel  = "nljet",
+    TString jextraCut = "(ljcpt[0]-ljcptbg[0])/nljet>0.5",
     const char * inFile0Name="~/scratch01/mc/QCD/su10-qcd80-startup36v9_f500_proc1022_final/trkhists_*.root",
     TString header = "QCD-DiJet80",
     TString AnaType = "dj")
@@ -41,8 +45,8 @@ void anaJesFF(int doMC=1,
   selectionCut anaSel(SrcName,doMC,"S1",80,100,80,2.5);
   anaSel.DJCutType = "Ana";
   anaSel.TrkCutType = "Ana";
-  anaSel.LJExtraCut = ("(ljcpt[0]-ljcptbg[0])/nljet<0.5");
-  anaSel.AJExtraCut = ("(ljcpt[1]-ljcptbg[1])/aljet<0.5");
+  anaSel.LJExtraCut = jextraCut;
+  anaSel.AJExtraCut = anaSel.NrCut2AwCut(jextraCut);
   anaSel.Tag2+=TString("_"+modName);
   anaSel.SetCut();
   anaSel.Print(1);
@@ -51,6 +55,10 @@ void anaJesFF(int doMC=1,
   cout << endl << "====== DJ Selection: " << anaSel.DJCutType << " ======" << endl;
   cout << " DJ selection: " << TString(anaSel.FinDJCut()) << endl;
   cout << "# DJ events passed: " << djTree->GetEntries(anaSel.FinDJCut()) << endl;
+  cout << " LJ selection: " << TString(anaSel.FinLJCut()) << endl;
+  cout << "# LJ events passed: " << djTree->GetEntries(anaSel.FinLJCut()) << endl;
+  cout << " AJ selection: " << TString(anaSel.FinAJCut()) << endl;
+  cout << "# AJ events passed: " << djTree->GetEntries(anaSel.FinAJCut()) << endl;
 
   // === Define Output ===
   CPlot::sOutDir = outdir;

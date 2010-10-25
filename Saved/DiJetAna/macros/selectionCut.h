@@ -34,6 +34,12 @@ class selectionCut
     // mutators
     void SetDJEt(double nrMin, double nrMax, double awMin)
     { NrJEtMin=nrMin; NrJEtMax=nrMax; AwJEtMin=awMin; }
+    // External
+    TCut NrCut2AwCut(TString nrCut) {
+      nrCut.ReplaceAll("nlj","alj");
+      nrCut.ReplaceAll("[0]","[1]");
+      return TCut(nrCut);
+    }
 
     // ana setup
     TString Name;
