@@ -40,6 +40,17 @@ class selectionCut
       nrCut.ReplaceAll("[0]","[1]");
       return TCut(nrCut);
     }
+    void PreviewCuts(TTree * djTree, int level=1) {
+      cout << endl << "====== DJ Selection: " << DJCutType << " ======" << endl;
+      cout << " DJ selection: " << TString(FinDJCut()) << endl;
+      cout << "# DJ events passed: " << djTree->GetEntries(FinDJCut()) << endl;
+      if (level>=2) {
+	cout << " LJ selection: " << TString(FinLJCut()) << endl;
+	cout << "# LJ events passed: " << djTree->GetEntries(FinLJCut()) << endl;
+	cout << " AJ selection: " << TString(FinAJCut()) << endl;
+	cout << "# AJ events passed: " << djTree->GetEntries(FinAJCut()) << endl;
+      }
+    }
 
     // ana setup
     TString Name;
