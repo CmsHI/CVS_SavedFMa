@@ -41,9 +41,10 @@ void anaJesFF(int doMC=1,
   selectionCut anaSel(SrcName,doMC,"S1",80,100,80,2.5);
   anaSel.DJCutType = "Ana";
   anaSel.TrkCutType = "Ana";
+  anaSel.LJExtraCut = ("(ljcpt[0]-ljcptbg[0])/nljet<0.5");
+  anaSel.AJExtraCut = ("(ljcpt[1]-ljcptbg[1])/aljet<0.5");
   anaSel.Tag2+=TString("_"+modName);
   anaSel.SetCut();
-  //anaSel.DJAnd("nljC5Pt/nljet<0.5 && aljC5Pt/aljet<0.5");
   anaSel.Print(1);
 
   // -- analysis selections --

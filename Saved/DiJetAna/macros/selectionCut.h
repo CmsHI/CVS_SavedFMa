@@ -51,6 +51,8 @@ class selectionCut
     TCut Trigger;
     TCut CentCut;
     TCut VtxCut;
+    TCut LJExtraCut;
+    TCut AJExtraCut;
 
     // run info
     int RunNum;
@@ -186,6 +188,9 @@ void selectionCut::SetCut()
 
   LJ["AnaLower"] = Form("nljet*0.86>%.1f&&nljet*0.86<%.1f&&abs(nljeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
   AJ["AnaLower"] = Form("aljet*0.86>%.1f&&aljet*0.86<%.1f&&abs(aljeta)<%.1f",AwJEtMin,NrJEtMax,AwJEtaMax);
+
+  if (!TString(LJExtraCut).IsWhitespace()) And(LJ,LJExtraCut);
+  if (!TString(AJExtraCut).IsWhitespace()) And(AJ,AJExtraCut);
 
   // Dijet selections
   TCut JDPhiCut(Form("jdphi>%.2f",DjDPhiMin));
