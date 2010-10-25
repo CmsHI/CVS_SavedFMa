@@ -41,6 +41,7 @@ class selectionCut
       return TCut(nrCut);
     }
     void PreviewCuts(TTree * djTree, int level=1) {
+      cout << " # entries: " << djTree->GetEntries() << endl;
       cout << endl << "====== DJ Selection: " << DJCutType << " ======" << endl;
       cout << " DJ selection: " << TString(FinDJCut()) << endl;
       cout << "# DJ events passed: " << djTree->GetEntries(FinDJCut()) << endl;
