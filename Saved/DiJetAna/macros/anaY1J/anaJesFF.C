@@ -27,6 +27,10 @@ void anaJesFF(int doMC=1,
     Double_t NrJEtMax = 100,
     TString DJCutType = "Ana",
     TString fragVar = "lppt[0]/nljet",
+    TString fragVarTag = "Lz",
+    TString fragVarTitle = "z^{lead} = p_{T}^{lead trk in Jet}/E_{T}^{CaloJet}",
+    Double_t fragVarMin = 0,
+    Double_t fragVarMax = 1,
     TString jetPlot = "nljet",
     TString jextraCut = "(ljcpt[0]-ljcptbg[0])/nljet>0.5",
     const char * inFile0Name="~/scratch01/mc/QCD/su10-qcd80-startup36v9_f500_proc1022_final/trkhists_*.root",
@@ -41,7 +45,6 @@ void anaJesFF(int doMC=1,
   TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
   djTree->Add(inFile0Name);
   aliases_dijet(djTree,doMC);
-  cout << " # entries: " << djTree->GetEntries() << endl;
 
   // === Declare selection ===
   selectionCut anaSel(SrcName,doMC,"S1",NrJEtMin,NrJEtMax,NrJEtMin,2.5);
@@ -52,8 +55,6 @@ void anaJesFF(int doMC=1,
   anaSel.Tag2+=TString("_"+modName);
   anaSel.SetCut();
   anaSel.Print(1);
-
-  // -- analysis selections --
   anaSel.PreviewCuts(djTree,2);
 
   // === Define Output ===
@@ -72,6 +73,11 @@ void anaJesFF(int doMC=1,
   TProfile * hLzVsJEtProf = new TProfile("hLzVsJEtProf","hLzVsJEt",50,0,250);
   TProfile * hRespVsLzProf = new TProfile("hRespVsLzProf","hLzVsJEt",50,0,1);
   TProfile * hRespVsAzProf = new TProfile("hRespVsAzProf","hAzVsJEt",50,0,1);
+  // frag var
+  AnaFrag anaFragVarNr(fragVarTag,"Nr",djTree,anaSel.FinLJCut(),"",fragVar,"","",40,fragVarMin,fragVarMax);
+  AnaFrag anaFragVarAw(fragVarTag,"Aw",djTree,anaSel.FinAJCut(),"",fragVar,"","",40,fragVarMin,fragVarMax);
+
+  // correlations
   djTree->Draw("lppt[0]:nlrjet>>hLPPtVsGJEt",anaSel.FinLJCut(),"goff");
   djTree->Draw("lppt[0]:nljet>>hLPPtVsJEt",anaSel.FinLJCut(),"goff");
   djTree->Draw("lppt[0]/nlrjet:nlrjet>>hLzVsGJEtProf",anaSel.FinLJCut(),"prof goff");
@@ -80,6 +86,12 @@ void anaJesFF(int doMC=1,
   djTree->Draw("aljet/alrjet:lppt[1]/alrjet>>hRespVsAzProf",anaSel.FinAJCut(),"prof goff");
 
   // -- plot --
+  TCanvas * cFragVar = new TCanvas("c"+fragVarTag,"c"+fragVarTag,500,500);
+  CPlot cpFragVar(fragVarTag+anaSel.Tag2,fragVarTag,fragVarTitle,"unit normalization");
+  cpFragVar.AddHist1D(anaFragVarNr.hRaw,"Leading Jet","E",kRed,kOpenCircle);
+  cpFragVar.AddHist1D(anaFragVarAw.hRaw,"Away Jet","E",kBlue,kOpenSquare);
+  cpFragVar.Draw(cFragVar,true);
+
   TCanvas * cLPPtVsGJEt = new TCanvas("cLPPtVsGJEt","cLPPtVsGJEt",500,500);
   cLPPtVsGJEt->SetLogz();
   CPlot cpLPPtVsGJEt("LPPtVsGJEt"+anaSel.Tag2,"DJ","Leading E_{T}^{genjet} [GeV]","Leading p_{T}^{trk} (in Jet Cone) [GeV]");
