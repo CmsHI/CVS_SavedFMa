@@ -1,6 +1,7 @@
 #include <iostream>
 #include "TTree.h"
 #include "TH1D.h"
+#include "TH2.h"
 #include "TString.h"
 #include <cassert>
 #include "TCut.h"
@@ -15,12 +16,14 @@ class AnaFragBase
     double xmax;
 
     AnaFragBase(TString src, TString t,TTree *tree, int nx=10, double min=0, double max=6);
+    void PlotCorrelations(TCut jetSel,TString var1, TString var2, int ny, double ymin, double ymax);
 
     TString tag;
     TTree * trDj;
     TH1D * hRaw;
     TH1D * hBkg;
     TH1D * hSig;
+    TH2D * hCorrel;
 
     TString xtitle;
 };
@@ -39,10 +42,17 @@ AnaFragBase::AnaFragBase(TString src, TString t,TTree *tree, int nx, double min,
   assert(trDj);
 }
 
+void AnaFragBase::PlotCorrelations(TCut jetSel,TString var1, TString var2, int nc, double cmin, double cmax)
+{
+  hCorrel = new TH2D("h"+tag,";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
+  trDj->Draw(var1+":"+var2+">>h"+tag,jetSel,"goff");
+}
 
 class AnaFrag : public AnaFragBase
 {
   public:
+    AnaFrag(TString src, TString t,TTree *tree,int nx=10,double min=0,double max=6, selectionCut * anaCut=0)
+      : AnaFragBase(src,t,tree,nx,min,max) {}
     AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TCut dRSig, TCut dRBkg,int nx=10,double min=0,double max=6, selectionCut * anaCut=0);
 };
 

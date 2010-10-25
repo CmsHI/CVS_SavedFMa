@@ -31,7 +31,7 @@ void anaJesFF(int doMC=1,
     TString fragVarTitle = "z^{lead} = p_{T}^{lead trk in Jet}/E_{T}^{CaloJet}",
     Double_t fragVarMin = 0,
     Double_t fragVarMax = 1,
-    TString jetPlot = "nljet",
+    TString jEtVar = "nljet",
     TString jextraCut = "(ljcpt[0]-ljcptbg[0])/nljet>0.5",
     const char * inFile0Name="~/scratch01/mc/QCD/su10-qcd80-startup36v9_f500_proc1022_final/trkhists_*.root",
     TString header = "QCD-DiJet80",
@@ -74,12 +74,13 @@ void anaJesFF(int doMC=1,
   TProfile * hRespVsLzProf = new TProfile("hRespVsLzProf","hLzVsJEt",50,0,1);
   TProfile * hRespVsAzProf = new TProfile("hRespVsAzProf","hAzVsJEt",50,0,1);
   // frag var
-  AnaFrag anaFragVarNr(fragVarTag,"Nr",djTree,anaSel.FinLJCut(),"",fragVar,"","",40,fragVarMin,fragVarMax);
-  AnaFrag anaFragVarAw(fragVarTag,"Aw",djTree,anaSel.FinAJCut(),"",fragVar,"","",40,fragVarMin,fragVarMax);
+  Int_t numFragVarBins=40;
+  AnaFrag anaFragVarNr(fragVarTag,"Nr",djTree,anaSel.FinLJCut(),"",fragVar,"","",numFragVarBins,fragVarMin,fragVarMax);
+  AnaFrag anaFragVarAw(fragVarTag,"Aw",djTree,anaSel.FinAJCut(),"",fragVar,"","",numFragVarBins,fragVarMin,fragVarMax);
 
   // correlations
-  //AnaFrag anaFragVar_JEt(fragVarTag+"_JEt","Nr",djTree);
-  //anaFragVar_JEt.PlotCorrelation(anaSel.FinLJCut(),fragVar,jetPlot,40,fragVarMin,fragVarMax,anaSel.num,anaSel.jmin,anaSel.jmax);
+  AnaFrag anaFragVar_JEt(fragVarTag+"_JEt","Nr",djTree,numFragVarBins,fragVarMin,fragVarMax);
+  anaFragVar_JEt.PlotCorrelations(anaSel.FinLJCut(),fragVar,jEtVar,anaSel.numJEtBins,anaSel.hisJEtMin,anaSel.hisJEtMax);
 
   djTree->Draw("lppt[0]:nlrjet>>hLPPtVsGJEt",anaSel.FinLJCut(),"goff");
   djTree->Draw("lppt[0]:nljet>>hLPPtVsJEt",anaSel.FinLJCut(),"goff");
