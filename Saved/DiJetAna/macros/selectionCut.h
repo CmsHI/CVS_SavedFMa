@@ -27,6 +27,8 @@ class selectionCut
     TCut DJCut() const { return DJ.find(DJCutType)->second; }
     TCut TrkCut() const { return Trk.find(TrkCutType)->second; }
     TCut TrkCut(TString type) const { return Trk.find(type)->second; }
+    TCut FinLJCut() const { return BaseCut && LJCut(); }
+    TCut FinAJCut() const { return BaseCut && AJCut(); }
     TCut FinDJCut() const { return BaseCut && DJCut(); }
     TCut FinDJTrkCut() const { return FinDJCut() && TrkCut(); }
     // mutators

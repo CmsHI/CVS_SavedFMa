@@ -20,7 +20,7 @@ using namespace std;
 
 void anaJesFF(int doMC=1,
     TString SrcName = "su10Qcd80",
-    TString AnaVersion = "a1025",
+    TString AnaVersion = "a1025c",
     TString CmpVersion = "c0",
     TString modName = "djcalo_genp",
     const char * inFile0Name="~/scratch01/mc/QCD/su10-qcd80-startup36v9_f500_proc1022_final/trkhists_*.root",
@@ -67,12 +67,12 @@ void anaJesFF(int doMC=1,
   TProfile * hLzVsJEtProf = new TProfile("hLzVsJEtProf","hLzVsJEt",50,0,250);
   TProfile * hRespVsLzProf = new TProfile("hRespVsLzProf","hLzVsJEt",50,0,1);
   TProfile * hRespVsAzProf = new TProfile("hRespVsAzProf","hAzVsJEt",50,0,1);
-  djTree->Draw("lppt[0]:nlrjet>>hLPPtVsGJEt",anaSel.FinDJCut(),"goff");
-  djTree->Draw("lppt[0]:nljet>>hLPPtVsJEt",anaSel.FinDJCut(),"goff");
-  djTree->Draw("lppt[0]/nlrjet:nlrjet>>hLzVsGJEtProf",anaSel.FinDJCut(),"prof goff");
-  djTree->Draw("lppt[0]/nlrjet:nljet>>hLzVsJEtProf",anaSel.FinDJCut(),"prof goff");
-  djTree->Draw("nljet/nlrjet:lppt[0]/nlrjet>>hRespVsLzProf",anaSel.FinDJCut(),"prof goff");
-  djTree->Draw("aljet/alrjet:lppt[1]/alrjet>>hRespVsAzProf",anaSel.FinDJCut(),"prof goff");
+  djTree->Draw("lppt[0]:nlrjet>>hLPPtVsGJEt",anaSel.FinLJCut(),"goff");
+  djTree->Draw("lppt[0]:nljet>>hLPPtVsJEt",anaSel.FinLJCut(),"goff");
+  djTree->Draw("lppt[0]/nlrjet:nlrjet>>hLzVsGJEtProf",anaSel.FinLJCut(),"prof goff");
+  djTree->Draw("lppt[0]/nlrjet:nljet>>hLzVsJEtProf",anaSel.FinLJCut(),"prof goff");
+  djTree->Draw("nljet/nlrjet:lppt[0]/nlrjet>>hRespVsLzProf",anaSel.FinLJCut(),"prof goff");
+  djTree->Draw("aljet/alrjet:lppt[1]/alrjet>>hRespVsAzProf",anaSel.FinAJCut(),"prof goff");
 
   // -- plot --
   TCanvas * cLPPtVsGJEt = new TCanvas("cLPPtVsGJEt","cLPPtVsGJEt",500,500);
