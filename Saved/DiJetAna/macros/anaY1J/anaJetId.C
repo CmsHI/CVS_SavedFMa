@@ -19,15 +19,16 @@
 using namespace std;
 
 void anaJetId(int doMC=1,
-    TString AnaVersion = "a1018",
-    TString modName = "djcalo",
-    TString outdir="out/jm-r10a-pr4-j50u/compare/a1018c0",
-    const char * inFile0Name="~/scratch01/data/JetMETTau/JM-R10A-PR4-Jet50Uskim-v0_proc1014/trkhists_trkAnaSkimAOD_*.root",
-    TString SrcName = "jm-r10a-pr4-j50u",
-    TString header = "7TeV HLT_Jet50U",
+    TString SrcName = "su10Qcd80",
+    TString AnaVersion = "a1025",
+    TString CmpVersion = "c0",
+    TString modName = "djcalo_genp",
+    const char * inFile0Name="~/scratch01/mc/QCD/su10-qcd80-startup36v9_f500_proc1022_final/trkhists_*.root",
+    TString header = "QCD-DiJet80",
     TString AnaType = "jid")
 {
   // Define Inputs
+  TString outdir="out/"+SrcName+"/compare/"+AnaVersion+CmpVersion;
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
   cout << "Analyze: " << modName << endl;
