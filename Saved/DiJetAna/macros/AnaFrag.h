@@ -26,6 +26,7 @@ class AnaFragBase
     TH1D * hBkg;
     TH1D * hSig;
     TH2F * hCorrelNr;
+    TH2F * hCorrelAw;
 
     TString xvar;
     TString yvar;
@@ -51,12 +52,20 @@ AnaFragBase::AnaFragBase(TString src, TString t,TTree *tree, int nx, double min,
 void AnaFragBase::PlotCorrelations(selectionCut & anaSel,TString var1, TString var2, int nc, double cmin, double cmax)
 {
   hCorrelNr = new TH2F("h"+tag+"Nr",";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
+  hCorrelAw = new TH2F("h"+tag+"Aw",";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
   trDj->Draw(var1+":"+var2+">>h"+tag+"Nr",anaSel.FinLJCut(),"goff");
+  trDj->Draw(TString(anaSel.Nr2Aw(var1))+":"+TString(anaSel.Nr2Aw(var2))+">>h"+tag+"Aw",anaSel.FinAJCut(),"goff");
+  cout << "CorrelNr: " << var1+":"+var2 << endl;
+  cout << "CorrelAw: " << anaSel.Nr2Aw(var1)+":"+anaSel.Nr2Aw(var2) << endl;
 
-  TCanvas * cFragVar_JEt = new TCanvas("c"+xtag+"_"+ytag,"c"+xtag+"_"+ytag,500,500);
-  CPlot cpFragVar_JEt(xtag+"_"+ytag+anaSel.Tag2,xtag+"_"+ytag,xtitle,ytitle);
-  cpFragVar_JEt.AddHist2D(hCorrelNr,"colz");
-  cpFragVar_JEt.Draw(cFragVar_JEt,false);
+  TCanvas * cCorrel2D = new TCanvas("c"+xtag+"_"+ytag,"c"+xtag+"_"+ytag,500,500);
+  cCorrel2D->Divide(2,2);
+  CPlot cpCorrel2DNr(xtag+"_"+ytag+"Nr"+anaSel.Tag2,xtag+"_"+ytag,"(Near) "+xtitle,ytitle);
+  cpCorrel2DNr.AddHist2D(hCorrelNr,"colz");
+  cCorrel2D->cd(1); cpCorrel2DNr.Draw((TPad*)cCorrel2D->GetPad(1),false);
+  CPlot cpCorrel2DAw(xtag+"_"+ytag+"Aw"+anaSel.Tag2,xtag+"_"+ytag,"(Away) "xtitle,ytitle);
+  cpCorrel2DAw.AddHist2D(hCorrelAw,"colz");
+  cCorrel2D->cd(3); cpCorrel2DAw.Draw((TPad*)cCorrel2D->GetPad(3),false);
 }
 
 class AnaFrag : public AnaFragBase
