@@ -23,17 +23,23 @@ void anaJesFF(int doMC=1,
     TString AnaVersion = "a1025c",
     TString CmpVersion = "c0",
     TString modName = "djcalo_genp",
-    Double_t NrJEtMin = 50,
-    Double_t NrJEtMax = 120,
+    Double_t NrJEtMin = 80,
+    Double_t NrJEtMax = 200,
     TString DJCutType = "Ref",
-    TString fragVar = "lppt[0]/nlrjet",
-    TString fragVarTag = "Lz",
-    TString fragVarTitle = "z^{lead} = p_{T}^{lead trk in Jet}/E_{T}^{CaloJet}",
+    //TString fragVar = "lppt[0]/nlrjet",
+    //TString fragVarTag = "Lz",
+    //TString fragVarTitle = "z^{lead} = p_{T}^{lead trk in Jet}/E_{T}^{CaloJet}",
+    //Double_t fragVarMin = 0,
+    //Double_t fragVarMax = 1,
+    TString fragVar = "nlrjet",
+    TString fragVarTag = "RefJEt",
+    TString fragVarTitle = "E_{T}^{GenJet}",
     Double_t fragVarMin = 0,
-    Double_t fragVarMax = 1,
-    TString jEtVar = "nrljet",
-    TString jEtVarTitle = "E_{T}^{CaloJet}",
-    TString jextraCut = "(ljcpt[0]-ljcptbg[0])/nrljet>0.5",
+    Double_t fragVarMax = 250,
+    TString jEtVar = "nlrjet",
+    TString jEtVarTag = "RefJEt",
+    TString jEtVarTitle = "E_{T}^{GenJet}",
+    TString jextraCut = "(ljcpt[0]-ljcptbg[0])/nlrjet>0.5",
     const char * inFile0Name="~/scratch01/mc/QCD/su10-qcd80-startup36v9_f500_proc1022_final/trkhists_*.root",
     TString header = "QCD-DiJet80",
     TString AnaType = "dj")
@@ -80,7 +86,7 @@ void anaJesFF(int doMC=1,
   AnaFrag anaFragVarAw(fragVarTag,"Aw",djTree,anaSel.FinAJCut(),"",fragVar,"","",numFragVarBins,fragVarMin,fragVarMax);
 
   // correlations
-  AnaFrag anaFragVar_JEt(fragVarTag,jEtVar,djTree,numFragVarBins,fragVarMin,fragVarMax);
+  AnaFrag anaFragVar_JEt(fragVarTag,jEtVarTag,djTree,numFragVarBins,fragVarMin,fragVarMax);
   anaFragVar_JEt.xtag = jEtVar;
   anaFragVar_JEt.ytag = fragVarTag;
   anaFragVar_JEt.xtitle = jEtVarTitle;

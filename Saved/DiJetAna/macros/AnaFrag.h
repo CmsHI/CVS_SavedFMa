@@ -51,12 +51,18 @@ AnaFragBase::AnaFragBase(TString src, TString t,TTree *tree, int nx, double min,
 
 void AnaFragBase::PlotCorrelations(selectionCut & anaSel,TString var1, TString var2, int nc, double cmin, double cmax)
 {
-  hCorrelNr = new TH2F("h"+tag+"Nr",";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
-  hCorrelAw = new TH2F("h"+tag+"Aw",";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
-  trDj->Draw(var1+":"+var2+">>h"+tag+"Nr",anaSel.FinLJCut(),"goff");
-  trDj->Draw(TString(anaSel.Nr2Aw(var1))+":"+TString(anaSel.Nr2Aw(var2))+">>h"+tag+"Aw",anaSel.FinAJCut(),"goff");
-  cout << "CorrelNr: " << var1+":"+var2 << endl;
-  cout << "CorrelAw: " << anaSel.Nr2Aw(var1)+":"+anaSel.Nr2Aw(var2) << endl;
+  TString hNameNr("h"+tag+"Nr");
+  TString hNameAw(anaSel.Nr2Aw(hNameNr));
+  hCorrelNr = new TH2F(hNameNr,";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
+  hCorrelAw = new TH2F(hNameAw,";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
+  TString drawStrNr(var1+":"+var2);
+  TString drawStrAw(anaSel.Nr2Aw(drawStrNr));
+  trDj->Draw(drawStrNr+">>"+hNameNr,anaSel.FinLJCut(),"goff");
+  trDj->Draw(drawStrAw+">>"+hNameAw,anaSel.FinAJCut(),"goff");
+  cout << "Correl Nr draw: " << drawStrNr << " to " << hNameNr << endl;
+  cout << "  Sel: " << anaSel.FinLJCut() << endl;
+  cout << "Correl Aw draw: " << drawStrAw << " to " << hNameAw << endl;
+  cout << "  Sel: " << anaSel.FinAJCut() << endl;
 
   TCanvas * cCorrel2D = new TCanvas("c"+xtag+"_"+ytag,"c"+xtag+"_"+ytag,800,800);
   cCorrel2D->Divide(2,2);
