@@ -52,7 +52,7 @@ void anaJesFF(int doMC=1,
   anaSel.DJCutType = DJCutType;
   anaSel.TrkCutType = "Ana";
   anaSel.LJExtraCut = jextraCut;
-  anaSel.AJExtraCut = anaSel.NrCut2AwCut(jextraCut);
+  anaSel.AJExtraCut = anaSel.Nr2Aw(jextraCut);
   anaSel.Tag2+=TString("_"+modName);
   anaSel.SetCut();
   anaSel.Print(1);

@@ -35,10 +35,10 @@ class selectionCut
     void SetDJEt(double nrMin, double nrMax, double awMin)
     { NrJEtMin=nrMin; NrJEtMax=nrMax; AwJEtMin=awMin; }
     // External
-    TCut NrCut2AwCut(TString nrCut) {
-      nrCut.ReplaceAll("nlj","alj");
-      nrCut.ReplaceAll("[0]","[1]");
-      return TCut(nrCut);
+    TString Nr2Aw(TString s) {
+      s.ReplaceAll("nlj","alj");
+      s.ReplaceAll("[0]","[1]");
+      return s;
     }
     void PreviewCuts(TTree * djTree, int level=1) {
       cout << " # entries: " << djTree->GetEntries() << endl;
