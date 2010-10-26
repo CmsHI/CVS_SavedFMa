@@ -5,6 +5,7 @@
 #include <TCut.h>
 #include <TString.h>
 #include "TMath.h"
+#include "TTree.h"
 #include <iostream>
 #include <iomanip>
 #include <map>
@@ -39,6 +40,7 @@ class selectionCut
       s.ReplaceAll("nlrj","alrj");
       s.ReplaceAll("nlj","alj");
       s.ReplaceAll("[0]","[1]");
+      s.ReplaceAll("Nr","Aw");
       return s;
     }
     void PreviewCuts(TTree * djTree, int level=1) {
