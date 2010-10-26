@@ -36,6 +36,7 @@ class selectionCut
     { NrJEtMin=nrMin; NrJEtMax=nrMax; AwJEtMin=awMin; }
     // External
     TString Nr2Aw(TString s) {
+      s.ReplaceAll("nlrj","alrj");
       s.ReplaceAll("nlj","alj");
       s.ReplaceAll("[0]","[1]");
       return s;
