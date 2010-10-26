@@ -58,14 +58,21 @@ void AnaFragBase::PlotCorrelations(selectionCut & anaSel,TString var1, TString v
   cout << "CorrelNr: " << var1+":"+var2 << endl;
   cout << "CorrelAw: " << anaSel.Nr2Aw(var1)+":"+anaSel.Nr2Aw(var2) << endl;
 
-  TCanvas * cCorrel2D = new TCanvas("c"+xtag+"_"+ytag,"c"+xtag+"_"+ytag,500,500);
+  TCanvas * cCorrel2D = new TCanvas("c"+xtag+"_"+ytag,"c"+xtag+"_"+ytag,800,800);
   cCorrel2D->Divide(2,2);
+
   CPlot cpCorrel2DNr(xtag+"_"+ytag+"Nr"+anaSel.Tag2,xtag+"_"+ytag,"(Near) "+xtitle,ytitle);
   cpCorrel2DNr.AddHist2D(hCorrelNr,"colz");
   cCorrel2D->cd(1); cpCorrel2DNr.Draw((TPad*)cCorrel2D->GetPad(1),false);
-  CPlot cpCorrel2DAw(xtag+"_"+ytag+"Aw"+anaSel.Tag2,xtag+"_"+ytag,"(Away) "xtitle,ytitle);
+
+  CPlot cpCorrel2DAw(xtag+"_"+ytag+"Aw"+anaSel.Tag2,xtag+"_"+ytag,"(Away) "+xtitle,ytitle);
   cpCorrel2DAw.AddHist2D(hCorrelAw,"colz");
   cCorrel2D->cd(3); cpCorrel2DAw.Draw((TPad*)cCorrel2D->GetPad(3),false);
+
+  CPlot cpCorrel2DProf(xtag+"_"+ytag+"Prof"+anaSel.Tag2,xtag+"_"+ytag,xtitle,ytitle);
+  cpCorrel2DProf.AddProfile(hCorrelNr->ProfileX(xtag+"_"+ytag+"NrProfX"),"Lead Jet","E",kRed,kOpenCircle);
+  cpCorrel2DProf.AddProfile(hCorrelAw->ProfileX(xtag+"_"+ytag+"AwProfX"),"Away Jet","E",kBlue,kOpenSquare);
+  cCorrel2D->cd(2); cpCorrel2DProf.Draw((TPad*)cCorrel2D->GetPad(2),false);
 }
 
 class AnaFrag : public AnaFragBase
