@@ -6,6 +6,8 @@
 #include <cassert>
 #include "TCut.h"
 #include "selectionCut.h"
+#include "TCanvas.h"
+#include "Saved/Utilities/macros/cplot/CPlot.h"           // helper class for plots
 
 class AnaFragBase
 {
@@ -16,16 +18,21 @@ class AnaFragBase
     double xmax;
 
     AnaFragBase(TString src, TString t,TTree *tree, int nx=10, double min=0, double max=6);
-    void PlotCorrelations(TCut jetSel,TString var1, TString var2, int ny, double ymin, double ymax);
+    void PlotCorrelations(selectionCut & anaSel,TString var1, TString var2, int ny, double ymin, double ymax);
 
     TString tag;
     TTree * trDj;
     TH1D * hRaw;
     TH1D * hBkg;
     TH1D * hSig;
-    TH2D * hCorrel;
+    TH2F * hCorrelNr;
 
+    TString xvar;
+    TString yvar;
+    TString xtag;
+    TString ytag;
     TString xtitle;
+    TString ytitle;
 };
 
 AnaFragBase::AnaFragBase(TString src, TString t,TTree *tree, int nx, double min, double max) :
@@ -35,17 +42,21 @@ AnaFragBase::AnaFragBase(TString src, TString t,TTree *tree, int nx, double min,
   xmax(max)
 {
   tag = src;
-  xtitle = t;
   trDj = tree;
   tag+=t;
   if (!trDj) cout << tag << ": tree not found" << endl;
   assert(trDj);
 }
 
-void AnaFragBase::PlotCorrelations(TCut jetSel,TString var1, TString var2, int nc, double cmin, double cmax)
+void AnaFragBase::PlotCorrelations(selectionCut & anaSel,TString var1, TString var2, int nc, double cmin, double cmax)
 {
-  hCorrel = new TH2D("h"+tag,";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
-  trDj->Draw(var1+":"+var2+">>h"+tag,jetSel,"goff");
+  hCorrelNr = new TH2F("h"+tag+"Nr",";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
+  trDj->Draw(var1+":"+var2+">>h"+tag+"Nr",anaSel.FinLJCut(),"goff");
+
+  TCanvas * cFragVar_JEt = new TCanvas("c"+xtag+"_"+ytag,"c"+xtag+"_"+ytag,500,500);
+  CPlot cpFragVar_JEt(xtag+"_"+ytag+anaSel.Tag2,xtag+"_"+ytag,xtitle,ytitle);
+  cpFragVar_JEt.AddHist2D(hCorrelNr,"colz");
+  cpFragVar_JEt.Draw(cFragVar_JEt,false);
 }
 
 class AnaFrag : public AnaFragBase
