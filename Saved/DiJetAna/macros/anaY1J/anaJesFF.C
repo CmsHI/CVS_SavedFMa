@@ -23,12 +23,12 @@ void anaJesFF(int doMC=1,
     TString AnaVersion = "a1028",
     TString CmpVersion = "c0",
     TString modName = "djcalo_genp",
-    Double_t NrJEtMin = 50,
-    Double_t NrJEtMax = 200,
-    TString DJCutType = "Ref",
-    TString fragVar = "lppt[0]/nlrjet",
-    TString fragVarTag = "Lz",
-    TString fragVarTitle = "z^{lead} = p_{T}^{trk}/E_{T}^{RefJet}",
+    Double_t NrJEtMin = 80,
+    Double_t NrJEtMax = 100,
+    TString DJCutType = "Ana",
+    TString fragVar = "lppt[0]/nljet",
+    TString fragVarTag = "LzJet",
+    TString fragVarTitle = "z^{lead} = p_{T}^{trk}/E_{T}^{Jet}",
     Double_t fragVarMin = 0,
     Double_t fragVarMax = 1.5,
     //TString fragVar = "nlrjet",
@@ -99,10 +99,16 @@ void anaJesFF(int doMC=1,
   anaFragVar_JResp.PlotCorrelations(anaSel,"nljet/nlrjet",fragVar,numFragVarBins,fragVarMin,fragVarMax);
 
   // -- plot frag var--
-  TCanvas * cFragVar = new TCanvas("c"+fragVarTag,"c"+fragVarTag,500,500);
+  TCanvas * cFragVar = new TCanvas("c"+fragVarTag,"c"+fragVarTag,1000,500);
+  cFragVar->Divide(2,1);
   CPlot cpFragVar(fragVarTag+anaSel.Tag2,fragVarTag,fragVarTitle,"unit normalization");
   cpFragVar.SetLogy();
   cpFragVar.AddHist1D(anaFragVarNr.hRaw,"Leading Jet","E",kRed,kOpenCircle);
   cpFragVar.AddHist1D(anaFragVarAw.hRaw,"Away Jet","E",kBlue,kOpenSquare);
-  cpFragVar.Draw(cFragVar,true);
+  cFragVar->cd(1); cpFragVar.Draw((TPad*)cFragVar->GetPad(1),false);
+  CPlot cpJRespFragVar(fragVarTag+"_JResp"+anaSel.Tag2,fragVarTag,fragVarTitle,"unit normalization");
+  cpJRespFragVar.AddHist1D(anaFragVar_JResp.hCorrelProfNr,"Leading Jet","E",kRed,kOpenCircle);
+  cpJRespFragVar.AddHist1D(anaFragVar_JResp.hCorrelProfAw,"Away Jet","E",kBlue,kOpenSquare);
+  cFragVar->cd(2); cpJRespFragVar.Draw((TPad*)cFragVar->GetPad(2),false);
+  cFragVar->Print(CPlot::sOutDir+"/"+fragVarTag+anaSel.Tag2+".gif");
 }
