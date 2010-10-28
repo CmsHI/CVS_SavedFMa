@@ -30,7 +30,7 @@ void anaJesFF(int doMC=1,
     TString fragVarTag = "LzJet",
     TString fragVarTitle = "z^{lead} = p_{T}^{trk}/E_{T}^{Jet}",
     Double_t fragVarMin = 0,
-    Double_t fragVarMax = 1.5,
+    Double_t fragVarMax = 1.2,
     //TString fragVar = "nlrjet",
     //TString fragVarTag = "RefJEt",
     //TString fragVarTitle = "E_{T}^{RefJet}",
@@ -92,6 +92,11 @@ void anaJesFF(int doMC=1,
   anaFragVar_JCPtDivRefJEt.xtitle = "#Sigma_{jet cone} p_{T}^{Trk}/E_{t}^{RefJet}";
   anaFragVar_JCPtDivRefJEt.ytitle = fragVarTitle;
   anaFragVar_JCPtDivRefJEt.PlotCorrelations(anaSel,fragVar,"(ljcpt[0]-ljcptbg[0])/nlrjet",numFragVarBins,0,2);
+
+  AnaFrag anaFragVar_JCRAvePtW(fragVarTag,"JCRAvePtW",djTree,numFragVarBins,fragVarMin,fragVarMax);
+  anaFragVar_JCRAvePtW.xtitle = "#LT dr(trk,jet) #GT_{p_{T}}";
+  anaFragVar_JCRAvePtW.ytitle = fragVarTitle;
+  anaFragVar_JCRAvePtW.PlotCorrelations(anaSel,fragVar,"ljcptr[0]/ljcpt[0]",numFragVarBins,0,0.8);
 
   AnaFrag anaFragVar_JResp("JResp",fragVarTag,djTree,numFragVarBins,0,2);
   anaFragVar_JResp.xtitle = fragVarTitle;
