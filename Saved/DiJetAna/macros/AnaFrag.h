@@ -78,6 +78,7 @@ void AnaFragBase::PlotCorrelations(selectionCut & anaSel,TString var1, TString v
   cCorrel2D->cd(3); cpCorrel2DAw.Draw((TPad*)cCorrel2D->GetPad(3),false);
 
   CPlot cpCorrel2DProf(tag+"Prof"+anaSel.Tag2,tag,xtitle,ytitle);
+  cpCorrel2DProf.SetYRange(xmin,xmax);
   cpCorrel2DProf.AddProfile(hCorrelNr->ProfileX(tag+"NrProfX"),"Lead Jet","E",kRed,kOpenCircle);
   cpCorrel2DProf.AddProfile(hCorrelAw->ProfileX(tag+"AwProfX"),"Away Jet","E",kBlue,kOpenSquare);
   cCorrel2D->cd(2); cpCorrel2DProf.Draw((TPad*)cCorrel2D->GetPad(2),false);
