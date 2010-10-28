@@ -20,7 +20,7 @@ using namespace std;
 
 void anaJetId(int doMC=1,
     TString SrcName = "su10Qcd80",
-    TString AnaVersion = "a1025",
+    TString AnaVersion = "a1025b",
     TString CmpVersion = "c0",
     TString modName = "djcalo_genp",
     const char * inFile0Name="~/scratch01/mc/QCD/su10-qcd80-startup36v9_f500_proc1022_final/trkhists_*.root",
