@@ -83,6 +83,16 @@ void anaJesFF(int doMC=1,
   anaFragVar_RefJEt.ytitle = fragVarTitle;
   anaFragVar_RefJEt.PlotCorrelations(anaSel,fragVar,"nlrjet",anaSel.numJEtBins,anaSel.hisJEtMin,anaSel.hisJEtMax);
 
+  AnaFrag anaFragVar_LzJEt(fragVarTag,"LzJEt",djTree,numFragVarBins,fragVarMin,fragVarMax);
+  anaFragVar_LzJEt.xtitle = "z^{lead} = p_{T}^{trk}/E_{T}^{Jet}";
+  anaFragVar_LzJEt.ytitle = fragVarTitle;
+  anaFragVar_LzJEt.PlotCorrelations(anaSel,fragVar,"lppt[0]/nljet",numFragVarBins,0,1.5);
+
+  AnaFrag anaFragVar_LzRefJEt(fragVarTag,"LzRefJEt",djTree,numFragVarBins,fragVarMin,fragVarMax);
+  anaFragVar_LzRefJEt.xtitle = "z^{lead} = p_{T}^{trk}/E_{T}^{RefJet}";
+  anaFragVar_LzRefJEt.ytitle = fragVarTitle;
+  anaFragVar_LzRefJEt.PlotCorrelations(anaSel,fragVar,"lppt[0]/nlrjet",numFragVarBins,0,1.5);
+
   AnaFrag anaFragVar_JCPtDivJEt(fragVarTag,"JCPtDivJEt",djTree,numFragVarBins,fragVarMin,fragVarMax);
   anaFragVar_JCPtDivJEt.xtitle = "#Sigma_{jet cone} p_{T}^{Trk}/E_{t}^{Jet}";
   anaFragVar_JCPtDivJEt.ytitle = fragVarTitle;
