@@ -2,6 +2,7 @@
 #include "TTree.h"
 #include "TH1D.h"
 #include "TH2.h"
+#include "TProfile.h"
 #include "TString.h"
 #include <cassert>
 #include "TCut.h"
@@ -34,6 +35,8 @@ class AnaFragBase
     TH1D * hSig;
     TH2F * hCorrelNr;
     TH2F * hCorrelAw;
+    TProfile * hCorrelProfNr;
+    TProfile * hCorrelProfAw;
 };
 
 AnaFragBase::AnaFragBase(TString xtg, TString ytg,TTree *tree, int nx, double min, double max) :
@@ -77,10 +80,12 @@ void AnaFragBase::PlotCorrelations(selectionCut & anaSel,TString var1, TString v
   cpCorrel2DAw.AddHist2D(hCorrelAw,"colz");
   cCorrel2D->cd(3); cpCorrel2DAw.Draw((TPad*)cCorrel2D->GetPad(3),false);
 
+  hCorrelProfNr = hCorrelNr->ProfileX(tag+"NrProfX");
+  hCorrelProfAw = hCorrelAw->ProfileX(tag+"AwProfX");
   CPlot cpCorrel2DProf(tag+"Prof"+anaSel.Tag2,tag,xtitle,ytitle);
   cpCorrel2DProf.SetYRange(xmin,xmax);
-  cpCorrel2DProf.AddProfile(hCorrelNr->ProfileX(tag+"NrProfX"),"Lead Jet","E",kRed,kOpenCircle);
-  cpCorrel2DProf.AddProfile(hCorrelAw->ProfileX(tag+"AwProfX"),"Away Jet","E",kBlue,kOpenSquare);
+  cpCorrel2DProf.AddProfile(hCorrelProfNr,"Lead Jet","E",kRed,kOpenCircle);
+  cpCorrel2DProf.AddProfile(hCorrelProfAw,"Away Jet","E",kBlue,kOpenSquare);
   cCorrel2D->cd(2); cpCorrel2DProf.Draw((TPad*)cCorrel2D->GetPad(2),false);
   cCorrel2D->Print(CPlot::sOutDir+"/"+tag+anaSel.Tag2+".gif");
 }
