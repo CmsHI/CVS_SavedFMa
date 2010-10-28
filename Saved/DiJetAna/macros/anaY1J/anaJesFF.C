@@ -24,7 +24,7 @@ void anaJesFF(int doMC=1,
     TString CmpVersion = "c0",
     TString modName = "djcalo_genp",
     Double_t NrJEtMin = 80,
-    Double_t NrJEtMax = 100,
+    Double_t NrJEtMax = 120,
     TString DJCutType = "Ref",
     //TString fragVar = "lppt[0]/nlrjet",
     //TString fragVarTag = "Lz",
@@ -39,7 +39,7 @@ void anaJesFF(int doMC=1,
     //TString jEtVar = "nljet",
     //TString jEtVarTag = "JEt",
     //TString jEtVarTitle = "E_{T}^{CaloJet}",
-    TString jextraCut = "(ljcpt[0]-ljcptbg[0])/nlrjet>0.5",
+    TString jextraCut = "",//"(ljcpt[0]-ljcptbg[0])/nlrjet>0.5",
     const char * inFile0Name="~/scratch01/mc/QCD/su10-qcd80-startup36v9_f500_proc1022_final/trkhists_9*.root",
     TString header = "QCD-DiJet80",
     TString AnaType = "dj")
@@ -99,19 +99,19 @@ void anaJesFF(int doMC=1,
   AnaFrag anaFragVar_JCPtDivJEt(fragVarTag,"JCPtDivJEt",djTree,numFragVarBins,fragVarMin,fragVarMax);
   anaFragVar_JCPtDivJEt.xtitle = "#Sigma_{jet cone} p_{T}^{Trk}/E_{t}^{Jet}";
   anaFragVar_JCPtDivJEt.ytitle = fragVarTitle;
-  anaFragVar_JCPtDivJEt.PlotCorrelations(anaSel,fragVar,"(ljcpt[0]-ljcptbg[0])/nljet",numFragVarBins,0,1);
+  anaFragVar_JCPtDivJEt.PlotCorrelations(anaSel,fragVar,"(ljcpt[0]-ljcptbg[0])/nljet",numFragVarBins,0,2);
 
   AnaFrag anaFragVar_JCPtDivRefJEt(fragVarTag,"JCPtDivRefJEt",djTree,numFragVarBins,fragVarMin,fragVarMax);
   anaFragVar_JCPtDivRefJEt.xtitle = "#Sigma_{jet cone} p_{T}^{Trk}/E_{t}^{RefJet}";
   anaFragVar_JCPtDivRefJEt.ytitle = fragVarTitle;
-  anaFragVar_JCPtDivRefJEt.PlotCorrelations(anaSel,fragVar,"(ljcpt[0]-ljcptbg[0])/nlrjet",numFragVarBins,0,1);
+  anaFragVar_JCPtDivRefJEt.PlotCorrelations(anaSel,fragVar,"(ljcpt[0]-ljcptbg[0])/nlrjet",numFragVarBins,0,2);
+
+  AnaFrag anaFragVar_JResp("JResp",fragVarTag,djTree,numFragVarBins,0,2);
+  anaFragVar_JResp.xtitle = fragVarTitle;
+  anaFragVar_JResp.ytitle = "E_{T}^{RecoJet}/E_{t}^{RefJet}";
+  anaFragVar_JResp.PlotCorrelations(anaSel,"nljet/nlrjet",fragVar,numFragVarBins,fragVarMin,fragVarMax);
 
   /*
-  AnaFrag anaFragVar_JResp("JResp",fragVarTag,djTree,numFragVarBins,fragVarMin,fragVarMax);
-  anaFragVar_JResp.xtitle = fragVarTitle;
-  anaFragVar_JResp.ytitle = "E_{T}^{RecoJet}/E_{t}^{GenJet}";
-  anaFragVar_JResp.PlotCorrelations(anaSel,fragVar,"nljet/nlrjet:nlrjet",numFragVarBins,0,1);
-
   djTree->Draw("lppt[0]:nlrjet>>hLPPtVsGJEt",anaSel.FinLJCut(),"goff");
   djTree->Draw("lppt[0]:nljet>>hLPPtVsJEt",anaSel.FinLJCut(),"goff");
   djTree->Draw("lppt[0]/nlrjet:nlrjet>>hLzVsGJEtProf",anaSel.FinLJCut(),"prof goff");
