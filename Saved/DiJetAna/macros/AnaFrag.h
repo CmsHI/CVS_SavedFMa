@@ -12,12 +12,19 @@
 class AnaFragBase
 {
   public:
+    TString xvar;
+    TString yvar;
+    TString xtag;
+    TString ytag;
+    TString xtitle;
+    TString ytitle;
+
     int numDJ;
     int nbin;
     double xmin;
     double xmax;
 
-    AnaFragBase(TString src, TString t,TTree *tree, int nx=10, double min=0, double max=6);
+    AnaFragBase(TString xtg, TString ytg,TTree *tree, int nx=10, double min=0, double max=6);
     void PlotCorrelations(selectionCut & anaSel,TString var1, TString var2, int ny, double ymin, double ymax);
 
     TString tag;
@@ -27,75 +34,70 @@ class AnaFragBase
     TH1D * hSig;
     TH2F * hCorrelNr;
     TH2F * hCorrelAw;
-
-    TString xvar;
-    TString yvar;
-    TString xtag;
-    TString ytag;
-    TString xtitle;
-    TString ytitle;
 };
 
-AnaFragBase::AnaFragBase(TString src, TString t,TTree *tree, int nx, double min, double max) :
+AnaFragBase::AnaFragBase(TString xtg, TString ytg,TTree *tree, int nx, double min, double max) :
+  xtag(xtg),
+  ytag(ytg),
   numDJ(-1),
   nbin(nx),
   xmin(min),
   xmax(max)
 {
-  tag = src;
+  tag = xtg+ytg;
   trDj = tree;
-  tag+=t;
   if (!trDj) cout << tag << ": tree not found" << endl;
   assert(trDj);
 }
 
 void AnaFragBase::PlotCorrelations(selectionCut & anaSel,TString var1, TString var2, int nc, double cmin, double cmax)
 {
-  TString hNameNr("h"+tag+"Nr");
-  TString hNameAw(anaSel.Nr2Aw(hNameNr));
-  hCorrelNr = new TH2F(hNameNr,";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
-  hCorrelAw = new TH2F(hNameAw,";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
+  TString hisNameNr("h"+tag+"Nr");
+  TString hisNameAw(anaSel.Nr2Aw(hisNameNr));
+  hCorrelNr = new TH2F(hisNameNr,";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
+  hCorrelAw = new TH2F(hisNameAw,";"+xtitle+";",nc,cmin,cmax,nbin,xmin,xmax);
   TString drawStrNr(var1+":"+var2);
   TString drawStrAw(anaSel.Nr2Aw(drawStrNr));
-  trDj->Draw(drawStrNr+">>"+hNameNr,anaSel.FinLJCut(),"goff");
-  trDj->Draw(drawStrAw+">>"+hNameAw,anaSel.FinAJCut(),"goff");
-  cout << "Correl Nr draw: " << drawStrNr << " to " << hNameNr << endl;
-  cout << "  Sel: " << anaSel.FinLJCut() << endl;
-  cout << "Correl Aw draw: " << drawStrAw << " to " << hNameAw << endl;
-  cout << "  Sel: " << anaSel.FinAJCut() << endl;
+  trDj->Draw(drawStrNr+">>"+hisNameNr,anaSel.FinLJCut(),"goff");
+  trDj->Draw(drawStrAw+">>"+hisNameAw,anaSel.FinAJCut(),"goff");
+  cout << tag << endl;
+  cout << "  Nr draw: " << drawStrNr << " to " << hisNameNr << endl;
+  cout << "      Sel: " << anaSel.FinLJCut() << endl;
+  cout << "  Aw draw: " << drawStrAw << " to " << hisNameAw << endl;
+  cout << "      Sel: " << anaSel.FinAJCut() << endl;
 
-  TCanvas * cCorrel2D = new TCanvas("c"+xtag+"_"+ytag,"c"+xtag+"_"+ytag,800,800);
+  TCanvas * cCorrel2D = new TCanvas("c"+tag,"c"+tag,800,800);
   cCorrel2D->Divide(2,2);
 
-  CPlot cpCorrel2DNr(xtag+ytag+"Nr"+anaSel.Tag2,xtag+ytag,"(Near) "+xtitle,ytitle);
+  CPlot cpCorrel2DNr(tag+"Nr"+anaSel.Tag2,tag,"(Near) "+xtitle,ytitle);
   cpCorrel2DNr.AddHist2D(hCorrelNr,"colz");
   cCorrel2D->cd(1); cpCorrel2DNr.Draw((TPad*)cCorrel2D->GetPad(1),false);
 
-  CPlot cpCorrel2DAw(xtag+ytag+"Aw"+anaSel.Tag2,xtag+ytag,"(Away) "+xtitle,ytitle);
+  CPlot cpCorrel2DAw(tag+"Aw"+anaSel.Tag2,tag,"(Away) "+xtitle,ytitle);
   cpCorrel2DAw.AddHist2D(hCorrelAw,"colz");
   cCorrel2D->cd(3); cpCorrel2DAw.Draw((TPad*)cCorrel2D->GetPad(3),false);
 
-  CPlot cpCorrel2DProf(xtag+ytag+"Prof"+anaSel.Tag2,xtag+ytag,xtitle,ytitle);
-  cpCorrel2DProf.AddProfile(hCorrelNr->ProfileX(xtag+ytag+"NrProfX"),"Lead Jet","E",kRed,kOpenCircle);
-  cpCorrel2DProf.AddProfile(hCorrelAw->ProfileX(xtag+ytag+"AwProfX"),"Away Jet","E",kBlue,kOpenSquare);
+  CPlot cpCorrel2DProf(tag+"Prof"+anaSel.Tag2,tag,xtitle,ytitle);
+  cpCorrel2DProf.AddProfile(hCorrelNr->ProfileX(tag+"NrProfX"),"Lead Jet","E",kRed,kOpenCircle);
+  cpCorrel2DProf.AddProfile(hCorrelAw->ProfileX(tag+"AwProfX"),"Away Jet","E",kBlue,kOpenSquare);
   cCorrel2D->cd(2); cpCorrel2DProf.Draw((TPad*)cCorrel2D->GetPad(2),false);
-  cCorrel2D->Print(CPlot::sOutDir+"/"+xtag+ytag+anaSel.Tag2+".gif");
+  cCorrel2D->Print(CPlot::sOutDir+"/"+tag+anaSel.Tag2+".gif");
 }
 
 class AnaFrag : public AnaFragBase
 {
   public:
-    AnaFrag(TString src, TString t,TTree *tree,int nx=10,double min=0,double max=6, selectionCut * anaCut=0)
-      : AnaFragBase(src,t,tree,nx,min,max) {}
-    AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TCut dRSig, TCut dRBkg,int nx=10,double min=0,double max=6, selectionCut * anaCut=0);
+    AnaFrag(TString xtg, TString ytg,TTree *tree,int nx=10,double min=0,double max=6, selectionCut * anaCut=0)
+      : AnaFragBase(xtg,ytg,tree,nx,min,max) {}
+    AnaFrag(TString xtg, TString ytg,TTree *tree,TCut djCut,TCut djTrkCut, TString var, TCut dRSig, TCut dRBkg,int nx=10,double min=0,double max=6, selectionCut * anaCut=0);
 };
 
-AnaFrag::AnaFrag(TString src, TString t,TTree *tree,TCut djCut,TCut trkCut, TString var, TCut dRSig, TCut dRBkg, int nx,double min,double max,selectionCut * anaSel) :
-  AnaFragBase(src,t,tree,nx,min,max)
+AnaFrag::AnaFrag(TString xtg, TString ytg,TTree *tree,TCut djCut,TCut trkCut, TString var, TCut dRSig, TCut dRBkg, int nx,double min,double max,selectionCut * anaSel) :
+  AnaFragBase(xtg,ytg,tree,nx,min,max)
 {
   // Normalization
   numDJ = trDj->Draw("jdphi>>hDJDPhi",djCut,"goff");
-  std::cout << "--- " << tag << ": ---" << std::endl;
+  std::cout << "--- " << tag << ", Draw: " << var << " --- " << std::endl;
   std::cout << " # of sel jet events: " << numDJ << std::endl;
 
   // DJ selection control plots

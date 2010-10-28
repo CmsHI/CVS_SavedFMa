@@ -20,27 +20,27 @@ using namespace std;
 
 void anaJesFF(int doMC=1,
     TString SrcName = "su10Qcd80",
-    TString AnaVersion = "a1025c",
+    TString AnaVersion = "a1028",
     TString CmpVersion = "c0",
     TString modName = "djcalo_genp",
     Double_t NrJEtMin = 80,
-    Double_t NrJEtMax = 200,
+    Double_t NrJEtMax = 100,
     TString DJCutType = "Ref",
-    TString fragVar = "lppt[0]/nlrjet",
-    TString fragVarTag = "Lz",
-    TString fragVarTitle = "z^{lead} = p_{T}^{lead trk in Jet}/E_{T}^{CaloJet}",
-    Double_t fragVarMin = 0,
-    Double_t fragVarMax = 1,
-    //TString fragVar = "nlrjet",
-    //TString fragVarTag = "RefJEt",
-    //TString fragVarTitle = "E_{T}^{GenJet}",
+    //TString fragVar = "lppt[0]/nlrjet",
+    //TString fragVarTag = "Lz",
+    //TString fragVarTitle = "z^{lead} = p_{T}^{trk}/E_{T}^{RefJet}",
     //Double_t fragVarMin = 0,
-    //Double_t fragVarMax = 250,
-    TString jEtVar = "nlrjet",
-    TString jEtVarTag = "RefJEt",
-    TString jEtVarTitle = "E_{T}^{GenJet}",
+    //Double_t fragVarMax = 1,
+    TString fragVar = "nlrjet",
+    TString fragVarTag = "RefJEt",
+    TString fragVarTitle = "E_{T}^{RefJet}",
+    Double_t fragVarMin = 0,
+    Double_t fragVarMax = 250,
+    //TString jEtVar = "nljet",
+    //TString jEtVarTag = "JEt",
+    //TString jEtVarTitle = "E_{T}^{CaloJet}",
     TString jextraCut = "(ljcpt[0]-ljcptbg[0])/nlrjet>0.5",
-    const char * inFile0Name="~/scratch01/mc/QCD/su10-qcd80-startup36v9_f500_proc1022_final/trkhists_*.root",
+    const char * inFile0Name="~/scratch01/mc/QCD/su10-qcd80-startup36v9_f500_proc1022_final/trkhists_9*.root",
     TString header = "QCD-DiJet80",
     TString AnaType = "dj")
 {
@@ -69,57 +69,58 @@ void anaJesFF(int doMC=1,
   gSystem->mkdir(outdir.Data(),kTRUE);
 
   // === ana ===
-  HisTGroup<TH2F> hgPPt_JEt("PPT_JEt",50,0,250,50,0,250);
-  hgPPt_JEt.Add2D("Nr");
-  hgPPt_JEt.Add2D("GJNr");
-  hgPPt_JEt.Add2D("Aw");
-  hgPPt_JEt.Add2D("GJAw");
+  /*
   TH2F * hLPPtVsGJEt = new TH2F("hLPPtVsGJEt","hLPPtVsJEt",50,0,250,50,0,250);
   TH2F * hLPPtVsJEt = new TH2F("hLPPtVsJEt","hLPPtVsJEt",50,0,250,50,0,250);
   TProfile * hLzVsGJEtProf = new TProfile("hLzVsGJEtProf","hLzVsJEt",50,0,250);
   TProfile * hLzVsJEtProf = new TProfile("hLzVsJEtProf","hLzVsJEt",50,0,250);
   TProfile * hRespVsLzProf = new TProfile("hRespVsLzProf","hLzVsJEt",50,0,1);
   TProfile * hRespVsAzProf = new TProfile("hRespVsAzProf","hAzVsJEt",50,0,1);
+  TProfile * hRespVsLJEtProf = new TProfile("hRespVsLJEtProf","hLJEtVsJEt",50,0,250);
+  TProfile * hRespVsAJEtProf = new TProfile("hRespVsAJEtProf","hAJEtVsJEt",50,0,250);
+  */
   // frag var
   Int_t numFragVarBins=40;
   AnaFrag anaFragVarNr(fragVarTag,"Nr",djTree,anaSel.FinLJCut(),"",fragVar,"","",numFragVarBins,fragVarMin,fragVarMax);
-  AnaFrag anaFragVarAw(fragVarTag,"Aw",djTree,anaSel.FinAJCut(),"",fragVar,"","",numFragVarBins,fragVarMin,fragVarMax);
+  AnaFrag anaFragVarAw(fragVarTag,"Aw",djTree,anaSel.FinAJCut(),"",anaSel.Nr2Aw(fragVar),"","",numFragVarBins,fragVarMin,fragVarMax);
 
+  cout << "=== Correlation Analysis ===" << endl;
   // correlations
-  AnaFrag anaFragVar_JEtCheck(fragVarTag,jEtVarTag,djTree,numFragVarBins,fragVarMin,fragVarMax);
-  anaFragVar_JEtCheck.xtag = jEtVarTag;
-  anaFragVar_JEtCheck.ytag = fragVarTag;
-  anaFragVar_JEtCheck.xtitle = jEtVarTitle;
-  anaFragVar_JEtCheck.ytitle = fragVarTitle;
-  anaFragVar_JEtCheck.PlotCorrelations(anaSel,fragVar,jEtVar,anaSel.numJEtBins,anaSel.hisJEtMin,anaSel.hisJEtMax);
-
-  AnaFrag anaFragVar_AnaJEt(fragVarTag,"AnaJEt",djTree,numFragVarBins,fragVarMin,fragVarMax);
-  anaFragVar_AnaJEt.xtag = "AnaJEt";
-  anaFragVar_AnaJEt.ytag = fragVarTag;
-  anaFragVar_AnaJEt.xtitle = "#Sigma_{jet cone} p_{T}^{Trk}/E_{t}^{Jet}";
+  AnaFrag anaFragVar_AnaJEt(fragVarTag,"JEt",djTree,numFragVarBins,fragVarMin,fragVarMax);
+  anaFragVar_AnaJEt.xtitle = "E_{t}^{Jet}";
   anaFragVar_AnaJEt.ytitle = fragVarTitle;
   anaFragVar_AnaJEt.PlotCorrelations(anaSel,fragVar,"nljet",anaSel.numJEtBins,anaSel.hisJEtMin,anaSel.hisJEtMax);
 
   AnaFrag anaFragVar_RefJEt(fragVarTag,"RefJEt",djTree,numFragVarBins,fragVarMin,fragVarMax);
-  anaFragVar_RefJEt.xtag = "RefJEt";
-  anaFragVar_RefJEt.ytag = fragVarTag;
-  anaFragVar_RefJEt.xtitle = "#Sigma_{jet cone} p_{T}^{Trk}/E_{t}^{RefJet}";
+  anaFragVar_RefJEt.xtitle = "E_{t}^{RefJet}";
   anaFragVar_RefJEt.ytitle = fragVarTitle;
   anaFragVar_RefJEt.PlotCorrelations(anaSel,fragVar,"nlrjet",anaSel.numJEtBins,anaSel.hisJEtMin,anaSel.hisJEtMax);
 
-  AnaFrag anaFragVar_JCPt(fragVarTag,"JCPt",djTree,numFragVarBins,fragVarMin,fragVarMax);
-  anaFragVar_JCPt.xtag = "JCPt";
-  anaFragVar_JCPt.ytag = fragVarTag;
-  anaFragVar_JCPt.xtitle = "#Sigma_{jet cone} p_{T}^{Trk}/E_{t}^{Jet}";
-  anaFragVar_JCPt.ytitle = fragVarTitle;
-  anaFragVar_JCPt.PlotCorrelations(anaSel,fragVar,"(ljcpt[0]-ljcptbg[0])/nljet",numFragVarBins,0,1);
+  AnaFrag anaFragVar_JCPtDivJEt(fragVarTag,"JCPtDivJEt",djTree,numFragVarBins,fragVarMin,fragVarMax);
+  anaFragVar_JCPtDivJEt.xtitle = "#Sigma_{jet cone} p_{T}^{Trk}/E_{t}^{Jet}";
+  anaFragVar_JCPtDivJEt.ytitle = fragVarTitle;
+  anaFragVar_JCPtDivJEt.PlotCorrelations(anaSel,fragVar,"(ljcpt[0]-ljcptbg[0])/nljet",numFragVarBins,0,1);
+
+  AnaFrag anaFragVar_JCPtDivRefJEt(fragVarTag,"JCPtDivRefJEt",djTree,numFragVarBins,fragVarMin,fragVarMax);
+  anaFragVar_JCPtDivRefJEt.xtitle = "#Sigma_{jet cone} p_{T}^{Trk}/E_{t}^{RefJet}";
+  anaFragVar_JCPtDivRefJEt.ytitle = fragVarTitle;
+  anaFragVar_JCPtDivRefJEt.PlotCorrelations(anaSel,fragVar,"(ljcpt[0]-ljcptbg[0])/nlrjet",numFragVarBins,0,1);
+
+  /*
+  AnaFrag anaFragVar_JResp("JResp",fragVarTag,djTree,numFragVarBins,fragVarMin,fragVarMax);
+  anaFragVar_JResp.xtitle = fragVarTitle;
+  anaFragVar_JResp.ytitle = "E_{T}^{RecoJet}/E_{t}^{GenJet}";
+  anaFragVar_JResp.PlotCorrelations(anaSel,fragVar,"nljet/nlrjet:nlrjet",numFragVarBins,0,1);
 
   djTree->Draw("lppt[0]:nlrjet>>hLPPtVsGJEt",anaSel.FinLJCut(),"goff");
   djTree->Draw("lppt[0]:nljet>>hLPPtVsJEt",anaSel.FinLJCut(),"goff");
   djTree->Draw("lppt[0]/nlrjet:nlrjet>>hLzVsGJEtProf",anaSel.FinLJCut(),"prof goff");
   djTree->Draw("lppt[0]/nlrjet:nljet>>hLzVsJEtProf",anaSel.FinLJCut(),"prof goff");
-  djTree->Draw("nljet/nlrjet:lppt[0]/nlrjet>>hRespVsLzProf",anaSel.FinLJCut(),"prof goff");
-  djTree->Draw("aljet/alrjet:lppt[1]/alrjet>>hRespVsAzProf",anaSel.FinAJCut(),"prof goff");
+  djTree->Draw("nljet/nlrjet:lppt[0]/nlrjet>>hRespVsLzProf",anaSel.FinDJCut(),"prof goff");
+  djTree->Draw("aljet/alrjet:lppt[1]/alrjet>>hRespVsAzProf",anaSel.FinDJCut(),"prof goff");
+  djTree->Draw("nljet/nlrjet:nlrjet>>hRespVsLJEtProf",anaSel.FinDJCut(),"prof goff");
+  djTree->Draw("aljet/alrjet:alrjet>>hRespVsAJEtProf",anaSel.FinDJCut(),"prof goff");
+  */
 
   // -- plot frag var--
   TCanvas * cFragVar = new TCanvas("c"+fragVarTag,"c"+fragVarTag,500,500);
@@ -128,6 +129,7 @@ void anaJesFF(int doMC=1,
   cpFragVar.AddHist1D(anaFragVarAw.hRaw,"Away Jet","E",kBlue,kOpenSquare);
   cpFragVar.Draw(cFragVar,true);
 
+  /*
   TCanvas * cLPPtVsGJEt = new TCanvas("cLPPtVsGJEt","cLPPtVsGJEt",500,500);
   cLPPtVsGJEt->SetLogz();
   CPlot cpLPPtVsGJEt("LPPtVsGJEt"+anaSel.Tag2,"DJ","Leading E_{T}^{genjet} [GeV]","Leading p_{T}^{trk} (in Jet Cone) [GeV]");
@@ -157,4 +159,13 @@ void anaJesFF(int doMC=1,
   cpRespVsLzProf.AddProfile(hRespVsAzProf,"j2","E",kBlue,kOpenSquare);
   cpRespVsLzProf.SetLegend(0.53,0.31,0.86,0.37);
   cpRespVsLzProf.Draw(cRespVsLzProf,true);
+
+  TCanvas * cRespVsLJEtProf = new TCanvas("RespVsLJEtProf","RespVsLJEtProf",500,500);
+  CPlot cpRespVsLJEtProf("RespVsLJEtProf"+anaSel.Tag2,"RespVsLJEtProf","E_{T}^{genjet}","E_{T}^{calojet}/E_{T}^{genjet}");
+  cpRespVsLJEtProf.SetYRange(0,1.5);
+  cpRespVsLJEtProf.AddProfile(hRespVsLJEtProf,"j1","E");
+  cpRespVsLJEtProf.AddProfile(hRespVsAJEtProf,"j2","E",kBlue,kOpenSquare);
+  cpRespVsLJEtProf.SetLegend(0.53,0.31,0.86,0.37);
+  cpRespVsLJEtProf.Draw(cRespVsLJEtProf,true);
+  */
 }
