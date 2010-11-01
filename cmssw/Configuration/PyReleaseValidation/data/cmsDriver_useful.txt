@@ -14,7 +14,7 @@ cmsDriver.py Hydjet_Quenched_MinBias_2760GeV_cfi.py -s GEN,SIM,DIGI,L1,DIGI2RAW 
 cmsDriver.py Hydjet_Quenched_MinBias_2760GeV_cfi.py -s HLT:HIon -n 1 --geometry DB --conditions auto:mc --datatier GEN-SIM-DIGI-RAW-HLTDEBUG --eventcontent FEVTDEBUGHLT --scenario HeavyIons --no_exec
 
 # Reco
-cmsDriver.py hiReco -n 2 -s RAW2DIGI,RECO --scenario HeavyIons --geometry DB --conditions FrontierConditions_GlobalTag,START38_V9::All --datatier GEN-SIM-RECO --eventcontent FEVTDEBUG --no_exec --python_filename RECOHI1_STARTUP.py
+cmsDriver.py hiReco -n 2 -s RAW2DIGI,RECO --scenario HeavyIons --geometry DB --conditions auto:startup --datatier GEN-SIM-RECO --eventcontent FEVTSIM --no_exec --python_filename RECOHI1_STARTUP.py
 
 # For himix
 cmsDriver.py Configuration/GenProduction/Pyquen_DiJet_Pt80_cfi.py -n 1 -s GEN:hiSignal,SIM,DIGI,L1,DIGI2RAW,HLT:HIon --conditions auto:mc --scenario HeavyIons --himix geometry Extended --datatier GEN-SIM-RAW --eventcontent=FEVTDEBUGHLT --filein=background.root --fileout=out.root --processName HISIGNAL --customise Configuration/GenProduction/customiseCaloDigisNZS.py --cust_function customiseCaloNZS --no_exec
