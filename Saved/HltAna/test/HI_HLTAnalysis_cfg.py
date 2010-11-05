@@ -159,8 +159,8 @@ process.TFileService = cms.Service('TFileService',
 # Schedule the whole thing
 print "menu HIon"
 process.schedule = cms.Schedule(
-      process.DoHLTHIJets,
-      process.DoHLTHIPhoton,
+    #  process.DoHLTHIJets,
+    #  process.DoHLTHIPhoton,
       process.analyzeThis)
 
 #########################################################################################
