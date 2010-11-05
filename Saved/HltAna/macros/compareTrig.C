@@ -51,7 +51,7 @@ void compareTrig(
 
     string t = int2string(i);
     TString name = "c"+t;
-    TCanvas *c = new TCanvas(name,name,2);
+    TCanvas *c = new TCanvas(name,name,600,800);
     char *na = num_data->GetYaxis()->GetBinLabel(i);
 
     //get denominators 
@@ -103,7 +103,7 @@ void compareTrig(
     if (doCompare>0) mcErr->Draw("PSame");
     clearXErrorBar(mcErr);
 
-    TLegend *l= new TLegend(0.25,0.49,0.41,0.62);
+    TLegend *l= new TLegend(0.2,0.66,0.35,0.8);
     l->SetHeader(na);
     if (doCompare>0) {
       l->AddEntry(dataErr,"Data","LP");
@@ -114,7 +114,7 @@ void compareTrig(
     l->SetTextSize(0.035);
     l->Draw();
  
-    c->SetBottomMargin(0.42);
+    c->SetBottomMargin(0.55);
     c->Print(Form("%s/%s.gif",outdir.Data(),na));
 
     nux->Clear();
