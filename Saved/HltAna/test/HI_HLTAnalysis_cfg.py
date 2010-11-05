@@ -4,10 +4,10 @@ import FWCore.ParameterSet.Config as cms
 
 # useful options
 isData=1 # =1 running on real data, =0 running on MC
-
+recoOnly=True
 
 OUTPUT_HIST='openhlt.root'
-NEVTS=-1
+NEVTS=10
 MENU="HIon" # LUMI8e29 or LUMI1e31 for pre-38X MC, or GRun for data
 isRelval=1 # =1 for running on MC RelVals, =0 for standard production MC, no effect for data 
 
@@ -62,7 +62,10 @@ process.options = cms.untracked.PSet(
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-    'dcache:/pnfs/cmsaf.mit.edu/t2bat/cms/store/user/nart/Hydjet_Quenched_MinBias_2760GeV_STARTUP39V3_L1Menu_CollisionsHeavyIons2010_v0_391v1/Hydjet_Quenched_MinBias_2760GeV_STARTUP39V3_L1Menu_CollisionsHeavyIons2010_v0_391v1_RECO/4fa2e3ec03e211b495652e2ed26839f0/output_9_1_mJS.root'
+  #  'dcache:/pnfs/cmsaf.mit.edu/t2bat/cms/store/user/nart/Hydjet_Quenched_MinBias_2760GeV_STARTUP39V3_L1Menu_CollisionsHeavyIons2010_v0_391v1/Hydjet_Quenched_MinBias_2760GeV_STARTUP39V3_L1Menu_CollisionsHeavyIons2010_v0_391v1_RECO/4fa2e3ec03e211b495652e2ed26839f0/output_9_1_mJS.root'
+#   '/store/hidata/HIRun2010/HIAllPhysics/RECO/PromptReco-v1/000/150/074/A0263031-E0E8-DF11-988C-0030487CD16E.root'
+#    '/store/hidata/HIRun2010/HIAllPhysics/DQM/PromptReco-v1/000/150/095/1C45B6EC-DBE8-DF11-A0D2-0030487CD718.root'
+    '/store/hidata/HIRun2010/HIAllPhysics/RECO/PromptReco-v1/000/150/026/9CF3D839-57E8-DF11-A4BE-0030487CD812.root'
     )
 )
 
@@ -106,8 +109,6 @@ process.analyzeThis = cms.Path( process.HLTBeginSequence
       * process.centralityBin
       * process.hltanalysis
       )
-if isData:
-   process.analyzeThis.remove(process.heavyIon)
 
 process.hltanalysis.RunParameters = cms.PSet(
 	    HistogramFile	  = cms.untracked.string(OUTPUT_HIST),
@@ -157,6 +158,14 @@ process.TFileService = cms.Service('TFileService',
     )
 
 # Schedule the whole thing
+if isData:
+   process.analyzeThis.remove(process.heavyIon)
+if recoOnly:
+   process.analyzeThis.remove(process.HLTBeginSequence)
+   process.hltanalysis.l1GtReadoutRecord = cms.InputTag( 'gtDigis','',"RECO")
+
+process.hiCentrality.producePixelTracks = False
+   
 print "menu HIon"
 process.schedule = cms.Schedule(
     #  process.DoHLTHIJets,
@@ -182,4 +191,4 @@ else:
                     if isinstance(parameter, cms.InputTag):
                         if parameter.moduleLabel == 'rawDataCollector':
                             if(isRelval == 0):
-                                parameter.moduleLabel = 'rawDataCollector::HLT8E29'
+                                parameter.moduleLabel = 'rawDataCollector::HLT7E29'
