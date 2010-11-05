@@ -63,7 +63,7 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
   vector <double*> effs;
 
   // calculate the efficiency //   
-  effs.push_back(calcEff(HltTree,"All",nEvt,Form("(%s)&&1==1",cut)));
+  effs.push_back(calcEff(HltTree,"AllPhysics",nEvt,Form("(%s)&&1==1",cut)));
   // -- unprotected --
   effs.push_back(calcEff(HltTree,"L1_BscMinBiasThreshold1",nEvt,Form("(%s)&&L1_BscMinBiasThreshold1",cut)));
   effs.push_back(calcEff(HltTree,"L1_HcalHfCoincidencePm",nEvt,Form("(%s)&&L1_HcalHfCoincidencePm",cut)));
@@ -152,7 +152,7 @@ void trigAnaCorrelation(
     string source="mc")
 {
   // Load input
-  TChain * HltTree = new TChain("HltTree","HI OpenHLT Tree");
+  TChain * HltTree = new TChain("hltanalysis/HltTree","HI OpenHLT Tree");
   HltTree->Add(inFile0Name);
   cout << " # entries: " << HltTree->GetEntries() << endl;
 
@@ -163,7 +163,7 @@ void trigAnaCorrelation(
   // define event types
   vector<string> evtType;
   vector<string> evtTypeCut;
-  evtType.push_back("All"); evtTypeCut.push_back("1==1");
+  evtType.push_back("AllPhysics"); evtTypeCut.push_back("1==1");
   if (source=="mc") {
   }
   else if (source=="data") {
