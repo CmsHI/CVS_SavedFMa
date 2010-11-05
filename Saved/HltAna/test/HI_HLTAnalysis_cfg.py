@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 ##################################################################
 
 # useful options
-isData=0 # =1 running on real data, =0 running on MC
+isData=1 # =1 running on real data, =0 running on MC
 
 
 OUTPUT_HIST='openhlt.root'
@@ -42,11 +42,11 @@ if (isData):
 if (isData):
     # GLOBAL_TAG='GR09_H_V6OFF::All' # collisions 2009
     # GLOBAL_TAG='GR10_H_V6A::All' # collisions2010 tag for CMSSW_3_6_X
-    GLOBAL_TAG='GR10_H_V8_T2::All' # collisions2010 tag for CMSSW_3_8_X
+    GLOBAL_TAG='GR10_P_V12::All' # collisions2010 tag for CMSSW_3_8_X
 else:
     GLOBAL_TAG='MC_31X_V2::All'
     if (MENU == "LUMI8e29"): GLOBAL_TAG= 'STARTUP3X_V15::All'
-    if (MENU == "HIon"): GLOBAL_TAG= 'START39_V3::All'
+    if (MENU == "HIon"): GLOBAL_TAG= 'START39_V4HI::All'
     
     
 ##################################################################
@@ -76,12 +76,13 @@ process.load('Configuration/StandardSequences/MagneticField_38T_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load('Configuration/StandardSequences/SimL1Emulator_cff')
 process.GlobalTag.globaltag = GLOBAL_TAG
-process.GlobalTag.toGet = cms.VPSet(
-    cms.PSet(record = cms.string("HeavyIonRcd"),
-             tag = cms.string("CentralityTable_HFhits40_Hydjet2760GeV_v0_mc"),
-             connect = cms.untracked.string("frontier://FrontierPrep/CMS_COND_PHYSICSTOOLS")
-             )
-    )
+from CmsHi.Analysis2010.CommonFunctions_cff import *
+overrideCentrality(process)
+process.HeavyIonGlobalParameters = cms.PSet(
+      centralityVariable = cms.string("HFhits"),
+      nonDefaultGlauberModel = cms.string("AMPT_2760GeV"),
+      centralitySrc = cms.InputTag("hiCentrality")
+      )
 
 
 # OpenHLT specificss
@@ -99,26 +100,28 @@ process.DQMStore = cms.Service( "DQMStore",)
 # Define the analyzer modules
 process.load("HLTrigger.HLTanalyzers.HI_HLTAnalyser_cff")
 process.analyzeThis = cms.Path( process.HLTBeginSequence 
-    * process.heavyIon
-    * process.siPixelRecHits
-    * process.hiCentrality
-    * process.centralityBin
-    * process.hltanalysis
-    )
+      * process.heavyIon
+      * process.siPixelRecHits
+      * process.hiCentrality
+      * process.centralityBin
+      * process.hltanalysis
+      )
+if isData:
+   process.analyzeThis.remove(process.heavyIon)
 
 process.hltanalysis.RunParameters = cms.PSet(
 	    HistogramFile	  = cms.untracked.string(OUTPUT_HIST),
 	    UseTFileService	  = cms.untracked.bool(True),
-            Monte                = cms.bool(True),
+            Monte                = cms.bool(not isData),
             Debug                = cms.bool(False),
 
                 ### added in 2010 ###
             DoHeavyIon           = cms.untracked.bool(True),
-            DoMC           = cms.untracked.bool(True),
-            DoAlCa           = cms.untracked.bool(True),
-            DoTracks           = cms.untracked.bool(True),
-            DoVertex           = cms.untracked.bool(True),
-            DoJets           = cms.untracked.bool(True),
+            DoMC           = cms.untracked.bool(not isData),
+            DoAlCa           = cms.untracked.bool(False),
+            DoTracks           = cms.untracked.bool(False),
+            DoVertex           = cms.untracked.bool(False),
+            DoJets           = cms.untracked.bool(False),
 
                 ### MCTruth
             DoParticles          = cms.untracked.bool(False),
@@ -126,13 +129,13 @@ process.hltanalysis.RunParameters = cms.PSet(
             DoVerticesByParticle = cms.untracked.bool(False),
 
                 ### Egamma
-            DoPhotons            = cms.untracked.bool(True),
+            DoPhotons            = cms.untracked.bool(False),
             DoElectrons          = cms.untracked.bool(False),
-            DoSuperClusters      = cms.untracked.bool(True),
+            DoSuperClusters      = cms.untracked.bool(False),
 
                 ### Muon
-            DoMuons            = cms.untracked.bool(True),
-            DoL1Muons            = cms.untracked.bool(True),
+            DoMuons            = cms.untracked.bool(False),
+            DoL1Muons            = cms.untracked.bool(False),
             DoL2Muons            = cms.untracked.bool(False),
             DoL3Muons            = cms.untracked.bool(False),
             DoOfflineMuons       = cms.untracked.bool(False),
@@ -154,16 +157,11 @@ process.TFileService = cms.Service('TFileService',
     )
 
 # Schedule the whole thing
-if (MENU == "HIon"):
-    print "menu HIon"
-    process.schedule = cms.Schedule(
-	process.DoHLTHIJets,
-	process.DoHLTHIPhoton,
-	process.analyzeThis)
-
-from L1Trigger.Configuration.L1Trigger_custom import customiseL1Menu
-process=customiseL1Menu(process)
-process.l1conddb.connect = "sqlite_file:./L1Menu_CollisionsHeavyIons2010_v0_mc.db"
+print "menu HIon"
+process.schedule = cms.Schedule(
+      process.DoHLTHIJets,
+      process.DoHLTHIPhoton,
+      process.analyzeThis)
 
 #########################################################################################
 #
