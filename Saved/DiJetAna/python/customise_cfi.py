@@ -25,6 +25,7 @@ def loadCentralityDB(process,centTag):
 
 
 def enableRECO(process,mode="MC",type="HI"):
+  process.reco_extra = cms.Sequence()
   if type=="HI":
     # pat jet
     process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
