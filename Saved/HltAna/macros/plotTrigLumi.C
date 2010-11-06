@@ -16,12 +16,12 @@ TH1D * plotOne(TTree * oh, Int_t runNum, TString trig,Int_t maxLumi,TString opt=
 
   TString histName = "hTrigLumi_"+trig;
   Int_t numBins = maxLumi/10.;
-  TH1D * hLumi = new TH1D(histName,trig+";Lumi Section;# Events/Lumi",numBins,0,maxLumi);
+  TH1D * hLumi = new TH1D(histName,trig+";Lumi Section;dN^{Evt}/d(LumiSec)",numBins,0,maxLumi);
   TString evtSel(Form("Run==%d&&%s",runNum,trig.Data()));
   cout << evtSel << endl;
   cout << " # of events: " << oh->Draw("LumiBlock>>"+histName,evtSel,opt) << endl;
   hLumi->Scale(1./hLumi->GetBinWidth(1));
-  hLumi->SetMinimum(1e-4);
+  hLumi->SetMinimum(1e-3);
   //hLumi->SetMaximum(hLumi->GetMaximum()*1.6);
   if (trig.Contains("NotBsc2")) {
     hLumi->SetMarkerColor(kBlue);
@@ -41,9 +41,10 @@ TH1D * plotOne(TTree * oh, Int_t runNum, TString trig,Int_t maxLumi,TString opt=
   return hLumi;
 }
 
-void plotTrigLumi(TString infiles0="hltana*.root",
+void plotTrigLumi(
+    TString infiles0="~/scratch02/data/HIAllPhysics/HR10All-PR1-v0/*.root",
     Int_t runNum = 150063,
-    TString outdir="out/trigLumi")
+    TString outdir="out/HR10All-PR1-v0")
 {
   gStyle->SetTitleColor(1);
   TChain * oh = new TChain("hltanalysis/HltTree");
@@ -77,7 +78,7 @@ void plotTrigLumi(TString infiles0="hltana*.root",
     TH1D * hLumiVetoBsc2 = plotOne(oh,runNum,trigVetoBsc2,maxLumi,"p same");
     TH1D * hLumiBptxVetoBsc2 = plotOne(oh,runNum,trigBptxVetoBsc2,maxLumi,"p same");
     // Clarify Plot
-    TLegend *l= new TLegend(0.19,0.17,0.86,0.35);
+    TLegend *l= new TLegend(0.185,0.17,0.92,0.35);
     l->SetHeader(Form("Run %d",runNum));
     if (hLumi) l->AddEntry(hLumi,trigs[i],"L");
     if (hLumiBptx) l->AddEntry(hLumiBptx,trigBptx,"Lp");
