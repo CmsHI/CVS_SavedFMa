@@ -151,6 +151,10 @@ process.hltanalysis.hltresults = cms.InputTag( 'TriggerResults','',WhichHLTProce
 process.hltanalysis.HLTProcessName = WhichHLTProcess
 process.hltanalysis.ht = "hltJet30Ht"
 process.hltanalysis.genmet = "genMetTrue"
+# rec objects
+process.hltanalysis.recjets  = "iterativeConePu5CaloJets"
+process.hltanalysis.BarrelPhoton = "correctedIslandBarrelSuperClusters"
+process.hltanalysis.EndcapPhoton = "correctedIslandEndcapSuperClusters"
 
 # TFile service output
 process.TFileService = cms.Service('TFileService',
