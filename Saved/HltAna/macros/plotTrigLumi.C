@@ -66,18 +66,18 @@ void plotTrigLumi(TString infiles0="hltana*.root",
 
   Int_t maxLumi = oh->GetMaximum("LumiBlock");
   for (UInt_t i=0; i<trigs.size(); ++i) {
+    if (maxLumi<0.001) continue;
     TCanvas * cLumi = new TCanvas("c"+trigs[i],"c"+trigs[i],500,500);
+    cLumi->SetLogy();
     TString trigBptx(trigs[i]+"_BptxAND");
     TString trigVetoBsc2(trigs[i]); trigVetoBsc2.ReplaceAll("L1","L1_NotBsc2");
     TString trigBptxVetoBsc2(trigs[i]); trigBptxVetoBsc2.ReplaceAll("L1","L1_NotBsc2_BptxAND");
     TH1D * hLumi = plotOne(oh,runNum,trigs[i],maxLumi,"hist");
-    if (hLumi->GetEntries()==0) continue;
     TH1D * hLumiBptx = plotOne(oh,runNum,trigBptx,maxLumi,"p same");
     TH1D * hLumiVetoBsc2 = plotOne(oh,runNum,trigVetoBsc2,maxLumi,"p same");
     TH1D * hLumiBptxVetoBsc2 = plotOne(oh,runNum,trigBptxVetoBsc2,maxLumi,"p same");
     // Clarify Plot
-    cLumi->SetLogy();
-    TLegend *l= new TLegend(0.24,0.17,0.86,0.35);
+    TLegend *l= new TLegend(0.19,0.17,0.86,0.35);
     l->SetHeader(Form("Run %d",runNum));
     if (hLumi) l->AddEntry(hLumi,trigs[i],"L");
     if (hLumiBptx) l->AddEntry(hLumiBptx,trigBptx,"Lp");
