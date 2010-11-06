@@ -4,8 +4,9 @@
   // in your rootlogon.C, the CMS setup is executed only if the CMS
   // environment is set up.
   //
+  bool doFWLite = false;
   TString cmsswbase = getenv("CMSSW_BASE");
-  if (cmsswbase.Length() > 0) {
+  if (doFWLite && cmsswbase.Length() > 0) {
     //
     // The CMSSW environment is defined (this is true even for FW Lite)
     // so set up the rest.
