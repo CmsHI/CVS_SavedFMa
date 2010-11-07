@@ -122,7 +122,7 @@ process.hltanalysis.RunParameters = cms.PSet(
             DoAlCa           = cms.untracked.bool(False),
             DoTracks           = cms.untracked.bool(False),
             DoVertex           = cms.untracked.bool(False),
-            DoJets           = cms.untracked.bool(False),
+            DoJets           = cms.untracked.bool(True),
 
                 ### MCTruth
             DoParticles          = cms.untracked.bool(False),
@@ -130,12 +130,12 @@ process.hltanalysis.RunParameters = cms.PSet(
             DoVerticesByParticle = cms.untracked.bool(False),
 
                 ### Egamma
-            DoPhotons            = cms.untracked.bool(False),
+            DoPhotons            = cms.untracked.bool(True),
             DoElectrons          = cms.untracked.bool(False),
-            DoSuperClusters      = cms.untracked.bool(False),
+            DoSuperClusters      = cms.untracked.bool(True),
 
                 ### Muon
-            DoMuons            = cms.untracked.bool(False),
+            DoMuons            = cms.untracked.bool(True),
             DoL1Muons            = cms.untracked.bool(False),
             DoL2Muons            = cms.untracked.bool(False),
             DoL3Muons            = cms.untracked.bool(False),
