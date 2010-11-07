@@ -7,7 +7,8 @@ import os                     # For making directories
 storage  = "/castor/cern.ch/cms/store/caf/user/frankma"
 scratch = "/d101/frankma/data"
 samples  = {
-    "HR10All-PR1-v0":"HIAllPhysics"
+    #"HR10All-PR1-v0":"HIAllPhysics"
+    "HR10Exp3/r150304":"HIExpress"
     }
 
 for sample,PD in samples.items():
@@ -25,5 +26,5 @@ for sample,PD in samples.items():
       print cmd
       os.system(cmd)
     else:
-      print subfile[-1] + " already exists in '" + outdir + "' directory"
+      print file + " already exists in '" + outdir + "' directory"
 
