@@ -8,7 +8,8 @@ storage  = "/castor/cern.ch/cms/store/caf/user/frankma"
 scratch = "/d101/frankma/data"
 samples  = {
     #"HR10All-PR1-v0":"HIAllPhysics"
-    "HR10Exp3/r150304":"HIExpress"
+    "HR10Exp3/r150308":"HIExpress"
+    #"HR10Exp3/r150308HFSkim":"HIExpress"
     }
 
 for sample,PD in samples.items():
