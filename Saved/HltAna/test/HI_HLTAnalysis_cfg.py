@@ -124,7 +124,7 @@ process.hltanalysis.RunParameters = cms.PSet(
             DoMC           = cms.untracked.bool(not isData),
             DoAlCa           = cms.untracked.bool(False),
             DoTracks           = cms.untracked.bool(False),
-            DoVertex           = cms.untracked.bool(False),
+            DoVertex           = cms.untracked.bool(True),
             DoJets           = cms.untracked.bool(True),
 
                 ### MCTruth
