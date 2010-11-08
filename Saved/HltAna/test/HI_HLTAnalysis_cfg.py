@@ -107,7 +107,7 @@ process.DQMStore = cms.Service( "DQMStore",)
 process.load("HLTrigger.HLTanalyzers.HI_HLTAnalyser_cff")
 process.analyzeThis = cms.Path( process.HLTBeginSequence 
       * process.heavyIon
-      * process.siPixelRecHits
+      #* process.siPixelRecHits
       * process.hiCentrality
       * process.centralityBin
       * process.hltanalysis
