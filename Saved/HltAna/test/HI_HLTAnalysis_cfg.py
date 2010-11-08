@@ -86,6 +86,8 @@ process.HeavyIonGlobalParameters = cms.PSet(
       nonDefaultGlauberModel = cms.string("AMPT_2760GeV"),
       centralitySrc = cms.InputTag("hiCentrality")
       )
+if (isData):
+  process.HeavyIonGlobalParameters.nonDefaultGlauberModel = cms.string("")
 
 
 # OpenHLT specificss
