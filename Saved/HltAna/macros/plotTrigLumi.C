@@ -38,13 +38,16 @@ TH1D * plotOne(TTree * oh, Int_t runNum, TString trig,Int_t maxLumi,TString opt=
     hLumi->SetLineColor(kRed);
     hLumi->SetMarkerStyle(kOpenSquare);
   }
+  if (trig.Contains("5bx")) {
+    hLumi->SetLineStyle(7);
+  }
   return hLumi;
 }
 
 void plotTrigLumi(
-    TString infiles0="~/scratch02/data/HIAllPhysics/HR10All-PR1-v0/*.root",
-    Int_t runNum = 150063,
-    TString outdir="out/HR10All-PR1-v0")
+    TString infiles0="/d101/frankma/data/HIExpress/HR10Exp3/r150068/hltana_*.root",
+    Int_t runNum = 150068,
+    TString outdir="out/HR10-Exp3/r150068")
 {
   gStyle->SetTitleColor(1);
   TChain * oh = new TChain("hltanalysis/HltTree");
@@ -77,6 +80,7 @@ void plotTrigLumi(
     TH1D * hLumiBptx = plotOne(oh,runNum,trigBptx,maxLumi,"p same");
     TH1D * hLumiVetoBsc2 = plotOne(oh,runNum,trigVetoBsc2,maxLumi,"p same");
     TH1D * hLumiBptxVetoBsc2 = plotOne(oh,runNum,trigBptxVetoBsc2,maxLumi,"p same");
+    hLumiVetoBsc2=0; hLumiBptxVetoBsc2=0;
     // Clarify Plot
     TLegend *l= new TLegend(0.185,0.17,0.92,0.35);
     l->SetHeader(Form("Run %d",runNum));
