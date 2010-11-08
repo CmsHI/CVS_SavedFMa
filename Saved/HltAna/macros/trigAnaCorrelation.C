@@ -64,26 +64,33 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
   vector <double*> effs;
 
   // calculate the efficiency //   
-  effs.push_back(calcEff(HltTree,"AllPhysics",nEvt,Form("(%s)&&1==1",cut)));
+  effs.push_back(calcEff(HltTree,"GoodLumi",nEvt,Form("(%s)&&1==1",cut)));
   if (anaMode=="L1MB") {
-    // -- unprotected --
-    effs.push_back(calcEff(HltTree,"L1_BscMinBiasThreshold1",nEvt,Form("(%s)&&L1_BscMinBiasThreshold1",cut)));
-    effs.push_back(calcEff(HltTree,"L1_HcalHfCoincidencePm",nEvt,Form("(%s)&&L1_HcalHfCoincidencePm",cut)));
-    effs.push_back(calcEff(HltTree,"L1_ETT30",nEvt,Form("(%s)&&L1_ETT30",cut)));
-    effs.push_back(calcEff(HltTree,"L1_ZdcCaloPlus_ZdcCaloMinus",nEvt,Form("(%s)&&L1_ZdcCaloPlus_ZdcCaloMinus",cut)));
-    // -- protected w/ bptx --
-    effs.push_back(calcEff(HltTree,"L1_BscMinBiasOR_BptxAND",nEvt,Form("(%s)&&L1_BscMinBiasOR_BptxAND",cut)));
+    // BSC Coinc
+    effs.push_back(calcEff(HltTree,"L1_BscMinBiasThreshold1_5bx",nEvt,Form("(%s)&&L1_BscMinBiasThreshold1",cut)));
     effs.push_back(calcEff(HltTree,"L1_BscMinBiasThreshold1_BptxAND",nEvt,Form("(%s)&&L1_BscMinBiasThreshold1_BptxAND",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_NotBsc2_BptxAND_BscMinBiasThreshold1",nEvt,Form("(%s)&&L1_NotBsc2_BptxAND_BscMinBiasThreshold1",cut)));
+    // HF Coinc
+    effs.push_back(calcEff(HltTree,"L1_HcalHfCoincidencePm_5bx",nEvt,Form("(%s)&&L1_HcalHfCoincidencePm",cut)));
     effs.push_back(calcEff(HltTree,"L1_HcalHfCoincidencePm_BptxAND",nEvt,Form("(%s)&&L1_HcalHfCoincidencePm_BptxAND",cut)));
-    effs.push_back(calcEff(HltTree,"L1_ZdcCaloPlus_ZdcCaloMinus_BptxAND",nEvt,Form("(%s)&&L1_ZdcCaloPlus_ZdcCaloMinus_BptxAND",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_NotBsc2_BptxAND_HcalHfCoincidencePm",nEvt,Form("(%s)&&L1_NotBsc2_BptxAND_HcalHfCoincidencePm",cut)));
+    // ZDC
+    effs.push_back(calcEff(HltTree,"L1_ZdcCaloPlus_ZdcCaloMinus",nEvt,Form("(%s)&&L1_ZdcCaloPlus_ZdcCaloMinus",cut)));
+    // High mul
+    effs.push_back(calcEff(HltTree,"L1Tech_BSC_HighMultiplicity.v0",nEvt,Form("(%s)&&L1Tech_BSC_HighMultiplicity.v0",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_BscMinBiasThreshold1",nEvt,Form("(%s)&&L1_BscMinBiasThreshold1",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_HcalHfCoincidencePm",nEvt,Form("(%s)&&L1_HcalHfCoincidencePm",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_ETT30",nEvt,Form("(%s)&&L1_ETT30",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_SingleJet20",nEvt,Form("(%s)&&L1_SingleJet20",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_SingleEG8",nEvt,Form("(%s)&&L1_SingleEG8",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_BscMinBiasOR_BptxAND",nEvt,Form("(%s)&&L1_BscMinBiasOR_BptxAND",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_ZdcCaloPlus_ZdcCaloMinus_BptxAND",nEvt,Form("(%s)&&L1_ZdcCaloPlus_ZdcCaloMinus_BptxAND",cut)));
     // -- protected w/ bsc2 veto --
-    effs.push_back(calcEff(HltTree,"L1_NotBsc2_BscMinBiasOR",nEvt,Form("(%s)&&L1_NotBsc2_BscMinBiasOR",cut)));
-    effs.push_back(calcEff(HltTree,"L1_NotBsc2_BscMinBiasThreshold1",nEvt,Form("(%s)&&L1_NotBsc2_BscMinBiasThreshold1",cut)));
-    effs.push_back(calcEff(HltTree,"L1_NotBsc2_HcalHfCoincidencePm",nEvt,Form("(%s)&&L1_NotBsc2_HcalHfCoincidencePm",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_NotBsc2_BscMinBiasOR",nEvt,Form("(%s)&&L1_NotBsc2_BscMinBiasOR",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_NotBsc2_BscMinBiasThreshold1",nEvt,Form("(%s)&&L1_NotBsc2_BscMinBiasThreshold1",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_NotBsc2_HcalHfCoincidencePm",nEvt,Form("(%s)&&L1_NotBsc2_HcalHfCoincidencePm",cut)));
     // -- protected w/ bptx and bsc2 veto --
-    effs.push_back(calcEff(HltTree,"L1_NotBsc2_BptxAND_BscMinBiasOR",nEvt,Form("(%s)&&L1_NotBsc2_BptxAND_BscMinBiasOR",cut)));
-    effs.push_back(calcEff(HltTree,"L1_NotBsc2_BptxAND_BscMinBiasThreshold1",nEvt,Form("(%s)&&L1_NotBsc2_BptxAND_BscMinBiasThreshold1",cut)));
-    effs.push_back(calcEff(HltTree,"L1_NotBsc2_BptxAND_HcalHfCoincidencePm",nEvt,Form("(%s)&&L1_NotBsc2_BptxAND_HcalHfCoincidencePm",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_NotBsc2_BptxAND_BscMinBiasOR",nEvt,Form("(%s)&&L1_NotBsc2_BptxAND_BscMinBiasOR",cut)));
   }
   if (anaMode=="HLTMB") {
     effs.push_back(calcEff(HltTree,"HLT_HIL1Algo_Unprotected",nEvt,Form("(%s)&&HLT_HIL1Algo_Unprotected",cut)));
@@ -154,11 +161,11 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
 }
 
 void trigAnaCorrelation(
-    TString inFile0Name="~/scratch02/data/HIAllPhysics/HR10All-PR1-v0/hltana_24*.root",
-    TString mode="HLTMB", // L1MB, L1Algo, HLTMB, HLTAlgo
-    TString outdir = "out/HR10All-PR1-v0",
-    Int_t runNum = 150063,
-    char *projectTitle = "AllPhysics2010",
+    TString inFile0Name="/d101/frankma/data/HIAllPhysics/HR10AllPR2/r150305/hltana_*.root",
+    TString mode="L1MB", // L1MB, L1Algo, HLTMB, HLTAlgo
+    TString outdir="out/HR10AllPR2/r150305",
+    Int_t runNum = 150305,
+    char *projectTitle = "HIAllPhy2010",
     string source="data")
 {
   // Load input
@@ -168,7 +175,7 @@ void trigAnaCorrelation(
   anaMode=mode;
 
   // Define Output
-  outdir+=Form("/run%d",runNum);
+  outdir+=Form("/run%d_%s",runNum,anaMode.Data());
   gSystem->mkdir(outdir.Data(),kTRUE);
   goutdir=outdir;
   TFile *outf = new TFile(Form("%s/%s_hist.root",outdir.Data(),projectTitle),"RECREATE");
@@ -176,11 +183,11 @@ void trigAnaCorrelation(
   // define event types
   vector<string> evtType;
   vector<string> evtTypeCut;
-  evtType.push_back("AllPhysics"); evtTypeCut.push_back("1==1");
+  evtType.push_back("GoodLumi"); evtTypeCut.push_back("LumiBlock>2&&LumiBlock<124");
   if (source=="mc") {
   }
   else if (source=="data") {
-    for (UInt_t i=0; i<evtTypeCut.size(); ++i) evtTypeCut[i]+=Form("&&Run==%d",runNum);
+    for (UInt_t i=0; i<evtTypeCut.size(); ++i) evtTypeCut[i]+=Form("&&LumiBlock>2&&LumiBlock<140&&Run==%d",runNum);
   }
 
   // Print out event type fractions

@@ -17,11 +17,11 @@ void clearXErrorBar(TGraphAsymmErrors * gr)
 
 void compareTrig(
     bool doCompare=0,
-    TString outdir = "out/Compare/Hydj_HiL1",
-    TString fname1 = "out/Hydj_HiL1/cerHI_HLT_Test391_V0/Hydjet2760GeV_hist.root",
-    TString histName1 = "hAll_ct",
-    TString fname2 = "out/Hydj_HiL1/cerHI_HLT_Test391_V0/Hydjet2760GeV_hist.root",
-    TString histName2 = "hAll_ct"
+    TString outdir="out/Compare/HR10AllPR2/r150305",
+    TString fname1 = "out/HR10AllPR2/r150305/run150305_L1MB/HIAllPhy2010_hist.root",
+    TString histName1 = "hGoodLumi_ct",
+    TString fname2 = "out/HR10AllPR2/r150305/run150305_L1MB/HIAllPhy2010_hist.root",
+    TString histName2 = "hGoodLumi_ct"
     )
 {
   // Inputs
@@ -110,6 +110,7 @@ void compareTrig(
       l->AddEntry(mcErr,"MC","LP");
     }
     l->SetFillColor(0);
+    l->SetFillStyle(0);
     l->SetLineColor(0);
     l->SetTextSize(0.035);
     l->Draw();

@@ -1,11 +1,14 @@
-void plotTrig5Bx(Int_t runNum=150308)
+TChain * plotTrig5Bx(Int_t runNum=150308,
+    TString trig = "L1_BscMinBiasThreshold1_BptxAND"
+    )
 {
   TChain * oh = new TChain("hltanalysis/HltTree");
   oh->Add(Form("/d101/frankma/data/HIExpress/HR10Exp3/r%d/hltana_*.root",runNum));
-  oh->Draw("LumiBlock>>hLumi","L1_BscMinBiasThreshold1_BptxAND","goff");
-  oh->Draw("LumiBlock>>hLumi5Bx","L1_BscMinBiasThreshold1_BptxAND_5bx","goff");
+  cout << "oh: # events " << oh->GetEntries() << endl;
+  oh->Draw("LumiBlock>>hLumi",trig,"goff");
+  oh->Draw("LumiBlock>>hLumi5Bx",trig+"_5bx","goff");
   hLumi5Bx->SetXTitle("Lumi Section");
-  hLumi5Bx->SetYTitle("L1_BscMinBiasThreshold1_BptxAND");
+  hLumi5Bx->SetYTitle("# Events");
   hLumi->SetLineColor(2);
   hLumi5Bx->SetMinimum(0.1);
   TCanvas * cLumi = new TCanvas("cLumi","cLumi",500,500);
@@ -19,4 +22,6 @@ void plotTrig5Bx(Int_t runNum=150308)
   //l->SetFillStyle(0);;
   l->SetFillColor(0);;
   l->Draw();
+
+  return oh;
 }
