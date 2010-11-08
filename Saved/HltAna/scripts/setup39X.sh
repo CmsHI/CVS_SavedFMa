@@ -9,6 +9,3 @@ sed -i 's/_OR_BXes=false/_OR_BXes=true/' HLTrigger/HLTanalyzers/src/HLTInfo.cc
 
 # Centrality
 ./CmsHi/Analysis2010/scripts/setup.sh
-
-rm -rf RecoHI/HiCentralityAlgos
-cvs co RecoHI/HiCentralityAlgos
