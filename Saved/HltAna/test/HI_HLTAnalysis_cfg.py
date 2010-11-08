@@ -79,6 +79,8 @@ process.load('Configuration/StandardSequences/MagneticField_38T_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load('Configuration/StandardSequences/SimL1Emulator_cff')
 process.GlobalTag.globaltag = GLOBAL_TAG
+
+# Centrality
 from CmsHi.Analysis2010.CommonFunctions_cff import *
 overrideCentrality(process)
 process.HeavyIonGlobalParameters = cms.PSet(
@@ -88,7 +90,6 @@ process.HeavyIonGlobalParameters = cms.PSet(
       )
 if (isData):
   process.HeavyIonGlobalParameters.nonDefaultGlauberModel = cms.string("")
-
 
 # OpenHLT specificss
 # Define the HLT reco paths
@@ -158,6 +159,17 @@ process.hltanalysis.recjets  = "iterativeConePu5CaloJets"
 process.hltanalysis.BarrelPhoton = "correctedIslandBarrelSuperClusters"
 process.hltanalysis.EndcapPhoton = "correctedIslandEndcapSuperClusters"
 
+# Centrality Objects
+process.hiCentrality.produceHFhits = False
+process.hiCentrality.produceHFtowers = True
+process.hiCentrality.produceEcalhits = False
+process.hiCentrality.produceBasicClusters = False
+process.hiCentrality.produceZDChits = True
+process.hiCentrality.produceETmidRapidity = False
+process.hiCentrality.producePixelhits = False
+process.hiCentrality.produceTracks = False
+process.hiCentrality.producePixelTracks = False
+   
 # TFile service output
 process.TFileService = cms.Service('TFileService',
     fileName = cms.string("hltana.root")
@@ -170,8 +182,6 @@ if recoOnly:
    process.analyzeThis.remove(process.HLTBeginSequence)
    process.hltanalysis.l1GtReadoutRecord = cms.InputTag( 'gtDigis','',"RECO")
 
-process.hiCentrality.producePixelTracks = False
-   
 print "menu HIon"
 process.schedule = cms.Schedule(
     #  process.DoHLTHIJets,
