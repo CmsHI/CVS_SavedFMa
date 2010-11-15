@@ -6,7 +6,8 @@ from Saved.DiJetAna.dijetAna_cfi import *
 djcalokt4 = djcalo.clone(
     jetsrc = cms.InputTag("kt4patJets"),
     #doFJL1Corr = cms.bool(True),
-    refjetsrc = cms.InputTag("kt4patJets")
+    refjetsrc = cms.InputTag("kt4patJets"),
+    nearJetPtMin = cms.double(80)
     )
 
 djcaloak5 = djcalokt4.clone(

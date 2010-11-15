@@ -54,7 +54,21 @@ from Saved.DiJetAna.customise_cfi import *
 #enablePp(process,"PpRECO") # options: "PpRECO", "HIRECO"
 enableData(process)
 #process.reco_extra*=process.allTracks
+
+# HLT Ana
 enableOpenHlt(process,process.dijetAna_seq,isData)
+process.iterativeConePu5CaloJetsOldAlgo = process.iterativeConePu5CaloJets.clone(
+   subtractorName = cms.string( "JetOffsetCorrector" )
+)
+process.hltanalysisOldAlgo = process.hltanalysis.clone(
+   recjets = cms.InputTag("iterativeConePu5CaloJetsOldAlgo")
+)
+process.dijetAna_seq*=process.iterativeConePu5CaloJetsOldAlgo
+process.dijetAna_seq*=process.hltanalysisOldAlgo
+
+# FJ
+process.dijetAna_seq*=process.djcaloak5
+process.dijetAna_seq*=process.djcalokt4
 
 #process.reco = cms.Path( process.eventSelection * process.reco_extra )
 process.ana  = cms.Path( process.eventSelection * process.dijetAna_seq )
