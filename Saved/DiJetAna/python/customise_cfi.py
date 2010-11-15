@@ -12,18 +12,6 @@ def loadCentralityDB(process,centTag):
 	)
       )
 
-  #  process.load("CondCore.DBCommon.CondDBCommon_cfi")
-#  process.CondDBCommon.connect = "sqlite_file:/net/hisrv0001/home/frankma/work/HI/jet/sw/Y1JAna_CMSSW_3_8_4/src/RecoHI/HiCentralityAlgos/data/CentralityTables.db"
-#  process.PoolDBESSource = cms.ESSource("PoolDBESSource",
-#      process.CondDBCommon,
-#      toGet = cms.VPSet(
-#	cms.PSet(record = cms.string('HeavyIonRcd'),
-#	  tag = cms.string(centTag)
-#	  )
-#	)
-#      )
-
-
 def enableRECO(process,mode="MC",type="HI"):
   process.reco_extra = cms.Sequence()
   if type=="HI":
@@ -68,6 +56,23 @@ def enablePp(process,recoMode="PpRECO"):
   process.djcalo_genp.trksrc = "genParticles"
   process.djgen.jetsrc = "ak5GenJets"
   process.djgen.trksrc = "genParticles"
+
+def enableOpenHlt(process, seq, isData=True):
+  process.load("HLTrigger.HLTanalyzers.HI_HLTAnalyser_cff")
+  process.hltanalysis.RunParameters.Debug = False
+  process.hltanalysis.RunParameters.UseTFileService = True
+  process.hltanalysis.RunParameters.Monte = (not isData)
+  process.hltanalysis.RunParameters.DoMC = (not isData)
+  process.hltanalysis.RunParameters.DoJets = True
+  process.hltanalysis.RunParameters.DoPhotons = True
+  process.hltanalysis.RunParameters.DoSuperClusters = True
+  process.hltanalysis.recjets  = "iterativeConePu5CaloJets"
+  process.hltanalysis.BarrelPhoton = "correctedIslandBarrelSuperClusters"
+  process.hltanalysis.EndcapPhoton = "correctedIslandEndcapSuperClusters"
+  process.hltanalysis.l1GtReadoutRecord = cms.InputTag("gtDigis")
+  # add to seq
+  seq*=process.centralityBin
+  seq*=process.hltanalysis
 
 ### If Data
 def enableData(process):

@@ -3,6 +3,9 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("DJAna")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
+process.load('Configuration/StandardSequences/GeometryExtended_cff')
+process.load('Configuration/StandardSequences/MagneticField_38T_cff')
+process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Saved.DiJetAna.eventSelection_cff")
 process.load("Saved.DiJetAna.ExtraReco_cff")
 process.load("Saved.DiJetAna.dijetAna_cff")
@@ -15,11 +18,22 @@ process.source = cms.Source("PoolSource",
       )
     )
 
+# ===== Top Level =====
+process.GlobalTag.globaltag = "GR10_P_V12::All"
+isData=True
+
 # ===== Centrality =====
-from Saved.DiJetAna.customise_cfi import *
-#loadCentralityDB(process,'HFhits40_DataJulyExercise_AMPT2760GeV_MC_37Y_V5_ZS_v0')
-#loadCentralityDB(process,'HFhits40_MC_Hydjet2760GeV_MC_3XY_V24_v0')
-#loadCentralityDB(process,'CentralityTable_HFhits40_Hydjet2760GeV_v0_mc')
+from CmsHi.Analysis2010.CommonFunctions_cff import *
+overrideCentrality(process)
+process.HeavyIonGlobalParameters = cms.PSet(
+    centralityVariable = cms.string("HFhits"),
+    nonDefaultGlauberModel = cms.string("AMPT_organ_2760GeV"),
+    centralitySrc = cms.InputTag("hiCentrality")
+    )
+if (isData):
+  process.HeavyIonGlobalParameters.nonDefaultGlauberModel = cms.string("")
+
+
 
 # === Sample specific configs ===
 for i,m in enumerate([process.djcalo,
@@ -28,9 +42,6 @@ for i,m in enumerate([process.djcalo,
   process.djgen]):
   #m.hltsrc = cms.InputTag("TriggerResults","","HISIGNAL")
   print i, "hlt: ", m.hltsrc
-process.djcalo.trksrc = "hiSelectedTracks"
-process.djcalo.anaTrkType = 2
-process.djgen.jetsrc = "ak5HiGenJets"
 
 anaOutName = "dj_%s.root" % (process.djcalo.jetsrc.value())
 process.TFileService = cms.Service('TFileService',
@@ -38,12 +49,15 @@ process.TFileService = cms.Service('TFileService',
     )
 
 # =============== Final Paths =====================
+from Saved.DiJetAna.customise_cfi import *
 #enableRECO(process,"MC","pp")
-enablePp(process,"PpRECO") # options: "PpRECO", "HIRECO"
+#enablePp(process,"PpRECO") # options: "PpRECO", "HIRECO"
 enableData(process)
 #process.reco_extra*=process.allTracks
+enableOpenHlt(process,process.dijetAna_seq,isData)
 
-process.reco = cms.Path( process.eventSelection * process.reco_extra )
+#process.reco = cms.Path( process.eventSelection * process.reco_extra )
 process.ana  = cms.Path( process.eventSelection * process.dijetAna_seq )
 
-process.schedule = cms.Schedule(process.reco,process.ana)
+#process.schedule = cms.Schedule(process.reco,process.ana)
+process.schedule = cms.Schedule(process.ana)

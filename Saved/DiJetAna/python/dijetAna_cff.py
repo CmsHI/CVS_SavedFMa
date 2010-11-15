@@ -5,10 +5,8 @@ from Saved.DiJetAna.dijetAna_cfi import *
 # different jet reco - mc
 djcalokt4 = djcalo.clone(
     jetsrc = cms.InputTag("kt4patJets"),
-    doFJL1Corr = cms.bool(True),
-    refjetsrc = cms.InputTag("kt4patJets"),
-    trksrc = cms.InputTag("allTracks"),
-    anaTrkType = cms.int32(3)
+    #doFJL1Corr = cms.bool(True),
+    refjetsrc = cms.InputTag("kt4patJets")
     )
 
 djcaloak5 = djcalokt4.clone(
