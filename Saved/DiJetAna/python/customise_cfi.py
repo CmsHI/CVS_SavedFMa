@@ -75,13 +75,16 @@ def enableOpenHlt(process, seq, isData=True):
   seq*=process.hltanalysis
 
 ### If Data
-def enableData(process):
+def enableData(process,dataType="HI"):
   process.dijetAna_seq.remove(process.djcalo_genp)
   process.dijetAna_seq.remove(process.djgen)
   for m in [process.djcalo,process.djcalo_tower,process.djcaloak5,process.djcalokt4]:
     m.hltsrc = cms.InputTag("TriggerResults","","HLT")
     m.isMC = False
     m.refJetType = -1
+  if dataType=="HI":
+    process.eventSelection*=process.L1HfOrBscCoinc
+    process.eventSelection*=process.collisionEventSelection
 
 
 ### Output levels

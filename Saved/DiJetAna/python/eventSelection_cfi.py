@@ -16,10 +16,18 @@ bscNoHalo = hltLevel1GTSeed.clone(
     L1SeedsLogicalExpression = cms.string('NOT (36 OR 37 OR 38 OR 39)')
     )
 
+L1HfOrBscCoinc = l1Filter.clone(
+    algorithms = cms.vstring("L1_BscMinBiasInnerThreshold1","L1_HcalHfCoincidencePm")
+    )
+
+
 # HI event Filters
 from RecoHI.HiCentralityAlgos.CentralityFilter_cfi import *
 centralityFilter.centralityBase = "HF"
 centralityFilter.selectedBins = range(40)
+
+# HI Data
+from HeavyIonsAnalysis.Configuration.collisionEventSelection_cff import *
 
 # Final Filter Sequences
 triggerSelection = cms.Sequence(physDeclFilter)
