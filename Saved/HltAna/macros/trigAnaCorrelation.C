@@ -64,14 +64,15 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
   vector <double*> effs;
 
   // calculate the efficiency //   
-  effs.push_back(calcEff(HltTree,"GoodLumi",nEvt,Form("(%s)&&1==1",cut)));
+  effs.push_back(calcEff(HltTree,"All",nEvt,Form("(%s)&&1==1",cut)));
+  cout << cut << endl;
   if (anaMode=="L1MB") {
     // BSC Coinc
     effs.push_back(calcEff(HltTree,"L1_BscMinBiasThreshold1_5bx",nEvt,Form("(%s)&&L1_BscMinBiasThreshold1",cut)));
     effs.push_back(calcEff(HltTree,"L1_BscMinBiasThreshold1_BptxAND",nEvt,Form("(%s)&&L1_BscMinBiasThreshold1_BptxAND",cut)));
     //effs.push_back(calcEff(HltTree,"L1_NotBsc2_BptxAND_BscMinBiasThreshold1",nEvt,Form("(%s)&&L1_NotBsc2_BptxAND_BscMinBiasThreshold1",cut)));
     // HF Coinc
-    effs.push_back(calcEff(HltTree,"L1_HcalHfCoincidencePm_5bx",nEvt,Form("(%s)&&L1_HcalHfCoincidencePm",cut)));
+    //effs.push_back(calcEff(HltTree,"L1_HcalHfCoincidencePm_5bx",nEvt,Form("(%s)&&L1_HcalHfCoincidencePm",cut)));
     effs.push_back(calcEff(HltTree,"L1_HcalHfCoincidencePm_BptxAND",nEvt,Form("(%s)&&L1_HcalHfCoincidencePm_BptxAND",cut)));
     //effs.push_back(calcEff(HltTree,"L1_NotBsc2_BptxAND_HcalHfCoincidencePm",nEvt,Form("(%s)&&L1_NotBsc2_BptxAND_HcalHfCoincidencePm",cut)));
     // ZDC
@@ -161,21 +162,33 @@ void printEff(TTree* HltTree,const char *cut,const char *title, char *projectTit
 }
 
 void trigAnaCorrelation(
-    TString inFile0Name="/d101/frankma/data/HIAllPhysics/HR10AllPR2/r150305/hltana_*.root",
     TString mode="L1MB", // L1MB, L1Algo, HLTMB, HLTAlgo
-    TString outdir="out/HR10AllPR2/r150305",
-    Int_t runNum = 150305,
+    //TString inFile0Name="/d101/frankma/data/HIAllPhysics/HR10AllPR2/r150471/hltana_*.root",
+    //TString outdir="out/HR10AllPR2/r150471",
+    Int_t runNum = 150476,
+    Int_t goodLumiStart = 20,
+    TString inFile0Name="/d101/frankma/data/HIAllPhysics/HR10AllPR2/r150476v2/hltana_*.root",
+    TString outdir="out/HR10AllPR2",
+    //Int_t runNum = 150431,
+    //Int_t goodLumiStart = 130,
     char *projectTitle = "HIAllPhy2010",
+    //TString inFile0Name="/d101/frankma/data/HIExpress/HR10Exp3/r150476/hltana_*.root",
+    //TString outdir="out/HR10Exp3/r150476",
+    //Int_t runNum = 150476,
+    //Int_t goodLumiStart = 400,
+    //char *projectTitle = "HIExpPhy2010",
     string source="data")
 {
   // Load input
   TChain * HltTree = new TChain("hltanalysis/HltTree","HI OpenHLT Tree");
   HltTree->Add(inFile0Name);
+  cout << inFile0Name << endl;
   cout << " # entries: " << HltTree->GetEntries() << endl;
   anaMode=mode;
 
   // Define Output
-  outdir+=Form("/run%d_%s",runNum,anaMode.Data());
+  TString evtSel("L1Tech_BPTX_plus_AND_minus.v0_5bx");
+  outdir+=Form("/run%d_%s_%s",runNum,anaMode.Data(),evtSel.Data());
   gSystem->mkdir(outdir.Data(),kTRUE);
   goutdir=outdir;
   TFile *outf = new TFile(Form("%s/%s_hist.root",outdir.Data(),projectTitle),"RECREATE");
@@ -183,11 +196,11 @@ void trigAnaCorrelation(
   // define event types
   vector<string> evtType;
   vector<string> evtTypeCut;
-  evtType.push_back("GoodLumi"); evtTypeCut.push_back("LumiBlock>2&&LumiBlock<124");
+  evtType.push_back("BptxAND"); evtTypeCut.push_back(evtSel.Data());
   if (source=="mc") {
   }
   else if (source=="data") {
-    for (UInt_t i=0; i<evtTypeCut.size(); ++i) evtTypeCut[i]+=Form("&&LumiBlock>2&&LumiBlock<140&&Run==%d",runNum);
+    for (UInt_t i=0; i<evtTypeCut.size(); ++i) evtTypeCut[i]+=Form("&&Run==%d&&LumiBlock>%d",runNum,goodLumiStart);
   }
 
   // Print out event type fractions
