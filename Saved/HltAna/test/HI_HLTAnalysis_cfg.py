@@ -7,7 +7,7 @@ isData=1 # =1 running on real data, =0 running on MC
 recoOnly=True
 
 OUTPUT_HIST='openhlt.root'
-NEVTS=10
+NEVTS=1000
 MENU="HIon" # LUMI8e29 or LUMI1e31 for pre-38X MC, or GRun for data
 isRelval=1 # =1 for running on MC RelVals, =0 for standard production MC, no effect for data 
 
@@ -65,7 +65,8 @@ process.source = cms.Source("PoolSource",
   #  'dcache:/pnfs/cmsaf.mit.edu/t2bat/cms/store/user/nart/Hydjet_Quenched_MinBias_2760GeV_STARTUP39V3_L1Menu_CollisionsHeavyIons2010_v0_391v1/Hydjet_Quenched_MinBias_2760GeV_STARTUP39V3_L1Menu_CollisionsHeavyIons2010_v0_391v1_RECO/4fa2e3ec03e211b495652e2ed26839f0/output_9_1_mJS.root'
 #   '/store/hidata/HIRun2010/HIAllPhysics/RECO/PromptReco-v1/000/150/074/A0263031-E0E8-DF11-988C-0030487CD16E.root'
 #    '/store/hidata/HIRun2010/HIAllPhysics/DQM/PromptReco-v1/000/150/095/1C45B6EC-DBE8-DF11-A0D2-0030487CD718.root'
-    '/store/hidata/HIRun2010/HIAllPhysics/RECO/PromptReco-v1/000/150/026/9CF3D839-57E8-DF11-A4BE-0030487CD812.root'
+#    '/store/hidata/HIRun2010/HIAllPhysics/RECO/PromptReco-v1/000/150/026/9CF3D839-57E8-DF11-A4BE-0030487CD812.root'
+    'rfio:/castor/cern.ch/user/e/edwenger/merge_EventDisplay_run_150431_RECO.root'
     )
 )
 
@@ -107,7 +108,7 @@ process.DQMStore = cms.Service( "DQMStore",)
 process.load("HLTrigger.HLTanalyzers.HI_HLTAnalyser_cff")
 process.analyzeThis = cms.Path( process.HLTBeginSequence 
       * process.heavyIon
-      #* process.siPixelRecHits
+      * process.siPixelRecHits
       * process.hiCentrality
       * process.centralityBin
       * process.hltanalysis
@@ -159,6 +160,16 @@ process.hltanalysis.recjets  = "iterativeConePu5CaloJets"
 process.hltanalysis.BarrelPhoton = "correctedIslandBarrelSuperClusters"
 process.hltanalysis.EndcapPhoton = "correctedIslandEndcapSuperClusters"
 
+# Jet ana
+process.iterativeConePu5CaloJetsOldAlgo = process.iterativeConePu5CaloJets.clone(
+   subtractorName = cms.string( "JetOffsetCorrector" )
+)
+process.hltanalysisOldAlgo = process.hltanalysis.clone(
+   recjets = cms.InputTag("iterativeConePu5CaloJetsOldAlgo")
+)
+process.analyzeThis*=process.iterativeConePu5CaloJetsOldAlgo
+process.analyzeThis*=process.hltanalysisOldAlgo
+
 # Centrality Objects
 process.hiCentrality.produceHFhits = False
 process.hiCentrality.produceHFtowers = True
@@ -169,6 +180,7 @@ process.hiCentrality.produceETmidRapidity = False
 process.hiCentrality.producePixelhits = False
 process.hiCentrality.produceTracks = False
 process.hiCentrality.producePixelTracks = False
+process.hiCentrality.doPixelCut = cms.bool(True)
    
 # TFile service output
 process.TFileService = cms.Service('TFileService',
@@ -186,7 +198,8 @@ print "menu HIon"
 process.schedule = cms.Schedule(
     #  process.DoHLTHIJets,
     #  process.DoHLTHIPhoton,
-      process.analyzeThis)
+   process.analyzeThis
+   )
 
 #########################################################################################
 #
