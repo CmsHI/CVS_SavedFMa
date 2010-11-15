@@ -2,7 +2,13 @@ import FWCore.ParameterSet.Config as cms
 
 from Saved.DiJetAna.dijetAna_cfi import *
 
-# different jet reco - mc
+# different jet reco
+djcaloic5 = djcalo.clone(
+    jetsrc = cms.InputTag("ic5patJets"),
+    refjetsrc = cms.InputTag("ic5patJets"),
+    nearJetPtMin = cms.double(80)
+    )
+
 djcalokt4 = djcalo.clone(
     jetsrc = cms.InputTag("kt4patJets"),
     #doFJL1Corr = cms.bool(True),
