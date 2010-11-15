@@ -50,28 +50,30 @@ process.TFileService = cms.Service('TFileService',
 
 # =============== Final Paths =====================
 from Saved.DiJetAna.customise_cfi import *
-#enableRECO(process,"MC","pp")
+# HLT Ana
+enableOpenHlt(process,process.dijetAna_seq,isData)
+process.iterativeConePu5CaloJetsJOC = process.iterativeConePu5CaloJets.clone(
+   subtractorName = cms.string( "JetOffsetCorrector" )
+)
+enableRECO(process,"Data","HI")
+process.patJetCorrFactors.jetSource = "iterativeConePu5CaloJetsJOC"
+process.patJets.jetSource = "iterativeConePu5CaloJetsJOC"
 #enablePp(process,"PpRECO") # options: "PpRECO", "HIRECO"
 enableData(process)
 #process.reco_extra*=process.allTracks
+process.eventSelection.remove(process.siPixelRecHits) # tmp fix for running on skim
+process.eventSelection.remove(process.hltPixelClusterShapeFilter) # tmp fix for running on skim
 
-# HLT Ana
-enableOpenHlt(process,process.dijetAna_seq,isData)
-process.iterativeConePu5CaloJetsOldAlgo = process.iterativeConePu5CaloJets.clone(
-   subtractorName = cms.string( "JetOffsetCorrector" )
-)
-process.hltanalysisOldAlgo = process.hltanalysis.clone(
-   recjets = cms.InputTag("iterativeConePu5CaloJetsOldAlgo")
-)
-process.dijetAna_seq*=process.iterativeConePu5CaloJetsOldAlgo
-process.dijetAna_seq*=process.hltanalysisOldAlgo
+process.djcaloJOC = process.djcalo.clone(jetsrc="patJets")
+process.dijetAna_seq*=process.djcaloJOC
 
 # FJ
+process.dijetAna_seq*=process.djcaloic5
 process.dijetAna_seq*=process.djcaloak5
 process.dijetAna_seq*=process.djcalokt4
 
-#process.reco = cms.Path( process.eventSelection * process.reco_extra )
+process.reco = cms.Path( process.eventSelection * process.iterativeConePu5CaloJetsJOC * process.reco_extra )
 process.ana  = cms.Path( process.eventSelection * process.dijetAna_seq )
 
-#process.schedule = cms.Schedule(process.reco,process.ana)
-process.schedule = cms.Schedule(process.ana)
+process.schedule = cms.Schedule(process.reco,process.ana)
+#process.schedule = cms.Schedule(process.ana)
