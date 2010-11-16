@@ -11,7 +11,7 @@ inputDir=$1
 inputFile=$2
 outputDir=$3
 maxEvents=$4
-swenv=/net/hibat0003/d00/scratch/frankma/HI/jet/Y1JAna_CMSSW_3_8_4/env.sh
+swenv=/net/hibat0003/d00/scratch/frankma/HI/jet/Y1JAna_CMSSW_3_9_2_patch5/env.sh
 
 # check
 if [ ! -e $cfg ]; then
