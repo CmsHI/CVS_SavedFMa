@@ -8,7 +8,7 @@ djcalo = cms.EDAnalyzer('DiJetAna',
     vtxsrc = cms.InputTag("hiSelectedVertex"),
     hltsrc = cms.InputTag("TriggerResults","","HLT"),
     hltNames = cms.untracked.vstring(
-      "HLT_HIMinBiasHfOrBSC",
+      "HLT_HIMinBiasHfOrBSC_Core",
       "HLT_HIJet35U_Core",
       "HLT_HIJet50U_Core",
       "HLT_HIJet75U_Core",
