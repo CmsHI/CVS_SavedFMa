@@ -27,13 +27,13 @@ TH2D * plot2D(TTree * tr,TCut cut, TString var, TString name, TString title,Int_
 
 TH1D * plotJEt(TTree * tr, TCut cut, TString var, TString name, Int_t normType=0)
 {
-  return plot1D(tr,cut,var,name,";E_{T}^{Jet};#",80,0,200,normType);
+  return plot1D(tr,cut,var,name,";E_{T}^{Jet};#",80,0,250,normType);
 }
 
 TH2D * plotJEtCorr(TTree * tr, TCut cut, TString var, TString name, TString title, Int_t normType=0)
 {
-  TH2D * hist = plot2D(tr,cut,var,name,title,80,0,200,40,0,2);
-  TLine *l = new TLine(0,1,200,1);
+  TH2D * hist = plot2D(tr,cut,var,name,title,80,0,250,40,0,2);
+  TLine *l = new TLine(0,1,250,1);
   l->SetLineStyle(2);
   TCanvas * cJEtCorr0 = new TCanvas("c"+name,"c"+name,500,500);
   cJEtCorr0->SetRightMargin(0.15);
@@ -43,7 +43,7 @@ TH2D * plotJEtCorr(TTree * tr, TCut cut, TString var, TString name, TString titl
 }
 
 TChain * compJetAlgos(
-    TString infile="../process_aod/dj_icPu5patJets_try10.root",
+    TString infile="../process_aod/dj_HCPR-J50U-151020to151076.root",
     TString header="HLT_HIJet50U"
     )
 {
@@ -56,7 +56,7 @@ TChain * compJetAlgos(
   dj->AddFriend("kt4 = djcalokt4/djTree",infile);
   cout << "Total: " << dj->GetEntries() << endl;
 
-  TCut evtSel("cent<100");
+  TCut evtSel("cent>60");
   cout << "Evt Sel: " << TString(evtSel) << ": " << dj->GetEntries(evtSel) << endl;
 
   TH1D * hJEtIc5pu = plotJEt(dj,evtSel,"nljet","hJEtIc5pu",0);
