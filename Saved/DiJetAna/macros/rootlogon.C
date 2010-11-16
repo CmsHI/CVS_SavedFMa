@@ -22,13 +22,14 @@
 
     AutoLibraryLoader::enable();
   }
-  */
+   */
 
   // include paths
   gSystem->AddIncludePath("-I$CMSSW_BASE/src/");
 
   // styles
   gROOT->Macro("$CMSSW_BASE/src/Saved/Utilities/macros/logon/rootlogon_dNdEtaBase.C+");
+  gROOT->Macro("$CMSSW_BASE/src/Saved/Utilities/macros/logon/rootcolors.C+");
   //gStyle->SetOptStat(1111);
   gStyle->SetPadLeftMargin(0.2);
 
