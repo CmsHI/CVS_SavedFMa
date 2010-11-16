@@ -55,6 +55,8 @@ enableOpenHlt(process,process.dijetAna_seq,isData)
 process.iterativeConePu5CaloJetsJOC = process.iterativeConePu5CaloJets.clone(
    subtractorName = cms.string( "JetOffsetCorrector" )
 )
+process.hltanalysisJOC = process.hltanalysis.clone(recjets = cms.InputTag("iterativeConePu5CaloJetsJOC"))
+process.dijetAna_seq*=process.hltanalysisJOC
 enableRECO(process,"Data","HI")
 process.patJetCorrFactors.jetSource = "iterativeConePu5CaloJetsJOC"
 process.patJets.jetSource = "iterativeConePu5CaloJetsJOC"
@@ -74,6 +76,12 @@ process.dijetAna_seq*=process.djcaloJOC
 process.dijetAna_seq*=process.djcaloic5
 process.dijetAna_seq*=process.djcaloak5
 process.dijetAna_seq*=process.djcalokt4
+
+# For MB
+process.dijetAna_seq.remove(process.djcalo_tower)
+for m in [process.djcalo,process.djcaloJOC,process.djcaloic5,process.djcaloak5,process.djcalokt4]:
+  m.anaTrkType = 3
+  m.trksrc = "towerMaker"
 
 process.reco = cms.Path( process.eventSelection * process.iterativeConePu5CaloJetsJOC * process.reco_extra )
 process.ana  = cms.Path( process.eventSelection * process.dijetAna_seq )
