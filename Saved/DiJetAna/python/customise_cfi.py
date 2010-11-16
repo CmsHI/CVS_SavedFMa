@@ -78,7 +78,7 @@ def enableOpenHlt(process, seq, isData=True):
 def enableData(process,dataType="HI"):
   process.dijetAna_seq.remove(process.djcalo_genp)
   process.dijetAna_seq.remove(process.djgen)
-  for m in [process.djcalo,process.djcalo_tower,process.djcaloak5,process.djcalokt4]:
+  for m in [process.djcalo,process.djcalo_tower,process.djcaloic5,process.djcaloak5,process.djcalokt4]:
     m.hltsrc = cms.InputTag("TriggerResults","","HLT")
     m.isMC = False
     m.refJetType = -1

@@ -64,7 +64,10 @@ enableData(process)
 process.eventSelection.remove(process.siPixelRecHits) # tmp fix for running on skim
 process.eventSelection.remove(process.hltPixelClusterShapeFilter) # tmp fix for running on skim
 
-process.djcaloJOC = process.djcalo.clone(jetsrc="patJets")
+process.djcaloJOC = process.djcalo.clone(
+    jetsrc="patJets",
+    nearJetPtMin = cms.double(80)
+    )
 process.dijetAna_seq*=process.djcaloJOC
 
 # FJ
