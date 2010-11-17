@@ -13,6 +13,7 @@ using namespace std;
 
 TH1D * plot1D(TTree * tr,TCut cut,TString var, TString name, TString title,Int_t nbins, Float_t min, Float_t max, Int_t normType=0)
 {
+  cout << "Sel: " << TString(cut) << ": " << tr->GetEntries(cut) << endl;
   TH1D * hist = new TH1D(name,title,nbins,min,max);
   tr->Draw(var+">>"+name,cut,"goff");
   return hist;
@@ -20,6 +21,7 @@ TH1D * plot1D(TTree * tr,TCut cut,TString var, TString name, TString title,Int_t
 
 TH2D * plot2D(TTree * tr,TCut cut, TString var, TString name, TString title,Int_t xnbins, Float_t xmin, Float_t xmax, Int_t ynbins, Float_t ymin, Float_t ymax)
 {
+  cout << "Sel: " << TString(cut) << ": " << tr->GetEntries(cut) << endl;
   TH2D * hist = new TH2D(name,title,xnbins,xmin,xmax,ynbins,ymin,ymax);
   tr->Draw(var+">>"+name,cut,"goff");
   return hist;
@@ -44,20 +46,31 @@ TH2D * plotJEtCorr(TTree * tr, TCut cut, TString var, TString name, TString titl
 
 TChain * compJetAlgos(
     TString infile="../process_aod/dj_HCPR-J50U-151020to151076.root",
-    TString header="HLT_HIJet50U"
+    TString header="HLT_HIJet50U_Core",
+    TString mbfile="../process_aod/dj_HCPR-MB-151020to151076_trigana1116.root",
+    TString mbheader="HLT_HIMinBiasHfOrBSC_Core"
     )
 {
   TChain * dj = new TChain("djcalo/djTree");
+  TChain * mbdj = new TChain("djcalo/djTree");
 
   dj->Add(infile);
   dj->AddFriend("joc = djcaloJOC/djTree",infile);
   dj->AddFriend("ic5 = djcaloic5/djTree",infile);
   dj->AddFriend("ak5 = djcaloak5/djTree",infile);
   dj->AddFriend("kt4 = djcalokt4/djTree",infile);
-  cout << "Total: " << dj->GetEntries() << endl;
+  dj->AddFriend("hltanalysis/HltTree",infile);
+  cout << "Trig Total: " << dj->GetEntries() << endl;
+  mbdj->Add(mbfile);
+  mbdj->AddFriend("joc = djcaloJOC/djTree",mbfile);
+  mbdj->AddFriend("ic5 = djcaloic5/djTree",mbfile);
+  mbdj->AddFriend("ak5 = djcaloak5/djTree",mbfile);
+  mbdj->AddFriend("kt4 = djcalokt4/djTree",mbfile);
+  mbdj->AddFriend("hltanalysis/HltTree",infile);
+  cout << "MB Total: " << mbdj->GetEntries() << endl;
 
-  TCut evtSel("cent>60");
-  cout << "Evt Sel: " << TString(evtSel) << ": " << dj->GetEntries(evtSel) << endl;
+  TCut evtSel("HLT_HIJet50U_Core && cent<100");
+  TCut evtSelMB("HLT_HIMinBiasHfOrBSC_Core && cent<100");
 
   TH1D * hJEtIc5pu = plotJEt(dj,evtSel,"nljet","hJEtIc5pu",0);
   TH1D * hJEtIc5puJOC = plotJEt(dj,evtSel,"joc.nljet","hJEtIc5puJOC",0);
