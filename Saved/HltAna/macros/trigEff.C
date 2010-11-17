@@ -51,13 +51,14 @@ TChain * trigEff(
   dj->AddFriend("kt4 = djcalokt4/djTree",infile);
   cout << "Total: " << dj->GetEntries() << endl;
 
-  TCut evtSel("hlt[0]&&cent<100");
+  TCut evtSel("hlt[0]&&cent>50");
 
-  TGraphAsymmErrors *g0=0,*g1=0,*g2=0,*g3=0;
+  TGraphAsymmErrors *g0=0,*g1=0,*g2=0,*g3=0,*g4=0;
   g0 = eff(dj,"nljet",evtSel,"hlt[2]","ic5pu");
   g1 = eff(dj,"joc.nljet",evtSel,"hlt[2]","joc");
   g2 = eff(dj,"ak5.nljet",evtSel,"hlt[2]","ak5");
   g3 = eff(dj,"kt4.nljet",evtSel,"hlt[2]","kt4");
+  g4 = eff(dj,"ic5.nljet",evtSel,"hlt[2]","ic5fj");
 
   // Draw
   TCanvas *cTrigEff = new TCanvas("cTrigEff","cTrigEff",600,600);
@@ -75,6 +76,9 @@ TChain * trigEff(
   g3->SetMarkerColor(kBlue);
   g3->SetLineColor(kBlue);
   g3->SetMarkerStyle(kOpenStar);
+  g4->SetMarkerStyle(kOrange);
+  g4->SetLineStyle(kOrange);
+  g4->SetMarkerStyle(kOpenDiamond);
   hTmp->SetAxisRange(0,1.3,"Y");
   hTmp->SetXTitle("Leading E_{T}^{Jet,Corr} [GeV]");
   hTmp->SetYTitle("Eff. (Trigger/MB)");
@@ -82,7 +86,8 @@ TChain * trigEff(
   g0->Draw("p");
   g1->Draw("p");
   g2->Draw("p");
-  g3->Draw("p");
+  //g3->Draw("p");
+  //g4->Draw("p");
   TLine *l = new TLine(0,1,bin[nBin],1);
   l->SetLineStyle(2);
   l->Draw();
@@ -94,6 +99,7 @@ TChain * trigEff(
   t->AddEntry(g0,"Ic5pu (Offline)","pl");
   t->AddEntry(g2,"Ak5","pl");
   //t->AddEntry(g3,"Kt4","pl");
+  //t->AddEntry(g4,"Ic5Fj","pl");
   t->Draw();
 
   return dj;
