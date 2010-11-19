@@ -61,8 +61,8 @@ TChain * compHltJetAlgos(
   mbdj->AddFriend("joc = hltanalysisJOC/HltTree",mbfile);
   cout << "MB Total: " << mbdj->GetEntries() << endl;
 
-  //TCut evtSel("HLT_HIJet50U_Core && hiBin*40<100");
-  TCut evtSelMB("HLT_HIMinBiasHfOrBSC_Core && hiBin*40<100");
+  //TCut evtSel("HLT_HIJet50U_Core && hiBin*2.5<100");
+  TCut evtSelMB("HLT_HIMinBiasHfOrBSC_Core && hiBin*2.5<100");
 
   TH1D * hJEtIc5pu = plotJEt(mbdj,evtSelMB,"recoJetCalPt[0]","hJEtIc5pu",0);
   TH1D * hJEtIc5puJOC = plotJEt(mbdj,evtSelMB,"joc.recoJetCalPt[0]","hJEtIc5puJOC",0);
