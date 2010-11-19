@@ -51,7 +51,7 @@ TChain * trigEff(
   dj->AddFriend("kt4 = djcalokt4/djTree",infile);
   cout << "Total: " << dj->GetEntries() << endl;
 
-  TCut evtSel("hlt[0]&&cent>50");
+  TCut evtSel("hlt[0]&&cent<100");
 
   TGraphAsymmErrors *g0=0,*g1=0,*g2=0,*g3=0,*g4=0;
   g0 = eff(dj,"nljet",evtSel,"hlt[2]","ic5pu");
