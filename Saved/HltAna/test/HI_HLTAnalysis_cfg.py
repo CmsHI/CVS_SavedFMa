@@ -4,7 +4,8 @@ import FWCore.ParameterSet.Config as cms
 
 # useful options
 isData=1 # =1 running on real data, =0 running on MC
-recoOnly=True
+recoOnly=False
+compareOnline=True
 
 OUTPUT_HIST='openhlt.root'
 NEVTS=1000
@@ -66,7 +67,8 @@ process.source = cms.Source("PoolSource",
 #   '/store/hidata/HIRun2010/HIAllPhysics/RECO/PromptReco-v1/000/150/074/A0263031-E0E8-DF11-988C-0030487CD16E.root'
 #    '/store/hidata/HIRun2010/HIAllPhysics/DQM/PromptReco-v1/000/150/095/1C45B6EC-DBE8-DF11-A0D2-0030487CD718.root'
 #    '/store/hidata/HIRun2010/HIAllPhysics/RECO/PromptReco-v1/000/150/026/9CF3D839-57E8-DF11-A4BE-0030487CD812.root'
-    'rfio:/castor/cern.ch/user/e/edwenger/merge_EventDisplay_run_150431_RECO.root'
+#'rfio:/castor/cern.ch/user/e/edwenger/merge_EventDisplay_run_150431_RECO.root'
+    '/store/express/HIRun2010/HIExpressPhysics/FEVT/Express-v4/000/151/058/E2CEB9A8-BBEF-DF11-A322-001D09F34488.root'
     )
 )
 
@@ -157,18 +159,18 @@ process.hltanalysis.ht = "hltJet30Ht"
 process.hltanalysis.genmet = "genMetTrue"
 # rec objects
 process.hltanalysis.recjets  = "iterativeConePu5CaloJets"
+process.hltanalysis.caloTowerThreshold = 0
+process.hltanalysis.calotowers = "towerMaker"
 process.hltanalysis.BarrelPhoton = "correctedIslandBarrelSuperClusters"
 process.hltanalysis.EndcapPhoton = "correctedIslandEndcapSuperClusters"
 
 # Jet ana
-process.iterativeConePu5CaloJetsOldAlgo = process.iterativeConePu5CaloJets.clone(
-   subtractorName = cms.string( "JetOffsetCorrector" )
+process.hltanalysisOnl = process.hltanalysis.clone(
+   recjets  = "hltIterativeCone5PileupSubtractionCaloJets",
+   calotowers = "hltTowerMakerForAll"
 )
-process.hltanalysisOldAlgo = process.hltanalysis.clone(
-   recjets = cms.InputTag("iterativeConePu5CaloJetsOldAlgo")
-)
-process.analyzeThis*=process.iterativeConePu5CaloJetsOldAlgo
-process.analyzeThis*=process.hltanalysisOldAlgo
+if compareOnline:
+  process.analyzeThis*=process.hltanalysisOnl
 
 # Centrality Objects
 process.hiCentrality.produceHFhits = False
@@ -196,7 +198,7 @@ if recoOnly:
 
 print "menu HIon"
 process.schedule = cms.Schedule(
-    #  process.DoHLTHIJets,
+    process.DoHLTHIJets,
     #  process.DoHLTHIPhoton,
    process.analyzeThis
    )
