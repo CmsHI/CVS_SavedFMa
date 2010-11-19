@@ -82,6 +82,7 @@ process.dijetAna_seq.remove(process.djcalo_tower)
 for m in [process.djcalo,process.djcaloJOC,process.djcaloic5,process.djcaloak5,process.djcalokt4]:
   m.anaTrkType = 3
   m.trksrc = "towerMaker"
+  m.nearJetPtMin = 80
 
 process.reco = cms.Path( process.eventSelection * process.iterativeConePu5CaloJetsJOC * process.reco_extra )
 process.ana  = cms.Path( process.eventSelection * process.dijetAna_seq )
