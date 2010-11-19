@@ -66,7 +66,7 @@ TChain * compJetAlgos(
   mbdj->AddFriend("ic5 = djcaloic5/djTree",mbfile);
   mbdj->AddFriend("ak5 = djcaloak5/djTree",mbfile);
   mbdj->AddFriend("kt4 = djcalokt4/djTree",mbfile);
-  mbdj->AddFriend("hltanalysis/HltTree",infile);
+  mbdj->AddFriend("hltanalysis/HltTree",mbinfile);
   cout << "MB Total: " << mbdj->GetEntries() << endl;
 
   TCut evtSel("HLT_HIJet50U_Core && cent<100");
