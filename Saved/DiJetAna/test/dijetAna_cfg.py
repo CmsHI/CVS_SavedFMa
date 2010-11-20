@@ -85,7 +85,7 @@ process.dijetAna_seq*=process.djcalokt4
 #  m.nearJetPtMin = 80
 
 # First look at data
-process.djcalo.nearJetPtMin = 120
+process.djcalo.nearJetPtMin = 100
 
 process.reco = cms.Path( process.eventSelection * process.dj_reco_extra )
 process.ana  = cms.Path( process.eventSelection * process.dijetAna_seq )
