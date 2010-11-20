@@ -1,3 +1,6 @@
 # cff for inclusion
 hltGetConfiguration --process TEST --unprescale --cff --offline --mc /dev/CMSSW_3_8_1/HIon/V33 > HLT_HIon_cff.py
 cp HLT_HIon_cff.py $CMSSW_BASE/src/HLTrigger/Configuration/pyton/
+
+# cfg from orcoff
+hltGetConfiguration --process TEST --unprescale --full --offline --data orcoff:/users/bdahmes/physics2010/Run2010/November/HeavyIon/v1.8/HIHLT_reload2/V2 > HIHLT_offline_data.cfg
