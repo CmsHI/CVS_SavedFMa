@@ -26,7 +26,7 @@ djcalo = cms.EDAnalyzer('DiJetAna',
     refjetsrc = cms.InputTag("icPu5patJets"), # careful: this should be same collection as anajets, if anajets is patjet
     refJetType = cms.int32(21),
     # di-jet reco
-    djDPhiMin = cms.double(0.5),
+    djDPhiMin = cms.double(3.14159/2.),
     # trk selection
     nearJetPtMin = cms.double(200), # Note: this is only for deciding whether to save the tracks in event
     trksrc = cms.InputTag("hiSelectedTracks"), # 2, hiSelectedTracks; 3, allTracks
@@ -65,7 +65,7 @@ djcalo_tower = djcalo.clone(
     # trk selection
     anaTrkType = cms.int32(3),
     trksrc = cms.InputTag("towerMaker"),
-    trkPtMin = cms.double(1.5)
+    trkPtMin = cms.double(0.7)
     )
 
 # Analysis Sequences
