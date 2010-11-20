@@ -13,20 +13,19 @@ def loadCentralityDB(process,centTag):
       )
 
 def enableRECO(process,mode="MC",type="HI"):
-  process.reco_extra = cms.Sequence()
   if type=="HI":
     # pat jet
     process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
     from PhysicsTools.PatAlgos.tools.heavyIonTools import configureHeavyIons
     configureHeavyIons(process)
-    process.reco_extra *= process.heavyIon*process.makeHeavyIonJets
+    process.dj_reco_extra *= process.heavyIon*process.makeHeavyIonJets
     if mode=="Data":
       from Saved.Skim.customise_cfi import removePatMCMatch
       removePatMCMatch(process)
-      process.reco_extra.remove(process.heavyIon)
+      process.dj_reco_extra.remove(process.heavyIon)
   if type=="pp":
     process.load('PhysicsTools.PatAlgos.patSequences_cff')
-    process.reco_extra *= process.makePatJets
+    process.dj_reco_extra *= process.makePatJets
     if mode=="Data":
       from PhysicsTools.PatAlgos.tools.coreTools import removeMCMatching
       removeMCMatching(process, ['All']) # turn off MC matching for data
@@ -71,17 +70,19 @@ def enableOpenHlt(process, seq, isData=True):
   process.hltanalysis.EndcapPhoton = "correctedIslandEndcapSuperClusters"
   process.hltanalysis.l1GtReadoutRecord = cms.InputTag("gtDigis")
   # add to seq
-  seq*=process.centralityBin
   seq*=process.hltanalysis
 
 ### If Data
-def enableData(process,dataType="HI"):
+def enableData(process):
   process.dijetAna_seq.remove(process.djcalo_genp)
   process.dijetAna_seq.remove(process.djgen)
   for m in [process.djcalo,process.djcalo_tower,process.djcaloic5,process.djcaloak5,process.djcalokt4]:
     m.hltsrc = cms.InputTag("TriggerResults","","HLT")
     m.isMC = False
     m.refJetType = -1
+
+def enableDataFilter(process,dataType="HI"):
+  process.eventSelection*=process.hiEcalRecHitSpikeFilter
   if dataType=="HI":
     process.eventSelection*=process.L1HfOrBscCoinc
     process.eventSelection*=process.collisionEventSelection

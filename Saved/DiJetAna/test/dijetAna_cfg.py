@@ -52,25 +52,25 @@ process.TFileService = cms.Service('TFileService',
 from Saved.DiJetAna.customise_cfi import *
 # HLT Ana
 enableOpenHlt(process,process.dijetAna_seq,isData)
-process.iterativeConePu5CaloJetsJOC = process.iterativeConePu5CaloJets.clone(
-   subtractorName = cms.string( "JetOffsetCorrector" )
-)
-process.hltanalysisJOC = process.hltanalysis.clone(recjets = cms.InputTag("iterativeConePu5CaloJetsJOC"))
-process.dijetAna_seq*=process.hltanalysisJOC
-enableRECO(process,"Data","HI")
-process.patJetCorrFactors.jetSource = "iterativeConePu5CaloJetsJOC"
-process.patJets.jetSource = "iterativeConePu5CaloJetsJOC"
+#process.iterativeConePu5CaloJetsJOC = process.iterativeConePu5CaloJets.clone(
+#   subtractorName = cms.string( "JetOffsetCorrector" )
+#)
+#process.hltanalysisJOC = process.hltanalysis.clone(recjets = cms.InputTag("iterativeConePu5CaloJetsJOC"))
+#process.dijetAna_seq*=process.hltanalysisJOC
+#enableRECO(process,"Data","HI")
+#process.patJetCorrFactors.jetSource = "iterativeConePu5CaloJetsJOC"
+#process.patJets.jetSource = "iterativeConePu5CaloJetsJOC"
 #enablePp(process,"PpRECO") # options: "PpRECO", "HIRECO"
 enableData(process)
-#process.reco_extra*=process.allTracks
+enableDataFilter(process,"HI")
 process.eventSelection.remove(process.siPixelRecHits) # tmp fix for running on skim
 process.eventSelection.remove(process.hltPixelClusterShapeFilter) # tmp fix for running on skim
 
-process.djcaloJOC = process.djcalo.clone(
-    jetsrc="patJets",
-    nearJetPtMin = cms.double(80)
-    )
-process.dijetAna_seq*=process.djcaloJOC
+#process.djcaloJOC = process.djcalo.clone(
+#    jetsrc="patJets",
+#    nearJetPtMin = cms.double(80)
+#    )
+#process.dijetAna_seq*=process.djcaloJOC
 
 # FJ
 process.dijetAna_seq*=process.djcaloic5
@@ -78,14 +78,16 @@ process.dijetAna_seq*=process.djcaloak5
 process.dijetAna_seq*=process.djcalokt4
 
 # For MB
-process.dijetAna_seq.remove(process.djcalo_tower)
-for m in [process.djcalo,process.djcaloJOC,process.djcaloic5,process.djcaloak5,process.djcalokt4]:
-  m.anaTrkType = 3
-  m.trksrc = "towerMaker"
-  m.nearJetPtMin = 80
+#process.dijetAna_seq.remove(process.djcalo_tower)
+#for m in [process.djcalo,process.djcaloJOC,process.djcaloic5,process.djcaloak5,process.djcalokt4]:
+#  m.anaTrkType = 3
+#  m.trksrc = "towerMaker"
+#  m.nearJetPtMin = 80
 
-process.reco = cms.Path( process.eventSelection * process.iterativeConePu5CaloJetsJOC * process.reco_extra )
+# First look at data
+process.djcalo.nearJetPtMin = 120
+
+process.reco = cms.Path( process.eventSelection * process.dj_reco_extra )
 process.ana  = cms.Path( process.eventSelection * process.dijetAna_seq )
 
 process.schedule = cms.Schedule(process.reco,process.ana)
-#process.schedule = cms.Schedule(process.ana)
