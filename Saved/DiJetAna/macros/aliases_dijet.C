@@ -14,6 +14,12 @@ void aliases_dijet(TTree * djTree, float pptMin=4.5, int doMC=1)
   // psube==0 for genp signal
   djTree->SetAlias("goodTrk",Form("ppt>%f && ppt<nljet*1.5",pptMin));
 
+  // leading partile
+  djTree->SetAlias("PI","3.1415926");
+  djTree->SetAlias("lpndphiRaw","abs(nljphi-lp[0].Phi())");
+  djTree->SetAlias("lpadphiRaw","abs(nljphi-lp[1].Phi())");
+  djTree->SetAlias("lpndphi","((lpndphiRaw<=PI)*lpndphiRaw+(lpndphiRaw>PI)*(2*PI-lpndphiRaw))");
+  djTree->SetAlias("lpadphi","((lpadphiRaw<=PI)*lpadphiRaw+(lpadphiRaw>PI)*(2*PI-lpadphiRaw))");
   // jet cone info
   double dR=0.5;
   djTree->SetAlias("NC5NP",Form("Sum$(goodTrk && pndr<%f)",dR));

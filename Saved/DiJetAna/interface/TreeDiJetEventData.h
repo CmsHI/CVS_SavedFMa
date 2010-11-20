@@ -6,8 +6,9 @@
 #define TREEDIJETEVENTDATA_H
 #include <vector>
 #include "TTree.h"
+#include "TVector3.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
-#include <vector>
+#include "DataFormats/Math/interface/Vector3D.h"
 
 const Int_t MAXTRK = 100000;
 const Int_t MAXJEC = 15;
@@ -29,6 +30,7 @@ class TreeDiJetEventData
     void CalcTrkVars(Bool_t isMC,
 	const std::vector<math::PtEtaPhiMLorentzVector> & anajets,
 	const math::PtEtaPhiMLorentzVector & anaTrk, Int_t it);
+    void AnaLeadParticle(Float_t NearDPhiMin);
     void AnaCone(Int_t ijet, Int_t np, Float_t * pTs, Float_t * dRs, Float_t * dRBgs);
     void AnaCones()
     {
@@ -83,6 +85,9 @@ class TreeDiJetEventData
     Float_t        	    padphi_[MAXTRK],padeta_[MAXTRK],padr_[MAXTRK],padrbg_[MAXTRK];
 
     Float_t       	    zn_[MAXTRK],za_[MAXTRK];
+
+    // -- Leading Particle Info --
+    std::vector<math::RhoEtaPhiVectorD>   lp_;
 
     //  - track sel -
     Int_t	       	    trkNHits_[MAXTRK];

@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.62 2010/10/22 06:59:24 frankma Exp $
+// $Id: DiJetAna.cc,v 1.63 2010/10/22 08:19:54 frankma Exp $
 //
 //
 
@@ -185,6 +185,8 @@ DiJetAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   FillTrks(iEvent,djEvt_,anaJets_,anaTrkType_);
 
   // -- Find Leading Trks --
+  // in Hemisphere
+  djEvt_.AnaLeadParticle(djDPhiMin_);
   djEvt_.AnaCones();
 
   // -- leading jet event selection for tracks --

@@ -28,6 +28,7 @@ TreeDiJetEventData::TreeDiJetEventData() :
   ljcptbg_(2),
   ljcpt2bg_(2),
   ljcptrbg_(2),
+  lp_(2),
   lppt_(2),
   lpjdr_(2),
   lgppt_(2),
@@ -116,6 +117,20 @@ void TreeDiJetEventData::CalcTrkVars(Bool_t isMC,
   padrbg_[it]		= reco::deltaR(peta_[it],pphi_[it],anajets[1].eta(),anajets[1].phi()+TMath::PiOver2());
   // fragmentation variables, will change to dijet frame soon
   za_[it]		= ppt_[it]/anajets[1].pt();
+}
+
+// Lead Trk ana
+void TreeDiJetEventData::AnaLeadParticle(Float_t NearDPhi)
+{
+  if (nljet_<0) return;
+  for (Int_t i=0; i<evtnp_; ++i) {
+    if (TMath::Abs(pndphi_[i])<=NearDPhi) {
+      if (ppt_[i]>lp_[0].Rho()) lp_[0].SetCoordinates(ppt_[i],peta_[i],pphi_[i]);
+    }
+    else {
+      if (ppt_[i]>lp_[1].Rho()) lp_[1].SetCoordinates(ppt_[i],peta_[i],pphi_[i]);
+    }
+  }
 }
 
 // Trks in Jet Cone
@@ -238,6 +253,9 @@ void TreeDiJetEventData::SetBranches(Int_t jetType, Int_t trkType)
   //tree_->Branch("zn",this->zn_,"zn[evtnp]/F");
   //tree_->Branch("za",this->za_,"za[evtnp]/F");
 
+  // -- leading particle info --
+  tree_->Branch("lp", &lp_);
+
   if (trkType==2) {
     tree_->Branch("trkNHits",this->trkNHits_,"trkNHits[evtnp]/I");
     //tree_->Branch("trkPtErr",this->trkPtErr_,"trkPtErr[evtnp]/F");
@@ -329,6 +347,8 @@ void TreeDiJetEventData::Clear()
     ljcptbg_[i] = 0;
     ljcpt2bg_[i] = 0;
     ljcptrbg_[i] = 0;
+    // leading particles
+    lp_[i].SetCoordinates(-99,-99,-99); // Rho,Eta,Phi
     // leading particle in cone
     lppt_[i] = -99;
     lpjdr_[i] = -99;
