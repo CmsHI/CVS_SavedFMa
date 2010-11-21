@@ -4,7 +4,6 @@
   // in your rootlogon.C, the CMS setup is executed only if the CMS
   // environment is set up.
   //
-  /*
   TString cmsswbase = getenv("CMSSW_BASE");
   if (cmsswbase.Length() > 0) {
     //
@@ -13,16 +12,16 @@
     //
     cout << "Loading FW Lite setup." << endl;
     gSystem->Load("libFWCoreFWLite.so");
-    gSystem->Load("libDataFormatsFWLite.so");
-    gSystem->Load("libDataFormatsPatCandidates.so");
-    gSystem->Load("libDataFormatsCommon.so");
+    //gSystem->Load("libDataFormatsFWLite.so");
+    //gSystem->Load("libDataFormatsPatCandidates.so");
+    //gSystem->Load("libDataFormatsCommon.so");
+    gSystem->Load("libDataFormatsMath.so");
 
     // JEC
-    gSystem->Load("libCondFormatsJetMETObjects.so");
+    //gSystem->Load("libCondFormatsJetMETObjects.so");
 
     AutoLibraryLoader::enable();
   }
-   */
 
   // include paths
   gSystem->AddIncludePath("-I$CMSSW_BASE/src/");
