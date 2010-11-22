@@ -32,6 +32,13 @@ def enableRECO(process,mode="MC",type="HI"):
   # JEC Set
   from PhysicsTools.PatAlgos.tools.jetTools import switchJECSet
   #switchJECSet( process, "Spring10") # Spring10 is the new default
+  for i,m in enumerate([process.djcalo,
+  process.djcalo_tower,
+  process.djcalo_genp,
+  process.djgen]):
+    if m!=process.djgen:
+      m.jetsrc = "patJets"
+    m.refjetsrc = "patJets"
 
 # If sample is pp disable HI event related variables
 def enablePp(process,recoMode="PpRECO"):
