@@ -100,7 +100,7 @@ TChain * compDataMcJetTrk(
   TCanvas * cPNDPhi = new TCanvas("cPNDPhi","cPNDPhi",500,500);
   CPlot cpPNDPhi("PNDPhi","PNDPhi","d#phi(jet1,tower)","1/N_{jet1} Et^{Tower} [GeV]");
   cpPNDPhi.SetXRange(0,3.1416);
-  cpPNDPhi.SetYRange(0,300);
+  cpPNDPhi.SetYRange(0.01,300);
   cpPNDPhi.AddHist1D(hPNDPhiData,"Data (HLT_HIJet50U)","E",kBlack,kFullCircle);
   cpPNDPhi.AddHist1D(hPNDPhiMc0,"Hydjet+DJQuen80","E",kRed,kOpenCircle);
   cpPNDPhi.AddHist1D(hPNDPhiMc1,"Hydjet+DJUnQuen80","E",kBlue,kOpenSquare);
@@ -110,7 +110,7 @@ TChain * compDataMcJetTrk(
   TCanvas * cLAPNDPhi = new TCanvas("cLAPNDPhi","cLAPNDPhi",500,500);
   CPlot cpLAPNDPhi("LAPNDPhi","LAPNDPhi","d#phi(jet1,tower1 away)","1/N_{jet1} Et^{Tower1} [GeV]");
   cpLAPNDPhi.SetXRange(0,3.1416);
-  cpLAPNDPhi.SetYRange(0,30);
+  cpLAPNDPhi.SetYRange(0.01,30);
   cpLAPNDPhi.AddHist1D(hLAPNDPhiData,"Data (HLT_HIJet50U)","E",kBlack,kFullCircle);
   cpLAPNDPhi.AddHist1D(hLAPNDPhiMc0,"Hydjet+DJQuen80","E",kRed,kOpenCircle);
   cpLAPNDPhi.AddHist1D(hLAPNDPhiMc1,"Hydjet+DJUnQuen80","E",kBlue,kOpenSquare);
