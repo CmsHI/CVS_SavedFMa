@@ -33,14 +33,19 @@ TH2D * plot2D(TTree * tr,TCut cut, TString var, TString name, TString title,Int_
   return hist;
 }
 
-TH1D * plotDPhi(TTree * tr, TCut cut, TString var, TString name, Int_t normType=0)
+TH1D * plotNDPhi(TTree * tr, TCut cut, TString var, TString name, Int_t normType=0)
 {
   return plot1D(tr,TCut("("+TString(cut)+")*ppt"),var,name,";d #phi (j1,tower);Et^{Tower}",36,0,3.14,normType);
 }
 
-TH1D * plotAPDPhi(TTree * tr, TCut cut, TString var, TString name, Int_t normType=0)
+TH1D * plotAPNDPhi(TTree * tr, TCut cut, TString var, TString name, Int_t normType=0)
 {
   return plot1D(tr,TCut("("+TString(cut)+")*lp[1].Rho()"),var,name,";d #phi (j1,tower1 away);Et^{Tower}",36,0,3.14,normType);
+}
+
+TH1D * plotNPNDPhi(TTree * tr, TCut cut, TString var, TString name, Int_t normType=0)
+{
+  return plot1D(tr,TCut("("+TString(cut)+")*lp[0].Rho()"),var,name,";d #phi (j1,tower1 near);Et^{Tower}",36,0,3.14,normType);
 }
 
 TH2D * plotJEtCorr(TTree * tr, TCut cut, TString var, TString name, TString title, Int_t normType=0)
@@ -87,15 +92,20 @@ TChain * compDataMcJetTrk(
   TCut evtSelMc("cent<10 && nljet>110 && nljet<500 && lppt[0]>10 && abs(nljeta)<2");
   TCut evtSelData = evtSelMc && "hlt[2]";
   TCut trkSel("ppt>0.7&&abs(peta)<3");
+  TCut nlTrkSel("lp[0].Rho()>0.7&&abs(lp[0].Eta())<3");
   TCut alTrkSel("lp[1].Rho()>0.7&&abs(lp[1].Eta())<3");
 
-  TH1D * hPNDPhiData = plotDPhi(djdata,evtSelData&&trkSel,"abs(pndphi)","hPNDPhiData",3);
-  TH1D * hPNDPhiMc0 = plotDPhi(djmc0,evtSelMc&&trkSel,"abs(pndphi)","hPNDPhiMc0",3);
-  TH1D * hPNDPhiMc1 = plotDPhi(djmc1,evtSelMc&&trkSel,"abs(pndphi)","hPNDPhiMc1",3);
+  TH1D * hPNDPhiData = plotNDPhi(djdata,evtSelData&&trkSel,"abs(pndphi)","hPNDPhiData",3);
+  TH1D * hPNDPhiMc0 = plotNDPhi(djmc0,evtSelMc&&trkSel,"abs(pndphi)","hPNDPhiMc0",3);
+  TH1D * hPNDPhiMc1 = plotNDPhi(djmc1,evtSelMc&&trkSel,"abs(pndphi)","hPNDPhiMc1",3);
 
-  TH1D * hLAPNDPhiData = plotAPDPhi(djdata,evtSelData&&alTrkSel,"abs(lpadphi)","hLAPNDPhiData",3);
-  TH1D * hLAPNDPhiMc0 = plotAPDPhi(djmc0,evtSelMc&&alTrkSel,"abs(lpadphi)","hLAPNDPhiMc0",3);
-  TH1D * hLAPNDPhiMc1 = plotAPDPhi(djmc1,evtSelMc&&alTrkSel,"abs(lpadphi)","hLAPNDPhiMc1",3);
+  TH1D * hLNPNDPhiData = plotNPNDPhi(djdata,evtSelData&&nlTrkSel,"abs(lpndphi)","hLNPNDPhiData",3);
+  TH1D * hLNPNDPhiMc0 = plotNPNDPhi(djmc0,evtSelMc&&nlTrkSel,"abs(lpndphi)","hLNPNDPhiMc0",3);
+  TH1D * hLNPNDPhiMc1 = plotNPNDPhi(djmc1,evtSelMc&&nlTrkSel,"abs(lpndphi)","hLNPNDPhiMc1",3);
+
+  TH1D * hLAPNDPhiData = plotAPNDPhi(djdata,evtSelData&&alTrkSel,"abs(lpadphi)","hLAPNDPhiData",3);
+  TH1D * hLAPNDPhiMc0 = plotAPNDPhi(djmc0,evtSelMc&&alTrkSel,"abs(lpadphi)","hLAPNDPhiMc0",3);
+  TH1D * hLAPNDPhiMc1 = plotAPNDPhi(djmc1,evtSelMc&&alTrkSel,"abs(lpadphi)","hLAPNDPhiMc1",3);
 
   TCanvas * cPNDPhi = new TCanvas("cPNDPhi","cPNDPhi",500,500);
   CPlot cpPNDPhi("PNDPhi","PNDPhi","d#phi(jet1,tower)","1/N_{jet1} Et^{Tower} [GeV]");
@@ -107,10 +117,22 @@ TChain * compDataMcJetTrk(
   cpPNDPhi.SetLegendHeader("|#eta|^{Tower}<3, E_{t}^{Tower}>0.7GeV");
   cpPNDPhi.Draw(cPNDPhi,false);
 
+  TCanvas * cLNPNDPhi = new TCanvas("cLNPNDPhi","cLNPNDPhi",500,500);
+  CPlot cpLNPNDPhi("LNPNDPhi","LNPNDPhi","d#phi(jet1,tower1 near)","1/N_{jet1} Et^{Tower1} [GeV]");
+  cpLNPNDPhi.SetXRange(0,3.1416);
+  cpLNPNDPhi.SetYRange(0.01,100);
+  cpLNPNDPhi.SetLogy();
+  cpLNPNDPhi.AddHist1D(hLNPNDPhiData,"Data (HLT_HIJet50U)","E",kBlack,kFullCircle);
+  cpLNPNDPhi.AddHist1D(hLNPNDPhiMc0,"Hydjet+DJQuen80","E",kRed,kOpenCircle);
+  cpLNPNDPhi.AddHist1D(hLNPNDPhiMc1,"Hydjet+DJUnQuen80","E",kBlue,kOpenSquare);
+  cpLNPNDPhi.SetLegendHeader("|#eta|^{Tower}<3, E_{t}^{Tower}>0.7GeV");
+  cpLNPNDPhi.Draw(cLNPNDPhi,false);
+
   TCanvas * cLAPNDPhi = new TCanvas("cLAPNDPhi","cLAPNDPhi",500,500);
   CPlot cpLAPNDPhi("LAPNDPhi","LAPNDPhi","d#phi(jet1,tower1 away)","1/N_{jet1} Et^{Tower1} [GeV]");
   cpLAPNDPhi.SetXRange(0,3.1416);
-  cpLAPNDPhi.SetYRange(0.01,30);
+  cpLAPNDPhi.SetYRange(0.01,100);
+  cpLAPNDPhi.SetLogy();
   cpLAPNDPhi.AddHist1D(hLAPNDPhiData,"Data (HLT_HIJet50U)","E",kBlack,kFullCircle);
   cpLAPNDPhi.AddHist1D(hLAPNDPhiMc0,"Hydjet+DJQuen80","E",kRed,kOpenCircle);
   cpLAPNDPhi.AddHist1D(hLAPNDPhiMc1,"Hydjet+DJUnQuen80","E",kBlue,kOpenSquare);
