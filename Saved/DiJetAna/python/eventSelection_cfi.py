@@ -20,6 +20,10 @@ L1HfOrBscCoinc = l1Filter.clone(
     algorithms = cms.vstring("L1_BscMinBiasInnerThreshold1","L1_HcalHfCoincidencePm")
     )
 
+# HLT Selection
+from HLTrigger.HLTfilters.hltHighLevel_cfi import *
+hltMB = hltHighLevel.clone( HLTPaths = ["HLT_HIMinBiasHfOrBSC_Core"] )
+hltJet = hltHighLevel.clone( HLTPaths = ["HLT_HIJet35U","HLT_HIJet50U","HLT_HIJet75U","HLT_HIJet90U"] )
 
 # HI event Filters
 from RecoHI.HiCentralityAlgos.CentralityFilter_cfi import *

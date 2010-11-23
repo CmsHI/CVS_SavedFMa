@@ -12,6 +12,12 @@ def loadCentralityDB(process,centTag):
 	)
       )
 
+def enableTrigger(process,mode="Jet"):
+  if mode=="Jet":
+    process.triggerSelection.replace(process.physDeclFilter,process.hltJet)
+  if mode=="MB":
+    process.triggerSelection.replace(process.physDeclFilter,process.hltMB)
+
 def enableRECO(process,mode="MC",type="HI"):
   if type=="HI":
     # pat jet
