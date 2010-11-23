@@ -23,7 +23,7 @@ L1HfOrBscCoinc = l1Filter.clone(
 # HLT Selection
 from HLTrigger.HLTfilters.hltHighLevel_cfi import *
 hltMB = hltHighLevel.clone( HLTPaths = ["HLT_HIMinBiasHfOrBSC_Core"] )
-hltJet = hltHighLevel.clone( HLTPaths = ["HLT_HIJet35U","HLT_HIJet50U","HLT_HIJet75U","HLT_HIJet90U"] )
+hltJet = hltHighLevel.clone( HLTPaths = ["HLT_HIJet35U_Core","HLT_HIJet50U_Core","HLT_HIJet75U_Core","HLT_HIJet90U_Core"] )
 
 # HI event Filters
 from RecoHI.HiCentralityAlgos.CentralityFilter_cfi import *
