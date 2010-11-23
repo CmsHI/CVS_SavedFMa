@@ -51,7 +51,7 @@ process.TFileService = cms.Service('TFileService',
 # =============== Final Paths =====================
 from Saved.DiJetAna.customise_cfi import *
 # Event Selection
-enableTrigger(process,"MB")
+enableTrigger(process,"Jet")
 # HLT Ana
 enableOpenHlt(process,process.dijetAna_seq,isData)
 #process.iterativeConePu5CaloJetsJOC = process.iterativeConePu5CaloJets.clone(
