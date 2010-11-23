@@ -50,6 +50,8 @@ process.TFileService = cms.Service('TFileService',
 
 # =============== Final Paths =====================
 from Saved.DiJetAna.customise_cfi import *
+# Event Selection
+enableTrigger(process,"MB")
 # HLT Ana
 enableOpenHlt(process,process.dijetAna_seq,isData)
 #process.iterativeConePu5CaloJetsJOC = process.iterativeConePu5CaloJets.clone(
@@ -57,14 +59,14 @@ enableOpenHlt(process,process.dijetAna_seq,isData)
 #)
 #process.hltanalysisJOC = process.hltanalysis.clone(recjets = cms.InputTag("iterativeConePu5CaloJetsJOC"))
 #process.dijetAna_seq*=process.hltanalysisJOC
-#enableRECO(process,"Data","HI")
+enableRECO(process,"Data","HI")
 #process.patJetCorrFactors.jetSource = "iterativeConePu5CaloJetsJOC"
 #process.patJets.jetSource = "iterativeConePu5CaloJetsJOC"
 #enablePp(process,"PpRECO") # options: "PpRECO", "HIRECO"
 enableData(process)
 enableDataFilter(process,"HI")
-process.eventSelection.remove(process.siPixelRecHits) # tmp fix for running on skim
-process.eventSelection.remove(process.hltPixelClusterShapeFilter) # tmp fix for running on skim
+#process.eventSelection.remove(process.siPixelRecHits) # tmp fix for running on skim
+#process.eventSelection.remove(process.hltPixelClusterShapeFilter) # tmp fix for running on skim
 
 #process.djcaloJOC = process.djcalo.clone(
 #    jetsrc="patJets",
@@ -73,20 +75,17 @@ process.eventSelection.remove(process.hltPixelClusterShapeFilter) # tmp fix for 
 #process.dijetAna_seq*=process.djcaloJOC
 
 # FJ
-process.dijetAna_seq*=process.djcaloic5
-process.dijetAna_seq*=process.djcaloak5
-process.dijetAna_seq*=process.djcalokt4
+#process.dijetAna_seq*=process.djcaloic5
+#process.dijetAna_seq*=process.djcaloak5
+#process.dijetAna_seq*=process.djcalokt4
 
 # For MB
-#process.dijetAna_seq.remove(process.djcalo_tower)
-#for m in [process.djcalo,process.djcaloJOC,process.djcaloic5,process.djcaloak5,process.djcalokt4]:
-#  m.anaTrkType = 3
-#  m.trksrc = "towerMaker"
-#  m.nearJetPtMin = 80
+for m in [process.djcalo,process.djcalo_tower]:
+  m.nearJetPtMin = 40
 
 # First look at data
-process.djcalo.nearJetPtMin = 100
-process.djcalo_tower.nearJetPtMin = 100
+#process.djcalo.nearJetPtMin = 100
+#process.djcalo_tower.nearJetPtMin = 100
 
 process.reco = cms.Path( process.eventSelection * process.dj_reco_extra )
 process.ana  = cms.Path( process.eventSelection * process.dijetAna_seq )
