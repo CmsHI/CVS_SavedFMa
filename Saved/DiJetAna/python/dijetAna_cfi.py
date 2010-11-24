@@ -18,7 +18,7 @@ djcalo = cms.EDAnalyzer('DiJetAna',
     # jet reco
     jetsrc = cms.InputTag("icPu5patJets"),
     anaJetType = cms.int32(2),
-    jetEtaMax = cms.double(5.0),
+    jetEtaMax = cms.double(3.0),
     # jet energy correction
     JECLab1 = cms.string("abs"),
     doFJL1Corr = cms.bool(False), # currently on top of the pp default JEC
@@ -26,7 +26,7 @@ djcalo = cms.EDAnalyzer('DiJetAna',
     refjetsrc = cms.InputTag("icPu5patJets"), # careful: this should be same collection as anajets, if anajets is patjet
     refJetType = cms.int32(21),
     # di-jet reco
-    djDPhiMin = cms.double(3.14159/2.),
+    djDPhiMin = cms.double(3.14159*5./6.),
     # trk selection
     nearJetPtMin = cms.double(200), # Note: this is only for deciding whether to save the tracks in event
     trksrc = cms.InputTag("hiGoodTracks"), # 2, reco tracks; 3, candidate
