@@ -18,7 +18,7 @@ djcalo = cms.EDAnalyzer('DiJetAna',
     # jet reco
     jetsrc = cms.InputTag("icPu5patJets"),
     anaJetType = cms.int32(2),
-    jetEtaMax = cms.double(3.0),
+    jetEtaMax = cms.double(5.0),
     # jet energy correction
     JECLab1 = cms.string("abs"),
     doFJL1Corr = cms.bool(False), # currently on top of the pp default JEC
