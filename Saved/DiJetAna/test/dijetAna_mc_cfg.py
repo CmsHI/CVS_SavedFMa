@@ -19,7 +19,7 @@ process.source = cms.Source("PoolSource",
     )
 
 # ===== Top Level =====
-process.GlobalTag.globaltag = "START39_V5HI::All"
+process.GlobalTag.globaltag = "START39_V7HI::All"
 isData=False
 
 # ===== Centrality =====
@@ -50,6 +50,8 @@ process.TFileService = cms.Service('TFileService',
 
 # =============== Final Paths =====================
 from Saved.DiJetAna.customise_cfi import *
+# Event Selection
+#enableTrigger(process,"Jet")
 # HLT Ana
 enableOpenHlt(process,process.dijetAna_seq,isData)
 process.hltanalysis.l1GtReadoutRecord = cms.InputTag( 'gtDigis','',"RECO")
@@ -82,11 +84,8 @@ enableRECO(process,"MC","HI")
 #process.dijetAna_seq*=process.djcalokt4
 
 # For MB
-#process.dijetAna_seq.remove(process.djcalo_tower)
-#for m in [process.djcalo,process.djcaloJOC,process.djcaloic5,process.djcaloak5,process.djcalokt4]:
-#  m.anaTrkType = 3
-#  m.trksrc = "towerMaker"
-#  m.nearJetPtMin = 80
+#for m in [process.djcalo,process.djcalo_tower]:
+#  m.nearJetPtMin = 40
 
 # First look at data
 process.djcalo.nearJetPtMin = 100
