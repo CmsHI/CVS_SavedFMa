@@ -134,12 +134,12 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   DJCutType("Ana"),
   TrkCutType("Ana"),
   // default cuts
-  Trigger("hlt[0]"),
-  CentCut("cent<20"),
+  Trigger("hlt[2]"),
+  CentCut("cent<10"),
   // evt
   RunNum(-1),
-  VzMin(-30),
-  VzMax(30),
+  VzMin(-20),
+  VzMax(20),
   // jet
   NrJEtMin(NrEtMin),
   NrJEtMax(NrEtMax),
@@ -235,9 +235,9 @@ void selectionCut::SetCut()
   DJ["AnaLz2"]	      = LJ["Ana"]	  && AJ["Ana"]		&& JDPhiCut && "(lppt[0]/nljet)>0.6&&(lppt[0]/nljet)<0.9";
 
   // Track Selections
-  Trk["Ana"] = ("ppt>1.2&&ppt<nljet");
-  Trk["Tight3"] = ("ppt>3.&&ppt<nljet");
-  Trk["Tight5"] = ("ppt>5.&&ppt<nljet");
+  Trk["Ana"] = ("ppt>1.2&&ppt<1.5*nljet");
+  Trk["Tight3"] = ("ppt>3.&&ppt<1.5*nljet");
+  Trk["Tight5"] = ("ppt>5.&&ppt<1.5*nljet");
   Trk["TightNH"] = ("ppt>1.5&&ppt<nljet&&trkNHits>14");
   Trk["AnaSig"] = Trk["Ana"]&&"psube==0";
 
