@@ -127,13 +127,13 @@ AnaFrag::AnaFrag(TString xtg, TString ytg,TTree *tree,TCut djCut,TCut trkCut, TS
       trDj->Draw("nlrjet>>hRefJEtNr",djCut,"goff");
       trDj->Draw("alrjet>>hRefJEtAw",djCut,"goff");
 
-      trDj->Draw("nljC5NP>>hC5NPNr",djCut,"goff");
-      trDj->Draw("nljC5NPBg>>hC5NPBgNr",djCut,"goff");
-      trDj->Draw("nljC5NP-nljC5NPBg>>hC5NPSubNr",djCut,"goff");
+      trDj->Draw("ljcnp[0]>>hC5NPNr",djCut,"goff");
+      trDj->Draw("ljcnpbg[0]>>hC5NPBgNr",djCut,"goff");
+      trDj->Draw("ljcnp[0]-ljcnpbg[0]>>hC5NPSubNr",djCut,"goff");
 
-      trDj->Draw("aljC5NP>>hC5NPAw",djCut,"goff");
-      trDj->Draw("aljC5NPBg>>hC5NPBgAw",djCut,"goff");
-      trDj->Draw("aljC5NP-aljC5NPBg>>hC5NPSubAw",djCut,"goff");
+      trDj->Draw("ljcnp[1]>>hC5NPAw",djCut,"goff");
+      trDj->Draw("ljcnpbg[1]>>hC5NPBgAw",djCut,"goff");
+      trDj->Draw("ljcnp[1]-ljcnpbg[1]>>hC5NPSubAw",djCut,"goff");
     }
     else cout << "no anaSel defined" << endl;
   }
