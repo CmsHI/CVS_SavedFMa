@@ -101,8 +101,11 @@ def enableDataFilter(process,dataType="HI"):
     process.eventSelection*=process.collisionEventSelection
 
 def enableDataMixMC(process):
-  process.genPartons.src = "genParticles"
-  process.heavyIonCleanedGenJets.src = "iterativeCone5GenJets"
+  process.makeHeavyIonJets.remove(process.genPartons)
+  process.makeHeavyIonJets.remove(process.hiPartons)
+  process.makeHeavyIonJets.remove(process.heavyIonCleanedGenJets)
+  process.patJetGenJetMatch.matched = "iterativeCone5GenJets"
+  process.patJetPartonMatch.matched = "genParticles"
   process.djcalo_genp.trksrc = "genParticles"
   process.djgen.trksrc = "genParticles"
   process.djgen.jetsrc = "iterativeCone5GenJets"
