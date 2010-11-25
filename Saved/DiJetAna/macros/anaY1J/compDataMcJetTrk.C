@@ -38,19 +38,24 @@ TH1D * plotTrkPt(TTree * tr, TCut cut, TString var, TString name, Int_t normType
   return plot1D(tr,cut,var,name,";Trk Pt;#",50,0,150,normType);
 }
 
+TH1D * plotJDPhi(TTree * tr, TCut cut, TString var, TString name, Int_t normType=0)
+{
+  return plot1D(tr,cut,var,name,";d #phi (j1,j2);#/j1",50,0,3.14,normType);
+}
+
 TH1D * plotNDPhi(TTree * tr, TCut cut, TString var, TString name, Int_t normType=0)
 {
-  return plot1D(tr,TCut("("+TString(cut)+")*ppt"),var,name,";d #phi (j1,tower);Et^{Tower}",36,0,3.14,normType);
+  return plot1D(tr,TCut("("+TString(cut)+")*ppt"),var,name,";d #phi (j1,tower);Et^{Trk}",36,0,3.14,normType);
 }
 
 TH1D * plotAPNDPhi(TTree * tr, TCut cut, TString var, TString name, Int_t normType=0)
 {
-  return plot1D(tr,TCut("("+TString(cut)+")*lp[1].Rho()"),var,name,";d #phi (j1,tower1 away);Et^{Tower}",36,0,3.14,normType);
+  return plot1D(tr,TCut("("+TString(cut)+")*lp[1].Rho()"),var,name,";d #phi (j1,tower1 away);Et^{Trk}",36,0,3.14,normType);
 }
 
 TH1D * plotNPNDPhi(TTree * tr, TCut cut, TString var, TString name, Int_t normType=0)
 {
-  return plot1D(tr,TCut("("+TString(cut)+")*lp[0].Rho()"),var,name,";d #phi (j1,tower1 near);Et^{Tower}",36,0,3.14,normType);
+  return plot1D(tr,TCut("("+TString(cut)+")*lp[0].Rho()"),var,name,";d #phi (j1,tower1 near);Et^{Trk}",36,0,3.14,normType);
 }
 
 TH2D * plotJEtCorr(TTree * tr, TCut cut, TString var, TString name, TString title, Int_t normType=0)
@@ -94,14 +99,18 @@ TChain * compDataMcJetTrk(
   cout << "MC0 Total Events: " << djmc0->GetEntries() << endl;
   cout << "MC1 Total Events: " << djmc1->GetEntries() << endl;
 
-  TCut evtSelMc("cent<10 && nljet>100 && nljet<500 && abs(nljeta)<2");
-  TCut awayCut("aljet>50 && abs(aljeta)<2");
+  TCut evtSelMc("cent<10 && nljet>120 && nljet<500 && abs(nljeta)<2");
+  TCut awayCut("aljet>50 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
   evtSelMc = evtSelMc && awayCut;
   TCut evtSelData = evtSelMc && "hlt[2]";
   TCut trkSel("ppt>1.2&&abs(peta)<3");
   TString header("p_{T}^{Trk}>1.2GeV");
   TCut nlTrkSel("lp[0].Rho()>0.7&&abs(lp[0].Eta())<3");
   TCut alTrkSel("lp[1].Rho()>0.7&&abs(lp[1].Eta())<3");
+
+  TH1D * hJDPhiData = plotJDPhi(djdata,evtSelData,"jdphi","hJDPhiData",3);
+  TH1D * hJDPhiMc0 = plotJDPhi(djmc0,evtSelMc,"jdphi","hJDPhiMc0",3);
+  TH1D * hJDPhiMc1 = plotJDPhi(djmc1,evtSelMc,"jdphi","hJDPhiMc1",3);
 
   TH1D * hPPtData = plotTrkPt(djdata,evtSelData&&trkSel,"ppt","hPPtData",3);
   TH1D * hJetPPtData = plotTrkPt(djdata,evtSelData&&trkSel&&"pndr<0.5||padr<0.5","ppt","hJetPPtData",3);
@@ -126,8 +135,16 @@ TChain * compDataMcJetTrk(
   TH1D * hLAPNDPhiMc0 = plotAPNDPhi(djmc0,evtSelMc&&alTrkSel,"abs(lpadphi)","hLAPNDPhiMc0",3);
   TH1D * hLAPNDPhiMc1 = plotAPNDPhi(djmc1,evtSelMc&&alTrkSel,"abs(lpadphi)","hLAPNDPhiMc1",3);
 
+  TCanvas * cJDPhi = new TCanvas("cJDPhi","cJDPhi",500,500);
+  CPlot cpJDPhi("JDPhi","JDPhi","d#phi(j1,j2)","# /DJ");
+  cpJDPhi.AddHist1D(hJDPhiData,"Data","E",kBlack,kFullCircle);
+  cpJDPhi.AddHist1D(hJDPhiMc0,"Hydjet+DJQuen80","E",kRed,kOpenCircle);
+  cpJDPhi.AddHist1D(hJDPhiMc1,"Hydjet+DJUnQuen80","E",kBlue,kOpenSquare);
+  cpJDPhi.Draw(cJDPhi,false);
+
   TCanvas * cPPt = new TCanvas("cPPt","cPPt",500,500);
-  CPlot cpPPt("PPt","PPt","Trk Pt [GeV]","1/N_{jet1} #");
+  CPlot.SetLogy();
+  CPlot cpPPt("PPt","PPt","Trk Pt [GeV]","# /N_{DJ}");
   cpPPt.AddHist1D(hPPtData,"Data: All Tracks","E",kBlack,kFullCircle);
   cpPPt.AddHist1D(hJetPPtData,"Data: Trks in Jet1,Jet2","E",kRed,kOpenSquare);
   cpPPt.AddHist1D(hJet1PPtData,"Data: Trks in Jet1","E",kBlue,kOpenCircle);
@@ -138,7 +155,7 @@ TChain * compDataMcJetTrk(
   cpPPt.Draw(cPPt,false);
 
   TCanvas * cPNDPhi = new TCanvas("cPNDPhi","cPNDPhi",500,500);
-  CPlot cpPNDPhi("PNDPhi","PNDPhi","d#phi(jet1,tower)","1/N_{jet1} Et^{Tower} [GeV]");
+  CPlot cpPNDPhi("PNDPhi","PNDPhi","d#phi(jet1,tower)","1/N_{DJ} Pt^{Trk} [GeV]");
   cpPNDPhi.SetXRange(0,3.1416);
   cpPNDPhi.SetYRange(0.01,80);
   cpPNDPhi.AddHist1D(hPNDPhiData,"Data (HLT_HIJet50U)","E",kBlack,kFullCircle);
@@ -148,7 +165,7 @@ TChain * compDataMcJetTrk(
   cpPNDPhi.Draw(cPNDPhi,false);
 
   TCanvas * cPADPhi = new TCanvas("cPADPhi","cPADPhi",500,500);
-  CPlot cpPADPhi("PADPhi","PADPhi","d#phi(jet1,tower)","1/N_{jet1} Et^{Tower} [GeV]");
+  CPlot cpPADPhi("PADPhi","PADPhi","d#phi(jet1,tower)","1/N_{DJ} Pt^{Trk} [GeV]");
   cpPADPhi.SetXRange(0,3.1416);
   cpPADPhi.SetYRange(0.01,80);
   cpPADPhi.AddHist1D(hPADPhiData,"Data (HLT_HIJet50U)","E",kBlack,kFullCircle);
@@ -158,7 +175,7 @@ TChain * compDataMcJetTrk(
   cpPADPhi.Draw(cPADPhi,false);
 
   TCanvas * cLNPNDPhi = new TCanvas("cLNPNDPhi","cLNPNDPhi",500,500);
-  CPlot cpLNPNDPhi("LNPNDPhi","LNPNDPhi","d#phi(jet1,tower1 near)","1/N_{jet1} Et^{Tower1} [GeV]");
+  CPlot cpLNPNDPhi("LNPNDPhi","LNPNDPhi","d#phi(jet1,tower1 near)","1/N_{DJ} Pt^{Trk} [GeV]");
   cpLNPNDPhi.SetXRange(0,3.1416);
   cpLNPNDPhi.SetYRange(0.01,100);
   cpLNPNDPhi.SetLogy();
@@ -169,7 +186,7 @@ TChain * compDataMcJetTrk(
   cpLNPNDPhi.Draw(cLNPNDPhi,false);
 
   TCanvas * cLAPNDPhi = new TCanvas("cLAPNDPhi","cLAPNDPhi",500,500);
-  CPlot cpLAPNDPhi("LAPNDPhi","LAPNDPhi","d#phi(jet1,tower1 away)","1/N_{jet1} Et^{Tower1} [GeV]");
+  CPlot cpLAPNDPhi("LAPNDPhi","LAPNDPhi","d#phi(jet1,tower1 away)","1/N_{DJ} Pt^{Trk} [GeV]");
   cpLAPNDPhi.SetXRange(0,3.1416);
   cpLAPNDPhi.SetYRange(0.01,100);
   cpLAPNDPhi.SetLogy();
