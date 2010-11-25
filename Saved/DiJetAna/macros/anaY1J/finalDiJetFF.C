@@ -13,9 +13,9 @@
 using namespace std;
 
 void finalDiJetFF(int doCorr=0,
-    TString inFile0Dir="out/HydUQDJ80/S1_100_200_50_25/a6",
-    TString header="Hydjet+UQDJ80",
-    TString AnaType="ff")
+    TString inFile0Dir="out/HCPR-GoodTrk1123_All0/S2_120_500_50_26/1125a1r1",
+    TString header="HLT_HIJet50U",
+    TString AnaType="ffd2")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
