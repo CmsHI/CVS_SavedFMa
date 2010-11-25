@@ -38,6 +38,11 @@ TH1D * plotTrkPt(TTree * tr, TCut cut, TString var, TString name, Int_t normType
   return plot1D(tr,cut,var,name,";Trk Pt;#",50,0,150,normType);
 }
 
+TH1D * plotVz(TTree * tr, TCut cut, TString var, TString name, Int_t normType=0)
+{
+  return plot1D(tr,cut,var,name,"",80,-40,40,normType);
+}
+
 TH1D * plotJDPhi(TTree * tr, TCut cut, TString var, TString name, Int_t normType=0)
 {
   return plot1D(tr,cut,var,name,";d #phi (j1,j2);#/j1",50,0,3.14,normType);
@@ -108,6 +113,10 @@ TChain * compDataMcJetTrk(
   TCut nlTrkSel("lp[0].Rho()>0.7&&abs(lp[0].Eta())<3");
   TCut alTrkSel("lp[1].Rho()>0.7&&abs(lp[1].Eta())<3");
 
+  TH1D * hVzData = plotVz(djdata,evtSelData,"vz","hVzData",3);
+  TH1D * hVzMc0 = plotVz(djmc0,evtSelMc,"vz","hVzMc0",3);
+  TH1D * hVzMc1 = plotVz(djmc1,evtSelMc,"vz","hVzMc1",3);
+
   TH1D * hJDPhiData = plotJDPhi(djdata,evtSelData,"jdphi","hJDPhiData",3);
   TH1D * hJDPhiMc0 = plotJDPhi(djmc0,evtSelMc,"jdphi","hJDPhiMc0",3);
   TH1D * hJDPhiMc1 = plotJDPhi(djmc1,evtSelMc,"jdphi","hJDPhiMc1",3);
@@ -135,6 +144,13 @@ TChain * compDataMcJetTrk(
   TH1D * hLAPNDPhiMc0 = plotAPNDPhi(djmc0,evtSelMc&&alTrkSel,"abs(lpadphi)","hLAPNDPhiMc0",3);
   TH1D * hLAPNDPhiMc1 = plotAPNDPhi(djmc1,evtSelMc&&alTrkSel,"abs(lpadphi)","hLAPNDPhiMc1",3);
 
+  TCanvas * cVz = new TCanvas("cVz","cVz",500,500);
+  CPlot cpVz("Vz","Vz","Vz","# /DJ");
+  cpVz.AddHist1D(hVzData,"Data","E",kBlack,kFullCircle);
+  cpVz.AddHist1D(hVzMc0,"Hydjet+DJQuen80","E",kRed,kOpenCircle);
+  cpVz.AddHist1D(hVzMc1,"Hydjet+DJUnQuen80","E",kBlue,kOpenSquare);
+  cpVz.Draw(cVz,false);
+
   TCanvas * cJDPhi = new TCanvas("cJDPhi","cJDPhi",500,500);
   CPlot cpJDPhi("JDPhi","JDPhi","d#phi(j1,j2)","# /DJ");
   cpJDPhi.AddHist1D(hJDPhiData,"Data","E",kBlack,kFullCircle);
@@ -143,8 +159,8 @@ TChain * compDataMcJetTrk(
   cpJDPhi.Draw(cJDPhi,false);
 
   TCanvas * cPPt = new TCanvas("cPPt","cPPt",500,500);
-  CPlot.SetLogy();
   CPlot cpPPt("PPt","PPt","Trk Pt [GeV]","# /N_{DJ}");
+  cpPPt.SetLogy();
   cpPPt.AddHist1D(hPPtData,"Data: All Tracks","E",kBlack,kFullCircle);
   cpPPt.AddHist1D(hJetPPtData,"Data: Trks in Jet1,Jet2","E",kRed,kOpenSquare);
   cpPPt.AddHist1D(hJet1PPtData,"Data: Trks in Jet1","E",kBlue,kOpenCircle);
