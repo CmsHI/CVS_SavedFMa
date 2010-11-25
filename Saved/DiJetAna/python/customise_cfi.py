@@ -100,6 +100,12 @@ def enableDataFilter(process,dataType="HI"):
     process.eventSelection*=process.L1HfOrBscCoinc
     process.eventSelection*=process.collisionEventSelection
 
+def enableDataMixMC(process):
+  process.genPartons.src = "genParticles"
+  process.heavyIonCleanedGenJets.src = "iterativeCone5GenJets"
+  process.djcalo_genp.trksrc = "genParticles"
+  process.djgen.trksrc = "genParticles"
+  process.djgen.jetsrc = "iterativeCone5GenJets"
 
 ### Output levels
 djOutputThreshold = {

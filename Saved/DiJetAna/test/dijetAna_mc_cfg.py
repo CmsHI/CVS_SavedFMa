@@ -41,7 +41,7 @@ for i,m in enumerate([process.djcalo,
   process.djcalo_tower,
   process.djcalo_genp,
   process.djgen]):
-  m.hltsrc = cms.InputTag("TriggerResults","","RECOMIX")
+  m.hltsrc = cms.InputTag("TriggerResults","","HLTMIX")
   print i, "hlt: ", m.hltsrc
 
 anaOutName = "dj_%s.root" % (process.djcalo.jetsrc.value())
@@ -55,44 +55,21 @@ from Saved.DiJetAna.customise_cfi import *
 #enableTrigger(process,"Jet")
 # HLT Ana
 enableOpenHlt(process,process.dijetAna_seq,isData)
-process.hltanalysis.l1GtReadoutRecord = cms.InputTag( 'gtDigis','',"RECOMIX")
-process.hltanalysis.hltresults = cms.InputTag( 'TriggerResults','',"RECOMIX")
-process.hltanalysis.HLTProcessName = "RECOMIX"
+process.hltanalysis.hltresults = cms.InputTag( 'TriggerResults','',"HLTMIX")
+process.hltanalysis.HLTProcessName = "HLTMIX"
 
-#process.iterativeConePu5CaloJetsJOC = process.iterativeConePu5CaloJets.clone(
-#   subtractorName = cms.string( "JetOffsetCorrector" )
-#)
-#process.hltanalysisJOC = process.hltanalysis.clone(recjets = cms.InputTag("iterativeConePu5CaloJetsJOC"))
-#process.dijetAna_seq*=process.hltanalysisJOC
 enableRECO(process,"MC","HI")
-#process.patJetCorrFactors.jetSource = "iterativeConePu5CaloJetsJOC"
-#process.patJets.jetSource = "iterativeConePu5CaloJetsJOC"
 #enablePp(process,"PpRECO") # options: "PpRECO", "HIRECO"
-#enableData(process)
-#enableDataFilter(process,"HI")
-#process.eventSelection.remove(process.siPixelRecHits) # tmp fix for running on skim
-#process.eventSelection.remove(process.hltPixelClusterShapeFilter) # tmp fix for running on skim
-
-#process.djcaloJOC = process.djcalo.clone(
-#    jetsrc="patJets",
-#    nearJetPtMin = cms.double(80)
-#    )
-#process.dijetAna_seq*=process.djcaloJOC
-
-# FJ
-#process.dijetAna_seq*=process.djcaloic5
-#process.dijetAna_seq*=process.djcaloak5
-#process.dijetAna_seq*=process.djcalokt4
 
 # For MB
 #for m in [process.djcalo,process.djcalo_tower]:
 #  m.nearJetPtMin = 40
 
 # First look at data
-process.dijetAna_seq.remove(process.djcalo_genp)
-process.dijetAna_seq.remove(process.djgen)
 process.djcalo.nearJetPtMin = 100
 process.djcalo_tower.nearJetPtMin = 100
+# For Embedding
+enableDataMixMC(process)
 
 process.reco = cms.Path( process.eventSelection * process.dj_reco_extra )
 process.ana  = cms.Path( process.eventSelection * process.dijetAna_seq )
