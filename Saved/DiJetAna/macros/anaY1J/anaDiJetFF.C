@@ -25,6 +25,7 @@ void anaDiJetFF(int doMC=1,
     Double_t NrJEtMax = 200,
     Double_t AwJEtMin = 50,
     Double_t AwJEtaMax = 2.,
+    Double_t JDPhi = TMath::Pi()*5./6,
     TString DJCutType = "Ana",
     TString TrkCutType = "Ana",
     TString varXiNrJES = "log(nljet/ppt)",
@@ -44,7 +45,7 @@ void anaDiJetFF(int doMC=1,
   cout << " # entries: " << djTree->GetEntries() << endl;
 
   // === Declare selection ===
-  selectionCut anaSel(SrcName,doMC,"S1",NrJEtMin,NrJEtMax,AwJEtMin,2.5);
+  selectionCut anaSel(SrcName,doMC,"S2",NrJEtMin,NrJEtMax,AwJEtMin,JDPhi);
   anaSel.AwJEtaMax = AwJEtaMax;
   anaSel.DJCutType = DJCutType;
   anaSel.TrkCutType = TrkCutType;
