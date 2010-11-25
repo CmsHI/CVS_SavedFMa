@@ -2,16 +2,17 @@ import os,sys
 
 AnaV = "1125a1"
 RunV = sys.argv[1]
-#inFile0Name="~/scratch01/ana/s10-dj80to120/dj1009_Y1JAna011/dj_*.root"
-#SrcName="HydjQDJUQ80"
-#header="HydjetQDJUQuen80"
-inFile0Name="dj_HydjetQ_DJQ80_F10GSR_GoodTrk1123.root"
 doMC=0
-SrcName="HCPR-GoodTrk1123_All0"
-header="HLT_HIJet50U"
+#inFile0Name="dj_HydjetQ_DJQ80_F10GSR_GoodTrk1123.root"
+#SrcName="HydjQDJQ80"
+inFile0Name="dj_HydjetQ_DJUQ80_F10GSR_GoodTrk1123.root"
+SrcName="HydjQDJUQ80"
+#inFile0Name="dj_HCPR-GoodTrk1123_All0.root"
+#SrcName="HCPR-GoodTrk1123_All0"
+evtBase="S1"
 AnaType="ff"
-NrJEtMin=100
-NrJEtMax=200
+NrJEtMin=120
+NrJEtMax=500
 AwJEtMin=50
 JDPhi=3.14159*5./6
 
@@ -41,6 +42,7 @@ SysAnas = {
 
 SysAnas = {
     "d0":["djcalo",NrJEtMin,NrJEtMax,0.,2.,JDPhi,"Ana","Ana","log\(nljet/ppt\)","log\(aljet/ppt\)"],
+    "d0":["djcalo",NrJEtMin,NrJEtMax,0.,2.,3.14-JDPhi,"Ana","Ana","log\(nljet/ppt\)","log\(aljet/ppt\)"],
     "d1":["djcalo",NrJEtMin,NrJEtMax,35.,2.,JDPhi,"Ana","Ana","log\(nljet/ppt\)","log\(aljet/ppt\)"],
     "d2":["djcalo",NrJEtMin,NrJEtMax,50.,2.,JDPhi,"Ana","Ana","log\(nljet/ppt\)","log\(aljet/ppt\)"]
     }
@@ -57,6 +59,7 @@ for sysana, [mod,NrJEtMin,NrJEtMax,AwJEtMin,AwJEtaMax,JetDPhiMin,DJCutType,TrkCu
   os.system('echo;echo;echo --- '+sysana+' --- >> '+logfile)
   cmd='root -l -b -q anaDiJetFF.C+\('
   cmd+=str(doMC)+','
+  cmd+='\\"'+evtBase+'\\",'
   cmd+='\\"'+AnaV+RunV+'\\",'
   cmd+='\\"'+mod+'\\",'
   cmd+=str(NrJEtMin)+','
@@ -70,7 +73,6 @@ for sysana, [mod,NrJEtMin,NrJEtMax,AwJEtMin,AwJEtaMax,JetDPhiMin,DJCutType,TrkCu
   cmd+='\\"'+varXiAwJES+'\\",'
   cmd+='\\"'+inFile0Name+'\\",'
   cmd+='\\"'+SrcName+'\\",'
-  cmd+='\\"'+header+'\\",'
   cmd+='\\"'+AnaType+sysana+'\\"\)'
   cmd+=' >> '+logfile
   print cmd
