@@ -19,18 +19,19 @@ process.source = cms.Source("PoolSource",
     )
 
 # ===== Top Level =====
-process.GlobalTag.globaltag = "START39_V7HI::All"
+process.GlobalTag.globaltag = "START39_V5HI::All"
 isData=False
+isDataEmbed=True
 
 # ===== Centrality =====
 from CmsHi.Analysis2010.CommonFunctions_cff import *
 overrideCentrality(process)
 process.HeavyIonGlobalParameters = cms.PSet(
     centralityVariable = cms.string("HFhits"),
-    nonDefaultGlauberModel = cms.string("Hydjet_2760GeV"),
+    nonDefaultGlauberModel = cms.string("Hydjet_Bass_2760GeV"),
     centralitySrc = cms.InputTag("hiCentrality")
     )
-if (isData):
+if (isData or isDataEmbed):
   process.HeavyIonGlobalParameters.nonDefaultGlauberModel = cms.string("")
 
 
@@ -40,7 +41,7 @@ for i,m in enumerate([process.djcalo,
   process.djcalo_tower,
   process.djcalo_genp,
   process.djgen]):
-  m.hltsrc = cms.InputTag("TriggerResults","","HISIGNAL")
+  m.hltsrc = cms.InputTag("TriggerResults","","RECOMIX")
   print i, "hlt: ", m.hltsrc
 
 anaOutName = "dj_%s.root" % (process.djcalo.jetsrc.value())
@@ -54,9 +55,9 @@ from Saved.DiJetAna.customise_cfi import *
 #enableTrigger(process,"Jet")
 # HLT Ana
 enableOpenHlt(process,process.dijetAna_seq,isData)
-process.hltanalysis.l1GtReadoutRecord = cms.InputTag( 'gtDigis','',"RECO")
-process.hltanalysis.hltresults = cms.InputTag( 'TriggerResults','',"HISIGNAL")
-process.hltanalysis.HLTProcessName = "HISIGNAL"
+process.hltanalysis.l1GtReadoutRecord = cms.InputTag( 'gtDigis','',"RECOMIX")
+process.hltanalysis.hltresults = cms.InputTag( 'TriggerResults','',"RECOMIX")
+process.hltanalysis.HLTProcessName = "RECOMIX"
 
 #process.iterativeConePu5CaloJetsJOC = process.iterativeConePu5CaloJets.clone(
 #   subtractorName = cms.string( "JetOffsetCorrector" )
@@ -88,6 +89,8 @@ enableRECO(process,"MC","HI")
 #  m.nearJetPtMin = 40
 
 # First look at data
+process.dijetAna_seq.remove(process.djcalo_genp)
+process.dijetAna_seq.remove(process.djgen)
 process.djcalo.nearJetPtMin = 100
 process.djcalo_tower.nearJetPtMin = 100
 
