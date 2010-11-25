@@ -19,6 +19,7 @@
 using namespace std;
 
 void anaDiJetFF(int doMC=1,
+    TString evtBase="S2",
     TString AnaVersion = "a1006",
     TString modName = "djcalo_genp",
     Double_t NrJEtMin = 100,
@@ -32,7 +33,6 @@ void anaDiJetFF(int doMC=1,
     TString varXiAwJES = "log(aljet/ppt)",
     const char * inFile0Name="~/scratch01/ana/Hydj_Hard_GSR_NZS/UQDJ80_120_proc0831_10k.root",
     TString SrcName = "HydjUQDJ80",
-    TString header = "Hydjet+UQDJ80",
     TString AnaType = "ff")
 {
   // Define Inputs
@@ -45,7 +45,7 @@ void anaDiJetFF(int doMC=1,
   cout << " # entries: " << djTree->GetEntries() << endl;
 
   // === Declare selection ===
-  selectionCut anaSel(SrcName,doMC,"S2",NrJEtMin,NrJEtMax,AwJEtMin,JDPhi);
+  selectionCut anaSel(SrcName,doMC,evtBase,NrJEtMin,NrJEtMax,AwJEtMin,JDPhi);
   anaSel.AwJEtaMax = AwJEtaMax;
   anaSel.DJCutType = DJCutType;
   anaSel.TrkCutType = TrkCutType;
