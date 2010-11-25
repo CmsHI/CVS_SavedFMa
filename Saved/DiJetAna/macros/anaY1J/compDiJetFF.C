@@ -13,13 +13,13 @@
 using namespace std;
 
 void compDiJetFF(
-    TString inFile0Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs01.root",
-    TString inFile1Name="out/HydUQDJ80/S1_100_200_0_25/a9/ffs00.root",
-    TString compTag="ffs01ffs00",
-    TString outdir="out/HydUQDJ80/compare/a9",
+    TString inFile0Name="out/HCPR-GoodTrk1123_All0/S2_120_500_50_26/1125a1r1/ffd2.root",
+    TString inFile1Name="out/HydjQDJUQ80/S1_120_500_50_26/1125a1r1/ffd2.root",
+    TString compTag="DataHydjQDJUQ",
+    TString outdir="out/compare/HCPR-GoodTrk1123",
     TString JEtNr0="hJEtNr",
     TString JEtNr1="hJEtNr",
-    TString header="Hydjet+UQDiJet80to120",
+    TString header="HLT_HIJet50U",
     TString finalMeas="hSig_XiE1Aw",
     TString finalMeasTitle="j2(E1)")
 {
