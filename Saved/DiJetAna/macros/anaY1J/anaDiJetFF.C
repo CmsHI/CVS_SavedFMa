@@ -25,6 +25,7 @@ void anaDiJetFF(int doMC=1,
     Double_t NrJEtMin = 100,
     Double_t NrJEtMax = 200,
     Double_t AwJEtMin = 50,
+    Double_t AwJEtMax = 200,
     Double_t AwJEtaMax = 2.,
     Double_t JDPhi = TMath::Pi()*5./6,
     TString DJCutType = "Ana",
@@ -46,6 +47,7 @@ void anaDiJetFF(int doMC=1,
 
   // === Declare selection ===
   selectionCut anaSel(SrcName,doMC,evtBase,NrJEtMin,NrJEtMax,AwJEtMin,JDPhi);
+  anaSel.AwJEtMax = AwJEtMax;
   anaSel.AwJEtaMax = AwJEtaMax;
   anaSel.DJCutType = DJCutType;
   anaSel.TrkCutType = TrkCutType;
