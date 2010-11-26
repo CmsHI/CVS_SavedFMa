@@ -110,6 +110,13 @@ def enableDataMixMC(process):
   process.djgen.trksrc = "genParticles"
   process.djgen.jetsrc = "iterativeCone5GenJets"
 
+def enableOutput(process):
+  process.output = cms.OutputModule("PoolOutputModule",
+    fileName = cms.untracked.string("jetAnaSkim.root")
+  )
+  process.out_step = cms.EndPath(process.output)
+  process.schedule.extend([process.out_step])
+
 ### Output levels
 djOutputThreshold = {
   'FULL': -1,
