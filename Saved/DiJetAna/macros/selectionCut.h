@@ -87,6 +87,7 @@ class selectionCut
     double NrJEtMin;
     double NrJEtMax;
     double AwJEtMin;
+    double AwJEtMax;
     double JEtaMin;
     double NrJEtaMax;
     double AwJEtaMax;
@@ -144,6 +145,7 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   NrJEtMin(NrEtMin),
   NrJEtMax(NrEtMax),
   AwJEtMin(AwEtMin),
+  AwJEtMax(NrEtMax),
   JEtaMin(0.),
   NrJEtaMax(2.),
   AwJEtaMax(2.),
@@ -190,25 +192,25 @@ void selectionCut::SetCut()
 
   // Single Jet Selections
   LJ["Ana"] = Form("nljet>%.1f&&nljet<%.1f&&abs(nljeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
-  AJ["Ana"] = Form("aljet>%.1f&&aljet<%.1f&&abs(aljeta)<%.1f",AwJEtMin,NrJEtMax,AwJEtaMax);
+  AJ["Ana"] = Form("aljet>%.1f&&aljet<%.1f&&abs(aljeta)<%.1f",AwJEtMin,AwJEtMax,AwJEtaMax);
 
   LJ["AnaMatRef"] = LJ["Ana"] && "nlrjet>10";
   AJ["AnaMatRef"] = AJ["Ana"] && "alrjet>10";
 
   LJ["Ref"] = Form("nlrjet>%.1f&&nlrjet<%.1f&&abs(nlrjeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
-  AJ["Ref"] = Form("alrjet>%.1f&&alrjet<%.1f&&abs(alrjeta)<%.1f",AwJEtMin,NrJEtMax,AwJEtaMax);
+  AJ["Ref"] = Form("alrjet>%.1f&&alrjet<%.1f&&abs(alrjeta)<%.1f",AwJEtMin,AwJEtMax,AwJEtaMax);
 
   LJ["AnaOrderRef"] = Form("nrljet>%.1f&&nrljet<%.1f&&abs(nrljeta)<%.1f && nlrjet>10",NrJEtMin,NrJEtMax,NrJEtaMax);
-  AJ["AnaOrderRef"] = Form("arljet>%.1f&&arljet<%.1f&&abs(arljeta)<%.1f && alrjet>10",AwJEtMin,NrJEtMax,AwJEtaMax);
+  AJ["AnaOrderRef"] = Form("arljet>%.1f&&arljet<%.1f&&abs(arljeta)<%.1f && alrjet>10",AwJEtMin,AwJEtMax,AwJEtaMax);
 
   LJ["RefOrderRef"] = Form("nrlrjet>%.1f&&nrlrjet<%.1f&&abs(nrlrjeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
-  AJ["RefOrderRef"] = Form("arlrjet>%.1f&&arlrjet<%.1f&&abs(arlrjeta)<%.1f",AwJEtMin,NrJEtMax,AwJEtaMax);
+  AJ["RefOrderRef"] = Form("arlrjet>%.1f&&arlrjet<%.1f&&abs(arlrjeta)<%.1f",AwJEtMin,AwJEtMax,AwJEtaMax);
 
   LJ["AnaUpper"] = Form("nljet*1.14>%.1f&&nljet*1.14<%.1f&&abs(nljeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
-  AJ["AnaUpper"] = Form("aljet*1.14>%.1f&&aljet*1.14<%.1f&&abs(aljeta)<%.1f",AwJEtMin,NrJEtMax,AwJEtaMax);
+  AJ["AnaUpper"] = Form("aljet*1.14>%.1f&&aljet*1.14<%.1f&&abs(aljeta)<%.1f",AwJEtMin,AwJEtMax,AwJEtaMax);
 
   LJ["AnaLower"] = Form("nljet*0.86>%.1f&&nljet*0.86<%.1f&&abs(nljeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
-  AJ["AnaLower"] = Form("aljet*0.86>%.1f&&aljet*0.86<%.1f&&abs(aljeta)<%.1f",AwJEtMin,NrJEtMax,AwJEtaMax);
+  AJ["AnaLower"] = Form("aljet*0.86>%.1f&&aljet*0.86<%.1f&&abs(aljeta)<%.1f",AwJEtMin,AwJEtMax,AwJEtaMax);
 
   if (!TString(LJExtraCut).IsWhitespace()) And(LJ,LJExtraCut);
   if (!TString(AJExtraCut).IsWhitespace()) And(AJ,AJExtraCut);
@@ -242,6 +244,8 @@ void selectionCut::SetCut()
   Trk["AnaSig"] = Trk["Ana"]&&"psube==0";
 
   Tag = Form("%s_%0.f_%.0f_%.0f_%.0f",BaseCutType.Data(),NrJEtMin,NrJEtMax,AwJEtMin,DjDPhiMin*10);
+  if (TMath::Abs(AwJEtMax-NrJEtMax)>0.1)
+    Tag = Form("%s_%0.f_%.0f_%.0f_%.0f_%.0f",BaseCutType.Data(),NrJEtMin,NrJEtMax,AwJEtMin,AwJEtMax,DjDPhiMin*10);
   Tag2 = "_J"+DJCutType+"T"+TrkCutType;
 }
 
