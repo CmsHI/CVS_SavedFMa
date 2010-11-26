@@ -76,7 +76,7 @@ void finalDiJetFF(int doCorr=0,
   cpXiE1.Draw(cXiE1,true);
 
   TCanvas * cPPt = new TCanvas("PPt","PPt",500,500);
-  CPlot cpPPt("PPt","PPt","p_{T}^{trk})","#frac{1}{N_{jet}} #frac{dN}{d#p_{T}}");
+  CPlot cpPPt("PPt","PPt","p_{T}^{trk}","#frac{1}{N_{jet}} #frac{dN}{dp_{T}}");
   cpPPt.SetLogy();
   cpPPt.SetXRange(0,60);
   cpPPt.AddHist1D(hg0.H("PPtNrSig"),"j1","E",kRed,kOpenSquare);
