@@ -6,6 +6,18 @@ void aliases_dijet(TTree * djTree, float pptMin=4.5, int doMC=1)
   if (!djTree) cout << "djTree not defined, please check" << endl;
   assert(djTree);
 
+  // jet matching
+  djTree->SetAlias("PI","3.1415926535897932");
+  TString refjet("djgen");
+  djTree->SetAlias("tr2nljdphiRaw",Form("abs(nljphi-%s.nljphi)",refjet.Data()));
+  djTree->SetAlias("tr2aljdphiRaw",Form("abs(aljphi-%s.aljphi)",refjet.Data()));
+  djTree->SetAlias("tr2nljdphi","((tr2nljdphiRaw<=PI)*tr2nljdphiRaw+(tr2nljdphiRaw>PI)*(2*PI-tr2nljdphiRaw))");
+  djTree->SetAlias("tr2aljdphi","((tr2aljdphiRaw<=PI)*tr2aljdphiRaw+(tr2aljdphiRaw>PI)*(2*PI-tr2aljdphiRaw))");
+  djTree->SetAlias("tr2nljdeta",Form("abs(nljeta-%s.nljeta)",refjet.Data()));
+  djTree->SetAlias("tr2aljdeta",Form("abs(aljeta-%s.aljeta)",refjet.Data()));
+  djTree->SetAlias("tr2nljdr","sqrt(tr2nljdphi*tr2nljdphi+tr2nljdeta*tr2nljdeta)");
+  djTree->SetAlias("tr2aljdr","sqrt(tr2aljdphi*tr2aljdphi+tr2aljdeta*tr2aljdeta)");
+
   // dijet cleaning
   djTree->SetAlias("goodDJ3","nljet>10 && aljet>10 && abs(nljeta)<3 && abs(aljeta)<3 && jdphi>2.14 && nljemf>0.01 && aljemf>0.01");
   djTree->SetAlias("goodDJ2","nljet>10 && aljet>10 && abs(nljeta)<2 && abs(aljeta)<2 && jdphi>2.14 && nljemf>0.01 && aljemf>0.01");
@@ -15,7 +27,6 @@ void aliases_dijet(TTree * djTree, float pptMin=4.5, int doMC=1)
   djTree->SetAlias("goodTrk",Form("ppt>%f && ppt<nljet*1.5",pptMin));
 
   // leading partile
-  djTree->SetAlias("PI","3.1415926");
   djTree->SetAlias("lpndphiRaw","abs(nljphi-lp[0].Phi())");
   djTree->SetAlias("lpadphiRaw","abs(nljphi-lp[1].Phi())");
   djTree->SetAlias("lpndphi","((lpndphiRaw<=PI)*lpndphiRaw+(lpndphiRaw>PI)*(2*PI-lpndphiRaw))");
