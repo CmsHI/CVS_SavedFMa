@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.63 2010/10/22 08:19:54 frankma Exp $
+// $Id: DiJetAna.cc,v 1.64 2010/11/20 22:56:12 frankma Exp $
 //
 //
 
@@ -547,7 +547,7 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
 
   if (anaJets_.size()<1) return;
   Handle<vector<pat::Jet> > matjets;
-  iEvent.getByLabel(refjetsrc_,matjets);
+  if (refjetType<1000) iEvent.getByLabel(refjetsrc_,matjets);
 
   // calojet to genjet
   if (refjetType==21) {
@@ -583,6 +583,23 @@ void DiJetAna::FindRefJets(const edm::Event& iEvent, Int_t refjetType, std::vect
       }
     }
     return; // done with case 12
+  }
+  
+  // manual matching
+  if (refjetType==1021||refjetType==1012) {
+    edm::Handle<reco::CandidateView> cands;
+    iEvent.getByLabel(refjetsrc_,cands);
+    for (unsigned int i=0; i<anaJets_.size(); ++i) {
+      double maxpt=-99; int ibest=-99;
+      for (unsigned int j=0; j<(*cands).size();++j) {
+	const reco::Candidate & jet = (*cands)[j];
+	if (deltaR(jet,anaJets_[i])>0.4) continue;
+	if (jet.pt()>maxpt) { maxpt=jet.pt(); ibest=j; }
+      }
+      if (ibest>=0) refjets.push_back((*cands)[ibest].polarP4());
+      // correct if ref collection is calojet
+      if (refjetType==1012) refjets[i] *= anaJECs_[ibest];
+    }
   }
 }
 

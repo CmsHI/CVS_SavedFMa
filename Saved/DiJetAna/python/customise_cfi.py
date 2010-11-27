@@ -109,6 +109,12 @@ def enableDataMixMC(process):
   process.djcalo_genp.trksrc = "genParticles"
   process.djgen.trksrc = "genParticles"
   process.djgen.jetsrc = "iterativeCone5GenJets"
+  # for the moment do manual matching
+  for m in [process.djcalo,process.djcalo_tower,process.djcalo_genp]:
+    m.refJetType = 1021
+    m.refjetsrc = "iterativeCone5GenJets"
+  process.djgen.refJetType = 1012
+  process.djgen.refjetsrc = "patJets"
 
 def enableOutput(process):
   process.output = cms.OutputModule("PoolOutputModule",
