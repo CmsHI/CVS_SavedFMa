@@ -8,6 +8,15 @@ void aliases_dijet(TTree * djTree, float pptMin=4.5, int doMC=1, TString refjet=
 
   // jet matching
   djTree->SetAlias("PI","3.1415926535897932");
+  djTree->SetAlias("nlrjdphiRaw",Form("abs(nljphi-nlrjphi)"));
+  djTree->SetAlias("alrjdphiRaw",Form("abs(aljphi-alrjphi)"));
+  djTree->SetAlias("nlrjdphi","((nlrjdphiRaw<=PI)*nlrjdphiRaw+(nlrjdphiRaw>PI)*(2*PI-nlrjdphiRaw))");
+  djTree->SetAlias("alrjdphi","((alrjdphiRaw<=PI)*alrjdphiRaw+(alrjdphiRaw>PI)*(2*PI-alrjdphiRaw))");
+  djTree->SetAlias("nlrjdeta",Form("abs(nljeta-nlrjeta)"));
+  djTree->SetAlias("alrjdeta",Form("abs(aljeta-alrjeta)"));
+  djTree->SetAlias("nlrjdr","sqrt(nlrjdphi*nlrjdphi+nlrjdeta*nlrjdeta)");
+  djTree->SetAlias("alrjdr","sqrt(alrjdphi*alrjdphi+alrjdeta*alrjdeta)");
+
   djTree->SetAlias("nltr2nljdphiRaw",Form("abs(nljphi-%s.nljphi)",refjet.Data()));
   djTree->SetAlias("altr2aljdphiRaw",Form("abs(aljphi-%s.aljphi)",refjet.Data()));
   djTree->SetAlias("nltr2nljdphi","((nltr2nljdphiRaw<=PI)*nltr2nljdphiRaw+(nltr2nljdphiRaw>PI)*(2*PI-nltr2nljdphiRaw))");
