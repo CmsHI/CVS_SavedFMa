@@ -8,8 +8,8 @@ jobTag="MatchedJetGoodTrk1127"
 samples  = {
     #"HydjetQ_DJQ80_F10GSR":"ana",
     #"HydjetQ_DJUQ80_F10GSR":"ana"
-    "Data_MinBias_DijetUnquenched80_d20101125":"ana",
-    "Data_MinBias0to20_DijetUnquenched50_d20101124":"ana"
+    "Data_MinBias_DijetUnquenched80_d20101125and1126":"ana",
+    "Data_MinBias_DijetUnquenched50_d20101127":"ana"
     }
 
 for sample,PD in samples.items():
