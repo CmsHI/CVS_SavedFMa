@@ -13,7 +13,12 @@
 #include "Saved/Utilities/macros/graph/tgraphTools.C"
 using namespace std;
 
-TGraphAsymmErrors *calcEff(TH1* h1, TH1* h2,char *hName="hEff")
+//const int nBin=11;
+//Float_t bin[nBin+1]={0,5,10,15,30,60,80,100,120,160,200,300};
+const int nBin=25;
+Float_t bin[nBin+1]={0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,90,100,110,120,140,160,200,240,300};
+
+TGraphAsymmErrors *calcEff(TH1* h1, TH1* h2,TString hName="hEff")
 {
    TGraphAsymmErrors *gEfficiency = new TGraphAsymmErrors();
    gEfficiency->BayesDivide(h2,h1);
@@ -27,10 +32,6 @@ TGraphAsymmErrors *eff(TTree * t,TString var="nljet",TCut sel="",TCut cut="",TSt
   cout << "Evt Sel: " << TString(sel) << ": " << t->GetEntries(sel) << endl;
   cout << "Trigger: " << TString(sel&&cut) << ": " << t->GetEntries(sel&&cut) << endl;
 
-  //const int nBin=11;
-  //Float_t bin[nBin+1]={0,5,10,15,30,60,80,100,120,160,200,300};
-  const int nBin=25;
-  Float_t bin[nBin+1]={0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,90,100,110,120,140,160,200,240,300};
   TH1F *h = new TH1F("h"+tag,"",nBin,bin);
   TH1F *hCut = new TH1F("hCut"+tag,"",nBin,bin);
   t->Draw(var+">>h"+tag,sel,"goff");
@@ -41,65 +42,53 @@ TGraphAsymmErrors *eff(TTree * t,TString var="nljet",TCut sel="",TCut cut="",TSt
 }
 
 TChain * effJet(bool doMC=1,
-    TString infile0="dj_Data_MinBias_DijetUnquenched80_d20101125_StdJetGoodTrk1126.root",
-    TString infile1="dj_Data_MinBias0to20_DijetUnquenched50_d20101124_StdJetGoodTrk1126.root",
+    TString infile0="dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127.root",
+    //TString infile1="dj_Data_MinBias_DijetUnquenched80_d20101125_StdJetGoodTrk1126.root",
     TString header="McDiJet-DataBackground"
     )
 {
   TChain * dj = new TChain("djgen/djTree");
-  TChain * dj1 = new TChain("djgen/djTree");
+  //TChain * dj1 = new TChain("djgen/djTree");
 
   dj->Add(infile0);
   dj->AddFriend("djcalo = djcalo/djTree",infile0);
   aliases_dijet(dj,1.2,doMC,"djcalo");
   cout << "dj0 Total: " << dj->GetEntries() << endl;
 
-  dj1->Add(infile1);
-  dj1->AddFriend("djcalo = djcalo/djTree",infile1);
-  aliases_dijet(dj1,1.2,doMC,"djcalo");
-  cout << "dj1 Total: " << dj1->GetEntries() << endl;
+  //dj1->Add(infile1);
+  //dj1->AddFriend("djcalo = djcalo/djTree",infile1);
+  //aliases_dijet(dj1,1.2,doMC,"djcalo");
+  //cout << "dj1 Total: " << dj1->GetEntries() << endl;
 
-  TCut evtSel("cent<10 && nljet>35 && abs(nljeta)<2 && aljet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
+  TCut evtSel("cent<10 && nljet>30 && abs(nljeta)<2 && aljet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
   //evtSel = evtSel && "djgen.nljet>0&&djgen.aljet>0" //for now abs eff --- no selection on mc
   TCut evtSelAw = evtSel && "nljet>120";
   //TCut evtSel("HLT_HIJet50U && cent<10 ");
 
+  TCanvas * cDr = new TCanvas("cDr","cDr",500,500);
+  dj->Draw("nlrjdr>>hDrNr(300,0,6.28)",evtSel);
+  dj->Draw("alrjdr>>hDrAw(300,0,6.28)",evtSel,"same");
+
   TCanvas * cEt = new TCanvas("cEt","cEt",500,500);
   dj->Draw("nljet",evtSel,"hist");
-  dj->Draw("aljet",evtSel,"sameE");
-  dj1->Draw("nljet",evtSel,"hist same");
-  dj1->Draw("aljet",evtSel,"sameE");
-
-  TCanvas * cDr = new TCanvas("cDr","cDr",500,500);
-  dj->Draw("tr2nljdr",evtSel,"hist");
-  dj->Draw("tr2aljdr",evtSel,"sameE");
-
-  TCanvas * cDr1 = new TCanvas("cDr1","cDr1",500,500);
-  dj1->Draw("tr2nljdr",evtSel,"hist");
-  dj1->Draw("tr2aljdr",evtSel,"sameE");
+  dj->Draw("nlrjet",evtSel,"hist E");
+  dj->Draw("aljet",evtSel,"same hist");
+  dj->Draw("alrjet",evtSel,"same E");
 
   TGraphAsymmErrors *g0=0,*g1=0,*g2=0,*g3=0,*g4=0;
-  g0 = eff(dj,"nljet",evtSel,"tr2nljdr<0.3","NrJEt");
-  g1 = eff(dj,"aljet",evtSelAw,"tr2aljdr<0.3","AwJEt");
-  g2 = eff(dj1,"nljet",evtSel,"tr2nljdr<0.3","NrJEt1");
-  g3 = eff(dj1,"aljet",evtSelAw,"tr2aljdr<0.3","AwJEt1");
+  g0 = eff(dj,"nljet",evtSel,"nlrjdr<0.3","NrJEt");
+  g1 = eff(dj,"aljet",evtSelAw,"alrjdr<0.3","AwJEt");
 
   // Draw
   TCanvas *cTrigEff = new TCanvas("cTrigEff","cTrigEff",600,600);
-  //const int nBin=11;
-  //Float_t bin[nBin+1]={0,5,10,15,30,60,80,100,120,160,200,300};
-  const int nBin=25;
-  Float_t bin[nBin+1]={0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,90,100,110,120,140,160,200,240,300};
   TH1F *hTmp = new TH1F("hTmp","",nBin,bin);
   g1->SetLineColor(kGreen+2); g1->SetMarkerColor(kGreen+2); g1->SetMarkerStyle(kOpenSquare);
-  g2->SetLineColor(kBlue); g2->SetMarkerColor(kBlue); g2->SetMarkerStyle(kOpenStar);
   hTmp->SetAxisRange(0,1.3,"Y");
   hTmp->SetXTitle("E_{T}^{GenJet} [GeV]");
   hTmp->SetYTitle("Eff. (Matched Reco/Gen)");
   hTmp->Draw();
   g0->Draw("p");
-  //g1->Draw("p");
-  g2->Draw("p");
+  g1->Draw("p");
   TLine *l = new TLine(0,1,bin[nBin],1);
   l->SetLineStyle(2);
   l->Draw();
@@ -108,8 +97,7 @@ TChain * effJet(bool doMC=1,
   t->SetBorderSize(0);
   t->SetFillStyle(0);
   t->AddEntry(g0,"UnQuen MC - Leading Jet","pl");
-  //t->AddEntry(g1,"UnQuen MC - Away Jet","pl");
-  t->AddEntry(g2,"Quen MC - Leading Jet","pl");
+  t->AddEntry(g1,"UnQuen MC - Away Jet","pl");
   t->Draw();
 
   return dj;
