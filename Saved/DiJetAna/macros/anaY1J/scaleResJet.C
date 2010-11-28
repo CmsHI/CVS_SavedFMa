@@ -4,6 +4,7 @@
 #include "TChain.h"
 #include <TH1F.h>
 #include "TH2.h"
+#include "TH3.h"
 #include <TCut.h>
 #include <TLegend.h>
 #include <TLine.h>
@@ -20,6 +21,19 @@ const int nBin=25;
 Float_t bin[nBin+1]={0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,90,100,110,120,140,160,200,240,300};
 const int nBinRat=20;
 Float_t binRat[nBinRat+1];
+const int nBinEta=4;
+Float_t binEta[nBinEta+1]={-2,-1,0,1,2};
+
+TH3F * JES2D(TTree * t,TString var="nljet/nlrjet:nlrjet:nlrjeta",TCut sel="",TCut cut="",TString tag="")
+{
+  cout << "var: " << var << endl;
+  cout << "Trigger: " << TString(sel&&cut) << ": " << t->GetEntries(sel&&cut) << endl;
+
+  TH3F *h3d = new TH3F("h"+tag,"",nBin,bin,nBinRat,binRat,nBinEta,binEta);
+  t->Draw(var+">>h"+tag,sel&&cut,"goff");
+
+  return h3d;
+}
 
 TH2F * JES(TTree * t,TString var="nljet/nlrjet:nlrjet",TCut sel="",TCut cut="",TString tag="")
 {
@@ -27,11 +41,10 @@ TH2F * JES(TTree * t,TString var="nljet/nlrjet:nlrjet",TCut sel="",TCut cut="",T
   cout << "Trigger: " << TString(sel&&cut) << ": " << t->GetEntries(sel&&cut) << endl;
 
   TH2F *h2d = new TH2F("h"+tag,"",nBin,bin,nBinRat,binRat);
-  //TH2F *h2d = new TH2F("h"+tag,"",50,0,200,20,0,2);
   t->Draw(var+">>h"+tag,sel&&cut,"goff");
 
-  h2d->FitSlicesY();
-  //h2d->FitSlicesY(0,0,-1,10);
+  //h2d->FitSlicesY();
+  h2d->FitSlicesY(0,0,-1,5);
   return h2d;
 }
 
@@ -55,7 +68,7 @@ TChain * scaleResJet(bool doMC=1,
   //aliases_dijet(dj1,1.2,doMC,"djgen");
   //cout << "dj1 Total: " << dj1->GetEntries() << endl;
 
-  TCut evtSel("cent<10 && nlrjet>80 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
+  TCut evtSel("cent>=30 && cent<100 && nlrjet>80 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
   //evtSel = evtSel && "djgen.nljet>0&&djgen.aljet>0" //for now abs eff --- no selection on mc
   TCut evtSelAw = evtSel && "alrjet>80";
   //TCut evtSel("HLT_HIJet50U && cent<10 ");
