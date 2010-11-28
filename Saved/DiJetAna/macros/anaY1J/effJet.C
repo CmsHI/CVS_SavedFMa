@@ -79,9 +79,9 @@ TChain * effJet(bool doMC=1,
   //aliases_dijet(dj1,1.2,doMC,"djcalo");
   //cout << "dj1 Total: " << dj1->GetEntries() << endl;
 
-  TCut evtSel("cent<10 && nljet>30 && abs(nljeta)<2 && aljet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
+  TCut evtSel("cent<10 && nljet>50 && abs(nljeta)<2 && aljet>15 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
   //evtSel = evtSel && "djgen.nljet>0&&djgen.aljet>0" //for now abs eff --- no selection on mc
-  TCut evtSelAw = evtSel && "nljet>120";
+  TCut evtSelAw = evtSel;//&& "nljet>120";
   //TCut evtSel("HLT_HIJet50U && cent<10 ");
 
   TCanvas * cDr = new TCanvas("cDr","cDr",500,500);
@@ -103,7 +103,7 @@ TChain * effJet(bool doMC=1,
   TH2F * hEff2d = eff2d(dj,"aljet:nljet",evtSel,"nlrjdr<0.3&&alrjdr<0.3","JEt2D");
 
   // Draw
-  TCanvas *cJetEff = new TCanvas("cJetEff","cJetEff",500,500);
+  TCanvas *cJetEff = new TCanvas("cJetEff","cJetEff",500,550);
   TH1F *hTmp = new TH1F("hTmp","",nBin,bin);
   g1->SetLineColor(kGreen+2); g1->SetMarkerColor(kGreen+2); g1->SetMarkerStyle(kOpenSquare);
   hTmp->SetAxisRange(0,1.3,"Y");
@@ -119,11 +119,11 @@ TChain * effJet(bool doMC=1,
   t->SetHeader(header);
   t->SetBorderSize(0);
   t->SetFillStyle(0);
-  t->AddEntry(g0,"UnQuen MC - Leading Jet","pl");
-  t->AddEntry(g1,"UnQuen MC - Away Jet","pl");
+  t->AddEntry(g0,"UnQuen MC - Leading GenJet","pl");
+  t->AddEntry(g1,"UnQuen MC - Away GenJet","pl");
   t->Draw();
 
-  TCanvas *cJet2DEff = new TCanvas("cJet2DEff","cJet2DEff",500,500);
+  TCanvas *cJet2DEff = new TCanvas("cJet2DEff","cJet2DEff",500,550);
   hEff2d->Draw("colz");
   cJet2DEff->SetRightMargin(0.2);
   return dj;
