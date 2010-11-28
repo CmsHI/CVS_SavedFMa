@@ -3,6 +3,7 @@
 #include <TTree.h>
 #include "TChain.h"
 #include <TH1F.h>
+#include "TH2F.h"
 #include <TCut.h>
 #include <TLegend.h>
 #include <TLine.h>
@@ -17,6 +18,8 @@ using namespace std;
 //Float_t bin[nBin+1]={0,5,10,15,30,60,80,100,120,160,200,300};
 const int nBin=25;
 Float_t bin[nBin+1]={0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,90,100,110,120,140,160,200,240,300};
+const int nBinRat=100;
+Float_t binRat[nBinRat+1];
 
 TGraphAsymmErrors *calcEff(TH1* h1, TH1* h2,TString hName="hEff")
 {
@@ -39,6 +42,22 @@ TGraphAsymmErrors *eff(TTree * t,TString var="nljet",TCut sel="",TCut cut="",TSt
   TGraphAsymmErrors *g = calcEff(h,hCut);
   //g->Draw("ap");
   return g;
+}
+
+TH2F * eff2d(TTree * t,TString var="aljet:nljet",TCut sel="",TCut cut="",TString tag="")
+{
+  cout << "var: " << var << endl;
+  cout << "Evt Sel: " << TString(sel) << ": " << t->GetEntries(sel) << endl;
+  cout << "Trigger: " << TString(sel&&cut) << ": " << t->GetEntries(sel&&cut) << endl;
+
+  TH2F *h = new TH2F("h"+tag,";E_{T}^{Leading Jet} [GeV];E_{T}^{Away Jet} [GeV]",nBin,bin,nBin,bin);
+  TH2F *hCut = new TH2F("hCut"+tag,";E_{T}^{Leading Jet} [GeV];E_{T}^{Away Jet} [GeV]",nBin,bin,nBin,bin);
+  t->Draw(var+">>h"+tag,sel,"");
+  t->Draw(var+">>hCut"+tag,sel&&cut,"");
+  TH2F *hRat = (TH2F*)h->Clone("h"+tag+"Eff");
+  hRat->Divide(hCut,h);
+  hRat->SetMaximum(1.);
+  return hRat;
 }
 
 TChain * effJet(bool doMC=1,
@@ -75,12 +94,16 @@ TChain * effJet(bool doMC=1,
   dj->Draw("aljet",evtSel,"same hist");
   dj->Draw("alrjet",evtSel,"same E");
 
+  for (int i=0; i<=nBinRat;++i) binRat[i]=i*2./nBinRat;
+
   TGraphAsymmErrors *g0=0,*g1=0,*g2=0,*g3=0,*g4=0;
   g0 = eff(dj,"nljet",evtSel,"nlrjdr<0.3","NrJEt");
   g1 = eff(dj,"aljet",evtSelAw,"alrjdr<0.3","AwJEt");
 
+  TH2F * hEff2d = eff2d(dj,"aljet:nljet",evtSel,"nlrjdr<0.3&&alrjdr<0.3","JEt2D");
+
   // Draw
-  TCanvas *cTrigEff = new TCanvas("cTrigEff","cTrigEff",600,600);
+  TCanvas *cJetEff = new TCanvas("cJetEff","cJetEff",500,500);
   TH1F *hTmp = new TH1F("hTmp","",nBin,bin);
   g1->SetLineColor(kGreen+2); g1->SetMarkerColor(kGreen+2); g1->SetMarkerStyle(kOpenSquare);
   hTmp->SetAxisRange(0,1.3,"Y");
@@ -100,5 +123,8 @@ TChain * effJet(bool doMC=1,
   t->AddEntry(g1,"UnQuen MC - Away Jet","pl");
   t->Draw();
 
+  TCanvas *cJet2DEff = new TCanvas("cJet2DEff","cJet2DEff",500,500);
+  hEff2d->Draw("colz");
+  cJet2DEff->SetRightMargin(0.2);
   return dj;
 }
