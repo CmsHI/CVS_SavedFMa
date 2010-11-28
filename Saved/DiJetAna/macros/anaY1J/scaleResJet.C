@@ -55,33 +55,40 @@ TChain * scaleResJet(bool doMC=1,
   //aliases_dijet(dj1,1.2,doMC,"djgen");
   //cout << "dj1 Total: " << dj1->GetEntries() << endl;
 
-  TCut evtSel("cent<10 && nlrjet>80 && abs(nljeta)<2 && aljet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
+  TCut evtSel("cent<10 && nlrjet>80 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
   //evtSel = evtSel && "djgen.nljet>0&&djgen.aljet>0" //for now abs eff --- no selection on mc
-  TCut evtSelAw = evtSel;// && "nljet>120";
+  TCut evtSelAw = evtSel && "alrjet>80";
   //TCut evtSel("HLT_HIJet50U && cent<10 ");
   
   for (int i=0; i<=nBinRat;++i) binRat[i]=i*2./nBinRat;
 
-  TCanvas * cEt = new TCanvas("cEt","cEt",500,500);
-  dj->Draw("nljet",evtSel,"hist");
-  dj->Draw("aljet",evtSel,"sameE");
+  TCanvas * cEtNr2D = new TCanvas("cEtNr2D","cEtNr2D",500,500);
+  TH2D * hEtNr2D = new TH2D("hEtNr2D",";E_{T}^{GenJet};E_{T}^{RecoJet}",60,0,300,60,0,300);
+  dj->Draw("nljet:nlrjet>>hEtNr2D",evtSel,"colz");
+  TCanvas * cEtAw2D = new TCanvas("cEtAw2D","cEtAw2D",500,500);
+  TH2D * hEtAw2D = new TH2D("hEtAw2D",";E_{T}^{GenJet};E_{T}^{RecoJet}",60,0,300,60,0,300);
+  dj->Draw("aljet:alrjet>>hEtAw2D",evtSelAw,"colz");
 
   TCanvas * cDr = new TCanvas("cDr","cDr",500,500);
   dj->Draw("nlrjdr",evtSel,"hist");
-  dj->Draw("alrjdr",evtSel,"sameE");
+  dj->Draw("alrjdr",evtSelAw,"sameE");
 
   TH2F * hJESNr2D = JES(dj,"nljet/nlrjet:nlrjet",evtSel,"nlrjdr<0.3","JESNr2D");
   TH1D * hJESNr2D_1 = (TH1D*)gDirectory->Get("hJESNr2D_1");
   TH1D * hJESNr2D_2 = (TH1D*)gDirectory->Get("hJESNr2D_2");
-  TH2F * hJESAw2D = JES(dj,"aljet/alrjet:alrjet",evtSel,"alrjdr<0.3","JESAw2D");
+  TH2F * hJESAw2D = JES(dj,"aljet/alrjet:alrjet",evtSelAw,"alrjdr<0.3","JESAw2D");
+  TH1D * hJESAw2D_1 = (TH1D*)gDirectory->Get("hJESAw2D_1");
+  TH1D * hJESAw2D_2 = (TH1D*)gDirectory->Get("hJESAw2D_2");
 
   // Draw
   TCanvas * cJES = new TCanvas("cJES","cJES",500,500);
-  CPlot cpJES("JES","JES","E_{T}^{Jet} [GeV]","E_{T}^{RecoJet}/E_{T}^{GenJet}");
+  CPlot cpJES("JES","JES","E_{T}^{GenJet} [GeV]","E_{T}^{RecoJet}/E_{T}^{GenJet}");
   cpJES.SetYRange(0,1.5);
   cpJES.AddHist1D(hJESNr2D_1,"Leading Jet Reponse","E",kBlack,kFullCircle);
+  cpJES.AddHist1D(hJESAw2D_1,"Away Jet Reponse","E",kRed,kFullSquare);
   cpJES.AddHist1D(hJESNr2D_2,"Leading Jet Resolution","E",kBlack,kOpenCircle);
-  cpJES.SetLegend(0.25,0.8,0.58,0.92);
+  cpJES.AddHist1D(hJESAw2D_2,"Away Jet Resolution","E",kRed,kOpenSquare);
+  cpJES.SetLegend(0.54,0.8,0.86,0.92);
   cpJES.Draw(cJES,false);
   TLine *l = new TLine(0,1,bin[nBin],1);
   l->SetLineStyle(2);
