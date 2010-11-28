@@ -10,6 +10,7 @@
 #include <TLine.h>
 #include <TCanvas.h>
 #include "TProfile.h"
+#include "TProfile2D.h"
 #include <iostream>
 
 #include "Saved/DiJetAna/macros/aliases_dijet.C"
@@ -29,7 +30,8 @@ TH3F * JES2D(TTree * t,TString var="nljet/nlrjet:nlrjet:nlrjeta",TCut sel="",TCu
   cout << "var: " << var << endl;
   cout << "Trigger: " << TString(sel&&cut) << ": " << t->GetEntries(sel&&cut) << endl;
 
-  TH3F *h3d = new TH3F("h"+tag,"",nBin,bin,nBinRat,binRat,nBinEta,binEta);
+  //TH3F *h3d = new TH3F("h"+tag,"",nBinEta,binEta,nBin,bin,nBinRat,binRat);
+  TH3F *h3d = new TH3F("h"+tag,"#eta^{Jet};p_{T}^{Jet};Reponse",8,-2,2,50,0,300,50,0,2);
   t->Draw(var+">>h"+tag,sel&&cut,"goff");
 
   return h3d;
@@ -43,7 +45,6 @@ TH2F * JES(TTree * t,TString var="nljet/nlrjet:nlrjet",TCut sel="",TCut cut="",T
   TH2F *h2d = new TH2F("h"+tag,"",nBin,bin,nBinRat,binRat);
   t->Draw(var+">>h"+tag,sel&&cut,"goff");
 
-  //h2d->FitSlicesY();
   h2d->FitSlicesY(0,0,-1,5);
   return h2d;
 }
@@ -92,12 +93,17 @@ TChain * scaleResJet(bool doMC=1,
   dj->Draw("nlrjdr",evtSel,"hist");
   dj->Draw("alrjdr",evtSelAw,"sameE");
 
+  // 1D Response
   TH2F * hJESNr2D = JES(dj,"nljet/nlrjet:nlrjet",evtSel,"nlrjdr<0.3","JESNr2D");
   TH1D * hJESNr2D_1 = (TH1D*)gDirectory->Get("hJESNr2D_1");
   TH1D * hJESNr2D_2 = (TH1D*)gDirectory->Get("hJESNr2D_2");
   TH2F * hJESAw2D = JES(dj,"aljet/alrjet:alrjet",evtSelAw,"alrjdr<0.3","JESAw2D");
   TH1D * hJESAw2D_1 = (TH1D*)gDirectory->Get("hJESAw2D_1");
   TH1D * hJESAw2D_2 = (TH1D*)gDirectory->Get("hJESAw2D_2");
+
+  // 2D Reponse
+  TH3F * hJESNr3D = JES2D(dj,"nljet/nlrjet:nlrjet:nlrjeta",evtSel,"nlrjdr<0.3","JESNr3D");
+  TH3F * hJESAw3D = JES2D(dj,"aljet/alrjet:alrjet:alrjeta",evtSelAw,"alrjdr<0.3","JESAw3D");
 
   // Draw
   TCanvas * cJES = new TCanvas("cJES","cJES",500,500);
@@ -112,6 +118,20 @@ TChain * scaleResJet(bool doMC=1,
   TLine *l = new TLine(0,1,bin[nBin],1);
   l->SetLineStyle(2);
   l->Draw();
+  
+  TCanvas * cJES2DNr = new TCanvas("cJES2DNr","cJES2DNr",500,500);
+  cJES2DNr->SetRightMargin(0.2);
+  TProfile2D * hJESNr3D_pyx = (TProfile2D*)hJESNr3D->Project3DProfile("yx");
+  hJESNr3D_pyx->SetMinimum(0.8);
+  hJESNr3D_pyx->SetMaximum(1.2);
+  hJESNr3D_pyx->Draw("colz");
+
+  TCanvas * cJES2DAw = new TCanvas("cJES2DAw","cJES2DAw",500,500);
+  cJES2DAw->SetRightMargin(0.2);
+  TProfile2D * hJESAw3D_pyx = (TProfile2D*)hJESAw3D->Project3DProfile("yx");
+  hJESAw3D_pyx->SetMinimum(0.8);
+  hJESAw3D_pyx->SetMaximum(1.2);
+  hJESAw3D_pyx->Draw("colz");
 
   return dj;
 }
