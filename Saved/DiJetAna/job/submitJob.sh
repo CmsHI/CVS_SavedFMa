@@ -18,7 +18,10 @@ for i in `cat $inputList | sort | head -n $njobs`
 do
   ifile=${i##*/}
   inputTopDir=${i%/*.root}
-  cmd="./condor64Basic.sh runOne.sh $inputTopDir $ifile $output_dir -1"
+  if [ -f $output_dir/dj_$ifile ];
+  then echo file exits: $output_dir/dj_$ifile
+  else cmd="./condor64Basic.sh runOne.sh $inputTopDir $ifile $output_dir -1"
+  fi
   echo $cmd
   eval $cmd
 done
