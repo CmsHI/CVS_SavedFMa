@@ -65,9 +65,15 @@ TChain * scaleResJet(bool doMC=1,
   TCanvas * cEtNr2D = new TCanvas("cEtNr2D","cEtNr2D",500,500);
   TH2D * hEtNr2D = new TH2D("hEtNr2D",";E_{T}^{GenJet};E_{T}^{RecoJet}",60,0,300,60,0,300);
   dj->Draw("nljet:nlrjet>>hEtNr2D",evtSel,"colz");
+  hEtNr2D->ProfileX()->Draw("same");
+  TLine *l45 = new TLine(0,0,300,300);
+  l45->SetLineStyle(2);
+  l45->Draw();
   TCanvas * cEtAw2D = new TCanvas("cEtAw2D","cEtAw2D",500,500);
   TH2D * hEtAw2D = new TH2D("hEtAw2D",";E_{T}^{GenJet};E_{T}^{RecoJet}",60,0,300,60,0,300);
   dj->Draw("aljet:alrjet>>hEtAw2D",evtSelAw,"colz");
+  hEtAw2D->ProfileX()->Draw("same");
+  l45->Draw();
 
   TCanvas * cDr = new TCanvas("cDr","cDr",500,500);
   dj->Draw("nlrjdr",evtSel,"hist");
