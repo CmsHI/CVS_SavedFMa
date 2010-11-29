@@ -2,9 +2,10 @@
 #define __ptresolution_h__
 
 #include "TMath.h"
+#include "TF1.h"
 
 // Switch MC truth or data resolutions
-bool _ismcjer = false;
+bool _ismcjer = true;
 
 // Hauke's resolutions
 const int _nres = 6;
@@ -111,5 +112,9 @@ Double_t res(Double_t *x, Double_t *p) {
 Double_t res2(Double_t *x, Double_t *p) {
   return sqrt(pow(ptresolution_calo(x[0],0),2)+pow(7/x[0],2));
 }
+
+TF1 * fReso = new TF1("fReso","sqrt(pow([0],2)+pow([1]/sqrt(x),2)+pow([2]/x,2))",0,400);
+TF1 * fResoNoBkg = new TF1("fResoWBkg","sqrt(pow(7.7e-02,2)+pow(1.07/sqrt(x),2)+pow(-4.6e-5/x,2))",0,400);
+TF1 * fResoWBkg = new TF1("fResoWBkg","sqrt(pow(7.7e-02,2)+pow(1.07/sqrt(x),2)+pow(-4.6e-5/x,2)+pow(7/x,2))",0,400);
 
 #endif // __ptresolution_h__

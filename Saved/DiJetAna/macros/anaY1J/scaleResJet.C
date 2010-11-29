@@ -19,8 +19,10 @@
 #include "Saved/Utilities/macros/graph/tgraphTools.C"
 using namespace std;
 
-const int nBin=25;
-Float_t bin[nBin+1]={0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,90,100,110,120,140,160,200,240,300};
+//const int nBin=25;
+//Float_t bin[nBin+1]={0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,90,100,110,120,140,160,200,240,300};
+const int nBin=18;
+Float_t bin[nBin+1]={0,5,10,15,20,25,30,35,40,45,50,60,70,80,100,120,160,200,300};
 const int nBinRat=20;
 Float_t binRat[nBinRat+1];
 const int nBinEta=4;
@@ -51,11 +53,12 @@ TH2F * JES(TTree * t,TString var="nljet/nlrjet:nlrjet",TCut sel="",TCut cut="",T
 }
 
 TChain * scaleResJet(bool doMC=1,
+    TString infile0="dj_Data_MinBias_DijetUnquenched50and80_d20101125to27.root",
     //TString infile0="dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127v2.root",
-    TString infile0="dj_Data_MinBias_DijetUnquenched80_d20101125and1126_MatchedJetGoodTrk1127v2.root",
+    //TString infile0="dj_Data_MinBias_DijetUnquenched80_d20101125and1126_MatchedJetGoodTrk1127v2.root",
     //TString infile1="dj_Data_MinBias0to20_DijetUnquenched50_d20101124_StdJetGoodTrk1126.root",
-    Float_t centMin=70,
-    Float_t centMax=100,
+    Float_t centMin=0,
+    Float_t centMax=10,
     TString header="McDiJet-DataBackground"
     )
 {
@@ -72,10 +75,10 @@ TChain * scaleResJet(bool doMC=1,
   //aliases_dijet(dj1,1.2,doMC,"djgen");
   //cout << "dj1 Total: " << dj1->GetEntries() << endl;
 
-  TCut evtSel(Form("cent>=%.0f && cent<%.0f && nlrjet>80 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6",
+  TCut evtSel(Form("cent>=%.0f && cent<%.0f && nlrjet>50 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6",
 	centMin,centMax));
   //evtSel = evtSel && "djgen.nljet>0&&djgen.aljet>0" //for now abs eff --- no selection on mc
-  TCut evtSelAw = evtSel && "alrjet>70";
+  TCut evtSelAw = evtSel && "alrjet>40";
   //TCut evtSel("HLT_HIJet50U && cent<10 ");
   
   for (int i=0; i<=nBinRat;++i) binRat[i]=i*2./nBinRat;
@@ -140,12 +143,18 @@ TChain * scaleResJet(bool doMC=1,
   cpJReso.AddHist1D(hJESAw2D_2,"Away Jet Resolution","E",kRed,kOpenSquare);
   cpJReso.SetLegend(0.54,0.8,0.86,0.92);
   cpJReso.SetLegendHeader(Form("Centrality %.0f to %.0f",centMin,centMax));
-  cpJReso.Draw(cJReso,false);
   TF1 * fres = new TF1("fres",res,30,1000,0);
   TF1 * fres2 = new TF1("fres2",res2,30,1000,0);
-  fres2->SetLineStyle(7);
-  fres->Draw("same");
-  fres2->Draw("same");
+  //hJESNr2D_2->Fit("fReso","","",30,400);
+  cpJReso.Draw(cJReso,false);
+  fResoNoBkg->SetRange(30,400);
+  fResoNoBkg->Draw("same");
+  //fResoWBkg->SetParameters(fReso->GetParameter(0),fReso->GetParameter(1),fReso->GetParameter(2));
+  fResoWBkg->SetRange(30,400);
+  fResoWBkg->SetLineColor(kGreen+2);
+  fResoWBkg->Draw("same");
+  //fres->SetLineStyle(7);
+  //fres->Draw("same");
   cJReso->Print(Form("JReso_%.0fto%.0f.gif",centMin,centMax));
   cJReso->Print(Form("JReso_%.0fto%.0f.pdf",centMin,centMax));
   
