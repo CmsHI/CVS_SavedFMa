@@ -54,8 +54,8 @@ TChain * scaleResJet(bool doMC=1,
     //TString infile0="dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127v2.root",
     TString infile0="dj_Data_MinBias_DijetUnquenched80_d20101125and1126_MatchedJetGoodTrk1127v2.root",
     //TString infile1="dj_Data_MinBias0to20_DijetUnquenched50_d20101124_StdJetGoodTrk1126.root",
-    Float_t centMin=0,
-    Float_t centMax=10,
+    Float_t centMin=70,
+    Float_t centMax=100,
     TString header="McDiJet-DataBackground"
     )
 {
@@ -72,7 +72,6 @@ TChain * scaleResJet(bool doMC=1,
   //aliases_dijet(dj1,1.2,doMC,"djgen");
   //cout << "dj1 Total: " << dj1->GetEntries() << endl;
 
-  //TCut evtSel("cent>=70 && cent<100 && nlrjet>80 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
   TCut evtSel(Form("cent>=%.0f && cent<%.0f && nlrjet>80 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6",
 	centMin,centMax));
   //evtSel = evtSel && "djgen.nljet>0&&djgen.aljet>0" //for now abs eff --- no selection on mc
