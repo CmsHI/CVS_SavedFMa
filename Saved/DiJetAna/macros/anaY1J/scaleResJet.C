@@ -81,24 +81,29 @@ TChain * scaleResJet(bool doMC=1,
   
   for (int i=0; i<=nBinRat;++i) binRat[i]=i*2./nBinRat;
 
-  TCanvas * cEtNr2D = new TCanvas("cEtNr2D","cEtNr2D",500,500);
+  TCanvas * cEtNr2D = new TCanvas("cEtNr2D","cEtNr2D",500,550);
   TH2D * hEtNr2D = new TH2D("hEtNr2D",";E_{T}^{GenJet};E_{T}^{RecoJet}",60,0,300,60,0,300);
   dj->Draw("nljet:nlrjet>>hEtNr2D",evtSel,"colz");
   hEtNr2D->ProfileX()->Draw("same");
   TLine *l45 = new TLine(0,0,300,300);
   l45->SetLineStyle(2);
   l45->Draw();
-  TCanvas * cEtAw2D = new TCanvas("cEtAw2D","cEtAw2D",500,500);
+  cEtNr2D->Print(Form("EtNr2D_%.0fto%.0f.gif",centMin,centMax));
+  cEtNr2D->Print(Form("EtNr2D_%.0fto%.0f.pdf",centMin,centMax));
+
+  TCanvas * cEtAw2D = new TCanvas("cEtAw2D","cEtAw2D",500,550);
   TH2D * hEtAw2D = new TH2D("hEtAw2D",";E_{T}^{GenJet};E_{T}^{RecoJet}",60,0,300,60,0,300);
   dj->Draw("aljet:alrjet>>hEtAw2D",evtSelAw,"colz");
   hEtAw2D->ProfileX()->Draw("same");
   l45->Draw();
+  cEtAw2D->Print(Form("EtAw2D_%.0fto%.0f.gif",centMin,centMax));
+  cEtAw2D->Print(Form("EtAw2D_%.0fto%.0f.pdf",centMin,centMax));
 
-  TCanvas * cDr = new TCanvas("cDr","cDr",500,500);
+  TCanvas * cDr = new TCanvas("cDr","cDr",500,550);
   dj->Draw("nlrjdr",evtSel,"hist");
   dj->Draw("alrjdr",evtSelAw,"sameE");
   
-  TCanvas * cCent = new TCanvas("cCent","cCent",500,500);
+  TCanvas * cCent = new TCanvas("cCent","cCent",500,550);
   dj->Draw("cent",evtSel,"hist");
   dj->Draw("cent",evtSelAw,"sameE");
 
@@ -115,7 +120,7 @@ TChain * scaleResJet(bool doMC=1,
   TH3F * hJESAw3D = JES2D(dj,"aljet/alrjet:alrjet:alrjeta",evtSelAw,"alrjdr<0.3","JESAw3D");
 
   // Draw
-  TCanvas * cJES = new TCanvas("cJES","cJES",500,500);
+  TCanvas * cJES = new TCanvas("cJES","cJES",500,550);
   CPlot cpJES("JES","JES","E_{T}^{GenJet} [GeV]","E_{T}^{RecoJet}/E_{T}^{GenJet}");
   cpJES.SetYRange(0,1.5);
   cpJES.AddHist1D(hJESNr2D_1,"Leading Jet Reponse","E",kBlack,kFullCircle);
@@ -126,8 +131,10 @@ TChain * scaleResJet(bool doMC=1,
   TLine *l = new TLine(0,1,bin[nBin],1);
   l->SetLineStyle(2);
   l->Draw();
+  cJES->Print(Form("JES_%.0fto%.0f.gif",centMin,centMax));
+  cJES->Print(Form("JES_%.0fto%.0f.pdf",centMin,centMax));
   
-  TCanvas * cJReso = new TCanvas("cJReso","cJReso",500,500);
+  TCanvas * cJReso = new TCanvas("cJReso","cJReso",500,550);
   CPlot cpJReso("JReso","JReso","E_{T}^{GenJet} [GeV]","#sigma(E_{T}^{RecoJet}/E_{T}^{GenJet})");
   cpJReso.SetYRange(0,0.4);
   cpJReso.AddHist1D(hJESNr2D_2,"Leading Jet Resolution","E",kBlack,kOpenCircle);
@@ -140,20 +147,26 @@ TChain * scaleResJet(bool doMC=1,
   fres2->SetLineStyle(7);
   fres->Draw("same");
   fres2->Draw("same");
+  cJReso->Print(Form("JReso_%.0fto%.0f.gif",centMin,centMax));
+  cJReso->Print(Form("JReso_%.0fto%.0f.pdf",centMin,centMax));
   
-  TCanvas * cJES2DNr = new TCanvas("cJES2DNr","cJES2DNr",500,500);
+  TCanvas * cJES2DNr = new TCanvas("cJES2DNr","cJES2DNr",500,550);
   cJES2DNr->SetRightMargin(0.2);
   TProfile2D * hJESNr3D_pyx = (TProfile2D*)hJESNr3D->Project3DProfile("yx");
   hJESNr3D_pyx->SetMinimum(0.8);
   hJESNr3D_pyx->SetMaximum(1.2);
   hJESNr3D_pyx->Draw("colz");
+  cJES2DNr->Print(Form("JES2DNr_%.0fto%.0f.gif",centMin,centMax));
+  cJES2DNr->Print(Form("JES2DNr_%.0fto%.0f.pdf",centMin,centMax));
 
-  TCanvas * cJES2DAw = new TCanvas("cJES2DAw","cJES2DAw",500,500);
+  TCanvas * cJES2DAw = new TCanvas("cJES2DAw","cJES2DAw",500,550);
   cJES2DAw->SetRightMargin(0.2);
   TProfile2D * hJESAw3D_pyx = (TProfile2D*)hJESAw3D->Project3DProfile("yx");
   hJESAw3D_pyx->SetMinimum(0.8);
   hJESAw3D_pyx->SetMaximum(1.2);
   hJESAw3D_pyx->Draw("colz");
+  cJES2DAw->Print(Form("JES2DAw_%.0fto%.0f.gif",centMin,centMax));
+  cJES2DAw->Print(Form("JES2DAw_%.0fto%.0f.pdf",centMin,centMax));
 
   return dj;
 }
