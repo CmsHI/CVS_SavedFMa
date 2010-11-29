@@ -54,6 +54,8 @@ TChain * scaleResJet(bool doMC=1,
     //TString infile0="dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127v2.root",
     TString infile0="dj_Data_MinBias_DijetUnquenched80_d20101125and1126_MatchedJetGoodTrk1127v2.root",
     //TString infile1="dj_Data_MinBias0to20_DijetUnquenched50_d20101124_StdJetGoodTrk1126.root",
+    Float_t centMin=0,
+    Float_t centMax=10,
     TString header="McDiJet-DataBackground"
     )
 {
@@ -70,9 +72,11 @@ TChain * scaleResJet(bool doMC=1,
   //aliases_dijet(dj1,1.2,doMC,"djgen");
   //cout << "dj1 Total: " << dj1->GetEntries() << endl;
 
-  TCut evtSel("cent>=70 && cent<100 && nlrjet>80 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
+  //TCut evtSel("cent>=70 && cent<100 && nlrjet>80 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
+  TCut evtSel(Form("cent>=%.0f && cent<%.0f && nlrjet>80 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6",
+	centMin,centMax));
   //evtSel = evtSel && "djgen.nljet>0&&djgen.aljet>0" //for now abs eff --- no selection on mc
-  TCut evtSelAw = evtSel && "alrjet>80";
+  TCut evtSelAw = evtSel && "alrjet>70";
   //TCut evtSel("HLT_HIJet50U && cent<10 ");
   
   for (int i=0; i<=nBinRat;++i) binRat[i]=i*2./nBinRat;
@@ -117,6 +121,7 @@ TChain * scaleResJet(bool doMC=1,
   cpJES.AddHist1D(hJESNr2D_1,"Leading Jet Reponse","E",kBlack,kFullCircle);
   cpJES.AddHist1D(hJESAw2D_1,"Away Jet Reponse","E",kRed,kFullSquare);
   cpJES.SetLegend(0.54,0.8,0.86,0.92);
+  cpJES.SetLegendHeader(Form("Centrality %.0f to %.0f",centMin,centMax));
   cpJES.Draw(cJES,false);
   TLine *l = new TLine(0,1,bin[nBin],1);
   l->SetLineStyle(2);
@@ -128,6 +133,7 @@ TChain * scaleResJet(bool doMC=1,
   cpJReso.AddHist1D(hJESNr2D_2,"Leading Jet Resolution","E",kBlack,kOpenCircle);
   cpJReso.AddHist1D(hJESAw2D_2,"Away Jet Resolution","E",kRed,kOpenSquare);
   cpJReso.SetLegend(0.54,0.8,0.86,0.92);
+  cpJReso.SetLegendHeader(Form("Centrality %.0f to %.0f",centMin,centMax));
   cpJReso.Draw(cJReso,false);
   TF1 * fres = new TF1("fres",res,30,1000,0);
   TF1 * fres2 = new TF1("fres2",res2,30,1000,0);
