@@ -109,7 +109,7 @@ Double_t res(Double_t *x, Double_t *p) {
 }
 
 Double_t res2(Double_t *x, Double_t *p) {
-  return sqrt(pow(ptresolution_calo(x[0],0),2)+pow(5/x[0],2));
+  return sqrt(pow(ptresolution_calo(x[0],0),2)+pow(7/x[0],2));
 }
 
 #endif // __ptresolution_h__
