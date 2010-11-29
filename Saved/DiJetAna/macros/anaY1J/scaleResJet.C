@@ -14,6 +14,7 @@
 #include <iostream>
 
 #include "Saved/DiJetAna/macros/aliases_dijet.C"
+#include "Saved/DiJetAna/macros/anaY1J/ptresolution.h"
 #include "Saved/Utilities/macros/cplot/CPlot.h"           // helper class for plots
 #include "Saved/Utilities/macros/graph/tgraphTools.C"
 using namespace std;
@@ -69,7 +70,7 @@ TChain * scaleResJet(bool doMC=1,
   //aliases_dijet(dj1,1.2,doMC,"djgen");
   //cout << "dj1 Total: " << dj1->GetEntries() << endl;
 
-  TCut evtSel("cent>=30 && cent<100 && nlrjet>80 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
+  TCut evtSel("cent>=70 && cent<100 && nlrjet>80 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
   //evtSel = evtSel && "djgen.nljet>0&&djgen.aljet>0" //for now abs eff --- no selection on mc
   TCut evtSelAw = evtSel && "alrjet>80";
   //TCut evtSel("HLT_HIJet50U && cent<10 ");
@@ -92,6 +93,10 @@ TChain * scaleResJet(bool doMC=1,
   TCanvas * cDr = new TCanvas("cDr","cDr",500,500);
   dj->Draw("nlrjdr",evtSel,"hist");
   dj->Draw("alrjdr",evtSelAw,"sameE");
+  
+  TCanvas * cCent = new TCanvas("cCent","cCent",500,500);
+  dj->Draw("cent",evtSel,"hist");
+  dj->Draw("cent",evtSelAw,"sameE");
 
   // 1D Response
   TH2F * hJESNr2D = JES(dj,"nljet/nlrjet:nlrjet",evtSel,"nlrjdr<0.3","JESNr2D");
@@ -111,13 +116,24 @@ TChain * scaleResJet(bool doMC=1,
   cpJES.SetYRange(0,1.5);
   cpJES.AddHist1D(hJESNr2D_1,"Leading Jet Reponse","E",kBlack,kFullCircle);
   cpJES.AddHist1D(hJESAw2D_1,"Away Jet Reponse","E",kRed,kFullSquare);
-  cpJES.AddHist1D(hJESNr2D_2,"Leading Jet Resolution","E",kBlack,kOpenCircle);
-  cpJES.AddHist1D(hJESAw2D_2,"Away Jet Resolution","E",kRed,kOpenSquare);
   cpJES.SetLegend(0.54,0.8,0.86,0.92);
   cpJES.Draw(cJES,false);
   TLine *l = new TLine(0,1,bin[nBin],1);
   l->SetLineStyle(2);
   l->Draw();
+  
+  TCanvas * cJReso = new TCanvas("cJReso","cJReso",500,500);
+  CPlot cpJReso("JReso","JReso","E_{T}^{GenJet} [GeV]","#sigma(E_{T}^{RecoJet}/E_{T}^{GenJet})");
+  cpJReso.SetYRange(0,0.4);
+  cpJReso.AddHist1D(hJESNr2D_2,"Leading Jet Resolution","E",kBlack,kOpenCircle);
+  cpJReso.AddHist1D(hJESAw2D_2,"Away Jet Resolution","E",kRed,kOpenSquare);
+  cpJReso.SetLegend(0.54,0.8,0.86,0.92);
+  cpJReso.Draw(cJReso,false);
+  TF1 * fres = new TF1("fres",res,30,1000,0);
+  TF1 * fres2 = new TF1("fres2",res2,30,1000,0);
+  fres2->SetLineStyle(7);
+  fres->Draw("same");
+  fres2->Draw("same");
   
   TCanvas * cJES2DNr = new TCanvas("cJES2DNr","cJES2DNr",500,500);
   cJES2DNr->SetRightMargin(0.2);
