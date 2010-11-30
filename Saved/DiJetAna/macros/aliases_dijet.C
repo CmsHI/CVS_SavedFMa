@@ -8,28 +8,22 @@ void aliases_dijet(TTree * djTree, float pptMin=4.5, int doMC=1, TString refjet=
 
   // jet matching
   djTree->SetAlias("PI","3.1415926535897932");
-  djTree->SetAlias("nlrjdphiRaw",Form("abs(nljphi-nlrjphi)"));
-  djTree->SetAlias("alrjdphiRaw",Form("abs(aljphi-alrjphi)"));
-  djTree->SetAlias("nlrjdphi","((nlrjdphiRaw<=PI)*nlrjdphiRaw+(nlrjdphiRaw>PI)*(2*PI-nlrjdphiRaw))");
-  djTree->SetAlias("alrjdphi","((alrjdphiRaw<=PI)*alrjdphiRaw+(alrjdphiRaw>PI)*(2*PI-alrjdphiRaw))");
+  djTree->SetAlias("nlrjdphi","PI-abs(PI-abs(nljphi-nlrjphi))");
+  djTree->SetAlias("alrjdphi","PI-abs(PI-abs(aljphi-alrjphi))");
   djTree->SetAlias("nlrjdeta",Form("abs(nljeta-nlrjeta)"));
   djTree->SetAlias("alrjdeta",Form("abs(aljeta-alrjeta)"));
   djTree->SetAlias("nlrjdr","sqrt(nlrjdphi*nlrjdphi+nlrjdeta*nlrjdeta)");
   djTree->SetAlias("alrjdr","sqrt(alrjdphi*alrjdphi+alrjdeta*alrjdeta)");
 
-  djTree->SetAlias("nltr2nljdphiRaw",Form("abs(nljphi-%s.nljphi)",refjet.Data()));
-  djTree->SetAlias("altr2aljdphiRaw",Form("abs(aljphi-%s.aljphi)",refjet.Data()));
-  djTree->SetAlias("nltr2nljdphi","((nltr2nljdphiRaw<=PI)*nltr2nljdphiRaw+(nltr2nljdphiRaw>PI)*(2*PI-nltr2nljdphiRaw))");
-  djTree->SetAlias("altr2aljdphi","((altr2aljdphiRaw<=PI)*altr2aljdphiRaw+(altr2aljdphiRaw>PI)*(2*PI-altr2aljdphiRaw))");
+  djTree->SetAlias("nltr2nljdphi",Form("PI-abs(PI-abs(nljphi-%s.nljphi))",refjet.Data()));
+  djTree->SetAlias("altr2aljdphi",Form("PI-abs(PI-abs(aljphi-%s.aljphi))",refjet.Data()));
   djTree->SetAlias("nltr2nljdeta",Form("abs(nljeta-%s.nljeta)",refjet.Data()));
   djTree->SetAlias("altr2aljdeta",Form("abs(aljeta-%s.aljeta)",refjet.Data()));
   djTree->SetAlias("nltr2nljdr","sqrt(nltr2nljdphi*nltr2nljdphi+nltr2nljdeta*nltr2nljdeta)");
   djTree->SetAlias("altr2aljdr","sqrt(altr2aljdphi*altr2aljdphi+altr2aljdeta*altr2aljdeta)");
 
-  djTree->SetAlias("nltr2aljdphiRaw",Form("abs(nljphi-%s.aljphi)",refjet.Data()));
-  djTree->SetAlias("altr2nljdphiRaw",Form("abs(aljphi-%s.nljphi)",refjet.Data()));
-  djTree->SetAlias("nltr2aljdphi","((nltr2aljdphiRaw<=PI)*nltr2aljdphiRaw+(nltr2aljdphiRaw>PI)*(2*PI-nltr2aljdphiRaw))");
-  djTree->SetAlias("altr2nljdphi","((altr2nljdphiRaw<=PI)*altr2nljdphiRaw+(altr2nljdphiRaw>PI)*(2*PI-altr2nljdphiRaw))");
+  djTree->SetAlias("nltr2aljdphi",Form("PI-abs(PI-abs(nljphi-%s.aljphi))",refjet.Data()));
+  djTree->SetAlias("altr2nljdphi",Form("PI-abs(PI-abs(aljphi-%s.nljphi))",refjet.Data()));
   djTree->SetAlias("nltr2aljdeta",Form("abs(nljeta-%s.aljeta)",refjet.Data()));
   djTree->SetAlias("altr2nljdeta",Form("abs(aljeta-%s.nljeta)",refjet.Data()));
   djTree->SetAlias("nltr2aljdr","sqrt(nltr2aljdphi*nltr2aljdphi+nltr2aljdeta*nltr2aljdeta)");
