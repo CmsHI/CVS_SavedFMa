@@ -8,6 +8,7 @@
 #include <TLegend.h>
 #include <TLine.h>
 #include <TCanvas.h>
+#include "TF1.h"
 #include <iostream>
 
 #include "Saved/DiJetAna/macros/aliases_dijet.C"
@@ -67,10 +68,11 @@ TChain * effJet(bool doMC=1,
     )
 {
   TChain * dj = new TChain("djgen/djTree");
+  TString tag="GenJet";
   //TChain * dj1 = new TChain("djgen/djTree");
 
   dj->Add(infile0);
-  dj->AddFriend("djcalo = djcalo/djTree",infile0);
+  //dj->AddFriend("djcalo = djcalo/djTree",infile0);
   aliases_dijet(dj,1.2,doMC,"djcalo");
   cout << "dj0 Total: " << dj->GetEntries() << endl;
 
@@ -97,9 +99,10 @@ TChain * effJet(bool doMC=1,
   for (int i=0; i<=nBinRat;++i) binRat[i]=i*2./nBinRat;
 
   TGraphAsymmErrors *g0=0,*g1=0,*g2=0,*g3=0,*g4=0;
-  g0 = eff(dj,"nljet",evtSel,"nlrjdr<0.3","NrJEt");
-  g1 = eff(dj,"aljet",evtSelAw,"alrjdr<0.3","AwJEt");
-
+  dj->SetAlias("fscNr","(1.03-2.33e-4*nljet+6.5e3/pow(nljet,3))");
+  dj->SetAlias("fscAw","(0.87+2.05e-4*nljet+5.74e3/pow(nljet,3))");
+  g0 = eff(dj,"nljet*fscNr",evtSel,"nlrjdr<0.3","NrJEt");
+  g1 = eff(dj,"aljet*fscAw",evtSelAw,"alrjdr<0.3","AwJEt");
   TH2F * hEff2d = eff2d(dj,"aljet:nljet",evtSel,"nlrjdr<0.3&&alrjdr<0.3","JEt2D");
 
   // Draw
@@ -107,7 +110,7 @@ TChain * effJet(bool doMC=1,
   TH1F *hTmp = new TH1F("hTmp","",nBin,bin);
   g1->SetLineColor(kGreen+2); g1->SetMarkerColor(kGreen+2); g1->SetMarkerStyle(kOpenSquare);
   hTmp->SetAxisRange(0,1.3,"Y");
-  hTmp->SetXTitle("E_{T}^{GenJet} [GeV]");
+  hTmp->SetXTitle("E_{T}^{CaloJet} [GeV]");
   hTmp->SetYTitle("Eff. (Matched Reco/Gen)");
   hTmp->Draw();
   g0->Draw("p");
@@ -119,12 +122,16 @@ TChain * effJet(bool doMC=1,
   t->SetHeader(header);
   t->SetBorderSize(0);
   t->SetFillStyle(0);
-  t->AddEntry(g0,"UnQuen MC - Leading GenJet","pl");
-  t->AddEntry(g1,"UnQuen MC - Away GenJet","pl");
+  t->AddEntry(g0,"UnQuen MC - Leading "+tag,"pl");
+  t->AddEntry(g1,"UnQuen MC - Away "+tag,"pl");
   t->Draw();
+  cJetEff->Print("JetRecoEff.gif");
+  cJetEff->Print("JetRecoEff.C");
+  cJetEff->Print("JetRecoEff.pdf");
 
   TCanvas *cJet2DEff = new TCanvas("cJet2DEff","cJet2DEff",500,550);
   hEff2d->Draw("colz");
   cJet2DEff->SetRightMargin(0.2);
+
   return dj;
 }
