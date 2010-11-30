@@ -64,9 +64,13 @@ TH2F * eff2d(TTree * t,TString var="aljet:nljet",TCut sel="",TCut cut="",TString
 TChain * effJet(bool doMC=1,
     TString infile0="dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127.root",
     //TString infile1="dj_Data_MinBias_DijetUnquenched80_d20101125_StdJetGoodTrk1126.root",
-    TString header="McDiJet-DataBackground"
+    TString header="McDiJet-DataBackground",
+    Float_t centMin=0,
+    Float_t centMax=10,
+    TString outtag="DataMix_Pt50"
     )
 {
+  outtag+=Form("_Cent%.0fto%0.f",centMin,centMax);
   TChain * dj = new TChain("djgen/djTree");
   TString tag="GenJet";
   //TChain * dj1 = new TChain("djgen/djTree");
@@ -81,7 +85,8 @@ TChain * effJet(bool doMC=1,
   //aliases_dijet(dj1,1.2,doMC,"djcalo");
   //cout << "dj1 Total: " << dj1->GetEntries() << endl;
 
-  TCut evtSel("cent<10 && nljet>50 && abs(nljeta)<2 && aljet>15 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6");
+  TCut evtSel(Form("cent>=%.0f && cent<%.0f && nljet>50 && abs(nljeta)<2 && aljet>15 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6",
+	centMin,centMax));
   //evtSel = evtSel && "djgen.nljet>0&&djgen.aljet>0" //for now abs eff --- no selection on mc
   TCut evtSelAw = evtSel;//&& "nljet>120";
   //TCut evtSel("HLT_HIJet50U && cent<10 ");
@@ -103,7 +108,7 @@ TChain * effJet(bool doMC=1,
   dj->SetAlias("fscAw","(0.87+2.05e-4*nljet+5.74e3/pow(nljet,3))");
   g0 = eff(dj,"nljet*fscNr",evtSel,"nlrjdr<0.3","NrJEt");
   g1 = eff(dj,"aljet*fscAw",evtSelAw,"alrjdr<0.3","AwJEt");
-  TH2F * hEff2d = eff2d(dj,"aljet:nljet",evtSel,"nlrjdr<0.3&&alrjdr<0.3","JEt2D");
+  TH2F * hEff2d = eff2d(dj,"aljet*fscAw:nljet*fscNr",evtSel,"nlrjdr<0.3&&alrjdr<0.3","JEt2D");
 
   // Draw
   TCanvas *cJetEff = new TCanvas("cJetEff","cJetEff",500,550);
@@ -125,13 +130,16 @@ TChain * effJet(bool doMC=1,
   t->AddEntry(g0,"UnQuen MC - Leading "+tag,"pl");
   t->AddEntry(g1,"UnQuen MC - Away "+tag,"pl");
   t->Draw();
-  cJetEff->Print("JetRecoEff.gif");
-  cJetEff->Print("JetRecoEff.C");
-  cJetEff->Print("JetRecoEff.pdf");
+  cJetEff->Print(outtag+"_Eff_vs_GenJEt.gif");
+  cJetEff->Print(outtag+"_Eff_vs_GenJEt.C");
+  cJetEff->Print(outtag+"_Eff_vs_GenJEt.pdf");
 
   TCanvas *cJet2DEff = new TCanvas("cJet2DEff","cJet2DEff",500,550);
   hEff2d->Draw("colz");
   cJet2DEff->SetRightMargin(0.2);
+  cJet2DEff->Print(outtag+"_Eff2D_vs_GenJEt.gif");
+  cJet2DEff->Print(outtag+"_Eff2D_vs_GenJEt.C");
+  cJet2DEff->Print(outtag+"_Eff2D_vs_GenJEt.pdf");
 
   return dj;
 }
