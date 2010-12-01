@@ -2,6 +2,9 @@
 #include <TLegend.h>
 #include <TF1.h>
 #include <TCanvas.h>
+#include "TError.h"
+#include "TLatex.h"
+
 void makeMultiPanelCanvas(TCanvas*& canv, const Int_t columns,
                           const Int_t rows, const Float_t leftOffset=0.,
                           const Float_t bottomOffset=0.,
@@ -103,11 +106,11 @@ void centralityBinning(float *b=0)
 
 void handsomeTH1( TH1 *a=0, int col =1, float size=1, int markerstyle=20)
 {
-  a->SetMarkerColor(col);
-  a->SetMarkerSize(size);
-  a->SetMarkerStyle(markerstyle);
-  a->SetLineColor(col);
-  a->GetYaxis()->SetTitleOffset(1.25);
+  //a->SetMarkerColor(col);
+  //a->SetMarkerSize(size);
+  //a->SetMarkerStyle(markerstyle);
+  //a->SetLineColor(col);
+  //a->GetYaxis()->SetTitleOffset(1.25);
   a->GetXaxis()->CenterTitle();
   a->GetYaxis()->CenterTitle();
 }
@@ -191,6 +194,16 @@ TF1* cleverGaus(TH1* h, char* title="h", float c = 2.5)
    TF1 *fit1 = new TF1(title,"gaus",peak-c*sigma,peak+c*sigma);
    h->Fit(fit1,"LL M R Q");
    return fit1;
+}
+
+void addCms(TCanvas *c)
+{
+  c->cd();
+  TLatex *cms = new TLatex(0.6013,0.89,"CMS Preliminary");
+  cms->SetTextFont(63);
+  cms->SetTextSize(16);
+  cms->SetNDC();
+  cms->Draw();
 }
 
 
