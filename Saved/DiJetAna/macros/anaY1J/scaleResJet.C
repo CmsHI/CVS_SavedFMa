@@ -75,18 +75,20 @@ TChain * scaleResJet(bool doMC=1,
   //aliases_dijet(dj1,1.2,doMC,"djgen");
   //cout << "dj1 Total: " << dj1->GetEntries() << endl;
 
-  TCut evtSel(Form("cent>=%.0f && cent<%.0f && nlrjet>50 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6",
+  TCut evtSel(Form("cent>=%.0f && cent<%.0f && nlrjet>20 && abs(nljeta)<2 && alrjet>20 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6",
 	centMin,centMax));
+  //TCut evtSel(Form("cent>=%.0f && cent<%.0f && nlrjet>50 && abs(nljeta)<2 && alrjet>0 && abs(aljeta)<2 && jdphi>TMath::Pi()*5/6",
+  //	centMin,centMax));
   //evtSel = evtSel && "djgen.nljet>0&&djgen.aljet>0" //for now abs eff --- no selection on mc
-  TCut evtSelAw = evtSel && "alrjet>40";
+  TCut evtSelAw = evtSel;// && "alrjet>40";
   //TCut evtSel("HLT_HIJet50U && cent<10 ");
   
   for (int i=0; i<=nBinRat;++i) binRat[i]=i*2./nBinRat;
 
   TCanvas * cEtNr2D = new TCanvas("cEtNr2D","cEtNr2D",500,550);
-  TH2D * hEtNr2D = new TH2D("hEtNr2D",";E_{T}^{GenJet};E_{T}^{RecoJet}",60,0,300,60,0,300);
+  TH2D * hEtNr2D = new TH2D("hEtNr2D",";E_{T}^{GenJet};E_{T}^{CaloJet}",60,0,300,60,0,300);
   dj->Draw("nljet:nlrjet>>hEtNr2D",evtSel,"colz");
-  hEtNr2D->ProfileX()->Draw("same");
+  //hEtNr2D->ProfileX()->Draw("same");
   TLine *l45 = new TLine(0,0,300,300);
   l45->SetLineStyle(2);
   l45->Draw();
@@ -94,9 +96,9 @@ TChain * scaleResJet(bool doMC=1,
   cEtNr2D->Print(Form("EtNr2D_%.0fto%.0f.pdf",centMin,centMax));
 
   TCanvas * cEtAw2D = new TCanvas("cEtAw2D","cEtAw2D",500,550);
-  TH2D * hEtAw2D = new TH2D("hEtAw2D",";E_{T}^{GenJet};E_{T}^{RecoJet}",60,0,300,60,0,300);
+  TH2D * hEtAw2D = new TH2D("hEtAw2D",";E_{T}^{GenJet};E_{T}^{CaloJet}",60,0,300,60,0,300);
   dj->Draw("aljet:alrjet>>hEtAw2D",evtSelAw,"colz");
-  hEtAw2D->ProfileX()->Draw("same");
+  //hEtAw2D->ProfileX()->Draw("same");
   l45->Draw();
   cEtAw2D->Print(Form("EtAw2D_%.0fto%.0f.gif",centMin,centMax));
   cEtAw2D->Print(Form("EtAw2D_%.0fto%.0f.pdf",centMin,centMax));
@@ -110,20 +112,20 @@ TChain * scaleResJet(bool doMC=1,
   dj->Draw("cent",evtSelAw,"sameE");
 
   // 1D Response
-  TH2F * hJESNr2D = JES(dj,"nljet/nlrjet:nlrjet",evtSel,"nlrjdr<0.3","JESNr2D");
+  TH2F * hJESNr2D = JES(dj,"nljet/nlrjet:nljet",evtSel,"nlrjdr<0.3","JESNr2D");
   TH1D * hJESNr2D_1 = (TH1D*)gDirectory->Get("hJESNr2D_1");
   TH1D * hJESNr2D_2 = (TH1D*)gDirectory->Get("hJESNr2D_2");
-  TH2F * hJESAw2D = JES(dj,"aljet/alrjet:alrjet",evtSelAw,"alrjdr<0.3","JESAw2D");
+  TH2F * hJESAw2D = JES(dj,"aljet/alrjet:aljet",evtSelAw,"alrjdr<0.3","JESAw2D");
   TH1D * hJESAw2D_1 = (TH1D*)gDirectory->Get("hJESAw2D_1");
   TH1D * hJESAw2D_2 = (TH1D*)gDirectory->Get("hJESAw2D_2");
 
   // 2D Reponse
-  TH3F * hJESNr3D = JES2D(dj,"nljet/nlrjet:nlrjet:nlrjeta",evtSel,"nlrjdr<0.3","JESNr3D");
-  TH3F * hJESAw3D = JES2D(dj,"aljet/alrjet:alrjet:alrjeta",evtSelAw,"alrjdr<0.3","JESAw3D");
+  TH3F * hJESNr3D = JES2D(dj,"nljet/nlrjet:nljet:nljeta",evtSel,"nlrjdr<0.3","JESNr3D");
+  TH3F * hJESAw3D = JES2D(dj,"aljet/alrjet:aljet:aljeta",evtSelAw,"alrjdr<0.3","JESAw3D");
 
   // Draw
   TCanvas * cJES = new TCanvas("cJES","cJES",500,550);
-  CPlot cpJES("JES","JES","E_{T}^{GenJet} [GeV]","E_{T}^{RecoJet}/E_{T}^{GenJet}");
+  CPlot cpJES("JES","JES","E_{T}^{CaloJet} [GeV]","E_{T}^{CaloJet}/E_{T}^{GenJet}");
   cpJES.SetYRange(0,1.5);
   cpJES.AddHist1D(hJESNr2D_1,"Leading Jet Reponse","E",kBlack,kFullCircle);
   cpJES.AddHist1D(hJESAw2D_1,"Away Jet Reponse","E",kRed,kFullSquare);
@@ -137,7 +139,7 @@ TChain * scaleResJet(bool doMC=1,
   cJES->Print(Form("JES_%.0fto%.0f.pdf",centMin,centMax));
   
   TCanvas * cJReso = new TCanvas("cJReso","cJReso",500,550);
-  CPlot cpJReso("JReso","JReso","E_{T}^{GenJet} [GeV]","#sigma(E_{T}^{RecoJet}/E_{T}^{GenJet})");
+  CPlot cpJReso("JReso","JReso","E_{T}^{Calo} [GeV]","#sigma(E_{T}^{Calo}/E_{T}^{GenJet})");
   cpJReso.SetYRange(0,0.4);
   cpJReso.AddHist1D(hJESNr2D_2,"Leading Jet Resolution","E",kBlack,kOpenCircle);
   cpJReso.AddHist1D(hJESAw2D_2,"Away Jet Resolution","E",kRed,kOpenSquare);
@@ -147,12 +149,12 @@ TChain * scaleResJet(bool doMC=1,
   TF1 * fres2 = new TF1("fres2",res2,30,1000,0);
   //hJESNr2D_2->Fit("fReso","","",30,400);
   cpJReso.Draw(cJReso,false);
-  fResoNoBkg->SetRange(30,400);
-  fResoNoBkg->Draw("same");
+  fResoNoBkgVsCalo->SetRange(30,400);
+  fResoNoBkgVsCalo->Draw("same");
   //fResoWBkg->SetParameters(fReso->GetParameter(0),fReso->GetParameter(1),fReso->GetParameter(2));
-  fResoWBkg->SetRange(30,400);
-  fResoWBkg->SetLineColor(kGreen+2);
-  fResoWBkg->Draw("same");
+  fResoWBkgVsCalo->SetRange(30,400);
+  fResoWBkgVsCalo->SetLineColor(kGreen+2);
+  fResoWBkgVsCalo->Draw("same");
   //fres->SetLineStyle(7);
   //fres->Draw("same");
   cJReso->Print(Form("JReso_%.0fto%.0f.gif",centMin,centMax));
