@@ -114,7 +114,9 @@ Double_t res2(Double_t *x, Double_t *p) {
 }
 
 TF1 * fReso = new TF1("fReso","sqrt(pow([0],2)+pow([1]/sqrt(x),2)+pow([2]/x,2))",0,400);
-TF1 * fResoNoBkg = new TF1("fResoWBkg","sqrt(pow(7.7e-02,2)+pow(1.07/sqrt(x),2)+pow(-4.6e-5/x,2))",0,400);
+TF1 * fResoNoBkg = new TF1("fResoNoBkg","sqrt(pow(7.7e-02,2)+pow(1.07/sqrt(x),2)+pow(-4.6e-5/x,2))",0,400);
 TF1 * fResoWBkg = new TF1("fResoWBkg","sqrt(pow(7.7e-02,2)+pow(1.07/sqrt(x),2)+pow(-4.6e-5/x,2)+pow(7/x,2))",0,400);
+TF1 * fResoNoBkgVsCalo = new TF1("fResoNoBkgVsCalo","sqrt(pow(1.04e-01,2)+pow(8.38e-1/sqrt(x),2)+pow(-4.43e-1/x,2))",0,400);
+TF1 * fResoWBkgVsCalo = new TF1("fResoWBkgVsCalo","sqrt(pow(1.04e-01,2)+pow(8.38e-1/sqrt(x),2)+pow(-4.43e-1/x,2)+pow(7/x,2))",0,400);
 
 #endif // __ptresolution_h__
