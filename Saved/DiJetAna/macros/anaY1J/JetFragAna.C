@@ -69,6 +69,7 @@ void JetFragAna::Loop()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
+   numDJ_=0;
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
@@ -80,7 +81,9 @@ void JetFragAna::Loop()
 	  << " leading et|eta|phi: " << nljet <<"|" << nljeta << "|" << nljphi
 	  << " away et|eta|phi: " << aljet <<"|" << aljeta << "|" << aljphi
 	  << " jdphi: " << jdphi << endl;
+	++numDJ_;
       }
       // if (Cut(ientry) < 0) continue;
    }
+   cout << "DiJets: " << numDJ_ << endl;
 }

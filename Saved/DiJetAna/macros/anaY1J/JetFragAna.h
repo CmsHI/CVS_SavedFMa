@@ -21,6 +21,9 @@ public :
    Int_t           fCurrent; //!current Tree number in a TChain
    selectionCut    cut;
 
+   // Loop Ana Vars
+   Int_t numDJ_;
+
    // Declaration of leaf types
    Int_t           run;
    Int_t           evt;
