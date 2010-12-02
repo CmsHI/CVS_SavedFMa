@@ -36,13 +36,6 @@ if (isData):
 
 
 # === Sample specific configs ===
-for i,m in enumerate([process.djcalo,
-  process.djcalo_tower,
-  process.djcalo_genp,
-  process.djgen]):
-  #m.hltsrc = cms.InputTag("TriggerResults","","HISIGNAL")
-  print i, "hlt: ", m.hltsrc
-
 anaOutName = "dj_%s.root" % (process.djcalo.jetsrc.value())
 process.TFileService = cms.Service('TFileService',
     fileName = cms.string(anaOutName)
