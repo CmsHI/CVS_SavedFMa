@@ -16,6 +16,7 @@
     //gSystem->Load("libDataFormatsPatCandidates.so");
     //gSystem->Load("libDataFormatsCommon.so");
     gSystem->Load("libDataFormatsMath.so");
+    gSystem->Load("pluginSavedDiJetAna.so");
 
     // JEC
     //gSystem->Load("libCondFormatsJetMETObjects.so");
@@ -37,5 +38,6 @@
 
 
   // helper classes
+  gROOT->Macro("$CMSSW_BASE/src/Saved/DiJetAna/macros/anaY1J/JetFragAna.C+");
   gROOT->Macro("$CMSSW_BASE/src/Saved/Utilities/macros/cplot/CPlot.cc+");
 }
