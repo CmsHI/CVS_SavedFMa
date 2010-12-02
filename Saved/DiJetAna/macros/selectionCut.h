@@ -13,7 +13,7 @@
 class selectionCut
 {  
   public:
-    selectionCut(TString name, int doMC, TString base="S0", double NrJetMin=100, double NrJetMax=170, double AwJetMin=50, double jdphi=2.5);
+    selectionCut(TString name, int doMC, TString base="S1", double NrJetMin=120, double NrJetMax=500, double AwJetMin=50, double jdphi=2.5);
     ~selectionCut(){}
 
     // memeber functions
@@ -33,8 +33,8 @@ class selectionCut
     TCut FinDJCut() const { return BaseCut && DJCut(); }
     TCut FinDJTrkCut() const { return FinDJCut() && TrkCut(); }
     // mutators
-    void SetDJEt(double nrMin, double nrMax, double awMin)
-    { NrJEtMin=nrMin; NrJEtMax=nrMax; AwJEtMin=awMin; }
+    void SetDJEt(double nrMin, double nrMax, double awMin, double awMax, double dPhiMin)
+    { NrJEtMin=nrMin; NrJEtMax=nrMax; AwJEtMin=awMin; AwJEtMax=awMax; DjDPhiMin=dPhiMin; }
     // External
     TString Nr2Aw(TString s) {
       s.ReplaceAll("nlrj","alrj");
