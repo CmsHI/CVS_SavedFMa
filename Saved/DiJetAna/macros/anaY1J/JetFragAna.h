@@ -8,6 +8,8 @@
 #ifndef JetFragAna_h
 #define JetFragAna_h
 
+#include <vector>
+#include "DataFormats/Math/interface/LorentzVector.h"
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
@@ -23,6 +25,8 @@ public :
 
    // Loop Ana Vars
    Int_t numDJ_;
+   std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
+   std::vector<math::PtEtaPhiMLorentzVector> refJets_;
 
    // Declaration of leaf types
    Int_t           run;
@@ -207,7 +211,9 @@ public :
 
 #ifdef JetFragAna_cxx
 JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
-  cut(tag,doMC)
+  cut(tag,doMC),
+  anaJets_(2),
+  refJets_(2)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
