@@ -39,7 +39,10 @@ void JetFragAna::Loop()
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
-      std::cout << "Global Entry: " << jentry << " nljet: " << nljet << std::endl;
+
+      if (nljet>200) {
+	std::cout << "Global Entry: " << jentry << " nljet: " << nljet << std::endl;
+      }
       // if (Cut(ientry) < 0) continue;
    }
 }

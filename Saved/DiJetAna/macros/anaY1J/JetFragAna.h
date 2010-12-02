@@ -11,6 +11,7 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include "Saved/DiJetAna/macros/selectionCut.h"
 const Int_t kMax = 2;
 const Int_t MAXTRK = 100000;
 
@@ -18,6 +19,7 @@ class JetFragAna {
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
+   selectionCut    cut;
 
    // Declaration of leaf types
    Int_t           run;
@@ -187,7 +189,7 @@ public :
    TBranch        *b_lgpch;   //!
    TBranch        *b_lgppid;   //!
 
-   JetFragAna(TTree *tree=0);
+   JetFragAna(TTree *tree=0,TString tag="Data",Int_t doMC=0);
    virtual ~JetFragAna();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
@@ -201,7 +203,8 @@ public :
 #endif
 
 #ifdef JetFragAna_cxx
-JetFragAna::JetFragAna(TTree *tree)
+JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
+  cut(tag,doMC)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
