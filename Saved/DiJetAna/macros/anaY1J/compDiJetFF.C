@@ -20,8 +20,8 @@ void compDiJetFF(
     TString JEtNr0="hJEtNr",
     TString JEtNr1="hJEtNr",
     TString header="HLT_HIJet50U",
-    TString finalMeas="hSig_XiE1Aw",
-    TString finalMeasTitle="j2(E1)")
+    TString finalMeas="hSig_XiE1Aw",//"hSig_XiE1Aw",
+    TString finalMeasTitle="j2(E1)") //"j2, j2(E1)")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
