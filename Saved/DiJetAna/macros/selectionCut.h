@@ -79,6 +79,8 @@ class selectionCut
     int RunNum;
 
     // evt
+    double CentMin;
+    double CentMax;
     double VzMin;
     double VzMax;
 
@@ -136,9 +138,10 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   TrkCutType("Ana"),
   // default cuts
   Trigger("hlt[2]"),
-  CentCut("cent<10"),
   // evt
   RunNum(-1),
+  CentMin(0),
+  CentMax(10),
   VzMin(-20),
   VzMax(20),
   // jet
@@ -178,6 +181,7 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   TH1::SetDefaultSumw2();
 
   RunCut = Form("run==%d",RunNum);
+  CentCut = Form("cent>=%.1f&&cent<%.1f",CentMin,CentMax);
   VtxCut = Form("vz>%.1f&&vz<%.1f",VzMin,VzMax);
 }
 
@@ -191,8 +195,8 @@ void selectionCut::SetCut()
   BaseCut = Evt[BaseCutType];
 
   // Single Jet Selections
-  LJ["Ana"] = Form("nljet>%.1f&&nljet<%.1f&&abs(nljeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
-  AJ["Ana"] = Form("aljet>%.1f&&aljet<%.1f&&abs(aljeta)<%.1f",AwJEtMin,AwJEtMax,AwJEtaMax);
+  LJ["Ana"] = Form("nljet>=%.1f&&nljet<%.1f&&abs(nljeta)<%.1f",NrJEtMin,NrJEtMax,NrJEtaMax);
+  AJ["Ana"] = Form("aljet>=%.1f&&aljet<%.1f&&abs(aljeta)<%.1f",AwJEtMin,AwJEtMax,AwJEtaMax);
 
   LJ["AnaMatRef"] = LJ["Ana"] && "nlrjet>10";
   AJ["AnaMatRef"] = AJ["Ana"] && "alrjet>10";
