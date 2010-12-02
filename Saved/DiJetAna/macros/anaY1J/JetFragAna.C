@@ -4,6 +4,41 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <iostream>
+using namespace std;
+
+Int_t JetFragAna::Cut(Long64_t entry)
+{
+  // This function may be called from Loop.
+  // returns  1 if entry is accepted.
+  // returns -1 otherwise.
+
+  // preselection
+  if (cut.BaseCutType=="S0")
+    if (vz<=cut.VzMin || vz>= cut.VzMax)
+      return -1;
+
+  if (cut.BaseCutType=="S1")
+    if (vz<=cut.VzMin || vz>= cut.VzMax ||
+       cent<cut.CentMin || cent>=cut.CentMax)
+      return -1;
+
+  if (cut.BaseCutType=="S2")
+    if (vz<=cut.VzMin || vz>= cut.VzMax ||
+	cent<cut.CentMin || cent>=cut.CentMax ||
+	!hlt->at(2))
+      return -1;
+
+  Int_t result=-1;
+  if (cut.DJCutType=="Ana") {
+    if (nljet>=cut.NrJEtMin && nljet<cut.NrJEtMax && fabs(nljeta)<cut.NrJEtaMax &&
+	aljet>=cut.AwJEtMin && aljet<cut.AwJEtMax && fabs(aljeta)<cut.AwJEtaMax &&
+	jdphi>=cut.DjDPhiMin
+       )
+      result=1;
+  }
+
+  return result;
+}
 
 void JetFragAna::Loop()
 {
@@ -40,8 +75,11 @@ void JetFragAna::Loop()
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-      if (nljet>200) {
-	std::cout << "Global Entry: " << jentry << " nljet: " << nljet << std::endl;
+      if (Cut(ientry)>=0) {
+	cout << "Global Entry: " << jentry
+	  << " leading et|eta|phi: " << nljet <<"|" << nljeta << "|" << nljphi
+	  << " away et|eta|phi: " << aljet <<"|" << aljeta << "|" << aljphi
+	  << " jdphi: " << jdphi << endl;
       }
       // if (Cut(ientry) < 0) continue;
    }

@@ -381,11 +381,4 @@ void JetFragAna::Show(Long64_t entry)
    if (!fChain) return;
    fChain->Show(entry);
 }
-Int_t JetFragAna::Cut(Long64_t entry)
-{
-// This function may be called from Loop.
-// returns  1 if entry is accepted.
-// returns -1 otherwise.
-   return 1;
-}
 #endif // #ifdef JetFragAna_cxx
