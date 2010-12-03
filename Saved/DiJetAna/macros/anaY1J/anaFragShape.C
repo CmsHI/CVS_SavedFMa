@@ -46,7 +46,7 @@ void anaFragShape(TString infile="dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root")
   hPNDRPix->Draw("E");
   hPADRPix->Draw("Esame");
   TCanvas * c3_2 = new TCanvas("c3_2","c3_2",500,500);
-  c3->SetLogy();
+  c3_2->SetLogy();
   hPNDRTrk->Draw("E");
   hPADRTrk->Draw("Esame");
 }
