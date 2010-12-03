@@ -19,9 +19,9 @@ void balance(TString infile="dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root")
   TH1D * hPADPhiPix = new TH1D("hPADPhiPix",";#Delta#phi(trk,jet);1/N_{DJ} dp_{T}^{Trk}/d(#Delta#phi#Delta#eta)",10,0,TMath::PiOver2());
   Double_t deta=1;
   djcalo->Draw("abs(pndphi)>>hPNDPhiTrk",Form("(%s&&abs(peta-nljeta)<%f&&ppt>=1.2)*(ppt)",evtSel.Data(),deta));
-  djcalopix->Draw("abs(pndphi)>>hPNDPhiPix",Form("(%s&&abs(peta-nljeta)<%f&&ppt<1.2)*(ppt)",evtSel.Data(),deta));
-  djcalo->Draw("abs(padphi)>>hPADPhiTrk",Form("(%s&&abs(peta-aljeta)<%f&&ppt>=1.2)*(ppt)",evtSel.Data(),deta));
-  djcalopix->Draw("abs(padphi)>>hPADPhiPix",Form("(%s&&abs(peta-aljeta)<%f&&ppt<1.2)*(ppt)",evtSel.Data(),deta));
+  djcalopix->Draw("abs(pndphi)>>hPNDPhiPix",Form("(%s&&abs(peta-nljeta)<%f&&ppt>=0.3&&ppt<1.2)*(ppt)",evtSel.Data(),deta));
+  djcalo->Draw("abs(padphi)>>hPADPhiTrk",Form("(%s&&abs(peta-aljeta)<%f&&ppt>=0.3&&ppt>=1.2)*(ppt)",evtSel.Data(),deta));
+  djcalopix->Draw("abs(padphi)>>hPADPhiPix",Form("(%s&&abs(peta-aljeta)<%f&&ppt>=0.3&&ppt<1.2)*(ppt)",evtSel.Data(),deta));
   hPNDPhiTrk->Scale(1./(numDJ*hPNDPhiTrk->GetBinWidth(1)*deta));
   hPNDPhiPix->Scale(1./(numDJ*hPNDPhiPix->GetBinWidth(1)*deta));
   hPADPhiTrk->Scale(1./(numDJ*hPADPhiTrk->GetBinWidth(1)*deta));
