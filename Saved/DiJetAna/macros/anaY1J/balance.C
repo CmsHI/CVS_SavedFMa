@@ -1,10 +1,18 @@
+#include "Saved/DiJetAna/macros/aliases_dijet.C"
+
 void balance(TString infile="dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root")
 {
   TChain * djcalo = new TChain("djcalo/djTree");
   djcalo->Add(infile);
+  aliases_dijet(djcalo);
   TChain * djcalopix = new TChain("djcalo_pxl/djTree");
   djcalopix->Add(infile);
-  TString evtSel("(cent<10 && nljet>120 && abs(nljeta)<2 && aljet>50 && abs(aljeta)<2 && jdphi>2.5)");
+  aliases_dijet(djcalopix);
+  TString evtSel("(cent<10 && nljet>120 && abs(nljeta)<2 && aljet>50 && abs(aljeta)<2 && jdphi>2.5 && Aj>0.24)");
+
+  TCanvas * c0 = new TCanvas("c0","c0",500,500);
+  djcalo->Draw("Aj>>hAj(20,0,1)",evtSel);
+  djcalopix->Draw("Aj",evtSel,"Esame");
 
   TCanvas * c2 = new TCanvas("c2","c2",500,500);
   TH1D * hJDPhi = new TH1D("hJDPhi","hJDPhi",50,0,3.1416);
