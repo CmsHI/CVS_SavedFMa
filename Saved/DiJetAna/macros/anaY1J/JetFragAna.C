@@ -79,10 +79,7 @@ void JetFragAna::Loop()
       anaJets_[0].SetCoordinates(nljet,nljeta,nljphi,0);
       anaJets_[1].SetCoordinates(aljet,aljeta,aljphi,0);
       if (Cut(ientry)>=0) {
-	cout << "Global Entry: " << jentry
-	  << " leading et|eta|phi: " << anaJets_[0]
-	  << " away et|eta|phi: " << anaJets_[1]
-	  << " jdphi: " << jdphi << endl;
+	//cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
 	++numDJ_;
       }
       // if (Cut(ientry) < 0) continue;
