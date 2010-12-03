@@ -34,6 +34,9 @@ void aliases_dijet(TTree * djTree, float pptMin=4.5, int doMC=1, TString refjet=
   djTree->SetAlias("nlmatrjet",Form("(%s.nljet*(nltr2nljdr<=nltr2aljdr)+%s.aljet*(nltr2nljdr>nltr2aljdr))",refjet.Data(),refjet.Data()));
   djTree->SetAlias("almatrjet",Form("(%s.aljet*(nltr2nljdr<=nltr2aljdr)+%s.nljet*(nltr2nljdr>nltr2aljdr))",refjet.Data(),refjet.Data()));
 
+  // balance
+  djTree->SetAlias("Aj","((nljet-aljet)/(nljet+aljet))");
+
   // dijet cleaning
   djTree->SetAlias("goodDJ3","nljet>10 && aljet>10 && abs(nljeta)<3 && abs(aljeta)<3 && jdphi>2.14 && nljemf>0.01 && aljemf>0.01");
   djTree->SetAlias("goodDJ2","nljet>10 && aljet>10 && abs(nljeta)<2 && abs(aljeta)<2 && jdphi>2.14 && nljemf>0.01 && aljemf>0.01");
