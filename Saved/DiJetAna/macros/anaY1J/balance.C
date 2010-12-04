@@ -25,7 +25,7 @@ void balance(TString infile="dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root")
   TH1D * hPNDPhiPix = new TH1D("hPNDPhiPix",";#Delta#phi(trk,jet);1/N_{DJ} dp_{T}^{Trk}/d(#Delta#phi#Delta#eta)",10,0,TMath::PiOver2());
   TH1D * hPADPhiTrk = new TH1D("hPADPhiTrk",";#Delta#phi(trk,jet);1/N_{DJ} dp_{T}^{Trk}/d(#Delta#phi#Delta#eta)",10,0,TMath::PiOver2());
   TH1D * hPADPhiPix = new TH1D("hPADPhiPix",";#Delta#phi(trk,jet);1/N_{DJ} dp_{T}^{Trk}/d(#Delta#phi#Delta#eta)",10,0,TMath::PiOver2());
-  Double_t deta=1;
+  Double_t deta=0.9;
   djcalo->Draw("abs(pndphi)>>hPNDPhiTrk",Form("(%s&&abs(peta-nljeta)<%f&&ppt>=1.2)*(ppt)",evtSel.Data(),deta));
   djcalopix->Draw("abs(pndphi)>>hPNDPhiPix",Form("(%s&&abs(peta-nljeta)<%f&&ppt>=0.3&&ppt<1.2)*(ppt)",evtSel.Data(),deta));
   djcalo->Draw("abs(padphi)>>hPADPhiTrk",Form("(%s&&abs(peta-aljeta)<%f&&ppt>=0.3&&ppt>=1.2)*(ppt)",evtSel.Data(),deta));
