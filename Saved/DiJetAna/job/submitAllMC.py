@@ -2,14 +2,16 @@ import os
 os.system("./create_custom_python_cfg.sh")
 
 scratch="/net/hidsk0001/d00/scratch/frankma"
-jobTag="MatchedJetGoodTrk1127v2"
+jobTag="AnaStd1204"
 
 # ================== 362 ===============
 samples  = {
     #"HydjetQ_DJQ80_F10GSR":"ana",
     #"HydjetQ_DJUQ80_F10GSR":"ana"
-    "Data_MinBias_DijetUnquenched80_d20101125and1126":"ana",
-    "Data_MinBias_DijetUnquenched50_d20101127":"ana"
+    #"Data_MinBias_DijetUnquenched80_d20101125and1126":"ana",
+    #"Data_MinBias_DijetUnquenched50_d20101127":"ana"
+    "HydjetQ_DJUQ50_Pat_hiGoodMergedTracks_v1":"ana",
+    "Pyquen_DJUQ50_Pat_hiGoodMergedTracks_v1":"ana"
     }
 
 for sample,PD in samples.items():
