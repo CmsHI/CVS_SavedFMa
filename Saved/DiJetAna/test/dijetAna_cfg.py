@@ -51,8 +51,6 @@ enableOpenHlt(process,process.dijetAna_seq,isData)
 #enablePp(process,"PpRECO") # options: "PpRECO", "HIRECO"
 enableData(process)
 enableDataFilter(process,"HI")
-process.eventSelection.remove(process.siPixelRecHits) # tmp fix for running on skim
-process.eventSelection.remove(process.hltPixelClusterShapeFilter) # tmp fix for running on skim
 
 # FJ
 #process.dijetAna_seq*=process.djcaloic5
@@ -65,7 +63,7 @@ process.eventSelection.remove(process.hltPixelClusterShapeFilter) # tmp fix for 
 
 # First look at data
 process.djcalo.nearJetPtMin = 100
-process.djcalo_tower.nearJetPtMin = 100
+process.djcalo_tower.nearJetPtMin = 120
 
 process.reco = cms.Path( process.eventSelection * process.dj_reco_extra )
 process.ana  = cms.Path( process.eventSelection * process.dijetAna_seq )

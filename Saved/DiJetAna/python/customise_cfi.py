@@ -99,6 +99,8 @@ def enableDataFilter(process,dataType="HI"):
   if dataType=="HI":
     process.eventSelection*=process.L1HfOrBscCoinc
     process.eventSelection*=process.collisionEventSelection
+    process.eventSelection.remove(process.siPixelRecHits) # tmp fix for running on skim
+    process.eventSelection.remove(process.hltPixelClusterShapeFilter) # tmp fix for running on skim
 
 def enableDataMixMC(process):
   process.makeHeavyIonJets.remove(process.genPartons)
