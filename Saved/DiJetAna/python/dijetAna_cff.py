@@ -2,7 +2,6 @@ import FWCore.ParameterSet.Config as cms
 
 from Saved.DiJetAna.dijetAna_cfi import *
 
-# different jet reco
 djcaloic5 = djcalo.clone(
     jetsrc = cms.InputTag("ic5patJets"),
     refjetsrc = cms.InputTag("ic5patJets")
@@ -17,4 +16,14 @@ djcalokt4 = djcalo.clone(
 djcaloak5 = djcalokt4.clone(
     jetsrc = cms.InputTag("ak5patJets"),
     refjetsrc = cms.InputTag("ak5patJets")
+    )
+
+djpfic5 = djcalokt4.clone(
+    jetsrc = cms.InputTag("ic5PFpatJets"),
+    refjetsrc = cms.InputTag("ic5PFpatJets")
+    )
+
+djpfak5 = djcalokt4.clone(
+    jetsrc = cms.InputTag("ak5PFpatJets"),
+    refjetsrc = cms.InputTag("ak5PFpatJets")
     )
