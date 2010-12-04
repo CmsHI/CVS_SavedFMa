@@ -1,10 +1,41 @@
 #include <iostream>
+#include <map>
 #include "TCanvas.h"
 #include "TH1.h"
 #include "TChain.h"
 #include "TMath.h"
+#include "TCut.h"
 #include "Saved/DiJetAna/macros/aliases_dijet.C"
 using namespace std;
+
+TH1D * plot1D(TTree * tr,TCut sel, TCut cut,TString var, TString name, TString title,Int_t nbins, Float_t min, Float_t max,TString weight="",Int_t normType=0, Float_t normFactor=1)
+{
+  cout << name << endl;
+  Float_t nSelEvt=tr->GetEntries(sel);
+  cout << "Sel Evt:  " << TString(sel) << ": " << nSelEvt << endl;
+  TH1D * hist = new TH1D(name,title,nbins,min,max);
+  TString finalCut;
+  if (weight=="")
+    finalCut = TString(sel&&cut);
+  else
+    finalCut = "("+TString(sel&&cut)+")*"+weight;
+  Int_t npass = tr->Draw(var+">>"+name,finalCut,"goff");
+  cout << "Sel Draw: " << finalCut << ": " << npass << endl;
+  if (normType==3)
+    hist->Scale(1./(nSelEvt*hist->GetBinWidth(1)));
+  if (normType==4)
+    hist->Scale(1./(nSelEvt*hist->GetBinWidth(1)*normFactor));
+  return hist;
+}
+
+TH1D * plotPJDPhi(TTree * tr, TCut sel, TString jeta, TString var, TString name, Float_t deta, Float_t ptMin, Float_t ptMax)
+{
+  TCut cut=Form("abs(peta-%s)<%.2f&&ppt>=%.2f&&ppt<%.2f",jeta.Data(),deta,ptMin,ptMax);
+  return plot1D(tr,sel,cut,var,name,
+      ";#Delta#phi(trk,jet);1/N_{DJ} dp_{T}^{Trk}/d(#Delta#phi#Delta#eta)",
+      16,0,TMath::PiOver2(),
+      "ppt",4,deta);
+}
 
 void balance(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to152643-v1_StdAna1204v2.root")
 {
@@ -21,19 +52,13 @@ void balance(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to15264
   Float_t numDJ = djcalo->Draw("jdphi>>hJDPhi",evtSel);
   cout << "num djs: " << numDJ << endl;
 
-  TH1D * hPNDPhiTrk = new TH1D("hPNDPhiTrk",";#Delta#phi(trk,jet);1/N_{DJ} dp_{T}^{Trk}/d(#Delta#phi#Delta#eta)",16,0,TMath::PiOver2());
-  TH1D * hPNDPhiPix = new TH1D("hPNDPhiPix",";#Delta#phi(trk,jet);1/N_{DJ} dp_{T}^{Trk}/d(#Delta#phi#Delta#eta)",16,0,TMath::PiOver2());
-  TH1D * hPADPhiTrk = new TH1D("hPADPhiTrk",";#Delta#phi(trk,jet);1/N_{DJ} dp_{T}^{Trk}/d(#Delta#phi#Delta#eta)",16,0,TMath::PiOver2());
-  TH1D * hPADPhiPix = new TH1D("hPADPhiPix",";#Delta#phi(trk,jet);1/N_{DJ} dp_{T}^{Trk}/d(#Delta#phi#Delta#eta)",16,0,TMath::PiOver2());
+  map<TString,TH1D*> histsDPhi;
   Double_t deta=1.5;
-  djcalo->Draw("abs(pndphi)>>hPNDPhiTrk",Form("(%s&&abs(peta-nljeta)<%f&&ppt>=1.5)*(ppt)",evtSel.Data(),deta),"goff");
-  djcalo->Draw("abs(pndphi)>>hPNDPhiPix",Form("(%s&&abs(peta-nljeta)<%f&&ppt>=0.3)*(ppt)",evtSel.Data(),deta),"goff");
-  djcalo->Draw("abs(padphi)>>hPADPhiTrk",Form("(%s&&abs(peta-aljeta)<%f&&ppt>=0.3&&ppt>=1.5)*(ppt)",evtSel.Data(),deta),"goff");
-  djcalo->Draw("abs(padphi)>>hPADPhiPix",Form("(%s&&abs(peta-aljeta)<%f&&ppt>=0.3)*(ppt)",evtSel.Data(),deta),"goff");
-  hPNDPhiTrk->Scale(1./(numDJ*hPNDPhiTrk->GetBinWidth(1)*deta));
-  hPNDPhiPix->Scale(1./(numDJ*hPNDPhiPix->GetBinWidth(1)*deta));
-  hPADPhiTrk->Scale(1./(numDJ*hPADPhiTrk->GetBinWidth(1)*deta));
-  hPADPhiPix->Scale(1./(numDJ*hPADPhiPix->GetBinWidth(1)*deta));
+  TH1D * hPNDPhiTrk = plotPJDPhi(djcalo,TCut(evtSel),"nljeta","abs(pndphi)","hPNDPhiTrk",deta,1.5,10000);
+  TH1D * hPADPhiTrk = plotPJDPhi(djcalo,TCut(evtSel),"aljeta","abs(padphi)","hPADPhiTrk",deta,1.5,10000);
+  TH1D * hPNDPhiPix = plotPJDPhi(djcalo,TCut(evtSel),"nljeta","abs(pndphi)","hPNDPhiPix",deta,0.3,10000);
+  TH1D * hPADPhiPix = plotPJDPhi(djcalo,TCut(evtSel),"aljeta","abs(padphi)","hPADPhiPix",deta,0.3,10000);
+
   hPNDPhiPix->SetMinimum(0.01);
   hPNDPhiPix->SetMaximum(1200);
   hPNDPhiTrk->SetMinimum(0.01);
@@ -75,8 +100,8 @@ void balance(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to15264
   }
   cout << "Near Sum: " << ptSumNear << endl;
   Float_t ptSumAway=0;
-  for (Int_t i=0; i<hPADPhiPix->GetNbinsX()+2; ++i) {
-    Float_t dx = hPADPhiPix->GetBinWidth(1);
+  for (Int_t i=0; i<hPADPhiPixRB->GetNbinsX()+2; ++i) {
+    Float_t dx = hPADPhiPixRB->GetBinWidth(1);
     Float_t y=hPADPhiPixRB->GetBinContent(i);
     cout << "Away: " << i << ": " << y << "  *dx = " << y*dx<< endl;
     ptSumAway+=y*dx;
