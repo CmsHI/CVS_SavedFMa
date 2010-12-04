@@ -31,7 +31,7 @@ djcalo = cms.EDAnalyzer('DiJetAna',
     nearJetPtMin = cms.double(200), # Note: this is only for deciding whether to save the tracks in event
     trksrc = cms.InputTag("hiGoodMergedTracks"), # 2, reco tracks; 3, candidate
     anaTrkType = cms.int32(2),
-    trkPtMin = cms.double(0.8),
+    trkPtMin = cms.double(0.15),
     # debug
     verbosity = cms.untracked.int32(2)
     )
