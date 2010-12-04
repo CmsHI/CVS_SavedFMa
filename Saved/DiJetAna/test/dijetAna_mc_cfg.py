@@ -21,7 +21,7 @@ process.source = cms.Source("PoolSource",
 # ===== Top Level =====
 process.GlobalTag.globaltag = "START39_V5HI::All"
 isData=False
-isDataEmbed=True
+isDataEmbed=False
 
 # ===== Centrality =====
 from CmsHi.Analysis2010.CommonFunctions_cff import *
@@ -79,7 +79,8 @@ process.dijetAna_seq*=process.djpfak5
 process.djcalo.nearJetPtMin = 120
 #process.djcalo_tower.nearJetPtMin = 100
 # For Embedding
-#enableDataMixMC(process)
+if isDataEmbed:
+  enableDataMixMC(process)
 #process.djcalo_genp.nearJetPtMin = 100
 #process.djgen.nearJetPtMin = 100
 
