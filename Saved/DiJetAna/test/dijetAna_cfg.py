@@ -54,8 +54,10 @@ enableDataFilter(process,"HI")
 
 # FJ
 #process.dijetAna_seq*=process.djcaloic5
-#process.dijetAna_seq*=process.djcaloak5
+process.dijetAna_seq*=process.djcaloak5
 #process.dijetAna_seq*=process.djcalokt4
+#process.dijetAna_seq*=process.djcalokt4
+process.dijetAna_seq*=process.djpfak5
 
 # For MB
 #for m in [process.djcalo,process.djcalo_tower]:
