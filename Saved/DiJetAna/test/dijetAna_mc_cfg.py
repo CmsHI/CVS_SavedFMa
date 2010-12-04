@@ -40,8 +40,12 @@ if (isData or isDataEmbed):
 for i,m in enumerate([process.djcalo,
   process.djcalo_tower,
   process.djcalo_genp,
-  process.djgen]):
-  m.hltsrc = cms.InputTag("TriggerResults","","HLTMIX")
+  process.djgen,
+  process.djcaloic5,
+  process.djcaloak5,
+  process.djpfic5,
+  process.djpfak5]):
+  m.hltsrc = cms.InputTag("TriggerResults","","HISIGNAL")
   print i, "hlt: ", m.hltsrc
 
 anaOutName = "dj_%s.root" % (process.djcalo.jetsrc.value())
@@ -55,21 +59,27 @@ from Saved.DiJetAna.customise_cfi import *
 #enableTrigger(process,"Jet")
 # HLT Ana
 enableOpenHlt(process,process.dijetAna_seq,isData)
-process.hltanalysis.hltresults = cms.InputTag( 'TriggerResults','',"HLTMIX")
-process.hltanalysis.HLTProcessName = "HLTMIX"
+process.hltanalysis.hltresults = cms.InputTag( 'TriggerResults','',"HISIGNAL")
+process.hltanalysis.HLTProcessName = "HISIGNAL"
 
-enableRECO(process,"MC","HI")
+#enableRECO(process,"MC","HI")
 #enablePp(process,"PpRECO") # options: "PpRECO", "HIRECO"
+
+# FJ
+process.dijetAna_seq*=process.djcaloic5
+process.dijetAna_seq*=process.djcaloak5
+process.dijetAna_seq*=process.djpfic5
+process.dijetAna_seq*=process.djpfak5
 
 # For MB
 #for m in [process.djcalo,process.djcalo_tower]:
 #  m.nearJetPtMin = 40
 
 # First look at data
-#process.djcalo.nearJetPtMin = 100
+process.djcalo.nearJetPtMin = 120
 #process.djcalo_tower.nearJetPtMin = 100
 # For Embedding
-enableDataMixMC(process)
+#enableDataMixMC(process)
 #process.djcalo_genp.nearJetPtMin = 100
 #process.djgen.nearJetPtMin = 100
 
