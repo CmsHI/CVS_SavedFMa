@@ -58,8 +58,12 @@ void balanceMul(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to15
   Float_t numDJ = djcalo->Draw("jdphi>>hJDPhi",evtSel);
   cout << "num djs: " << numDJ << endl;
 
+  TCanvas * c3 = new TCanvas("c3","c3",500,500);
+  djcalo->Draw("peta-nljeta",evtSel);
+  djcalo->Draw("peta-aljeta",evtSel,"sameE");
+
   map<TString,TH1D*> histsDPhi;
-  Double_t deta=1.5;
+  Double_t deta=0.7;
   Int_t colors[20] = {kBlack,kGray+2,kViolet,kBlue,kGreen+2,kOrange+2,kMagenta,kRed};
   const Int_t numPtBins = 5;
   Float_t ptBins[numPtBins+3] = {0,1,2,4,8,10000,0,1000};
@@ -99,6 +103,6 @@ void balanceMul(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to15
     }
     t->Draw();
   }
-  cPJDPhi->Print(Form("PJDPhi_Cent%.0fto%.0f_Aj%.0fto%.0f.gif",centMin,centMax,AjMin*100,AjMax*100));
-  cPJDPhi->Print(Form("PJDPhi_Cent%.0fto%.0f_Aj%.0fto%.0f.C",centMin,centMax,AjMin*100,AjMax*100));
+  cPJDPhi->Print(Form("PJDPhi_Cent%.0fto%.0f_DEta%.0f_Aj%.0fto%.0f.gif",centMin,centMax,deta*10,AjMin*100,AjMax*100));
+  cPJDPhi->Print(Form("PJDPhi_Cent%.0fto%.0f_DEta%.0f_Aj%.0fto%.0f.C",centMin,centMax,deta*10,AjMin*100,AjMax*100));
 }
