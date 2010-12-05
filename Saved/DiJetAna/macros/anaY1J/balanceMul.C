@@ -1,11 +1,13 @@
 #include <iostream>
 #include <map>
+#include <vector>
 #include "TCanvas.h"
 #include "TH1.h"
 #include "TChain.h"
 #include "TMath.h"
 #include "TCut.h"
 #include "TLegend.h"
+#include "TLine.h"
 #include "Saved/DiJetAna/macros/aliases_dijet.C"
 using namespace std;
 
@@ -38,7 +40,7 @@ TH1D * plotPJDPhi(TTree * tr, TCut sel, TString jeta, TString var, TString name,
       "ppt",4,deta);
 }
 
-void balanceMul(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to152643-v1_StdAna1204v2.root",
+void balanceMul(TString infile="dj_HCPR-J50U-hiGoodMergedTracks_Runs152562_152791_StdAna1204v2.root",
     Float_t centMin=0,
     Float_t centMax=10,
     Float_t AjMin=0.24,
@@ -63,8 +65,10 @@ void balanceMul(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to15
   djcalo->Draw("peta-aljeta",evtSel,"sameE");
 
   map<TString,TH1D*> histsDPhi;
+  vector<TH1D*> histsBalance;
   Double_t deta=0.7;
   Int_t colors[20] = {kBlack,kGray+2,kViolet,kBlue,kGreen+2,kOrange+2,kMagenta,kRed};
+  Int_t mkstls[20] = {kCircle,kOpenDiamond,kOpenStar,kStar,kOpenSquare,kOpenCross,kOpenDiamond};
   const Int_t numPtBins = 5;
   Float_t ptBins[numPtBins+3] = {0,1,2,4,8,10000,0,1000};
 
@@ -91,6 +95,14 @@ void balanceMul(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to15
     hAw->SetMarkerStyle(kOpenSquare);
     hNr->Draw("E");
     hAw->Draw("sameE");
+    // difference
+    TH1D * hDiff = (TH1D*)hNr->Clone(Form("hPJDPhiDiffTrk_Pt%.0fto%.0f",ptBins[i],ptBins[i+1]));
+    hDiff->Add(hNr,hAw,1,-1);
+    hDiff->SetMarkerStyle(mkstls[i]);
+    hDiff->SetMarkerColor(colors[i]);
+    hDiff->SetLineColor(colors[i]);
+    hDiff->SetYTitle("Near-Away");
+    histsBalance.push_back(hDiff);
     // Legend
     TLegend *t = new TLegend(0.25,0.76,0.92,0.91);
     t->SetHeader(Form("Trk p_{T}: %.1f to %.1f [GeV],  |#Delta#eta(trk,jet)|<%.1f",ptBins[i],ptBins[i+1],deta));
@@ -105,4 +117,25 @@ void balanceMul(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to15
   }
   cPJDPhi->Print(Form("PJDPhi_Cent%.0fto%.0f_DEta%.0f_Aj%.0fto%.0f.gif",centMin,centMax,deta*10,AjMin*100,AjMax*100));
   cPJDPhi->Print(Form("PJDPhi_Cent%.0fto%.0f_DEta%.0f_Aj%.0fto%.0f.C",centMin,centMax,deta*10,AjMin*100,AjMax*100));
+
+  TCanvas * cBalance = new TCanvas("cBalance","cBalance",500,500);
+  histsBalance[histsBalance.size()-1]->SetMarkerStyle(kFullCircle);
+  histsBalance[histsBalance.size()-1]->SetMarkerColor(kBlack);
+  histsBalance[histsBalance.size()-1]->SetLineColor(kBlack);
+  histsBalance[histsBalance.size()-1]->Draw("E");
+  TLegend *t = new TLegend(0.48,0.61,0.92,0.91);
+  t->SetHeader(Form("|#Delta#eta(trk,jet)|<%.1f",deta));
+  t->SetTextSize(0.04);
+  t->SetBorderSize(0);
+  t->SetFillStyle(0);
+  t->AddEntry(histsBalance[histsBalance.size()-1],"All Pt","pl");
+  for (Int_t i=0; i<histsBalance.size(); ++i) {
+    histsBalance[i]->Draw("Esame");
+    if (i<histsBalance.size()-1)
+      t->AddEntry(histsBalance[i],Form("Pt %.0f to %.0f",ptBins[i],ptBins[i+1]),"pl");
+  }
+  t->Draw();
+  TLine *l = new TLine(0,0,3.14,0);
+  l->SetLineStyle(2);
+  l->Draw();
 }
