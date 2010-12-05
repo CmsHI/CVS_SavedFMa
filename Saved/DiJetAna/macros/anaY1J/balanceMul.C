@@ -41,6 +41,7 @@ TH1D * plotPJDPhi(TTree * tr, TCut sel, TString jeta, TString var, TString name,
 }
 
 void balanceMul(TString infile="dj_HCPR-J50U-hiGoodMergedTracks_Runs152562_152791_StdAna1204v2.root",
+    Int_t doBkgSub=1,
     Float_t centMin=0,
     Float_t centMax=10,
     Float_t AjMin=0.24,
@@ -49,8 +50,10 @@ void balanceMul(TString infile="dj_HCPR-J50U-hiGoodMergedTracks_Runs152562_15279
   TChain * djcalo = new TChain("djcalo/djTree");
   djcalo->Add(infile);
   aliases_dijet(djcalo);
-  TString evtSel(Form("(cent>=%.0f && cent<%.0f && nljet>120 && abs(nljeta)<2 && aljet>50 && abs(aljeta)<2 && jdphi>2.5 && Aj>=%.2f && Aj<%.2f)",
+  TCut evtSel(Form("cent>=%.0f && cent<%.0f && nljet>120 && abs(nljeta)<2 && aljet>50 && abs(aljeta)<2 && jdphi>2.5 && Aj>=%.2f && Aj<%.2f",
 	centMin,centMax,AjMin,AjMax));
+  if (doBkgSub==1)
+    evtSel = evtSel && "abs(aljeta-nljeta)>=1.4";
 
   TCanvas * c0 = new TCanvas("c0","c0",500,500);
   djcalo->Draw("Aj>>hAj(20,0,1)",evtSel);
@@ -76,10 +79,16 @@ void balanceMul(TString infile="dj_HCPR-J50U-hiGoodMergedTracks_Runs152562_15279
   cPJDPhi->Divide(4,2);
   for (Int_t i=0; i<numPtBins+2; ++i) {
     if (ptBins[i]>ptBins[i+1]) continue;
+    // All
     TString nameNr=Form("hPNDPhiTrk_Pt%.0fto%.0f",ptBins[i],ptBins[i+1]);
-    TH1D * hNr = plotPJDPhi(djcalo,TCut(evtSel),"nljeta","abs(pndphi)",nameNr,deta,ptBins[i],ptBins[i+1]);
+    TH1D * hNr = plotPJDPhi(djcalo,evtSel,"nljeta","abs(pndphi)",nameNr,deta,ptBins[i],ptBins[i+1]);
     TString nameAw=Form("hPADPhiTrk_Pt%.0fto%.0f",ptBins[i],ptBins[i+1]);
-    TH1D * hAw = plotPJDPhi(djcalo,TCut(evtSel),"aljeta","abs(padphi)",nameAw,deta,ptBins[i],ptBins[i+1]);
+    TH1D * hAw = plotPJDPhi(djcalo,evtSel,"aljeta","abs(padphi)",nameAw,deta,ptBins[i],ptBins[i+1]);
+    // Bkg
+    TString nameNrBkg=Form("hPNDPhiBkgTrk_Pt%.0fto%.0f",ptBins[i],ptBins[i+1]);
+    TH1D * hNrBkg = plotPJDPhi(djcalo,evtSel,"nljeta","PI-abs(pndphi)",nameNrBkg,deta,ptBins[i],ptBins[i+1]);
+    TString nameAwBkg=Form("hPADPhiBkgTrk_Pt%.0fto%.0f",ptBins[i],ptBins[i+1]);
+    TH1D * hAwBkg = plotPJDPhi(djcalo,evtSel,"aljeta","PI-abs(padphi)",nameAwBkg,deta,ptBins[i],ptBins[i+1]);
     cPJDPhi->cd(i+1);
     if ((i+1)<=4)
       hNr->SetMaximum(hNr->GetMinimum()+(hNr->GetMaximum()-hNr->GetMinimum())*2);
@@ -93,8 +102,12 @@ void balanceMul(TString infile="dj_HCPR-J50U-hiGoodMergedTracks_Runs152562_15279
     hAw->SetMarkerColor(kBlue);
     hAw->SetLineColor(kBlue);
     hAw->SetMarkerStyle(kOpenSquare);
+    hNrBkg->SetLineColor(kRed);
+    hAwBkg->SetLineColor(kBlue);
     hNr->Draw("E");
     hAw->Draw("sameE");
+    hNrBkg->Draw("same hist");
+    hAwBkg->Draw("same hist");
     // difference
     TH1D * hDiff = (TH1D*)hNr->Clone(Form("hPJDPhiDiffTrk_Pt%.0fto%.0f",ptBins[i],ptBins[i+1]));
     hDiff->Add(hNr,hAw,1,-1);
@@ -111,12 +124,14 @@ void balanceMul(TString infile="dj_HCPR-J50U-hiGoodMergedTracks_Runs152562_15279
     t->SetFillStyle(0);
     if (i==0) {
       t->AddEntry(hNr,"Near","pl");
-      t->AddEntry(hAw,"Aw","pl");
+      t->AddEntry(hNrBkg,"Near Bkg","l");
+      t->AddEntry(hAw,"Away","pl");
+      t->AddEntry(hAwBkg,"Away Bkg","l");
     }
     t->Draw();
   }
-  cPJDPhi->Print(Form("PJDPhi_Cent%.0fto%.0f_DEta%.0f_Aj%.0fto%.0f.gif",centMin,centMax,deta*10,AjMin*100,AjMax*100));
-  cPJDPhi->Print(Form("PJDPhi_Cent%.0fto%.0f_DEta%.0f_Aj%.0fto%.0f.C",centMin,centMax,deta*10,AjMin*100,AjMax*100));
+  cPJDPhi->Print(Form("PJDPhi_Cent%.0fto%.0f_DEta%.0f_Aj%.0fto%.0f_BkgSub%d.gif",centMin,centMax,deta*10,AjMin*100,AjMax*100,doBkgSub));
+  cPJDPhi->Print(Form("PJDPhi_Cent%.0fto%.0f_DEta%.0f_Aj%.0fto%.0f_BkgSub%d.C",centMin,centMax,deta*10,AjMin*100,AjMax*100,doBkgSub));
 
   TCanvas * cBalance = new TCanvas("cBalance","cBalance",500,500);
   histsBalance[histsBalance.size()-1]->SetMarkerStyle(kFullCircle);
@@ -138,4 +153,6 @@ void balanceMul(TString infile="dj_HCPR-J50U-hiGoodMergedTracks_Runs152562_15279
   TLine *l = new TLine(0,0,3.14,0);
   l->SetLineStyle(2);
   l->Draw();
+  cBalance->Print(Form("Balance_Cent%.0fto%.0f_DEta%.0f_Aj%.0fto%.0f_BkgSub%d.gif",centMin,centMax,deta*10,AjMin*100,AjMax*100,doBkgSub));
+  cBalance->Print(Form("Balance_Cent%.0fto%.0f_DEta%.0f_Aj%.0fto%.0f_BkgSub%d.C",centMin,centMax,deta*10,AjMin*100,AjMax*100,doBkgSub));
 }
