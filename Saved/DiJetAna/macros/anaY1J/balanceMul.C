@@ -38,12 +38,17 @@ TH1D * plotPJDPhi(TTree * tr, TCut sel, TString jeta, TString var, TString name,
       "ppt",4,deta);
 }
 
-void balanceMul(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to152643-v1_StdAna1204v2.root")
+void balanceMul(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to152643-v1_StdAna1204v2.root",
+    Float_t centMin=0,
+    Float_t centMax=10,
+    Float_t AjMin=0.24,
+    Float_t AjMax=1)
 {
   TChain * djcalo = new TChain("djcalo/djTree");
   djcalo->Add(infile);
   aliases_dijet(djcalo);
-  TString evtSel("(cent<10 && nljet>120 && abs(nljeta)<2 && aljet>50 && abs(aljeta)<2 && jdphi>2.5 && Aj>0.24)");
+  TString evtSel(Form("(cent>=%.0f && cent<%.0f && nljet>120 && abs(nljeta)<2 && aljet>50 && abs(aljeta)<2 && jdphi>2.5 && Aj>=%.2f && Aj<%.2f)",
+	centMin,centMax,AjMin,AjMax));
 
   TCanvas * c0 = new TCanvas("c0","c0",500,500);
   djcalo->Draw("Aj>>hAj(20,0,1)",evtSel);
@@ -68,9 +73,13 @@ void balanceMul(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to15
     TString nameAw=Form("hPADPhiTrk_Pt%.0fto%.0f",ptBins[i],ptBins[i+1]);
     TH1D * hAw = plotPJDPhi(djcalo,TCut(evtSel),"aljeta","abs(padphi)",nameAw,deta,ptBins[i],ptBins[i+1]);
     cPJDPhi->cd(i+1);
-    if ((i+1)>4) cPJDPhi->GetPad(i+1)->SetLogy();
-    //hNr->SetMinimum(0.1);
-    //hNr->SetMaximum(1000);
+    if ((i+1)<=4)
+      hNr->SetMaximum(hNr->GetMinimum()+(hNr->GetMaximum()-hNr->GetMinimum())*2);
+    else {
+      //hNr->SetMinimum(0.1);
+      //hNr->SetMaximum(3000);
+      cPJDPhi->GetPad(i+1)->SetLogy();
+    }
     hNr->SetLineColor(kRed);
     hNr->SetMarkerColor(kRed);
     hAw->SetMarkerColor(kBlue);
@@ -80,8 +89,8 @@ void balanceMul(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to15
     hAw->Draw("sameE");
     // Legend
     TLegend *t = new TLegend(0.25,0.76,0.92,0.91);
-    t->SetHeader(Form("Trk p_{T}: %.1f to %.1f [GeV]|, #Delta#eta(trk,jet)|<%.1f",ptBins[i],ptBins[i+1],deta));
-    t->SetTextSize(0.03);
+    t->SetHeader(Form("Trk p_{T}: %.1f to %.1f [GeV],  |#Delta#eta(trk,jet)|<%.1f",ptBins[i],ptBins[i+1],deta));
+    t->SetTextSize(0.04);
     t->SetBorderSize(0);
     t->SetFillStyle(0);
     if (i==0) {
@@ -90,4 +99,6 @@ void balanceMul(TString infile="dj_HCPR-J50U-JSON_hiGoodMergedTrksRuns152562to15
     }
     t->Draw();
   }
+  cPJDPhi->Print(Form("PJDPhi_Cent%.0fto%.0f_Aj%.0fto%.0f.gif",centMin,centMax,AjMin*100,AjMax*100));
+  cPJDPhi->Print(Form("PJDPhi_Cent%.0fto%.0f_Aj%.0fto%.0f.C",centMin,centMax,AjMin*100,AjMax*100));
 }
