@@ -45,7 +45,8 @@ void balanceMul(TString infile="dj_HCPR-J50U-hiGoodMergedTracks_Runs152562_15279
     Float_t centMin=0,
     Float_t centMax=10,
     Float_t AjMin=0.24,
-    Float_t AjMax=1)
+    Float_t AjMax=1,
+    Double_t deta=0.7)
 {
   TChain * djcalo = new TChain("djcalo/djTree");
   djcalo->Add(infile);
@@ -67,9 +68,12 @@ void balanceMul(TString infile="dj_HCPR-J50U-hiGoodMergedTracks_Runs152562_15279
   djcalo->Draw("peta-nljeta",evtSel);
   djcalo->Draw("peta-aljeta",evtSel,"sameE");
 
+  TCanvas * c4 = new TCanvas("c4","c4",500,500);
+  djcalo->Draw("abs(pndphi)",evtSel&&Form("abs(peta-nljeta)<%.0f",deta));
+  djcalo->Draw("abs(padphi)",evtSel&&Form("abs(peta-aljeta)<%.0f",deta),"sameE");
+
   map<TString,TH1D*> histsDPhi;
   vector<TH1D*> histsBalance;
-  Double_t deta=0.7;
   Int_t colors[20] = {kBlack,kGray+2,kViolet,kBlue,kGreen+2,kOrange+2,kMagenta,kRed};
   Int_t mkstls[20] = {kCircle,kOpenDiamond,kOpenStar,kStar,kOpenSquare,kOpenCross,kOpenDiamond};
   const Int_t numPtBins = 5;
@@ -90,8 +94,11 @@ void balanceMul(TString infile="dj_HCPR-J50U-hiGoodMergedTracks_Runs152562_15279
     TString nameAwBkg=Form("hPADPhiBkgTrk_Pt%.0fto%.0f",ptBins[i],ptBins[i+1]);
     TH1D * hAwBkg = plotPJDPhi(djcalo,evtSel,"aljeta","PI-abs(padphi)",nameAwBkg,deta,ptBins[i],ptBins[i+1]);
     cPJDPhi->cd(i+1);
-    if ((i+1)<=4)
-      hNr->SetMaximum(hNr->GetMinimum()+(hNr->GetMaximum()-hNr->GetMinimum())*2);
+    if ((i+1)<=4) {
+      Float_t d=hNr->GetMaximum()-hNr->GetMinimum();
+      hNr->SetMaximum(hNr->GetMinimum()+d*2);
+      hNr->SetMinimum(hNr->GetMinimum()-d*0.7);
+    }
     else {
       //hNr->SetMinimum(0.1);
       //hNr->SetMaximum(3000);
