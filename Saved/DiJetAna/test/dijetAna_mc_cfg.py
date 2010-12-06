@@ -22,13 +22,14 @@ process.source = cms.Source("PoolSource",
 process.GlobalTag.globaltag = "START39_V5HI::All"
 isData=False
 isDataEmbed=False
+hltProcess="HISIGNAL" # HLT, HISIGNAL
 
 # ===== Centrality =====
 from CmsHi.Analysis2010.CommonFunctions_cff import *
 overrideCentrality(process)
 process.HeavyIonGlobalParameters = cms.PSet(
     centralityVariable = cms.string("HFhits"),
-    nonDefaultGlauberModel = cms.string("Hydjet_Bass_2760GeV"),
+    nonDefaultGlauberModel = cms.string("Hydjet_Bass"),
     centralitySrc = cms.InputTag("hiCentrality")
     )
 if (isData or isDataEmbed):
@@ -45,7 +46,7 @@ for i,m in enumerate([process.djcalo,
   process.djcaloak5,
   process.djpfic5,
   process.djpfak5]):
-  m.hltsrc = cms.InputTag("TriggerResults","","HISIGNAL")
+  m.hltsrc = cms.InputTag("TriggerResults","",hltProcess)
   print i, "hlt: ", m.hltsrc
 
 anaOutName = "dj_%s.root" % (process.djcalo.jetsrc.value())
@@ -59,8 +60,8 @@ from Saved.DiJetAna.customise_cfi import *
 #enableTrigger(process,"Jet")
 # HLT Ana
 enableOpenHlt(process,process.dijetAna_seq,isData)
-process.hltanalysis.hltresults = cms.InputTag( 'TriggerResults','',"HISIGNAL")
-process.hltanalysis.HLTProcessName = "HISIGNAL"
+process.hltanalysis.hltresults = cms.InputTag( 'TriggerResults','',hltProcess)
+process.hltanalysis.HLTProcessName = hltProcess
 
 #enableRECO(process,"MC","HI")
 #enablePp(process,"PpRECO") # options: "PpRECO", "HIRECO"
