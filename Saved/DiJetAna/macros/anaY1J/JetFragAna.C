@@ -181,19 +181,37 @@ void JetFragAna::Loop()
 
 	  hPNDR->Fill(pndr[i],ppt[i]);
 	  hPADR->Fill(padr[i],ppt[i]);
-	  hPNDRDens->Fill(pndr[i],ppt[i]/pndr[i]);
-	  hPADRDens->Fill(padr[i],ppt[i]/padr[i]);
+	  hPNDRDens->Fill(pndr[i],ppt[i]/(2*PI*pndr[i]));
+	  hPADRDens->Fill(padr[i],ppt[i]/(2*PI*padr[i]));
 
 	  hPNDRBg->Fill(PNdRBkg,ppt[i]);
 	  hPADRBg->Fill(PAdRBkg,ppt[i]);
-	  hPNDRDensBg->Fill(PNdRBkg,ppt[i]/PNdRBkg);
-	  hPADRDensBg->Fill(PAdRBkg,ppt[i]/PAdRBkg);
+	  hPNDRDensBg->Fill(PNdRBkg,ppt[i]/(2*PI*PNdRBkg));
+	  hPADRDensBg->Fill(PAdRBkg,ppt[i]/(2*PI*PAdRBkg));
+
+	  hPtPNDR->Fill(ppt[i],pndr[i],ppt[i]);
+	  hPtPADR->Fill(ppt[i],padr[i],ppt[i]);
+	  hPtPNDRDens->Fill(ppt[i],pndr[i],ppt[i]/(2*PI*pndr[i]));
+	  hPtPADRDens->Fill(ppt[i],padr[i],ppt[i]/(2*PI*padr[i]));
+
+	  hPtPNDRBg->Fill(ppt[i],PNdRBkg,ppt[i]);
+	  hPtPADRBg->Fill(ppt[i],PAdRBkg,ppt[i]);
+	  hPtPNDRDensBg->Fill(ppt[i],PNdRBkg,ppt[i]/(2*PI*PNdRBkg));
+	  hPtPADRDensBg->Fill(ppt[i],PAdRBkg,ppt[i]/(2*PI*PAdRBkg));
 	}
 	++numDJ_;
       }
       // if (Cut(ientry) < 0) continue;
    }
    cout << "DiJets: " << numDJ_ << endl;
+   hJDPhi->Scale(1./(numDJ_*hJDPhi->GetBinWidth(1)));
+   hJEtNr->Scale(1./(numDJ_*hJEtNr->GetBinWidth(1)));
+   hJEtAw->Scale(1./(numDJ_*hJEtAw->GetBinWidth(1)));
+   hAj->Scale(1./(numDJ_*hAj->GetBinWidth(1)));
+   hJEtaNr->Scale(1./(numDJ_*hJEtaNr->GetBinWidth(1)));
+   hJEtaAw->Scale(1./(numDJ_*hJEtaAw->GetBinWidth(1)));
+   hJDEta->Scale(1./(numDJ_*hJDEta->GetBinWidth(1)));
+
    hPNDR->Scale(1./(numDJ_*hPNDR->GetBinWidth(1)));
    hPADR->Scale(1./(numDJ_*hPADR->GetBinWidth(1)));
    hPNDRDens->Scale(1./(numDJ_*hPNDRDens->GetBinWidth(1)));
