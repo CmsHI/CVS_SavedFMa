@@ -163,6 +163,9 @@ void JetFragAna::Loop()
 	if (cut.BkgSubType=="EtaRefl") {
 	  if (fabs(nljeta)<0.8||fabs(aljeta)<0.8) continue;
 	}
+	if (cut.BkgSubType=="PhiRot") {
+	  if (fabs(nljeta-aljeta)<1.6) continue;
+	}
 	//cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
 	hJDPhi->Fill(jdphi);
 	hJEtNr->Fill(anaJets_[0].pt());
@@ -177,6 +180,10 @@ void JetFragAna::Loop()
 	  if (cut.BkgSubType=="EtaRefl") {
 	    PNdRBkg = reco::deltaR(peta[i],pphi[i],-nljeta,nljphi);
 	    PAdRBkg = reco::deltaR(peta[i],pphi[i],-aljeta,aljphi);
+	  }
+	  if (cut.BkgSubType=="PhiRot") {
+	    PNdRBkg = reco::deltaR(peta[i],pphi[i],nljeta,nljphi+PI);
+	    PAdRBkg = reco::deltaR(peta[i],pphi[i],aljeta,aljphi+PI);
 	  }
 
 	  hPNDR->Fill(pndr[i],ppt[i]);
