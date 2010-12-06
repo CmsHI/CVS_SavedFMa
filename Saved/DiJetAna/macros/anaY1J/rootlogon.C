@@ -16,7 +16,7 @@
     //gSystem->Load("libDataFormatsPatCandidates.so");
     //gSystem->Load("libDataFormatsCommon.so");
     gSystem->Load("libDataFormatsMath.so");
-    gSystem->Load("pluginSavedDiJetAna.so");
+    //gSystem->Load("pluginSavedDiJetAna.so");
 
     // JEC
     //gSystem->Load("libCondFormatsJetMETObjects.so");
@@ -35,6 +35,7 @@
   //gStyle->SetOptStat(1111);
   //gStyle->SetPadLeftMargin(0.2);
   gStyle->SetOptFit(0);
+  gStyle->SetMarkerSize(0.8);
 
 
   // helper classes
