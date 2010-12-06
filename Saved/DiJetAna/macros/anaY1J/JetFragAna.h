@@ -39,6 +39,10 @@ public :
    TH1D * hJDPhi;
    TH1D * hJEtNr;
    TH1D * hJEtAw;
+   TH1D * hAj;
+   TH1D * hJEtaNr;
+   TH1D * hJEtaAw;
+   TH1D * hJDEta;
    TH1D * hRefJEtNr;
    TH1D * hRefJEtAw;
    // cone

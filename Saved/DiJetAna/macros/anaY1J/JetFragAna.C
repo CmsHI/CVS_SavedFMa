@@ -35,6 +35,10 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    hJDPhi = new TH1D("hJDPhi","",50,0,PI);
    hJEtNr = new TH1D("hJEtNr","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
    hJEtAw = new TH1D("hJEtAw","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hAj = new TH1D("hAj","",20,0,1);
+   hJEtaNr = new TH1D("hJEtaNr","",50,-3,3);
+   hJEtaAw = new TH1D("hJEtaAw","",50,-3,3);
+   hJDEta = new TH1D("hJDEta","",50,-6,6);
    hRefJEtNr = new TH1D("hRefJEtNr","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
    hRefJEtAw = new TH1D("hRefJEtAw","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
    // cone
@@ -152,6 +156,13 @@ void JetFragAna::Loop()
 
       if (Cut(ientry)>=0) {
 	//cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
+	hJDPhi->Fill(jdphi);
+	hJEtNr->Fill(anaJets_[0].pt());
+	hJEtAw->Fill(anaJets_[1].pt());
+	hAj->Fill((anaJets_[0].pt()-anaJets_[1].pt())/(anaJets_[0].pt()+anaJets_[1].pt()));
+	hJEtaNr->Fill(anaJets_[0].eta());
+	hJEtaAw->Fill(anaJets_[1].eta());
+	hJDEta->Fill(anaJets_[1].eta()-anaJets_[0].eta());
 	for (Int_t i=0; i<particles_.size();++i) {
 	  //if (particles_[i].pt()>30) cout << "particle " << i << ": " << particles_[i] << endl;
 	}
