@@ -96,7 +96,7 @@ Int_t JetFragAna::Cut(Long64_t entry)
       return -1;
 
   Int_t result=-1;
-  if (cut.DJCutType=="Ana"||cut.DJCutType=="Refl"||cut.DJCutType=="Rotate") {
+  if (cut.DJCutType=="Ana") {
     if (anaJets_[0].pt()>=cut.NrJEtMin && anaJets_[0].pt()<cut.NrJEtMax && fabs(anaJets_[0].eta())<cut.NrJEtaMax &&
 	anaJets_[1].pt()>=cut.AwJEtMin && anaJets_[1].pt()<cut.AwJEtMax && fabs(anaJets_[1].eta())<cut.AwJEtaMax &&
 	jdphi>=cut.DjDPhiMin
@@ -160,6 +160,9 @@ void JetFragAna::Loop()
       nb = GetEntry(jentry);   nbytes += nb;
 
       if (Cut(ientry)>=0) {
+	if (cut.BkgSubType=="EtaRefl") {
+	  if (fabs(nljeta)<0.8||fabs(aljeta)<0.8) continue;
+	}
 	//cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
 	hJDPhi->Fill(jdphi);
 	hJEtNr->Fill(anaJets_[0].pt());
@@ -170,8 +173,11 @@ void JetFragAna::Loop()
 	hJDEta->Fill(anaJets_[1].eta()-anaJets_[0].eta());
 	for (Int_t i=0; i<evtnp;++i) {
 	  //if (particles_[i].pt()>30) cout << "particle " << i << ": " << particles_[i] << endl;
-	  Float_t PNdRBkg = reco::deltaR(peta[i],pphi[i],nljeta,nljphi);
-	  Float_t PAdRBkg = reco::deltaR(peta[i],pphi[i],aljeta,aljphi);
+	  Double_t PNdRBkg=0,PAdRBkg=0;
+	  if (cut.BkgSubType=="EtaRefl") {
+	    PNdRBkg = reco::deltaR(peta[i],pphi[i],-nljeta,nljphi);
+	    PAdRBkg = reco::deltaR(peta[i],pphi[i],-aljeta,aljphi);
+	  }
 
 	  hPNDR->Fill(pndr[i],ppt[i]);
 	  hPADR->Fill(padr[i],ppt[i]);
