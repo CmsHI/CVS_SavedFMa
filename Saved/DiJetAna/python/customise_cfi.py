@@ -96,7 +96,7 @@ def enableData(process):
     m.refJetType = -1
 
 def enableDataFilter(process,dataType="HI"):
-  process.eventSelection*=process.hiEcalRecHitSpikeFilter
+  #process.eventSelection*=process.hiEcalRecHitSpikeFilter
   if dataType=="HI":
     process.eventSelection*=process.L1HfOrBscCoinc
     process.eventSelection*=process.collisionEventSelection

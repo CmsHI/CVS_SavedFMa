@@ -34,8 +34,8 @@ centralityFilter.selectedBins = range(40)
 from HeavyIonsAnalysis.Configuration.collisionEventSelection_cff import *
 
 # Noise Filters
-from CmsHi.PhotonAnalysis.hiEcalRecHitSpikeFilter_cfi import *
-hiEcalRecHitSpikeFilter.minEt = 50.0
+#from CmsHi.PhotonAnalysis.hiEcalRecHitSpikeFilter_cfi import *
+#hiEcalRecHitSpikeFilter.minEt = 50.0
 
 # Final Filter Sequences
 triggerSelection = cms.Sequence(physDeclFilter)
