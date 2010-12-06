@@ -237,9 +237,15 @@ JetFragAna::~JetFragAna()
 
 Int_t JetFragAna::GetEntry(Long64_t entry)
 {
-// Read contents of entry.
-   if (!fChain) return 0;
-   return fChain->GetEntry(entry);
+  // Read contents of entry.
+  if (!fChain) return 0;
+  Int_t result = fChain->GetEntry(entry);
+  if (result<0) return result;
+  else {
+    anaJets_[0].SetCoordinates(nljet,nljeta,nljphi,0);
+    anaJets_[1].SetCoordinates(aljet,aljeta,aljphi,0);
+  }
+  return result;
 }
 Long64_t JetFragAna::LoadTree(Long64_t entry)
 {

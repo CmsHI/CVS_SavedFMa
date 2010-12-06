@@ -30,8 +30,8 @@ Int_t JetFragAna::Cut(Long64_t entry)
 
   Int_t result=-1;
   if (cut.DJCutType=="Ana") {
-    if (nljet>=cut.NrJEtMin && nljet<cut.NrJEtMax && fabs(nljeta)<cut.NrJEtaMax &&
-	aljet>=cut.AwJEtMin && aljet<cut.AwJEtMax && fabs(aljeta)<cut.AwJEtaMax &&
+    if (anaJets_[0].pt()>=cut.NrJEtMin && anaJets_[0].pt()<cut.NrJEtMax && fabs(anaJets_[0].eta())<cut.NrJEtaMax &&
+	anaJets_[1].pt()>=cut.AwJEtMin && anaJets_[1].pt()<cut.AwJEtMax && fabs(anaJets_[1].eta())<cut.AwJEtaMax &&
 	jdphi>=cut.DjDPhiMin
        )
       result=1;
@@ -74,10 +74,8 @@ void JetFragAna::Loop()
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
-      nb = fChain->GetEntry(jentry);   nbytes += nb;
+      nb = GetEntry(jentry);   nbytes += nb;
 
-      anaJets_[0].SetCoordinates(nljet,nljeta,nljphi,0);
-      anaJets_[1].SetCoordinates(aljet,aljeta,aljphi,0);
       if (Cut(ientry)>=0) {
 	//cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
 	++numDJ_;
