@@ -14,8 +14,9 @@ void anaJetFrag(int doMC=0,
     Double_t AwJEtMax = 500,
     Double_t AwJEtaMax = 2.,
     Double_t JDPhiMin = 2.5,
-    TString DJCutType = "Ana",
+    TString DJCutType = "Ana", // Ana, Refl, Rotate
     TString TrkCutType = "Ana",
+    TString BkgSubType = "EtaRefl", // EtaRefl, PhiRot
     const char * inFile0Name="dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root",
     TString SrcName = "HydjUQDJ80")
 {
@@ -24,15 +25,18 @@ void anaJetFrag(int doMC=0,
   cout << inFile0Name << endl;
   cout << "Analyze: " << modName << endl;
   TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
-  djTree->Add(inFile0Name);
+  djTree->Add("~/scratch01/ana/merge/dj_HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_150883_to_152485_RECOPAT-v1_OfficialSelNoVtxPatchv1.root");
+  djTree->Add("~/scratch01/ana/merge/dj_HCPR-J50U-Pre-OfficialJSON_hiGoodMergedTracks_Runs_152652_to_152791_RECOPAT-v1_OfficialSelNoVtxPatchv1.root");
   aliases_dijet(djTree,doMC);
   cout << " # entries: " << djTree->GetEntries() << endl;
 
+  TFile * outf = new TFile(Form("jetFragHists_%s.root",BkgSubType.Data()),"RECREATE");
   JetFragAna jana(djTree,SrcName,doMC);
   jana.cut.SetDJEt(NrJEtMin,NrJEtMax,AwJEtMin,AwJEtMax,JDPhiMin);
   jana.cut.BaseCutType=evtBase;
   jana.cut.DJCutType = DJCutType;
   jana.cut.TrkCutType = TrkCutType;
+  jana.cut.BkgSubType = BkgSubType;
   jana.cut.SetCut();
 
   // -- analysis selections --
@@ -42,4 +46,5 @@ void anaJetFrag(int doMC=0,
 
   // do ana
   jana.Loop();
+  outf->Write();
 }
