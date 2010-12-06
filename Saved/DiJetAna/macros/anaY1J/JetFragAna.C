@@ -186,12 +186,21 @@ void JetFragAna::Loop()
 
 	  hPNDRBg->Fill(PNdRBkg,ppt[i]);
 	  hPADRBg->Fill(PAdRBkg,ppt[i]);
-	  hPNDRDensBg->Fill(PNdRBkg,ppt[i]/pndr[i]);
-	  hPADRDensBg->Fill(PAdRBkg,ppt[i]/padr[i]);
+	  hPNDRDensBg->Fill(PNdRBkg,ppt[i]/PNdRBkg);
+	  hPADRDensBg->Fill(PAdRBkg,ppt[i]/PAdRBkg);
 	}
 	++numDJ_;
       }
       // if (Cut(ientry) < 0) continue;
    }
    cout << "DiJets: " << numDJ_ << endl;
+   hPNDR->Scale(1./(numDJ_*hPNDR->GetBinWidth(1)));
+   hPADR->Scale(1./(numDJ_*hPADR->GetBinWidth(1)));
+   hPNDRDens->Scale(1./(numDJ_*hPNDRDens->GetBinWidth(1)));
+   hPADRDens->Scale(1./(numDJ_*hPADRDens->GetBinWidth(1)));
+
+   hPNDRBg->Scale(1./(numDJ_*hPNDRBg->GetBinWidth(1)));
+   hPADRBg->Scale(1./(numDJ_*hPADRBg->GetBinWidth(1)));
+   hPNDRDensBg->Scale(1./(numDJ_*hPNDRDensBg->GetBinWidth(1)));
+   hPADRDensBg->Scale(1./(numDJ_*hPADRDensBg->GetBinWidth(1)));
 }
