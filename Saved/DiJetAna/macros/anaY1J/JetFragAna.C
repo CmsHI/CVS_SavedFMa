@@ -1,16 +1,12 @@
 #define JetFragAna_cxx
 #include "Saved/DiJetAna/macros/anaY1J/JetFragAna.h"
+#include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <iostream>
 using namespace std;
-const Int_t numPtBins = 7;
-Double_t ptBins[numPtBins+1]={0,1,2,4,8,16,64,200};
-const Int_t numDRBins = 10;
-Double_t dRBins[numDRBins+1]={0,0.2,0.4,0.6,0.8,1.,1.2,1.4,1.6,1.8,2.};
-const Int_t numDPhiBins = 10;
-Double_t dPhiBins[numDRBins+1]={0,0.1*HPI,0.2*HPI,0.3*HPI,0.4*HPI,0.5*HPI,0.6*HPI,0.7*HPI,0.8*HPI,0.9*HPI,HPI};
 
 JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
   cut(tag,doMC),
@@ -58,6 +54,15 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    hPtPNDRBg = new TH2D("hPtPNDRBg","",numPtBins,ptBins,numDRBins,dRBins);
    hPtPADRBg = new TH2D("hPtPADRBg","",numPtBins,ptBins,numDRBins,dRBins);
 
+   hPNDRDens = new TH1D("hPNDRDens","",numDRBins,dRBins);
+   hPADRDens = new TH1D("hPADRDens","",numDRBins,dRBins);
+   hPNDRDensBg = new TH1D("hPNDRDensBg","",numDRBins,dRBins);
+   hPADRDensBg = new TH1D("hPADRDensBg","",numDRBins,dRBins);
+   hPtPNDRDens = new TH2D("hPtPNDRDens","",numPtBins,ptBins,numDRBins,dRBins);
+   hPtPADRDens = new TH2D("hPtPADRDens","",numPtBins,ptBins,numDRBins,dRBins);
+   hPtPNDRDensBg = new TH2D("hPtPNDRDensBg","",numPtBins,ptBins,numDRBins,dRBins);
+   hPtPADRDensBg = new TH2D("hPtPADRDensBg","",numPtBins,ptBins,numDRBins,dRBins);
+
    hPNDPhi = new TH1D("hPNDPhi","",numDPhiBins,dPhiBins);
    hPADPhi = new TH1D("hPADPhi","",numDPhiBins,dPhiBins);
    hPNDPhiBg = new TH1D("hPNDPhiBg","",numDPhiBins,dPhiBins);
@@ -91,7 +96,7 @@ Int_t JetFragAna::Cut(Long64_t entry)
       return -1;
 
   Int_t result=-1;
-  if (cut.DJCutType=="Ana") {
+  if (cut.DJCutType=="Ana"||cut.DJCutType=="Refl"||cut.DJCutType=="Rotate") {
     if (anaJets_[0].pt()>=cut.NrJEtMin && anaJets_[0].pt()<cut.NrJEtMax && fabs(anaJets_[0].eta())<cut.NrJEtaMax &&
 	anaJets_[1].pt()>=cut.AwJEtMin && anaJets_[1].pt()<cut.AwJEtMax && fabs(anaJets_[1].eta())<cut.AwJEtaMax &&
 	jdphi>=cut.DjDPhiMin
@@ -163,8 +168,20 @@ void JetFragAna::Loop()
 	hJEtaNr->Fill(anaJets_[0].eta());
 	hJEtaAw->Fill(anaJets_[1].eta());
 	hJDEta->Fill(anaJets_[1].eta()-anaJets_[0].eta());
-	for (Int_t i=0; i<particles_.size();++i) {
+	for (Int_t i=0; i<evtnp;++i) {
 	  //if (particles_[i].pt()>30) cout << "particle " << i << ": " << particles_[i] << endl;
+	  Float_t PNdRBkg = reco::deltaR(peta[i],pphi[i],nljeta,nljphi);
+	  Float_t PAdRBkg = reco::deltaR(peta[i],pphi[i],aljeta,aljphi);
+
+	  hPNDR->Fill(pndr[i],ppt[i]);
+	  hPADR->Fill(padr[i],ppt[i]);
+	  hPNDRDens->Fill(pndr[i],ppt[i]/pndr[i]);
+	  hPADRDens->Fill(padr[i],ppt[i]/padr[i]);
+
+	  hPNDRBg->Fill(PNdRBkg,ppt[i]);
+	  hPADRBg->Fill(PAdRBkg,ppt[i]);
+	  hPNDRDensBg->Fill(PNdRBkg,ppt[i]/pndr[i]);
+	  hPADRDensBg->Fill(PAdRBkg,ppt[i]/padr[i]);
 	}
 	++numDJ_;
       }

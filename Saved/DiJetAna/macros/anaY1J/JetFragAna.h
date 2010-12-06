@@ -18,9 +18,16 @@
 #include "TH2.h"
 #include "Saved/DiJetAna/macros/selectionCut.h"
 const Int_t PI = 3.1415926535897932384626;
-const Int_t HPI = 3.1415926535897932384626;
+const Int_t HPI = PI/2.;
 const Int_t kMax = 2;
 const Int_t MAXTRK = 100000;
+const Int_t numPtBins = 7;
+Double_t ptBins[numPtBins+1]={0,1,2,4,8,16,64,200};
+const Int_t numDRBins = 10;
+//Double_t dRBins[numDRBins+1]={0,0.2,0.4,0.6,0.8,1.,1.2,1.4,1.6,1.8,2.};
+Double_t dRBins[numDRBins+1]={0,0.1*HPI,0.2*HPI,0.3*HPI,0.4*HPI,0.5*HPI,0.6*HPI,0.7*HPI,0.8*HPI,0.9*HPI,HPI};
+const Int_t numDPhiBins = 10;
+Double_t dPhiBins[numDPhiBins+1]={0,0.1*HPI,0.2*HPI,0.3*HPI,0.4*HPI,0.5*HPI,0.6*HPI,0.7*HPI,0.8*HPI,0.9*HPI,HPI};
 
 class JetFragAna {
 public :
@@ -61,6 +68,15 @@ public :
    TH2D * hPtPADR;
    TH2D * hPtPNDRBg;
    TH2D * hPtPADRBg;
+
+   TH1D * hPNDRDens;
+   TH1D * hPADRDens;
+   TH1D * hPNDRDensBg;
+   TH1D * hPADRDensBg;
+   TH2D * hPtPNDRDens;
+   TH2D * hPtPADRDens;
+   TH2D * hPtPNDRDensBg;
+   TH2D * hPtPADRDensBg;
 
    TH1D * hPNDPhi;
    TH1D * hPADPhi;
