@@ -1,7 +1,8 @@
 void drawTrkEnergy() {
 
-  TFile *f = new TFile("hists_Aj_24_100_cent_0_10.root");
-  
+  //TFile *f = new TFile("hists_Aj_24_100_cent_0_10.root");
+  TFile *f = new TFile("test_energy_not_density.root");
+
   TH1D *n1 = (TH1D*) f->Get("hPNDRSigTrk1");
   TH1D *n2 = (TH1D*) f->Get("hPNDRSigTrk2");
   TH1D *n4 = (TH1D*) f->Get("hPNDRSigTrk4");
@@ -55,10 +56,10 @@ void drawTrkEnergy() {
   TH1D* hc12 = combine(n12,a12);
   TH1D* hc1 = combine(n1,a1);
 
-  hc1248->Draw("hist"); hc1248->Draw("esame"); //chist
-  hc124->Draw("histsame"); hc124->Draw("esame");
-  hc12->Draw("histsame"); hc12->Draw("esame");
-  hc1->Draw("histsame"); hc1->Draw("esame");
+  hc1248->Draw("chist"); hc1248->Draw("esame"); //chist
+  hc124->Draw("chistsame"); hc124->Draw("esame");
+  hc12->Draw("chistsame"); hc12->Draw("esame");
+  hc1->Draw("chistsame"); hc1->Draw("esame");
 
   hc1248->GetXaxis()->SetAxisColor(0);
   hc1248->GetXaxis()->SetLabelColor(0);
@@ -89,6 +90,20 @@ void drawTrkEnergy() {
   leg->AddEntry(hc124,"4-8 GeV/c","f");
   leg->AddEntry(hc1248,"8+ GeV/c","f");
   leg->Draw();
+
+
+  double nearsum=0.0, awaysum=0.0;
+  for(ibin=1; ibin<=40; ibin++) {
+    double bc = hc1248->GetBinContent(ibin);
+    cout << bc << endl;
+    if(ibin>10 && ibin<=14 && bc>0) nearsum+=bc;
+    if(ibin>30 && ibin<=34 && bc>0) awaysum+=bc;
+  }
+
+
+  cout << "integral of dET/dR = " << nearsum << "(near-side) \t"
+       << awaysum << "(away-side)" << endl;
+
 }
 
 TH1D* combine(TH1D* near, TH1D* away) {
@@ -114,7 +129,8 @@ TH1D* combine(TH1D* near, TH1D* away) {
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
   hcombine->SetMinimum(1.0);
-  hcombine->SetTitle(";;#frac{1}{N_{dijet}}  #frac{d#sump_{T}^{track} }{  2#pi R dR }");
+  hcombine->SetTitle(";;#frac{1}{N_{dijet}}  #frac{d#sump_{T}^{track} }{ dR }"); // no 2piR in denominator
+  //hcombine->SetTitle(";;#frac{1}{N_{dijet}}  #frac{d#sump_{T}^{track} }{  2#pi R dR }");
   hcombine->GetYaxis()->CenterTitle();
   hcombine->GetYaxis()->SetTitleOffset(1.7);
 
