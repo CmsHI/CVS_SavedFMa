@@ -5,6 +5,64 @@
 #include <TCanvas.h>
 #include <iostream>
 using namespace std;
+const Int_t numPtBins = 7;
+Double_t ptBins[numPtBins+1]={0,1,2,4,8,16,64,200};
+const Int_t numDRBins = 10;
+Double_t dRBins[numDRBins+1]={0,0.2,0.4,0.6,0.8,1.,1.2,1.4,1.6,1.8,2.};
+const Int_t numDPhiBins = 10;
+Double_t dPhiBins[numDRBins+1]={0,0.1*HPI,0.2*HPI,0.3*HPI,0.4*HPI,0.5*HPI,0.6*HPI,0.7*HPI,0.8*HPI,0.9*HPI,HPI};
+
+JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
+  cut(tag,doMC),
+  anaJets_(2),
+  refJets_(2)
+{
+// if parameter tree is not specified (or zero), connect the file
+// used to generate this class and read the Tree.
+   if (tree == 0) {
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root");
+      if (!f) {
+         f = new TFile("dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root");
+         f->cd("dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root:/djcalo");
+      }
+      tree = (TTree*)gDirectory->Get("djTree");
+
+   }
+   Init(tree);
+
+   // Histograms
+   // jet
+   hJDPhi = new TH1D("hJDPhi","",50,0,PI);
+   hJEtNr = new TH1D("hJEtNr","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hJEtAw = new TH1D("hJEtAw","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hRefJEtNr = new TH1D("hRefJEtNr","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hRefJEtAw = new TH1D("hRefJEtAw","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   // cone
+   hCNPNr = new TH1D("hCNPNr","",cut.numC5NPBins,cut.hisC5NPMin,cut.hisC5NPMax);
+   hCNPBgNr = new TH1D("hCNPBgNr","",cut.numC5NPBins,cut.hisC5NPMin,cut.hisC5NPMax);
+   hCNPSubNr = new TH1D("hCNPSubNr","",cut.numC5NPSubBins,cut.hisC5NPSubMin,cut.hisC5NPSubMax);
+   hCNPAw = new TH1D("hCNPAw","",cut.numC5NPBins,cut.hisC5NPMin,cut.hisC5NPMax);
+   hCNPBgAw = new TH1D("hCNPBgAw","",cut.numC5NPBins,cut.hisC5NPMin,cut.hisC5NPMax);
+   hCNPSubAw = new TH1D("hCNPSubAw","",cut.numC5NPSubBins,cut.hisC5NPSubMin,cut.hisC5NPSubMax);
+   // trk
+   hPNDR = new TH1D("hPNDR","",numDRBins,dRBins);
+   hPADR = new TH1D("hPADR","",numDRBins,dRBins);
+   hPNDRBg = new TH1D("hPNDRBg","",numDRBins,dRBins);
+   hPADRBg = new TH1D("hPADRBg","",numDRBins,dRBins);
+   hPtPNDR = new TH2D("hPtPNDR","",numPtBins,ptBins,numDRBins,dRBins);
+   hPtPADR = new TH2D("hPtPADR","",numPtBins,ptBins,numDRBins,dRBins);
+   hPtPNDRBg = new TH2D("hPtPNDRBg","",numPtBins,ptBins,numDRBins,dRBins);
+   hPtPADRBg = new TH2D("hPtPADRBg","",numPtBins,ptBins,numDRBins,dRBins);
+
+   hPNDPhi = new TH1D("hPNDPhi","",numDPhiBins,dPhiBins);
+   hPADPhi = new TH1D("hPADPhi","",numDPhiBins,dPhiBins);
+   hPNDPhiBg = new TH1D("hPNDPhiBg","",numDPhiBins,dPhiBins);
+   hPADPhiBg = new TH1D("hPADPhiBg","",numDPhiBins,dPhiBins);
+   hPtPNDPhi = new TH2D("hPtPNDPhi","",numPtBins,ptBins,numDPhiBins,dPhiBins);
+   hPtPADPhi = new TH2D("hPtPADPhi","",numPtBins,ptBins,numDPhiBins,dPhiBins);
+   hPtPNDPhiBg = new TH2D("hPtPNDPhiBg","",numPtBins,ptBins,numDPhiBins,dPhiBins);
+   hPtPADPhiBg = new TH2D("hPtPADPhiBg","",numPtBins,ptBins,numDPhiBins,dPhiBins);
+}
 
 Int_t JetFragAna::Cut(Long64_t entry)
 {
@@ -93,11 +151,9 @@ void JetFragAna::Loop()
       nb = GetEntry(jentry);   nbytes += nb;
 
       if (Cut(ientry)>=0) {
-	cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
-	if (jentry<10) {
-	  for (Int_t i=0; i<particles_.size();++i) {
-	    if (particles_[i].pt()>3) cout << "particle " << i << ": " << particles_[i] << endl;
-	  }
+	//cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
+	for (Int_t i=0; i<particles_.size();++i) {
+	  //if (particles_[i].pt()>30) cout << "particle " << i << ": " << particles_[i] << endl;
 	}
 	++numDJ_;
       }

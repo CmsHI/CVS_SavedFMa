@@ -13,7 +13,12 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include "TMath.h"
+#include "TH1.h"
+#include "TH2.h"
 #include "Saved/DiJetAna/macros/selectionCut.h"
+const Int_t PI = 3.1415926535897932384626;
+const Int_t HPI = 3.1415926535897932384626;
 const Int_t kMax = 2;
 const Int_t MAXTRK = 100000;
 
@@ -28,6 +33,39 @@ public :
    std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
    std::vector<math::PtEtaPhiMLorentzVector> refJets_;
    std::vector<math::PtEtaPhiMLorentzVector> particles_;
+
+   // Histograms
+   // jet
+   TH1D * hJDPhi;
+   TH1D * hJEtNr;
+   TH1D * hJEtAw;
+   TH1D * hRefJEtNr;
+   TH1D * hRefJEtAw;
+   // cone
+   TH1D * hCNPNr;
+   TH1D * hCNPBgNr;
+   TH1D * hCNPSubNr;
+   TH1D * hCNPAw;
+   TH1D * hCNPBgAw;
+   TH1D * hCNPSubAw;
+   // trk
+   TH1D * hPNDR;
+   TH1D * hPADR;
+   TH1D * hPNDRBg;
+   TH1D * hPADRBg;
+   TH2D * hPtPNDR;
+   TH2D * hPtPADR;
+   TH2D * hPtPNDRBg;
+   TH2D * hPtPADRBg;
+
+   TH1D * hPNDPhi;
+   TH1D * hPADPhi;
+   TH1D * hPNDPhiBg;
+   TH1D * hPADPhiBg;
+   TH2D * hPtPNDPhi;
+   TH2D * hPtPADPhi;
+   TH2D * hPtPNDPhiBg;
+   TH2D * hPtPADPhiBg;
 
    // Declaration of leaf types
    Int_t           run;
@@ -211,25 +249,6 @@ public :
 #endif
 
 #ifdef JetFragAna_cxx
-JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
-  cut(tag,doMC),
-  anaJets_(2),
-  refJets_(2)
-{
-// if parameter tree is not specified (or zero), connect the file
-// used to generate this class and read the Tree.
-   if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root");
-      if (!f) {
-         f = new TFile("dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root");
-         f->cd("dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root:/djcalo");
-      }
-      tree = (TTree*)gDirectory->Get("djTree");
-
-   }
-   Init(tree);
-}
-
 JetFragAna::~JetFragAna()
 {
    if (!fChain) return;
