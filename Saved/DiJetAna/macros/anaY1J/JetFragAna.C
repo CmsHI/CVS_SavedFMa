@@ -204,21 +204,31 @@ void JetFragAna::Loop()
       // if (Cut(ientry) < 0) continue;
    }
    cout << "DiJets: " << numDJ_ << endl;
-   hJDPhi->Scale(1./(numDJ_*hJDPhi->GetBinWidth(1)));
-   hJEtNr->Scale(1./(numDJ_*hJEtNr->GetBinWidth(1)));
-   hJEtAw->Scale(1./(numDJ_*hJEtAw->GetBinWidth(1)));
-   hAj->Scale(1./(numDJ_*hAj->GetBinWidth(1)));
-   hJEtaNr->Scale(1./(numDJ_*hJEtaNr->GetBinWidth(1)));
-   hJEtaAw->Scale(1./(numDJ_*hJEtaAw->GetBinWidth(1)));
-   hJDEta->Scale(1./(numDJ_*hJDEta->GetBinWidth(1)));
+   hJDPhi->Scale(1./(numDJ_));
+   hJEtNr->Scale(1./(numDJ_));
+   hJEtAw->Scale(1./(numDJ_));
+   hAj->Scale(1./(numDJ_));
+   hJEtaNr->Scale(1./(numDJ_));
+   hJEtaAw->Scale(1./(numDJ_));
+   hJDEta->Scale(1./(numDJ_));
 
-   hPNDR->Scale(1./(numDJ_*hPNDR->GetBinWidth(1)));
-   hPADR->Scale(1./(numDJ_*hPADR->GetBinWidth(1)));
-   hPNDRDens->Scale(1./(numDJ_*hPNDRDens->GetBinWidth(1)));
-   hPADRDens->Scale(1./(numDJ_*hPADRDens->GetBinWidth(1)));
+   hPNDR->Scale(1./(numDJ_));
+   hPADR->Scale(1./(numDJ_));
+   hPNDRDens->Scale(1./(numDJ_));
+   hPADRDens->Scale(1./(numDJ_));
 
-   hPNDRBg->Scale(1./(numDJ_*hPNDRBg->GetBinWidth(1)));
-   hPADRBg->Scale(1./(numDJ_*hPADRBg->GetBinWidth(1)));
-   hPNDRDensBg->Scale(1./(numDJ_*hPNDRDensBg->GetBinWidth(1)));
-   hPADRDensBg->Scale(1./(numDJ_*hPADRDensBg->GetBinWidth(1)));
+   hPNDRBg->Scale(1./(numDJ_));
+   hPADRBg->Scale(1./(numDJ_));
+   hPNDRDensBg->Scale(1./(numDJ_));
+   hPADRDensBg->Scale(1./(numDJ_));
+
+   hPtPNDR->Scale(1./(numDJ_));
+   hPtPADR->Scale(1./(numDJ_));
+   hPtPNDRDens->Scale(1./(numDJ_));
+   hPtPADRDens->Scale(1./(numDJ_));
+
+   hPtPNDRBg->Scale(1./(numDJ_));
+   hPtPADRBg->Scale(1./(numDJ_));
+   hPtPNDRDensBg->Scale(1./(numDJ_));
+   hPtPADRDensBg->Scale(1./(numDJ_));
 }
