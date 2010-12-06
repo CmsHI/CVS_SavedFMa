@@ -40,6 +40,22 @@ Int_t JetFragAna::Cut(Long64_t entry)
   return result;
 }
 
+Int_t JetFragAna::GetEntry(Long64_t entry)
+{
+  // Read contents of entry.
+  if (!fChain) return 0;
+  Int_t result = fChain->GetEntry(entry);
+  if (result<0) return result;
+  else {
+    anaJets_[0].SetCoordinates(nljet,nljeta,nljphi,0);
+    anaJets_[1].SetCoordinates(aljet,aljeta,aljphi,0);
+    particles_.clear();
+    for (Int_t i=0; i<evtnp; ++i) {
+      particles_.push_back(math::PtEtaPhiMLorentzVector(ppt[i],peta[i],pphi[i],0.13957));
+    }
+  }
+  return result;
+}
 void JetFragAna::Loop()
 {
 //   In a ROOT session, you can do:
@@ -77,7 +93,12 @@ void JetFragAna::Loop()
       nb = GetEntry(jentry);   nbytes += nb;
 
       if (Cut(ientry)>=0) {
-	//cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
+	cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
+	if (jentry<10) {
+	  for (Int_t i=0; i<particles_.size();++i) {
+	    if (particles_[i].pt()>3) cout << "particle " << i << ": " << particles_[i] << endl;
+	  }
+	}
 	++numDJ_;
       }
       // if (Cut(ientry) < 0) continue;
