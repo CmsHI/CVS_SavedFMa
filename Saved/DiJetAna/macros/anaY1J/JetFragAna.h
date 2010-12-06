@@ -17,8 +17,8 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "Saved/DiJetAna/macros/selectionCut.h"
-const Int_t PI = 3.1415926535897932384626;
-const Int_t HPI = PI/2.;
+const Float_t PI = 3.1415926535897932384626;
+const Float_t HPI = PI/2.;
 const Int_t kMax = 2;
 const Int_t MAXTRK = 100000;
 const Int_t numPtBins = 7;
