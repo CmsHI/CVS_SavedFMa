@@ -2,7 +2,7 @@ import os
 os.system("./create_custom_python_cfg.sh")
 
 scratch="/net/hidsk0001/d00/scratch/frankma"
-jobTag="StdAna1204v2"
+jobTag="OfficialSel"
 
 # ================== 362 ===============
 samples  = {
@@ -15,7 +15,10 @@ samples  = {
     #"HCPR-J50U-151350to151353-PAT":"ana",
     #"HCPR-J50U-151878to151975-PAT":"ana",
     #"HCPR-J50U-151935to151969-PAT":"ana"
-    "HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_152561_to_152643_RECOPAT-v1":"ana"
+    #"HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_152561_to_152643_RECOPAT-v1":"ana"
+    #"HCPR-J50U-Pre-OfficialJSON_hiGoodMergedTracks_Runs_152652_to_152791_RECOPAT-v0":"ana"
+    "HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_150883_to_152485_RECOPAT-v0_VtxPatch":"ana",
+    "HCPR-J50U-Pre-OfficialJSON_hiGoodMergedTracks_Runs_152652_to_152791_RECOPAT-v0_VtxPatch":"ana"
     }
 
 for sample,PD in samples.items():
