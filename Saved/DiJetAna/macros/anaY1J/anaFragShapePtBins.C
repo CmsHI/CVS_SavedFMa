@@ -10,13 +10,15 @@ void anaFragShapePtBins(TString infile1="/net/hisrv0001/home/frankma/scratch01/a
   djcalo->Add(infile1);
   djcalo->Add(infile2);
   aliases_dijet(djcalo);
-  TString evtSel("(cent>=30 && nljet>120 && abs(nljeta)<2 && aljet>50 && abs(aljeta)<2 && jdphi>2.5 && Aj<0.24)");
+  TString evtSel("(cent<10 && nljet>120 && abs(nljeta)<2 && aljet>50 && abs(aljeta)<2 && jdphi>2.5 && Aj>0.24)");
   TH1::SetDefaultSumw2();
 
   //cones reflected in eta. avoid jets *right* at mid-rapidity to avoid overlap
   djcalo->SetAlias("pndrrefl","(sqrt(pndphi*pndphi+(peta+nljeta)*(peta+nljeta)))");
   djcalo->SetAlias("padrrefl","(sqrt(padphi*padphi+(peta+aljeta)*(peta+aljeta)))");
-  evtSel += " && (abs(nljeta)>0.5 && abs(aljeta)>0.5)";
+  
+  TString evtSelNS = evtSel + " && (abs(nljeta)>0.5)";
+  TString evtSelAS = evtSel + " && (abs(aljeta)>0.5)";
 
   //jet energy imbalance
   TCanvas * c0 = new TCanvas("c0","c0",500,500);
@@ -26,79 +28,80 @@ void anaFragShapePtBins(TString infile1="/net/hisrv0001/home/frankma/scratch01/a
   TCanvas * c2 = new TCanvas("c2","c2",500,500);
   TH1D * hJDPhi = new TH1D("hJDPhi","hJDPhi",50,0,3.1416);
   TH1D * hJDPhi2 = new TH1D("hJDPhi2","hJDPhi",50,0,3.1416);
-  Float_t numDJ = djcalo->Draw("jdphi>>hJDPhi",evtSel);
-  cout << "num djs: " << numDJ << endl;
+  Float_t numDJNS = djcalo->Draw("jdphi>>hJDPhi",evtSelNS);
+  Float_t numDJAS = djcalo->Draw("jdphi>>hJDPhi",evtSelAS,"same");
+  cout << "num djs: " << numDJNS << " (near-side) \t" << numDJAS << " (away-side)" << endl;
 
   //track energy density by dR in pt bins
   TH1D * hPNDRTrk0 = new TH1D("hPNDRTrk0",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
   TH1D * hPADRTrk0 = new TH1D("hPADRTrk0",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
-  djcalo->Draw("pndr>>hPNDRTrk0",Form("(%s&&ppt<1.0)*(ppt/(TMath::TwoPi()*pndr))",evtSel.Data()),"goff");
-  djcalo->Draw("padr>>hPADRTrk0",Form("(%s&&ppt<1.0)*(ppt/(TMath::TwoPi()*padr))",evtSel.Data()),"goff");
+  djcalo->Draw("pndr>>hPNDRTrk0",Form("(%s&&ppt<1.0)*(ppt/(TMath::TwoPi()*pndr))",evtSelNS.Data()),"goff");
+  djcalo->Draw("padr>>hPADRTrk0",Form("(%s&&ppt<1.0)*(ppt/(TMath::TwoPi()*padr))",evtSelAS.Data()),"goff");
   TH1D * hPNDRReflTrk0 = new TH1D("hPNDRReflTrk0",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
   TH1D * hPADRReflTrk0 = new TH1D("hPADRReflTrk0",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
-  djcalo->Draw("pndrrefl>>hPNDRReflTrk0",Form("(%s&&ppt<1.0)*(ppt/(TMath::TwoPi()*pndrrefl))",evtSel.Data()),"goff");
-  djcalo->Draw("padrrefl>>hPADRReflTrk0",Form("(%s&&ppt<1.0)*(ppt/(TMath::TwoPi()*padrrefl))",evtSel.Data()),"goff");
+  djcalo->Draw("pndrrefl>>hPNDRReflTrk0",Form("(%s&&ppt<1.0)*(ppt/(TMath::TwoPi()*pndrrefl))",evtSelNS.Data()),"goff");
+  djcalo->Draw("padrrefl>>hPADRReflTrk0",Form("(%s&&ppt<1.0)*(ppt/(TMath::TwoPi()*padrrefl))",evtSelAS.Data()),"goff");
 
   TH1D * hPNDRTrk1 = new TH1D("hPNDRTrk1",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
   TH1D * hPADRTrk1 = new TH1D("hPADRTrk1",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
-  djcalo->Draw("pndr>>hPNDRTrk1",Form("(%s&&ppt<2.0&&ppt>=1.0)*(ppt/(TMath::TwoPi()*pndr))",evtSel.Data()),"goff");
-  djcalo->Draw("padr>>hPADRTrk1",Form("(%s&&ppt<2.0&&ppt>=1.0)*(ppt/(TMath::TwoPi()*padr))",evtSel.Data()),"goff");
+  djcalo->Draw("pndr>>hPNDRTrk1",Form("(%s&&ppt<2.0&&ppt>=1.0)*(ppt/(TMath::TwoPi()*pndr))",evtSelNS.Data()),"goff");
+  djcalo->Draw("padr>>hPADRTrk1",Form("(%s&&ppt<2.0&&ppt>=1.0)*(ppt/(TMath::TwoPi()*padr))",evtSelAS.Data()),"goff");
   TH1D * hPNDRReflTrk1 = new TH1D("hPNDRReflTrk1",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
   TH1D * hPADRReflTrk1 = new TH1D("hPADRReflTrk1",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
-  djcalo->Draw("pndrrefl>>hPNDRReflTrk1",Form("(%s&&ppt<2.0&&ppt>=1.0)*(ppt/(TMath::TwoPi()*pndrrefl))",evtSel.Data()),"goff");
-  djcalo->Draw("padrrefl>>hPADRReflTrk1",Form("(%s&&ppt<2.0&&ppt>=1.0)*(ppt/(TMath::TwoPi()*padrrefl))",evtSel.Data()),"goff");
+  djcalo->Draw("pndrrefl>>hPNDRReflTrk1",Form("(%s&&ppt<2.0&&ppt>=1.0)*(ppt/(TMath::TwoPi()*pndrrefl))",evtSelNS.Data()),"goff");
+  djcalo->Draw("padrrefl>>hPADRReflTrk1",Form("(%s&&ppt<2.0&&ppt>=1.0)*(ppt/(TMath::TwoPi()*padrrefl))",evtSelAS.Data()),"goff");
 
   TH1D * hPNDRTrk2 = new TH1D("hPNDRTrk2",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
   TH1D * hPADRTrk2 = new TH1D("hPADRTrk2",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
-  djcalo->Draw("pndr>>hPNDRTrk2",Form("(%s&&ppt<4.0&&ppt>=2.0)*(ppt/(TMath::TwoPi()*pndr))",evtSel.Data()),"goff");
-  djcalo->Draw("padr>>hPADRTrk2",Form("(%s&&ppt<4.0&&ppt>=2.0)*(ppt/(TMath::TwoPi()*padr))",evtSel.Data()),"goff");
+  djcalo->Draw("pndr>>hPNDRTrk2",Form("(%s&&ppt<4.0&&ppt>=2.0)*(ppt/(TMath::TwoPi()*pndr))",evtSelNS.Data()),"goff");
+  djcalo->Draw("padr>>hPADRTrk2",Form("(%s&&ppt<4.0&&ppt>=2.0)*(ppt/(TMath::TwoPi()*padr))",evtSelAS.Data()),"goff");
   TH1D * hPNDRReflTrk2 = new TH1D("hPNDRReflTrk2",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
   TH1D * hPADRReflTrk2 = new TH1D("hPADRReflTrk2",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
-  djcalo->Draw("pndrrefl>>hPNDRReflTrk2",Form("(%s&&ppt<4.0&&ppt>=2.0)*(ppt/(TMath::TwoPi()*pndrrefl))",evtSel.Data()),"goff");
-  djcalo->Draw("padrrefl>>hPADRReflTrk2",Form("(%s&&ppt<4.0&&ppt>=2.0)*(ppt/(TMath::TwoPi()*padrrefl))",evtSel.Data()),"goff");
+  djcalo->Draw("pndrrefl>>hPNDRReflTrk2",Form("(%s&&ppt<4.0&&ppt>=2.0)*(ppt/(TMath::TwoPi()*pndrrefl))",evtSelNS.Data()),"goff");
+  djcalo->Draw("padrrefl>>hPADRReflTrk2",Form("(%s&&ppt<4.0&&ppt>=2.0)*(ppt/(TMath::TwoPi()*padrrefl))",evtSelAS.Data()),"goff");
 
   TH1D * hPNDRTrk4 = new TH1D("hPNDRTrk4",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
   TH1D * hPADRTrk4 = new TH1D("hPADRTrk4",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
-  djcalo->Draw("pndr>>hPNDRTrk4",Form("(%s&&ppt<8.0&&ppt>=4.0)*(ppt/(TMath::TwoPi()*pndr))",evtSel.Data()),"goff");
-  djcalo->Draw("padr>>hPADRTrk4",Form("(%s&&ppt<8.0&&ppt>=4.0)*(ppt/(TMath::TwoPi()*padr))",evtSel.Data()),"goff");
+  djcalo->Draw("pndr>>hPNDRTrk4",Form("(%s&&ppt<8.0&&ppt>=4.0)*(ppt/(TMath::TwoPi()*pndr))",evtSelNS.Data()),"goff");
+  djcalo->Draw("padr>>hPADRTrk4",Form("(%s&&ppt<8.0&&ppt>=4.0)*(ppt/(TMath::TwoPi()*padr))",evtSelAS.Data()),"goff");
   TH1D * hPNDRReflTrk4 = new TH1D("hPNDRReflTrk4",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
   TH1D * hPADRReflTrk4 = new TH1D("hPADRReflTrk4",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
-  djcalo->Draw("pndrrefl>>hPNDRReflTrk4",Form("(%s&&ppt<8.0&&ppt>=4.0)*(ppt/(TMath::TwoPi()*pndrrefl))",evtSel.Data()),"goff");
-  djcalo->Draw("padrrefl>>hPADRReflTrk4",Form("(%s&&ppt<8.0&&ppt>=4.0)*(ppt/(TMath::TwoPi()*padrrefl))",evtSel.Data()),"goff");
+  djcalo->Draw("pndrrefl>>hPNDRReflTrk4",Form("(%s&&ppt<8.0&&ppt>=4.0)*(ppt/(TMath::TwoPi()*pndrrefl))",evtSelNS.Data()),"goff");
+  djcalo->Draw("padrrefl>>hPADRReflTrk4",Form("(%s&&ppt<8.0&&ppt>=4.0)*(ppt/(TMath::TwoPi()*padrrefl))",evtSelAS.Data()),"goff");
 
   TH1D * hPNDRTrk8 = new TH1D("hPNDRTrk8",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
   TH1D * hPADRTrk8 = new TH1D("hPADRTrk8",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
-  djcalo->Draw("pndr>>hPNDRTrk8",Form("(%s&&ppt>=8.0)*(ppt/(TMath::TwoPi()*pndr))",evtSel.Data()),"goff");
-  djcalo->Draw("padr>>hPADRTrk8",Form("(%s&&ppt>=8.0)*(ppt/(TMath::TwoPi()*padr))",evtSel.Data()),"goff");
+  djcalo->Draw("pndr>>hPNDRTrk8",Form("(%s&&ppt>=8.0)*(ppt/(TMath::TwoPi()*pndr))",evtSelNS.Data()),"goff");
+  djcalo->Draw("padr>>hPADRTrk8",Form("(%s&&ppt>=8.0)*(ppt/(TMath::TwoPi()*padr))",evtSelAS.Data()),"goff");
   TH1D * hPNDRReflTrk8 = new TH1D("hPNDRReflTrk8",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
   TH1D * hPADRReflTrk8 = new TH1D("hPADRReflTrk8",";R(trk,jet);1/(N_{DJ} 2#piR) dp_{T}^{Trk}/dR",10,0,TMath::PiOver2());
-  djcalo->Draw("pndrrefl>>hPNDRReflTrk8",Form("(%s&&ppt>=8.0)*(ppt/(TMath::TwoPi()*pndrrefl))",evtSel.Data()),"goff");
-  djcalo->Draw("padrrefl>>hPADRReflTrk8",Form("(%s&&ppt>=8.0)*(ppt/(TMath::TwoPi()*padrrefl))",evtSel.Data()),"goff");
+  djcalo->Draw("pndrrefl>>hPNDRReflTrk8",Form("(%s&&ppt>=8.0)*(ppt/(TMath::TwoPi()*pndrrefl))",evtSelNS.Data()),"goff");
+  djcalo->Draw("padrrefl>>hPADRReflTrk8",Form("(%s&&ppt>=8.0)*(ppt/(TMath::TwoPi()*padrrefl))",evtSelAS.Data()),"goff");
 
-  hPNDRTrk0->Scale(1./(numDJ*hPNDRTrk0->GetBinWidth(1)));
-  hPADRTrk0->Scale(1./(numDJ*hPADRTrk0->GetBinWidth(1)));
-  hPNDRReflTrk0->Scale(1./(numDJ*hPNDRReflTrk0->GetBinWidth(1)));
-  hPADRReflTrk0->Scale(1./(numDJ*hPADRReflTrk0->GetBinWidth(1)));
+  hPNDRTrk0->Scale(1./(numDJNS*hPNDRTrk0->GetBinWidth(1)));
+  hPADRTrk0->Scale(1./(numDJAS*hPADRTrk0->GetBinWidth(1)));
+  hPNDRReflTrk0->Scale(1./(numDJNS*hPNDRReflTrk0->GetBinWidth(1)));
+  hPADRReflTrk0->Scale(1./(numDJAS*hPADRReflTrk0->GetBinWidth(1)));
 
-  hPNDRTrk1->Scale(1./(numDJ*hPNDRTrk1->GetBinWidth(1)));
-  hPADRTrk1->Scale(1./(numDJ*hPADRTrk1->GetBinWidth(1)));
-  hPNDRReflTrk1->Scale(1./(numDJ*hPNDRReflTrk1->GetBinWidth(1)));
-  hPADRReflTrk1->Scale(1./(numDJ*hPADRReflTrk1->GetBinWidth(1)));
+  hPNDRTrk1->Scale(1./(numDJNS*hPNDRTrk1->GetBinWidth(1)));
+  hPADRTrk1->Scale(1./(numDJAS*hPADRTrk1->GetBinWidth(1)));
+  hPNDRReflTrk1->Scale(1./(numDJNS*hPNDRReflTrk1->GetBinWidth(1)));
+  hPADRReflTrk1->Scale(1./(numDJAS*hPADRReflTrk1->GetBinWidth(1)));
 
-  hPNDRTrk2->Scale(1./(numDJ*hPNDRTrk2->GetBinWidth(1)));
-  hPADRTrk2->Scale(1./(numDJ*hPADRTrk2->GetBinWidth(1)));
-  hPNDRReflTrk2->Scale(1./(numDJ*hPNDRReflTrk2->GetBinWidth(1)));
-  hPADRReflTrk2->Scale(1./(numDJ*hPADRReflTrk2->GetBinWidth(1)));
+  hPNDRTrk2->Scale(1./(numDJNS*hPNDRTrk2->GetBinWidth(1)));
+  hPADRTrk2->Scale(1./(numDJAS*hPADRTrk2->GetBinWidth(1)));
+  hPNDRReflTrk2->Scale(1./(numDJNS*hPNDRReflTrk2->GetBinWidth(1)));
+  hPADRReflTrk2->Scale(1./(numDJAS*hPADRReflTrk2->GetBinWidth(1)));
 
-  hPNDRTrk4->Scale(1./(numDJ*hPNDRTrk4->GetBinWidth(1)));
-  hPADRTrk4->Scale(1./(numDJ*hPADRTrk4->GetBinWidth(1)));
-  hPNDRReflTrk4->Scale(1./(numDJ*hPNDRReflTrk4->GetBinWidth(1)));
-  hPADRReflTrk4->Scale(1./(numDJ*hPADRReflTrk4->GetBinWidth(1)));
+  hPNDRTrk4->Scale(1./(numDJNS*hPNDRTrk4->GetBinWidth(1)));
+  hPADRTrk4->Scale(1./(numDJAS*hPADRTrk4->GetBinWidth(1)));
+  hPNDRReflTrk4->Scale(1./(numDJNS*hPNDRReflTrk4->GetBinWidth(1)));
+  hPADRReflTrk4->Scale(1./(numDJAS*hPADRReflTrk4->GetBinWidth(1)));
 
-  hPNDRTrk8->Scale(1./(numDJ*hPNDRTrk8->GetBinWidth(1)));
-  hPADRTrk8->Scale(1./(numDJ*hPADRTrk8->GetBinWidth(1)));
-  hPNDRReflTrk8->Scale(1./(numDJ*hPNDRReflTrk8->GetBinWidth(1)));
-  hPADRReflTrk8->Scale(1./(numDJ*hPADRReflTrk8->GetBinWidth(1)));
+  hPNDRTrk8->Scale(1./(numDJNS*hPNDRTrk8->GetBinWidth(1)));
+  hPADRTrk8->Scale(1./(numDJAS*hPADRTrk8->GetBinWidth(1)));
+  hPNDRReflTrk8->Scale(1./(numDJNS*hPNDRReflTrk8->GetBinWidth(1)));
+  hPADRReflTrk8->Scale(1./(numDJAS*hPADRReflTrk8->GetBinWidth(1)));
 
   hPNDRTrk0->SetMinimum(0.1);
   hPNDRTrk0->SetMaximum(1.3*hPNDRTrk0->GetBinContent(1));
