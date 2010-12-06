@@ -1,6 +1,6 @@
 void drawTrkEnergy() {
 
-  TFile *f = new TFile("hists_Aj_0_24_cent_30_100.root");
+  TFile *f = new TFile("hists_Aj_24_100_cent_0_10.root");
   
   TH1D *n1 = (TH1D*) f->Get("hPNDRSigTrk1");
   TH1D *n2 = (TH1D*) f->Get("hPNDRSigTrk2");
@@ -55,10 +55,10 @@ void drawTrkEnergy() {
   TH1D* hc12 = combine(n12,a12);
   TH1D* hc1 = combine(n1,a1);
 
-  hc1248->Draw("chist");
-  hc124->Draw("chistsame");
-  hc12->Draw("chistsame");
-  hc1->Draw("chistsame");
+  hc1248->Draw("hist"); hc1248->Draw("esame"); //chist
+  hc124->Draw("histsame"); hc124->Draw("esame");
+  hc12->Draw("histsame"); hc12->Draw("esame");
+  hc1->Draw("histsame"); hc1->Draw("esame");
 
   hc1248->GetXaxis()->SetAxisColor(0);
   hc1248->GetXaxis()->SetLabelColor(0);
