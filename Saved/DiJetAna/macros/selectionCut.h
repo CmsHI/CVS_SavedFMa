@@ -9,6 +9,7 @@
 #include <iostream>
 #include <iomanip>
 #include <map>
+using namespace std;
 
 class selectionCut
 {  
@@ -64,6 +65,7 @@ class selectionCut
     TString BaseCutType; 
     TString DJCutType;
     TString TrkCutType;
+    TString BkgSubType;
     TString Tag2;
 
     // Cuts
@@ -136,6 +138,7 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   BaseCutType(base),
   DJCutType("Ana"),
   TrkCutType("Ana"),
+  BkgSubType("EtaRefl"),
   // default cuts
   Trigger("hlt[2]"),
   // evt
