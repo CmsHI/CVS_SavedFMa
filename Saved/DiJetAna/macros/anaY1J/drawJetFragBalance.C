@@ -10,7 +10,8 @@ void drawJetFragBalance(
   TH2D * hPtPADRBg = (TH2D*) f->Get("hPtPADRBg");
 
   Int_t numBinsPt=hPtPNDR->GetNbinsX();
-  Int_t numBinsDR=hPtPNDR->GetNbinsY();
+  //Int_t numBinsDR=hPtPNDR->GetNbinsY();
+  Int_t numBinsDR=5; // for the integration in dr we integrate to ~0.8 for now
   cout << "DR vs Pt: pt bins: " << numBinsPt << " DR bins: " << numBinsDR << endl;
 
   Int_t endBinX=6;
