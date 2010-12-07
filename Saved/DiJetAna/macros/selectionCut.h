@@ -96,6 +96,8 @@ class selectionCut
     double NrJEtaMax;
     double AwJEtaMax;
     double DjDPhiMin;
+    double AjMin;
+    double AjMax;
     // trk
     double TrkPtMin;
     // -- draw ranges --
@@ -158,6 +160,8 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   NrJEtaMax(2.),
   AwJEtaMax(2.),
   DjDPhiMin(jdphi),
+  AjMin(0),
+  AjMax(1),
   // trk
   TrkPtMin(1.2),
   // plot
@@ -186,15 +190,15 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   hisXiMax(6)
 {
   TH1::SetDefaultSumw2();
-
-  RunCut = Form("run==%d",RunNum);
-  CentCut = Form("cent>=%.1f&&cent<%.1f",CentMin,CentMax);
-  VtxCut = Form("vz>%.1f&&vz<%.1f",VzMin,VzMax);
 }
 
 void selectionCut::SetCut()
 {
   // Event level selections
+  RunCut = Form("run==%d",RunNum);
+  CentCut = Form("cent>=%.1f&&cent<%.1f",CentMin,CentMax);
+  VtxCut = Form("vz>%.1f&&vz<%.1f",VzMin,VzMax);
+
   Evt["S0"] = VtxCut;
   Evt["S1"] = CentCut&&VtxCut;
   Evt["S2"] = Trigger&&CentCut&&VtxCut;
