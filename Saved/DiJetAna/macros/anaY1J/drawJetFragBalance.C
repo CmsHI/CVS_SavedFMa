@@ -42,6 +42,7 @@ void drawJetFragBalance() {
     c3->cd(i);
     Int_t iBeg=i,iEnd=i;
     if (i==endBinY) {iBeg=1; iEnd=100;}
+    c3->GetPad(i)->SetLogx();
     c3->GetPad(i)->SetLogy();
     TH1D * hNr = (TH1D*)hPtPNDR->ProjectionX(Form("hPtNr_%d_%d",iBeg,iEnd),iBeg,iEnd);
     TH1D * hAw = (TH1D*)hPtPADR->ProjectionX(Form("hPtAw_%d_%d",iBeg,iEnd),iBeg,iEnd);
@@ -74,10 +75,15 @@ void drawJetFragBalance() {
     TH1D * hAwBg = (TH1D*)hPtPADRBg->ProjectionY(Form("hPADRBgSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
     hNr->Add(hAw,-1);
     hNrBg->Add(hAwBg,-1);
+    hNr->SetMarkerColor(kRed);
+    hNr->SetLineColor(kRed);
     hNr->SetMinimum(-15);
     hNr->SetMaximum(15);
     hNr->Draw();
     hNrBg->Draw("same hist");
+    TLine *l = new TLine(0,0,3.14/2,0);
+    l->SetLineStyle(2);
+    l->Draw();
   }
 
   TCanvas * c5 = new TCanvas("c5","c5",1200,900);
@@ -86,15 +92,21 @@ void drawJetFragBalance() {
     Int_t iBeg=i,iEnd=i;
     if (i==endBinY) {iBeg=1; iEnd=100;}
     c5->cd(i);
+    c5->GetPad(i)->SetLogx();
     TH1D * hNr = (TH1D*)hPtPNDR->ProjectionX(Form("hPtNrSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
     TH1D * hAw = (TH1D*)hPtPADR->ProjectionX(Form("hPtAwSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
     TH1D * hNrBg = (TH1D*)hPtPNDRBg->ProjectionX(Form("hPtBgNrSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
     TH1D * hAwBg = (TH1D*)hPtPADRBg->ProjectionX(Form("hPtBgAwSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
     hNr->Add(hAw,-1);
     hNrBg->Add(hAwBg,-1);
+    hNr->SetMarkerColor(kRed);
+    hNr->SetLineColor(kRed);
     hNr->SetMinimum(-15);
     hNr->SetMaximum(15);
     hNr->Draw();
     hNrBg->Draw("same hist");
+    TLine *l = new TLine(0,0,100,0);
+    l->SetLineStyle(2);
+    l->Draw();
   }
 }
