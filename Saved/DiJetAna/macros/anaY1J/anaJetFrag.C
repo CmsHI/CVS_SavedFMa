@@ -8,16 +8,20 @@ void anaJetFrag(int doMC=0,
     TString evtBase="S1",
     TString AnaVersion = "a1006",
     TString modName = "djcalo",
+    Double_t CentMin = 0,
+    Double_t CentMax = 10,
     Double_t NrJEtMin = 120,
     Double_t NrJEtMax = 500,
     Double_t AwJEtMin = 50,
     Double_t AwJEtMax = 500,
     Double_t AwJEtaMax = 2.,
     Double_t JDPhiMin = 2.5,
+    Double_t AjMin = 0.24,
+    Double_t AjMax = 1.,
     TString DJCutType = "Ana", // Ana
-    TString BkgSubType = "EtaRefl", // EtaRefl, PhiRot
+    TString BkgSubType = "PhiRot", // EtaRefl, PhiRot
     const char * inFile0Name="dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root",
-    TString SrcName = "HydjUQDJ80")
+    TString SrcName = "HCPR-GoodMergedTracks")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -29,14 +33,19 @@ void anaJetFrag(int doMC=0,
   aliases_dijet(djTree,doMC);
   cout << " # entries: " << djTree->GetEntries() << endl;
 
-  TFile * outf = new TFile(Form("jetFragHists_%s.root",BkgSubType.Data()),"RECREATE");
+  TFile * outf = new TFile(Form("jetFragHists_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()),"RECREATE");
   JetFragAna jana(djTree,SrcName,doMC);
+  jana.cut.CentMin = CentMin;
+  jana.cut.CentMax = CentMax;
   jana.cut.SetDJEt(NrJEtMin,NrJEtMax,AwJEtMin,AwJEtMax,JDPhiMin);
+  jana.cut.AjMin = AjMin;
+  jana.cut.AjMax = AjMax;
   jana.cut.BaseCutType=evtBase;
   jana.cut.DJCutType = DJCutType;
   jana.cut.TrkPtMin = 0.5;
   jana.cut.BkgSubType = BkgSubType;
   jana.cut.SetCut();
+  jana.cut.Print(1);
 
   // -- analysis selections --
   cout << endl << "====== DJ Selection: " << jana.cut.DJCutType << " ======" << endl;
