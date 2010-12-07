@@ -1,7 +1,8 @@
-void drawJetFragBalance() {
-
-  //TFile *f = new TFile("jetFragHists_EtaRefl.root");
-  TFile *f = new TFile("jetFragHists_PhiRot.root");
+void drawJetFragBalance(
+    //TString inFileName="jetFragHists_EtaRefl.root" 
+    TString inFileName="jetFragHists_PhiRot.root"
+    ) {
+  TFile *f = new TFile(inFileName);
 
   TH2D * hPtPNDR = (TH2D*) f->Get("hPtPNDR");
   TH2D * hPtPADR = (TH2D*) f->Get("hPtPADR");
@@ -10,6 +11,8 @@ void drawJetFragBalance() {
 
   Int_t endBinX=6;
   Int_t endBinY=9;
+
+  TFile *outf = new TFile("drawn_"+inFileName,"RECREATE");
 
   TCanvas * c2 = new TCanvas("c2","c2",1200,700);
   c2->Divide(3,2);
@@ -109,4 +112,5 @@ void drawJetFragBalance() {
     l->SetLineStyle(2);
     l->Draw();
   }
+  outf->Write();
 }
