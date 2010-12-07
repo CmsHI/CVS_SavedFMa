@@ -21,7 +21,7 @@ void anaJetFrag(int doMC=0,
     TString DJCutType = "Ana", // Ana
     TString BkgSubType = "PhiRot", // EtaRefl, PhiRot
     const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2.root",
-    TString SrcName = "HCPR-GoodMergedTracks")
+    TString SrcName = "HCPR_J50U")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
@@ -29,12 +29,10 @@ void anaJetFrag(int doMC=0,
   cout << "Analyze: " << modName << endl;
   TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
   djTree->Add(inFile0Name);
-  //djTree->Add("~/scratch01/ana/merge/dj_HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_150883_to_152485_RECOPAT-v1_OfficialSelNoVtxPatchv1.root");
-  //djTree->Add("~/scratch01/ana/merge/dj_HCPR-J50U-Pre-OfficialJSON_hiGoodMergedTracks_Runs_152652_to_152791_RECOPAT-v1_OfficialSelNoVtxPatchv1.root");
   aliases_dijet(djTree,doMC);
   cout << " # entries: " << djTree->GetEntries() << endl;
 
-  TFile * outf = new TFile(Form("jetFragHists_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()),"RECREATE");
+  TFile * outf = new TFile(Form("jfh_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",SrcName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()),"RECREATE");
   JetFragAna jana(djTree,SrcName,doMC);
   jana.cut.CentMin = CentMin;
   jana.cut.CentMax = CentMax;
