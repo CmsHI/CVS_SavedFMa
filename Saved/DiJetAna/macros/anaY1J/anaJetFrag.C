@@ -15,12 +15,12 @@ void anaJetFrag(int doMC=0,
     Double_t AwJEtMin = 50,
     Double_t AwJEtMax = 500,
     Double_t AwJEtaMax = 2.,
-    Double_t JDPhiMin = 2.5,
+    Double_t JDPhiMin = PI*2./3,
     Double_t AjMin = 0.24,
     Double_t AjMax = 1.,
     TString DJCutType = "Ana", // Ana
     TString BkgSubType = "PhiRot", // EtaRefl, PhiRot
-    const char * inFile0Name="dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root",
+    const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2.root",
     TString SrcName = "HCPR-GoodMergedTracks")
 {
   // Define Inputs
@@ -28,8 +28,9 @@ void anaJetFrag(int doMC=0,
   cout << inFile0Name << endl;
   cout << "Analyze: " << modName << endl;
   TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
-  djTree->Add("~/scratch01/ana/merge/dj_HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_150883_to_152485_RECOPAT-v1_OfficialSelNoVtxPatchv1.root");
-  djTree->Add("~/scratch01/ana/merge/dj_HCPR-J50U-Pre-OfficialJSON_hiGoodMergedTracks_Runs_152652_to_152791_RECOPAT-v1_OfficialSelNoVtxPatchv1.root");
+  djTree->Add(inFile0Name);
+  //djTree->Add("~/scratch01/ana/merge/dj_HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_150883_to_152485_RECOPAT-v1_OfficialSelNoVtxPatchv1.root");
+  //djTree->Add("~/scratch01/ana/merge/dj_HCPR-J50U-Pre-OfficialJSON_hiGoodMergedTracks_Runs_152652_to_152791_RECOPAT-v1_OfficialSelNoVtxPatchv1.root");
   aliases_dijet(djTree,doMC);
   cout << " # entries: " << djTree->GetEntries() << endl;
 
