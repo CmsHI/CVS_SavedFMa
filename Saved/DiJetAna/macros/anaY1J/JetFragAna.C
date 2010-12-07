@@ -95,6 +95,9 @@ Int_t JetFragAna::Cut(Long64_t entry)
 	!hlt->at(2))
       return -1;
 
+  Float_t Aj = (anaJets_[0].pt()-anaJets_[1].pt())/(anaJets_[0].pt()+anaJets_[1].pt());
+  if (Aj<cut.AjMin||Aj>=cut.AjMax) return -1;
+
   Int_t result=-1;
   if (cut.DJCutType=="Ana") {
     if (anaJets_[0].pt()>=cut.NrJEtMin && anaJets_[0].pt()<cut.NrJEtMax && fabs(anaJets_[0].eta())<cut.NrJEtaMax &&
