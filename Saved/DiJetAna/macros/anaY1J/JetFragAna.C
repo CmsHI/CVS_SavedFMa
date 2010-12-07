@@ -178,7 +178,10 @@ void JetFragAna::Loop()
 	hJEtaAw->Fill(anaJets_[1].eta());
 	hJDEta->Fill(anaJets_[1].eta()-anaJets_[0].eta());
 	for (Int_t i=0; i<evtnp;++i) {
+	  // Trk Cut
+	  if (ppt[i]<cut.TrkPtMin) continue;
 	  //if (particles_[i].pt()>30) cout << "particle " << i << ": " << particles_[i] << endl;
+	  // Trk histograms
 	  Double_t PNdRBkg=0,PAdRBkg=0;
 	  if (cut.BkgSubType=="EtaRefl") {
 	    PNdRBkg = reco::deltaR(peta[i],pphi[i],-nljeta,nljphi);
