@@ -90,7 +90,7 @@ void drawTrkEnergy() {
   nuaxis->Draw();
   auaxis->Draw();
 
-  gPad->SetLogy();
+  //gPad->SetLogy();
   gPad->SetRightMargin(0.05);
   gPad->SetLeftMargin(0.18);
 
