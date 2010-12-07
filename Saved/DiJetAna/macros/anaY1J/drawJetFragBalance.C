@@ -1,6 +1,6 @@
 void drawJetFragBalance(
-    //TString inFileName="jetFragHists_EtaRefl.root" 
-    TString inFileName="jetFragHists_PhiRot.root"
+    //TString inFileName="jetFragHists_SubEtaRefl.root" 
+    TString inFileName="jetFragHists_Cent0to10_Aj24to100_SubPhiRot.root"
     ) {
   TFile *f = new TFile(inFileName);
 
@@ -108,6 +108,57 @@ void drawJetFragBalance(
     hNr->SetMaximum(15);
     hNr->Draw();
     hNrBg->Draw("same hist");
+    TLine *l = new TLine(0,0,100,0);
+    l->SetLineStyle(2);
+    l->Draw();
+  }
+
+  TCanvas * c6 = new TCanvas("c6","c6",1200,700);
+  c6->Divide(3,2);
+  for (Int_t i=1; i<=endBinX; ++i) {
+    Int_t iBeg=i,iEnd=i;
+    if (i==endBinX) {iBeg=1; iEnd=100;}
+    c6->cd(i);
+    TH1D * hNr = (TH1D*)hPtPNDR->ProjectionY(Form("hPNDRSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hAw = (TH1D*)hPtPADR->ProjectionY(Form("hPADRSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hNrBg = (TH1D*)hPtPNDRBg->ProjectionY(Form("hPNDRBgSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hAwBg = (TH1D*)hPtPADRBg->ProjectionY(Form("hPADRBgSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    hNr->Add(hNrBg,-1);
+    hAw->Add(hAwBg,-1);
+    hNr->SetMarkerColor(kRed);
+    hNr->SetLineColor(kRed);
+    hAw->SetMarkerColor(kBlue);
+    hAw->SetLineColor(kBlue);
+    hNr->SetMinimum(-15);
+    hNr->SetMaximum(40);
+    hNr->Draw();
+    hAw->Draw("same");
+    TLine *l = new TLine(0,0,3.14/2,0);
+    l->SetLineStyle(2);
+    l->Draw();
+  }
+
+  TCanvas * c7 = new TCanvas("c7","c7",1200,900);
+  c7->Divide(3,3);
+  for (Int_t i=1; i<=endBinY; ++i) {
+    Int_t iBeg=i,iEnd=i;
+    if (i==endBinY) {iBeg=1; iEnd=10;}
+    c7->cd(i);
+    c7->GetPad(i)->SetLogx();
+    TH1D * hNr = (TH1D*)hPtPNDR->ProjectionX(Form("hPtNrSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hAw = (TH1D*)hPtPADR->ProjectionX(Form("hPtAwSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hNrBg = (TH1D*)hPtPNDRBg->ProjectionX(Form("hPtBgNrSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hAwBg = (TH1D*)hPtPADRBg->ProjectionX(Form("hPtBgAwSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    hNr->Add(hNrBg,-1);
+    hAw->Add(hAwBg,-1);
+    hNr->SetMarkerColor(kRed);
+    hNr->SetLineColor(kRed);
+    hAw->SetMarkerColor(kBlue);
+    hAw->SetLineColor(kBlue);
+    hNr->SetMinimum(-15);
+    hNr->SetMaximum(40);
+    hNr->Draw();
+    hAw->Draw("same");
     TLine *l = new TLine(0,0,100,0);
     l->SetLineStyle(2);
     l->Draw();
