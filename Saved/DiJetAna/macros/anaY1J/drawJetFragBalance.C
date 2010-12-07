@@ -1,8 +1,8 @@
 void drawJetFragBalance(
-    //TString inFileName="jetFragHists_SubEtaRefl.root" 
-    TString inFileName="jetFragHists_Cent0to10_Aj24to100_SubPhiRot.root"
+    //TString inFileName="jetFragHists_SubEtaRefl" 
+    TString inFileName="jetFragHists_Cent0to10_Aj24to100_SubPhiRot"
     ) {
-  TFile *f = new TFile(inFileName);
+  TFile *f = new TFile(inFileName+".root");
 
   TH2D * hPtPNDR = (TH2D*) f->Get("hPtPNDR");
   TH2D * hPtPADR = (TH2D*) f->Get("hPtPADR");
@@ -12,7 +12,7 @@ void drawJetFragBalance(
   Int_t endBinX=6;
   Int_t endBinY=9;
 
-  TFile *outf = new TFile("drawn_"+inFileName,"RECREATE");
+  TFile *outf = new TFile("drawn_"+inFileName+".root","RECREATE");
 
   TCanvas * c2 = new TCanvas("c2","c2",1200,700);
   c2->Divide(3,2);
@@ -38,6 +38,8 @@ void drawJetFragBalance(
     hNrBg->Draw("same hist");
     hAwBg->Draw("same hist");
   }
+  c2->Print(Form("%s_DR.gif",inFileName.Data()));
+  c2->Print(Form("%s_DR.C",inFileName.Data()));
 
   TCanvas * c3 = new TCanvas("c3","c3",1200,900);
   c3->Divide(3,3);
@@ -65,6 +67,8 @@ void drawJetFragBalance(
     hNrBg->Draw("same hist");
     hAwBg->Draw("same hist");
   }
+  c3->Print(Form("%s_Pt.gif",inFileName.Data()));
+  c3->Print(Form("%s_Pt.C",inFileName.Data()));
 
   TCanvas * c4 = new TCanvas("c4","c4",1200,700);
   c4->Divide(3,2);
@@ -88,6 +92,8 @@ void drawJetFragBalance(
     l->SetLineStyle(2);
     l->Draw();
   }
+  c4->Print(Form("%s_DRNrSubAw.gif",inFileName.Data()));
+  c4->Print(Form("%s_DRNrSubAw.C",inFileName.Data()));
 
   TCanvas * c5 = new TCanvas("c5","c5",1200,900);
   c5->Divide(3,3);
@@ -112,6 +118,8 @@ void drawJetFragBalance(
     l->SetLineStyle(2);
     l->Draw();
   }
+  c5->Print(Form("%s_PtNrSubAw.gif",inFileName.Data()));
+  c5->Print(Form("%s_PtNrSubAw.C",inFileName.Data()));
 
   TCanvas * c6 = new TCanvas("c6","c6",1200,700);
   c6->Divide(3,2);
@@ -137,6 +145,8 @@ void drawJetFragBalance(
     l->SetLineStyle(2);
     l->Draw();
   }
+  c6->Print(Form("%s_DRSubBg.gif",inFileName.Data()));
+  c6->Print(Form("%s_DRSubBg.C",inFileName.Data()));
 
   TCanvas * c7 = new TCanvas("c7","c7",1200,900);
   c7->Divide(3,3);
@@ -163,5 +173,9 @@ void drawJetFragBalance(
     l->SetLineStyle(2);
     l->Draw();
   }
+  c7->Print(Form("%s_PtSubBg.gif",inFileName.Data()));
+  c7->Print(Form("%s_PtSubBg.C",inFileName.Data()));
+
+  // All Done
   outf->Write();
 }
