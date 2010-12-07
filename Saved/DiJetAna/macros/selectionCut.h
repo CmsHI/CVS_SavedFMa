@@ -96,6 +96,8 @@ class selectionCut
     double NrJEtaMax;
     double AwJEtaMax;
     double DjDPhiMin;
+    // trk
+    double TrkPtMin;
     // -- draw ranges --
     int	  numJEtBins;
     double hisJEtMin;
@@ -156,6 +158,8 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   NrJEtaMax(2.),
   AwJEtaMax(2.),
   DjDPhiMin(jdphi),
+  // trk
+  TrkPtMin(1.2),
   // plot
   numJEtBins(50),
   hisJEtMin(0),
@@ -244,7 +248,7 @@ void selectionCut::SetCut()
   DJ["AnaLz2"]	      = LJ["Ana"]	  && AJ["Ana"]		&& JDPhiCut && "(lppt[0]/nljet)>0.6&&(lppt[0]/nljet)<0.9";
 
   // Track Selections
-  Trk["Ana"] = ("ppt>1.2&&ppt<1.5*nljet");
+  Trk["Ana"] = Form("ppt>%.1f&&ppt<1.5*nljet",TrkPtMin);
   Trk["Tight3"] = ("ppt>3.&&ppt<1.5*nljet");
   Trk["Tight5"] = ("ppt>5.&&ppt<1.5*nljet");
   Trk["TightNH"] = ("ppt>1.5&&ppt<nljet&&trkNHits>14");
