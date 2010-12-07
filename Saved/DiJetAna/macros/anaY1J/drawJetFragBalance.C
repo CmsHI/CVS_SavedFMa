@@ -1,7 +1,7 @@
 void drawJetFragBalance() {
 
-  TFile *f = new TFile("jetFragHists_EtaRefl.root");
-  //TFile *f = new TFile("jetFragHists_PhiRot.root");
+  //TFile *f = new TFile("jetFragHists_EtaRefl.root");
+  TFile *f = new TFile("jetFragHists_PhiRot.root");
 
   TH2D * hPtPNDR = (TH2D*) f->Get("hPtPNDR");
   TH2D * hPtPADR = (TH2D*) f->Get("hPtPADR");
@@ -41,7 +41,7 @@ void drawJetFragBalance() {
   for (Int_t i=1; i<=endBinY; ++i) {
     c3->cd(i);
     Int_t iBeg=i,iEnd=i;
-    if (i==endBinY) {iBeg=1; iEnd=100;}
+    if (i==endBinY) {iBeg=1; iEnd=10;}
     c3->GetPad(i)->SetLogx();
     c3->GetPad(i)->SetLogy();
     TH1D * hNr = (TH1D*)hPtPNDR->ProjectionX(Form("hPtNr_%d_%d",iBeg,iEnd),iBeg,iEnd);
@@ -90,7 +90,7 @@ void drawJetFragBalance() {
   c5->Divide(3,3);
   for (Int_t i=1; i<=endBinY; ++i) {
     Int_t iBeg=i,iEnd=i;
-    if (i==endBinY) {iBeg=1; iEnd=100;}
+    if (i==endBinY) {iBeg=1; iEnd=10;}
     c5->cd(i);
     c5->GetPad(i)->SetLogx();
     TH1D * hNr = (TH1D*)hPtPNDR->ProjectionX(Form("hPtNrSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
