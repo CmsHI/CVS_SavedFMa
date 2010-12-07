@@ -1,35 +1,44 @@
 void drawTrkEnergy() {
 
-  //TFile *f = new TFile("hists_Aj_24_100_cent_0_10.root");
-  TFile *f = new TFile("test_energy_not_density.root");
+  TFile *f = new TFile("drawn_jetFragHists_Cent0to10_Aj24to100_SubPhiRot.root");
 
-  TH1D *n1 = (TH1D*) f->Get("hPNDRSigTrk1");
-  TH1D *n2 = (TH1D*) f->Get("hPNDRSigTrk2");
-  TH1D *n4 = (TH1D*) f->Get("hPNDRSigTrk4");
-  TH1D *n8 = (TH1D*) f->Get("hPNDRSigTrk8");
+  TH1D *n0 = (TH1D*) f->Get("hPNDRSubBg_1_1");
+  TH1D *n1 = (TH1D*) f->Get("hPNDRSubBg_2_2");
+  TH1D *n2 = (TH1D*) f->Get("hPNDRSubBg_3_3");
+  TH1D *n4 = (TH1D*) f->Get("hPNDRSubBg_4_4");
+  TH1D *n8 = (TH1D*) f->Get("hPNDRSubBg_5_5");
+  TH1D *nall = (TH1D*) f->Get("hPNDRSubBg_1_100");
 
-  TH1D *a1 = (TH1D*) f->Get("hPADRSigTrk1");
-  TH1D *a2 = (TH1D*) f->Get("hPADRSigTrk2");
-  TH1D *a4 = (TH1D*) f->Get("hPADRSigTrk4");
-  TH1D *a8 = (TH1D*) f->Get("hPADRSigTrk8");
+  TH1D *a0 = (TH1D*) f->Get("hPADRSubBg_1_1");
+  TH1D *a1 = (TH1D*) f->Get("hPADRSubBg_2_2");
+  TH1D *a2 = (TH1D*) f->Get("hPADRSubBg_3_3");
+  TH1D *a4 = (TH1D*) f->Get("hPADRSubBg_4_4");
+  TH1D *a8 = (TH1D*) f->Get("hPADRSubBg_5_5");
+  TH1D *aall = (TH1D*) f->Get("hPADRSubBg_1_100");
 
   TH1::SetDefaultSumw2();
 
-  n1->SetFillColor(kBlue-3);
-  TH1D *n12 = (TH1D*) n1->Clone("n12");
+  n0->SetFillColor(kGray);
+  TH1D *n01 = (TH1D*) n0->Clone("n01");
+  n01->Add(n1); n01->SetFillColor(kBlue-3);
+  TH1D *n12 = (TH1D*) n01->Clone("n12");
   n12->Add(n2); n12->SetFillColor(38);
   TH1D *n124 = (TH1D*) n12->Clone("n124");
   n124->Add(n4); n124->SetFillColor(kOrange-8);
   TH1D *n1248 = (TH1D*) n124->Clone("n1248");
   n1248->Add(n8); n1248->SetFillColor(kRed-6);
+  nall->SetFillColor(kBlack);
 
-  a1->SetFillColor(kBlue-3);
-  TH1D *a12 = (TH1D*) a1->Clone("a12");
+  a0->SetFillColor(kGray);
+  TH1D *a01 = (TH1D*) a0->Clone("a01");
+  a01->Add(a1); a01->SetFillColor(kBlue-3);
+  TH1D *a12 = (TH1D*) a01->Clone("a12");
   a12->Add(a2); a12->SetFillColor(38);
   TH1D *a124 = (TH1D*) a12->Clone("a124");
   a124->Add(a4); a124->SetFillColor(kOrange-8);
   TH1D *a1248 = (TH1D*) a124->Clone("a1248");
   a1248->Add(a8); a1248->SetFillColor(kRed-6);
+  aall->SetFillColor(kBlack);
 
   /*
   TCanvas *c = new TCanvas("c","c",800,500);
@@ -51,15 +60,19 @@ void drawTrkEnergy() {
   */
 
   TCanvas *c2 = new TCanvas("c2","c2",600,500);
+  TH1D* hcall = combine(nall,aall);
   TH1D* hc1248 = combine(n1248,a1248);
   TH1D* hc124 = combine(n124,a124);
   TH1D* hc12 = combine(n12,a12);
-  TH1D* hc1 = combine(n1,a1);
+  TH1D* hc01 = combine(n01,a01);
+  TH1D* hc0 = combine(n0,a0);
 
-  hc1248->Draw("chist"); hc1248->Draw("esame"); //chist
+  hcall->Draw("chist"); hcall->Draw("esame");
+  hc1248->Draw("chistsame"); hc1248->Draw("esame"); //chist
   hc124->Draw("chistsame"); hc124->Draw("esame");
   hc12->Draw("chistsame"); hc12->Draw("esame");
-  hc1->Draw("chistsame"); hc1->Draw("esame");
+  hc01->Draw("chistsame"); hc01->Draw("esame");
+  hc0->Draw("chistsame"); hc0->Draw("esame");
 
   hc1248->GetXaxis()->SetAxisColor(0);
   hc1248->GetXaxis()->SetLabelColor(0);
@@ -85,19 +98,27 @@ void drawTrkEnergy() {
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
   leg->SetNColumns(2);
-  leg->AddEntry(hc1,"1-2 GeV/c","f");
+  leg->AddEntry(hc0,"0.5-1 GeV/c","f");
+  leg->AddEntry(hc01,"1-2 GeV/c","f");
   leg->AddEntry(hc12,"2-4 GeV/c","f");
   leg->AddEntry(hc124,"4-8 GeV/c","f");
-  leg->AddEntry(hc1248,"8+ GeV/c","f");
+  leg->AddEntry(hc1248,"8-16 GeV/c","f");
+  leg->AddEntry(hcall,"16+ GeV/c","f");
   leg->Draw();
 
 
   double nearsum=0.0, awaysum=0.0;
-  for(ibin=1; ibin<=40; ibin++) {
-    double bc = hc1248->GetBinContent(ibin);
+  for(ibin=1; ibin<=8; ibin++) {
+    /*
+    double bc = hcall->GetBinContent(ibin);
     cout << bc << endl;
-    if(ibin>10 && ibin<=14 && bc>0) nearsum+=bc;
-    if(ibin>30 && ibin<=34 && bc>0) awaysum+=bc;
+    if(ibin>12 && ibin<=18) nearsum+=bc;
+    if(ibin>32 && ibin<=38) awaysum+=bc;
+    */
+    double bcNr = nall->GetBinContent(ibin);
+    double bcAw = aall->GetBinContent(ibin);
+    nearsum+=bcNr;
+    awaysum+=bcAw;
   }
 
 
@@ -128,7 +149,7 @@ TH1D* combine(TH1D* near, TH1D* away) {
 
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
-  hcombine->SetMinimum(1.0);
+  hcombine->SetMinimum(0.1);
   hcombine->SetTitle(";;#frac{1}{N_{dijet}}  #frac{d#sump_{T}^{track} }{ dR }"); // no 2piR in denominator
   //hcombine->SetTitle(";;#frac{1}{N_{dijet}}  #frac{d#sump_{T}^{track} }{  2#pi R dR }");
   hcombine->GetYaxis()->CenterTitle();
