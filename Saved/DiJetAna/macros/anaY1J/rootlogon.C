@@ -36,6 +36,7 @@
   //gStyle->SetPadLeftMargin(0.2);
   gStyle->SetOptFit(0);
   gStyle->SetMarkerSize(0.8);
+  gStyle->SetHistLineWidth(2);
 
 
   // helper classes
