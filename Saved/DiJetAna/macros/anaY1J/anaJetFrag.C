@@ -14,8 +14,7 @@ void anaJetFrag(int doMC=0,
     Double_t AwJEtMax = 500,
     Double_t AwJEtaMax = 2.,
     Double_t JDPhiMin = 2.5,
-    TString DJCutType = "Ana", // Ana, Refl, Rotate
-    TString TrkCutType = "Ana",
+    TString DJCutType = "Ana", // Ana
     TString BkgSubType = "EtaRefl", // EtaRefl, PhiRot
     const char * inFile0Name="dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root",
     TString SrcName = "HydjUQDJ80")
@@ -35,7 +34,7 @@ void anaJetFrag(int doMC=0,
   jana.cut.SetDJEt(NrJEtMin,NrJEtMax,AwJEtMin,AwJEtMax,JDPhiMin);
   jana.cut.BaseCutType=evtBase;
   jana.cut.DJCutType = DJCutType;
-  jana.cut.TrkCutType = TrkCutType;
+  jana.cut.TrkPtMin = 0.5;
   jana.cut.BkgSubType = BkgSubType;
   jana.cut.SetCut();
 
