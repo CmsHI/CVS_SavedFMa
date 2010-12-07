@@ -182,7 +182,7 @@ void JetFragAna::Loop()
 	  if (ppt[i]<cut.TrkPtMin) continue;
 	  //if (particles_[i].pt()>30) cout << "particle " << i << ": " << particles_[i] << endl;
 	  // Trk histograms
-	  Double_t PNdRBkg=0,PAdRBkg=0;
+	  Double_t PNdRBkg=-999,PAdRBkg=-999;
 	  if (cut.BkgSubType=="EtaRefl") {
 	    PNdRBkg = reco::deltaR(peta[i],pphi[i],-nljeta,nljphi);
 	    PAdRBkg = reco::deltaR(peta[i],pphi[i],-aljeta,aljphi);
