@@ -1,7 +1,8 @@
 #include <iostream>
+#include <TCanvas.h>
+#include "TH1.h"
 #include "Saved/DiJetAna/macros/aliases_dijet.C"
 #include "Saved/DiJetAna/macros/anaY1J/JetFragAna.h"
-#include <TCanvas.h>
 using namespace std;
 
 void anaJetFrag(int doMC=0,
@@ -27,6 +28,7 @@ void anaJetFrag(int doMC=0,
     //const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_PyquenUQ80_hiGoodMergedTracks_OfficialSelv2.root",
     //TString SrcName = "PyquenUQ80")
 {
+  TH1::SetDefaultSumw2();
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
@@ -36,7 +38,7 @@ void anaJetFrag(int doMC=0,
   aliases_dijet(djTree,doMC);
   cout << " # entries: " << djTree->GetEntries() << endl;
 
-  TFile * outf = new TFile(Form("jfh_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()),"RECREATE");
+  TFile * outf = new TFile(Form("jfh%s_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",AnaVersion.Data(),SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()),"RECREATE");
   JetFragAna jana(djTree,SrcName,doMC);
   jana.cut.CentMin = CentMin;
   jana.cut.CentMax = CentMax;
