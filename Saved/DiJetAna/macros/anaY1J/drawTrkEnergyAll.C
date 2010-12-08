@@ -8,6 +8,7 @@
 #include "TPad.h"
 #include "TMath.h"
 #include "TLatex.h"
+#include "TString.h"
 using namespace std;
 
 
@@ -26,36 +27,36 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
 void drawText(const char *text, float xp, float yp);
 //------------------------------------------------------
 
-void drawTrkEnergyAll()
+void drawTrkEnergyAll(TString module="djcalo_tower")
 {
   TCanvas *c1 = new TCanvas("c1","",1200,630);
 
   makeMultiPanelCanvas(c1,3,2,0.0,0.0,0.2,0.18,0.02);
 
   c1->cd(1);
-  drawTrkEnergy("drawn_jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl.root",false,true);
-  drawText("30~100%",0.22,0.86);
+  drawTrkEnergy("drawn_jfh_HCPR_J50U_"+module+"_Cent30to100_Aj0to100_SubEtaRefl.root",false,true);
+  drawText("30-100%",0.22,0.86);
 
   c1->cd(2);
-  drawTrkEnergy("drawn_jfh_HCPR_J50U_Cent10to30_Aj0to100_SubEtaRefl.root",false,false);
-  drawText("10~30%",0.04,0.86);
+  drawTrkEnergy("drawn_jfh_HCPR_J50U_"+module+"_Cent10to30_Aj0to100_SubEtaRefl.root",false,false);
+  drawText("10-30%",0.04,0.86);
 
   c1->cd(3);
-  drawTrkEnergy("drawn_jfh_HCPR_J50U_Cent0to10_Aj0to100_SubEtaRefl.root",true,false);
-  drawText("0~10%",0.03,0.86);
+  drawTrkEnergy("drawn_jfh_HCPR_J50U_"+module+"_Cent0to10_Aj0to100_SubEtaRefl.root",true,false);
+  drawText("0-10%",0.03,0.86);
 
   c1->cd(4);
-  drawTrkEnergy("drawn_jfh_HCPR_J50U_Cent0to30_Aj0to24_SubEtaRefl.root",false,true);
-  drawText("0~10%",0.22,0.90);
+  drawTrkEnergy("drawn_jfh_HCPR_J50U_"+module+"_Cent0to30_Aj0to24_SubEtaRefl.root",false,true);
+  drawText("0-30%",0.22,0.90);
   drawText("A_{j}<0.24",0.22,0.80);
 
   c1->cd(5);
-  drawTrkEnergy("drawn_jfh_HCPR_J50U_Cent0to30_Aj24to100_SubEtaRefl.root",false,false);
-  drawText("0~10%",0.04,0.90);
+  drawTrkEnergy("drawn_jfh_HCPR_J50U_"+module+"_Cent0to30_Aj24to100_SubEtaRefl.root",false,false);
+  drawText("0-30%",0.04,0.90);
   drawText("A_{j}>0.24",0.04,0.80);
 
   c1->cd(6);
-  drawTrkEnergy("drawn_jfh_PyquenUQ80_Cent0to100_Aj0to100_SubNone.root",false,false);
+  drawTrkEnergy("drawn_jfh_PyquenUQ80_"+module+"_Cent0to100_Aj0to100_SubEtaRefl.root",false,false);
   drawText("PYTHIA",0.03,0.90);
 
   c1->Print("TrackEnergyPtRBkgSub.gif");
@@ -160,7 +161,7 @@ void drawTrkEnergy(TString infile,
   //nuaxis->Draw();
   //auaxis->Draw();
 
-  gPad->SetLogy();
+  //gPad->SetLogy();
   //gPad->SetRightMargin(0.05);
   //gPad->SetLeftMargin(0.18);
   //gPad->SetBottomMargin(0.18);
