@@ -62,8 +62,8 @@ TChain * scaleResJet(bool doMC=1,
     //TString infile0="dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127v2.root",
     //TString infile0="dj_Data_MinBias_DijetUnquenched80_d20101125and1126_MatchedJetGoodTrk1127v2.root",
     //TString infile1="dj_Data_MinBias0to20_DijetUnquenched50_d20101124_StdJetGoodTrk1126.root",
-    Float_t centMin=70,
-    Float_t centMax=100,
+    Float_t centMin=0,
+    Float_t centMax=10,
     TString header="McDiJet-DataBackground"
     )
 {
