@@ -1,18 +1,14 @@
+#include <iostream>
+#include "TFile.h"
+#include "TCanvas.h"
+#include "TH1.h"
+#include "TH2.h"
+#include "TString.h"
+#include "TLine.h"
+using namespace std;
+
 void drawJetFragBalance(
-    //TString inFileName="jfh_HCPR_J50U_Cent0to10_Aj0to100_SubNone"
-    //TString inFileName="jfh_HCPR_J50U_Cent0to10_Aj0to24_SubEtaRefl"
-    //TString inFileName="jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEtaRefl"
-    //TString inFileName="jfh_HCPR_J50U_Cent0to10_Aj0to24_SubPhiRot"
-    //TString inFileName="jfh_HCPR_J50U_Cent0to10_Aj24to100_SubPhiRot"
-
-    //TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to24_SubEtaRefl"
-    //TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj24to100_SubEtaRefl"
     TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl"
-    //TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to24_SubPhiRot"
-    //TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj24to100_SubPhiRot"
-    //TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to100_SubPhiRot"
-
-    //TString inFileName="jfh_PyquenUQ80_Cent0to100_Aj0to100_SubNone"
     ) {
   TFile *f = new TFile(inFileName+".root");
 
