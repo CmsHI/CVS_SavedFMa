@@ -9,7 +9,7 @@ void anaJetFrag(int doMC=0,
     TString AnaVersion = "a1006",
     TString modName = "djcalo",
     Double_t CentMin = 0,
-    Double_t CentMax = 10,
+    Double_t CentMax = 100,
     Double_t NrJEtMin = 120,
     Double_t NrJEtMax = 500,
     Double_t AwJEtMin = 50,
@@ -17,11 +17,15 @@ void anaJetFrag(int doMC=0,
     Double_t AwJEtaMax = 2.,
     Double_t JDPhiMin = PI*2./3,
     Double_t AjMin = 0.24,
-    Double_t AjMax = 1.,
+    Double_t AjMax = 1,
     TString DJCutType = "Ana", // Ana
-    TString BkgSubType = "PhiRot", // EtaRefl, PhiRot
+    TString BkgSubType = "EtaRefl", // EtaRefl, PhiRot, None
+    // Data
     const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2.root",
     TString SrcName = "HCPR_J50U")
+    // MC
+    //const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_PyquenUQ80_hiGoodMergedTracks_OfficialSelv2.root",
+    //TString SrcName = "PyquenUQ80")
 {
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
