@@ -1,6 +1,18 @@
 void drawJetFragBalance(
-    //TString inFileName="jetFragHists_SubEtaRefl" 
-    TString inFileName="jfh_HCPR_J50U_Cent0to10_Aj24to100_SubPhiRot"
+    //TString inFileName="jfh_HCPR_J50U_Cent0to10_Aj0to100_SubNone"
+    //TString inFileName="jfh_HCPR_J50U_Cent0to10_Aj0to24_SubEtaRefl"
+    //TString inFileName="jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEtaRefl"
+    //TString inFileName="jfh_HCPR_J50U_Cent0to10_Aj0to24_SubPhiRot"
+    //TString inFileName="jfh_HCPR_J50U_Cent0to10_Aj24to100_SubPhiRot"
+
+    //TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to24_SubEtaRefl"
+    //TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj24to100_SubEtaRefl"
+    TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl"
+    //TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to24_SubPhiRot"
+    //TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj24to100_SubPhiRot"
+    //TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to100_SubPhiRot"
+
+    //TString inFileName="jfh_PyquenUQ80_Cent0to100_Aj0to100_SubNone"
     ) {
   TFile *f = new TFile(inFileName+".root");
 
@@ -45,6 +57,7 @@ void drawJetFragBalance(
     hAwBg->Draw("same hist");
   }
   c2->Print(Form("%s_DR.gif",inFileName.Data()));
+  c2->Print(Form("%s_DR.eps",inFileName.Data()));
   c2->Print(Form("%s_DR.C",inFileName.Data()));
 
   TCanvas * c3 = new TCanvas("c3","c3",1200,900);
@@ -75,6 +88,7 @@ void drawJetFragBalance(
     hAwBg->Draw("same hist");
   }
   c3->Print(Form("%s_Pt.gif",inFileName.Data()));
+  c3->Print(Form("%s_Pt.eps",inFileName.Data()));
   c3->Print(Form("%s_Pt.C",inFileName.Data()));
 
   TCanvas * c4 = new TCanvas("c4","c4",1200,700);
@@ -101,6 +115,7 @@ void drawJetFragBalance(
     l->Draw();
   }
   c4->Print(Form("%s_DRNrSubAw.gif",inFileName.Data()));
+  c4->Print(Form("%s_DRNrSubAw.eps",inFileName.Data()));
   c4->Print(Form("%s_DRNrSubAw.C",inFileName.Data()));
 
   TCanvas * c5 = new TCanvas("c5","c5",1200,900);
@@ -128,6 +143,7 @@ void drawJetFragBalance(
     l->Draw();
   }
   c5->Print(Form("%s_PtNrSubAw.gif",inFileName.Data()));
+  c5->Print(Form("%s_PtNrSubAw.eps",inFileName.Data()));
   c5->Print(Form("%s_PtNrSubAw.C",inFileName.Data()));
 
   TCanvas * c6 = new TCanvas("c6","c6",1200,700);
@@ -156,6 +172,7 @@ void drawJetFragBalance(
     l->Draw();
   }
   c6->Print(Form("%s_DRSubBg.gif",inFileName.Data()));
+  c6->Print(Form("%s_DRSubBg.eps",inFileName.Data()));
   c6->Print(Form("%s_DRSubBg.C",inFileName.Data()));
 
   TCanvas * c7 = new TCanvas("c7","c7",1200,900);
@@ -185,6 +202,7 @@ void drawJetFragBalance(
     l->Draw();
   }
   c7->Print(Form("%s_PtSubBg.gif",inFileName.Data()));
+  c7->Print(Form("%s_PtSubBg.eps",inFileName.Data()));
   c7->Print(Form("%s_PtSubBg.C",inFileName.Data()));
 
   // All Done
