@@ -1,20 +1,42 @@
+#include <iostream>
+#include "TH1.h"
+#include "TFile.h"
+#include "TStyle.h"
+#include "TCanvas.h"
+#include "TGaxis.h"
+#include "TLegend.h"
+#include "TPad.h"
+#include "TMath.h"
+using namespace std;
+
+TH1D* combine(TH1D* near, TH1D* away);
+
 void drawTrkEnergy() {
 
-  TFile *f = new TFile("drawn_jetFragHists_Cent0to10_Aj24to100_SubPhiRot.root");
+  //TFile *f = new TFile("drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEtaRefl.root");
+  //TFile *f = new TFile("drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubPhiRot.root");
+  //TFile *f = new TFile("drawn_jfh_HCPR_J50U_Cent0to10_Aj0to24_SubEtaRefl.root");
+  //TFile *f = new TFile("drawn_jfh_HCPR_J50U_Cent0to10_Aj0to24_SubPhiRot.root");
+
+  TFile *f = new TFile("drawn_jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl.root");
+
+  //TFile *f = new TFile("drawn_jfh_PyquenUQ80_Cent0to100_Aj0to100_SubNone.root");
+  //TFile *f = new TFile("drawn_jfh_PyquenUQ80_Cent0to100_Aj0to24_SubNone.root");
+  gStyle->SetMarkerStyle(0);
 
   TH1D *n0 = (TH1D*) f->Get("hPNDRSubBg_1_1");
   TH1D *n1 = (TH1D*) f->Get("hPNDRSubBg_2_2");
   TH1D *n2 = (TH1D*) f->Get("hPNDRSubBg_3_3");
   TH1D *n4 = (TH1D*) f->Get("hPNDRSubBg_4_4");
-  TH1D *n8 = (TH1D*) f->Get("hPNDRSubBg_5_5");
-  TH1D *nall = (TH1D*) f->Get("hPNDRSubBg_1_100");
+  TH1D *n8 = (TH1D*) f->Get("hPNDRSubBg_5_7");
+  TH1D *nall = (TH1D*) f->Get("hPNDRSubBg_1_7");
 
   TH1D *a0 = (TH1D*) f->Get("hPADRSubBg_1_1");
   TH1D *a1 = (TH1D*) f->Get("hPADRSubBg_2_2");
   TH1D *a2 = (TH1D*) f->Get("hPADRSubBg_3_3");
   TH1D *a4 = (TH1D*) f->Get("hPADRSubBg_4_4");
-  TH1D *a8 = (TH1D*) f->Get("hPADRSubBg_5_5");
-  TH1D *aall = (TH1D*) f->Get("hPADRSubBg_1_100");
+  TH1D *a8 = (TH1D*) f->Get("hPADRSubBg_5_7");
+  TH1D *aall = (TH1D*) f->Get("hPADRSubBg_1_7");
 
   TH1::SetDefaultSumw2();
 
@@ -67,18 +89,19 @@ void drawTrkEnergy() {
   TH1D* hc01 = combine(n01,a01);
   TH1D* hc0 = combine(n0,a0);
 
-  hcall->Draw("chist"); hcall->Draw("esame");
-  hc1248->Draw("chistsame"); hc1248->Draw("esame"); //chist
-  hc124->Draw("chistsame"); hc124->Draw("esame");
-  hc12->Draw("chistsame"); hc12->Draw("esame");
-  hc01->Draw("chistsame"); hc01->Draw("esame");
-  hc0->Draw("chistsame"); hc0->Draw("esame");
+  hcall->GetXaxis()->SetNdivisions(000,true);
+  hcall->Draw("hist"); hcall->Draw("esame");
+  hc1248->Draw("histsame"); hc1248->Draw("esame"); //chist
+  hc124->Draw("histsame"); hc124->Draw("esame");
+  hc12->Draw("histsame"); hc12->Draw("esame");
+  hc01->Draw("histsame"); hc01->Draw("esame");
+  hc0->Draw("histsame"); hc0->Draw("esame");
 
   hc1248->GetXaxis()->SetAxisColor(0);
   hc1248->GetXaxis()->SetLabelColor(0);
 
-  TGaxis *naxis = new TGaxis(-1.4,1.0,1.4,1.0,-1.4,1.4,510,"-");
-  TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,1.0,TMath::Pi()+1.4,1.0,-1.4,1.4,510,"-");
+  TGaxis *naxis = new TGaxis(-1.4,0.08,1.4,0.08,-1.4,1.4,510,"-");
+  TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,.08,TMath::Pi()+1.4,0.08,-1.4,1.4,510,"-");
   naxis->SetLabelOffset(-0.05); naxis->SetLabelSize(0.03);
   naxis->SetTitle("#DeltaR^{track}_{leading jet}"); naxis->CenterTitle(); naxis->SetTitleOffset(-1.5);
   aaxis->SetLabelOffset(-0.05); aaxis->SetLabelSize(0.03);
@@ -90,9 +113,10 @@ void drawTrkEnergy() {
   nuaxis->Draw();
   auaxis->Draw();
 
-  //gPad->SetLogy();
+  gPad->SetLogy();
   gPad->SetRightMargin(0.05);
   gPad->SetLeftMargin(0.18);
+  gPad->SetBottomMargin(0.18);
 
   TLegend *leg = new TLegend(0.45,0.73,0.75,0.88);
   leg->SetFillStyle(0);
@@ -102,13 +126,13 @@ void drawTrkEnergy() {
   leg->AddEntry(hc01,"1-2 GeV/c","f");
   leg->AddEntry(hc12,"2-4 GeV/c","f");
   leg->AddEntry(hc124,"4-8 GeV/c","f");
-  leg->AddEntry(hc1248,"8-16 GeV/c","f");
-  leg->AddEntry(hcall,"16+ GeV/c","f");
+  leg->AddEntry(hc1248,"16+ GeV/c","f");
+  //leg->AddEntry(hcall,"16+ GeV/c","f");
   leg->Draw();
 
 
   double nearsum=0.0, awaysum=0.0;
-  for(ibin=1; ibin<=8; ibin++) {
+  for(Int_t ibin=1; ibin<=8; ibin++) {
     /*
     double bc = hcall->GetBinContent(ibin);
     cout << bc << endl;
@@ -129,20 +153,21 @@ void drawTrkEnergy() {
 
 TH1D* combine(TH1D* near, TH1D* away) {
 
-  TH1D* hcombine = new TH1D("hcombine","",40,-1.0*TMath::PiOver2(),3.0*TMath::PiOver2());
-  for(int bin=1; bin<=10; bin++) {
+  TH1D* hcombine = new TH1D(Form("hcombine_%s_%s",near->GetName(),away->GetName()),"",40,-1.0*TMath::PiOver2(),3.0*TMath::PiOver2());
+  Int_t delta=4;
+  for(int bin=1+delta; bin<=10; bin++) {
     hcombine->SetBinContent(bin,near->GetBinContent(11-bin));
     hcombine->SetBinError(bin,near->GetBinError(11-bin));
   }
-  for(int bin=11; bin<=20; bin++) {
+  for(int bin=11; bin<=20-delta; bin++) {
     hcombine->SetBinContent(bin,near->GetBinContent(bin-10));
     hcombine->SetBinError(bin,near->GetBinError(bin-10));
   }
-  for(int bin=21; bin<=30; bin++) {
+  for(int bin=21+delta; bin<=30; bin++) {
     hcombine->SetBinContent(bin,away->GetBinContent(31-bin));
     hcombine->SetBinError(bin,away->GetBinError(31-bin));
   }
-  for(int bin=31; bin<=40; bin++) {
+  for(int bin=31; bin<=40-delta; bin++) {
     hcombine->SetBinContent(bin,away->GetBinContent(bin-30));
     hcombine->SetBinError(bin,away->GetBinError(bin-30));
   }
@@ -150,7 +175,7 @@ TH1D* combine(TH1D* near, TH1D* away) {
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
   hcombine->SetMinimum(0.1);
-  hcombine->SetTitle(";;#frac{1}{N_{dijet}}  #frac{d#sump_{T}^{track} }{ dR }"); // no 2piR in denominator
+  hcombine->SetTitle(";;#frac{1}{N_{dijet}}  #frac{d#sump_{T}^{track} }{ dR } [GeV]"); // no 2piR in denominator
   //hcombine->SetTitle(";;#frac{1}{N_{dijet}}  #frac{d#sump_{T}^{track} }{  2#pi R dR }");
   hcombine->GetYaxis()->CenterTitle();
   hcombine->GetYaxis()->SetTitleOffset(1.7);
