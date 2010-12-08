@@ -36,7 +36,7 @@ void anaJetFrag(int doMC=0,
   aliases_dijet(djTree,doMC);
   cout << " # entries: " << djTree->GetEntries() << endl;
 
-  TFile * outf = new TFile(Form("jfh_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",SrcName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()),"RECREATE");
+  TFile * outf = new TFile(Form("jfh_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()),"RECREATE");
   JetFragAna jana(djTree,SrcName,doMC);
   jana.cut.CentMin = CentMin;
   jana.cut.CentMax = CentMax;
