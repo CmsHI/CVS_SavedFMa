@@ -1,6 +1,8 @@
 #include <iostream>
+#include <map>
 #include <TCanvas.h>
 #include "TH1.h"
+#include "TF1.h"
 #include "Saved/DiJetAna/macros/aliases_dijet.C"
 #include "Saved/DiJetAna/macros/anaY1J/JetFragAna.h"
 using namespace std;
@@ -38,6 +40,15 @@ void anaJetFrag(int doMC=0,
   aliases_dijet(djTree,doMC);
   cout << " # entries: " << djTree->GetEntries() << endl;
 
+  // Corrections
+  TFile *fetacorr = new TFile("etacorr.root");
+  std::map<TString,TF1*> jetaCorr;
+  jetaCorr["ec1"] = (TF1 *) fetacorr->Get("f1");
+  jetaCorr["ec2"] = (TF1 *) fetacorr->Get("f2");
+  jetaCorr["ec3"] = (TF1 *) fetacorr->Get("f3");
+  jetaCorr["ec4"] = (TF1 *) fetacorr->Get("f4");
+  jetaCorr["ec5"] = (TF1 *) fetacorr->Get("f5");
+
   TFile * outf = new TFile(Form("jfh%s_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",AnaVersion.Data(),SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()),"RECREATE");
   JetFragAna jana(djTree,SrcName,doMC);
   jana.cut.CentMin = CentMin;
@@ -51,6 +62,7 @@ void anaJetFrag(int doMC=0,
   jana.cut.BkgSubType = BkgSubType;
   jana.cut.SetCut();
   jana.cut.Print(1);
+  jana.jetaCorr_ = jetaCorr;
 
   // -- analysis selections --
   cout << endl << "====== DJ Selection: " << jana.cut.DJCutType << " ======" << endl;

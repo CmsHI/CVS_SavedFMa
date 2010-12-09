@@ -1,3 +1,4 @@
+#include "TF1.h"
 #define JetFragAna_cxx
 #include "Saved/DiJetAna/macros/anaY1J/JetFragAna.h"
 #include "DataFormats/Math/interface/deltaR.h"
@@ -10,6 +11,7 @@ using namespace std;
 
 JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
   cut(tag,doMC),
+  doEtaCorr_(true),
   anaJets_(2),
   refJets_(2)
 {
@@ -119,6 +121,25 @@ Int_t JetFragAna::GetEntry(Long64_t entry)
   else {
     anaJets_[0].SetCoordinates(nljet,nljeta,nljphi,0);
     anaJets_[1].SetCoordinates(aljet,aljeta,aljphi,0);
+    if (doEtaCorr_) {
+      for (Int_t i=0;i<2;++i) {
+	if (anaJets_[i].pt()<0) continue;
+	Float_t etain = anaJets_[i].eta();
+	Float_t etaout = etain;
+	if(etain<-1.5)
+	  etaout = etain-jetaCorr_["ec1"]->Eval(etain);
+	else if(etain<-0.8)
+	  etaout = etain-jetaCorr_["ec2"]->Eval(etain);
+	else if(etain<0.9)
+	  etaout = etain-jetaCorr_["ec3"]->Eval(etain);
+	else if(etain<1.5)
+	  etaout = etain-jetaCorr_["ec4"]->Eval(etain);
+	else if(etain<2.5)
+	  etaout = etain-jetaCorr_["ec5"]->Eval(etain);
+	anaJets_[i].SetEta(etaout);
+	//cout << "entry: " << entry << " old eta: " << etain << "  new eta: " << etaout << " " << anaJets_[i] << endl;
+      }
+    }
     particles_.clear();
     for (Int_t i=0; i<evtnp; ++i) {
       particles_.push_back(math::PtEtaPhiMLorentzVector(ppt[i],peta[i],pphi[i],0.13957));
@@ -169,7 +190,7 @@ void JetFragAna::Loop()
 	if (cut.BkgSubType=="PhiRot") {
 	  if (fabs(nljeta-aljeta)<1.6) continue;
 	}
-	//cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
+	cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
 	hJDPhi->Fill(jdphi);
 	hJEtNr->Fill(anaJets_[0].pt());
 	hJEtAw->Fill(anaJets_[1].pt());

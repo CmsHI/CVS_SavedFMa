@@ -9,6 +9,7 @@
 #define JetFragAna_h
 
 #include <vector>
+#include <map>
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include <TROOT.h>
 #include <TChain.h>
@@ -16,6 +17,7 @@
 #include "TMath.h"
 #include "TH1.h"
 #include "TH2.h"
+//#include "TF1.h"
 #include "Saved/DiJetAna/macros/selectionCut.h"
 const Float_t PI = 3.1415926535897932384626;
 const Float_t HPI = PI/2.;
@@ -37,10 +39,14 @@ public :
    selectionCut    cut;
 
    // Loop Ana Vars
+   Bool_t doEtaCorr_;
    Int_t numDJ_;
    std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
    std::vector<math::PtEtaPhiMLorentzVector> refJets_;
    std::vector<math::PtEtaPhiMLorentzVector> particles_;
+
+   // Corrections
+   std::map<TString,TF1*> jetaCorr_;
 
    // Histograms
    // jet
