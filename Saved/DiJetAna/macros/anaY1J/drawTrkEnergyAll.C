@@ -39,7 +39,7 @@ void drawTrkEnergyAll(
 
   c1->cd(1);
   drawTrkEnergy("drawn_jfh"+anaV+"_PyquenUQ80_"+module+"_Cent0to100_Aj0to100_"+BckSub+".root",false,false,logScale);
-  drawText("PYTHIA",0.03,0.90);
+  drawText("PYTHIA",0.22,0.90);
 
   c1->cd(2);
   drawTrkEnergy("drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent30to100_Aj0to100_"+BckSub+".root",false,false,logScale);
@@ -61,8 +61,8 @@ void drawTrkEnergyAll(
 
   c1->cd(6);
   drawTrkEnergy("drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj24to100_"+BckSub+".root",false,false,logScale);
-  drawText("0-30%",0.22,0.90);
-  drawText("A_{j}>0.24",0.22,0.80);
+  drawText("0-30%",0.04,0.90);
+  drawText("A_{j}>0.24",0.04,0.80);
 
   c1->Print("TrackEnergyPtRBkgSub.gif");
   c1->Print("TrackEnergyPtRBkgSub.eps");
