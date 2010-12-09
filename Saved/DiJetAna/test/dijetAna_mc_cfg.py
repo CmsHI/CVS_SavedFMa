@@ -78,12 +78,14 @@ process.dijetAna_seq*=process.djpfak5
 
 # First look at data
 process.djcalo.nearJetPtMin = 100
-#process.djcalo_tower.nearJetPtMin = 100
+process.djcalo_tower.nearJetPtMin = 120
+process.djcalo_genp.nearJetPtMin = 100
+process.djcalo_genp.anaGenpType = 0 # for all charge
+#process.djgen.nearJetPtMin = 100
+process.djgen.anaGenpType = 0 # for all charge
 # For Embedding
 if isDataEmbed:
   enableDataMixMC(process)
-#process.djcalo_genp.nearJetPtMin = 100
-#process.djgen.nearJetPtMin = 100
 
 process.reco = cms.Path( process.eventSelection * process.dj_reco_extra )
 process.ana  = cms.Path( process.eventSelection * process.dijetAna_seq )
