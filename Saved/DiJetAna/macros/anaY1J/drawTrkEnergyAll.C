@@ -28,7 +28,7 @@ void drawText(const char *text, float xp, float yp);
 //------------------------------------------------------
 
 void drawTrkEnergyAll(
-    TString anaV="1208b",
+    TString anaV="CorrEtaLowPt",
     TString module="djcalo",
     TString BckSub="SubEtaRefl",
     Int_t logScale=0)
@@ -177,19 +177,19 @@ void drawTrkEnergy(TString infile,
     leg->SetFillStyle(0);
     leg->SetBorderSize(0);
     leg->SetNColumns(2);
-    /*
     leg->AddEntry(hc0,"0.5-1 GeV/c","f");
     leg->AddEntry(hc01,"1-2 GeV/c","f");
     leg->AddEntry(hc12,"2-4 GeV/c","f");
     leg->AddEntry(hc124,"4-8 GeV/c","f");
     leg->AddEntry(hc1248,"16+ GeV/c","f");
     //leg->AddEntry(hcall,"16+ GeV/c","f");
-    */
+    /*
     leg->AddEntry(hc0,"1.5-3 GeV/c","f");
     leg->AddEntry(hc01,"3-6 GeV/c","f");
     leg->AddEntry(hc12,"6-9 GeV/c","f");
     leg->AddEntry(hc124,"9-18 GeV/c","f");
     leg->AddEntry(hc1248,"18+ GeV/c","f");
+    */
     leg->Draw();
   }
 
