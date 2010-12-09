@@ -32,6 +32,7 @@ djcalo = cms.EDAnalyzer('DiJetAna',
     trksrc = cms.InputTag("hiGoodMergedTracks"), # 2, reco tracks; 3, candidate
     anaTrkType = cms.int32(2),
     trkPtMin = cms.double(0.15),
+    anaGenpType = cms.int32(1),
     # debug
     verbosity = cms.untracked.int32(2)
     )

@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.64 2010/11/20 22:56:12 frankma Exp $
+// $Id: DiJetAna.cc,v 1.65 2010/11/27 20:51:03 frankma Exp $
 //
 //
 
@@ -93,6 +93,7 @@ DiJetAna::DiJetAna(const edm::ParameterSet& iConfig) :
   trksrc_ = iConfig.getParameter<edm::InputTag>("trksrc");
   anaTrkType_ = iConfig.getParameter<int>("anaTrkType");
   trkPtMin_ = iConfig.getParameter<double>("trkPtMin");
+  anaGenpType_ = iConfig.getParameter<int>("anaGenpType");
   // debug
   verbosity_ = iConfig.getUntrackedParameter<int>("verbosity", 0);
 
@@ -435,15 +436,15 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
 	}
       }
       // Select charged stable particles
-      if (!GoodAnaTrkParticle(trk,trkType)) continue;
+      if (!GoodAnaTrkParticle(trk,trkType,anaGenpType_)) continue;
       // fill subevent info if genp
       if (trkType==0) {
 	const reco::GenParticle & p    = (*genps)[it];
 	jd.psube_[selTrkCt]	       = p.collisionId();
       }
       // fill frag candidates basic info
-      //jd.ppid_[selTrkCt]	       = trk.pdgId();
-      //jd.pch_[selTrkCt]		       = trk.charge();
+      jd.ppid_[selTrkCt]	       = trk.pdgId();
+      jd.pch_[selTrkCt]		       = trk.charge();
       // make trk-jet calcuations
       jd.CalcTrkVars(isMC_,anajets,trk.polarP4(),selTrkCt);
       ++selTrkCt;
@@ -611,11 +612,11 @@ Bool_t DiJetAna::GoodAnaTrk(const reco::Track & trk)
   return true;
 }
 
-Bool_t DiJetAna::GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType)
+Bool_t DiJetAna::GoodAnaTrkParticle(const reco::Candidate & p, Int_t trkType, Int_t genpType)
 {
   if (trkType==0) {
     if (p.status()!=1) return false;
-    if (p.charge()==0) return false;
+    if (genpType==1 && p.charge()==0) return false;
   }
   if (p.pt()<trkPtMin_) return false;
   return true;
@@ -764,7 +765,7 @@ void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
     for(unsigned it=0; it<trks->size(); ++it){
       const reco::Candidate & trk = (*trks)[it];
       // select charged stable particles
-      if (!GoodAnaTrkParticle(trk,trkType)) continue;
+      if (!GoodAnaTrkParticle(trk,trkType,anaGenpType_)) continue;
       ++pct;
       if (pct<=20 || it>(trks->size()-20)) {
 	cout << "trk " << it;
