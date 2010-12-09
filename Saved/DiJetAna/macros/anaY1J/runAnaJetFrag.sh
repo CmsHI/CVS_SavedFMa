@@ -1,5 +1,5 @@
 #!/bin/bash -
-anaV=1208b
+anaV=CorrEtaLowPt
 infileData="dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2.root"
 infilePyquen="dj_PyquenUQ80_hiGoodMergedTracks_OfficialSelv2.root"
 module="djcalo"
