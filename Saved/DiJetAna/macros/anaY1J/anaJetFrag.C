@@ -10,7 +10,7 @@ using namespace std;
 void anaJetFrag(int doMC=0,
     TString evtBase="S1",
     TString AnaVersion = "a1006",
-    TString modName = "djcalo",
+    TString modName = "djcalo_genp",
     Double_t CentMin = 0,
     Double_t CentMax = 100,
     Double_t NrJEtMin = 120,
@@ -24,11 +24,11 @@ void anaJetFrag(int doMC=0,
     TString DJCutType = "Ana", // Ana
     TString BkgSubType = "EtaRefl", // EtaRefl, PhiRot, None
     // Data
-    const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2.root",
-    TString SrcName = "HCPR_J50U")
+    //const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2.root",
+    //TString SrcName = "HCPR_J50U")
     // MC
-    //const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_PyquenUQ80_hiGoodMergedTracks_OfficialSelv2.root",
-    //TString SrcName = "PyquenUQ80")
+    const char * inFile0Name="dj_PyquenUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.root.root",
+    TString SrcName = "PyquenUQ80")
 {
   TH1::SetDefaultSumw2();
   // Define Inputs
@@ -59,6 +59,7 @@ void anaJetFrag(int doMC=0,
   jana.cut.BaseCutType=evtBase;
   jana.cut.DJCutType = DJCutType;
   jana.cut.TrkPtMin = 0.5;
+  if (modName=="djcalo_genp"||modName=="djgen") jana.anaGenpType_=1;
   jana.cut.BkgSubType = BkgSubType;
   jana.cut.SetCut();
   jana.cut.Print(1);

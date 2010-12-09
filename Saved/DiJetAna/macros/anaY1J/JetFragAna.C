@@ -12,6 +12,7 @@ using namespace std;
 JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
   cut(tag,doMC),
   doEtaCorr_(true),
+  anaGenpType_(0),
   anaJets_(2),
   refJets_(2)
 {
@@ -190,7 +191,7 @@ void JetFragAna::Loop()
 	if (cut.BkgSubType=="PhiRot") {
 	  if (fabs(nljeta-aljeta)<1.6) continue;
 	}
-	cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
+	//cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
 	hJDPhi->Fill(jdphi);
 	hJEtNr->Fill(anaJets_[0].pt());
 	hJEtAw->Fill(anaJets_[1].pt());
@@ -200,8 +201,9 @@ void JetFragAna::Loop()
 	hJDEta->Fill(anaJets_[1].eta()-anaJets_[0].eta());
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
+	  if (anaGenpType_==1 && pch[i]==0) continue;
 	  if (ppt[i]<cut.TrkPtMin) continue;
-	  //if (particles_[i].pt()>30) cout << "particle " << i << ": " << particles_[i] << endl;
+	  //cout << "particle " << i << ": ch " << pch[i] << " " << particles_[i] << endl;
 	  // Trk histograms
 	  Double_t PNdRBkg=-999,PAdRBkg=-999;
 	  if (cut.BkgSubType=="EtaRefl") {
