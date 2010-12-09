@@ -28,8 +28,8 @@ void drawText(const char *text, float xp, float yp);
 //------------------------------------------------------
 
 void drawTrkEnergyAll(
-    TString anaV="1208",
-    TString module="djcalo_tower",
+    TString anaV="1208b",
+    TString module="djcalo",
     TString BckSub="SubEtaRefl",
     Int_t logScale=0)
 {
@@ -38,30 +38,31 @@ void drawTrkEnergyAll(
   makeMultiPanelCanvas(c1,3,2,0.0,0.0,0.2,0.18,0.02);
 
   c1->cd(1);
-  drawTrkEnergy("drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent30to100_Aj0to100_"+BckSub+".root",false,true,logScale);
-  drawText("30-100%",0.22,0.86);
-
-  c1->cd(2);
-  drawTrkEnergy("drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent10to30_Aj0to100_"+BckSub+".root",false,false,logScale);
-  drawText("10-30%",0.04,0.86);
-
-  c1->cd(3);
-  drawTrkEnergy("drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to10_Aj0to100_"+BckSub+".root",true,false,logScale);
-  drawText("0-10%",0.03,0.86);
-
-  c1->cd(4);
-  drawTrkEnergy("drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to24_"+BckSub+".root",false,true,logScale);
-  drawText("0-30%",0.22,0.90);
-  drawText("A_{j}<0.24",0.22,0.80);
-
-  c1->cd(5);
-  drawTrkEnergy("drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj24to100_"+BckSub+".root",false,false,logScale);
-  drawText("0-30%",0.04,0.90);
-  drawText("A_{j}>0.24",0.04,0.80);
-
-  c1->cd(6);
   drawTrkEnergy("drawn_jfh"+anaV+"_PyquenUQ80_"+module+"_Cent0to100_Aj0to100_"+BckSub+".root",false,false,logScale);
   drawText("PYTHIA",0.03,0.90);
+
+  c1->cd(2);
+  drawTrkEnergy("drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent30to100_Aj0to100_"+BckSub+".root",false,false,logScale);
+  drawText("30-100%",0.03,0.86);
+
+  c1->cd(3);
+  drawTrkEnergy("drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to100_"+BckSub+".root",true,false,logScale);
+  drawText("0-30%",0.04,0.86);
+
+  c1->cd(4);
+  drawTrkEnergy("drawn_jfh"+anaV+"_PyquenUQ80_"+module+"_Cent0to100_Aj24to100_"+BckSub+".root",false,false,logScale);
+  drawText("PYTHIA",0.22,0.90);
+  drawText("A_{j}>0.24",0.22,0.80);
+
+  c1->cd(5);
+  drawTrkEnergy("drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to24_"+BckSub+".root",false,true,logScale);
+  drawText("0-30%",0.04,0.90);
+  drawText("A_{j}<0.24",0.04,0.80);
+
+  c1->cd(6);
+  drawTrkEnergy("drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj24to100_"+BckSub+".root",false,false,logScale);
+  drawText("0-30%",0.22,0.90);
+  drawText("A_{j}>0.24",0.22,0.80);
 
   c1->Print("TrackEnergyPtRBkgSub.gif");
   c1->Print("TrackEnergyPtRBkgSub.eps");
@@ -176,12 +177,19 @@ void drawTrkEnergy(TString infile,
     leg->SetFillStyle(0);
     leg->SetBorderSize(0);
     leg->SetNColumns(2);
+    /*
     leg->AddEntry(hc0,"0.5-1 GeV/c","f");
     leg->AddEntry(hc01,"1-2 GeV/c","f");
     leg->AddEntry(hc12,"2-4 GeV/c","f");
     leg->AddEntry(hc124,"4-8 GeV/c","f");
     leg->AddEntry(hc1248,"16+ GeV/c","f");
     //leg->AddEntry(hcall,"16+ GeV/c","f");
+    */
+    leg->AddEntry(hc0,"1.5-3 GeV/c","f");
+    leg->AddEntry(hc01,"3-6 GeV/c","f");
+    leg->AddEntry(hc12,"6-9 GeV/c","f");
+    leg->AddEntry(hc124,"9-18 GeV/c","f");
+    leg->AddEntry(hc1248,"18+ GeV/c","f");
     leg->Draw();
   }
 
