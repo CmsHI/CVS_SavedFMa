@@ -50,9 +50,11 @@ void drawTrkEnergyAll(
   drawText("0-30%",0.04,0.86);
 
   c1->cd(4);
-  drawTrkEnergy("drawn_jfh"+anaV+"_PyquenUQ80_"+module+"_Cent0to100_Aj24to100_"+BckSub+".root",false,false,logScale);
+  //drawTrkEnergy("drawn_jfh"+anaV+"_PyquenUQ80_"+module+"_Cent0to100_Aj24to100_"+BckSub+".root",false,false,logScale);
+  drawTrkEnergy("drawn_jfh"+anaV+"_PyquenUQ80_djcalo_genp_Cent0to100_Aj0to100_"+BckSub+".root",false,false,logScale);
   drawText("PYTHIA",0.22,0.90);
-  drawText("A_{j}>0.24",0.22,0.80);
+  //drawText("A_{j}>0.24",0.22,0.80);
+  drawText("GenParticle",0.22,0.80);
 
   c1->cd(5);
   drawTrkEnergy("drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to24_"+BckSub+".root",false,true,logScale);
