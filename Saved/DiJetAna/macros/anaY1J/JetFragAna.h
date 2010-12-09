@@ -23,14 +23,6 @@ const Float_t PI = 3.1415926535897932384626;
 const Float_t HPI = PI/2.;
 const Int_t kMax = 2;
 const Int_t MAXTRK = 100000;
-const Int_t numPtBins = 7;
-Double_t ptBins[numPtBins+1]={0.2,1,2,4,8,16,64,200};
-//Double_t ptBins[numPtBins+1]={1.5,3,6,9,18,36,72,200};
-const Int_t numDRBins = 10;
-//Double_t dRBins[numDRBins+1]={0,0.2,0.4,0.6,0.8,1.,1.2,1.4,1.6,1.8,2.};
-Double_t dRBins[numDRBins+1]={0,0.1*HPI,0.2*HPI,0.3*HPI,0.4*HPI,0.5*HPI,0.6*HPI,0.7*HPI,0.8*HPI,0.9*HPI,HPI};
-const Int_t numDPhiBins = 10;
-Double_t dPhiBins[numDPhiBins+1]={0,0.1*HPI,0.2*HPI,0.3*HPI,0.4*HPI,0.5*HPI,0.6*HPI,0.7*HPI,0.8*HPI,0.9*HPI,HPI};
 
 class JetFragAna {
 public :
