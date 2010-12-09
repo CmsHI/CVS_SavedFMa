@@ -62,7 +62,7 @@ void drawJetFragBalance(
     c3->cd(i);
     Int_t iBeg=i,iEnd=i;
     if (i==endBinY) {iBeg=1; iEnd=numBinsDR;}
-    if (i==endBinX-1) {iBeg=i; iEnd=numBinsDR;}
+    if (i==endBinY-1) {iBeg=i; iEnd=numBinsDR;}
     c3->GetPad(i)->SetLogx();
     c3->GetPad(i)->SetLogy();
     TH1D * hNr = (TH1D*)hPtPNDR->ProjectionX(Form("hPtNr_%d_%d",iBeg,iEnd),iBeg,iEnd);
@@ -119,7 +119,7 @@ void drawJetFragBalance(
   for (Int_t i=1; i<=endBinY; ++i) {
     Int_t iBeg=i,iEnd=i;
     if (i==endBinY) {iBeg=1; iEnd=numBinsDR;}
-    if (i==endBinX-1) {iBeg=i; iEnd=numBinsDR;}
+    if (i==endBinY-1) {iBeg=i; iEnd=numBinsDR;}
     c5->cd(i);
     c5->GetPad(i)->SetLogx();
     TH1D * hNr = (TH1D*)hPtPNDR->ProjectionX(Form("hPtNrSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
@@ -176,7 +176,7 @@ void drawJetFragBalance(
   for (Int_t i=1; i<=endBinY; ++i) {
     Int_t iBeg=i,iEnd=i;
     if (i==endBinY) {iBeg=1; iEnd=numBinsDR;}
-    if (i==endBinX-1) {iBeg=i; iEnd=numBinsDR;}
+    if (i==endBinY-1) {iBeg=i; iEnd=numBinsDR;}
     c7->cd(i);
     c7->GetPad(i)->SetLogx();
     TH1D * hNr = (TH1D*)hPtPNDR->ProjectionX(Form("hPtNrSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
