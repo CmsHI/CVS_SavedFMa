@@ -17,7 +17,6 @@ void anaJetFrag(int doMC=0,
     Double_t NrJEtMax = 500,
     Double_t AwJEtMin = 50,
     Double_t AwJEtMax = 500,
-    Double_t JDPhiMin = TMath::Pi()*2./3,
     Double_t AjMin = 0.24,
     Double_t AjMax = 1,
     TString DJCutType = "Ana", // Ana
@@ -54,7 +53,7 @@ void anaJetFrag(int doMC=0,
   jana.doJetOnly_ = false;
   jana.cut.CentMin = CentMin;
   jana.cut.CentMax = CentMax;
-  jana.cut.SetDJEt(NrJEtMin,NrJEtMax,AwJEtMin,AwJEtMax,JDPhiMin);
+  jana.cut.SetDJEt(NrJEtMin,NrJEtMax,AwJEtMin,AwJEtMax,TMath::Pi()*2./3);
   jana.cut.AjMin = AjMin;
   jana.cut.AjMax = AjMax;
   jana.cut.BaseCutType=evtBase;
