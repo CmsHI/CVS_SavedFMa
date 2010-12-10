@@ -1,16 +1,17 @@
+#include <iostream>
 #include "TF1.h"
-#include "Saved/DiJetAna/macros/anaY1J/JetFragAna.h"
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
-#include <iostream>
+#include "Saved/DiJetAna/macros/anaY1J/JetFragAna.h"
 using namespace std;
 
 JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
   cut(tag,doMC),
-  doEtaCorr_(true),
+  doEtaCorr_(false),
+  doJetOnly_(true),
   anaGenpType_(0),
   anaJets_(2),
   refJets_(2)
@@ -19,6 +20,7 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
 // used to generate this class and read the Tree.
    if (tree == 0) {
       cout << "bad tree" << endl;
+      return;
    }
    Init(tree);
 
@@ -27,56 +29,65 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    Double_t dRBins[numDRBins+1];
    for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = PI/2./((double)numDRBins)*i; }
    const Int_t numPtBins = 7;
-   //Double_t ptBins[numPtBins+1]={0.2,1,2,4,8,16,64,200};
+   //Double_t ptBins[numPtBins+1]={0.5,1,2,4,8,16,64,200};
    Double_t ptBins[numPtBins+1]={1.5,3,6,9,18,36,72,200};
    const Int_t numDPhiBins = 20;
    Double_t dPhiBins[numDPhiBins+1];
    for (int i=0;i<numDPhiBins+1;i++)   { dPhiBins[i] = PI/2./((double)numDPhiBins)*i; }
 
+   // -- 2D hists --
+   hPtPNDR = new TH2D("hPtPNDR","",numPtBins,ptBins,numDRBins,dRBins);
+   hPtPNDR->Sumw2();
+   hPtPADR = new TH2D("hPtPADR","",numPtBins,ptBins,numDRBins,dRBins);
+   hPtPADR->Sumw2();
+   hPtPNDRBg = new TH2D("hPtPNDRBg","",numPtBins,ptBins,numDRBins,dRBins);
+   hPtPNDRBg->Sumw2();
+   hPtPADRBg = new TH2D("hPtPADRBg","",numPtBins,ptBins,numDRBins,dRBins);
+   hPtPADRBg->Sumw2();
+
+   // -- 1D hists --
+   //TH1::SetDefaultSumw2();
    // jet
    hJDPhi = new TH1D("hJDPhi","",50,0,PI);
+   hJDPhi->Sumw2();
    hJEtNr = new TH1D("hJEtNr","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hJEtNr->Sumw2();
    hJEtAw = new TH1D("hJEtAw","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hJEtAw->Sumw2();
    hAj = new TH1D("hAj","",20,0,1);
+   hAj->Sumw2();
    hJEtaNr = new TH1D("hJEtaNr","",50,-3,3);
+   hJEtaNr->Sumw2();
    hJEtaAw = new TH1D("hJEtaAw","",50,-3,3);
+   hJEtaAw->Sumw2();
    hJDEta = new TH1D("hJDEta","",50,-6,6);
+   hJDEta->Sumw2();
    hRefJEtNr = new TH1D("hRefJEtNr","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hRefJEtNr->Sumw2();
    hRefJEtAw = new TH1D("hRefJEtAw","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hRefJEtAw->Sumw2();
    // cone
-   hCNPNr = new TH1D("hCNPNr","",cut.numC5NPBins,cut.hisC5NPMin,cut.hisC5NPMax);
-   hCNPBgNr = new TH1D("hCNPBgNr","",cut.numC5NPBins,cut.hisC5NPMin,cut.hisC5NPMax);
-   hCNPSubNr = new TH1D("hCNPSubNr","",cut.numC5NPSubBins,cut.hisC5NPSubMin,cut.hisC5NPSubMax);
-   hCNPAw = new TH1D("hCNPAw","",cut.numC5NPBins,cut.hisC5NPMin,cut.hisC5NPMax);
-   hCNPBgAw = new TH1D("hCNPBgAw","",cut.numC5NPBins,cut.hisC5NPMin,cut.hisC5NPMax);
-   hCNPSubAw = new TH1D("hCNPSubAw","",cut.numC5NPSubBins,cut.hisC5NPSubMin,cut.hisC5NPSubMax);
+   hNrCPt = new TH1D("hCNrPt","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hNrCPt->Sumw2();
+   hNrCPtBg = new TH1D("hCNrPtBg","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hNrCPtBg->Sumw2();
+   hNrCPtBgSub = new TH1D("hCNrPtBgSub","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hNrCPtBgSub->Sumw2();
+   hAwCPt = new TH1D("hCAwPt","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hAwCPt->Sumw2();
+   hAwCPtBg = new TH1D("hCAwPtBg","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hAwCPtBg->Sumw2();
+   hAwCPtBgSub = new TH1D("hCAwPtBgSub","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hAwCPtBgSub->Sumw2();
    // trk
    hPNDR = new TH1D("hPNDR","",numDRBins,dRBins);
+   hPNDR->Sumw2();
    hPADR = new TH1D("hPADR","",numDRBins,dRBins);
+   hPADR->Sumw2();
    hPNDRBg = new TH1D("hPNDRBg","",numDRBins,dRBins);
+   hPNDRBg->Sumw2();
    hPADRBg = new TH1D("hPADRBg","",numDRBins,dRBins);
-   hPtPNDR = new TH2D("hPtPNDR","",numPtBins,ptBins,numDRBins,dRBins);
-   hPtPADR = new TH2D("hPtPADR","",numPtBins,ptBins,numDRBins,dRBins);
-   hPtPNDRBg = new TH2D("hPtPNDRBg","",numPtBins,ptBins,numDRBins,dRBins);
-   hPtPADRBg = new TH2D("hPtPADRBg","",numPtBins,ptBins,numDRBins,dRBins);
-
-   hPNDRDens = new TH1D("hPNDRDens","",numDRBins,dRBins);
-   hPADRDens = new TH1D("hPADRDens","",numDRBins,dRBins);
-   hPNDRDensBg = new TH1D("hPNDRDensBg","",numDRBins,dRBins);
-   hPADRDensBg = new TH1D("hPADRDensBg","",numDRBins,dRBins);
-   hPtPNDRDens = new TH2D("hPtPNDRDens","",numPtBins,ptBins,numDRBins,dRBins);
-   hPtPADRDens = new TH2D("hPtPADRDens","",numPtBins,ptBins,numDRBins,dRBins);
-   hPtPNDRDensBg = new TH2D("hPtPNDRDensBg","",numPtBins,ptBins,numDRBins,dRBins);
-   hPtPADRDensBg = new TH2D("hPtPADRDensBg","",numPtBins,ptBins,numDRBins,dRBins);
-
-   hPNDPhi = new TH1D("hPNDPhi","",numDPhiBins,dPhiBins);
-   hPADPhi = new TH1D("hPADPhi","",numDPhiBins,dPhiBins);
-   hPNDPhiBg = new TH1D("hPNDPhiBg","",numDPhiBins,dPhiBins);
-   hPADPhiBg = new TH1D("hPADPhiBg","",numDPhiBins,dPhiBins);
-   hPtPNDPhi = new TH2D("hPtPNDPhi","",numPtBins,ptBins,numDPhiBins,dPhiBins);
-   hPtPADPhi = new TH2D("hPtPADPhi","",numPtBins,ptBins,numDPhiBins,dPhiBins);
-   hPtPNDPhiBg = new TH2D("hPtPNDPhiBg","",numPtBins,ptBins,numDPhiBins,dPhiBins);
-   hPtPADPhiBg = new TH2D("hPtPADPhiBg","",numPtBins,ptBins,numDPhiBins,dPhiBins);
+   hPADRBg->Sumw2();
 }
 
 JetFragAna::~JetFragAna()
@@ -265,7 +276,7 @@ Int_t JetFragAna::Cut(Long64_t entry)
   if (cut.DJCutType=="Ana") {
     if (anaJets_[0].pt()>=cut.NrJEtMin && anaJets_[0].pt()<cut.NrJEtMax && fabs(anaJets_[0].eta())<cut.NrJEtaMax &&
 	anaJets_[1].pt()>=cut.AwJEtMin && anaJets_[1].pt()<cut.AwJEtMax && fabs(anaJets_[1].eta())<cut.AwJEtaMax &&
-	jdphi>=cut.DjDPhiMin
+	jdphi>cut.DjDPhiMin
        )
       result=1;
   }
@@ -279,6 +290,7 @@ Int_t JetFragAna::GetEntry(Long64_t entry)
   if (!fChain) return 0;
   Int_t result = fChain->GetEntry(entry);
   if (result<0) return result;
+  // Got Entry
   else {
     anaJets_[0].SetCoordinates(nljet,nljeta,nljphi,0);
     anaJets_[1].SetCoordinates(aljet,aljeta,aljphi,0);
@@ -302,10 +314,12 @@ Int_t JetFragAna::GetEntry(Long64_t entry)
       }
     }
     particles_.clear();
-    for (Int_t i=0; i<evtnp; ++i) {
-      particles_.push_back(math::PtEtaPhiMLorentzVector(ppt[i],peta[i],pphi[i],0.13957));
+    if (!doJetOnly_) {
+      for (Int_t i=0; i<evtnp; ++i) {
+	particles_.push_back(math::PtEtaPhiMLorentzVector(ppt[i],peta[i],pphi[i],0.13957));
+      }
     }
-  }
+  } // finished with entry
   return result;
 }
 void JetFragAna::Loop()
@@ -338,18 +352,21 @@ void JetFragAna::Loop()
    Long64_t nentries = fChain->GetEntriesFast();
 
    numDJ_=0;
+   Int_t numTotEvt=0, numDJNoBkgLimit=0;
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
       nb = GetEntry(jentry);   nbytes += nb;
+      ++numTotEvt;
 
       if (Cut(ientry)>=0) {
+	++numDJNoBkgLimit;
 	if (cut.BkgSubType=="EtaRefl") {
-	  if (fabs(nljeta)<0.8||fabs(aljeta)<0.8) continue;
+	  if (fabs(nljeta)<cut.ConeSize||fabs(aljeta)<cut.ConeSize) continue;
 	}
 	if (cut.BkgSubType=="PhiRot") {
-	  if (fabs(nljeta-aljeta)<1.6) continue;
+	  if (fabs(nljeta-aljeta)<cut.ConeSize*2) continue;
 	}
 	//cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
 	hJDPhi->Fill(jdphi);
@@ -359,47 +376,66 @@ void JetFragAna::Loop()
 	hJEtaNr->Fill(anaJets_[0].eta());
 	hJEtaAw->Fill(anaJets_[1].eta());
 	hJDEta->Fill(anaJets_[1].eta()-anaJets_[0].eta());
+
+	++numDJ_;
+	if (doJetOnly_) continue;
+
+	// -- Loop over Particles --
+	Int_t nrConePt=0,nrConePtBg=0;
+	Int_t awConePt=0,awConePtBg=0;
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
 	  if (ppt[i]<cut.TrkPtMin) continue;
 	  //cout << "particle " << i << ": ch " << pch[i] << " " << particles_[i] << endl;
 	  // Trk histograms
-	  Double_t PNdRBkg=-999,PAdRBkg=-999;
+	  Double_t PNdRBkg=999,PAdRBkg=999;
 	  if (cut.BkgSubType=="EtaRefl") {
 	    PNdRBkg = reco::deltaR(peta[i],pphi[i],-nljeta,nljphi);
 	    PAdRBkg = reco::deltaR(peta[i],pphi[i],-aljeta,aljphi);
 	  }
 	  if (cut.BkgSubType=="PhiRot") {
-	    PNdRBkg = reco::deltaR(peta[i],pphi[i],nljeta,nljphi+PI);
-	    PAdRBkg = reco::deltaR(peta[i],pphi[i],aljeta,aljphi+PI);
+	    PNdRBkg = reco::deltaR(peta[i],pphi[i],nljeta,nljphi+TMath::Pi());
+	    PAdRBkg = reco::deltaR(peta[i],pphi[i],aljeta,aljphi+TMath::Pi());
 	  }
 
-	  hPNDR->Fill(pndr[i],ppt[i]);
-	  hPADR->Fill(padr[i],ppt[i]);
-	  hPNDRDens->Fill(pndr[i],ppt[i]/(2*PI*pndr[i]));
-	  hPADRDens->Fill(padr[i],ppt[i]/(2*PI*padr[i]));
-
-	  hPNDRBg->Fill(PNdRBkg,ppt[i]);
-	  hPADRBg->Fill(PAdRBkg,ppt[i]);
-	  hPNDRDensBg->Fill(PNdRBkg,ppt[i]/(2*PI*PNdRBkg));
-	  hPADRDensBg->Fill(PAdRBkg,ppt[i]/(2*PI*PAdRBkg));
-
-	  hPtPNDR->Fill(ppt[i],pndr[i],ppt[i]);
-	  hPtPADR->Fill(ppt[i],padr[i],ppt[i]);
-	  hPtPNDRDens->Fill(ppt[i],pndr[i],ppt[i]/(2*PI*pndr[i]));
-	  hPtPADRDens->Fill(ppt[i],padr[i],ppt[i]/(2*PI*padr[i]));
-
-	  hPtPNDRBg->Fill(ppt[i],PNdRBkg,ppt[i]);
-	  hPtPADRBg->Fill(ppt[i],PAdRBkg,ppt[i]);
-	  hPtPNDRDensBg->Fill(ppt[i],PNdRBkg,ppt[i]/(2*PI*PNdRBkg));
-	  hPtPADRDensBg->Fill(ppt[i],PAdRBkg,ppt[i]/(2*PI*PAdRBkg));
-	}
-	++numDJ_;
+	  // Signal Cone
+	  if (pndr[i]<cut.ConeSize) {
+	    nrConePt+=ppt[i];
+	    hPNDR->Fill(pndr[i],ppt[i]);
+	    hPtPNDR->Fill(ppt[i],pndr[i],ppt[i]);
+	  }
+	  if (padr[i]<cut.ConeSize) {
+	    awConePt+=ppt[i];
+	    hPADR->Fill(padr[i],ppt[i]);
+	    hPtPADR->Fill(ppt[i],padr[i],ppt[i]);
+	  }
+	  // Background Cone
+	  if (PNdRBkg<cut.ConeSize) {
+	    nrConePtBg+=ppt[i];
+	    hPNDRBg->Fill(PNdRBkg,ppt[i]);
+	    hPtPNDRBg->Fill(ppt[i],PNdRBkg,ppt[i]);
+	  }
+	  if (PAdRBkg<cut.ConeSize) {
+	    awConePtBg+=ppt[i];
+	    hPADRBg->Fill(PAdRBkg,ppt[i]);
+	    hPtPADRBg->Fill(ppt[i],PAdRBkg,ppt[i]);
+	  }
+	} // end of particles loop
+	hNrCPt->Fill(nrConePt);
+	hAwCPt->Fill(awConePt);
+	hNrCPtBg->Fill(nrConePtBg);
+	hAwCPtBg->Fill(awConePtBg);
+	hNrCPtBgSub->Fill(nrConePt-nrConePtBg);
+	hAwCPtBgSub->Fill(awConePt-awConePtBg);
       }
       // if (Cut(ientry) < 0) continue;
    }
-   cout << "DiJets: " << numDJ_ << endl;
+
+   // After Event Loop
+   cout << "Total Events: " << numTotEvt << endl;
+   cout << "DiJets Selected w/o Bkg Limit: " << numDJNoBkgLimit << " (same as draw cut unless there is jet eta correction)" << endl;
+   cout << "DiJets Selected: " << numDJ_ << endl;
    hJDPhi->Scale(1./(numDJ_));
    hJEtNr->Scale(1./(numDJ_));
    hJEtAw->Scale(1./(numDJ_));
@@ -408,23 +444,20 @@ void JetFragAna::Loop()
    hJEtaAw->Scale(1./(numDJ_));
    hJDEta->Scale(1./(numDJ_));
 
+   hNrCPt->Scale(1./(numDJ_));
+   hAwCPt->Scale(1./(numDJ_));
+   hNrCPtBg->Scale(1./(numDJ_));
+   hAwCPtBg->Scale(1./(numDJ_));
+   hNrCPtBgSub->Scale(1./(numDJ_));
+   hAwCPtBgSub->Scale(1./(numDJ_));
+
    hPNDR->Scale(1./(numDJ_));
    hPADR->Scale(1./(numDJ_));
-   hPNDRDens->Scale(1./(numDJ_));
-   hPADRDens->Scale(1./(numDJ_));
-
    hPNDRBg->Scale(1./(numDJ_));
    hPADRBg->Scale(1./(numDJ_));
-   hPNDRDensBg->Scale(1./(numDJ_));
-   hPADRDensBg->Scale(1./(numDJ_));
 
    hPtPNDR->Scale(1./(numDJ_));
    hPtPADR->Scale(1./(numDJ_));
-   hPtPNDRDens->Scale(1./(numDJ_));
-   hPtPADRDens->Scale(1./(numDJ_));
-
    hPtPNDRBg->Scale(1./(numDJ_));
    hPtPADRBg->Scale(1./(numDJ_));
-   hPtPNDRDensBg->Scale(1./(numDJ_));
-   hPtPADRDensBg->Scale(1./(numDJ_));
 }

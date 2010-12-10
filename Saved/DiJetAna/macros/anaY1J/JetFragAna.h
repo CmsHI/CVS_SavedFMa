@@ -32,6 +32,7 @@ public :
 
    // Loop Ana Vars
    Bool_t doEtaCorr_;
+   Bool_t doJetOnly_;
    Int_t anaGenpType_;
    Int_t numDJ_;
    std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
@@ -53,12 +54,12 @@ public :
    TH1D * hRefJEtNr;
    TH1D * hRefJEtAw;
    // cone
-   TH1D * hCNPNr;
-   TH1D * hCNPBgNr;
-   TH1D * hCNPSubNr;
-   TH1D * hCNPAw;
-   TH1D * hCNPBgAw;
-   TH1D * hCNPSubAw;
+   TH1D * hNrCPt;
+   TH1D * hNrCPtBg;
+   TH1D * hNrCPtBgSub;
+   TH1D * hAwCPt;
+   TH1D * hAwCPtBg;
+   TH1D * hAwCPtBgSub;
    // trk
    TH1D * hPNDR;
    TH1D * hPADR;
@@ -260,14 +261,14 @@ public :
    TBranch        *b_lgppid;   //!
 
    JetFragAna(TTree *tree=0,TString tag="Data",Int_t doMC=0);
-   virtual ~JetFragAna();
-   virtual Int_t    Cut(Long64_t entry);
-   virtual Int_t    GetEntry(Long64_t entry);
-   virtual Long64_t LoadTree(Long64_t entry);
-   virtual void     Init(TTree *tree);
-   virtual void     Loop();
-   virtual Bool_t   Notify();
-   virtual void     Show(Long64_t entry = -1);
+   ~JetFragAna();
+   Int_t    Cut(Long64_t entry);
+   Int_t    GetEntry(Long64_t entry);
+   Long64_t LoadTree(Long64_t entry);
+   void	    Init(TTree *tree);
+   void     Loop();
+   Bool_t   Notify();
+   void     Show(Long64_t entry = -1);
 };
 
 #endif
