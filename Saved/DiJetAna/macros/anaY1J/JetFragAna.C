@@ -18,26 +18,20 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root");
-      if (!f) {
-         f = new TFile("dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root");
-         f->cd("dj_HCPR-GoodTrkAndPixel_CleanEvt1130.root:/djcalo");
-      }
-      tree = (TTree*)gDirectory->Get("djTree");
-
+      cout << "bad tree" << endl;
    }
    Init(tree);
 
    // Histograms
    const Int_t numDRBins = 20;
    Double_t dRBins[numDRBins+1];
-   for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = PI/((double)numDRBins)*i/2; }
+   for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = PI/2./((double)numDRBins)*i; }
    const Int_t numPtBins = 7;
-   Double_t ptBins[numPtBins+1]={0.2,1,2,4,8,16,64,200};
-   //Double_t ptBins[numPtBins+1]={1.5,3,6,9,18,36,72,200};
-   const Int_t numDPhiBins = 10;
+   //Double_t ptBins[numPtBins+1]={0.2,1,2,4,8,16,64,200};
+   Double_t ptBins[numPtBins+1]={1.5,3,6,9,18,36,72,200};
+   const Int_t numDPhiBins = 20;
    Double_t dPhiBins[numDPhiBins+1];
-   for (int i=0;i<numDPhiBins+1;i++)   { dPhiBins[i] = PI/((double)numDPhiBins)*i/2; }
+   for (int i=0;i<numDPhiBins+1;i++)   { dPhiBins[i] = PI/2./((double)numDPhiBins)*i; }
 
    // jet
    hJDPhi = new TH1D("hJDPhi","",50,0,PI);
