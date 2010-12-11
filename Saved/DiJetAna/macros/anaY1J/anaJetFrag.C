@@ -9,15 +9,15 @@ using namespace std;
 
 void anaJetFrag(int doMC=0,
     TString evtBase="S1",
-    TString AnaVersion = "CorrEtaHighPt",
+    TString AnaVersion = "test",
     TString modName = "djcalo",
     Double_t CentMin = 0,
-    Double_t CentMax = 10,
+    Double_t CentMax = 30,
     Double_t NrJEtMin = 120,
     Double_t NrJEtMax = 500,
     Double_t AwJEtMin = 50,
     Double_t AwJEtMax = 500,
-    Double_t AjMin = 0.24,
+    Double_t AjMin = 0,
     Double_t AjMax = 1,
     Double_t TrkPtMin = 1.5,
     TString DJCutType = "Ana", // Ana

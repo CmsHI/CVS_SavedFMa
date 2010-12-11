@@ -61,6 +61,12 @@ public :
    TH1D * hAwCPtBg;
    TH1D * hAwCPtBgSub;
    // trk
+   TH1D * hNrCPPt;
+   TH1D * hNrCPPtBg;
+   TH1D * hNrCPPtBgSub;
+   TH1D * hAwCPPt;
+   TH1D * hAwCPPtBg;
+   TH1D * hAwCPPtBgSub;
    TH1D * hPNDR;
    TH1D * hPADR;
    TH1D * hPNDRBg;

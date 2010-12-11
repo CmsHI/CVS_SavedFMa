@@ -80,6 +80,21 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    hAwCPtBgSub = new TH1D("hAwCPtBgSub","",cut.numJEtBins*2,-80,cut.hisJEtMax);
    hAwCPtBgSub->Sumw2();
    // trk
+   const Int_t numPPtBins=18;
+   Float_t pptBins[numPPtBins+1] = {0.0,0.2,1,2,3,4,6,8,10,14,18,22,26,30,40,50,60,70,80};
+   hNrCPPt = new TH1D("hNrCPPt","",numPPtBins,pptBins);
+   hNrCPPt->Sumw2();
+   hNrCPPtBg = new TH1D("hNrCPPtBg","",numPPtBins,pptBins);
+   hNrCPPtBg->Sumw2();
+   hNrCPPtBgSub = new TH1D("hNrCPPtBgSub","",numPPtBins,pptBins);
+   hNrCPPtBgSub->Sumw2();
+   hAwCPPt = new TH1D("hAwCPPt","",numPPtBins,pptBins);
+   hAwCPPt->Sumw2();
+   hAwCPPtBg = new TH1D("hAwCPPtBg","",numPPtBins,pptBins);
+   hAwCPPtBg->Sumw2();
+   hAwCPPtBgSub = new TH1D("hAwCPPtBgSub","",numPPtBins,pptBins);
+   hAwCPPtBgSub->Sumw2();
+
    hPNDR = new TH1D("hPNDR","",numDRBins,dRBins);
    hPNDR->Sumw2();
    hPADR = new TH1D("hPADR","",numDRBins,dRBins);
@@ -403,21 +418,25 @@ void JetFragAna::Loop()
 	  if (pndr[i]<cut.ConeSize) {
 	    nrConePt+=ppt[i];
 	    //cout << "Sum so far: " << nrConePt << endl;
+	    hNrCPPt->Fill(ppt[i]);
 	    hPNDR->Fill(pndr[i],ppt[i]);
 	    hPtPNDR->Fill(ppt[i],pndr[i],ppt[i]);
 	  }
 	  if (padr[i]<cut.ConeSize) {
+	    hAwCPPt->Fill(ppt[i]);
 	    awConePt+=ppt[i];
 	    hPADR->Fill(padr[i],ppt[i]);
 	    hPtPADR->Fill(ppt[i],padr[i],ppt[i]);
 	  }
 	  // Background Cone
 	  if (PNdRBkg<cut.ConeSize) {
+	    hNrCPPtBg->Fill(ppt[i]);
 	    nrConePtBg+=ppt[i];
 	    hPNDRBg->Fill(PNdRBkg,ppt[i]);
 	    hPtPNDRBg->Fill(ppt[i],PNdRBkg,ppt[i]);
 	  }
 	  if (PAdRBkg<cut.ConeSize) {
+	    hAwCPPtBg->Fill(ppt[i]);
 	    awConePtBg+=ppt[i];
 	    hPADRBg->Fill(PAdRBkg,ppt[i]);
 	    hPtPADRBg->Fill(ppt[i],PAdRBkg,ppt[i]);
@@ -444,6 +463,13 @@ void JetFragAna::Loop()
    hJEtaNr->Scale(1./(numDJ_));
    hJEtaAw->Scale(1./(numDJ_));
    hJDEta->Scale(1./(numDJ_));
+
+   hNrCPPt->Scale(1./numDJ_);
+   hAwCPPt->Scale(1./numDJ_);
+   hNrCPPtBg->Scale(1./numDJ_);
+   hAwCPPtBg->Scale(1./numDJ_);
+   hNrCPPtBgSub->Add(hNrCPPt,hNrCPPtBg,1,-1);
+   hAwCPPtBgSub->Add(hAwCPPt,hAwCPPtBg,1,-1);
 
    hNrCPt->Scale(1./(numDJ_));
    hAwCPt->Scale(1./(numDJ_));
