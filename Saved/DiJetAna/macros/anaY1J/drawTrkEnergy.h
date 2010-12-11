@@ -125,10 +125,14 @@ TH1D* combine(TH1D* near, TH1D* away) {
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
   hcombine->SetMinimum(0.1);
-  hcombine->SetMaximum(40);
+  hcombine->SetMaximum(44);
   hcombine->SetTitle(";;#frac{1}{N_{dijet}}  #frac{d#sump_{T}^{track} }{ dR } [GeV]"); // no 2piR in denominator
+  hcombine->GetYaxis()->SetTitleFont(63);
+  hcombine->GetYaxis()->SetTitleSize(18);
   hcombine->GetYaxis()->CenterTitle();
-  hcombine->GetYaxis()->SetTitleOffset(1.7);
+  hcombine->GetYaxis()->SetTitleOffset(3);
+  hcombine->GetYaxis()->SetLabelFont(63);
+  hcombine->GetYaxis()->SetLabelSize(18);
 
   return hcombine;
 }
@@ -193,10 +197,12 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
 
   TGaxis *naxis = new TGaxis(-1.4,0.08,1.4,0.08,-1.4,1.4,510,"-");
   TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,.08,TMath::Pi()+1.4,0.08,-1.4,1.4,510,"-");
-  naxis->SetLabelOffset(-0.05); naxis->SetLabelSize(0.03);
-  naxis->SetTitle("#DeltaR^{track}_{leading jet}"); naxis->CenterTitle(); naxis->SetTitleOffset(-1.5);
-  aaxis->SetLabelOffset(-0.05); aaxis->SetLabelSize(0.03);
-  aaxis->SetTitle("#DeltaR^{track}_{sub-leading jet}"); aaxis->CenterTitle(); aaxis->SetTitleOffset(-1.5);
+  naxis->SetLabelOffset(-0.05); naxis->SetLabelSize(0.05);
+  naxis->SetTitle("#DeltaR^{track}_{leading jet}"); naxis->CenterTitle(); naxis->SetTitleOffset(-1.3);
+  naxis->SetTitleSize(0.06);
+  aaxis->SetLabelOffset(-0.05); aaxis->SetLabelSize(0.05);
+  aaxis->SetTitle("#DeltaR^{track}_{sub-leading jet}"); aaxis->CenterTitle(); aaxis->SetTitleOffset(-1.3);
+  aaxis->SetTitleSize(0.06);
   naxis->Draw();
   aaxis->Draw();
   TGaxis *nuaxis = new TGaxis(-1.0*TMath::PiOver2(),3000.0,1.4,3000.0,-1.0*TMath::PiOver2(),1.4,510,"U-");
