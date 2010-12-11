@@ -23,7 +23,7 @@ void drawJetFragBalance_DR(
   // Get Pt info
   Int_t numBinsPt=hPtPNDR->GetNbinsX();
   TH1D * hPt = (TH1D*)hPtPNDR->ProjectionX("hPt");
-  cout << "DR vs Pt: pt bins: " << numBinsPt << endl;
+  cout << "Pt bins: " << numBinsPt << endl;
 
   // Output
   TFile *outf = new TFile("plot/drawn_"+inFileName+"_"+title+".root","RECREATE");
@@ -38,19 +38,22 @@ void drawJetFragBalance_DR(
     Int_t iBeg=1,iEnd=i;
     // Last drawn bin draws all remaining pt bins
     if (i==endPtBin) iEnd=numBinsPt;
-    TH1D * hNr = (TH1D*)hPtPNDR->ProjectionY(Form("hPNDRSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
-    TH1D * hAw = (TH1D*)hPtPADR->ProjectionY(Form("hPADRSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
-    TH1D * hNrBg = (TH1D*)hPtPNDRBg->ProjectionY(Form("hPNDRBgSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
-    TH1D * hAwBg = (TH1D*)hPtPADRBg->ProjectionY(Form("hPADRBgSubBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
-    // Draw to inspect
+    TH1D * hNr = (TH1D*)hPtPNDR->ProjectionY(Form("hPNDR_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hAw = (TH1D*)hPtPADR->ProjectionY(Form("hPADR_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hNrBg = (TH1D*)hPtPNDRBg->ProjectionY(Form("hPNDRBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hAwBg = (TH1D*)hPtPADRBg->ProjectionY(Form("hPADRBg_%d_%d",iBeg,iEnd),iBeg,iEnd);
     hNr->Add(hNrBg,-1);
     hAw->Add(hAwBg,-1);
+    // Print
+    cout << Form("%.1f < P_{T} < %.1f GeV: ",hPt->GetBinLowEdge(iBeg),hPt->GetBinLowEdge(iEnd+1))
+      << " SigSubBkg Integral - Nr: " << hNr->Integral() << " Aw: " << hAw->Integral() << endl;
+    // Draw to inspect
     hNr->SetMarkerColor(kRed);
     hNr->SetLineColor(kRed);
     hAw->SetMarkerColor(kBlue);
     hAw->SetLineColor(kBlue);
-    hNr->SetMinimum(-15);
-    hNr->SetMaximum(120);
+    hNr->SetMinimum(-10);
+    hNr->SetMaximum(60);
     c6->cd(i);
     hNr->Draw();
     hNr->SetXTitle("#Delta R");
