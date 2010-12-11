@@ -125,7 +125,7 @@ TH1D* combine(TH1D* near, TH1D* away) {
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
   hcombine->SetMinimum(0.1);
-  hcombine->SetMaximum(42);
+  hcombine->SetMaximum(40);
   hcombine->SetTitle(";;#frac{1}{N_{dijet}}  #frac{d#sump_{T}^{track} }{ dR } [GeV]"); // no 2piR in denominator
   hcombine->GetYaxis()->CenterTitle();
   hcombine->GetYaxis()->SetTitleOffset(1.7);
