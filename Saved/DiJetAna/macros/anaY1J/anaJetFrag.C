@@ -19,6 +19,7 @@ void anaJetFrag(int doMC=0,
     Double_t AwJEtMax = 500,
     Double_t AjMin = 0.24,
     Double_t AjMax = 1,
+    Double_t TrkPtMin = 1.5,
     TString DJCutType = "Ana", // Ana
     TString BkgSubType = "EtaRefl", // EtaRefl, PhiRot, None
     // Data
@@ -47,7 +48,7 @@ void anaJetFrag(int doMC=0,
   jetaCorr["ec4"] = (TF1 *) fetacorr->Get("f4");
   jetaCorr["ec5"] = (TF1 *) fetacorr->Get("f5");
 
-  TFile * outf = new TFile(Form("jfh%s_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",AnaVersion.Data(),SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()),"RECREATE");
+  TFile * outf = new TFile(Form("draw/jfh%s_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",AnaVersion.Data(),SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()),"RECREATE");
   JetFragAna jana(djTree,SrcName,doMC);
   jana.doEtaCorr_ = true;
   jana.doJetOnly_ = false;
@@ -58,7 +59,7 @@ void anaJetFrag(int doMC=0,
   jana.cut.AjMax = AjMax;
   jana.cut.BaseCutType=evtBase;
   jana.cut.DJCutType = DJCutType;
-  jana.cut.TrkPtMin = 0.5;
+  jana.cut.TrkPtMin = TrkPtMin;
   jana.cut.ConeSize = 0.8;
   if (modName=="djcalo_genp"||modName=="djgen") jana.anaGenpType_=1;
   jana.cut.BkgSubType = BkgSubType;

@@ -25,9 +25,9 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    Init(tree);
 
    // Histograms
-   const Int_t numDRBins = 20;
+   const Int_t numDRBins = 15;
    Double_t dRBins[numDRBins+1];
-   for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = PI/2./((double)numDRBins)*i; }
+   for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = 1.5/((double)numDRBins)*i; }
    const Int_t numPtBins = 7;
    //Double_t ptBins[numPtBins+1]={0.5,1,2,4,8,16,64,200};
    Double_t ptBins[numPtBins+1]={1.5,3,6,9,18,36,72,200};
@@ -67,17 +67,17 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    hRefJEtAw = new TH1D("hRefJEtAw","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
    hRefJEtAw->Sumw2();
    // cone
-   hNrCPt = new TH1D("hCNrPt","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hNrCPt = new TH1D("hNrCPt","",cut.numJEtBins*2,cut.hisJEtMin,cut.hisJEtMax);
    hNrCPt->Sumw2();
-   hNrCPtBg = new TH1D("hCNrPtBg","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hNrCPtBg = new TH1D("hNrCPtBg","",cut.numJEtBins*2,cut.hisJEtMin,cut.hisJEtMax);
    hNrCPtBg->Sumw2();
-   hNrCPtBgSub = new TH1D("hCNrPtBgSub","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hNrCPtBgSub = new TH1D("hNrCPtBgSub","",cut.numJEtBins*2,-80,cut.hisJEtMax);
    hNrCPtBgSub->Sumw2();
-   hAwCPt = new TH1D("hCAwPt","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hAwCPt = new TH1D("hAwCPt","",cut.numJEtBins*2,cut.hisJEtMin,cut.hisJEtMax);
    hAwCPt->Sumw2();
-   hAwCPtBg = new TH1D("hCAwPtBg","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hAwCPtBg = new TH1D("hAwCPtBg","",cut.numJEtBins*2,cut.hisJEtMin,cut.hisJEtMax);
    hAwCPtBg->Sumw2();
-   hAwCPtBgSub = new TH1D("hCAwPtBgSub","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+   hAwCPtBgSub = new TH1D("hAwCPtBgSub","",cut.numJEtBins*2,-80,cut.hisJEtMax);
    hAwCPtBgSub->Sumw2();
    // trk
    hPNDR = new TH1D("hPNDR","",numDRBins,dRBins);
@@ -381,13 +381,13 @@ void JetFragAna::Loop()
 	if (doJetOnly_) continue;
 
 	// -- Loop over Particles --
-	Int_t nrConePt=0,nrConePtBg=0;
-	Int_t awConePt=0,awConePtBg=0;
+	Double_t nrConePt=0,nrConePtBg=0;
+	Double_t awConePt=0,awConePtBg=0;
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
 	  if (ppt[i]<cut.TrkPtMin) continue;
-	  //cout << "particle " << i << ": ch " << pch[i] << " " << particles_[i] << endl;
+	  //cout << "particle " << i << ": ch " << pch[i] << " pt: " << ppt[i] << " pndr: " << pndr[i] << endl;
 	  // Trk histograms
 	  Double_t PNdRBkg=999,PAdRBkg=999;
 	  if (cut.BkgSubType=="EtaRefl") {
@@ -402,6 +402,7 @@ void JetFragAna::Loop()
 	  // Signal Cone
 	  if (pndr[i]<cut.ConeSize) {
 	    nrConePt+=ppt[i];
+	    //cout << "Sum so far: " << nrConePt << endl;
 	    hPNDR->Fill(pndr[i],ppt[i]);
 	    hPtPNDR->Fill(ppt[i],pndr[i],ppt[i]);
 	  }
