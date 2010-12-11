@@ -39,15 +39,23 @@ void drawPPt(TString infileData="",
   hNrBgSubMc->Draw("same hist");
   hAwBgSubMc->Draw("same hist");
 
-  Float_t nrConePtData=0, awConePtData=0;
+  Float_t nrConePtData=0, awConePtData=0, nrConePtMc=0, awConePtMc=0;
   for (Int_t i=0; i<hNrBgSubData->GetNbinsX(); ++i) {
     nrConePtData+=(hNrBgSubData->GetBinContent(i)*hNrBgSubData->GetBinCenter(i)*hNrBgSubData->GetBinWidth(i));
   }
   for (Int_t i=0; i<hAwBgSubData->GetNbinsX(); ++i) {
     awConePtData+=(hAwBgSubData->GetBinContent(i)*hAwBgSubData->GetBinCenter(i)*hAwBgSubData->GetBinWidth(i));
   }
+  for (Int_t i=0; i<hNrBgSubMc->GetNbinsX(); ++i) {
+    nrConePtMc+=(hNrBgSubMc->GetBinContent(i)*hNrBgSubMc->GetBinCenter(i)*hNrBgSubMc->GetBinWidth(i));
+  }
+  for (Int_t i=0; i<hAwBgSubMc->GetNbinsX(); ++i) {
+    awConePtMc+=(hAwBgSubMc->GetBinContent(i)*hAwBgSubMc->GetBinCenter(i)*hAwBgSubMc->GetBinWidth(i));
+  }
   cout << "Data cone pt sum - Nr: " << nrConePtData
     << " Aw: " << awConePtData << endl;
+  cout << "Mc cone pt sum - Nr: " << nrConePtMc
+    << " Aw: " << awConePtMc << endl;
 
   if (doLeg) {
     TLegend * l = new TLegend(0.56,0.62,0.86,0.92);
