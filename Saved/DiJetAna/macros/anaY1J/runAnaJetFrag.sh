@@ -1,5 +1,5 @@
 #!/bin/bash -
-anaV=CorrEtaHighPtv2
+anaV=CorrEtaHighPtv2WideRBin
 infileData="dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0.root"
 #infilePyquen="dj_PyquenUQ80_hiGoodMergedTracks_OfficialSelv2.root"
 infilePyquen="dj_PyquenUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.root"

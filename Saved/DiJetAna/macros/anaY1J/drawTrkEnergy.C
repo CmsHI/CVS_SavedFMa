@@ -11,13 +11,7 @@ using namespace std;
 
 TH1D* combine(TH1D* near, TH1D* away);
 
-void drawTrkEnergy() {
-
-  //TFile *f = new TFile("drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEtaRefl.root");
-  //TFile *f = new TFile("drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubPhiRot.root");
-  //TFile *f = new TFile("drawn_jfh_HCPR_J50U_Cent0to10_Aj0to24_SubEtaRefl.root");
-  //TFile *f = new TFile("drawn_jfh_HCPR_J50U_Cent0to10_Aj0to24_SubPhiRot.root");
-
+void drawTrkEnergyTest() {
   TFile *f = new TFile("drawn_jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl.root");
 
   //TFile *f = new TFile("drawn_jfh_PyquenUQ80_Cent0to100_Aj0to100_SubNone.root");
