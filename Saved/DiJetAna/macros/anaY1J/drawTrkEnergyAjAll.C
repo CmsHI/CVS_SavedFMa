@@ -44,7 +44,7 @@ void drawTrkEnergyAjAll(
   drawText("CMS",0.43,0.90);
   drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.43,0.82);
   drawText("#intL dt = 6.7 #mub^{-1}",0.43,0.74);
-  drawText("10-30%",0.43,0.51);
+  drawText("0-30%",0.43,0.51);
   drawText("A_{J}>0.24",0.43,0.43);
 
   c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubAjAll"+drawV+".gif");
