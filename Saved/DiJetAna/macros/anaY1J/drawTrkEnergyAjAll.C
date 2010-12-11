@@ -13,7 +13,7 @@
 using namespace std;
 
 void drawTrkEnergyAjAll(
-    TString anaV="CorrEtaHighPtv2WideRBin",
+    TString anaV="CorrEtaHighPtv3WideRBin",
     TString module="djcalo",
     TString BckSub="SubEtaRefl",
     TString title="_Track",
