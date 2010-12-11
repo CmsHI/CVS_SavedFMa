@@ -17,7 +17,7 @@ void drawTrkEnergyCentAll(
     TString module="djcalo",
     TString BckSub="SubEtaRefl",
     TString title="_Track",
-    TString drawV="d1",
+    TString drawV="d2",
     Int_t logScale=0)
 {
   TCanvas *c1 = new TCanvas("c1","",720,650);
@@ -35,8 +35,8 @@ void drawTrkEnergyCentAll(
   c1->cd(3);
   drawTrkEnergy("plot/drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent10to30_Aj0to100_"+BckSub+title+".root",false,true,logScale);
   drawText("CMS",0.56,0.90);
-  drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.56,0.80);
-  drawText("#intL dt = 6.7 #mub^{-1}",0.56,0.70);
+  drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.56,0.82);
+  drawText("#intL dt = 6.7 #mub^{-1}",0.56,0.74);
   drawText("10-30%",0.56,0.51);
 
   c1->cd(4);
