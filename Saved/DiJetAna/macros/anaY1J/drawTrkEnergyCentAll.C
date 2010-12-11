@@ -13,10 +13,11 @@
 using namespace std;
 
 void drawTrkEnergyCentAll(
-    TString anaV="CorrEtaHighPtv2WideRBin",
+    TString anaV="CorrEtaHighPtv3WideRBin",
     TString module="djcalo",
     TString BckSub="SubEtaRefl",
     TString title="_Track",
+    TString drawV="d1",
     Int_t logScale=0)
 {
   TCanvas *c1 = new TCanvas("c1","",700,650);
@@ -42,9 +43,9 @@ void drawTrkEnergyCentAll(
   drawText("CMS",0.04,0.90);
   drawText("0-10%",0.04,0.85);
 
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll.gif");
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll.eps");
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll.C");
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll"+drawV+".gif");
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll"+drawV+".eps");
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll"+drawV+".C");
 }
 
 
