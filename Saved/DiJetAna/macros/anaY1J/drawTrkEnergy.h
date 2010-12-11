@@ -125,7 +125,7 @@ TH1D* combine(TH1D* near, TH1D* away) {
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
   hcombine->SetMinimum(0.1);
-  hcombine->SetMaximum(40);
+  hcombine->SetMaximum(42);
   hcombine->SetTitle(";;#frac{1}{N_{dijet}}  #frac{d#sump_{T}^{track} }{ dR } [GeV]"); // no 2piR in denominator
   hcombine->GetYaxis()->CenterTitle();
   hcombine->GetYaxis()->SetTitleOffset(1.7);
@@ -144,15 +144,15 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   TH1D *n1 = (TH1D*) f->Get("hPNDR_1_2");
   TH1D *n2 = (TH1D*) f->Get("hPNDR_1_3");
   TH1D *n4 = (TH1D*) f->Get("hPNDR_1_4");
-  TH1D *n8 = (TH1D*) f->Get("hPNDR_1_5");
-  TH1D *nall = (TH1D*) f->Get("hPNDR_1_7");
+  TH1D *n8 = (TH1D*) f->Get("hPNDR_1_7");
+  //TH1D *nall = (TH1D*) f->Get("hPNDR_1_7");
 
   TH1D *a0 = (TH1D*) f->Get("hPADR_1_1");
   TH1D *a1 = (TH1D*) f->Get("hPADR_1_2");
   TH1D *a2 = (TH1D*) f->Get("hPADR_1_3");
   TH1D *a4 = (TH1D*) f->Get("hPADR_1_4");
-  TH1D *a8 = (TH1D*) f->Get("hPADR_1_5");
-  TH1D *aall = (TH1D*) f->Get("hPADR_1_7");
+  TH1D *a8 = (TH1D*) f->Get("hPADR_1_7");
+  //TH1D *aall = (TH1D*) f->Get("hPADR_1_7");
 
   TH1::SetDefaultSumw2();
 
@@ -161,28 +161,28 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   n2->SetFillColor(38);
   n4->SetFillColor(kOrange-8);
   n8->SetFillColor(kRed-6);
-  nall->SetFillColor(kBlack);
+  //nall->SetFillColor(kBlack);
 
   a0->SetFillColor(kGray);
   a1->SetFillColor(kBlue-3);
   a2->SetFillColor(38);
   a4->SetFillColor(kOrange-8);
   a8->SetFillColor(kRed-6);
-  aall->SetFillColor(kBlack);
+  //aall->SetFillColor(kBlack);
 
   //TCanvas *c2 = new TCanvas("c2","c2",600,500);
-  TH1D* hcall = combine(nall,aall);
+  //TH1D* hcall = combine(nall,aall);
   TH1D* hc1248 = combine(n8,a8);
   TH1D* hc124 = combine(n4,a4);
   TH1D* hc12 = combine(n2,a2);
   TH1D* hc01 = combine(n1,a1);
   TH1D* hc0 = combine(n0,a0);
 
-  hcall->GetXaxis()->SetNdivisions(000,true);
-  if(!drawYLab) hcall->GetYaxis()->SetTitle("");
+  hc1248->GetXaxis()->SetNdivisions(000,true);
+  if(!drawYLab) hc1248->GetYaxis()->SetTitle("");
 
-  hcall->Draw("hist"); hcall->Draw("esame");
-  hc1248->Draw("histsame"); hc1248->Draw("esame"); //chist
+  //hcall->Draw("hist"); hcall->Draw("esame");
+  hc1248->Draw("hist"); hc1248->Draw("esame"); //chist
   hc124->Draw("histsame"); hc124->Draw("esame");
   hc12->Draw("histsame"); hc12->Draw("esame");
   hc01->Draw("histsame"); hc01->Draw("esame");
@@ -227,8 +227,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
     leg->AddEntry(hc01,"3-6 GeV/c","f");
     leg->AddEntry(hc12,"6-9 GeV/c","f");
     leg->AddEntry(hc124,"9-18 GeV/c","f");
-    leg->AddEntry(hc1248,"18-36 GeV/c","f");
-    leg->AddEntry(hcall,"36+ GeV/c","f");
+    leg->AddEntry(hc1248,"18+ GeV/c","f");
     leg->Draw();
   }
 
@@ -241,8 +240,8 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
     if(ibin>12 && ibin<=18) nearsum+=bc;
     if(ibin>32 && ibin<=38) awaysum+=bc;
     */
-    double bcNr = nall->GetBinContent(ibin);
-    double bcAw = aall->GetBinContent(ibin);
+    double bcNr = n8->GetBinContent(ibin);
+    double bcAw = a8->GetBinContent(ibin);
     nearsum+=bcNr;
     awaysum+=bcAw;
   }

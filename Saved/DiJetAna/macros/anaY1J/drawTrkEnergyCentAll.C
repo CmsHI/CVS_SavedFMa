@@ -13,10 +13,10 @@
 using namespace std;
 
 void drawTrkEnergyCentAll(
-    TString anaV="CorrEtaHighPtWideRBin",
+    TString anaV="CorrEtaHighPtv2",
     TString module="djcalo",
     TString BckSub="SubEtaRefl",
-    TString title="",
+    TString title="_Track",
     Int_t logScale=0)
 {
   TCanvas *c1 = new TCanvas("c1","",700,650);
