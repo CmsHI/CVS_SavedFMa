@@ -100,6 +100,8 @@ class selectionCut
     double AjMax;
     // trk
     double TrkPtMin;
+    // cone
+    double ConeSize;
     // -- draw ranges --
     int	  numJEtBins;
     double hisJEtMin;
@@ -164,6 +166,8 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   AjMax(1),
   // trk
   TrkPtMin(1.2),
+  // cone
+  ConeSize(0.8),
   // plot
   numJEtBins(50),
   hisJEtMin(0),
@@ -189,7 +193,7 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   hisXiMin(0),
   hisXiMax(6)
 {
-  TH1::SetDefaultSumw2();
+  //TH1::SetDefaultSumw2();
 }
 
 void selectionCut::SetCut()
