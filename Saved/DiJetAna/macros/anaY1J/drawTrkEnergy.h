@@ -99,12 +99,6 @@ void makeMultiPanelCanvas(TCanvas*& canv,
 }
 
 TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1.) {
-  // Normalize
-  if (normType==1) { //case 1: normalize by near area
-    near->Scale(norm);
-    away->Scale(norm);
-  }
-
   // Get Bin Info
   Int_t nbin0=near->GetNbinsX();
   Int_t nbinc=nbin0*4;
@@ -129,7 +123,12 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1.) {
     hcombine->SetBinContent(bin,away->GetBinContent(bin-nbin0*3));
     hcombine->SetBinError(bin,away->GetBinError(bin-nbin0*3));
   }
+  // Normalize
   hcombine->Scale(0.5); // reduce by factor of 2 b/c we symmetrize the plot about dR=0
+  if (normType==1) { //case 1: normalize by near area
+    hcombine->Scale(norm);
+  }
+
 
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
@@ -256,11 +255,15 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
 
   Double_t nearsum=nall->Integral();
   Double_t awaysum=aall->Integral();
+  Double_t cnearsum=hcall->Integral(1,nall->GetNbinsX()*2);
+  Double_t cawaysum=hcall->Integral(1+nall->GetNbinsX()*2,hc0->GetNbinsX());
   if (normType==1) {
-    nearsum*=nall->GetBinWidth(1);
-    awaysum*=aall->GetBinWidth(1);
+    cnearsum*=nall->GetBinWidth(1);
+    cawaysum*=aall->GetBinWidth(1);
   }
 
-  cout << "integral of dET/dR = " << nearsum << "(near-side) \t"
+  cout << "integral of dET/dR (input hist) = " << nearsum << "(near-side) \t"
        << awaysum << "(away-side)" << endl;
+  cout << "integral of dET/dR (combined hist) = " << cnearsum << "(near-side) \t"
+       << cawaysum << "(away-side)" << endl;
 }
