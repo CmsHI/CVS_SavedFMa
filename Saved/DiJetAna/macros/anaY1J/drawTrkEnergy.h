@@ -9,6 +9,7 @@
 #include "TMath.h"
 #include "TLatex.h"
 #include "TString.h"
+#include "Saved/Utilities/macros/histogram/HisMath.C"
 using namespace std;
 
 void drawText(const char *text, float xp, float yp){
@@ -97,13 +98,20 @@ void makeMultiPanelCanvas(TCanvas*& canv,
    }
 }
 
-TH1D* combine(TH1D* near, TH1D* away) {
+TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1.) {
+  // Normalize
+  if (normType==1) { //case 1: normalize by near area
+    near->Scale(norm);
+    away->Scale(norm);
+  }
 
+  // Get Bin Info
   Int_t nbin0=near->GetNbinsX();
   Int_t nbinc=nbin0*4;
   Int_t delta=nbin0*0.4;
   cout << "nbin0 " << nbin0 << " nbinc: " << nbinc << endl;
 
+  // Combine Near and Away
   TH1D* hcombine = new TH1D(Form("hcombine_%s_%s",near->GetName(),away->GetName()),"",nbinc,-1.0*TMath::PiOver2(),3.0*TMath::PiOver2());
   for(int bin=1+delta; bin<=nbin0*2; bin++) {
     hcombine->SetBinContent(bin,near->GetBinContent(nbin0+1-bin));
@@ -121,16 +129,23 @@ TH1D* combine(TH1D* near, TH1D* away) {
     hcombine->SetBinContent(bin,away->GetBinContent(bin-nbin0*3));
     hcombine->SetBinError(bin,away->GetBinError(bin-nbin0*3));
   }
+  hcombine->Scale(0.5); // reduce by factor of 2 b/c we symmetrize the plot about dR=0
 
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
-  hcombine->SetMinimum(0.1);
-  hcombine->SetMaximum(44);
-  hcombine->SetTitle(";;#frac{1}{N_{dijet}}  #frac{d#sump_{T}^{track} }{ dR } [GeV]"); // no 2piR in denominator
+  hcombine->SetMinimum(0);
+  if (normType==0) {
+    hcombine->SetMaximum(46*0.5);
+    hcombine->SetTitle(";;#frac{1}{N_{dijet}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR }"); // no 2piR in denominator
+  }
+  if (normType==1) {
+    hcombine->SetMaximum(7.8*0.5);
+    hcombine->SetTitle(";;#frac{1}{N_{dijet} #scale[0.9]{#sum_{Jet1}}p_{T}^{track}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR }"); // no 2piR in denominator
+  }
   hcombine->GetYaxis()->SetTitleFont(63);
   hcombine->GetYaxis()->SetTitleSize(18);
   hcombine->GetYaxis()->CenterTitle();
-  hcombine->GetYaxis()->SetTitleOffset(3);
+  hcombine->GetYaxis()->SetTitleOffset(3.5);
   hcombine->GetYaxis()->SetLabelFont(63);
   hcombine->GetYaxis()->SetLabelSize(18);
 
@@ -139,7 +154,7 @@ TH1D* combine(TH1D* near, TH1D* away) {
 
 //------------------------------------------------------
 void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEtaRefl.root",
-		   bool drawLeg=false, bool drawYLab=false, Int_t logScale=0)
+		   bool drawLeg=false, bool drawYLab=false, Int_t logScale=0, Int_t normType=0)
 {
   TFile *f = new TFile(infile);
   gStyle->SetMarkerStyle(0);
@@ -175,12 +190,13 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   aall->SetFillColor(kRed);
 
   //TCanvas *c2 = new TCanvas("c2","c2",600,500);
-  TH1D* hcall = combine(nall,aall);
-  TH1D* hc1248 = combine(n8,a8);
-  TH1D* hc124 = combine(n4,a4);
-  TH1D* hc12 = combine(n2,a2);
-  TH1D* hc01 = combine(n1,a1);
-  TH1D* hc0 = combine(n0,a0);
+  Float_t norm = 1./(nall->Integral()*nall->GetBinWidth(1));
+  TH1D* hcall = combine(nall,aall,normType,norm);
+  TH1D* hc1248 = combine(n8,a8,normType,norm);
+  TH1D* hc124 = combine(n4,a4,normType,norm);
+  TH1D* hc12 = combine(n2,a2,normType,norm);
+  TH1D* hc01 = combine(n1,a1,normType,norm);
+  TH1D* hc0 = combine(n0,a0,normType,norm);
 
   hcall->GetXaxis()->SetNdivisions(000,true);
   if(!drawYLab) hc1248->GetYaxis()->SetTitle("");
@@ -195,8 +211,8 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   hc1248->GetXaxis()->SetAxisColor(0);
   hc1248->GetXaxis()->SetLabelColor(0);
 
-  TGaxis *naxis = new TGaxis(-1.4,0.08,1.4,0.08,-1.4,1.4,510,"-");
-  TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,.08,TMath::Pi()+1.4,0.08,-1.4,1.4,510,"-");
+  TGaxis *naxis = new TGaxis(-1.4,0,1.4,0,-1.4,1.4,510,"-");
+  TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,0,TMath::Pi()+1.4,0,-1.4,1.4,510,"-");
   naxis->SetLabelOffset(-0.05); naxis->SetLabelSize(0.05);
   naxis->SetTitle("#DeltaR^{track}_{leading jet}"); naxis->CenterTitle(); naxis->SetTitleOffset(-1.3);
   naxis->SetTitleSize(0.06);
@@ -205,8 +221,8 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   aaxis->SetTitleSize(0.06);
   naxis->Draw();
   aaxis->Draw();
-  TGaxis *nuaxis = new TGaxis(-1.0*TMath::PiOver2(),3000.0,1.4,3000.0,-1.0*TMath::PiOver2(),1.4,510,"U-");
-  TGaxis *auaxis = new TGaxis(TMath::Pi()-1.4,3000.0,3.0*TMath::PiOver2(),3000.0,-1.4,TMath::PiOver2(),510,"U-");
+  //TGaxis *nuaxis = new TGaxis(-1.0*TMath::PiOver2(),3000.0,1.4,3000.0,-1.0*TMath::PiOver2(),1.4,510,"U-");
+  //TGaxis *auaxis = new TGaxis(TMath::Pi()-1.4,3000.0,3.0*TMath::PiOver2(),3000.0,-1.4,TMath::PiOver2(),510,"U-");
   //nuaxis->Draw();
   //auaxis->Draw();
 
@@ -238,22 +254,13 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   }
 
 
-  double nearsum=0.0, awaysum=0.0;
-  for(Int_t ibin=1; ibin<=8; ibin++) {
-    /*
-    double bc = hcall->GetBinContent(ibin);
-    cout << bc << endl;
-    if(ibin>12 && ibin<=18) nearsum+=bc;
-    if(ibin>32 && ibin<=38) awaysum+=bc;
-    */
-    double bcNr = n8->GetBinContent(ibin);
-    double bcAw = a8->GetBinContent(ibin);
-    nearsum+=bcNr;
-    awaysum+=bcAw;
+  Double_t nearsum=nall->Integral();
+  Double_t awaysum=aall->Integral();
+  if (normType==1) {
+    nearsum*=nall->GetBinWidth(1);
+    awaysum*=aall->GetBinWidth(1);
   }
-
 
   cout << "integral of dET/dR = " << nearsum << "(near-side) \t"
        << awaysum << "(away-side)" << endl;
-
 }
