@@ -17,8 +17,8 @@ void resolution() {
   TDirectory *curdir = gDirectory;
   //setTDRStyle();
 
-  //TFile *f = new TFile("JES_0to10.root", "READ");
-  TFile *f = new TFile("JES_70to100.root", "READ");
+  TFile *f = new TFile("JES_0to10.root", "READ");
+  //TFile *f = new TFile("JES_70to100.root", "READ");
   assert(f && !f->IsZombie());
 
   //assert(f->cd("Standard"));
