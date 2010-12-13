@@ -16,7 +16,7 @@ using namespace std;
 void effJetCentAll(
     TString drawV="d0")
 {
-  TCanvas *c1 = new TCanvas("c1","",1200,500);
+  TCanvas *c1 = new TCanvas("c1","",1250,500);
 
   Float_t leftMargin=0.22,bottomMargin=0.16;
   makeMultiPanelCanvas(c1,3,1,0.0,0.0,leftMargin,bottomMargin,0.02);
