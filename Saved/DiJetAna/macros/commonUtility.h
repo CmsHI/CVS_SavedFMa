@@ -1,3 +1,5 @@
+#ifndef CommonUtility_h
+#define CommonUtility_h
 #include <TGraphAsymmErrors.h>
 #include <TLegend.h>
 #include <TF1.h>
@@ -218,6 +220,4 @@ void drawText(const char *text, float xp, float yp){
    tex->SetNDC();
    tex->Draw();
 }
-
-
-
+#endif
