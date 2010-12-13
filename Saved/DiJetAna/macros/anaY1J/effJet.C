@@ -79,10 +79,10 @@ TChain * effJet(bool doMC=0,
     TString outtag="DataMix_Pt50"
     )
 {
-  TString header="embedded PYTHIA";
+  TString header="Embedded PYTHIA";
   outtag+=Form("_Cent%.0fto%0.f",centMin,centMax);
   TChain * dj = new TChain("djgen/djTree");
-  TString tag="GenJet";
+  TString tag=Form("GenJet_%.0fto%.0f",centMin,centMax);
   //TChain * dj1 = new TChain("djgen/djTree");
 
   dj->Add(infile0);
@@ -121,7 +121,7 @@ TChain * effJet(bool doMC=0,
   // Draw
   TCanvas *cJetEff=0;
   if (!doMultiCanvas) cJetEff = new TCanvas("cJetEff","cJetEff",500,550);
-  g1->SetLineColor(kGreen+2); g1->SetMarkerColor(kGreen+2); g1->SetMarkerStyle(kOpenSquare);
+  g1->SetLineColor(kRed); g1->SetMarkerColor(kRed); g1->SetMarkerStyle(kOpenSquare);
   // Axis Styles
   TH1F *hTmp = new TH1F("hTmp","",nBin,bin);
   hTmp->SetAxisRange(0,1.4,"Y");
@@ -140,8 +140,8 @@ TChain * effJet(bool doMC=0,
   hTmp->GetXaxis()->CenterTitle();
   hTmp->GetYaxis()->CenterTitle();
   // Axis Titles
-  if (doJEC==0) hTmp->SetXTitle("GenJet p_{T} (GeV/c)");
-  if (doJEC==1) hTmp->SetXTitle("GenJet p_{T} (GeV/c)");
+  if (doJEC==0) hTmp->SetXTitle("p_{T}^{GenJet} (GeV/c)");
+  if (doJEC==1) hTmp->SetXTitle("p_{T}^{GenJet} (GeV/c)");
   hTmp->SetYTitle("Eff. (Matched Reco/Gen)");
   hTmp->Draw();
   g0->Draw("p");
