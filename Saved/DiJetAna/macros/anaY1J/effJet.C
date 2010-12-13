@@ -58,8 +58,8 @@ TH2F * eff2d(TTree * t,TString var="aljet:nljet",TCut sel="",TCut cut="",TString
   cout << "Evt Sel: " << TString(sel) << ": " << t->GetEntries(sel) << endl;
   cout << "Trigger: " << TString(sel&&cut) << ": " << t->GetEntries(sel&&cut) << endl;
 
-  TH2F *h = new TH2F("h"+tag,";E_{T}^{Leading Jet} [GeV];E_{T}^{Away Jet} [GeV]",nBin,bin,nBin,bin);
-  TH2F *hCut = new TH2F("hCut"+tag,";E_{T}^{Leading Jet} [GeV];E_{T}^{Away Jet} [GeV]",nBin,bin,nBin,bin);
+  TH2F *h = new TH2F("h"+tag,";p_{T}^{Leading Jet} (GeV/c);E_{T}^{Away Jet} (GeV)",nBin,bin,nBin,bin);
+  TH2F *hCut = new TH2F("hCut"+tag,";p_{T}^{Leading Jet} (GeV/c);E_{T}^{Away Jet} (GeV/c)",nBin,bin,nBin,bin);
   t->Draw(var+">>h"+tag,sel,"");
   t->Draw(var+">>hCut"+tag,sel&&cut,"");
   TH2F *hRat = (TH2F*)h->Clone("h"+tag+"Eff");
@@ -140,8 +140,8 @@ TChain * effJet(bool doMC=0,
   hTmp->GetXaxis()->CenterTitle();
   hTmp->GetYaxis()->CenterTitle();
   // Axis Titles
-  if (doJEC==0) hTmp->SetXTitle("p_{T}^{GenJet} [GeV]");
-  if (doJEC==1) hTmp->SetXTitle("p_{T}^{CaloJet} [GeV]");
+  if (doJEC==0) hTmp->SetXTitle("GenJet p_{T} (GeV/c)");
+  if (doJEC==1) hTmp->SetXTitle("GenJet p_{T} (GeV/c)");
   hTmp->SetYTitle("Eff. (Matched Reco/Gen)");
   hTmp->Draw();
   g0->Draw("p");
