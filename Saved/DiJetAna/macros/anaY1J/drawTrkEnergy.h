@@ -130,21 +130,21 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1.) {
 
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
-  hcombine->SetMinimum(0);
+  hcombine->SetMinimum(0.0001);
   if (normType==0) {
     hcombine->SetMaximum(46);
     hcombine->SetTitle(";;#frac{1}{N_{dijet}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR }"); // no 2piR in denominator
   }
   if (normType==1) {
     hcombine->SetMaximum(7.8);
-    hcombine->SetTitle(";;#frac{1}{N_{dijet} #scale[0.9]{#sum_{Jet1}}p_{T}^{track}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR }"); // no 2piR in denominator
+    hcombine->SetTitle(";;#frac{1}{N_{dijet} #scale[0.9]{#sum_{p_{T}>1.5GeV #in Jet1}}p_{T}^{track}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR }"); // no 2piR in denominator
   }
   hcombine->GetYaxis()->SetTitleFont(63);
-  hcombine->GetYaxis()->SetTitleSize(18);
+  hcombine->GetYaxis()->SetTitleSize(20);
   hcombine->GetYaxis()->CenterTitle();
-  hcombine->GetYaxis()->SetTitleOffset(3.5);
+  hcombine->GetYaxis()->SetTitleOffset(2.8);
   hcombine->GetYaxis()->SetLabelFont(63);
-  hcombine->GetYaxis()->SetLabelSize(18);
+  hcombine->GetYaxis()->SetLabelSize(22);
 
   return hcombine;
 }
@@ -208,19 +208,19 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   //hc1248->GetXaxis()->SetAxisColor(0);
   //hc1248->GetXaxis()->SetLabelColor(0);
 
-  TGaxis *naxis = new TGaxis(-1.4,0,1.4,0,-1.4,1.4,510,"+");
-  TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,0,TMath::Pi()+1.4,0,-1.4,1.4,510,"+");
+  TGaxis *naxis = new TGaxis(-1.4,0,1.4,0,-1.4,1.4,505,"+");
+  TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,0,TMath::Pi()+1.4,0,-1.4,1.4,505,"+");
   naxis->SetTitle("#DeltaR^{track}_{leading jet}"); naxis->CenterTitle(); naxis->SetTitleOffset(-1.3);
   naxis->SetLabelFont(63);
-  naxis->SetLabelOffset(0); naxis->SetLabelSize(18);
+  naxis->SetLabelOffset(0.01); naxis->SetLabelSize(22);
   naxis->SetTitleFont(63);
-  naxis->SetTitleSize(22);
+  naxis->SetTitleSize(24);
   naxis->SetTitleOffset(2);
   aaxis->SetTitle("#DeltaR^{track}_{sub-leading jet}"); aaxis->CenterTitle(); aaxis->SetTitleOffset(-1.3);
   aaxis->SetLabelFont(63);
-  aaxis->SetLabelOffset(0); aaxis->SetLabelSize(18);
+  aaxis->SetLabelOffset(0.01); aaxis->SetLabelSize(22);
   aaxis->SetTitleFont(63);
-  aaxis->SetTitleSize(22);
+  aaxis->SetTitleSize(24);
   aaxis->SetTitleOffset(2);
   naxis->Draw();
   aaxis->Draw();
