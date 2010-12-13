@@ -132,10 +132,10 @@ TChain * effJet(bool doMC=0,
   hTmp->GetYaxis()->SetLabelFont(63);
   hTmp->GetYaxis()->SetLabelSize(24);
   hTmp->GetXaxis()->SetTitleFont(63);
-  hTmp->GetXaxis()->SetTitleSize(24);
+  hTmp->GetXaxis()->SetTitleSize(28);
   hTmp->GetYaxis()->SetTitleFont(63);
   hTmp->GetYaxis()->SetTitleSize(24);
-  hTmp->GetXaxis()->SetTitleOffset(1.3);
+  hTmp->GetXaxis()->SetTitleOffset(1.2);
   hTmp->GetYaxis()->SetTitleOffset(1.8);
   hTmp->GetXaxis()->CenterTitle();
   hTmp->GetYaxis()->CenterTitle();
