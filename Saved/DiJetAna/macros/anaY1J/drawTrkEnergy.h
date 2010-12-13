@@ -102,7 +102,7 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1.) {
   // Get Bin Info
   Int_t nbin0=near->GetNbinsX();
   Int_t nbinc=nbin0*4;
-  Int_t delta=nbin0*0.4;
+  Int_t delta=0;
   cout << "nbin0 " << nbin0 << " nbinc: " << nbinc << endl;
 
   // Combine Near and Away
@@ -124,21 +124,19 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1.) {
     hcombine->SetBinError(bin,away->GetBinError(bin-nbin0*3));
   }
   // Normalize
-  hcombine->Scale(0.5); // reduce by factor of 2 b/c we symmetrize the plot about dR=0
   if (normType==1) { //case 1: normalize by near area
     hcombine->Scale(norm);
   }
-
 
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
   hcombine->SetMinimum(0);
   if (normType==0) {
-    hcombine->SetMaximum(46*0.5);
+    hcombine->SetMaximum(46);
     hcombine->SetTitle(";;#frac{1}{N_{dijet}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR }"); // no 2piR in denominator
   }
   if (normType==1) {
-    hcombine->SetMaximum(7.8*0.5);
+    hcombine->SetMaximum(7.8);
     hcombine->SetTitle(";;#frac{1}{N_{dijet} #scale[0.9]{#sum_{Jet1}}p_{T}^{track}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR }"); // no 2piR in denominator
   }
   hcombine->GetYaxis()->SetTitleFont(63);
@@ -198,7 +196,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   TH1D* hc0 = combine(n0,a0,normType,norm);
 
   hcall->GetXaxis()->SetNdivisions(000,true);
-  if(!drawYLab) hc1248->GetYaxis()->SetTitle("");
+  //if(!drawYLab) hcall->GetYaxis()->SetTitle("");
 
   hcall->Draw("hist"); hcall->Draw("esame");
   hc1248->Draw("histsame"); hc1248->Draw("esame"); //chist
@@ -207,17 +205,23 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   hc01->Draw("histsame"); hc01->Draw("esame");
   hc0->Draw("histsame"); hc0->Draw("esame");
 
-  hc1248->GetXaxis()->SetAxisColor(0);
-  hc1248->GetXaxis()->SetLabelColor(0);
+  //hc1248->GetXaxis()->SetAxisColor(0);
+  //hc1248->GetXaxis()->SetLabelColor(0);
 
-  TGaxis *naxis = new TGaxis(-1.4,0,1.4,0,-1.4,1.4,510,"-");
-  TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,0,TMath::Pi()+1.4,0,-1.4,1.4,510,"-");
-  naxis->SetLabelOffset(-0.05); naxis->SetLabelSize(0.05);
+  TGaxis *naxis = new TGaxis(-1.4,0,1.4,0,-1.4,1.4,510,"+");
+  TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,0,TMath::Pi()+1.4,0,-1.4,1.4,510,"+");
   naxis->SetTitle("#DeltaR^{track}_{leading jet}"); naxis->CenterTitle(); naxis->SetTitleOffset(-1.3);
-  naxis->SetTitleSize(0.06);
-  aaxis->SetLabelOffset(-0.05); aaxis->SetLabelSize(0.05);
+  naxis->SetLabelFont(63);
+  naxis->SetLabelOffset(0); naxis->SetLabelSize(18);
+  naxis->SetTitleFont(63);
+  naxis->SetTitleSize(22);
+  naxis->SetTitleOffset(2);
   aaxis->SetTitle("#DeltaR^{track}_{sub-leading jet}"); aaxis->CenterTitle(); aaxis->SetTitleOffset(-1.3);
-  aaxis->SetTitleSize(0.06);
+  aaxis->SetLabelFont(63);
+  aaxis->SetLabelOffset(0); aaxis->SetLabelSize(18);
+  aaxis->SetTitleFont(63);
+  aaxis->SetTitleSize(22);
+  aaxis->SetTitleOffset(2);
   naxis->Draw();
   aaxis->Draw();
   //TGaxis *nuaxis = new TGaxis(-1.0*TMath::PiOver2(),3000.0,1.4,3000.0,-1.0*TMath::PiOver2(),1.4,510,"U-");

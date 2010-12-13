@@ -17,7 +17,7 @@ void drawTrkEnergyCentAll(
     TString module="djcalo",
     TString BckSub="SubEtaRefl",
     TString title="_Track",
-    TString drawV="d3",
+    TString drawV="d4",
     Int_t logScale=0,
     Int_t normType=1)
 {
