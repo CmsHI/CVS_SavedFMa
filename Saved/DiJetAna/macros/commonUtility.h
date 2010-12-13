@@ -175,6 +175,7 @@ TH1* cleverRange(TH1* h,float fac=1.2, float minY=1.e-3)
    float maxY =  fac * h->GetBinContent(h->GetMaximumBin());
    cout <<" ranged will be set as " << minY << " ~ " << maxY << endl; 
    h->SetAxisRange(minY,maxY,"Y");
+   return h;
 }
 
 
@@ -205,5 +206,18 @@ void addCms(TCanvas *c)
   cms->SetNDC();
   cms->Draw();
 }
+
+//---------------------------------------------------
+void drawText(const char *text, float xp, float yp){
+   TLatex *tex = new TLatex(xp,yp,text);
+   tex->SetTextFont(63);
+   tex->SetTextSize(16);
+   //tex->SetTextSize(0.05);                                                                   
+   tex->SetTextColor(kBlack);
+   tex->SetLineWidth(1);
+   tex->SetNDC();
+   tex->Draw();
+}
+
 
 
