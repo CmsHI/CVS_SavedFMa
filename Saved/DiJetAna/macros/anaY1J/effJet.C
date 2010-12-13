@@ -10,16 +10,24 @@
 #include <TCanvas.h>
 #include "TF1.h"
 #include <iostream>
+using namespace std;
 
 #include "Saved/DiJetAna/macros/aliases_dijet.C"
 #include "Saved/DiJetAna/macros/commonUtility.h"
 #include "Saved/Utilities/macros/graph/tgraphTools.C"
-using namespace std;
 
 //const int nBin=11;
 //Float_t bin[nBin+1]={0,5,10,15,30,60,80,100,120,160,200,300};
 const int nBin=25;
 Float_t bin[nBin+1]={0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,90,100,110,120,140,160,200,240,300};
+/*
+const int nBin=17;
+Float_t bin[nBin+1]={
+  18, 21, 24, 28, 32, 
+  37, 43, 50, 56, 64, 
+  74, 84, 97, 114, 133,
+  174,220,300 };
+  */
 const int nBinRat=100;
 Float_t binRat[nBinRat+1];
 
@@ -62,10 +70,9 @@ TH2F * eff2d(TTree * t,TString var="aljet:nljet",TCut sel="",TCut cut="",TString
   return hRat;
 }
 
-TChain * effJet(bool doMC=1,
+TChain * effJet(bool doMC=0,
     TString infile0="dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127.root",
     //TString infile1="dj_Data_MinBias_DijetUnquenched80_d20101125_StdJetGoodTrk1126.root",
-    TString header="embedded PYTHIA",
     Float_t centMin=0,
     Float_t centMax=10,
     Int_t doJEC=0,
@@ -74,6 +81,7 @@ TChain * effJet(bool doMC=1,
     TString outtag="DataMix_Pt50"
     )
 {
+  TString header="embedded PYTHIA";
   outtag+=Form("_Cent%.0fto%0.f",centMin,centMax);
   TChain * dj = new TChain("djgen/djTree");
   TString tag="GenJet";
@@ -115,21 +123,36 @@ TChain * effJet(bool doMC=1,
   // Draw
   TCanvas *cJetEff=0;
   if (!doMultiCanvas) cJetEff = new TCanvas("cJetEff","cJetEff",500,550);
-  TH1F *hTmp = new TH1F("hTmp","",nBin,bin);
   g1->SetLineColor(kGreen+2); g1->SetMarkerColor(kGreen+2); g1->SetMarkerStyle(kOpenSquare);
+  // Axis Styles
+  TH1F *hTmp = new TH1F("hTmp","",nBin,bin);
   hTmp->SetAxisRange(0,1.4,"Y");
+  hTmp->SetAxisRange(0,300,"X");
+  hTmp->SetNdivisions(505);
+  hTmp->GetXaxis()->SetLabelFont(63);
+  hTmp->GetXaxis()->SetLabelSize(24);
+  hTmp->GetYaxis()->SetLabelFont(63);
+  hTmp->GetYaxis()->SetLabelSize(24);
+  hTmp->GetXaxis()->SetTitleFont(63);
+  hTmp->GetXaxis()->SetTitleSize(24);
+  hTmp->GetYaxis()->SetTitleFont(63);
+  hTmp->GetYaxis()->SetTitleSize(24);
+  hTmp->GetXaxis()->SetTitleOffset(1.3);
+  hTmp->GetYaxis()->SetTitleOffset(1.8);
+  hTmp->GetXaxis()->CenterTitle();
+  hTmp->GetYaxis()->CenterTitle();
+  // Axis Titles
   if (doJEC==0) hTmp->SetXTitle("p_{T}^{GenJet} [GeV]");
   if (doJEC==1) hTmp->SetXTitle("p_{T}^{CaloJet} [GeV]");
   hTmp->SetYTitle("Eff. (Matched Reco/Gen)");
-  handsomeTH1(hTmp);
   hTmp->Draw();
   g0->Draw("p");
   g1->Draw("p");
-  TLine *l = new TLine(0,1,bin[nBin],1);
+  TLine *l = new TLine(bin[0],1,bin[nBin],1);
+  l->SetLineStyle(2);
+  l->Draw();
   if (doLeg==1) {
-    l->SetLineStyle(2);
-    l->Draw();
-    TLegend *t = new TLegend(0.51,0.77,0.92,0.90);
+    TLegend *t = new TLegend(0.50,0.80,0.91,0.93);
     t->SetHeader(header);
     t->SetBorderSize(0);
     t->SetFillStyle(0);
