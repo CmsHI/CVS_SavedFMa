@@ -18,16 +18,14 @@ using namespace std;
 
 //const int nBin=11;
 //Float_t bin[nBin+1]={0,5,10,15,30,60,80,100,120,160,200,300};
-const int nBin=25;
-Float_t bin[nBin+1]={0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,90,100,110,120,140,160,200,240,300};
-/*
+//const int nBin=25;
+//Float_t bin[nBin+1]={0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,90,100,110,120,140,160,200,240,300};
 const int nBin=17;
 Float_t bin[nBin+1]={
   18, 21, 24, 28, 32, 
   37, 43, 50, 56, 64, 
   74, 84, 97, 114, 133,
   174,220,300 };
-  */
 const int nBinRat=100;
 Float_t binRat[nBinRat+1];
 
@@ -127,7 +125,7 @@ TChain * effJet(bool doMC=0,
   // Axis Styles
   TH1F *hTmp = new TH1F("hTmp","",nBin,bin);
   hTmp->SetAxisRange(0,1.4,"Y");
-  hTmp->SetAxisRange(0,300,"X");
+  hTmp->SetAxisRange(0,219,"X");
   hTmp->SetNdivisions(505);
   hTmp->GetXaxis()->SetLabelFont(63);
   hTmp->GetXaxis()->SetLabelSize(24);
@@ -152,11 +150,11 @@ TChain * effJet(bool doMC=0,
   l->SetLineStyle(2);
   l->Draw();
   if (doLeg==1) {
-    TLegend *t = new TLegend(0.50,0.80,0.91,0.93);
+    TLegend *t = new TLegend(0.31,0.80,0.72,0.93);
     t->SetHeader(header);
     t->SetBorderSize(0);
     t->SetFillStyle(0);
-    t->SetTextSize(0.035);
+    t->SetTextSize(0.05);
     t->AddEntry(g0,"Leading Jet","pl");
     t->AddEntry(g1,"SubLeading Jet","pl");
     t->Draw();
