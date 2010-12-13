@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "Saved/DiJetAna/macros/aliases_dijet.C"
+#include "Saved/DiJetAna/macros/commonUtility.h"
 #include "Saved/Utilities/macros/graph/tgraphTools.C"
 using namespace std;
 
@@ -64,9 +65,12 @@ TH2F * eff2d(TTree * t,TString var="aljet:nljet",TCut sel="",TCut cut="",TString
 TChain * effJet(bool doMC=1,
     TString infile0="dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127.root",
     //TString infile1="dj_Data_MinBias_DijetUnquenched80_d20101125_StdJetGoodTrk1126.root",
-    TString header="McDiJet-DataBackground",
+    TString header="embedded PYTHIA",
     Float_t centMin=0,
     Float_t centMax=10,
+    Int_t doJEC=0,
+    bool doMultiCanvas=0,
+    Int_t doLeg=1,
     TString outtag="DataMix_Pt50"
     )
 {
@@ -91,6 +95,56 @@ TChain * effJet(bool doMC=1,
   TCut evtSelAw = evtSel;//&& "nljet>120";
   //TCut evtSel("HLT_HIJet50U && cent<10 ");
 
+  for (int i=0; i<=nBinRat;++i) binRat[i]=i*2./nBinRat;
+
+  TGraphAsymmErrors *g0=0,*g1=0,*g2=0,*g3=0,*g4=0;
+  TH2F *hEff2d=0;
+  if (doJEC==0) {
+    g0 = eff(dj,"nljet",evtSel,"nlrjdr<0.3","NrJEt");
+    g1 = eff(dj,"aljet",evtSelAw,"alrjdr<0.3","AwJEt");
+    hEff2d = eff2d(dj,"aljet:nljet",evtSel,"nlrjdr<0.3&&alrjdr<0.3","JEt2D");
+  }
+  if (doJEC==1) {
+    dj->SetAlias("fscNr","(1.03-2.33e-4*nljet+6.5e3/pow(nljet,3))");
+    dj->SetAlias("fscAw","(0.87+2.05e-4*nljet+5.74e3/pow(nljet,3))");
+    g0 = eff(dj,"nljet*fscNr",evtSel,"nlrjdr<0.3","NrJEt");
+    g1 = eff(dj,"aljet*fscAw",evtSelAw,"alrjdr<0.3","AwJEt");
+    hEff2d = eff2d(dj,"aljet*fscAw:nljet*fscNr",evtSel,"nlrjdr<0.3&&alrjdr<0.3","JEt2D");
+  }
+
+  // Draw
+  TCanvas *cJetEff=0;
+  if (!doMultiCanvas) cJetEff = new TCanvas("cJetEff","cJetEff",500,550);
+  TH1F *hTmp = new TH1F("hTmp","",nBin,bin);
+  g1->SetLineColor(kGreen+2); g1->SetMarkerColor(kGreen+2); g1->SetMarkerStyle(kOpenSquare);
+  hTmp->SetAxisRange(0,1.4,"Y");
+  if (doJEC==0) hTmp->SetXTitle("p_{T}^{GenJet} [GeV]");
+  if (doJEC==1) hTmp->SetXTitle("p_{T}^{CaloJet} [GeV]");
+  hTmp->SetYTitle("Eff. (Matched Reco/Gen)");
+  handsomeTH1(hTmp);
+  hTmp->Draw();
+  g0->Draw("p");
+  g1->Draw("p");
+  TLine *l = new TLine(0,1,bin[nBin],1);
+  if (doLeg==1) {
+    l->SetLineStyle(2);
+    l->Draw();
+    TLegend *t = new TLegend(0.51,0.77,0.92,0.90);
+    t->SetHeader(header);
+    t->SetBorderSize(0);
+    t->SetFillStyle(0);
+    t->SetTextSize(0.035);
+    t->AddEntry(g0,"Leading Jet","pl");
+    t->AddEntry(g1,"SubLeading Jet","pl");
+    t->Draw();
+  }
+
+  if (doMultiCanvas) return dj;
+  cJetEff->Print(outtag+"_Eff_vs_GenJEt.gif");
+  cJetEff->Print(outtag+"_Eff_vs_GenJEt.C");
+  cJetEff->Print(outtag+"_Eff_vs_GenJEt.pdf");
+
+  // xcheck plots
   TCanvas * cDr = new TCanvas("cDr","cDr",500,500);
   dj->Draw("nlrjdr>>hDrNr(300,0,6.28)",evtSel);
   dj->Draw("alrjdr>>hDrAw(300,0,6.28)",evtSel,"same");
@@ -100,39 +154,6 @@ TChain * effJet(bool doMC=1,
   dj->Draw("nlrjet",evtSel,"hist E");
   dj->Draw("aljet",evtSel,"same hist");
   dj->Draw("alrjet",evtSel,"same E");
-
-  for (int i=0; i<=nBinRat;++i) binRat[i]=i*2./nBinRat;
-
-  TGraphAsymmErrors *g0=0,*g1=0,*g2=0,*g3=0,*g4=0;
-  dj->SetAlias("fscNr","(1.03-2.33e-4*nljet+6.5e3/pow(nljet,3))");
-  dj->SetAlias("fscAw","(0.87+2.05e-4*nljet+5.74e3/pow(nljet,3))");
-  g0 = eff(dj,"nljet*fscNr",evtSel,"nlrjdr<0.3","NrJEt");
-  g1 = eff(dj,"aljet*fscAw",evtSelAw,"alrjdr<0.3","AwJEt");
-  TH2F * hEff2d = eff2d(dj,"aljet*fscAw:nljet*fscNr",evtSel,"nlrjdr<0.3&&alrjdr<0.3","JEt2D");
-
-  // Draw
-  TCanvas *cJetEff = new TCanvas("cJetEff","cJetEff",500,550);
-  TH1F *hTmp = new TH1F("hTmp","",nBin,bin);
-  g1->SetLineColor(kGreen+2); g1->SetMarkerColor(kGreen+2); g1->SetMarkerStyle(kOpenSquare);
-  hTmp->SetAxisRange(0,1.3,"Y");
-  hTmp->SetXTitle("E_{T}^{CaloJet} [GeV]");
-  hTmp->SetYTitle("Eff. (Matched Reco/Gen)");
-  hTmp->Draw();
-  g0->Draw("p");
-  g1->Draw("p");
-  TLine *l = new TLine(0,1,bin[nBin],1);
-  l->SetLineStyle(2);
-  l->Draw();
-  TLegend *t = new TLegend(0.23,0.78,0.83,0.91);
-  t->SetHeader(header);
-  t->SetBorderSize(0);
-  t->SetFillStyle(0);
-  t->AddEntry(g0,"UnQuen MC - Leading "+tag,"pl");
-  t->AddEntry(g1,"UnQuen MC - Away "+tag,"pl");
-  t->Draw();
-  cJetEff->Print(outtag+"_Eff_vs_GenJEt.gif");
-  cJetEff->Print(outtag+"_Eff_vs_GenJEt.C");
-  cJetEff->Print(outtag+"_Eff_vs_GenJEt.pdf");
 
   TCanvas *cJet2DEff = new TCanvas("cJet2DEff","cJet2DEff",500,550);
   hEff2d->Draw("colz");
