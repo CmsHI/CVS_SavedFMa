@@ -18,7 +18,7 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1.) {
   Int_t nbin0=near->GetNbinsX();
   Int_t nbinc=nbin0*4;
   Int_t delta=0;
-  cout << "nbin0 " << nbin0 << " nbinc: " << nbinc << endl;
+  if (TString(near->GetName()).Contains("1_7")) cout << "nbin0 " << nbin0 << " nbinc: " << nbinc << endl;
 
   // Combine Near and Away
   TH1D* hcombine = new TH1D(Form("hcombine_%s_%s",near->GetName(),away->GetName()),"",nbinc,-1.0*TMath::PiOver2(),3.0*TMath::PiOver2());
@@ -123,22 +123,16 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   //hc1248->GetXaxis()->SetAxisColor(0);
   //hc1248->GetXaxis()->SetLabelColor(0);
 
+  //TGaxis *naxis = new TGaxis(0,0,1.4,0,0,1.4,505,"+");
   TGaxis *naxis = new TGaxis(-1.4,0,1.4,0,-1.4,1.4,505,"+");
   TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,0,TMath::Pi()+1.4,0,-1.4,1.4,505,"+");
   naxis->SetTitle("#DeltaR^{track}_{leading jet}"); naxis->CenterTitle(); naxis->SetTitleOffset(-1.3);
-  naxis->SetLabelFont(63);
-  naxis->SetLabelOffset(0.01); naxis->SetLabelSize(22);
-  naxis->SetTitleFont(63);
-  naxis->SetTitleSize(24);
-  naxis->SetTitleOffset(2);
+  fixedFontAxis(naxis);
   aaxis->SetTitle("#DeltaR^{track}_{sub-leading jet}"); aaxis->CenterTitle(); aaxis->SetTitleOffset(-1.3);
-  aaxis->SetLabelFont(63);
-  aaxis->SetLabelOffset(0.01); aaxis->SetLabelSize(22);
-  aaxis->SetTitleFont(63);
-  aaxis->SetTitleSize(24);
-  aaxis->SetTitleOffset(2);
+  fixedFontAxis(aaxis);
   naxis->Draw();
   aaxis->Draw();
+  //drawPatch(0.294,0.109,0.341,0.163);
   //TGaxis *nuaxis = new TGaxis(-1.0*TMath::PiOver2(),3000.0,1.4,3000.0,-1.0*TMath::PiOver2(),1.4,510,"U-");
   //TGaxis *auaxis = new TGaxis(TMath::Pi()-1.4,3000.0,3.0*TMath::PiOver2(),3000.0,-1.4,TMath::PiOver2(),510,"U-");
   //nuaxis->Draw();
@@ -182,7 +176,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   }
 
   cout << "integral of dET/dR (input hist) = " << nearsum << "(near-side) \t"
-       << awaysum << "(away-side)" << endl;
+       << awaysum << "(away-side) \t Aj:" << (nearsum-awaysum)/(nearsum+awaysum) << endl;
   cout << "integral of dET/dR (combined hist) = " << cnearsum << "(near-side) \t"
        << cawaysum << "(away-side)" << endl;
 }
