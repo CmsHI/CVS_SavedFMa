@@ -45,6 +45,7 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1.) {
 
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
+  hcombine->SetNdivisions(505,"Y");
   hcombine->SetMinimum(0.0001);
   if (normType==0) {
     hcombine->SetMaximum(46);
