@@ -213,11 +213,43 @@ void addCms(TCanvas *c)
 void drawText(const char *text, float xp, float yp){
    TLatex *tex = new TLatex(xp,yp,text);
    tex->SetTextFont(63);
-   tex->SetTextSize(20);
+   //tex->SetTextSize(20);
+   tex->SetTextSize(18);
    //tex->SetTextSize(0.05);                                                                   
    tex->SetTextColor(kBlack);
    tex->SetLineWidth(1);
    tex->SetNDC();
    tex->Draw();
 }
+
+//---------------------------------------------------
+void drawPatch(float x1, float y1, float x2, float y2){
+  TLegend *t1=new TLegend(x1,y1,x2,y2);
+  t1->SetFillColor(kWhite);
+  t1->SetBorderSize(0);
+  t1->SetFillStyle(1001);
+  t1->Draw("");
+}
+
+void fixedFontAxis(TGaxis * ax)
+{
+  ax->SetLabelFont(63);
+  ax->SetLabelOffset(0.01);
+  ax->SetLabelSize(22);
+  ax->SetTitleFont(63);
+  ax->SetTitleSize(24);
+  ax->SetTitleOffset(2);
+}
+//---------------------------------------------------
+void drawTextOver(const char *text, float xp, float yp){
+   TLatex *tex = new TLatex(xp,yp,text);
+   tex->SetTextFont(63);
+   tex->SetTextSize(22);
+   //tex->SetTextSize(0.05);                                                                   
+   tex->SetTextColor(kBlack);
+   tex->SetLineWidth(1);
+   tex->SetNDC();
+   tex->Draw();
+}
+
 #endif
