@@ -19,7 +19,7 @@ void drawTrkEnergyCentAll(
     TString title="_Track",
     TString drawV="d4",
     Int_t logScale=0,
-    Int_t normType=1)
+    Int_t normType=0)
 {
   TCanvas *c1 = new TCanvas("c1","",720,650);
 
@@ -46,9 +46,9 @@ void drawTrkEnergyCentAll(
   drawTrkEnergy("plot/drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to10_Aj0to100_"+BckSub+title+".root",false,false,logScale,normType);
   drawText("0-10%",0.44,downSpace+0.51);
 
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll"+drawV+".gif");
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll"+drawV+".eps");
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll"+drawV+".C");
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll"+drawV+Form("_norm%d.gif",normType));
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll"+drawV+Form("_norm%d.eps",normType));
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll"+drawV+Form("_norm%d.C",normType));
 }
 
 

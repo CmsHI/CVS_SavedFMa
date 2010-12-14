@@ -19,7 +19,7 @@ void drawTrkEnergyAjAll(
     TString title="_Track",
     TString drawV="d4",
     Int_t logScale=0,
-    Int_t normType=1)
+    Int_t normType=0)
 {
   TCanvas *c1 = new TCanvas("c1","",700,650);
 
@@ -50,7 +50,7 @@ void drawTrkEnergyAjAll(
   drawText("0-30%",0.43,downSpace+0.51);
   drawText("A_{J}>0.24",0.43,downSpace+0.43);
 
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubAjAll"+drawV+".gif");
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubAjAll"+drawV+".eps");
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubAjAll"+drawV+".C");
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubAjAll"+drawV+Form("_norm%d.gif",normType));
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubAjAll"+drawV+Form("_norm%d.eps",normType));
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubAjAll"+drawV+Form("_norm%d.C",normType));
 }
