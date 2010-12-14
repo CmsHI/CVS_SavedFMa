@@ -60,9 +60,9 @@ void drawTrkEnergyCentAll32(
   drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.43,0.82);
   drawText("#intL dt = 6.7 #mub^{-1}",0.43,0.74);
 
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll"+drawV+Form("_norm%d.gif",normType));
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll"+drawV+Form("_norm%d.gif",normType));
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll"+drawV+Form("_norm%d.gif",normType));
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll32"+drawV+Form("_norm%d.gif",normType));
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll32"+drawV+Form("_norm%d.eps",normType));
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll32"+drawV+Form("_norm%d.C",normType));
 }
 
 
