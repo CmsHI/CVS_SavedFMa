@@ -13,11 +13,11 @@
 using namespace std;
 
 void drawTrkEnergyCentAll32(
-    TString anaV="CorrEtaHighPtv3WideRBin",
+    TString anaV="CorrEtaHighPtv3RBin20",
     TString module="djcalo",
     TString BckSub="SubEtaRefl",
     TString title="_Track",
-    TString drawV="d4",
+    TString drawV="d5",
     Int_t logScale=0,
     Int_t normType=0)
 {
@@ -48,7 +48,7 @@ void drawTrkEnergyCentAll32(
   c1->cd(4);
   drawTrkEnergy("plot/drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent30to100_Aj0to100_"+BckSub+title+".root",false,false,logScale,normType);
   drawText("30-100%",leftSpace+0.43,downSpace+0.51);
-  drawText("CMS",0.56,downSpace+0.90);
+  drawText("CMS",0.56,downSpace+0.80);
 
   c1->cd(5);
   drawTrkEnergy("plot/drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent10to30_Aj0to100_"+BckSub+title+".root",true,true,logScale,normType);
