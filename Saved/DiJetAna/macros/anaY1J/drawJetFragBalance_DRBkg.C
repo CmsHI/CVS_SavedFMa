@@ -77,9 +77,9 @@ void drawJetFragBalance_DRBkg(
     leg->SetFillStyle(0);
     leg->AddEntry(hNr,Form("%.1f < P_{T} < %.1f GeV",hPt->GetBinLowEdge(iBeg),hPt->GetBinLowEdge(iEnd+1)),"");
     leg->AddEntry(hNr,"Leading Jet","pl");
-    leg->AddEntry(hNrBg,"Leading Jet Bkg","pl");
+    leg->AddEntry(hNrBg,"Leading Jet Bkg","l");
     leg->AddEntry(hAw,"SubLeading Jet","pl");
-    leg->AddEntry(hAwBg,"SubLeading Jet Bkg","pl");
+    leg->AddEntry(hAwBg,"SubLeading Jet Bkg","l");
     leg->SetTextSize(0.05);
     leg->Draw();
   }
