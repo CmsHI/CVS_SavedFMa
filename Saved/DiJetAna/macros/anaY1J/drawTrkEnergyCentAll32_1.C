@@ -77,9 +77,9 @@ void drawTrkEnergyCentAll32_1(
   drawText("Sub-leading jet",0.6,3*downSpace+0.1,15);
 
 
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll32"+drawV+Form("_norm%d.gif",normType));
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll32"+drawV+Form("_norm%d.eps",normType));
-  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll32"+drawV+Form("_norm%d.C",normType));
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll32_leadSub"+drawV+Form("_norm%d.gif",normType));
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll32_leadSub"+drawV+Form("_norm%d.eps",normType));
+  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubCentAll32_leadSub"+drawV+Form("_norm%d.C",normType));
 }
 
 
