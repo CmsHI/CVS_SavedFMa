@@ -13,7 +13,7 @@
 using namespace std;
 
 void drawTrkEnergyCentAll32(
-    TString anaV="CorrEtaHighPtv3RBin20",
+    TString anaV="CorrEtaPtBin4RBin20v1",
     TString module="djcalo",
     TString BckSub="SubEtaRefl",
     TString title="_Track",
@@ -34,7 +34,7 @@ void drawTrkEnergyCentAll32(
   drawText("30-100%",leftSpace+0.43,0.35);
 
   c1->cd(2);
-  drawTrkEnergy("plot/drawn_jfh"+anaV+"_Hydjet_"+module+"_Cent10to30_Aj0to100_"+BckSub+title+".root",false,true,logScale,normType);
+  drawTrkEnergy("plot/drawn_jfh"+anaV+"_Hydjet_"+module+"_Cent10to30_Aj0to100_"+BckSub+title+".root",true,true,logScale,normType);
   drawText("Hydjet",0.43,0.51);
   drawText("+PYTHIA",0.43,0.43);
   drawText("10-30%",0.43,0.35);
@@ -51,7 +51,7 @@ void drawTrkEnergyCentAll32(
   drawText("CMS",0.56,downSpace+0.80);
 
   c1->cd(5);
-  drawTrkEnergy("plot/drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent10to30_Aj0to100_"+BckSub+title+".root",true,true,logScale,normType);
+  drawTrkEnergy("plot/drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent10to30_Aj0to100_"+BckSub+title+".root",false,true,logScale,normType);
   drawText("10-30%",0.43,downSpace+0.51);
 
   c1->cd(6);
