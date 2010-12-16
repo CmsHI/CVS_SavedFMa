@@ -77,18 +77,16 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   TH1D *n0 = (TH1D*) f->Get("hPNDR_1_1");
   TH1D *n1 = (TH1D*) f->Get("hPNDR_1_2");
   TH1D *n2 = (TH1D*) f->Get("hPNDR_1_3");
-  TH1D *nall = (TH1D*) f->Get("hPNDR_1_4");
   //TH1D *n4 = (TH1D*) f->Get("hPNDR_1_4");
   //TH1D *n8 = (TH1D*) f->Get("hPNDR_1_5");
-  //TH1D *nall = (TH1D*) f->Get("hPNDR_1_7");
+  TH1D *nall = (TH1D*) f->Get(Form("hPNDR_1_%d",hPt->GetNbinsX()));
 
   TH1D *a0 = (TH1D*) f->Get("hPADR_1_1");
   TH1D *a1 = (TH1D*) f->Get("hPADR_1_2");
   TH1D *a2 = (TH1D*) f->Get("hPADR_1_3");
-  TH1D *aall = (TH1D*) f->Get("hPADR_1_4");
   //TH1D *a4 = (TH1D*) f->Get("hPADR_1_4");
   //TH1D *a8 = (TH1D*) f->Get("hPADR_1_5");
-  //TH1D *aall = (TH1D*) f->Get("hPADR_1_7");
+  TH1D *aall = (TH1D*) f->Get(Form("hPADR_1_%d",hPt->GetNbinsX()));
 
   TH1::SetDefaultSumw2();
 
@@ -157,7 +155,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
     leg->AddEntry(hc0,Form("%.1f-%.0f GeV/c",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(2)),"f");
     leg->AddEntry(hc01,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(2),hPt->GetBinLowEdge(3)),"f");
     leg->AddEntry(hc12,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(3),hPt->GetBinLowEdge(4)),"f");
-    leg->AddEntry(hcall,Form("%.0f+ GeV/c",hPt->GetBinLowEdge(4),hPt->GetBinLowEdge(5)),"f");
+    leg->AddEntry(hcall,Form("%.0f+ GeV/c",hPt->GetBinLowEdge(hPt->GetNbinsX())),"f");
     leg->Draw();
   }
 
