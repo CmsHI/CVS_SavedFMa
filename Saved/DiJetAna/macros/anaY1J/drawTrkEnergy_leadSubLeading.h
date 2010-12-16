@@ -179,9 +179,9 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   hcall->SetFillStyle(3004);
   //  hc1248->SetFillStyle(fillLeft);
   // hc124->SetFillStyle(fillLeft);
-  hc12->SetFillStyle(3005);
-  hc01->SetFillStyle(3006);
-  hc0->SetFillStyle(3007);
+  hc12->SetFillStyle(3004);
+  hc01->SetFillStyle(3004);
+  hc0->SetFillStyle(3004);
   
   hcall->SetLineColor(kRed);                                                                                                                                                      
   // hc1248->SetLineColor(kRed-6);                                                                                                                                                         
@@ -266,10 +266,11 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
 
   if (drawLeg) {
      TLegend *leg = new TLegend(0.01591379,0.5262957,0.4557399,0.9685675);
+
      leg->SetFillStyle(0);
-    leg->SetBorderSize(0);
-    leg->SetNColumns(1);
-    leg->SetTextSize(0.05);
+     leg->SetBorderSize(0);
+     leg->SetNColumns(1);
+     leg->SetTextSize(0.05);
     /*
     leg->AddEntry(hc0,"0.5-1 GeV/c","f");
     leg->AddEntry(hc01,"1-2 GeV/c","f");

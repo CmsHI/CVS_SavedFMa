@@ -244,9 +244,9 @@ void drawTrkEnergy(TString infile="pythia",
   hcall->SetFillStyle(3004);
   // hc1248->SetFillStyle(fillLeft);
   //  hc124->SetFillStyle(fillLeft);
-  hc12->SetFillStyle(3005);
-  hc01->SetFillStyle(3006);
-  hc0->SetFillStyle(3007);
+  hc12->SetFillStyle(3004);
+  hc01->SetFillStyle(3004);
+  hc0->SetFillStyle(3004);
   
   hcall->SetLineColor(kRed);                                                                                                                                                      
   // hc1248->SetLineColor(kRed-6);                                                                                                                                                         
