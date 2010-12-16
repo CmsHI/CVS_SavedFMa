@@ -61,7 +61,7 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
   if (TString(near->GetName()).Contains("1_7")) cout << "nbin0 " << nbin0 << " nbinc: " << nbinc << endl;
 
   // Combine Near and Away
-  TH1D* hcombine = new TH1D(Form("hcombine_%s_%s",near->GetName(),away->GetName()),"",nbinc,-1.0*TMath::PiOver2(),3.0*TMath::PiOver2());
+  TH1D* hcombine = new TH1D(Form("hcombine_%s_%s",near->GetName(),away->GetName()),"",nbinc,-TMath::Pi()/2, TMath::Pi()/2) ;
 
   if (Left) {
      for(int bin=1+delta; bin<=nbin0; bin++) {
@@ -99,7 +99,8 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
   hcombine->SetMinimum(0.0001);
   if (normType==0) {
     hcombine->SetMaximum(46);
-    hcombine->SetTitle(";;#frac{1}{N_{dijet}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR } (GeV/c)"); // no 2piR in denominator
+    //    hcombine->SetTitle(";;#frac{1}{N_{dijet}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR } (GeV/c)"); // no 2piR in denominator
+    hcombine->SetTitle(";;#Sigmap_{T} per bin (GeV/c)");
   }
   if (normType==1) {
     hcombine->SetMaximum(7.8);
@@ -122,48 +123,52 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   TFile *f = new TFile(infile);
   gStyle->SetMarkerStyle(0);
 
+  TH1D *hPt = (TH1D*) f->Get("hPt");
+  
   TH1D *n0 = (TH1D*) f->Get("hPNDR_1_1");
   TH1D *n1 = (TH1D*) f->Get("hPNDR_1_2");
   TH1D *n2 = (TH1D*) f->Get("hPNDR_1_3");
-  TH1D *n4 = (TH1D*) f->Get("hPNDR_1_4");
-  TH1D *n8 = (TH1D*) f->Get("hPNDR_1_5");
-  TH1D *nall = (TH1D*) f->Get("hPNDR_1_7");
+  //  TH1D *n4 = (TH1D*) f->Get("hPNDR_1_4");
+  //  TH1D *n8 = (TH1D*) f->Get("hPNDR_1_5");
+  TH1D *nall = (TH1D*) f->Get(Form("hPNDR_1_%d",hPt->GetNbinsX()));
+  // TH1D *nall = (TH1D*) f->Get("hPNDR_1_7");
 
   TH1D *a0 = (TH1D*) f->Get("hPADR_1_1");
   TH1D *a1 = (TH1D*) f->Get("hPADR_1_2");
   TH1D *a2 = (TH1D*) f->Get("hPADR_1_3");
-  TH1D *a4 = (TH1D*) f->Get("hPADR_1_4");
-  TH1D *a8 = (TH1D*) f->Get("hPADR_1_5");
-  TH1D *aall = (TH1D*) f->Get("hPADR_1_7");
+  // TH1D *a4 = (TH1D*) f->Get("hPADR_1_4");
+  //  TH1D *a8 = (TH1D*) f->Get("hPADR_1_5");
+  TH1D *aall = (TH1D*) f->Get(Form("hPADR_1_%d",hPt->GetNbinsX()));
+  //TH1D *aall = (TH1D*) f->Get("hPADR_1_7");
 
   TH1::SetDefaultSumw2();
 
   n0->SetFillColor(kGray);
   n1->SetFillColor(kBlue-3);
   n2->SetFillColor(38);
-  n4->SetFillColor(kOrange-8);
-  n8->SetFillColor(kRed-6);
+  //  n4->SetFillColor(kOrange-8);
+  //  n8->SetFillColor(kRed-6);
   nall->SetFillColor(kRed);
   a0->SetFillColor(kGray);
   a1->SetFillColor(kBlue-3);
   a2->SetFillColor(38);
-  a4->SetFillColor(kOrange-8);
-  a8->SetFillColor(kRed-6);
+  //  a4->SetFillColor(kOrange-8);
+  //  a8->SetFillColor(kRed-6);
   aall->SetFillColor(kRed);
 
  
   //TCanvas *c2 = new TCanvas("c2","c2",600,500);
   Float_t norm = 1./(nall->Integral()*nall->GetBinWidth(1));
   TH1D* hcall = combine(nall,aall,normType,norm);
-  TH1D* hc1248 = combine(n8,a8,normType,norm);
-  TH1D* hc124 = combine(n4,a4,normType,norm);
+  //  TH1D* hc1248 = combine(n8,a8,normType,norm);
+  //  TH1D* hc124 = combine(n4,a4,normType,norm);
   TH1D* hc12 = combine(n2,a2,normType,norm);
   TH1D* hc01 = combine(n1,a1,normType,norm);
   TH1D* hc0 = combine(n0,a0,normType,norm);
 
   TH1D* hcallRight = combine(nall,aall,normType,norm,false);
-  TH1D* hc1248Right = combine(n8,a8,normType,norm,false);
-  TH1D* hc124Right = combine(n4,a4,normType,norm,false);
+  //  TH1D* hc1248Right = combine(n8,a8,normType,norm,false);
+  //  TH1D* hc124Right = combine(n4,a4,normType,norm,false);
   TH1D* hc12Right = combine(n2,a2,normType,norm,false);
   TH1D* hc01Right = combine(n1,a1,normType,norm,false);
   TH1D* hc0Right = combine(n0,a0,normType,norm,false);
@@ -171,19 +176,19 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   
   int fillLeft = 3004;
   
-  hcall->SetFillStyle(fillLeft);
-  hc1248->SetFillStyle(fillLeft);
-  hc124->SetFillStyle(fillLeft);
-  hc12->SetFillStyle(fillLeft);
-  hc01->SetFillStyle(fillLeft);
-  hc0->SetFillStyle(fillLeft);
+  hcall->SetFillStyle(3004);
+  //  hc1248->SetFillStyle(fillLeft);
+  // hc124->SetFillStyle(fillLeft);
+  hc12->SetFillStyle(3005);
+  hc01->SetFillStyle(3006);
+  hc0->SetFillStyle(3007);
   
   hcall->SetLineColor(kRed);                                                                                                                                                      
-  hc1248->SetLineColor(kRed-6);                                                                                                                                                         
-  hc124->SetLineColor(kOrange-8);                                                                                                                                                       
+  // hc1248->SetLineColor(kRed-6);                                                                                                                                                         
+  //  hc124->SetLineColor(kOrange-8);                                                                                                                                                       
   hc12->SetLineColor(38);                                                                                                                                                               
   hc01->SetLineColor(kBlue-3);                                                                                                                                                           
-  hc0->SetLineColor(kGray);     
+  hc0->SetLineColor(1);     
   //  hcall->SetLineWidth(2);
   //  hc1248->SetLineWidth(2);
   //  hc124->SetLineWidth(2);
@@ -206,22 +211,22 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   
   float shftAxis= hc12Right->GetBinWidth(1)/2.*gab;
   float drRange = 0.8;
-  hcall->SetAxisRange(TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis);
+  hcall->SetAxisRange(-0.85,0.85,"X"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis);
   hcall->Draw("hist"); hcall->Draw("esame");
-  hc1248->Draw("histsame"); hc1248->Draw("esame"); //chist
-  hc124->Draw("histsame"); hc124->Draw("esame");
+  //  hc1248->Draw("histsame"); hc1248->Draw("esame"); //chist
+  //  hc124->Draw("histsame"); hc124->Draw("esame");
   hc12->Draw("histsame"); hc12->Draw("esame");
   hc01->Draw("histsame"); hc01->Draw("esame");
   hc0->Draw("histsame"); hc0->Draw("esame");
   
   hcallRight->Draw("histsame"); hcallRight->Draw("esame");
-  hc1248Right->Draw("histsame"); hc1248Right->Draw("esame"); //chist
-  hc124Right->Draw("histsame"); hc124Right->Draw("esame");
+  //  hc1248Right->Draw("histsame"); hc1248Right->Draw("esame"); //chist
+  //  hc124Right->Draw("histsame"); hc124Right->Draw("esame");
   hc12Right->Draw("histsame"); hc12Right->Draw("esame");
   hc01Right->Draw("histsame"); hc01Right->Draw("esame");
   hc0Right->Draw("histsame"); hc0Right->Draw("esame");
   
-  jumSun(TMath::Pi()/2-shftAxis,0,TMath::Pi()/2-shftAxis, hcall->GetMaximum(),1,1);
+  jumSun(0,0,0,hcall->GetMaximum(),1,1);
 
   //hc1248->GetXaxis()->SetAxisColor(0);
   //hc1248->GetXaxis()->SetLabelColor(0);
@@ -230,10 +235,10 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   //  TGaxis *naxis = new TGaxis(-1.4,0,1.4,0,-1.4,1.4,505,"+");
   //  TGaxis *naxis = new TGaxis(0,0,TMath::Pi()/2,0,TMath::Pi(),0,10,"+");
   // TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,0,TMath::Pi()+1.4,0,-1.4,1.4,505,"+");
-  TF1 *f1=new TF1("f1","-x",0,1);
-  TGaxis *naxis = new TGaxis(TMath::Pi()/2-1-shftAxis*2,0 , TMath::Pi()/2-shftAxis*2,0,"f1",3,"+");
-  TF1 *f2=new TF1("f2","x",0,1);
-  TGaxis *aaxis = new TGaxis(TMath::Pi()/2,0,TMath::Pi()/2+1,0,"f2",3,"+");
+  TF1 *f1=new TF1("f1","-x",0,0.8);
+  TGaxis *naxis = new TGaxis(-0.8,0,0,0,"f1",3,"+");
+  TF1 *f2=new TF1("f2","x",0,0.8);
+  TGaxis *aaxis = new TGaxis(0,0,0.8,0,"f2",3,"+");
 
   naxis->SetTitle("#DeltaR^{track}_{leading jet}"); naxis->CenterTitle(); naxis->SetTitleOffset(1.7);
   fixedFontAxis(naxis);
@@ -272,12 +277,16 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
     leg->AddEntry(hc124,"4-8 GeV/c","f");
     leg->AddEntry(hc1248,"16+ GeV/c","f");
     */
-    leg->AddEntry(hcallRight,"36+ GeV/c","f");
-    leg->AddEntry(hc1248Right,"18-36 GeV/c","f");
-    leg->AddEntry(hc124Right,"9-18 GeV/c","f");
-    leg->AddEntry(hc12Right,"6-9 GeV/c","f");
-    leg->AddEntry(hc01Right,"3-6 GeV/c","f");
-    leg->AddEntry(hc0Right,"1.5-3 GeV/c","f");
+    //    leg->AddEntry(hcallRight,"36+ GeV/c","f");
+    //  leg->AddEntry(hc1248Right,"18-36 GeV/c","f");
+    ///  leg->AddEntry(hc124Right,"9-18 GeV/c","f");
+    //  leg->AddEntry(hc12Right,"6-9 GeV/c","f");
+    //  leg->AddEntry(hc01Right,"3-6 GeV/c","f");
+    //  leg->AddEntry(hc0Right,"1.5-3 GeV/c","f");
+    leg->AddEntry(hcallRight,Form("%.0f+ GeV/c",hPt->GetBinLowEdge(hPt->GetNbinsX())),"f");
+    leg->AddEntry(hc12Right,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(3),hPt->GetBinLowEdge(4)),"f");
+    leg->AddEntry(hc01Right,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(2),hPt->GetBinLowEdge(3)),"f");
+    leg->AddEntry(hc0Right,Form("%.1f-%.0f GeV/c",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(2)),"f");
     leg->Draw();
   }
 
