@@ -28,9 +28,13 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    const Int_t numDRBins = 20;
    Double_t dRBins[numDRBins+1];
    for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = TMath::PiOver2()/((double)numDRBins)*i; }
-   const Int_t numPtBins = 7;
+   //const Int_t numPtBins = 7;
    //Double_t ptBins[numPtBins+1]={0.5,1,2,4,8,16,64,200};
-   Double_t ptBins[numPtBins+1]={1.5,3,6,9,18,36,72,200};
+   //Double_t ptBins[numPtBins+1]={1.5,3,6,9,18,36,72,200};
+   const Int_t numPtBins = 4;
+   //Double_t ptBins[numPtBins+1]={1.5,4,10,22,200}; // v0
+   //Double_t ptBins[numPtBins+1]={1.5,4,8,12,200}; // v1
+   Double_t ptBins[numPtBins+1]={1.5,4,8,24,200}; // v2
    const Int_t numDPhiBins = 20;
    Double_t dPhiBins[numDPhiBins+1];
    for (int i=0;i<numDPhiBins+1;i++)   { dPhiBins[i] = PI/2./((double)numDPhiBins)*i; }
