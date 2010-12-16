@@ -151,7 +151,8 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
     leg->SetFillStyle(0);
     leg->SetBorderSize(0);
     leg->SetNColumns(2);
-    leg->SetTextSize(0.05);
+    leg->SetTextFont(63);
+    leg->SetTextSize(16);
     leg->AddEntry(hc0,Form("%.1f-%.0f GeV/c",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(2)),"f");
     leg->AddEntry(hc01,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(2),hPt->GetBinLowEdge(3)),"f");
     leg->AddEntry(hc12,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(3),hPt->GetBinLowEdge(4)),"f");
