@@ -21,13 +21,19 @@ using namespace std;
 
 //const int nBin=25;
 //Float_t bin[nBin+1]={0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,90,100,110,120,140,160,200,240,300};
-const int nBin=21;
-Float_t bin[nBin+1]={//1, 5, 6, 8, 10, 12, 15, 
-  18, 21, 24, 28, 32, 37, 43, 50, 56, 64, 74, 84,
-     97, 114, 133, 153, 174, 196, 220, 245, 272, 300//, 330, 362, 395, 430, 468,
+//const int nBin=21;
+//Float_t bin[nBin+1]={//1, 5, 6, 8, 10, 12, 15, 
+//  18, 21, 24, 28, 32, 37, 43, 50, 56, 64, 74, 84,
+//     97, 114, 133, 153, 174, 196, 220, 245, 272, 300//, 330, 362, 395, 430, 468,
      //507, 548, 592, 638, 686, 737, 790, 846, 905, 967,
      // 1032, 1101, 1172, 1248, 1327, 1410, 1497, 1588, 1684, 1784, 1890, 2000};
-     }; 
+//     }; 
+const int nBin=17;
+Float_t bin[nBin+1]={
+  18, 21, 24, 28, 32, 
+  37, 43, 50, 56, 64, 
+  74, 84, 97, 114, 133,
+  174,220,300 };
 const int nBinRat=300;
 Float_t binRat[nBinRat+1];
 const int nBinEta=4;
@@ -58,8 +64,8 @@ TH2F * JES(TTree * t,TString var="nljet/nlrjet:nlrjet",TCut sel="",TCut cut="",T
 }
 
 TChain * scaleResJet(bool doMC=1,
-    TString infile0="dj_Data_MinBias_DijetUnquenched50and80_d20101125to27.root",
-    //TString infile0="dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127v2.root",
+    //TString infile0="dj_Data_MinBias_DijetUnquenched50and80_d20101125to27.root",
+    TString infile0="dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127v2.root",
     //TString infile0="dj_Data_MinBias_DijetUnquenched80_d20101125and1126_MatchedJetGoodTrk1127v2.root",
     //TString infile1="dj_Data_MinBias0to20_DijetUnquenched50_d20101124_StdJetGoodTrk1126.root",
     Float_t centMin=0,
