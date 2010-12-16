@@ -10,26 +10,27 @@
 
 
 void drawJetFragBalance_DR(
-    TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl",
+    TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl.root",
     TString title = "test"
     ) {
-  TFile *f = new TFile(inFileName+".root");
+  TFile *f = new TFile(inFileName);
 
   TH2D * hPtPNDR = (TH2D*) f->Get("hPtPNDR");
   TH2D * hPtPADR = (TH2D*) f->Get("hPtPADR");
   TH2D * hPtPNDRBg = (TH2D*) f->Get("hPtPNDRBg");
   TH2D * hPtPADRBg = (TH2D*) f->Get("hPtPADRBg");
 
+  // Output
+  TString inFileNameStrip(inFileName); inFileNameStrip.ReplaceAll(".root","");
+  TFile *outf = new TFile("plot/drawn_"+inFileNameStrip+"_"+title+".root","RECREATE");
+
   // Get Pt info
   Int_t numBinsPt=hPtPNDR->GetNbinsX();
   TH1D * hPt = (TH1D*)hPtPNDR->ProjectionX("hPt");
   cout << "Pt bins: " << numBinsPt << endl;
 
-  // Output
-  TFile *outf = new TFile("plot/drawn_"+inFileName+"_"+title+".root","RECREATE");
-
   // How many pt bins to draw
-  Int_t endPtBin=6;
+  Int_t endPtBin=numBinsPt;
 
   TCanvas * c6 = new TCanvas("c6","c6",1200,700);
   c6->Divide(3,2);
@@ -72,9 +73,9 @@ void drawJetFragBalance_DR(
     leg->SetTextSize(0.05);
     leg->Draw();
   }
-  c6->Print(Form("plot/%s_%s_DRSubBg.gif",inFileName.Data(),title.Data()));
-  c6->Print(Form("plot/%s_%s_DRSubBg.eps",inFileName.Data(),title.Data()));
-  c6->Print(Form("plot/%s_%s_DRSubBg.C",inFileName.Data(),title.Data()));
+  c6->Print(Form("plot/%s_%s_DRSubBg.gif",inFileNameStrip.Data(),title.Data()));
+  c6->Print(Form("plot/%s_%s_DRSubBg.eps",inFileNameStrip.Data(),title.Data()));
+  c6->Print(Form("plot/%s_%s_DRSubBg.C",inFileNameStrip.Data(),title.Data()));
 
   // All Done
   outf->Write();

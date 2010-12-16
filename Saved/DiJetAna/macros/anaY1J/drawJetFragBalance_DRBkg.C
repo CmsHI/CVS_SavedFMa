@@ -30,7 +30,7 @@ void drawJetFragBalance_DRBkg(
   TFile *outf = new TFile("plot/drawn_"+inFileNameStrip+"_"+title+".root","RECREATE");
 
   // How many pt bins to draw
-  Int_t endPtBin=6;
+  Int_t endPtBin=numBinsPt;
 
   TCanvas * c6 = new TCanvas("c6","c6",1200,700);
   c6->Divide(3,2);
