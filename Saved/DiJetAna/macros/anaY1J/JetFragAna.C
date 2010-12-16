@@ -34,7 +34,8 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    const Int_t numPtBins = 4;
    //Double_t ptBins[numPtBins+1]={1.5,4,10,22,200}; // v0
    //Double_t ptBins[numPtBins+1]={1.5,4,8,12,200}; // v1
-   Double_t ptBins[numPtBins+1]={1.5,4,8,24,200}; // v2
+   //Double_t ptBins[numPtBins+1]={1.5,4,8,24,200}; // v2
+   Double_t ptBins[numPtBins+1]={1.5,4,12,20,200}; // v3
    const Int_t numDPhiBins = 20;
    Double_t dPhiBins[numDPhiBins+1];
    for (int i=0;i<numDPhiBins+1;i++)   { dPhiBins[i] = PI/2./((double)numDPhiBins)*i; }
