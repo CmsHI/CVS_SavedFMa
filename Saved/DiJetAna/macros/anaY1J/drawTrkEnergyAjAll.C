@@ -64,7 +64,7 @@ void drawTrkEnergyAjAll(
   drawText("A_{J}>0.24",0.43,downSpace+0.43);
 
   c1->cd(6);
-  drawTrkEnergy("plot/drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj24to100_"+BckSub+title+".root",false,false,logScale,normType);
+  drawTrkEnergy("plot/drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to100_"+BckSub+title+".root",false,false,logScale,normType);
   drawText("CMS",0.41,0.90);
   drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.41,0.82);
   drawText("#intL dt = 6.7 #mub^{-1}",0.41,0.74);
