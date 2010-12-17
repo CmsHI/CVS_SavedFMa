@@ -50,7 +50,7 @@ void drawJetFragBalance_DRDiff_AjAll(
   drawText("A_{J}<0.24",0.13,downSpace+0.55);
 
 
-  c1->Print(anaV+"_"+BckSub+title+"JetFrag_Pt_AjAll"+drawV+Form("_norm%d.gif",normType));
-  c1->Print(anaV+"_"+BckSub+title+"JetFrag_Pt_AjAll"+drawV+Form("_norm%d.eps",normType));
-  c1->Print(anaV+"_"+BckSub+title+"JetFrag_Pt_AjAll"+drawV+Form("_norm%d.C",normType));
+  c1->Print(anaV+"_"+BckSub+title+"JetFrag_DRDiff_AjAll"+drawV+Form("_norm%d.gif",normType));
+  c1->Print(anaV+"_"+BckSub+title+"JetFrag_DRDiff_AjAll"+drawV+Form("_norm%d.eps",normType));
+  c1->Print(anaV+"_"+BckSub+title+"JetFrag_DRDiff_AjAll"+drawV+Form("_norm%d.C",normType));
 }
