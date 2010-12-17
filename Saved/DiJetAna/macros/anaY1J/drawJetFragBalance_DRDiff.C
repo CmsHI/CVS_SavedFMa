@@ -10,9 +10,10 @@
 using namespace std;
 #include "Saved/DiJetAna/macros/commonUtility.h"
 
+
 void drawJetFragBalance_DRDiff(
-    TString inFileName="jfhCorrEtaPtBin4RBin20v0_HCPR_J50U_djcalo_Cent0to30_Aj0to100_SubEtaRefl.root",
-    TString inFileNameHyPy="jfhCorrEtaPtBin4RBin20v0_Hydjet_J50U_djcalo_Cent0to30_Aj0to100_SubEtaRefl.root",
+			       TString inFileName=    "plot/jfhCorrEtaPtBin4RBin20v2_HCPR_J50U_djcalo_Cent0to30_Aj0to100_SubEtaRefl.root",
+			       TString inFileNameHyPy="plot/jfhCorrEtaPtBin4RBin20v2_Hydjet_djcalo_Cent0to30_Aj0to100_SubEtaRefl.root",
     TString title = "test",
     Int_t drawMode=1,
     Int_t doLeg=1
@@ -73,14 +74,14 @@ void drawJetFragBalance_DRDiff(
   hDRBgSubNr->SetAxisRange(0,0.784,"X");
   hDRBgSubNr->SetAxisRange(0,0.15,"Y");
   fixedFontHist(hDRBgSubNr);
-  hDRBgSubNr->Draw("E");
-  hDRBgSubNrHyPy->Draw("Ehistsame");
-  hDRBgSubAwHyPy->Draw("Ehistsame");
-  hDRBgSubNr->Draw("Esame");
-  hDRBgSubAw->Draw("Esame");
+  hDRBgSubNr->DrawCopy("E");
+  hDRBgSubNrHyPy->DrawCopy("Ehistsame");
+  hDRBgSubAwHyPy->DrawCopy("Ehistsame");
+  hDRBgSubNr->DrawCopy("Esame");
+  hDRBgSubAw->DrawCopy("Esame");
 
   if (doLeg==1) {
-    TLegend *leg = new TLegend(0.2,0.66,0.8,0.93);
+     TLegend *leg = new TLegend(0.302407,0.712258,0.7536548,0.9324599);
     leg->SetFillStyle(0);
     leg->SetBorderSize(0);
     leg->SetTextFont(63);
