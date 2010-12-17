@@ -69,8 +69,8 @@ void drawJetFragBalance_Pt(
   hPtBgSubAwHyPy->Scale(1./totPtBgSubAwHyPy);
   // Styles
   hPtBgSubNr->SetMarkerStyle(kOpenSquare);
-  hPtBgSubNrHyPy->SetLineColor(kRed);
-  hPtBgSubAwHyPy->SetLineColor(kBlue);
+  mcStyle1(hPtBgSubNrHyPy);
+  mcStyle2(hPtBgSubAwHyPy);
   hPtBgSubNrHyPy->SetMarkerStyle(0);
   hPtBgSubAwHyPy->SetMarkerStyle(0);
   // Draw
@@ -91,8 +91,8 @@ void drawJetFragBalance_Pt(
     leg->SetTextSize(16);
     leg->AddEntry(hPtBgSubNr,"Data Leading Jet","pl");
     leg->AddEntry(hPtBgSubAw,"Data SubLeading Jet","pl");
-    leg->AddEntry(hPtBgSubNrHyPy,"PYTHIA+HYDJET Leading Jet","l");
-    leg->AddEntry(hPtBgSubAwHyPy,"PYTHIA+HYDJET SubLeading Jet","l");
+    leg->AddEntry(hPtBgSubNrHyPy,"PYTHIA+HYDJET Leading Jet","f");
+    leg->AddEntry(hPtBgSubAwHyPy,"PYTHIA+HYDJET SubLeading Jet","f");
     leg->Draw();
   }
 }

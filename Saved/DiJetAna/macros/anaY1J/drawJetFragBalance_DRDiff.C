@@ -68,8 +68,8 @@ void drawJetFragBalance_DRDiff(
   hDRBgSubAwHyPy->Scale(1./totPtBgSubAwHyPy);
   // Set Styles
   hDRBgSubNr->SetMarkerStyle(kOpenSquare);
-  hDRBgSubNrHyPy->SetLineColor(kRed);
-  hDRBgSubAwHyPy->SetLineColor(kBlue);
+  mcStyle1(hDRBgSubNrHyPy);
+  mcStyle2(hDRBgSubAwHyPy);
   hDRBgSubNrHyPy->SetMarkerStyle(0);
   hDRBgSubAwHyPy->SetMarkerStyle(0);
   // Draw
