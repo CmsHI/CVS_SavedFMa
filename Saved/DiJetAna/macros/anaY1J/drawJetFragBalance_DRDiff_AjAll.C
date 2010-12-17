@@ -11,6 +11,7 @@
 #include "TString.h"
 #include "drawJetFragBalance_DRDiff.C"
 using namespace std;
+void drawPatch(float x1, float y1, float x2, float y2);
 
 void drawJetFragBalance_DRDiff_AjAll(
     TString anaV="CorrEtaPtBin4RBin20v2",
@@ -33,12 +34,16 @@ void drawJetFragBalance_DRDiff_AjAll(
   drawText("0-30%",0.85,0.9);
 
   drawText("All A_{J}",0.36,downSpace+0.55);
+  drawPatch(0.976,0.0972,1.1,0.171);
   
   c1->cd(2);
   drawJetFragBalance_DRDiff("plot/jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj24to100_"+BckSub+".root",
 			    "jfh"+anaV+"_Hydjet_"+module+"_Cent0to30_Aj24to100_"+BckSub+".root",0,0,0);
   drawText("0-30%",0.78,0.9);
   drawText("A_{J}>0.24",0.13,downSpace+0.55);
+
+  drawPatch(-0.00007,0.0972,0.0518,0.171);
+  drawPatch(0.976,0.0972,1.1,0.141);
   
   c1->cd(3);
   drawJetFragBalance_DRDiff("plot/jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to24_"+BckSub+".root",
@@ -48,9 +53,20 @@ void drawJetFragBalance_DRDiff_AjAll(
   drawText("#intL dt = 6.7 #mub^{-1}",0.41,0.74);
   drawText("0-30%",0.78,0.9);
   drawText("A_{J}<0.24",0.13,downSpace+0.55);
+  drawPatch(-0.00007,0.0972,0.0518,0.171);
 
 
   c1->Print(anaV+"_"+BckSub+title+"JetFrag_DRDiff_AjAll"+drawV+Form("_norm%d.gif",normType));
   c1->Print(anaV+"_"+BckSub+title+"JetFrag_DRDiff_AjAll"+drawV+Form("_norm%d.eps",normType));
   c1->Print(anaV+"_"+BckSub+title+"JetFrag_DRDiff_AjAll"+drawV+Form("_norm%d.C",normType));
 }
+
+
+void drawPatch(float x1, float y1, float x2, float y2){
+   TLegend *t1=new TLegend(x1,y1,x2,y2);
+   t1->SetFillColor(kWhite);
+   t1->SetBorderSize(0);
+   t1->SetFillStyle(1001);
+   t1->Draw("");
+}
+
