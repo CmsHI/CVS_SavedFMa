@@ -6,6 +6,7 @@
 #include <TCanvas.h>
 #include "TError.h"
 #include "TLatex.h"
+#include "TGaxis.h"
 
 void makeMultiPanelCanvas(TCanvas*& canv, const Int_t columns,
                           const Int_t rows, const Float_t leftOffset=0.,
@@ -239,6 +240,23 @@ void fixedFontAxis(TGaxis * ax)
   ax->SetTitleFont(63);
   ax->SetTitleSize(24);
   ax->SetTitleOffset(2);
+}
+
+void fixedFontHist(TH1D * h, Float_t xoffset=1.2, Float_t yoffset=2.)
+{
+  h->SetLabelFont(63,"X");
+  h->SetLabelFont(63,"Y");
+  //h->SetLabelOffset(0.01);
+  h->SetLabelSize(22);
+  h->SetTitleFont(63);
+  h->SetTitleSize(24);
+  h->SetLabelSize(22,"Y");
+  h->SetTitleFont(63,"Y");
+  h->SetTitleSize(24,"Y");
+  h->SetTitleOffset(xoffset,"X");
+  h->SetTitleOffset(yoffset,"Y");
+  h->GetXaxis()->CenterTitle();
+  h->GetYaxis()->CenterTitle();
 }
 //---------------------------------------------------
 void drawTextOver(const char *text, float xp, float yp){
