@@ -74,7 +74,7 @@ void drawJetFragBalance_Pt(
   hPtBgSubNrHyPy->SetMarkerStyle(0);
   hPtBgSubAwHyPy->SetMarkerStyle(0);
   // Draw
-  hPtBgSubNrHyPy->SetTitle(";p_{T}^{Track};fraction of #sum_{R<0.8}p_{T}^{Track}");
+  hPtBgSubNrHyPy->SetTitle(";p_{T}^{Track};F(p_{T}^{Track})");
   hPtBgSubNrHyPy->SetAxisRange(0,0.8,"Y");
   fixedFontHist(hPtBgSubNrHyPy);
   hPtBgSubNrHyPy->DrawCopy("Ehist");
@@ -91,8 +91,8 @@ void drawJetFragBalance_Pt(
     leg->SetTextSize(16);
     leg->AddEntry(hPtBgSubNr,"Data Leading Jet","pl");
     leg->AddEntry(hPtBgSubAw,"Data SubLeading Jet","pl");
-    leg->AddEntry(hPtBgSubNrHyPy,"PYTHIA+HYDJET Leading Jet","f");
-    leg->AddEntry(hPtBgSubAwHyPy,"PYTHIA+HYDJET SubLeading Jet","f");
+    leg->AddEntry(hPtBgSubNrHyPy,"MC Jet","f");
+    leg->AddEntry(hPtBgSubAwHyPy,"MC SubLeading Jet","f");
     leg->Draw();
   }
 }

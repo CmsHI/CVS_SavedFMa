@@ -73,9 +73,9 @@ void drawJetFragBalance_DRDiff(
   hDRBgSubNrHyPy->SetMarkerStyle(0);
   hDRBgSubAwHyPy->SetMarkerStyle(0);
   // Draw
-  hDRBgSubNrHyPy->SetTitle(";R^{track}_{jet};fraction of #sum_{R<0.8}p_{T}^{Track}");
+  hDRBgSubNrHyPy->SetTitle(";R^{track}_{jet};F(p_{T}^{Track})");
   hDRBgSubNrHyPy->SetAxisRange(0,0.784,"X");
-  hDRBgSubNrHyPy->SetAxisRange(0,0.14,"Y");
+  hDRBgSubNrHyPy->SetAxisRange(0,0.1,"Y");
   fixedFontHist(hDRBgSubNrHyPy);
   hDRBgSubNrHyPy->DrawCopy("Ehist");
   hDRBgSubAwHyPy->DrawCopy("Ehistsame");
@@ -91,8 +91,8 @@ void drawJetFragBalance_DRDiff(
     leg->AddEntry(hDRBgSubNr,Form("%.1f < P_{T} < %.1f GeV",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(2)),"");
     leg->AddEntry(hDRBgSubNr,"Data Leading Jet","pl");
     leg->AddEntry(hDRBgSubAw,"Data SubLeading Jet","pl");
-    leg->AddEntry(hDRBgSubNrHyPy,"PYTHIA+HYDJET Leading Jet","l");
-    leg->AddEntry(hDRBgSubAwHyPy,"PYTHIA+HYDJET SubLeading Jet","l");
+    leg->AddEntry(hDRBgSubNrHyPy,"MC Leading Jet","l");
+    leg->AddEntry(hDRBgSubAwHyPy,"MC SubLeading Jet","l");
     leg->Draw();
   }
 }

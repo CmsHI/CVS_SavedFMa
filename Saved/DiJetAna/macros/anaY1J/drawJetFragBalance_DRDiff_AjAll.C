@@ -32,14 +32,14 @@ void drawJetFragBalance_DRDiff_AjAll(
 			    "jfh"+anaV+"_Hydjet_"+module+"_Cent0to30_Aj0to100_"+BckSub+".root",0,0,1);
   drawText("0-30%",0.85,0.9);
 
-  drawText("All A_{J}",0.63+leftSpace,downSpace+0.52);
+  drawText("All A_{J}",0.63+leftSpace,downSpace+0.58);
   drawPatch(0.976,0.0972,1.1,0.171);
   
   c1->cd(2);
   drawJetFragBalance_DRDiff("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj24to100_"+BckSub+".root",
 			    "jfh"+anaV+"_Hydjet_"+module+"_Cent0to30_Aj24to100_"+BckSub+".root",0,0,0);
   drawText("0-30%",0.78,0.9);
-  drawText("A_{J}>0.24",0.63,downSpace+0.52);
+  drawText("A_{J}>0.24",0.63,downSpace+0.58);
 
   drawPatch(-0.00007,0.0972,0.0518,0.171);
   drawPatch(0.976,0.0972,1.1,0.141);
@@ -51,7 +51,7 @@ void drawJetFragBalance_DRDiff_AjAll(
   drawText("PbPb  #sqrt{s}_{_{NN}}=2.76 TeV",0.41,0.82);
   drawText("#intL dt = 6.7 #mub^{-1}",0.41,0.74);
   drawText("0-30%",0.78,0.9);
-  drawText("A_{J}<0.24",0.63,downSpace+0.52);
+  drawText("A_{J}<0.24",0.63,downSpace+0.58);
   drawPatch(-0.00007,0.0972,0.0518,0.171);
 
 
