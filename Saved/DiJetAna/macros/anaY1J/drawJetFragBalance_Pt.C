@@ -22,13 +22,14 @@ void drawJetFragBalance_Pt(
     Int_t doLeg=1
     ) {
   TFile *f = new TFile(inFileName);
+  TString inFileNameStrip(inFileName); inFileNameStrip.ReplaceAll(".root","");
 
   TH2D * hPtPNDR = (TH2D*) f->Get("hPtPNDR");
   TH2D * hPtPADR = (TH2D*) f->Get("hPtPADR");
   TH2D * hPtPNDRBg = (TH2D*) f->Get("hPtPNDRBg");
   TH2D * hPtPADRBg = (TH2D*) f->Get("hPtPADRBg");
-  TH2D * hPtPNDRBgSub = (TH2D*)hPtPNDR->Clone("hPtPNDRBgSub");
-  TH2D * hPtPADRBgSub = (TH2D*)hPtPADR->Clone("hPtPADRBgSub");
+  TH2D * hPtPNDRBgSub = (TH2D*)hPtPNDR->Clone(inFileNameStrip+"hPtPNDRBgSub");
+  TH2D * hPtPADRBgSub = (TH2D*)hPtPADR->Clone(inFileNameStrip+"hPtPADRBgSub");
   hPtPNDRBgSub->Add(hPtPNDR,hPtPNDRBg,1,-1);
   hPtPADRBgSub->Add(hPtPADR,hPtPADRBg,1,-1);
 
@@ -37,8 +38,8 @@ void drawJetFragBalance_Pt(
   TH2D * hPtPADRHyPy = (TH2D*) fhypy->Get("hPtPADR");
   TH2D * hPtPNDRBgHyPy = (TH2D*) fhypy->Get("hPtPNDRBg");
   TH2D * hPtPADRBgHyPy = (TH2D*) fhypy->Get("hPtPADRBg");
-  TH2D * hPtPNDRBgSubHyPy = (TH2D*)hPtPNDR->Clone("hPtPNDRBgSubHyPy");
-  TH2D * hPtPADRBgSubHyPy = (TH2D*)hPtPADR->Clone("hPtPADRBgSubHyPy");
+  TH2D * hPtPNDRBgSubHyPy = (TH2D*)hPtPNDR->Clone(inFileNameStrip+"hPtPNDRBgSubHyPy");
+  TH2D * hPtPADRBgSubHyPy = (TH2D*)hPtPADR->Clone(inFileNameStrip+"hPtPADRBgSubHyPy");
   hPtPNDRBgSubHyPy->Add(hPtPNDRHyPy,hPtPNDRBgHyPy,1,-1);
   hPtPADRBgSubHyPy->Add(hPtPADRHyPy,hPtPADRBgHyPy,1,-1);
 
@@ -56,26 +57,27 @@ void drawJetFragBalance_Pt(
 
   if (drawMode==1) TCanvas * c6 = new TCanvas("c6","c6",500,500);
   gPad->SetLogx();
-  TH1D * hPtBgSubNr = (TH1D*)hPtPNDRBgSub->ProjectionX("hPtBgSubNr");
-  TH1D * hPtBgSubAw = (TH1D*)hPtPADRBgSub->ProjectionX("hPtBgSubAw");
-  TH1D * hPtBgSubNrHyPy = (TH1D*)hPtPNDRBgSubHyPy->ProjectionX("hPtBgSubNrHyPy");
-  TH1D * hPtBgSubAwHyPy = (TH1D*)hPtPADRBgSubHyPy->ProjectionX("hPtBgSubAwHyPy");
+  TH1D * hPtBgSubNr = (TH1D*)hPtPNDRBgSub->ProjectionX(inFileNameStrip+"hPtBgSubNr");
+  TH1D * hPtBgSubAw = (TH1D*)hPtPADRBgSub->ProjectionX(inFileNameStrip+"hPtBgSubAw");
+  TH1D * hPtBgSubNrHyPy = (TH1D*)hPtPNDRBgSubHyPy->ProjectionX(inFileNameStrip+"hPtBgSubNrHyPy");
+  TH1D * hPtBgSubAwHyPy = (TH1D*)hPtPADRBgSubHyPy->ProjectionX(inFileNameStrip+"hPtBgSubAwHyPy");
   cout << "Data Pt tot  Nr: " << hPtBgSubNr->Integral() << " Aw: " << hPtBgSubAw->Integral() << endl;
   cout << "Pythia+Hydjet Pt tot  Nr: " << hPtBgSubNrHyPy->Integral() << " Aw: " << hPtBgSubAwHyPy->Integral() << endl;
   hPtBgSubNr->Scale(1./totPtBgSubNr);
   hPtBgSubAw->Scale(1./totPtBgSubAw);
   hPtBgSubNrHyPy->Scale(1./totPtBgSubNrHyPy);
   hPtBgSubAwHyPy->Scale(1./totPtBgSubAwHyPy);
+  // Styles
   hPtBgSubNr->SetMarkerStyle(kOpenSquare);
   hPtBgSubNrHyPy->SetLineColor(kRed);
   hPtBgSubAwHyPy->SetLineColor(kBlue);
   hPtBgSubNrHyPy->SetMarkerStyle(0);
   hPtBgSubAwHyPy->SetMarkerStyle(0);
-  hPtBgSubNr->SetTitle(";p_{T}^{Track};fraction of #sum_{R<0.8}p_{T}^{Track}");
-  hPtBgSubNr->SetAxisRange(0,0.8,"Y");
-  fixedFontHist(hPtBgSubNr);
-  hPtBgSubNr->DrawCopy("E");
-  hPtBgSubNrHyPy->DrawCopy("Ehistsame");
+  // Draw
+  hPtBgSubNrHyPy->SetTitle(";p_{T}^{Track};fraction of #sum_{R<0.8}p_{T}^{Track}");
+  hPtBgSubNrHyPy->SetAxisRange(0,0.8,"Y");
+  fixedFontHist(hPtBgSubNrHyPy);
+  hPtBgSubNrHyPy->DrawCopy("Ehist");
   hPtBgSubAwHyPy->DrawCopy("Ehistsame");
   hPtBgSubNr->DrawCopy("Esame");
   hPtBgSubAw->DrawCopy("Esame");

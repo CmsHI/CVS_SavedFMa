@@ -11,7 +11,6 @@
 #include "TString.h"
 #include "drawJetFragBalance_DRDiff.C"
 using namespace std;
-void drawPatch(float x1, float y1, float x2, float y2);
 
 void drawJetFragBalance_DRDiff_AjAll(
     TString anaV="CorrEtaPtBin4RBin20v2",
@@ -29,7 +28,7 @@ void drawJetFragBalance_DRDiff_AjAll(
 
   Float_t leftSpace=leftMargin/2., downSpace=bottomMargin/2.;
   c1->cd(1);
-  drawJetFragBalance_DRDiff("plot/jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to100_"+BckSub+".root",
+  drawJetFragBalance_DRDiff("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to100_"+BckSub+".root",
 			    "jfh"+anaV+"_Hydjet_"+module+"_Cent0to30_Aj0to100_"+BckSub+".root",0,0,1);
   drawText("0-30%",0.85,0.9);
 
@@ -37,7 +36,7 @@ void drawJetFragBalance_DRDiff_AjAll(
   drawPatch(0.976,0.0972,1.1,0.171);
   
   c1->cd(2);
-  drawJetFragBalance_DRDiff("plot/jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj24to100_"+BckSub+".root",
+  drawJetFragBalance_DRDiff("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj24to100_"+BckSub+".root",
 			    "jfh"+anaV+"_Hydjet_"+module+"_Cent0to30_Aj24to100_"+BckSub+".root",0,0,0);
   drawText("0-30%",0.78,0.9);
   drawText("A_{J}>0.24",0.13,downSpace+0.55);
@@ -46,7 +45,7 @@ void drawJetFragBalance_DRDiff_AjAll(
   drawPatch(0.976,0.0972,1.1,0.141);
   
   c1->cd(3);
-  drawJetFragBalance_DRDiff("plot/jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to24_"+BckSub+".root",
+  drawJetFragBalance_DRDiff("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to24_"+BckSub+".root",
 			    "jfh"+anaV+"_Hydjet_"+module+"_Cent0to30_Aj0to24_"+BckSub+".root",0,0,0);
   drawText("CMS",0.41,0.90);
   drawText("PbPb  #sqrt{s}_{_{NN}}=2.76 TeV",0.41,0.82);
@@ -60,13 +59,3 @@ void drawJetFragBalance_DRDiff_AjAll(
   c1->Print(anaV+"_"+BckSub+title+"JetFrag_DRDiff_AjAll"+drawV+Form("_norm%d.eps",normType));
   c1->Print(anaV+"_"+BckSub+title+"JetFrag_DRDiff_AjAll"+drawV+Form("_norm%d.C",normType));
 }
-
-
-void drawPatch(float x1, float y1, float x2, float y2){
-   TLegend *t1=new TLegend(x1,y1,x2,y2);
-   t1->SetFillColor(kWhite);
-   t1->SetBorderSize(0);
-   t1->SetFillStyle(1001);
-   t1->Draw("");
-}
-
