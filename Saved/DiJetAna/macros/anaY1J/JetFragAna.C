@@ -24,6 +24,9 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    }
    Init(tree);
 
+   // ntuples
+   ntjt = new TNtuple("ntjt","jet-trk nt","nljetacorr:aljetacorr:metx0:metx1:metx2:metx3:metx4");
+
    // Histograms
    const Int_t numDRBins = 20;
    Double_t dRBins[numDRBins+1];
@@ -36,9 +39,12 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    //Double_t ptBins[numPtBins+1]={1.5,4,8,12,200}; // v1
    //Double_t ptBins[numPtBins+1]={1.5,4,8,24,200}; // v2
    //Double_t ptBins[numPtBins+1]={1.5,4,12,20,200}; // v3
-   const Int_t numPtBins = 200;
-   Double_t ptBins[numPtBins+1];
-   for (int i=0;i<numPtBins+1;++i) { ptBins[i]=200/numPtBins*i; }
+   const Int_t numPtBins = 5;
+   Double_t ptBins[numPtBins+1]={0.5,1.5,4,8,20,1000}; // v0
+   // Fine pt bins
+   //const Int_t numPtBins = 200;
+   //Double_t ptBins[numPtBins+1];
+   //for (int i=0;i<numPtBins+1;++i) { ptBins[i]=200/numPtBins*i; }
    const Int_t numDPhiBins = 20;
    Double_t dPhiBins[numDPhiBins+1];
    for (int i=0;i<numDPhiBins+1;i++)   { dPhiBins[i] = PI/2./((double)numDPhiBins)*i; }
@@ -406,12 +412,17 @@ void JetFragAna::Loop()
 	// -- Loop over Particles --
 	Double_t nrConePt=0,nrConePtBg=0;
 	Double_t awConePt=0,awConePtBg=0;
+	Double_t metx0=0,metx1=0,metx2=0,metx3=0,metx4=0;
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
 	  if (ppt[i]<cut.TrkPtMin) continue;
 	  //cout << "particle " << i << ": ch " << pch[i] << " pt: " << ppt[i] << " pndr: " << pndr[i] << endl;
 	  // Trk histograms
+
+	  // met
+
+	  // bcksub
 	  Double_t PNdRBkg=999,PAdRBkg=999;
 	  if (cut.BkgSubType=="EtaRefl") {
 	    PNdRBkg = reco::deltaR(peta[i],pphi[i],-nljeta,nljphi);
@@ -456,6 +467,9 @@ void JetFragAna::Loop()
 	hAwCPtBg->Fill(awConePtBg);
 	hNrCPtBgSub->Fill(nrConePt-nrConePtBg);
 	hAwCPtBgSub->Fill(awConePt-awConePtBg);
+
+	// fill ntuple
+	ntjt->Fill(anaJets_[0].eta(),anaJets_[1].eta(),0,0,0,0,0);
       }
       // if (Cut(ientry) < 0) continue;
    }
