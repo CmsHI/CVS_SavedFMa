@@ -17,6 +17,7 @@
 #include "TMath.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TNtuple.h"
 //#include "TF1.h"
 #include "Saved/DiJetAna/macros/selectionCut.h"
 const Float_t PI = 3.1415926535897932384626;
@@ -41,6 +42,9 @@ public :
 
    // Corrections
    std::map<TString,TF1*> jetaCorr_;
+
+   // Ntuples
+   TNtuple * ntjt;
 
    // Histograms
    // jet
