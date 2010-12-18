@@ -50,6 +50,7 @@ void anaJetFrag(int doMC=0,
 
   TFile * outf = new TFile(Form("draw/jfh%s_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",AnaVersion.Data(),SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()),"RECREATE");
   JetFragAna jana(djTree,SrcName,doMC);
+  jana.doEvtSel_ = false;
   jana.doEtaCorr_ = true;
   jana.doJetOnly_ = false;
   jana.cut.CentMin = CentMin;

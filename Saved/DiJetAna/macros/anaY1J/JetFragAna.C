@@ -10,6 +10,7 @@ using namespace std;
 
 JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
   cut(tag,doMC),
+  doEvtSel_(true),
   doEtaCorr_(false),
   doJetOnly_(true),
   anaGenpType_(0),
@@ -25,7 +26,7 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    Init(tree);
 
    // ntuples
-   ntjt = new TNtuple("ntjt","jet-trk nt","nljetacorr:aljetacorr:metx0:metx1:metx2:metx3:metx4");
+   ntjt = new TNtuple("ntjt","jet-trk nt","nljetacorr:aljetacorr:metx:metx0:metx1:metx2:metx3:metx4:maskEvt");
 
    // Histograms
    const Int_t numDRBins = 20;
@@ -276,6 +277,55 @@ void JetFragAna::Show(Long64_t entry)
    if (!fChain) return;
    fChain->Show(entry);
 }
+
+Bool_t JetFragAna::GetEvtMask()
+{
+  // Bad hcal events from Marguerite
+  if(run== 151211 && evt == 555881 && lumi ==  103 ) return true;;
+  if(run== 151238 && evt == 581194 && lumi ==  105 ) return true;;
+  if(run== 151238 && evt == 1299690 && lumi ==  242) return true;;
+  if(run== 151352 && evt == 55195 && lumi ==  10   ) return true;;
+  if(run== 151878 && evt == 594808 && lumi ==  135 ) return true;;
+  if(run== 152047 && evt == 666877 && lumi ==  114 ) return true;;
+  if(run== 152112 && evt == 2207843 && lumi ==  426) return true;;
+  if(run== 152112 && evt == 3151220 && lumi ==  608) return true;;
+  if(run== 152349 && evt == 939393 && lumi ==  220 ) return true;;
+  if(run== 152350 && evt == 595632 && lumi ==  111 ) return true;;
+  if(run== 152350 && evt == 2482917 && lumi ==  472) return true;;
+  if(run== 152350 && evt == 2686548 && lumi ==  512) return true;;
+  if(run== 152474 && evt == 2085185 && lumi ==  403) return true;;
+  if(run== 152477 && evt == 1890056 && lumi ==  392) return true;;
+  if(run== 152485 && evt == 55917 && lumi ==  12   ) return true;;
+  if(run== 152561 && evt == 3406888 && lumi ==  606) return true;;
+  if(run== 152561 && evt == 3758331 && lumi ==  670) return true;;
+  if(run== 152561 && evt == 4478132 && lumi ==  803) return true;;
+  if(run== 152561 && evt == 4797830 && lumi ==  863) return true;;
+  if(run== 152561 && evt == 5176016 && lumi ==  936) return true;;
+  if(run== 152592 && evt == 22234 && lumi ==  4    ) return true;;
+  if(run== 152592 && evt == 402212 && lumi ==  66  ) return true;;
+  if(run== 152594 && evt == 587793 && lumi ==  110 ) return true;;
+  if(run== 152601 && evt == 1417393 && lumi ==  267) return true;;
+  if(run== 152602 && evt == 686565 && lumi ==  111 ) return true;;
+  if(run== 152602 && evt == 3940942 && lumi ==  684) return true;;
+  if(run== 152624 && evt == 995626 && lumi ==  170 ) return true;;
+  if(run== 152624 && evt == 1063452 && lumi ==  182) return true;;
+  if(run== 152624 && evt == 1250655 && lumi ==  215) return true;;
+  if(run== 152624 && evt == 1846646 && lumi ==  322) return true;;
+  if(run== 152625 && evt == 1634959 && lumi ==  282) return true;;
+  if(run== 152625 && evt == 3162245 && lumi ==  563) return true;;
+  if(run== 152641 && evt == 173478 && lumi ==  31  ) return true;;
+  if(run== 152642 && evt == 359181 && lumi ==  57  ) return true;;
+  if(run== 152642 && evt == 1764595 && lumi ==  286) return true;;
+  if(run== 152642 && evt == 2686223 && lumi ==  446) return true;;
+  if(run== 152721 && evt == 1304320 && lumi ==  249) return true;;
+  if(run== 152721 && evt == 1983505 && lumi ==  358) return true;;
+  if(run== 152722 && evt == 2963949 && lumi ==  485) return true;;
+  if(run== 152741 && evt == 558533 && lumi ==  91  ) return true;;
+  if(run== 152751 && evt == 3432123 && lumi ==  582) return true;;
+  if(run== 152791 && evt == 246343 && lumi ==  39  ) return true;;
+  return false;
+}
+
 Int_t JetFragAna::Cut(Long64_t entry)
 {
   // This function may be called from Loop.
@@ -378,7 +428,8 @@ void JetFragAna::Loop()
 //by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
 
-   Long64_t nentries = fChain->GetEntriesFast();
+   //Long64_t nentries = fChain->GetEntriesFast();
+   Long64_t nentries = 500;
 
    numDJ_=0;
    Int_t numTotEvt=0, numDJNoBkgLimit=0;
@@ -389,7 +440,7 @@ void JetFragAna::Loop()
       nb = GetEntry(jentry);   nbytes += nb;
       ++numTotEvt;
 
-      if (Cut(ientry)>=0) {
+      if (!doEvtSel_||(Cut(ientry)>=0&&!GetEvtMask())) {
 	++numDJNoBkgLimit;
 	if (cut.BkgSubType=="EtaRefl") {
 	  if (fabs(nljeta)<cut.ConeSize||fabs(aljeta)<cut.ConeSize) continue;
@@ -412,15 +463,22 @@ void JetFragAna::Loop()
 	// -- Loop over Particles --
 	Double_t nrConePt=0,nrConePtBg=0;
 	Double_t awConePt=0,awConePtBg=0;
-	Double_t metx0=0,metx1=0,metx2=0,metx3=0,metx4=0;
+	Double_t metx=0,metx0=0,metx1=0,metx2=0,metx3=0,metx4=0;
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
-	  if (ppt[i]<cut.TrkPtMin) continue;
+	  if (ppt[i]<cut.TrkPtMin||fabs(peta[i])>=2.5) continue;
 	  //cout << "particle " << i << ": ch " << pch[i] << " pt: " << ppt[i] << " pndr: " << pndr[i] << endl;
 	  // Trk histograms
 
 	  // met
+	  Float_t pptx=cos(pndphi[i])*ppt[i];
+	  metx+=pptx;
+	  if (ppt[i]>=hPtPNDR->ProjectionX()->GetBinLowEdge(1)&&ppt[i]<hPtPNDR->ProjectionX()->GetBinLowEdge(2)) metx0+=pptx;
+	  if (ppt[i]>=hPtPNDR->ProjectionX()->GetBinLowEdge(2)&&ppt[i]<hPtPNDR->ProjectionX()->GetBinLowEdge(3)) metx1+=pptx;
+	  if (ppt[i]>=hPtPNDR->ProjectionX()->GetBinLowEdge(3)&&ppt[i]<hPtPNDR->ProjectionX()->GetBinLowEdge(4)) metx2+=pptx;
+	  if (ppt[i]>=hPtPNDR->ProjectionX()->GetBinLowEdge(4)&&ppt[i]<hPtPNDR->ProjectionX()->GetBinLowEdge(5)) metx3+=pptx;
+	  if (ppt[i]>=hPtPNDR->ProjectionX()->GetBinLowEdge(5)&&ppt[i]<hPtPNDR->ProjectionX()->GetBinLowEdge(6)) metx4+=pptx;
 
 	  // bcksub
 	  Double_t PNdRBkg=999,PAdRBkg=999;
@@ -469,7 +527,7 @@ void JetFragAna::Loop()
 	hAwCPtBgSub->Fill(awConePt-awConePtBg);
 
 	// fill ntuple
-	ntjt->Fill(anaJets_[0].eta(),anaJets_[1].eta(),0,0,0,0,0);
+	ntjt->Fill(anaJets_[0].eta(),anaJets_[1].eta(),metx,metx0,metx1,metx2,metx3,metx4,GetEvtMask());
       }
       // if (Cut(ientry) < 0) continue;
    }

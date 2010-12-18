@@ -32,6 +32,7 @@ public :
    selectionCut    cut;
 
    // Loop Ana Vars
+   Bool_t doEvtSel_;
    Bool_t doEtaCorr_;
    Bool_t doJetOnly_;
    Int_t anaGenpType_;
@@ -102,6 +103,7 @@ public :
    Int_t           run;
    Int_t           evt;
    Int_t           lumi;
+   Bool_t	   evtMask;
    vector<bool>    *hlt;
    Int_t           nvtx;
    Int_t           vtxntrks;
@@ -279,6 +281,7 @@ public :
    void     Loop();
    Bool_t   Notify();
    void     Show(Long64_t entry = -1);
+   Bool_t   GetEvtMask();
 };
 
 #endif
