@@ -19,11 +19,11 @@ void anaJetFrag(int doMC=0,
     Double_t AwJEtMax = 500,
     Double_t AjMin = 0,
     Double_t AjMax = 1,
-    Double_t TrkPtMin = 1.5,
+    Double_t TrkPtMin = 0.5,
     TString DJCutType = "Ana", // Ana
-    TString BkgSubType = "EtaRefl", // EtaRefl, PhiRot, None
+    TString BkgSubType = "None", // EtaRefl, PhiRot, None
     // Data
-    const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2.root",
+    const char * inFile0Name="dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0.root",
     TString SrcName = "HCPR_J50U")
     // MC
     //const char * inFile0Name="dj_PyquenUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.root",
