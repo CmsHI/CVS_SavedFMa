@@ -1,5 +1,5 @@
 #!/bin/bash -
-anaV=CorrEtaPtBin200RBin20
+anaV=CorrEtaPtBin200RBin20v1
 infileData="dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0.root"
 #infilePyquen="dj_PyquenUQ80_hiGoodMergedTracks_OfficialSelv2.root"
 infilePyquen="dj_PyquenUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.root"
@@ -8,7 +8,7 @@ infileHyd="dj_HydQ_DJUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.roo
 module="djcalo"
 BkgSub="EtaRefl"
 NrJEtMin=120
-TrkPtMin=1.5
+TrkPtMin=0.5
 AjMed0to30=0.22
 
 # Pyquen
