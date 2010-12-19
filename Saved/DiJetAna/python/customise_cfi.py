@@ -20,6 +20,8 @@ def enableTrigger(process,mode="Jet"):
 
 def enableRECO(process,mode="MC",type="HI"):
   if type=="HI":
+    # trk
+    process.dj_reco_extra*=process.hiGoodTracksSelection
     # pat jet
     process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
     from PhysicsTools.PatAlgos.tools.heavyIonTools import configureHeavyIons
@@ -45,6 +47,7 @@ def enableRECO(process,mode="MC",type="HI"):
     if m!=process.djgen:
       m.jetsrc = "patJets"
     m.refjetsrc = "patJets"
+  process.djcalo.trksrc = "hiGoodTracks"
 
 # If sample is pp disable HI event related variables
 def enablePp(process,recoMode="PpRECO"):
