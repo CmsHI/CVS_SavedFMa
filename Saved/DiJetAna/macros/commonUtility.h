@@ -270,4 +270,16 @@ void drawTextOver(const char *text, float xp, float yp){
    tex->Draw();
 }
 
+//--------------------------------------------------
+void mcStyle1(TH1* h=0) {
+  h->SetLineColor(kRed);
+  h->SetFillColor(kRed-9);
+  h->SetFillStyle(3004);
+}
+void mcStyle2(TH1* h=0) {
+  h->SetLineColor(kBlue);
+  h->SetFillColor(kAzure-8);
+  h->SetFillStyle(3005);
+}
+
 #endif
