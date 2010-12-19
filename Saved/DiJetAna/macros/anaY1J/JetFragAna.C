@@ -436,7 +436,7 @@ void JetFragAna::Loop()
    TH1D * hPt = (TH1D*)hPtPNDR->ProjectionX();
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
-      if (jentry%100==0) cout << "jentry: " << jentry << " " << jentry/float(nentries) << endl;
+      if (jentry%500==0) cout << "jentry: " << jentry << " " << jentry/float(nentries) << endl;
       if (ientry < 0) break;
       nb = GetEntry(jentry);   nbytes += nb;
       ++numTotEvt;
