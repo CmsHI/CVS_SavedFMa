@@ -9,14 +9,15 @@
 #include <TTree.h>
 using namespace std;
 #include "Saved/DiJetAna/macros/commonUtility.h"
-
+#include "Integrate.h"
 
 void drawJetFragBalance_DRDiff(
 			       TString inFileName=    "plot/jfhCorrEtaPtBin4RBin20v2_HCPR_J50U_djcalo_Cent0to30_Aj0to100_SubEtaRefl.root",
 			       TString inFileNameHyPy="plot/jfhCorrEtaPtBin4RBin20v2_Hydjet_djcalo_Cent0to30_Aj0to100_SubEtaRefl.root",
     TString title = "test",
     Int_t drawMode=1,
-    Int_t doLeg=1
+			       Int_t doLeg=1,
+bool cumulative = true
     ) {
   TFile *f = new TFile(inFileName);
   TString inFileNameStrip(inFileName); inFileNameStrip.ReplaceAll(".root","");
@@ -52,12 +53,13 @@ void drawJetFragBalance_DRDiff(
   Double_t totPtBgSubNrHyPy=hPtPNDRBgSubHyPy->Integral();
   Double_t totPtBgSubAwHyPy=hPtPADRBgSubHyPy->Integral();
 
-  TH1D * hDRBgSubNr = (TH1D*)hPtPNDRBgSub->ProjectionY(inFileNameStrip+"hDRBgSubNr",1,1);
-  TH1D * hDRBgSubAw = (TH1D*)hPtPADRBgSub->ProjectionY(inFileNameStrip+"hDRBgSubAw",1,1);
-  TH1D * hDRBgSubNrHyPy = (TH1D*)hPtPNDRBgSubHyPy->ProjectionY(inFileNameStrip+"hDRBgSubNrHyPy",1,1);
-  TH1D * hDRBgSubAwHyPy = (TH1D*)hPtPADRBgSubHyPy->ProjectionY(inFileNameStrip+"hDRBgSubAwHyPy",1,1);
+  int ptUp = 2;
+  TH1D * hDRBgSubNr = (TH1D*)hPtPNDRBgSub->ProjectionY(inFileNameStrip+"hDRBgSubNr",1,ptUp);
+  TH1D * hDRBgSubAw = (TH1D*)hPtPADRBgSub->ProjectionY(inFileNameStrip+"hDRBgSubAw",1,ptUp);
+  TH1D * hDRBgSubNrHyPy = (TH1D*)hPtPNDRBgSubHyPy->ProjectionY(inFileNameStrip+"hDRBgSubNrHyPy",1,ptUp);
+  TH1D * hDRBgSubAwHyPy = (TH1D*)hPtPADRBgSubHyPy->ProjectionY(inFileNameStrip+"hDRBgSubAwHyPy",1,ptUp);
   // Print
-  cout << Form("%.1f < P_{T} < %.1f GeV: ",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(2)) << " SigSubBkg Integral - Nr: " << endl;
+  cout << Form("%.1f < p_{T} < %.1f GeV/c: ",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(ptUp+1)) << " SigSubBkg Integral - Nr: " << endl;
   cout << " Data - Nr: " << hDRBgSubNr->Integral() << " Aw: " << hDRBgSubAw->Integral() << endl;
   cout << " Pythia+Hydjet - Nr: " << hDRBgSubNrHyPy->Integral() << " Aw: " << hDRBgSubAwHyPy->Integral() << endl;
 
@@ -66,6 +68,14 @@ void drawJetFragBalance_DRDiff(
   hDRBgSubAw->Scale(1./totPtBgSubAw);
   hDRBgSubNrHyPy->Scale(1./totPtBgSubNrHyPy);
   hDRBgSubAwHyPy->Scale(1./totPtBgSubAwHyPy);
+
+  if(cumulative){
+     hDRBgSubNr = IntegrateFromLeft(hDRBgSubNr);
+     hDRBgSubAw = IntegrateFromLeft(hDRBgSubAw);
+     hDRBgSubNrHyPy = IntegrateFromLeft(hDRBgSubNrHyPy);
+     hDRBgSubAwHyPy = IntegrateFromLeft(hDRBgSubAwHyPy);
+  }
+
   // Set Styles
   hDRBgSubNr->SetMarkerStyle(kOpenSquare);
   mcStyle1(hDRBgSubNrHyPy);
@@ -73,9 +83,9 @@ void drawJetFragBalance_DRDiff(
   hDRBgSubNrHyPy->SetMarkerStyle(0);
   hDRBgSubAwHyPy->SetMarkerStyle(0);
   // Draw
-  hDRBgSubNrHyPy->SetTitle(";R^{track}_{jet};F(p_{T}^{Track})");
+  hDRBgSubNrHyPy->SetTitle(";#DeltaR_{max};F(#DeltaR<#DeltaR_{max})");
   hDRBgSubNrHyPy->SetAxisRange(0,0.784,"X");
-  hDRBgSubNrHyPy->SetAxisRange(0,0.1,"Y");
+  hDRBgSubNrHyPy->SetAxisRange(0,0.7,"Y");
   fixedFontHist(hDRBgSubNrHyPy);
   hDRBgSubNrHyPy->DrawCopy("Ehist");
   hDRBgSubAwHyPy->DrawCopy("Ehistsame");
@@ -83,12 +93,12 @@ void drawJetFragBalance_DRDiff(
   hDRBgSubAw->DrawCopy("Esame");
 
   if (doLeg==1) {
-     TLegend *leg = new TLegend(0.302407,0.712258,0.7536548,0.9324599);
+     TLegend *leg = new TLegend(0.302407,0.67,0.7536548,0.9324599);
     leg->SetFillStyle(0);
     leg->SetBorderSize(0);
     leg->SetTextFont(63);
     leg->SetTextSize(16);
-    leg->AddEntry(hDRBgSubNr,Form("%.1f < P_{T} < %.1f GeV",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(2)),"");
+    leg->AddEntry(hDRBgSubNr,Form("%.1f < p_{T} < %.1f GeV/c",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(ptUp+1)),"");
     leg->AddEntry(hDRBgSubNr,"Data Leading Jet","pl");
     leg->AddEntry(hDRBgSubAw,"Data SubLeading Jet","pl");
     leg->AddEntry(hDRBgSubNrHyPy,"MC Leading Jet","l");

@@ -7,8 +7,11 @@
 #include <TLegend.h>
 #include <TNtuple.h>
 #include <TTree.h>
+
+#include "Integrate.h"
 using namespace std;
 #include "Saved/DiJetAna/macros/commonUtility.h"
+
 
 Float_t getBinMean(TH1D* h, Int_t ibin)
 {
@@ -16,10 +19,11 @@ Float_t getBinMean(TH1D* h, Int_t ibin)
 }
 
 void drawJetFragBalance_Pt(
-    TString inFileName="jfhCorrEtaPtBin4RBin20v0_HCPR_J50U_djcalo_Cent0to30_Aj0to100_SubEtaRefl.root",
-    TString inFileNameHyPy="jfhCorrEtaPtBin4RBin20v0_Hydjet_J50U_djcalo_Cent0to30_Aj0to100_SubEtaRefl.root",
+    TString inFileName="jfhCorrEtaPtBin4RBin20v1_HCPR_J50U_djcalo_Cent0to30_Aj0to100_SubEtaRefl.root",
+    TString inFileNameHyPy="jfhCorrEtaPtBin4RBin20v1_Hydjet_J50U_djcalo_Cent0to30_Aj0to100_SubEtaRefl.root",
     Int_t drawMode=1,
-    Int_t doLeg=1
+    Int_t doLeg=1,
+    bool cumulative = true
     ) {
   TFile *f = new TFile(inFileName);
   TString inFileNameStrip(inFileName); inFileNameStrip.ReplaceAll(".root","");
@@ -47,6 +51,7 @@ void drawJetFragBalance_Pt(
   Int_t numBinsPt=hPtPNDR->GetNbinsX();
   Int_t numBinsDR=hPtPNDR->GetNbinsY();
   TH1D * hPt = (TH1D*)hPtPNDR->ProjectionX("hPt");
+
   cout << "Pt bins: " << numBinsPt << endl;
 
   Double_t totPtBgSubNr=hPtPNDRBgSub->Integral();
@@ -61,21 +66,35 @@ void drawJetFragBalance_Pt(
   TH1D * hPtBgSubAw = (TH1D*)hPtPADRBgSub->ProjectionX(inFileNameStrip+"hPtBgSubAw");
   TH1D * hPtBgSubNrHyPy = (TH1D*)hPtPNDRBgSubHyPy->ProjectionX(inFileNameStrip+"hPtBgSubNrHyPy");
   TH1D * hPtBgSubAwHyPy = (TH1D*)hPtPADRBgSubHyPy->ProjectionX(inFileNameStrip+"hPtBgSubAwHyPy");
+
   cout << "Data Pt tot  Nr: " << hPtBgSubNr->Integral() << " Aw: " << hPtBgSubAw->Integral() << endl;
   cout << "Pythia+Hydjet Pt tot  Nr: " << hPtBgSubNrHyPy->Integral() << " Aw: " << hPtBgSubAwHyPy->Integral() << endl;
   hPtBgSubNr->Scale(1./totPtBgSubNr);
   hPtBgSubAw->Scale(1./totPtBgSubAw);
   hPtBgSubNrHyPy->Scale(1./totPtBgSubNrHyPy);
   hPtBgSubAwHyPy->Scale(1./totPtBgSubAwHyPy);
+
+  if(cumulative){
+     hPtBgSubNr = IntegrateFromLeft(hPtBgSubNr);
+     hPtBgSubAw = IntegrateFromLeft(hPtBgSubAw);
+     hPtBgSubNrHyPy = IntegrateFromLeft(hPtBgSubNrHyPy);
+     hPtBgSubAwHyPy = IntegrateFromLeft(hPtBgSubAwHyPy);
+  }
+
   // Styles
+  hPtBgSubAw->SetMarkerStyle(kFullCircle);
   hPtBgSubNr->SetMarkerStyle(kOpenSquare);
+
+  hPtBgSubAw->SetMarkerSize(1.);
+  hPtBgSubNr->SetMarkerSize(1.);
+
   mcStyle1(hPtBgSubNrHyPy);
   mcStyle2(hPtBgSubAwHyPy);
   hPtBgSubNrHyPy->SetMarkerStyle(0);
   hPtBgSubAwHyPy->SetMarkerStyle(0);
   // Draw
-  hPtBgSubNrHyPy->SetTitle(";p_{T}^{Track};F(p_{T}^{Track})");
-  hPtBgSubNrHyPy->SetAxisRange(0,0.8,"Y");
+  hPtBgSubNrHyPy->SetTitle(";p_{T}^{max} (GeV/c);F(p_{T}<p_{T}^{max})");
+  hPtBgSubNrHyPy->SetAxisRange(0,1.8,"Y");
   fixedFontHist(hPtBgSubNrHyPy);
   hPtBgSubNrHyPy->DrawCopy("Ehist");
   hPtBgSubAwHyPy->DrawCopy("Ehistsame");
