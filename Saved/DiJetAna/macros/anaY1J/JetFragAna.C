@@ -26,7 +26,7 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    Init(tree);
 
    // ntuples
-   ntjt = new TNtuple("ntjt","jet-trk nt","nljetacorr:aljetacorr:metx:metx0:metx1:metx2:metx3:metx4:maskEvt");
+   ntjt = new TNtuple("ntjt","jet-trk nt","nljet:nljetacorr:aljet:aljetacorr:metx:metx0:metx1:metx2:metx3:metx4:maskEvt");
 
    // Histograms
    const Int_t numDRBins = 20;
@@ -428,14 +428,15 @@ void JetFragAna::Loop()
 //by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
 
-   //Long64_t nentries = fChain->GetEntriesFast();
-   Long64_t nentries = 500;
+   Long64_t nentries = fChain->GetEntriesFast();
 
    numDJ_=0;
    Int_t numTotEvt=0, numDJNoBkgLimit=0;
    Long64_t nbytes = 0, nb = 0;
+   TH1D * hPt = (TH1D*)hPtPNDR->ProjectionX();
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
+      if (jentry%100==0) cout << "jentry: " << jentry << " " << jentry/float(nentries) << endl;
       if (ientry < 0) break;
       nb = GetEntry(jentry);   nbytes += nb;
       ++numTotEvt;
@@ -474,11 +475,12 @@ void JetFragAna::Loop()
 	  // met
 	  Float_t pptx=cos(pndphi[i])*ppt[i];
 	  metx+=pptx;
-	  if (ppt[i]>=hPtPNDR->ProjectionX()->GetBinLowEdge(1)&&ppt[i]<hPtPNDR->ProjectionX()->GetBinLowEdge(2)) metx0+=pptx;
-	  if (ppt[i]>=hPtPNDR->ProjectionX()->GetBinLowEdge(2)&&ppt[i]<hPtPNDR->ProjectionX()->GetBinLowEdge(3)) metx1+=pptx;
-	  if (ppt[i]>=hPtPNDR->ProjectionX()->GetBinLowEdge(3)&&ppt[i]<hPtPNDR->ProjectionX()->GetBinLowEdge(4)) metx2+=pptx;
-	  if (ppt[i]>=hPtPNDR->ProjectionX()->GetBinLowEdge(4)&&ppt[i]<hPtPNDR->ProjectionX()->GetBinLowEdge(5)) metx3+=pptx;
-	  if (ppt[i]>=hPtPNDR->ProjectionX()->GetBinLowEdge(5)&&ppt[i]<hPtPNDR->ProjectionX()->GetBinLowEdge(6)) metx4+=pptx;
+	  //for (int i=0;i<hPt->GetNbinsX()+2;++i) cout << "Bin " << i << " ledge: " << hPt->GetBinLowEdge(i) << endl;
+	  if (ppt[i]>=hPt->GetBinLowEdge(1)&&ppt[i]<hPt->GetBinLowEdge(2)) metx0+=pptx;
+	  if (ppt[i]>=hPt->GetBinLowEdge(2)&&ppt[i]<hPt->GetBinLowEdge(3)) metx1+=pptx;
+	  if (ppt[i]>=hPt->GetBinLowEdge(3)&&ppt[i]<hPt->GetBinLowEdge(4)) metx2+=pptx;
+	  if (ppt[i]>=hPt->GetBinLowEdge(4)&&ppt[i]<hPt->GetBinLowEdge(5)) metx3+=pptx;
+	  if (ppt[i]>=hPt->GetBinLowEdge(5)&&ppt[i]<hPt->GetBinLowEdge(6)) metx4+=pptx;
 
 	  // bcksub
 	  Double_t PNdRBkg=999,PAdRBkg=999;
@@ -527,7 +529,7 @@ void JetFragAna::Loop()
 	hAwCPtBgSub->Fill(awConePt-awConePtBg);
 
 	// fill ntuple
-	ntjt->Fill(anaJets_[0].eta(),anaJets_[1].eta(),metx,metx0,metx1,metx2,metx3,metx4,GetEvtMask());
+	ntjt->Fill(anaJets_[0].pt(),anaJets_[0].eta(),anaJets_[1].pt(),anaJets_[1].eta(),metx,metx0,metx1,metx2,metx3,metx4,GetEvtMask());
       }
       // if (Cut(ientry) < 0) continue;
    }
