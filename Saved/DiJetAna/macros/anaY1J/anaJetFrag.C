@@ -7,13 +7,20 @@
 #include "Saved/DiJetAna/macros/anaY1J/JetFragAna.h"
 using namespace std;
 
-void anaJetFrag(int doMC=0,
+void anaJetFrag(
+    // Data
+    const char * inFile0Name="dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0.root",
+    TString SrcName = "HCPR_J50U",
+    // MC
+    //const char * inFile0Name="dj_PyquenUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.root",
+    //TString SrcName = "PyquenUQ80")
+    int doMC=0,
     TString evtBase="S1",
     TString AnaVersion = "test",
     TString modName = "djcalo",
     Double_t CentMin = 0,
     Double_t CentMax = 30,
-    Double_t NrJEtMin = 120,
+    Double_t NrJEtMin = 100,
     Double_t NrJEtMax = 500,
     Double_t AwJEtMin = 50,
     Double_t AwJEtMax = 500,
@@ -21,20 +28,15 @@ void anaJetFrag(int doMC=0,
     Double_t AjMax = 1,
     Double_t TrkPtMin = 0.5,
     TString DJCutType = "Ana", // Ana
-    TString BkgSubType = "None", // EtaRefl, PhiRot, None
-    // Data
-    const char * inFile0Name="dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0.root",
-    TString SrcName = "HCPR_J50U")
-    // MC
-    //const char * inFile0Name="dj_PyquenUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.root",
-    //TString SrcName = "PyquenUQ80")
+    TString BkgSubType = "None") // EtaRefl, PhiRot, None
 {
   //TH1::SetDefaultSumw2();
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
   cout << "Analyze: " << modName << endl;
-  TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
+  //TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
+  TChain * djTree = new TChain("djTree","dijet Tree");
   djTree->Add(inFile0Name);
   aliases_dijet(djTree,doMC);
   cout << " # entries: " << djTree->GetEntries() << endl;
@@ -48,9 +50,15 @@ void anaJetFrag(int doMC=0,
   jetaCorr["ec4"] = (TF1 *) fetacorr->Get("f4");
   jetaCorr["ec5"] = (TF1 *) fetacorr->Get("f5");
 
-  TFile * outf = new TFile(Form("draw/jfh%s_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",AnaVersion.Data(),SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()),"RECREATE");
+  Bool_t doEvtSel = false;
+  TString outName(Form("draw/jfh%s_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",AnaVersion.Data(),SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()));
+  if (!doEvtSel) {
+   outName=TString("nt_")+inFile0Name;
+  }
+  cout << "Output: " << outName << endl;
+  TFile * outf = new TFile(outName,"RECREATE");
   JetFragAna jana(djTree,SrcName,doMC);
-  jana.doEvtSel_ = false;
+  jana.doEvtSel_ = doEvtSel;
   jana.doEtaCorr_ = true;
   jana.doJetOnly_ = false;
   jana.cut.CentMin = CentMin;
