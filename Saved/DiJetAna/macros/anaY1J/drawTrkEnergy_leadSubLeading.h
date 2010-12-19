@@ -101,7 +101,7 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
   hcombine->SetNdivisions(505,"Y");
   hcombine->SetMinimum(0.0001);
   if (normType==0) {
-    hcombine->SetMaximum(46);
+    hcombine->SetMaximum(59.9);
     //    hcombine->SetTitle(";;#frac{1}{N_{dijet}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR } (GeV/c)"); // no 2piR in denominator
     hcombine->SetTitle(";;#Sigmap_{T} per bin (GeV/c)");
   }

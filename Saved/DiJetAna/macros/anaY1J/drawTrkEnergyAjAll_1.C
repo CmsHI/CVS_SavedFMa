@@ -14,6 +14,7 @@ using namespace std;
 
 void drawTrkEnergyAjAll_1(
     TString anaV="CorrEtaPtBin5RBin20v0",
+    //TString anaV="CorrEtaTrkEffPtBin5RBin20v1",
     TString module="djcalo",
     TString BckSub="SubEtaRefl",
     TString title="_Track",
@@ -49,8 +50,8 @@ void drawTrkEnergyAjAll_1(
   drawText("Leading jet",0.4,3*downSpace+0.1,15);
   drawText("Sub-leading jet",0.72,3*downSpace+0.1,15);
   drawText("CMS",0.33,downSpace+0.80);
-  drawText("PbPb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.82,15);
-  drawText("#intL dt = 6.7 #mub^{-1}",0.33,0.74,15);
+  drawText("PbPb  #sqrt{s}_{_{NN}}=2.76 TeV",0.31,0.82,15);
+  drawText("#intL dt = 6.7 #mub^{-1}",0.31,0.74,15);
   drawText("0-30%",0.33,downSpace+0.51);
 
   c1->cd(4);
