@@ -5,7 +5,7 @@
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
-#include "Saved/DiJetAna/macros/anaY1J/JetFragAna.h"
+#include "JetFragAna.h"
 using namespace std;
 
 JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
@@ -32,21 +32,9 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    const Int_t numDRBins = 20;
    Double_t dRBins[numDRBins+1];
    for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = TMath::PiOver2()/((double)numDRBins)*i; }
-   //const Int_t numPtBins = 7;
-   //Double_t ptBins[numPtBins+1]={0.5,1,2,4,8,16,64,200};
-   //Double_t ptBins[numPtBins+1]={1.5,3,6,9,18,36,72,200};
-   //const Int_t numPtBins = 4;
-   //Double_t ptBins[numPtBins+1]={1.5,4,10,22,200}; // v0
-   //Double_t ptBins[numPtBins+1]={1.5,4,8,12,200}; // v1
-   //Double_t ptBins[numPtBins+1]={1.5,4,8,24,200}; // v2
-   //Double_t ptBins[numPtBins+1]={1.5,4,12,20,200}; // v3
    const Int_t numPtBins = 5;
    //Double_t ptBins[numPtBins+1]={0.5,1.5,4,8,20,1000}; // v0
    Double_t ptBins[numPtBins+1]={0.5,1.5,4,8,20,180}; // v1
-   // Fine pt bins
-   //const Int_t numPtBins = 200;
-   //Double_t ptBins[numPtBins+1];
-   //for (int i=0;i<numPtBins+1;++i) { ptBins[i]=200/numPtBins*i; }
    const Int_t numDPhiBins = 20;
    Double_t dPhiBins[numDPhiBins+1];
    for (int i=0;i<numDPhiBins+1;i++)   { dPhiBins[i] = PI/2./((double)numDPhiBins)*i; }
@@ -95,6 +83,7 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    hAwCPtBg->Sumw2();
    hAwCPtBgSub = new TH1D("hAwCPtBgSub","",cut.numJEtBins*2,-80,cut.hisJEtMax);
    hAwCPtBgSub->Sumw2();
+
    // trk
    const Int_t numPPtBins=18;
    Float_t pptBins[numPPtBins+1] = {0.0,0.2,1,2,3,4,6,8,10,14,18,22,26,30,40,50,60,70,80};
@@ -167,6 +156,7 @@ void JetFragAna::Init(TTree *tree)
    lgppt = 0;
    lgpch = 0;
    lgppid = 0;
+
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -402,31 +392,45 @@ Int_t JetFragAna::GetEntry(Long64_t entry)
   } // finished with entry
   return result;
 }
+
+double JetFragAna::getEffFakeCorrection(double pt,double eta, double cent)
+{
+   
+   int bin = 0;
+
+   // Get the corresponding centrality bin
+   if (cent<10) {
+      bin = 0;
+   } else if (cent<20) {
+      bin = 1;
+   } else if (cent<30) {
+      bin = 2;
+   } else if (cent<50) {
+      bin = 3;   
+   } else if (cent<100) {
+      bin = 4;   
+   }          
+   
+   int etaBin = trackingEtaBin_->FindBin(fabs(eta));
+   int ptBin = trackingPtBin_->FindBin(pt);
+   
+   if (ptBin>21) ptBin= 21;
+ 
+   double eff = trackingEffCorr_[bin]->GetBinContent(etaBin,ptBin);
+   double effErr = trackingEffCorr_[bin]->GetBinError(etaBin,ptBin);
+   double fake = trackingFakeCorr_[bin]->GetBinContent(etaBin,ptBin);
+   if ((1-fake)/eff>10) {
+      cout <<"Correction: Pt = "<<pt <<" eta = "<<eta<<" cent = "<<cent<<endl;
+      cout <<"Correction: Fake = "<<fake <<" eff = "<<eff<<" cor = "<<(1-fake)/eff<<endl;
+      cout <<"Err = "<<effErr/eff<<endl;
+   }
+  
+   return (1-fake)/eff;
+//   return 1.3;
+}
+
 void JetFragAna::Loop()
 {
-//   In a ROOT session, you can do:
-//      Root > .L JetFragAna.C
-//      Root > JetFragAna t
-//      Root > t.GetEntry(12); // Fill t data members with entry number 12
-//      Root > t.Show();       // Show values of entry 12
-//      Root > t.Show(16);     // Read and show values of entry 16
-//      Root > t.Loop();       // Loop on all entries
-//
-
-//     This is the loop skeleton where:
-//    jentry is the global entry number in the chain
-//    ientry is the entry number in the current Tree
-//  Note that the argument to GetEntry must be:
-//    jentry for TChain::GetEntry
-//    ientry for TTree::GetEntry and TBranch::GetEntry
-//
-//       To read only selected branches, Insert statements like:
-// METHOD1:
-//    fChain->SetBranchStatus("*",0);  // disable all branches
-//    fChain->SetBranchStatus("branchname",1);  // activate branchname
-// METHOD2: replace line
-//    fChain->GetEntry(jentry);       //read all branches
-//by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
 
    Long64_t nentries = fChain->GetEntriesFast();
@@ -434,7 +438,13 @@ void JetFragAna::Loop()
    numDJ_=0;
    Int_t numTotEvt=0, numDJNoBkgLimit=0;
    Long64_t nbytes = 0, nb = 0;
+
+   // Pt Bin
    TH1D * hPt = (TH1D*)hPtPNDR->ProjectionX();
+
+  //=======================================================================================================================
+   // Main Loop 
+  //=======================================================================================================================
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (jentry%500==0) cout << "jentry: " << jentry << " " << jentry/float(nentries) << endl;
@@ -450,7 +460,7 @@ void JetFragAna::Loop()
 	if (cut.BkgSubType=="PhiRot") {
 	  if (fabs(nljeta-aljeta)<cut.ConeSize*2) continue;
 	}
-	//cout << "Global Entry: " << jentry << " leading et|eta|phi: " << anaJets_[0] << " away et|eta|phi: " << anaJets_[1] << " jdphi: " << jdphi << endl;
+
 	hJDPhi->Fill(jdphi);
 	hJEtNr->Fill(anaJets_[0].pt());
 	hJEtAw->Fill(anaJets_[1].pt());
@@ -469,12 +479,14 @@ void JetFragAna::Loop()
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
-	  if (ppt[i]<cut.TrkPtMin||fabs(peta[i])>=2.5) continue;
+	  if (ppt[i]<cut.TrkPtMin||fabs(peta[i])>=2.4) continue;
+          double trackWeight=1;
+          if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(ppt[i],peta[i],cent);
 	  //cout << "particle " << i << ": ch " << pch[i] << " pt: " << ppt[i] << " pndr: " << pndr[i] << endl;
 	  // Trk histograms
 
-	  // met
-	  Float_t pptx=cos(pndphi[i])*ppt[i];
+	  // met calculation
+	  Float_t pptx=cos(pndphi[i])*ppt[i]*trackWeight;
 	  metx+=pptx;
 	  //for (int i=0;i<hPt->GetNbinsX()+2;++i) cout << "Bin " << i << " ledge: " << hPt->GetBinLowEdge(i) << endl;
 	  if (ppt[i]>=hPt->GetBinLowEdge(1)&&ppt[i]<hPt->GetBinLowEdge(2)) metx0+=pptx;
@@ -496,30 +508,31 @@ void JetFragAna::Loop()
 
 	  // Signal Cone
 	  if (pndr[i]<cut.ConeSize) {
-	    nrConePt+=ppt[i];
+	    nrConePt+=ppt[i]*trackWeight;
 	    //cout << "Sum so far: " << nrConePt << endl;
-	    hNrCPPt->Fill(ppt[i]);
-	    hPNDR->Fill(pndr[i],ppt[i]);
-	    hPtPNDR->Fill(ppt[i],pndr[i],ppt[i]);
+	    hNrCPPt->Fill(ppt[i],trackWeight);
+	    hPNDR->Fill(pndr[i],ppt[i]*trackWeight);
+	    hPtPNDR->Fill(ppt[i],pndr[i],ppt[i]*trackWeight);
 	  }
 	  if (padr[i]<cut.ConeSize) {
-	    hAwCPPt->Fill(ppt[i]);
-	    awConePt+=ppt[i];
-	    hPADR->Fill(padr[i],ppt[i]);
-	    hPtPADR->Fill(ppt[i],padr[i],ppt[i]);
+	    hAwCPPt->Fill(ppt[i],trackWeight);
+	    awConePt+=ppt[i]*trackWeight;
+	    hPADR->Fill(padr[i],ppt[i]*trackWeight);
+	    hPtPADR->Fill(ppt[i],padr[i],ppt[i]*trackWeight);
 	  }
+
 	  // Background Cone
 	  if (PNdRBkg<cut.ConeSize) {
-	    hNrCPPtBg->Fill(ppt[i]);
-	    nrConePtBg+=ppt[i];
-	    hPNDRBg->Fill(PNdRBkg,ppt[i]);
-	    hPtPNDRBg->Fill(ppt[i],PNdRBkg,ppt[i]);
+	    hNrCPPtBg->Fill(ppt[i],trackWeight);
+	    nrConePtBg+=ppt[i]*trackWeight;
+	    hPNDRBg->Fill(PNdRBkg,ppt[i]*trackWeight);
+	    hPtPNDRBg->Fill(ppt[i],PNdRBkg,ppt[i]*trackWeight);
 	  }
 	  if (PAdRBkg<cut.ConeSize) {
-	    hAwCPPtBg->Fill(ppt[i]);
-	    awConePtBg+=ppt[i];
-	    hPADRBg->Fill(PAdRBkg,ppt[i]);
-	    hPtPADRBg->Fill(ppt[i],PAdRBkg,ppt[i]);
+	    hAwCPPtBg->Fill(ppt[i],trackWeight);
+	    awConePtBg+=ppt[i]*trackWeight;
+	    hPADRBg->Fill(PAdRBkg,ppt[i]*trackWeight);
+	    hPtPADRBg->Fill(ppt[i],PAdRBkg,ppt[i]*trackWeight);
 	  }
 	} // end of particles loop
 	hNrCPt->Fill(nrConePt);

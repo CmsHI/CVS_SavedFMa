@@ -19,7 +19,7 @@
 #include "TH2.h"
 #include "TNtuple.h"
 //#include "TF1.h"
-#include "Saved/DiJetAna/macros/selectionCut.h"
+#include "selectionCut.h"
 const Float_t PI = 3.1415926535897932384626;
 const Float_t HPI = PI/2.;
 const Int_t kMax = 2;
@@ -34,6 +34,7 @@ public :
    // Loop Ana Vars
    Bool_t doEvtSel_;
    Bool_t doEtaCorr_;
+   Bool_t doTrackingEffFakeCorr_;
    Bool_t doJetOnly_;
    Int_t anaGenpType_;
    Int_t numDJ_;
@@ -43,6 +44,10 @@ public :
 
    // Corrections
    std::map<TString,TF1*> jetaCorr_;
+   TH2D* trackingEffCorr_[10];
+   TH2D* trackingFakeCorr_[10];
+   TH1D* trackingPtBin_;
+   TH1D* trackingEtaBin_;
 
    // Ntuples
    TNtuple * ntjt;
@@ -282,6 +287,7 @@ public :
    Bool_t   Notify();
    void     Show(Long64_t entry = -1);
    Bool_t   GetEvtMask();
+   double   getEffFakeCorrection(double pt,double eta, double cent);
 };
 
 #endif
