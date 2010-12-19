@@ -211,11 +211,11 @@ void addCms(TCanvas *c)
 }
 
 //---------------------------------------------------
-void drawText(const char *text, float xp, float yp){
+void drawText(const char *text, float xp, float yp, int textSize=18){
    TLatex *tex = new TLatex(xp,yp,text);
    tex->SetTextFont(63);
    //tex->SetTextSize(20);
-   tex->SetTextSize(18);
+   tex->SetTextSize(textSize);
    //tex->SetTextSize(0.05);                                                                   
    tex->SetTextColor(kBlack);
    tex->SetLineWidth(1);
