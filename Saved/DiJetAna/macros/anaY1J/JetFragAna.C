@@ -41,7 +41,8 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    //Double_t ptBins[numPtBins+1]={1.5,4,8,24,200}; // v2
    //Double_t ptBins[numPtBins+1]={1.5,4,12,20,200}; // v3
    const Int_t numPtBins = 5;
-   Double_t ptBins[numPtBins+1]={0.5,1.5,4,8,20,1000}; // v0
+   //Double_t ptBins[numPtBins+1]={0.5,1.5,4,8,20,1000}; // v0
+   Double_t ptBins[numPtBins+1]={0.5,1.5,4,8,20,180}; // v1
    // Fine pt bins
    //const Int_t numPtBins = 200;
    //Double_t ptBins[numPtBins+1];

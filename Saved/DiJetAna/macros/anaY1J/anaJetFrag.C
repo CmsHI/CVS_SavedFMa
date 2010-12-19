@@ -15,20 +15,21 @@ void anaJetFrag(
     //const char * inFile0Name="dj_PyquenUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.root",
     //TString SrcName = "PyquenUQ80")
     int doMC=0,
-    TString evtBase="S1",
     TString AnaVersion = "test",
     TString modName = "djcalo",
+    Bool_t doEvtSel = true,
+    TString BkgSubType = "None", // EtaRefl, PhiRot, None
     Double_t CentMin = 0,
     Double_t CentMax = 30,
-    Double_t NrJEtMin = 100,
+    Double_t AjMin = 0,
+    Double_t AjMax = 1,
+    Double_t NrJEtMin = 120,
     Double_t NrJEtMax = 500,
     Double_t AwJEtMin = 50,
     Double_t AwJEtMax = 500,
-    Double_t AjMin = 0,
-    Double_t AjMax = 1,
     Double_t TrkPtMin = 0.5,
-    TString DJCutType = "Ana", // Ana
-    TString BkgSubType = "None") // EtaRefl, PhiRot, None
+    TString evtBase="S1",
+    TString DJCutType = "Ana") // Ana
 {
   //TH1::SetDefaultSumw2();
   // Define Inputs
@@ -50,7 +51,6 @@ void anaJetFrag(
   jetaCorr["ec4"] = (TF1 *) fetacorr->Get("f4");
   jetaCorr["ec5"] = (TF1 *) fetacorr->Get("f5");
 
-  Bool_t doEvtSel = false;
   TString outName(Form("draw/jfh%s_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",AnaVersion.Data(),SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()));
   if (!doEvtSel) {
    outName=TString("nt_")+inFile0Name;
