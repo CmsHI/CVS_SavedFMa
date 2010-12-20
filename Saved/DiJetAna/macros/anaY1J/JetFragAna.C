@@ -488,7 +488,7 @@ void JetFragAna::Loop()
         // centrality weight
         int cBin = hCent->FindBin(cent);
         double weight;
-        if (doCentralityReweighting) {
+        if (doCentralityReweighting_) {
            if (hCentralityData_->GetBinContent(cBin)==0 || hCent->GetBinContent(cBin)==0) {
              weight = 0; 
            } else {
