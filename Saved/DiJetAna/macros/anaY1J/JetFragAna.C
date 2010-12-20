@@ -26,10 +26,23 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    Init(tree);
 
    // ntuples
-   ntjt = new TNtuple("ntjt","jet-trk nt","nljet:nljetacorr:aljet:aljetacorr:metx:metx0:metx1:metx2:metx3:metx4:maskEvt:cent");
+   ntjt = new TNtuple("ntjt","jet-trk nt","nljet:nljetacorr:aljet:aljetacorr:"
+                                          "metx:metx0:metx1:metx2:metx3:metx4:"
+                                          "mety:mety0:mety1:mety2:mety3:mety4:"
+                                          "maskEvt:cent:jdphi");
    ntjt->SetAlias("et1","nljet");
    ntjt->SetAlias("et2","aljet");
    ntjt->SetAlias("Aj","(nljet-aljet)/(nljet+aljet)");
+
+   // new bining, use alias to keep flexibility
+   ntjt->SetAlias("metxMerged0","metx0+metx1");
+   ntjt->SetAlias("metxMerged1","metx2");
+   ntjt->SetAlias("metxMerged2","metx3+metx4");
+
+   ntjt->SetAlias("metyMerged0","mety0+mety1");
+   ntjt->SetAlias("metyMerged1","mety2");
+   ntjt->SetAlias("metyMerged2","mety3+mety4");
+
    // Histograms
    const Int_t numDRBins = 20;
    Double_t dRBins[numDRBins+1];
@@ -478,6 +491,7 @@ void JetFragAna::Loop()
 	Double_t nrConePt=0,nrConePtBg=0;
 	Double_t awConePt=0,awConePtBg=0;
 	Double_t metx=0,metx0=0,metx1=0,metx2=0,metx3=0,metx4=0;
+	Double_t mety=0,mety0=0,mety1=0,mety2=0,mety3=0,mety4=0;
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
@@ -490,12 +504,25 @@ void JetFragAna::Loop()
 	  // met calculation
 	  Float_t pptx=cos(pndphi[i])*ppt[i]*trackWeight;
 	  metx+=pptx;
+	  Float_t ppty=sin(pndphi[i])*ppt[i]*trackWeight;
+	  mety+=ppty;
 	  //for (int i=0;i<hPt->GetNbinsX()+2;++i) cout << "Bin " << i << " ledge: " << hPt->GetBinLowEdge(i) << endl;
-	  if (ppt[i]>=hPt->GetBinLowEdge(1)&&ppt[i]<hPt->GetBinLowEdge(2)) metx0+=pptx;
-	  if (ppt[i]>=hPt->GetBinLowEdge(2)&&ppt[i]<hPt->GetBinLowEdge(3)) metx1+=pptx;
-	  if (ppt[i]>=hPt->GetBinLowEdge(3)&&ppt[i]<hPt->GetBinLowEdge(4)) metx2+=pptx;
-	  if (ppt[i]>=hPt->GetBinLowEdge(4)&&ppt[i]<hPt->GetBinLowEdge(5)) metx3+=pptx;
-	  if (ppt[i]>=hPt->GetBinLowEdge(5)&&ppt[i]<hPt->GetBinLowEdge(6)) metx4+=pptx;
+	  if (ppt[i]>=hPt->GetBinLowEdge(1)&&ppt[i]<hPt->GetBinLowEdge(2)) {
+            metx0+=pptx;
+            mety0+=ppty;
+          } else if (ppt[i]>=hPt->GetBinLowEdge(2)&&ppt[i]<hPt->GetBinLowEdge(3)) {
+            metx1+=pptx;
+            mety1+=ppty;
+          } else if (ppt[i]>=hPt->GetBinLowEdge(3)&&ppt[i]<hPt->GetBinLowEdge(4)) {
+            metx2+=pptx;
+            mety2+=ppty;
+          } else if (ppt[i]>=hPt->GetBinLowEdge(4)&&ppt[i]<hPt->GetBinLowEdge(5)) {
+            metx3+=pptx;
+            mety3+=ppty;
+          } else if (ppt[i]>=hPt->GetBinLowEdge(5)&&ppt[i]<hPt->GetBinLowEdge(6)) { 
+            metx4+=pptx;
+            mety4+=ppty;
+          }
 
 	  // bcksub
 	  Double_t PNdRBkg=999,PAdRBkg=999;
@@ -545,7 +572,27 @@ void JetFragAna::Loop()
 	hAwCPtBgSub->Fill(awConePt-awConePtBg);
 
 	// fill ntuple
-	ntjt->Fill(anaJets_[0].pt(),anaJets_[0].eta(),anaJets_[1].pt(),anaJets_[1].eta(),metx,metx0,metx1,metx2,metx3,metx4,GetEvtMask(),cent);
+        Float_t var[100];
+        var[0]=anaJets_[0].pt();
+        var[1]=anaJets_[0].eta();
+        var[2]=anaJets_[1].pt();
+        var[3]=anaJets_[1].eta();
+        var[4]=metx;
+        var[5]=metx0;
+        var[6]=metx1;
+        var[7]=metx2;
+        var[8]=metx3;
+        var[9]=metx4;
+        var[10]=mety;
+        var[11]=mety0;
+        var[12]=mety1;
+        var[13]=mety2;
+        var[14]=mety3;
+        var[15]=mety4;
+        var[16]=GetEvtMask();
+        var[17]=cent;
+        var[18]=jdphi;
+	ntjt->Fill(var);
       }
       // if (Cut(ientry) < 0) continue;
    }
