@@ -39,6 +39,7 @@ public :
    Bool_t doJetOnly_;
    Int_t anaGenpType_;
    Int_t numDJ_;
+   Float_t numDJReWeighted_;
    std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
    std::vector<math::PtEtaPhiMLorentzVector> refJets_;
    std::vector<math::PtEtaPhiMLorentzVector> particles_;
@@ -52,6 +53,7 @@ public :
 
    // Centrality Reweighting
    TH1D *hCentralityData_;
+   TH1D *hCentralityWeight_;
 
    // Ntuples
    TNtuple * ntjt;

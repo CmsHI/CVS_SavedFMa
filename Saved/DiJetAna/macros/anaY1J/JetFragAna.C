@@ -70,6 +70,10 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
 
    // -- 1D hists --
    //TH1::SetDefaultSumw2();
+   // evt
+   // centrality weight
+   hCentralityWeight_ = new TH1D("hCentralityWeight","",40,0,100);
+
    // jet
    hJDPhi = new TH1D("hJDPhi","",50,0,PI);
    hJDPhi->Sumw2();
@@ -454,7 +458,7 @@ void JetFragAna::Loop()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
-   numDJ_=0;
+   numDJ_=0,numDJReWeighted_=0;
    Int_t numTotEvt=0, numDJNoBkgLimit=0;
    Long64_t nbytes = 0, nb = 0;
 
@@ -465,6 +469,10 @@ void JetFragAna::Loop()
    TH1D *hCent = new TH1D("hCent","",40,0,100);
    fChain->Project("hCent","cent",evtCut);
    hCent->Scale(1./hCent->GetEntries());   
+   // Centrality Weight
+   hCentralityWeight_->Divide(hCentralityData_,hCent);
+   // ReWeighted Centrality distribution
+   TH1D *hCentReWeighted = new TH1D("hCentReWeighted","",40,0,100);
 
   //=======================================================================================================================
    // Main Loop 
@@ -485,27 +493,28 @@ void JetFragAna::Loop()
 	  if (fabs(nljeta-aljeta)<cut.ConeSize*2) continue;
 	}
  
-        // centrality weight
         int cBin = hCent->FindBin(cent);
-        double weight;
+        double weight=1;
         if (doCentralityReweighting_) {
            if (hCentralityData_->GetBinContent(cBin)==0 || hCent->GetBinContent(cBin)==0) {
              weight = 0; 
            } else {
-             weight = hCentralityData_->GetBinContent(cBin)/hCent->GetBinContent(cBin);
+             weight = hCentralityWeight_->GetBinContent(cBin);
            }
-        } else {
-           weight =1;
         }
-	hJDPhi->Fill(jdphi);
-	hJEtNr->Fill(anaJets_[0].pt());
-	hJEtAw->Fill(anaJets_[1].pt());
-	hAj->Fill((anaJets_[0].pt()-anaJets_[1].pt())/(anaJets_[0].pt()+anaJets_[1].pt()));
-	hJEtaNr->Fill(anaJets_[0].eta());
-	hJEtaAw->Fill(anaJets_[1].eta());
-	hJDEta->Fill(anaJets_[1].eta()-anaJets_[0].eta());
+
+	// Event Level Histograms
+	hJDPhi->Fill(jdphi,weight);
+	hJEtNr->Fill(anaJets_[0].pt(),weight);
+	hJEtAw->Fill(anaJets_[1].pt(),weight);
+	hAj->Fill((anaJets_[0].pt()-anaJets_[1].pt())/(anaJets_[0].pt()+anaJets_[1].pt()),weight);
+	hJEtaNr->Fill(anaJets_[0].eta(),weight);
+	hJEtaAw->Fill(anaJets_[1].eta(),weight);
+	hJDEta->Fill(anaJets_[1].eta()-anaJets_[0].eta(),weight);
+	hCentReWeighted->Fill(cent,weight);
 
 	++numDJ_;
+	numDJReWeighted_+=weight;
 	if (doJetOnly_) continue;
 
 	// -- Loop over Particles --
@@ -519,6 +528,7 @@ void JetFragAna::Loop()
 	  if (ppt[i]<cut.TrkPtMin||fabs(peta[i])>=2.4) continue;
           double trackWeight=1;
           if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(ppt[i],peta[i],cent);
+          trackWeight *= weight;
 	  //cout << "particle " << i << ": ch " << pch[i] << " pt: " << ppt[i] << " pndr: " << pndr[i] << endl;
 	  // Trk histograms
 
@@ -623,35 +633,38 @@ void JetFragAna::Loop()
    cout << "Total Events: " << numTotEvt << endl;
    cout << "DiJets Selected w/o Bkg Limit: " << numDJNoBkgLimit << " (same as draw cut unless there is jet eta correction)" << endl;
    cout << "DiJets Selected: " << numDJ_ << endl;
-   hJDPhi->Scale(1./(numDJ_));
-   hJEtNr->Scale(1./(numDJ_));
-   hJEtAw->Scale(1./(numDJ_));
-   hAj->Scale(1./(numDJ_));
-   hJEtaNr->Scale(1./(numDJ_));
-   hJEtaAw->Scale(1./(numDJ_));
-   hJDEta->Scale(1./(numDJ_));
+   cout << "DiJets Selected Reweighted: " << numDJReWeighted_ << endl;
 
-   hNrCPPt->Scale(1./numDJ_);
-   hAwCPPt->Scale(1./numDJ_);
-   hNrCPPtBg->Scale(1./numDJ_);
-   hAwCPPtBg->Scale(1./numDJ_);
+   hJDPhi->Scale(1./(numDJReWeighted_));
+   hJEtNr->Scale(1./(numDJReWeighted_));
+   hJEtAw->Scale(1./(numDJReWeighted_));
+   hAj->Scale(1./(numDJReWeighted_));
+   hJEtaNr->Scale(1./(numDJReWeighted_));
+   hJEtaAw->Scale(1./(numDJReWeighted_));
+   hJDEta->Scale(1./(numDJReWeighted_));
+   hCentReWeighted->Scale(1./(numDJReWeighted_));
+
+   hNrCPPt->Scale(1./numDJReWeighted_);
+   hAwCPPt->Scale(1./numDJReWeighted_);
+   hNrCPPtBg->Scale(1./numDJReWeighted_);
+   hAwCPPtBg->Scale(1./numDJReWeighted_);
    hNrCPPtBgSub->Add(hNrCPPt,hNrCPPtBg,1,-1);
    hAwCPPtBgSub->Add(hAwCPPt,hAwCPPtBg,1,-1);
 
-   hNrCPt->Scale(1./(numDJ_));
-   hAwCPt->Scale(1./(numDJ_));
-   hNrCPtBg->Scale(1./(numDJ_));
-   hAwCPtBg->Scale(1./(numDJ_));
-   hNrCPtBgSub->Scale(1./(numDJ_));
-   hAwCPtBgSub->Scale(1./(numDJ_));
+   hNrCPt->Scale(1./(numDJReWeighted_));
+   hAwCPt->Scale(1./(numDJReWeighted_));
+   hNrCPtBg->Scale(1./(numDJReWeighted_));
+   hAwCPtBg->Scale(1./(numDJReWeighted_));
+   hNrCPtBgSub->Scale(1./(numDJReWeighted_));
+   hAwCPtBgSub->Scale(1./(numDJReWeighted_));
 
-   hPNDR->Scale(1./(numDJ_));
-   hPADR->Scale(1./(numDJ_));
-   hPNDRBg->Scale(1./(numDJ_));
-   hPADRBg->Scale(1./(numDJ_));
+   hPNDR->Scale(1./(numDJReWeighted_));
+   hPADR->Scale(1./(numDJReWeighted_));
+   hPNDRBg->Scale(1./(numDJReWeighted_));
+   hPADRBg->Scale(1./(numDJReWeighted_));
 
-   hPtPNDR->Scale(1./(numDJ_));
-   hPtPADR->Scale(1./(numDJ_));
-   hPtPNDRBg->Scale(1./(numDJ_));
-   hPtPADRBg->Scale(1./(numDJ_));
+   hPtPNDR->Scale(1./(numDJReWeighted_));
+   hPtPADR->Scale(1./(numDJReWeighted_));
+   hPtPNDRBg->Scale(1./(numDJReWeighted_));
+   hPtPADRBg->Scale(1./(numDJReWeighted_));
 }
