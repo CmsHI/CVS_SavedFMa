@@ -215,6 +215,8 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   float shftAxis= hc12Right->GetBinWidth(1)/2.*gab;
   float drRange = 0.8;
   hcall->SetAxisRange(-0.85,0.85,"X"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis);
+  hcall->SetAxisRange(0,70,"Y"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis);                                          
+
   hcall->Draw("hist"); hcall->Draw("esame");
   //  hc1248->Draw("histsame"); hc1248->Draw("esame"); //chist
     hc124->Draw("histsame"); hc124->Draw("esame");
