@@ -5,6 +5,7 @@
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
+#include <TCut.h>
 #include "JetFragAna.h"
 using namespace std;
 
@@ -25,11 +26,14 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    }
    Init(tree);
 
+   // event cut for centrality reweighting:
+   evtCut = "nljet>120&&abs(nljeta)<2&&aljet>50&&abs(aljeta)<2&&jdphi>2./3*TMath::Pi()";
+
    // ntuples
    ntjt = new TNtuple("ntjt","jet-trk nt","nljet:nljetacorr:aljet:aljetacorr:"
                                           "metx:metx0:metx1:metx2:metx3:metx4:"
                                           "mety:mety0:mety1:mety2:mety3:mety4:"
-                                          "maskEvt:cent:jdphi");
+                                          "maskEvt:cent:jdphi:weight");
    ntjt->SetAlias("et1","nljet");
    ntjt->SetAlias("et2","aljet");
    ntjt->SetAlias("Aj","(nljet-aljet)/(nljet+aljet)");
@@ -457,6 +461,11 @@ void JetFragAna::Loop()
    // Pt Bin
    TH1D * hPt = (TH1D*)hPtPNDR->ProjectionX();
 
+   // Centrality distribution
+   TH1D *hCent = new TH1D("hCent","",40,0,100);
+   fChain->Project("hCent","cent",evtCut);
+   hCent->Scale(1./hCent->GetEntries());   
+
   //=======================================================================================================================
    // Main Loop 
   //=======================================================================================================================
@@ -475,7 +484,19 @@ void JetFragAna::Loop()
 	if (cut.BkgSubType=="PhiRot") {
 	  if (fabs(nljeta-aljeta)<cut.ConeSize*2) continue;
 	}
-
+ 
+        // centrality weight
+        int cBin = hCent->FindBin(cent);
+        double weight;
+        if (doCentralityReweighting) {
+           if (hCentralityData_->GetBinContent(cBin)==0 || hCent->GetBinContent(cBin)==0) {
+             weight = 0; 
+           } else {
+             weight = hCentralityData_->GetBinContent(cBin)/hCent->GetBinContent(cBin);
+           }
+        } else {
+           weight =1;
+        }
 	hJDPhi->Fill(jdphi);
 	hJEtNr->Fill(anaJets_[0].pt());
 	hJEtAw->Fill(anaJets_[1].pt());
@@ -592,6 +613,7 @@ void JetFragAna::Loop()
         var[16]=GetEvtMask();
         var[17]=cent;
         var[18]=jdphi;
+        var[19]=weight;
 	ntjt->Fill(var);
       }
       // if (Cut(ientry) < 0) continue;

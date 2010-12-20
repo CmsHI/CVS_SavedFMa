@@ -35,6 +35,7 @@ public :
    Bool_t doEvtSel_;
    Bool_t doEtaCorr_;
    Bool_t doTrackingEffFakeCorr_;
+   Bool_t doCentralityReweighting_;
    Bool_t doJetOnly_;
    Int_t anaGenpType_;
    Int_t numDJ_;
@@ -44,10 +45,13 @@ public :
 
    // Corrections
    std::map<TString,TF1*> jetaCorr_;
-   TH2D* trackingEffCorr_[10];
-   TH2D* trackingFakeCorr_[10];
-   TH1D* trackingPtBin_;
-   TH1D* trackingEtaBin_;
+   TH2D *trackingEffCorr_[10];
+   TH2D *trackingFakeCorr_[10];
+   TH1D *trackingPtBin_;
+   TH1D *trackingEtaBin_;
+
+   // Centrality Reweighting
+   TH1D *hCentralityData_;
 
    // Ntuples
    TNtuple * ntjt;
@@ -103,6 +107,9 @@ public :
    TH2D * hPtPADPhi;
    TH2D * hPtPNDPhiBg;
    TH2D * hPtPADPhiBg;
+
+   // Event cut for centrality reweighting
+   TCut evtCut;
 
    // Declaration of leaf types
    Int_t           run;

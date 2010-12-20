@@ -65,6 +65,11 @@ void anaJetFrag(
      hTrackingEff[i]=(TH2D*)fTrackingEffCorr->FindObjectAny(Form("rEff_cbin%d",i));
      hTrackingFake[i]=(TH2D*)fTrackingEffCorr->FindObjectAny(Form("rFak_cbin%d",i));
   }
+  //=======================================================================================================================
+  // centrality reweighting
+  //=======================================================================================================================
+  TFile *fCent = new TFile("Centrality.root");
+  TH1D *hCentralityData = (TH1D*)fCent->Get("h");
 
   //=======================================================================================================================
   // tracking efficiency correction
@@ -80,6 +85,7 @@ void anaJetFrag(
   jana.doEvtSel_ = doEvtSel;
   jana.doEtaCorr_ = true;
   jana.doTrackingEffFakeCorr_ = true;
+  jana.doCentralityReweighting_ = true;
   jana.doJetOnly_ = false;
   jana.cut.CentMin = CentMin;
   jana.cut.CentMax = CentMax;
@@ -99,6 +105,7 @@ void anaJetFrag(
   jana.cut.DJAnd(TCut(Form("Aj>=%.2f&&Aj<%.2f",AjMin,AjMax)));
   jana.cut.Print(1);
   jana.jetaCorr_ = jetaCorr;
+  jana.hCentralityData_ = hCentralityData;  // centrality distribution from data
 
   jana.trackingEtaBin_ = (TH1D*)hTrackingEff[0]->ProjectionX();
   jana.trackingPtBin_ = (TH1D*)hTrackingEff[0]->ProjectionY();
