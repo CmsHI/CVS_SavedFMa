@@ -20,6 +20,9 @@ void drawJetFragBalance_DR(
   TH2D * hPtPNDRBg = (TH2D*) f->Get("hPtPNDRBg");
   TH2D * hPtPADRBg = (TH2D*) f->Get("hPtPADRBg");
 
+  TH1D * hNrCPtBgSub = (TH1D*) f->Get("hNrCPtBgSub");
+  TH1D * hAwCPtBgSub = (TH1D*) f->Get("hAwCPtBgSub");
+
   // Output
   TString inFileNameStrip(inFileName); inFileNameStrip.ReplaceAll(".root","");
   TFile *outf = new TFile("plot/drawn_"+inFileNameStrip+"_"+title+".root","RECREATE");
@@ -73,6 +76,8 @@ void drawJetFragBalance_DR(
     leg->SetTextSize(0.05);
     leg->Draw();
   }
+  // xcheck
+  cout << "Loop cone sum - Nr : " << hNrCPtBgSub->GetMean() << " Aw: " << hAwCPtBgSub->GetMean() << endl;
   c6->Print(Form("plot/%s_%s_DRSubBg.gif",inFileNameStrip.Data(),title.Data()));
   c6->Print(Form("plot/%s_%s_DRSubBg.eps",inFileNameStrip.Data(),title.Data()));
   c6->Print(Form("plot/%s_%s_DRSubBg.C",inFileNameStrip.Data(),title.Data()));
