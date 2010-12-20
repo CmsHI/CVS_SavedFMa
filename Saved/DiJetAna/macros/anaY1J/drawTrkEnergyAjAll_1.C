@@ -36,7 +36,8 @@ void drawTrkEnergyAjAll_1(
   drawText("Hydjet",0.33,0.81);
   drawText("+PYTHIA",0.33,0.73);
   drawText("0-30%",0.33,0.60);
-
+  drawPatch(0,0.0,0.28,0.1);
+  
   c1->cd(2);
   drawTrkEnergy("plot/drawn_jfh"+anaV+"_Hydjet_"+module+"_Cent0to30_Aj15to29_"+BckSub+title+".root",true,true,logScale,normType);
   drawText("0.15 < A_{J} < 0.29",0.63,0.52);
@@ -52,7 +53,7 @@ void drawTrkEnergyAjAll_1(
 
   c1->cd(4);
   drawTrkEnergy("plot/drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to15_"+BckSub+title+".root",false,true,logScale,normType);
-  drawText("A_{J} > 0.15",leftSpace+0.63,downSpace+0.43);
+  drawText("A_{J} < 0.15",leftSpace+0.63,downSpace+0.43);
   drawText("Leading jet",0.4,3*downSpace+0.1,15);
   drawText("Sub-leading jet",0.72,3*downSpace+0.1,15);
   drawText("CMS",0.33,downSpace+0.80);
