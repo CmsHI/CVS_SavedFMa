@@ -1,8 +1,8 @@
 #!/bin/bash -
 #macro="drawMeanAJ.C"
 macro="drawJetFragBalance_DR.C"
-anaV=CorrEtaTrkEffPtBin5RBin20v3xcheck
-module="djcalo"
+anaV=CorrEtaTrkEffPtBin5RBin20v4
+module="djcalo_genp"
 BkgSub="SubEtaRefl"
 Title="Track"
 

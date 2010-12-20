@@ -90,7 +90,10 @@ void anaJetFrag(
   jana.cut.DJCutType = DJCutType;
   jana.cut.TrkPtMin = TrkPtMin;
   jana.cut.ConeSize = 0.8;
-  if (modName=="djcalo_genp"||modName=="djgen") jana.anaGenpType_=1;
+  if (modName=="djcalo_genp"||modName=="djgen") {
+    jana.anaGenpType_=1;
+    jana.doTrackingEffFakeCorr_ = false;
+  }
   jana.cut.BkgSubType = BkgSubType;
   jana.cut.SetCut();
   jana.cut.DJAnd(TCut(Form("Aj>=%.2f&&Aj<%.2f",AjMin,AjMax)));
