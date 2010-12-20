@@ -26,8 +26,10 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    Init(tree);
 
    // ntuples
-   ntjt = new TNtuple("ntjt","jet-trk nt","nljet:nljetacorr:aljet:aljetacorr:metx:metx0:metx1:metx2:metx3:metx4:maskEvt");
-
+   ntjt = new TNtuple("ntjt","jet-trk nt","nljet:nljetacorr:aljet:aljetacorr:metx:metx0:metx1:metx2:metx3:metx4:maskEvt:cent");
+   ntjt->SetAlias("et1","nljet");
+   ntjt->SetAlias("et2","aljet");
+   ntjt->SetAlias("Aj","(nljet-aljet)/(nljet+aljet)");
    // Histograms
    const Int_t numDRBins = 20;
    Double_t dRBins[numDRBins+1];
@@ -543,7 +545,7 @@ void JetFragAna::Loop()
 	hAwCPtBgSub->Fill(awConePt-awConePtBg);
 
 	// fill ntuple
-	ntjt->Fill(anaJets_[0].pt(),anaJets_[0].eta(),anaJets_[1].pt(),anaJets_[1].eta(),metx,metx0,metx1,metx2,metx3,metx4,GetEvtMask());
+	ntjt->Fill(anaJets_[0].pt(),anaJets_[0].eta(),anaJets_[1].pt(),anaJets_[1].eta(),metx,metx0,metx1,metx2,metx3,metx4,GetEvtMask(),cent);
       }
       // if (Cut(ientry) < 0) continue;
    }

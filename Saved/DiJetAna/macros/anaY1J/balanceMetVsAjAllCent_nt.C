@@ -18,8 +18,13 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    TFile *inf = new TFile(infname);
    TTree *t = (TTree*)inf->Get("djTree");
    TString infnament("nt_"+infname);
+   TFile *inf2 = new TFile(infnament);
+   TTree *t2 = (TTree*)inf->Get("ntjt");
    cout << "Friend tree: " << infnament << endl;
    t->AddFriend("ntjt",infnament);
+   if (t->GetEntries()!=t2->GetEntries()){
+      cout <<"Friend tree has a different number of entries!"<<endl;
+   }
    //t->Print();
 
    const int nBin = 5;
@@ -28,7 +33,7 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
 
    // Selection cut
    TCut evtCut = "nljet>100&&abs(nljetacorr)<2&&aljet>50&&abs(aljetacorr)<2&&jdphi>2./3*TMath::Pi()&&!maskEvt";
-   t->SetAlias("Aj","(nljet-aljet)/(nljet+aljet)");
+
    cout << "Sel evt: " << t->GetEntries(evtCut&&myCut) << endl;
 
    TProfile *p[nBin];

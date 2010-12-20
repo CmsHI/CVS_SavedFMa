@@ -21,7 +21,7 @@ void anaJetFrag(
     Bool_t doEvtSel = true,
     TString BkgSubType = "None", // EtaRefl, PhiRot, None
     Double_t CentMin = 0,
-    Double_t CentMax = 30,
+    Double_t CentMax = 100,
     Double_t AjMin = 0,
     Double_t AjMax = 1,
     Double_t NrJEtMin = 120,
