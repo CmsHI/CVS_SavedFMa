@@ -36,7 +36,7 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = TMath::PiOver2()/((double)numDRBins)*i; }
    const Int_t numPtBins = 5;
    //Double_t ptBins[numPtBins+1]={0.5,1.5,4,8,20,1000}; // v0
-   Double_t ptBins[numPtBins+1]={0.5,1.5,4,8,20,180}; // v1
+   Double_t ptBins[numPtBins+1]={0.5,1.5,4,8,20,180}; // v1,v2
    const Int_t numDPhiBins = 20;
    Double_t dPhiBins[numDPhiBins+1];
    for (int i=0;i<numDPhiBins+1;i++)   { dPhiBins[i] = PI/2./((double)numDPhiBins)*i; }
@@ -77,13 +77,13 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    hNrCPt->Sumw2();
    hNrCPtBg = new TH1D("hNrCPtBg","",cut.numJEtBins*2,cut.hisJEtMin,cut.hisJEtMax);
    hNrCPtBg->Sumw2();
-   hNrCPtBgSub = new TH1D("hNrCPtBgSub","",cut.numJEtBins*2,-80,cut.hisJEtMax);
+   hNrCPtBgSub = new TH1D("hNrCPtBgSub","",cut.numJEtBins*2,-200,cut.hisJEtMax);
    hNrCPtBgSub->Sumw2();
    hAwCPt = new TH1D("hAwCPt","",cut.numJEtBins*2,cut.hisJEtMin,cut.hisJEtMax);
    hAwCPt->Sumw2();
    hAwCPtBg = new TH1D("hAwCPtBg","",cut.numJEtBins*2,cut.hisJEtMin,cut.hisJEtMax);
    hAwCPtBg->Sumw2();
-   hAwCPtBgSub = new TH1D("hAwCPtBgSub","",cut.numJEtBins*2,-80,cut.hisJEtMax);
+   hAwCPtBgSub = new TH1D("hAwCPtBgSub","",cut.numJEtBins*2,-200,cut.hisJEtMax);
    hAwCPtBgSub->Sumw2();
 
    // trk
