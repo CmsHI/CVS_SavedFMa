@@ -28,18 +28,19 @@
   gSystem->AddIncludePath("-I$CMSSW_BASE/src/");
 
   // styles
-  gROOT->Macro("$CMSSW_BASE/src/MNguyen/JetAnalysisMacros/InclusiveJetAnalyzer/rootlogon.C+");
+  //  gROOT->Macro("$CMSSW_BASE/src/MNguyen/JetAnalysisMacros/InclusiveJetAnalyzer/rootlogon.C+");
+  gROOT->Macro("../rootlogon.C+");
   //gROOT->Macro("$CMSSW_BASE/src/Saved/Utilities/macros/logon/rootlogon_dNdEtaBase.C+");
   //gROOT->Macro("$CMSSW_BASE/src/Saved/Utilities/macros/logon/rootcolors.C+");
   gStyle->SetOptStat(0);   
   //gStyle->SetOptStat(1111);
   //gStyle->SetPadLeftMargin(0.2);
   gStyle->SetOptFit(0);
-  //gStyle->SetMarkerSize(0.8);
-  gStyle->SetHistLineWidth(3);
+  gStyle->SetMarkerSize(1.);
+  gStyle->SetHistLineWidth(2);
 
 
   // helper classes
+  //gROOT->Macro("$CMSSW_BASE/src/Saved/DiJetAna/macros/anaY1J/JetFragAna.C+");
   gROOT->Macro("$CMSSW_BASE/src/Saved/Utilities/macros/cplot/CPlot.cc+");
-  gROOT->Macro("$CMSSW_BASE/src/Saved/DiJetAna/macros/anaY1J/JetFragAna.C+");
 }

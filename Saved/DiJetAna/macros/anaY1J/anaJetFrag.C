@@ -10,7 +10,8 @@ using namespace std;
 
 void anaJetFrag(
     // Data
-    const char * inFile0Name="dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_djcalo_120_50.root",
+		const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0.root",
+//dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_djcalo_120_50.root,
     TString SrcName = "HCPR_J50U",
     // MC
     //const char * inFile0Name="dj_PyquenUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.root",
@@ -38,8 +39,8 @@ void anaJetFrag(
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
   cout << "Analyze: " << modName << endl;
-  //TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
-  TChain * djTree = new TChain("djTree","dijet Tree");
+  TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
+  //  TChain * djTree = new TChain("djTree","dijet Tree");
   djTree->Add(inFile0Name);
   aliases_dijet(djTree,doMC);
   cout << " # entries: " << djTree->GetEntries() << endl;

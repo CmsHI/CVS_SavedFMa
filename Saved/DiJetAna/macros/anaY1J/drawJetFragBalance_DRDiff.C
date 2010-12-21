@@ -1,3 +1,4 @@
+
 #include <TFile.h>
 #include <TH2D.h>
 #include <TCanvas.h>
@@ -17,7 +18,7 @@ void drawJetFragBalance_DRDiff(
     TString title = "test",
     Int_t drawMode=1,
 			       Int_t doLeg=1,
-bool cumulative = true
+bool cumulative = 1
     ) {
   TFile *f = new TFile(inFileName);
   TString inFileNameStrip(inFileName); inFileNameStrip.ReplaceAll(".root","");
@@ -86,6 +87,9 @@ bool cumulative = true
   hDRBgSubNrHyPy->SetTitle(";#DeltaR_{max};F(#DeltaR<#DeltaR_{max})");
   hDRBgSubNrHyPy->SetAxisRange(0,0.784,"X");
   hDRBgSubNrHyPy->SetAxisRange(0,0.7,"Y");
+  if(!cumulative){
+     hDRBgSubNrHyPy->SetAxisRange(0,0.1,"Y");
+  }
   fixedFontHist(hDRBgSubNrHyPy);
   hDRBgSubNrHyPy->DrawCopy("Ehist");
   hDRBgSubAwHyPy->DrawCopy("Ehistsame");
