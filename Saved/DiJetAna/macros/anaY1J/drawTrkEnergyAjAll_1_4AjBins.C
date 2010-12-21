@@ -29,7 +29,7 @@ void drawTrkEnergyAjAll_1_4AjBins(
 
   Float_t leftSpace=leftMargin/2., downSpace=bottomMargin/2.;
   c1->cd(1);
-  drawTrkEnergy("plot/drawn_jfh"+anaV+"_Hydjet_"+module+"_Cent0to30_Aj0to11_"+BckSub+title+".root",false,true,logScale,normType);
+  drawTrkEnergy("plot/drawn_jfh"+anaV+"ReWt_Hydjet_"+module+"_Cent0to30_Aj0to11_"+BckSub+title+".root",false,true,logScale,normType);
   drawText("A_{J} < 0.11",leftSpace+0.63,0.52);
   drawText("Leading jet",0.4,downSpace+0.15,15);
   drawText("Sub-leading jet",0.72,downSpace+0.15,15);
@@ -39,19 +39,19 @@ void drawTrkEnergyAjAll_1_4AjBins(
   drawPatch(0,0.0,0.28,0.1);
   
   c1->cd(2);
-  drawTrkEnergy("plot/drawn_jfh"+anaV+"_Hydjet_"+module+"_Cent0to30_Aj11to22_"+BckSub+title+".root",true,true,logScale,normType);
-  drawText("0.11 < A_{J} < 0.22",0.58,0.52);
+  drawTrkEnergy("plot/drawn_jfh"+anaV+"ReWt_Hydjet_"+module+"_Cent0to30_Aj11to22_"+BckSub+title+".root",true,true,logScale,normType);
+  drawText("0.11 < A_{J} < 0.22",0.54,0.52);
   drawText("Leading jet",0.15,downSpace+0.15,15);
   drawText("Sub-leading jet",0.6,downSpace+0.15,15);
  
   c1->cd(3);
-  drawTrkEnergy("plot/drawn_jfh"+anaV+"_Hydjet_"+module+"_Cent0to30_Aj22to33_"+BckSub+title+".root",false,true,logScale,normType);
-  drawText("0.22 < A_{J} < 0.33",0.58,0.52);
+  drawTrkEnergy("plot/drawn_jfh"+anaV+"ReWt_Hydjet_"+module+"_Cent0to30_Aj22to33_"+BckSub+title+".root",false,true,logScale,normType);
+  drawText("0.22 < A_{J} < 0.33",0.54,0.52);
   drawText("Leading jet",0.15,downSpace+0.15,15);
   drawText("Sub-leading jet",0.6,downSpace+0.15,15);
 
   c1->cd(4);
-  drawTrkEnergy("plot/drawn_jfh"+anaV+"_Hydjet_"+module+"_Cent0to30_Aj33to100_"+BckSub+title+".root",false,true,logScale,normType);
+  drawTrkEnergy("plot/drawn_jfh"+anaV+"ReWt_Hydjet_"+module+"_Cent0to30_Aj33to100_"+BckSub+title+".root",false,true,logScale,normType);
   drawText("A_{J} > 0.33",0.63,0.52);
   drawText("Leading jet",0.15,downSpace+0.15,15);
   drawText("Sub-leading jet",0.6,downSpace+0.15,15);
@@ -69,13 +69,13 @@ void drawTrkEnergyAjAll_1_4AjBins(
 
   c1->cd(6);
   drawTrkEnergy("plot/drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj11to22_"+BckSub+title+".root",false,false,logScale,normType);
-  drawText("0.11 < A_{J} < 0.22",0.58,downSpace+0.43);
+  drawText("0.11 < A_{J} < 0.22",0.54,downSpace+0.43);
   drawText("Leading jet",0.15,3*downSpace+0.1,15);
   drawText("Sub-leading jet",0.63,3*downSpace+0.1,15);
 
   c1->cd(7);
   drawTrkEnergy("plot/drawn_jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj22to33_"+BckSub+title+".root",false,false,logScale,normType);
-  drawText("0.22 < A_{J} > 0.33",0.58,downSpace+0.43);
+  drawText("0.22 < A_{J} < 0.33",0.54,downSpace+0.43);
   drawText("Leading jet",0.15,3*downSpace+0.1,15);
   drawText("Sub-leading jet",0.6,3*downSpace+0.1,15);
 
