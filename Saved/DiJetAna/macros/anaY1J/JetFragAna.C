@@ -447,7 +447,7 @@ double JetFragAna::getEffFakeCorrection(double pt,double eta, double cent)
       cout <<"Correction: Fake = "<<fake <<" eff = "<<eff<<" cor = "<<(1-fake)/eff<<endl;
       cout <<"Err = "<<effErr/eff<<endl;
    }
-  
+   if (pt>20) eff*=1.20;
    return (1-fake)/eff;
 //   return 1.3;
 }
