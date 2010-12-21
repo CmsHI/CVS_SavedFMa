@@ -48,7 +48,7 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1.) {
   hcombine->SetNdivisions(505,"Y");
   hcombine->SetMinimum(0.0001);
   if (normType==0) {
-    hcombine->SetMaximum(46);
+    hcombine->SetMaximum(69.9);
     hcombine->SetTitle(";;#frac{1}{N_{dijet}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR }"); // no 2piR in denominator
   }
   if (normType==1) {
@@ -77,14 +77,14 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   TH1D *n0 = (TH1D*) f->Get("hPNDR_1_1");
   TH1D *n1 = (TH1D*) f->Get("hPNDR_1_2");
   TH1D *n2 = (TH1D*) f->Get("hPNDR_1_3");
-  //TH1D *n4 = (TH1D*) f->Get("hPNDR_1_4");
+  TH1D *n4 = (TH1D*) f->Get("hPNDR_1_4");
   //TH1D *n8 = (TH1D*) f->Get("hPNDR_1_5");
   TH1D *nall = (TH1D*) f->Get(Form("hPNDR_1_%d",hPt->GetNbinsX()));
 
   TH1D *a0 = (TH1D*) f->Get("hPADR_1_1");
   TH1D *a1 = (TH1D*) f->Get("hPADR_1_2");
   TH1D *a2 = (TH1D*) f->Get("hPADR_1_3");
-  //TH1D *a4 = (TH1D*) f->Get("hPADR_1_4");
+  TH1D *a4 = (TH1D*) f->Get("hPADR_1_4");
   //TH1D *a8 = (TH1D*) f->Get("hPADR_1_5");
   TH1D *aall = (TH1D*) f->Get(Form("hPADR_1_%d",hPt->GetNbinsX()));
 
@@ -93,14 +93,14 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   n0->SetFillColor(kGray);
   n1->SetFillColor(kBlue-3);
   n2->SetFillColor(38);
-  //n4->SetFillColor(kOrange-8);
+  n4->SetFillColor(kOrange-8);
   //n8->SetFillColor(kRed-6);
   nall->SetFillColor(kRed);
 
   a0->SetFillColor(kGray);
   a1->SetFillColor(kBlue-3);
   a2->SetFillColor(38);
-  //a4->SetFillColor(kOrange-8);
+  a4->SetFillColor(kOrange-8);
   //a8->SetFillColor(kRed-6);
   aall->SetFillColor(kRed);
 
@@ -108,7 +108,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   Float_t norm = 1./(nall->Integral()*nall->GetBinWidth(1));
   TH1D* hcall = combine(nall,aall,normType,norm);
   //TH1D* hc1248 = combine(n8,a8,normType,norm);
-  //TH1D* hc124 = combine(n4,a4,normType,norm);
+  TH1D* hc124 = combine(n4,a4,normType,norm);
   TH1D* hc12 = combine(n2,a2,normType,norm);
   TH1D* hc01 = combine(n1,a1,normType,norm);
   TH1D* hc0 = combine(n0,a0,normType,norm);
@@ -118,7 +118,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
 
   hcall->Draw("hist"); hcall->Draw("esame");
   //hc1248->Draw("histsame"); hc1248->Draw("esame"); //chist
-  //hc124->Draw("histsame"); hc124->Draw("esame");
+  hc124->Draw("histsame"); hc124->Draw("esame");
   hc12->Draw("histsame"); hc12->Draw("esame");
   hc01->Draw("histsame"); hc01->Draw("esame");
   hc0->Draw("histsame"); hc0->Draw("esame");
@@ -156,6 +156,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
     leg->AddEntry(hc0,Form("%.1f-%.0f GeV/c",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(2)),"f");
     leg->AddEntry(hc01,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(2),hPt->GetBinLowEdge(3)),"f");
     leg->AddEntry(hc12,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(3),hPt->GetBinLowEdge(4)),"f");
+    leg->AddEntry(hc124,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(4),hPt->GetBinLowEdge(5)),"f");
     leg->AddEntry(hcall,Form("%.0f+ GeV/c",hPt->GetBinLowEdge(hPt->GetNbinsX())),"f");
     leg->Draw();
   }
