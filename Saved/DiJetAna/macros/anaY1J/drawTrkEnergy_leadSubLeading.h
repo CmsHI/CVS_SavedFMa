@@ -223,14 +223,14 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   //  hc124->Draw("histsame"); hc124->Draw("esame");
   hc12->Draw("histsame"); hc12->Draw("esame");
   hc01->Draw("histsame"); hc01->Draw("esame");
-  hc0->Draw("histsame"); hc0->Draw("esame");
+  // hc0->Draw("histsame"); hc0->Draw("esame");
   
   hcallRight->Draw("histsame"); hcallRight->Draw("esame");
   //  hc1248Right->Draw("histsame"); hc1248Right->Draw("esame"); //chist
   //   hc124Right->Draw("histsame"); hc124Right->Draw("esame");
   hc12Right->Draw("histsame"); hc12Right->Draw("esame");
   hc01Right->Draw("histsame"); hc01Right->Draw("esame");
-  hc0Right->Draw("histsame"); hc0Right->Draw("esame");
+  // hc0Right->Draw("histsame"); hc0Right->Draw("esame");
   
   jumSun(0,0,0,hcall->GetMaximum(),1,1);
 
@@ -295,8 +295,8 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
      
      //    leg->AddEntry(hc124Right,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(4),hPt->GetBinLowEdge(5)),"f");
     leg->AddEntry(hc12Right,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(3),hPt->GetBinLowEdge(4)),"f");
-    leg->AddEntry(hc01Right,Form("%.1f-%.0f GeV/c",hPt->GetBinLowEdge(2),hPt->GetBinLowEdge(3)),"f");
-    leg->AddEntry(hc0Right,Form("%.1f-%.1f GeV/c",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(2)),"f");
+    leg->AddEntry(hc01Right,Form("%.1f-%.0f GeV/c",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(3)),"f");
+    //leg->AddEntry(hc0Right,Form("%.1f-%.1f GeV/c",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(2)),"f");
     leg->Draw();
   }
 
