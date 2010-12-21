@@ -19,12 +19,13 @@ void anaJetFrag(
     TString AnaVersion = "test",
     TString modName = "djcalo",
     Bool_t doEvtSel = true,
+    Bool_t doReWeight = false,
     TString BkgSubType = "None", // EtaRefl, PhiRot, None
     Double_t CentMin = 0,
     Double_t CentMax = 100,
     Double_t AjMin = 0,
     Double_t AjMax = 1,
-    Double_t NrJEtMin = 100,
+    Double_t NrJEtMin = 120,
     Double_t NrJEtMax = 500,
     Double_t AwJEtMin = 50,
     Double_t AwJEtMax = 500,
@@ -85,7 +86,7 @@ void anaJetFrag(
   jana.doEvtSel_ = doEvtSel;
   jana.doEtaCorr_ = true;
   jana.doTrackingEffFakeCorr_ = true;
-  jana.doCentralityReweighting_ = true;
+  jana.doCentralityReweighting_ = doReWeight;
   jana.doJetOnly_ = false;
   jana.cut.CentMin = CentMin;
   jana.cut.CentMax = CentMax;
