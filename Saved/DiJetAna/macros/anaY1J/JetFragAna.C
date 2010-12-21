@@ -528,7 +528,6 @@ void JetFragAna::Loop()
 	  if (ppt[i]<cut.TrkPtMin||fabs(peta[i])>=2.4) continue;
           double trackWeight=1;
           if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(ppt[i],peta[i],cent);
-          trackWeight *= weight;
 	  //cout << "particle " << i << ": ch " << pch[i] << " pt: " << ppt[i] << " pndr: " << pndr[i] << endl;
 	  // Trk histograms
 
@@ -554,6 +553,10 @@ void JetFragAna::Loop()
             metx4+=pptx;
             mety4+=ppty;
           }
+
+          // Take the reweighting into account for later histogram
+          // This should not be applied before the met calculation.
+          trackWeight *= weight;
 
 	  // bcksub
 	  Double_t PNdRBkg=999,PAdRBkg=999;
