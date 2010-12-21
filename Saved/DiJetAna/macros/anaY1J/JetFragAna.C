@@ -31,8 +31,8 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
 
    // ntuples
    ntjt = new TNtuple("ntjt","jet-trk nt","nljet:nljetacorr:aljet:aljetacorr:"
-                                          "metx:metx0:metx1:metx2:metx3:metx4:"
-                                          "mety:mety0:mety1:mety2:mety3:mety4:"
+                                          "metx:metx0:metx1:metx2:metx3:metx4:metx5:"
+                                          "mety:mety0:mety1:mety2:mety3:mety4:mety5:"
                                           "maskEvt:cent:jdphi:weight");
    ntjt->SetAlias("et1","nljet");
    ntjt->SetAlias("et2","aljet");
@@ -51,10 +51,9 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    const Int_t numDRBins = 20;
    Double_t dRBins[numDRBins+1];
    for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = TMath::PiOver2()/((double)numDRBins)*i; }
-   const Int_t numPtBins = 5;
+   const Int_t numPtBins = 6;
    //Double_t ptBins[numPtBins+1]={0.5,1.5,4,8,20,1000}; // v0
-   //Double_t ptBins[numPtBins+1]={0.5,1.5,4,8,20,180}; // v1,v2,v3
-   Double_t ptBins[numPtBins+1]={1,1.5,4,8,20,180}; // v9
+   Double_t ptBins[numPtBins+1]={0.5,1.0,1.5,4,8,20,180}; // v1,v2,v3
    const Int_t numDPhiBins = 20;
    Double_t dPhiBins[numDPhiBins+1];
    for (int i=0;i<numDPhiBins+1;i++)   { dPhiBins[i] = PI/2./((double)numDPhiBins)*i; }
@@ -521,8 +520,8 @@ void JetFragAna::Loop()
 	// -- Loop over Particles --
 	Double_t nrConePt=0,nrConePtBg=0;
 	Double_t awConePt=0,awConePtBg=0;
-	Double_t metx=0,metx0=0,metx1=0,metx2=0,metx3=0,metx4=0;
-	Double_t mety=0,mety0=0,mety1=0,mety2=0,mety3=0,mety4=0;
+	Double_t metx=0,metx0=0,metx1=0,metx2=0,metx3=0,metx4=0,metx5=0;
+	Double_t mety=0,mety0=0,mety1=0,mety2=0,mety3=0,mety4=0,mety5=0;
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
@@ -553,6 +552,9 @@ void JetFragAna::Loop()
           } else if (ppt[i]>=hPt->GetBinLowEdge(5)&&ppt[i]<hPt->GetBinLowEdge(6)) { 
             metx4+=pptx;
             mety4+=ppty;
+          } else if (ppt[i]>=hPt->GetBinLowEdge(6)&&ppt[i]<hPt->GetBinLowEdge(7)) { 
+            metx5+=pptx;
+            mety5+=ppty;
           }
 
           // Take the reweighting into account for later histogram
@@ -618,16 +620,18 @@ void JetFragAna::Loop()
         var[7]=metx2;
         var[8]=metx3;
         var[9]=metx4;
-        var[10]=mety;
-        var[11]=mety0;
-        var[12]=mety1;
-        var[13]=mety2;
-        var[14]=mety3;
-        var[15]=mety4;
-        var[16]=GetEvtMask();
-        var[17]=cent;
-        var[18]=jdphi;
-        var[19]=weight;
+        var[10]=metx5;
+        var[11]=mety;
+        var[12]=mety0;
+        var[13]=mety1;
+        var[14]=mety2;
+        var[15]=mety3;
+        var[16]=mety4;
+        var[17]=mety5;
+        var[18]=GetEvtMask();
+        var[19]=cent;
+        var[20]=jdphi;
+        var[21]=weight;
 	ntjt->Fill(var);
       }
       // if (Cut(ientry) < 0) continue;
