@@ -99,7 +99,7 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
   hcombine->SetNdivisions(505,"Y");
-  hcombine->SetMinimum(0.0001);
+  hcombine->SetMinimum(-10);
   if (normType==0) {
     hcombine->SetMaximum(59.9);
     //    hcombine->SetTitle(";;#frac{1}{N_{dijet}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR } (GeV/c)"); // no 2piR in denominator
@@ -123,6 +123,8 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
 void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEtaRefl.root",
 		   bool drawLeg=false, bool drawYLab=false, Int_t logScale=0, Int_t normType=0)
 {
+  Float_t ymin=-5;
+
   TFile *f = new TFile(infile);
   gStyle->SetMarkerStyle(0);
 
@@ -216,7 +218,8 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   float shftAxis= hc12Right->GetBinWidth(1)/2.*gab;
   float drRange = 0.8;
   hcall->SetAxisRange(-0.85,0.85,"X"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis);
-  hcall->SetAxisRange(0,70,"Y"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis);                                          
+  hcall->SetAxisRange(ymin,70,"Y"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis); 
+  fixedFontHist(hcall);
   
   hcall->Draw("hist"); hcall->Draw("esame");
   //  hc1248->Draw("histsame"); hc1248->Draw("esame"); //chist
@@ -242,16 +245,16 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   //  TGaxis *naxis = new TGaxis(0,0,TMath::Pi()/2,0,TMath::Pi(),0,10,"+");
   // TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,0,TMath::Pi()+1.4,0,-1.4,1.4,505,"+");
   TF1 *f1=new TF1("f1","-x",0,0.8);
-  TGaxis *naxis = new TGaxis(-0.8,0,0,0,"f1",3,"+");
+  TGaxis *naxis = new TGaxis(-0.8,ymin,0,ymin,"f1",3,"+");
   TF1 *f2=new TF1("f2","x",0,0.8);
-  TGaxis *aaxis = new TGaxis(0,0,0.8,0,"f2",3,"+");
+  TGaxis *aaxis = new TGaxis(0,ymin,0.8,ymin,"f2",3,"+");
 
-  naxis->SetTitle("#DeltaR^{track}_{leading jet}"); naxis->CenterTitle(); naxis->SetTitleOffset(1.7);
+  naxis->SetTitle("#DeltaR^{Leading jet}"); naxis->CenterTitle(); naxis->SetTitleOffset(1.7);
   fixedFontAxis(naxis);
-  aaxis->SetTitle("#DeltaR^{track}_{sub-leading jet}"); aaxis->CenterTitle(); aaxis->SetTitleOffset(1.7);
+  aaxis->SetTitle("#DeltaR^{SubLeading jet}"); aaxis->CenterTitle(); aaxis->SetTitleOffset(1.7);
   fixedFontAxis(aaxis);
-  naxis->SetTitleSize(18);
-  aaxis->SetTitleSize(18);
+  naxis->SetTitleSize(22);
+  aaxis->SetTitleSize(22);
   naxis->SetTitleOffset(2.3);
   aaxis->SetTitleOffset(2.3);
   naxis->Draw();
