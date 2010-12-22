@@ -49,8 +49,8 @@ void sysError(
   // What pt bins to draw
   const Int_t numPtBinsDraw=3;
 
-  TCanvas * c6 = new TCanvas("c6","c6",1200,700);
-  c6->Divide(3,2);
+  TCanvas * c6 = new TCanvas("c6","c6",1400,500);
+  c6->Divide(3,1);
   for (Int_t i=0; i<numPtBinsDraw; ++i) {
     Int_t iBeg,iEnd;
     if (i==0) { iBeg=1; iEnd=2;}
@@ -65,6 +65,10 @@ void sysError(
       hNr->Add(hNrGen,-1);
       hAw->Add(hAwGen,-1);
     }
+    if (sysMode==2) {
+      hNr->Divide(hNrGen);
+      hAw->Divide(hAwGen);
+    }
     // Print
     cout << Form("%.1f < P_{T} < %.1f GeV: ",hPt->GetBinLowEdge(iBeg),hPt->GetBinLowEdge(iEnd+1))
       << " SigSubBkg Integral - Nr: " << hNr->Integral() << " Aw: " << hAw->Integral() << endl
@@ -78,13 +82,18 @@ void sysError(
     // Axis
     if (sysMode==0) {
       hNr->SetYTitle("Background Subtracted Signal (GeV/c)");
-      hNr->SetAxisRange(-5,35,"Y");
+      hNr->SetAxisRange(-5,60,"Y");
     }
     if (sysMode==1) {
       hNr->SetYTitle("Reco-Gen (GeV/c)");
-      hNr->SetAxisRange(-10,10,"Y");
+      hNr->SetAxisRange(-20,20,"Y");
+    }
+    if (sysMode==2) {
+      hNr->SetYTitle("Reco/Gen (GeV/c)");
+      hNr->SetAxisRange(0,2,"Y");
     }
     hNr->SetXTitle("#Delta R");
+    hNr->SetAxisRange(0,0.8,"X");
     hNr->SetTitleOffset(1.5,"X");
     hNr->GetXaxis()->CenterTitle();
     hNr->GetYaxis()->CenterTitle();
@@ -96,8 +105,15 @@ void sysError(
       hNrGen->Draw("hist same");
       hAwGen->Draw("hist same");
     }
-    TLine *l = new TLine(0,0,3.14/2,0);
-    l->Draw();
+    if (sysMode==0||sysMode==1) {
+      TLine *l = new TLine(0,0,0.8,0);
+      l->Draw();
+    }
+    if (sysMode==2) {
+      TLine *l = new TLine(0,1,0.8,1);
+      l->SetLineStyle(2);
+      l->Draw();
+    }
     
     TLegend *leg = new TLegend(0.35,0.7,0.85,0.94);
     leg->SetBorderSize(0);
@@ -110,5 +126,5 @@ void sysError(
     leg->SetTextSize(0.05);
     leg->Draw();
   }
-  c6->Print(Form("plot/%s_%s_sysError%d.gif",inFileNameStrip.Data(),title.Data(),sysMode));
+  c6->Print(Form("plot/%s_%s_%s_sysError%d.gif",inFileNameStrip.Data(),inFileNameStripGen.Data(),title.Data(),sysMode));
 }
