@@ -29,7 +29,6 @@
 
   // styles
   //  gROOT->Macro("$CMSSW_BASE/src/MNguyen/JetAnalysisMacros/InclusiveJetAnalyzer/rootlogon.C+");
-  gROOT->Macro("../rootlogon.C+");
   //gROOT->Macro("$CMSSW_BASE/src/Saved/Utilities/macros/logon/rootlogon_dNdEtaBase.C+");
   //gROOT->Macro("$CMSSW_BASE/src/Saved/Utilities/macros/logon/rootcolors.C+");
   gStyle->SetOptStat(0);   
@@ -41,6 +40,6 @@
 
 
   // helper classes
-  //gROOT->Macro("$CMSSW_BASE/src/Saved/DiJetAna/macros/anaY1J/JetFragAna.C+");
+  gROOT->Macro("$CMSSW_BASE/src/Saved/DiJetAna/macros/anaY1J/JetFragAna.C+");
   gROOT->Macro("$CMSSW_BASE/src/Saved/Utilities/macros/cplot/CPlot.cc+");
 }
