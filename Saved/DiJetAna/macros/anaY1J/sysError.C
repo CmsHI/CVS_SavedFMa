@@ -12,7 +12,7 @@
 void sysError(
     TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl.root",
     TString inFileNameGen="jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl.root",
-    Int_t plotMode = 0,
+    Int_t sysMode = 0, // 0 for simple plot, 1 for difference
     TString title = "test"
     ) {
   TFile *f = new TFile(inFileName);
@@ -57,24 +57,38 @@ void sysError(
     TH1D * hAw = (TH1D*)hPtPADRSub->ProjectionY(Form("hPADRSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
     TH1D * hNrGen = (TH1D*)hPtPNDRSubGen->ProjectionY(Form("hPNDRSubGen_%d_%d",iBeg,iEnd),iBeg,iEnd);
     TH1D * hAwGen = (TH1D*)hPtPADRSubGen->ProjectionY(Form("hPADRSubGen_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    if (sysMode==1) {
+      hNr->Add(hNrGen,-1);
+      hAw->Add(hAwGen,-1);
+    }
     // Print
     cout << Form("%.1f < P_{T} < %.1f GeV: ",hPt->GetBinLowEdge(iBeg),hPt->GetBinLowEdge(iEnd+1))
       << " SigSubBkg Integral - Nr: " << hNr->Integral() << " Aw: " << hAw->Integral() << endl
       << " Gen - Nr: " << hNrGen->Integral() << " Aw: " << hAwGen->Integral() << endl;
-    // Draw to inspect
+    // Styles
     hNr->SetMarkerColor(kRed);
     hNr->SetLineColor(kRed);
     hAw->SetMarkerColor(kBlue);
     hAw->SetLineColor(kBlue);
-    hNr->SetAxisRange(-5,35,"Y");
     hAwGen->SetLineStyle(2);
-    c6->cd(i);
-    hNr->Draw();
+    // Axis
+    if (sysMode==0) {
+      hNr->SetYTitle("Background Subtracted Signal (GeV/c)");
+      hNr->SetAxisRange(-5,35,"Y");
+    }
+    if (sysMode==1) {
+      hNr->SetYTitle("Reco-Gen (GeV/c)");
+      hNr->SetAxisRange(-10,10,"Y");
+    }
     hNr->SetXTitle("#Delta R");
-    hNr->SetYTitle("#Background Subtracted Signal (GeV/c)");
+    c6->cd(i);
+    // Draw to Inspect
+    hNr->Draw();
     hAw->Draw("same");
-    hNrGen->Draw("hist same");
-    hAwGen->Draw("hist same");
+    if (sysMode==0) {
+      hNrGen->Draw("hist same");
+      hAwGen->Draw("hist same");
+    }
     TLine *l = new TLine(0,0,3.14/2,0);
     l->Draw();
     
@@ -83,9 +97,9 @@ void sysError(
     leg->SetFillStyle(0);
     leg->AddEntry(hNr,Form("%.1f < P_{T} < %.1f GeV",hPt->GetBinLowEdge(iBeg),hPt->GetBinLowEdge(iEnd+1)),"");
     leg->AddEntry(hNr,"Leading (Reco)","pl");
-    leg->AddEntry(hNrGen,"Leading (Gen)","l");
+    if (sysMode==0) leg->AddEntry(hNrGen,"Leading (Gen)","l");
     leg->AddEntry(hAw,"SubLeading (Reco)","pl");
-    leg->AddEntry(hAwGen,"SubLeading (Gen)","l");
+    if (sysMode==0) leg->AddEntry(hAwGen,"SubLeading (Gen)","l");
     leg->SetTextSize(0.05);
     leg->Draw();
   }
