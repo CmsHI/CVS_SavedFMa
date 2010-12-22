@@ -81,6 +81,9 @@ void sysError(
       hNr->SetAxisRange(-10,10,"Y");
     }
     hNr->SetXTitle("#Delta R");
+    hNr->SetTitleOffset(1.5,"X");
+    hNr->GetXaxis()->CenterTitle();
+    hNr->GetYaxis()->CenterTitle();
     c6->cd(i);
     // Draw to Inspect
     hNr->Draw();
@@ -103,5 +106,5 @@ void sysError(
     leg->SetTextSize(0.05);
     leg->Draw();
   }
-  c6->Print(Form("plot/%s_%s_sysError.gif",inFileNameStrip.Data(),title.Data()));
+  c6->Print(Form("plot/%s_%s_sysError%d.gif",inFileNameStrip.Data(),title.Data(),sysMode));
 }
