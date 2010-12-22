@@ -39,20 +39,24 @@ void sysError(
   hPtPADRSubGen->Add(hPtPADRGen,hPtPADRBgGen,1,-1);
 
   // Get Pt info
-  Int_t numBinsPt=hPtPNDR->GetNbinsX();
+  Int_t numPtBins=hPtPNDR->GetNbinsX();
   TH1D * hPt = (TH1D*)hPtPNDR->ProjectionX("hPt");
-  cout << "Pt bins: " << numBinsPt << endl;
+  cout << "Pt bins: " << numPtBins << endl;
+  for (Int_t i=0; i<numPtBins+2; ++i) {
+    cout << "Pt Bin " << i << " Low Edge: " << hPt->GetBinLowEdge(i) << endl;
+  }
 
-  // How many pt bins to draw
-  Int_t endPtBin=numBinsPt;
+  // What pt bins to draw
+  const Int_t numPtBinsDraw=3;
 
   TCanvas * c6 = new TCanvas("c6","c6",1200,700);
   c6->Divide(3,2);
-  for (Int_t i=1; i<=endPtBin; ++i) {
-    // What pt bins to project
-    Int_t iBeg=i,iEnd=i;
-    // Last drawn bin draws all remaining pt bins
-    if (i==endPtBin) iEnd=numBinsPt;
+  for (Int_t i=0; i<numPtBinsDraw; ++i) {
+    Int_t iBeg,iEnd;
+    if (i==0) { iBeg=1; iEnd=2;}
+    if (i==1) { iBeg=3; iEnd=3;}
+    if (i==2) { iBeg=4; iEnd=numPtBins;}
+    cout << "Bin: " << iBeg <<  " to " << iEnd << endl;
     TH1D * hNr = (TH1D*)hPtPNDRSub->ProjectionY(Form("hPNDRSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
     TH1D * hAw = (TH1D*)hPtPADRSub->ProjectionY(Form("hPADRSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
     TH1D * hNrGen = (TH1D*)hPtPNDRSubGen->ProjectionY(Form("hPNDRSubGen_%d_%d",iBeg,iEnd),iBeg,iEnd);
@@ -84,7 +88,7 @@ void sysError(
     hNr->SetTitleOffset(1.5,"X");
     hNr->GetXaxis()->CenterTitle();
     hNr->GetYaxis()->CenterTitle();
-    c6->cd(i);
+    c6->cd(i+1);
     // Draw to Inspect
     hNr->Draw();
     hAw->Draw("same");
