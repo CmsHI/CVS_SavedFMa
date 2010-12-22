@@ -7,6 +7,8 @@
 #include "TError.h"
 #include "TLatex.h"
 #include "TGaxis.h"
+#include "TMath.h"
+#include "TH1.h"
 
 void makeMultiPanelCanvas(TCanvas*& canv, const Int_t columns,
                           const Int_t rows, const Float_t leftOffset=0.,
@@ -234,24 +236,24 @@ void drawPatch(float x1, float y1, float x2, float y2){
 
 void fixedFontAxis(TGaxis * ax)
 {
-  ax->SetLabelFont(63);
+  ax->SetLabelFont(43);
   ax->SetLabelOffset(0.01);
   ax->SetLabelSize(22);
-  ax->SetTitleFont(63);
+  ax->SetTitleFont(43);
   ax->SetTitleSize(24);
   ax->SetTitleOffset(2);
 }
 
 void fixedFontHist(TH1D * h, Float_t xoffset=1.2, Float_t yoffset=2.)
 {
-  h->SetLabelFont(63,"X");
-  h->SetLabelFont(63,"Y");
+  h->SetLabelFont(43,"X");
+  h->SetLabelFont(43,"Y");
   //h->SetLabelOffset(0.01);
   h->SetLabelSize(22);
-  h->SetTitleFont(63);
+  h->SetTitleFont(43);
   h->SetTitleSize(24);
   h->SetLabelSize(22,"Y");
-  h->SetTitleFont(63,"Y");
+  h->SetTitleFont(43,"Y");
   h->SetTitleSize(24,"Y");
   h->SetTitleOffset(xoffset,"X");
   h->SetTitleOffset(yoffset,"Y");
@@ -280,6 +282,17 @@ void mcStyle2(TH1* h=0) {
   h->SetLineColor(kBlue);
   h->SetFillColor(kAzure-8);
   h->SetFillStyle(3005);
+}
+
+//--------------------------------------------------
+void AdditionalSysUncert(TH1 * h,Float_t frac) {
+  using namespace TMath;
+  for (Int_t i=1; i<=h->GetNbinsX(); ++i) {
+    Float_t y=h->GetBinContent(i);
+    Float_t ye= h->GetBinError(i);
+    h->SetBinError(i,Sqrt(ye*ye+frac*y*frac*y));
+    cout << "Old Error: " << ye << "New Error: " << h->GetBinError(i) << endl;
+  }
 }
 
 #endif
