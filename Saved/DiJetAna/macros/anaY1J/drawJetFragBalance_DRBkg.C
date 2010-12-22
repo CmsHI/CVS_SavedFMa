@@ -58,7 +58,7 @@ void drawJetFragBalance_DRBkg(
     hAwBg->SetLineColor(kBlue);
     hAwBg->SetLineStyle(9);
     hNr->SetAxisRange(0,hNr->GetBinLowEdge(hNr->GetNbinsX()/2.),"X");
-    hNr->SetAxisRange(-5,20,"Y");
+    hNr->SetAxisRange(-5,30,"Y");
     hNr->SetTitleOffset(1.2,"X");
     hNr->SetTitleOffset(1.2,"Y");
     c6->cd(i);
