@@ -13,7 +13,7 @@
 using namespace std;
 
 void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSrecoHydjet(
-			  TString anaV="CorrEtaTrkEffPtBin5RBin20v7",
+			  TString anaV="CorrEtaTrkEffPtBin5RBin20v9",
 			  //TString anaV="CorrEtaTrkEffPtBin5RBin20v1",
 			  TString module="djcalo",
 			  TString BckSub="SubEtaRefl",
@@ -87,9 +87,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSrecoHydjet(
   drawText("Leading jet",0.15,3*downSpace+0.1,15);
   drawText("Sub-leading jet",0.6,3*downSpace+0.1,15);
 
-  //  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubAjAll_leadSub"+drawV+Form("_norm%d.gif",normType));
-  //  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubAjAll_leadSub"+drawV+Form("_norm%d.eps",normType));
-  //  c1->Print(anaV+"_"+BckSub+title+"TrackEnergyPtRBkgSubAjAll_leadSub"+drawV+Form("_norm%d.C",normType));
-  c1->Print("CorrEtaTrkEffPtBin5RBin20v1_SubEtaRefl_TrackTrackEnergyPtRBkgSubAjAll_leadSubd5_genTrack_VS_recoTrack.C");
-  c1->Print("CorrEtaTrkEffPtBin5RBin20v1_SubEtaRefl_TrackTrackEnergyPtRBkgSubAjAll_leadSubd5_genTrack_VS_recoTrack.eps");
+  c1->Print(anaV+"_SubEtaRefl_TrackTrackEnergyPtRBkgSubAjAll_leadSubd5_genTrack_VS_recoTrack.gif");
+  c1->Print(anaV+"_SubEtaRefl_TrackTrackEnergyPtRBkgSubAjAll_leadSubd5_genTrack_VS_recoTrack.C");
+  c1->Print(anaV+"_SubEtaRefl_TrackTrackEnergyPtRBkgSubAjAll_leadSubd5_genTrack_VS_recoTrack.eps");
 }
