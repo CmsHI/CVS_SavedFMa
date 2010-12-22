@@ -116,6 +116,9 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
   hcombine->GetYaxis()->SetLabelFont(63);
   hcombine->GetYaxis()->SetLabelSize(22);
 
+  // Additional Systematic Error ---------------------------------
+  AdditionalSysUncert(hcombine,0.2);
+
   return hcombine;
 }
 
@@ -221,6 +224,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   hcall->SetAxisRange(ymin,70,"Y"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis); 
   fixedFontHist(hcall);
   
+  // Final Plot -------------------------------------------------
   hcall->Draw("hist"); hcall->Draw("esame");
   //  hc1248->Draw("histsame"); hc1248->Draw("esame"); //chist
   //  hc124->Draw("histsame"); hc124->Draw("esame");
