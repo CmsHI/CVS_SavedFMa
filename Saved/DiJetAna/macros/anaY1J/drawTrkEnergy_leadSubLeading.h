@@ -55,6 +55,12 @@ TH1D* foldHalf(TH1D* h, bool isLeft=true) {
 }
 
 */
+void getTotalNum(TH1D* h) {
+   TH1D* hSim = (TH1D*)h->Clone(Form("%s_oneBin",h->GetName()));
+   hSim->Rebin(hSim->GetNbinsX());
+   //   cout << " bin numbers = " << hSim->GetNbinsX() << endl;
+   cout << hSim->GetBinContent(1) << "  (" << hSim->GetBinError(1) << ")" << endl;
+}
 
 TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Left=true) {
   // Get Bin Info
@@ -231,16 +237,26 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   hc12->Draw("histsame"); hc12->Draw("esame");
   hc01->Draw("histsame"); hc01->Draw("esame");
   // hc0->Draw("histsame"); hc0->Draw("esame");
-  
+
   hcallRight->Draw("histsame"); hcallRight->Draw("esame");
   //  hc1248Right->Draw("histsame"); hc1248Right->Draw("esame"); //chist
   //   hc124Right->Draw("histsame"); hc124Right->Draw("esame");
   hc12Right->Draw("histsame"); hc12Right->Draw("esame");
   hc01Right->Draw("histsame"); hc01Right->Draw("esame");
   // hc0Right->Draw("histsame"); hc0Right->Draw("esame");
-  
   jumSun(0,0,0,hcall->GetMaximum(),1,1);
+  
+  cout << "  Leading   " << endl;
+  cout << "    0.5-4GeV   ";  getTotalNum(hc01);
+  cout << "    0.5-8GeV   ";  getTotalNum(hc12);
+  cout << "    0.5-All    ";  getTotalNum(hcall);
+  cout << "  SubLeading   " << endl;
+  cout << "    0.5-4GeV   ";  getTotalNum(hc01Right);
+  cout << "    0.5-8GeV   ";  getTotalNum(hc12Right);
+  cout << "    0.5-All    ";  getTotalNum(hcallRight);
 
+  
+  
   //hc1248->GetXaxis()->SetAxisColor(0);
   //hc1248->GetXaxis()->SetLabelColor(0);
 
