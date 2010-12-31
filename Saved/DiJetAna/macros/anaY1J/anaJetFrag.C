@@ -1,8 +1,12 @@
 #include <iostream>
 #include <map>
 #include <TCanvas.h>
+#include "TFile.h"
 #include "TH1.h"
+#include "TH2.h"
 #include "TF1.h"
+#include "TROOT.h"
+#include "TChain.h"
 #include "aliases_dijet.C"
 #include "JetFragAna.C"
 
@@ -10,16 +14,16 @@ using namespace std;
 
 void anaJetFrag(
     // Data
-		const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0.root",
-//dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_djcalo_120_50.root,
+    //const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0.root",
+    TString inFile0Name = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_djcalo_120_50.root",
     TString SrcName = "HCPR_J50U",
     // MC
     //const char * inFile0Name="dj_PyquenUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.root",
     //TString SrcName = "PyquenUQ80" 
     int doMC=0,
-    TString AnaVersion = "test",
+    TString AnaVersion = "testtree",
     TString modName = "djcalo",
-    Bool_t doEvtSel = true,
+    Bool_t doEvtSel = false,
     Bool_t doReWeight = false,
     TString BkgSubType = "None", // EtaRefl, PhiRot, None
     Double_t CentMin = 0,
@@ -34,13 +38,16 @@ void anaJetFrag(
     TString evtBase="S1",
     TString DJCutType = "Ana") // Ana
 {
+  // Load Class
+  gROOT->ProcessLine(".L JetFragAna.C+");
+
   //TH1::SetDefaultSumw2();
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
   cout << "Analyze: " << modName << endl;
-  TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
-  //  TChain * djTree = new TChain("djTree","dijet Tree");
+  //TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
+  TChain * djTree = new TChain("djTree","dijet Tree");
   djTree->Add(inFile0Name);
   aliases_dijet(djTree,doMC);
   cout << " # entries: " << djTree->GetEntries() << endl;
