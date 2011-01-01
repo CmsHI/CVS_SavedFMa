@@ -1,5 +1,6 @@
 #include <iostream>
 #include "TH1.h"
+#include "TH2.h"
 #include "TFile.h"
 #include "TStyle.h"
 #include "TCanvas.h"
@@ -16,6 +17,54 @@
 
 using namespace std;
 int gab = 0;
+
+TH1D * projectDR(TH2D * h2d,Int_t iBeg,Int_t iEnd)
+{
+  TH1D * hDr = (TH1D*)h2d->ProjectionY(Form("%s_%d_%d",h2d->GetName(),iBeg,iEnd),iBeg,iEnd);
+  //hDr->Sumw2();
+  //cout << "Project " << h2d->GetName() << ": " << iBeg << " - " << iEnd << endl;
+  return hDr;
+}
+
+TH2D * bkgSub(TH2D * hSig, TH2D * hBkg, TString name)
+{
+  //hSig->Sumw2();
+  //hBkg->Sumw2();
+  TH2D * hSub = (TH2D*)hSig->Clone(name+"Sub");
+  hSub->Add(hSig,hBkg,1,-1);
+  return hSub;
+}
+
+void getDRHists(TFile * f,
+    Int_t nbin,
+    Int_t * begbins,
+    Int_t * endbins,
+    TH1D ** Nr,
+    TH1D ** Aw,
+    TH1D * hPt
+    )
+{
+  // Input
+  TString inFileNameStrip(f->GetName());
+  inFileNameStrip.ReplaceAll(".root","");
+
+  // 2D histograms
+  TH2D * hPtPNDR = (TH2D*) f->Get("hPtPNDR");
+  TH2D * hPtPADR = (TH2D*) f->Get("hPtPADR");
+  TH2D * hPtPNDRBg = (TH2D*) f->Get("hPtPNDRBg");
+  TH2D * hPtPADRBg = (TH2D*) f->Get("hPtPADRBg");
+  // Subtract Bkg
+  TH2D * hPtPNDRSub = bkgSub(hPtPNDR,hPtPNDRBg,inFileNameStrip+"Nr");
+  TH2D * hPtPADRSub = bkgSub(hPtPADR,hPtPADRBg,inFileNameStrip+"Aw");
+
+  for (Int_t i=0; i<nbin; ++i) {
+    Nr[i] = projectDR(hPtPNDRSub,begbins[0],endbins[i]);
+    Aw[i] = projectDR(hPtPADRSub,begbins[0],endbins[i]);
+    // Print
+    //cout << Form("%.1f < P_{T} < %.1f GeV: ",hPt->GetBinLowEdge(begbins[0]),hPt->GetBinLowEdge(endbins[i]+1))
+    //  << " SigSubBkg Integral - Nr: " << Nr[i]->Integral() << " Aw: " << Aw[i]->Integral() << endl;
+  }
+}
 
 void jumSun(double x1=0,double y1=0,double x2=1,double y2=1,int color=1, double width=1)
 {
@@ -92,11 +141,10 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
 void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEtaRefl.root",
 		   bool drawLeg=false, bool drawYLab=false, Int_t logScale=0, Int_t normType=0)
 {
-  TH1::SetDefaultSumw2();
   gStyle->SetMarkerStyle(0);
 
   // =========================================================================
-  // Basica Plot Parameters
+  // Basic Plot Parameters
   // =========================================================================
   Float_t ymin=-5;
   //Int_t colors[5] = {38,kOrange-8,kBlue-3,kGray,kRed};
@@ -107,8 +155,9 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   // =========================================================================
   cout << endl << "=== " << infile << " ===" << endl;
   TFile *f = new TFile(infile);
-  // Pt Bins
-  TH1D *hPt = (TH1D*) f->Get("hPt");
+  // Get Pt info
+  TH2D *hPtPNDR = (TH2D*) f->Get("hPtPNDR");
+  TH1D * hPt = (TH1D*)hPtPNDR->ProjectionX("hPt");
   if (0) {
     cout << "Before Combine: " << hPt->GetNbinsX() << " pt bins" << endl;
     for (Int_t i=1; i<=hPt->GetNbinsX(); ++i) {
@@ -123,13 +172,12 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   Int_t begbins[nbin] = {1,3,4};
   Int_t endbins[nbin] = {2,3,hPt->GetNbinsX()};
 
-  // Near Jet accumulation histograms
+  // accumulation histograms
   TH1D *Nr[nbin];
   TH1D *Aw[nbin];
+  getDRHists(f,nbin,begbins,endbins,Nr,Aw,hPt);
   for (Int_t i=0; i<nbin; ++i) {
-    Nr[i] = (TH1D*) f->Get(Form("hPNDR_%d_%d",begbins[0],endbins[i]));
     Nr[i]->SetFillColor(colors[i]);
-    Aw[i] = (TH1D*) f->Get(Form("hPADR_%d_%d",begbins[0],endbins[i]));
     Aw[i]->SetFillColor(colors[i]);
   }
  
