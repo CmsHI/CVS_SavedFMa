@@ -30,7 +30,7 @@ void getTotalNum(TH1D* h) {
    TH1D* hSim = (TH1D*)h->Clone(Form("%s_oneBin",h->GetName()));
    hSim->Rebin(hSim->GetNbinsX());
    //   cout << " bin numbers = " << hSim->GetNbinsX() << endl;
-   cout << hSim->GetBinContent(1) << "  (" << hSim->GetBinError(1) << ")" << endl;
+   cout << hSim->GetBinContent(1) << " (" << hSim->GetBinError(1) << ")";
    delete hSim;
 }
 
@@ -214,13 +214,11 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   // Get Numbers
   // =========================================================================
   for (Int_t i=0; i<nbin; ++i) {
-    Double_t nearsum=Nr[i]->Integral();
-    Double_t awaysum=Aw[i]->Integral();
-    cout << Form("integral (%.1f-%.1f GeV) = ",hPt->GetBinLowEdge(begbins[0]),hPt->GetBinLowEdge(endbins[i]+1))
-      << "Nr: " << nearsum << "\t"
-      << "Aw: " << awaysum << "\t"
-      << "Aj:" << (nearsum-awaysum)/(nearsum+awaysum) << endl;
-    getTotalNum(Nr[i]);
-    getTotalNum(Aw[i]);
+    cout << Form("integral (%.1f-%.1f GeV) = ",hPt->GetBinLowEdge(begbins[0]),hPt->GetBinLowEdge(endbins[i]+1));
+    //Double_t nearsum=Nr[i]->Integral();
+    //Double_t awaysum=Aw[i]->Integral();
+    //cout << "Nr: " << nearsum << "\t" << "Aw: " << awaysum << "\t" << "Aj:" << (nearsum-awaysum)/(nearsum+awaysum) << endl;
+    cout << " Nr: "; getTotalNum(Nr[i]); cout << "\t";
+    cout << " Aw: "; getTotalNum(Aw[i]); cout << endl;
   }
 }
