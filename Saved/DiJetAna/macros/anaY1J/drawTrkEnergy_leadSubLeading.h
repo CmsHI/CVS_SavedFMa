@@ -30,6 +30,7 @@ void getTotalNum(TH1D* h) {
    TH1D* hSim = (TH1D*)h->Clone(Form("%s_oneBin",h->GetName()));
    hSim->Rebin(hSim->GetNbinsX());
    //   cout << " bin numbers = " << hSim->GetNbinsX() << endl;
+   cout.precision(4);
    cout << hSim->GetBinContent(1) << " (" << hSim->GetBinError(1) << ")";
    delete hSim;
 }
@@ -108,7 +109,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   TFile *f = new TFile(infile);
   // Pt Bins
   TH1D *hPt = (TH1D*) f->Get("hPt");
-  if (drawLeg) {
+  if (0) {
     cout << "Before Combine: " << hPt->GetNbinsX() << " pt bins" << endl;
     for (Int_t i=1; i<=hPt->GetNbinsX(); ++i) {
       cout << "Pt bin " << i << ": " << hPt->GetBinLowEdge(i) << " - " << hPt->GetBinLowEdge(i+1) << endl;
@@ -116,11 +117,12 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   }
 
   const Int_t nbin=3;
-  Int_t begbins[nbin] = {1,3,4};
-  Int_t endbins[nbin] = {2,3,hPt->GetNbinsX()};
   // v9:  bin1+2 = 1-4GeV
   //	  bin3 = 4-8 GeV
   //	  bin4+5 = 8+ GeV
+  Int_t begbins[nbin] = {1,3,4};
+  Int_t endbins[nbin] = {2,3,hPt->GetNbinsX()};
+
   // Near Jet accumulation histograms
   TH1D *Nr[nbin];
   TH1D *Aw[nbin];
@@ -142,7 +144,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   for (Int_t i=0; i<nbin; ++i) {
     hcLeft[i] = combine(Nr[i],Aw[i],normType,norm);
     hcLeft[i]->SetFillStyle(3004);
-    hcLeft[i]->SetLineColor(colors[i]);
+    if (i!=0) hcLeft[i]->SetLineColor(colors[i]);
     hcRight[i] = combine(Nr[i],Aw[i],normType,norm,false);
   }
 
