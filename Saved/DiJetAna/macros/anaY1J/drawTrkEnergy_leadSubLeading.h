@@ -247,13 +247,13 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   jumSun(0,0,0,hcall->GetMaximum(),1,1);
   
   cout << "  Leading   " << endl;
-  cout << "    0.5-4GeV   ";  getTotalNum(hc01);
-  cout << "    0.5-8GeV   ";  getTotalNum(hc12);
-  cout << "    0.5-All    ";  getTotalNum(hcall);
+  cout << "    1-4GeV   ";  getTotalNum(hc01);
+  cout << "    1-8GeV   ";  getTotalNum(hc12);
+  cout << "    1-All    ";  getTotalNum(hcall);
   cout << "  SubLeading   " << endl;
-  cout << "    0.5-4GeV   ";  getTotalNum(hc01Right);
-  cout << "    0.5-8GeV   ";  getTotalNum(hc12Right);
-  cout << "    0.5-All    ";  getTotalNum(hcallRight);
+  cout << "    1-4GeV   ";  getTotalNum(hc01Right);
+  cout << "    1-8GeV   ";  getTotalNum(hc12Right);
+  cout << "    1-All    ";  getTotalNum(hcallRight);
 
   
   
