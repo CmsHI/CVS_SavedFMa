@@ -291,7 +291,7 @@ void AdditionalSysUncert(TH1 * h,Float_t frac) {
     Float_t y=h->GetBinContent(i);
     Float_t ye= h->GetBinError(i);
     h->SetBinError(i,Sqrt(ye*ye+frac*y*frac*y));
-    cout << "Old Error: " << ye << "New Error: " << h->GetBinError(i) << endl;
+    //cout << "Old Error: " << ye << "New Error: " << h->GetBinError(i) << endl;
   }
 }
 
