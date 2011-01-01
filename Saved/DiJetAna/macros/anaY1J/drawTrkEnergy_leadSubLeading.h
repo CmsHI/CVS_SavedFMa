@@ -26,35 +26,6 @@ void jumSun(double x1=0,double y1=0,double x2=1,double y2=1,int color=1, double 
    t1->Draw();
 }
 
-/*
-TH1D* foldHalf(TH1D* h, bool isLeft=true) {
-   int nBins = h->GetNbinsX();
-   int centerBin = h->FindBin(0.0000001);
-   cout<< "nBins = " << nBins << "   and half bin = " << centerBin << endl;
-   TH1D* hfolded = (TH1D*)h->Clone( Form("hfolded_%s",h->GetName()) );
-   hfolded->Reset();
-   for ( int i=1 ; int i<=nBins ; i++) {
-      hfolded->SetBinContent( i ,   h->GetBinContent(nBins-i+1) );
-      hfolded->SetBinError( i , h->GetBinError(nBins-i+1) );
-   }
-   hfolded->Add(h);
-   if ( isLeft) {
-      for ( int i=1 ; int i<= ( nBins/2 ) ; i++) {
-	 hfolded->SetBinContent(i,0);
-	 hfolded->SetBinError(i,0);
-      }
-   }
-   else {
-      for ( int i= nBins/2+1 ; int i<= nBins ; i++) {
-	 hfolded->SetBinContent(i,0);
-	 hfolded->SetBinError(i,0);
-      } 
-   }
-   return hfolded;
-   
-}
-
-*/
 void getTotalNum(TH1D* h) {
    TH1D* hSim = (TH1D*)h->Clone(Form("%s_oneBin",h->GetName()));
    hSim->Rebin(hSim->GetNbinsX());
@@ -67,7 +38,6 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
   Int_t nbin0=near->GetNbinsX();
   Int_t nbinc=nbin0*2;
   Int_t delta=0;
-  if (TString(near->GetName()).Contains("1_7")) cout << "nbin0 " << nbin0 << " nbinc: " << nbinc << endl;
 
   // Combine Near and Away
   TH1D* hcombine = new TH1D(Form("hcombine_%s_%s",near->GetName(),away->GetName()),"",nbinc,-TMath::Pi()/2, TMath::Pi()/2) ;
@@ -84,18 +54,6 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
 	hcombine->SetBinError(bin,away->GetBinError(bin-nbin0)); 
      }
   }
-  //  for(int bin=nbin0+1; bin<=nbin0*2-delta; bin++) {
-  //    hcombine->SetBinContent(bin,near->GetBinContent(bin-nbin0));
-  //    hcombine->SetBinError(bin,near->GetBinError(bin-nbin0));
-  //  }
-  //  for(int bin=nbin0*2+delta+1; bin<=nbin0*3; bin++) {
-  //   hcombine->SetBinContent(bin,away->GetBinContent(nbin0*3+1-bin));
-  //   hcombine->SetBinError(bin,away->GetBinError(nbin0*3+1-bin));
-  //  }
-  // for(int bin=nbin0*3+1; bin<=nbin0*4-delta; bin++) {
-  //   hcombine->SetBinContent(bin,away->GetBinContent(bin-nbin0*3));
-  //    hcombine->SetBinError(bin,away->GetBinError(bin-nbin0*3));
-  //  }
 
   // Normalize
   if (normType==1) { //case 1: normalize by near area
@@ -132,138 +90,83 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
 void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEtaRefl.root",
 		   bool drawLeg=false, bool drawYLab=false, Int_t logScale=0, Int_t normType=0)
 {
-  Float_t ymin=-5;
-
-  TFile *f = new TFile(infile);
+  TH1::SetDefaultSumw2();
   gStyle->SetMarkerStyle(0);
 
+  // =========================================================================
+  // Basica Plot Parameters
+  // =========================================================================
+  Float_t ymin=-5;
+  //Int_t colors[5] = {38,kOrange-8,kBlue-3,kGray,kRed};
+  Int_t colors[3] = {kOrange-8,kBlue-3,kRed};
+
+  // =========================================================================
+  // Inputs
+  // =========================================================================
+  TFile *f = new TFile(infile);
+
   TH1D *hPt = (TH1D*) f->Get("hPt");
-  
-  TH1D *n0 = (TH1D*) f->Get("hPNDR_1_1");
-  TH1D *n1 = (TH1D*) f->Get("hPNDR_1_2");
-  TH1D *n2 = (TH1D*) f->Get("hPNDR_1_3");
-  TH1D *n4 = (TH1D*) f->Get("hPNDR_1_4");
-  //  TH1D *n8 = (TH1D*) f->Get("hPNDR_1_5");
-  TH1D *nall = (TH1D*) f->Get(Form("hPNDR_1_%d",hPt->GetNbinsX()));
-  // TH1D *nall = (TH1D*) f->Get("hPNDR_1_7");
+  cout << "Before Combine: " << hPt->GetNbinsX() << " pt bins" << endl;
 
-  TH1D *a0 = (TH1D*) f->Get("hPADR_1_1");
-  TH1D *a1 = (TH1D*) f->Get("hPADR_1_2");
-  TH1D *a2 = (TH1D*) f->Get("hPADR_1_3");
-  TH1D *a4 = (TH1D*) f->Get("hPADR_1_4");
-  //  TH1D *a8 = (TH1D*) f->Get("hPADR_1_5");
-  TH1D *aall = (TH1D*) f->Get(Form("hPADR_1_%d",hPt->GetNbinsX()));
-  //TH1D *aall = (TH1D*) f->Get("hPADR_1_7");
-
-  TH1::SetDefaultSumw2();
-
-  n4->SetFillColor(kGray);
-  n2->SetFillColor(kBlue-3);
-  n0->SetFillColor(38);
-  n1->SetFillColor(kOrange-8);
-  //  n8->SetFillColor(kRed-6);
-  nall->SetFillColor(kRed);
-
-  a4->SetFillColor(kGray);
-  a2->SetFillColor(kBlue-3);
-  a0->SetFillColor(38);
-  a1->SetFillColor(kOrange-8);
-  //  a8->SetFillColor(kRed-6);
-  aall->SetFillColor(kRed);
-
+  const Int_t nbin=3;
+  Int_t begbins[nbin] = {1,3,4};
+  Int_t endbins[nbin] = {2,3,hPt->GetNbinsX()};
+  // v9:  bin1+2 = 1-4GeV
+  //	  bin3 = 4-8 GeV
+  //	  bin4+5 = 8+ GeV
+  // Near Jet accumulation histograms
+  TH1D *Nr[nbin];
+  TH1D *Aw[nbin];
+  for (Int_t i=0; i<nbin; ++i) {
+    Nr[i] = (TH1D*) f->Get(Form("hPNDR_%d_%d",begbins[0],endbins[i]));
+    Nr[i]->SetFillColor(colors[i]);
+    Aw[i] = (TH1D*) f->Get(Form("hPADR_%d_%d",begbins[0],endbins[i]));
+    Aw[i]->SetFillColor(colors[i]);
+  }
  
+  // =========================================================================
+  // Combine Histgrams
+  // =========================================================================
   //TCanvas *c2 = new TCanvas("c2","c2",600,500);
-  Float_t norm = 1./(nall->Integral()*nall->GetBinWidth(1));
-  TH1D* hcall = combine(nall,aall,normType,norm);
-  //  TH1D* hc1248 = combine(n8,a8,normType,norm);
-  TH1D* hc124 = combine(n4,a4,normType,norm);
-  TH1D* hc12 = combine(n2,a2,normType,norm);
-  TH1D* hc01 = combine(n1,a1,normType,norm);
-  TH1D* hc0 = combine(n0,a0,normType,norm);
-
-  TH1D* hcallRight = combine(nall,aall,normType,norm,false);
-  //  TH1D* hc1248Right = combine(n8,a8,normType,norm,false);
-  TH1D* hc124Right = combine(n4,a4,normType,norm,false);
-  TH1D* hc12Right = combine(n2,a2,normType,norm,false);
-  TH1D* hc01Right = combine(n1,a1,normType,norm,false);
-  TH1D* hc0Right = combine(n0,a0,normType,norm,false);
-  
-  
+  Float_t norm = 1./(Nr[nbin-1]->Integral()*Nr[nbin-1]->GetBinWidth(1));
+  TH1D* hcLeft[nbin];
+  TH1D* hcRight[nbin];
   int fillLeft = 3004;
-  
-  hcall->SetFillStyle(3004);
-  //  hc1248->SetFillStyle(fillLeft);
-   hc124->SetFillStyle(fillLeft);
-  hc12->SetFillStyle(3004);
-  hc01->SetFillStyle(3004);
-  hc0->SetFillStyle(3004);
-  
-  hcall->SetLineColor(kRed);                                                                                                                                                      
-  // hc1248->SetLineColor(kRed-6);                                                                                                                                                         
-    hc124->SetLineColor(kGray);                                                                                                                                                       
-  hc12->SetLineColor(kBlue-3);                                                                                                                                                               
-  hc01->SetLineColor(1);                                                                                                                                                           
-  hc0->SetLineColor(1);     
-  //  hcall->SetLineWidth(2);
-  //  hc1248->SetLineWidth(2);
-  //  hc124->SetLineWidth(2);
-  //  hc12->SetLineWidth(2);
-  //  hc0->SetLineWidth(2);
-  // hc0->SetLineWidth(2);
+  for (Int_t i=0; i<nbin; ++i) {
+    hcLeft[i] = combine(Nr[i],Aw[i],normType,norm);
+    hcLeft[i]->SetFillStyle(3004);
+    hcLeft[i]->SetLineColor(colors[i]);
+    hcRight[i] = combine(Nr[i],Aw[i],normType,norm,false);
+  }
 
-  /*  hcallRight->SetFillColor(kRed-6);
-  hc1248Right->SetFillColor(kRed-7);
-  hc124Right->SetFillColor(kOrange-9);
-  hc12Right->SetFillColor(33);
-  hc0Right->SetFillColor(kBlue-4);
-  hc0Right->SetFillColor(kGray-1);
-  */
-
-  hcall->GetXaxis()->SetNdivisions(000,true);
-  //if(!drawYLab) hcall->GetYaxis()->SetTitle("");
-
-  // Original legend = 0 ~ Pi;
-  
-  float shftAxis= hc12Right->GetBinWidth(1)/2.*gab;
+  // =========================================================================
+  // Plot Axis
+  // =========================================================================
+  hcLeft[nbin-1]->GetXaxis()->SetNdivisions(000,true);
+  //if(!drawYLab) hcLeft[nbin-1]->GetYaxis()->SetTitle("");
+  float shftAxis= hcLeft[nbin-1]->GetBinWidth(1)/2.*gab;
   float drRange = 0.8;
-  hcall->SetAxisRange(-0.85,0.85,"X"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis);
-  hcall->SetAxisRange(ymin,70,"Y"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis); 
-  fixedFontHist(hcall);
+  hcLeft[nbin-1]->SetAxisRange(-0.85,0.85,"X"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis);
+  hcLeft[nbin-1]->SetAxisRange(ymin,70,"Y"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis); 
+  fixedFontHist(hcLeft[nbin-1]);
   
-  // Final Plot -------------------------------------------------
-  hcall->Draw("hist"); hcall->Draw("esame");
-  //  hc1248->Draw("histsame"); hc1248->Draw("esame"); //chist
-  //  hc124->Draw("histsame"); hc124->Draw("esame");
-  hc12->Draw("histsame"); hc12->Draw("esame");
-  hc01->Draw("histsame"); hc01->Draw("esame");
-  // hc0->Draw("histsame"); hc0->Draw("esame");
-
-  hcallRight->Draw("histsame"); hcallRight->Draw("esame");
-  //  hc1248Right->Draw("histsame"); hc1248Right->Draw("esame"); //chist
-  //   hc124Right->Draw("histsame"); hc124Right->Draw("esame");
-  hc12Right->Draw("histsame"); hc12Right->Draw("esame");
-  hc01Right->Draw("histsame"); hc01Right->Draw("esame");
-  // hc0Right->Draw("histsame"); hc0Right->Draw("esame");
-  jumSun(0,0,0,hcall->GetMaximum(),1,1);
+  // =========================================================================
+  // Draw Final Plot
+  // =========================================================================
+  for (Int_t i=nbin-1; i>=0; --i) {
+    if (i==nbin-1) {
+      hcLeft[i]->Draw("hist"); hcLeft[i]->Draw("esame");
+    }
+    else {
+      hcLeft[i]->Draw("histsame"); hcLeft[i]->Draw("esame");
+    }
+    hcRight[i]->Draw("histsame"); hcRight[i]->Draw("esame");
+  }
+  jumSun(0,0,0,hcLeft[nbin-1]->GetMaximum(),1,1);
   
-  cout << "  Leading   " << endl;
-  cout << "    1-4GeV   ";  getTotalNum(hc01);
-  cout << "    1-8GeV   ";  getTotalNum(hc12);
-  cout << "    1-All    ";  getTotalNum(hcall);
-  cout << "  SubLeading   " << endl;
-  cout << "    1-4GeV   ";  getTotalNum(hc01Right);
-  cout << "    1-8GeV   ";  getTotalNum(hc12Right);
-  cout << "    1-All    ";  getTotalNum(hcallRight);
-
-  
-  
-  //hc1248->GetXaxis()->SetAxisColor(0);
-  //hc1248->GetXaxis()->SetLabelColor(0);
-
-  //TGaxis *naxis = new TGaxis(0,0,1.4,0,0,1.4,505,"+");
-  //  TGaxis *naxis = new TGaxis(-1.4,0,1.4,0,-1.4,1.4,505,"+");
-  //  TGaxis *naxis = new TGaxis(0,0,TMath::Pi()/2,0,TMath::Pi(),0,10,"+");
-  // TGaxis *aaxis = new TGaxis(TMath::Pi()-1.4,0,TMath::Pi()+1.4,0,-1.4,1.4,505,"+");
+  // =========================================================================
+  // Draw Final Axis
+  // =========================================================================
   TF1 *f1=new TF1("f1","-x",0,0.8);
   TGaxis *naxis = new TGaxis(-0.8,ymin,0,ymin,"f1",3,"+");
   TF1 *f2=new TF1("f2","x",0,0.8);
@@ -280,62 +183,29 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   naxis->Draw();
   aaxis->Draw();
 
-  
-  //  aaxis->Draw();
-  //drawPatch(0.294,0.109,0.341,0.163);
-  //TGaxis *nuaxis = new TGaxis(-1.0*TMath::PiOver2(),3000.0,1.4,3000.0,-1.0*TMath::PiOver2(),1.4,510,"U-");
-  //TGaxis *auaxis = new TGaxis(TMath::Pi()-1.4,3000.0,3.0*TMath::PiOver2(),3000.0,-1.4,TMath::PiOver2(),510,"U-");
-  //nuaxis->Draw();
-  //auaxis->Draw();
-
   if (logScale==1) gPad->SetLogy();
-  //gPad->SetRightMargin(0.05);
-  //gPad->SetLeftMargin(0.18);
-  //gPad->SetBottomMargin(0.18);
 
+  // =========================================================================
+  // Draw Legend
+  // =========================================================================
   if (drawLeg) {
      TLegend *leg = new TLegend(0.01425723,0.6506156,0.4549146,0.9576504);
-
      leg->SetFillStyle(0);
      leg->SetBorderSize(0);
      leg->SetNColumns(1);
      leg->SetTextSize(0.05);
-    /*
-    leg->AddEntry(hc0,"0.5-1 GeV/c","f");
-    leg->AddEntry(hc01,"1-2 GeV/c","f");
-    leg->AddEntry(hc12,"2-4 GeV/c","f");
-    leg->AddEntry(hc124,"4-8 GeV/c","f");
-    leg->AddEntry(hc1248,"16+ GeV/c","f");
-    */
-    //    leg->AddEntry(hcallRight,"36+ GeV/c","f");
-    //  leg->AddEntry(hc1248Right,"18-36 GeV/c","f");
-    ///  leg->AddEntry(hc124Right,"9-18 GeV/c","f");
-    //  leg->AddEntry(hc12Right,"6-9 GeV/c","f");
-    //  leg->AddEntry(hc01Right,"3-6 GeV/c","f");
-    //  leg->AddEntry(hc0Right,"1.5-3 GeV/c","f");
-     //    leg->AddEntry(hcallRight,Form("> %.0f GeV/c",hPt->GetBinLowEdge(hPt->GetNbinsX())),"f");
-     leg->AddEntry(hcallRight,Form("> %.0f GeV/c",hPt->GetBinLowEdge(4)),"f");
-     
-     //    leg->AddEntry(hc124Right,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(4),hPt->GetBinLowEdge(5)),"f");
-    leg->AddEntry(hc12Right,Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(3),hPt->GetBinLowEdge(4)),"f");
-    leg->AddEntry(hc01Right,Form("%.1f-%.0f GeV/c",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(3)),"f");
-    //leg->AddEntry(hc0Right,Form("%.1f-%.1f GeV/c",hPt->GetBinLowEdge(1),hPt->GetBinLowEdge(2)),"f");
+     for (Int_t i=nbin-1;i>=0;--i) {
+       if (i==nbin-1) leg->AddEntry(hcRight[i],Form("> %.0f GeV/c",hPt->GetBinLowEdge(begbins[i])),"f");
+       else leg->AddEntry(hcRight[i],Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(begbins[i]),hPt->GetBinLowEdge(endbins[i]+1)),"f");
+     }
     leg->Draw();
   }
 
-
-  Double_t nearsum=nall->Integral();
-  Double_t awaysum=aall->Integral();
-
-  Double_t cnearsum=hcall->Integral(1,nall->GetNbinsX()*2);
-  Double_t cawaysum=hcall->Integral(1+nall->GetNbinsX()*2,hc0->GetNbinsX());
-  if (normType==1) {
-    cnearsum*=nall->GetBinWidth(1);
-    cawaysum*=aall->GetBinWidth(1);
-  }
-
+  // =========================================================================
+  // Get Numbers
+  // =========================================================================
+  Double_t nearsum=Nr[nbin-1]->Integral();
+  Double_t awaysum=Aw[nbin-1]->Integral();
   cout << "integral of dET/dR (input hist) = " << nearsum << "(near-side) \t"
        << awaysum << "(away-side) \t Aj:" << (nearsum-awaysum)/(nearsum+awaysum) << endl;
-  cout << "integral of dET/dR (combined hist) = " << cnearsum << "(near-side) \t"
-       << cawaysum << "(away-side)" << endl;
 }
