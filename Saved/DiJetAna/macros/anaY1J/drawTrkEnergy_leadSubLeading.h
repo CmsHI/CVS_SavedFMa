@@ -31,6 +31,7 @@ void getTotalNum(TH1D* h) {
    hSim->Rebin(hSim->GetNbinsX());
    //   cout << " bin numbers = " << hSim->GetNbinsX() << endl;
    cout << hSim->GetBinContent(1) << "  (" << hSim->GetBinError(1) << ")" << endl;
+   delete hSim;
 }
 
 TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Left=true) {
@@ -40,7 +41,7 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
   Int_t delta=0;
 
   // Combine Near and Away
-  TH1D* hcombine = new TH1D(Form("hcombine_%s_%s",near->GetName(),away->GetName()),"",nbinc,-TMath::Pi()/2, TMath::Pi()/2) ;
+  TH1D* hcombine = new TH1D(Form("hcombine_%s_%s_%d",near->GetName(),away->GetName(),Left),"",nbinc,-TMath::Pi()/2, TMath::Pi()/2) ;
 
   if (Left) {
      for(int bin=1+delta; bin<=nbin0; bin++) {
@@ -103,10 +104,16 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   // =========================================================================
   // Inputs
   // =========================================================================
+  cout << endl << "=== " << infile << " ===" << endl;
   TFile *f = new TFile(infile);
-
+  // Pt Bins
   TH1D *hPt = (TH1D*) f->Get("hPt");
-  cout << "Before Combine: " << hPt->GetNbinsX() << " pt bins" << endl;
+  if (drawLeg) {
+    cout << "Before Combine: " << hPt->GetNbinsX() << " pt bins" << endl;
+    for (Int_t i=1; i<=hPt->GetNbinsX(); ++i) {
+      cout << "Pt bin " << i << ": " << hPt->GetBinLowEdge(i) << " - " << hPt->GetBinLowEdge(i+1) << endl;
+    }
+  }
 
   const Int_t nbin=3;
   Int_t begbins[nbin] = {1,3,4};
@@ -163,6 +170,8 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
     hcRight[i]->Draw("histsame"); hcRight[i]->Draw("esame");
   }
   jumSun(0,0,0,hcLeft[nbin-1]->GetMaximum(),1,1);
+  TLine * l0 = new TLine(-0.8,0,0.8,0);
+  l0->Draw();
   
   // =========================================================================
   // Draw Final Axis
@@ -204,8 +213,14 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   // =========================================================================
   // Get Numbers
   // =========================================================================
-  Double_t nearsum=Nr[nbin-1]->Integral();
-  Double_t awaysum=Aw[nbin-1]->Integral();
-  cout << "integral of dET/dR (input hist) = " << nearsum << "(near-side) \t"
-       << awaysum << "(away-side) \t Aj:" << (nearsum-awaysum)/(nearsum+awaysum) << endl;
+  for (Int_t i=0; i<nbin; ++i) {
+    Double_t nearsum=Nr[i]->Integral();
+    Double_t awaysum=Aw[i]->Integral();
+    cout << Form("integral (%.1f-%.1f GeV) = ",hPt->GetBinLowEdge(begbins[0]),hPt->GetBinLowEdge(endbins[i]+1))
+      << "Nr: " << nearsum << "\t"
+      << "Aw: " << awaysum << "\t"
+      << "Aj:" << (nearsum-awaysum)/(nearsum+awaysum) << endl;
+    getTotalNum(Nr[i]);
+    getTotalNum(Aw[i]);
+  }
 }
