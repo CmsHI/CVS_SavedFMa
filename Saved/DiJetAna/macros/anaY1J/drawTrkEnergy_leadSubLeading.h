@@ -56,6 +56,9 @@ void getDRHists(TFile * f,
   // Subtract Bkg
   TH2D * hPtPNDRSub = bkgSub(hPtPNDR,hPtPNDRBg,inFileNameStrip+"Nr");
   TH2D * hPtPADRSub = bkgSub(hPtPADR,hPtPADRBg,inFileNameStrip+"Aw");
+  // xchecks
+  TH1D * hNrCPPtBgSub = (TH1D*)f->Get("hNrCPPtBgSub");
+  TH1D * hAwCPPtBgSub = (TH1D*)f->Get("hAwCPPtBgSub");
 
   for (Int_t i=0; i<nbin; ++i) {
     Nr[i] = projectDR(hPtPNDRSub,begbins[0],endbins[i]);
@@ -64,6 +67,7 @@ void getDRHists(TFile * f,
     //cout << Form("%.1f < P_{T} < %.1f GeV: ",hPt->GetBinLowEdge(begbins[0]),hPt->GetBinLowEdge(endbins[i]+1))
     //  << " SigSubBkg Integral - Nr: " << Nr[i]->Integral() << " Aw: " << Aw[i]->Integral() << endl;
   }
+  cout << "Evt by evt SigSubConePt - Nr: " << hNrCPPtBgSub->GetMean() << " Aw: " << hAwCPPtBgSub->GetMean() << endl;
 }
 
 void jumSun(double x1=0,double y1=0,double x2=1,double y2=1,int color=1, double width=1)
@@ -169,8 +173,11 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   // v9:  bin1+2 = 1-4GeV
   //	  bin3 = 4-8 GeV
   //	  bin4+5 = 8+ GeV
-  Int_t begbins[nbin] = {1,3,4};
-  Int_t endbins[nbin] = {2,3,hPt->GetNbinsX()};
+  // v10:   bin2+3 = 1-4GeV
+  //	    bin4 = 4-8 GeV
+  //	    bin5+6 = 8+ GeV
+  Int_t begbins[nbin] = {2,4,5};
+  Int_t endbins[nbin] = {3,4,hPt->GetNbinsX()};
 
   // accumulation histograms
   TH1D *Nr[nbin];

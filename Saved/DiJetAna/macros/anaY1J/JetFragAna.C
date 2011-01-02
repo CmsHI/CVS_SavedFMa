@@ -52,8 +52,7 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    Double_t dRBins[numDRBins+1];
    for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = TMath::PiOver2()/((double)numDRBins)*i; }
    const Int_t numPtBins = 6;
-   //Double_t ptBins[numPtBins+1]={0.5,1.5,4,8,20,1000}; // v0
-   Double_t ptBins[numPtBins+1]={0.5,1.0,1.5,4,8,20,180}; // v1,v2,v3
+   Double_t ptBins[numPtBins+1]={0.5,1.0,1.5,4,8,20,180}; // v10
    const Int_t numDPhiBins = 20;
    Double_t dPhiBins[numDPhiBins+1];
    for (int i=0;i<numDPhiBins+1;i++)   { dPhiBins[i] = PI/2./((double)numDPhiBins)*i; }
@@ -571,6 +570,9 @@ void JetFragAna::Loop()
 	    PNdRBkg = reco::deltaR(peta[i],pphi[i],nljeta,nljphi+TMath::Pi());
 	    PAdRBkg = reco::deltaR(peta[i],pphi[i],aljeta,aljphi+TMath::Pi());
 	  }
+
+	  // For the moment cone analysis start from 1GeV
+	  if (ppt[i]<hPt->GetBinLowEdge(2)) continue;
 
 	  // Signal Cone
 	  if (pndr[i]<cut.ConeSize) {
