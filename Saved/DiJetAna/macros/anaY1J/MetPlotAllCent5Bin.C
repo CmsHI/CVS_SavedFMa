@@ -183,8 +183,8 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
    drawText("PYTHIA+HYDJET",0.33,0.82);
    drawText("30-100%",0.85,0.9);
    float ptx(0.32),pty(0.25);
-   drawText("P_{T,1}  > 120GeV/c",ptx,pty);
-   drawText("P_{T,2}  > 50GeV/c",ptx,pty-0.08);
+   drawText("p_{T,1}  > 120GeV/c",ptx,pty);
+   drawText("p_{T,2}  > 50GeV/c",ptx,pty-0.08);
    drawText("#Delta#phi_{12}>  #frac{2}{3}#pi",ptx,pty-0.16);
    
    c1->cd(2);
@@ -199,8 +199,8 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
    drawText("#intL dt = 6.7 #mub^{-1}",0.33,0.78);
    drawText("30-100%",0.85,0.93);
    float pty1(0.4);
-   drawText("P_{T,1}  > 120GeV/c",ptx,pty1);
-   drawText("P_{T,2}  > 50GeV/c",ptx,pty1-0.07);
+   drawText("p_{T,1}  > 120GeV/c",ptx,pty1);
+   drawText("p_{T,2}  > 50GeV/c",ptx,pty1-0.07);
    drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty1-0.14);
 
 
