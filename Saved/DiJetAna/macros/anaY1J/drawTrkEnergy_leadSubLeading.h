@@ -126,7 +126,8 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
   Int_t delta=0;
 
   // Combine Near and Away
-  TH1D* hcombine = new TH1D(Form("hcombine_%s_%s_%d",near->GetName(),away->GetName(),Left),"",nbinc,-TMath::Pi()/2, TMath::Pi()/2) ;
+  Float_t xmax = near->GetBinLowEdge(nbin0+1);
+  TH1D* hcombine = new TH1D(Form("hcombine_%s_%s_%d",near->GetName(),away->GetName(),Left),"",nbinc,-xmax, xmax) ;
 
   if (Left) {
      for(int bin=1+delta; bin<=nbin0; bin++) {
@@ -203,12 +204,9 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   }
 
   const Int_t nbin=3;
-  // v9:  bin1+2 = 1-4GeV
-  //	  bin3 = 4-8 GeV
-  //	  bin4+5 = 8+ GeV
-  // v10:   bin2+3 = 1-4GeV
-  //	    bin4 = 4-8 GeV
-  //	    bin5+6 = 8+ GeV
+  // v10+:  bin2+3  = 1-4GeV
+  //	    bin4    = 4-8 GeV
+  //	    bin5+6  = 8+ GeV
   Int_t begbins[nbin] = {2,4,5};
   Int_t endbins[nbin] = {3,4,hPt->GetNbinsX()};
 
@@ -234,7 +232,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   for (Int_t i=0; i<nbin; ++i) {
     hcLeft[i] = combine(Nr[i],Aw[i],normType,norm,true,sysErrorType);
     hcLeft[i]->SetFillStyle(3004);
-    if (i!=0) hcLeft[i]->SetLineColor(colors[i]);
+    //if (i!=0) hcLeft[i]->SetLineColor(colors[i]);
     hcRight[i] = combine(Nr[i],Aw[i],normType,norm,false,sysErrorType);
   }
 
