@@ -4,7 +4,7 @@ srcName=$2
 anaV=$3
 module=$4
 doReWeight=$5
-BkgSub="EtaRefl"
+BkgSub="EtaReflSingle"
 AjMed0to30=0.22
 
 AjLow0to30=0.15
