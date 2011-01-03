@@ -79,7 +79,7 @@ TChain * effJet(bool doMC=0,
     TString outtag="DataMix_Pt50"
     )
 {
-  TString header="Embedded PYTHIA";
+  TString header="PYTHIA+DATA";
   outtag+=Form("_Cent%.0fto%0.f",centMin,centMax);
   TChain * dj = new TChain("djgen/djTree");
   TString tag=Form("GenJet_%.0fto%.0f",centMin,centMax);
