@@ -30,26 +30,31 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   Float_t leftSpace=leftMargin/2., downSpace=bottomMargin/2.;
   Float_t j1x=0.14,j1y=4*downSpace,j2x=0.56,j2y=4*downSpace;
   Float_t ax=0.52,ay=0.77;
-
+  
   c1->cd(1);
   drawTrkEnergy("jfh"+anaV+"ReWt_Hydjet_"+module+"_genp_Cent0to30_Aj0to11_"+BckSub+".root",false,true,logScale,normType);
   drawText("A_{J} < 0.11",leftSpace+ax+0.1,ay);
   drawText("Leading Jet",j1x+0.23,j1y,15);
   drawText("SubLeading Jet",j2x+leftSpace,j2y,15);
-  drawText("Hydjet",0.33,0.81);
+  drawText("HYDJET",0.33,0.81);
   drawText("+PYTHIA",0.33,0.73);
   drawText("MC truth",0.33,0.5);
   drawText("0-30%",0.33,0.60);
   drawPatch(0,0.0,0.28,0.1);
   
   c1->cd(2);
-  drawTrkEnergy("jfh"+anaV+"ReWt_Hydjet_"+module+"_genp_Cent0to30_Aj11to22_"+BckSub+".root",true,true,logScale,normType);
+  drawTrkEnergy("jfh"+anaV+"ReWt_Hydjet_"+module+"_genp_Cent0to30_Aj11to22_"+BckSub+".root",false,true,logScale,normType);
   drawText("0.11 < A_{J} < 0.22",ax,ay);
   drawText("Leading Jet",j1x,j1y,15);
   drawText("SubLeading Jet",j2x,j2y,15);
- 
+  
+  float ptx(0.05),pty(0.88);
+  drawText("P_{T,1} > 120GeV/c",ptx,pty,15);
+  drawText("P_{T,2} >  50GeV/c",ptx,pty-0.08,15);
+  drawText("#Delta#phi_{1,2} >  #frac{2}{3}#pi",ptx,pty-0.16,15);
+
   c1->cd(3);
-  drawTrkEnergy("jfh"+anaV+"ReWt_Hydjet_"+module+"_genp_Cent0to30_Aj22to33_"+BckSub+".root",false,true,logScale,normType);
+  drawTrkEnergy("jfh"+anaV+"ReWt_Hydjet_"+module+"_genp_Cent0to30_Aj22to33_"+BckSub+".root",true,true,logScale,normType);
   drawText("0.22 < A_{J} < 0.33",ax,ay);
   drawText("Leading Jet",j1x,j1y,15);
   drawText("SubLeading Jet",j2x,j2y,15);
@@ -76,6 +81,11 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   drawText("0.11 < A_{J} < 0.22",0.52,downSpace+0.73);
   drawText("Leading Jet",j1x,j1y+downSpace+0.02,15);
   drawText("SubLeading Jet",j2x,j2y+downSpace+0.02,15);
+  
+  float pty1(0.92);
+  drawText("P_{T,1} > 120GeV/c",ptx,pty1,15);
+  drawText("P_{T,2} >  50GeV/c",ptx,pty1-0.07,15);
+  drawText("#Delta#phi_{1,2} >  #frac{2}{3}#pi",ptx,pty1-0.14,15);
 
   c1->cd(7);
   drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj22to33_"+BckSub+".root",false,false,logScale,normType);
