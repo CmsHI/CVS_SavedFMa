@@ -96,6 +96,8 @@ void anaJetFrag(
   jana.doTrackingEffFakeCorr_ = true;
   jana.doCentralityReweighting_ = doReWeight;
   jana.doJetOnly_ = false;
+  jana.cut.NrJEtaMax = 1.6; // 2, 1.6
+  jana.cut.AwJEtaMax = 1.6; // 2, 1.6
   jana.cut.CentMin = CentMin;
   jana.cut.CentMax = CentMax;
   jana.cut.SetDJEt(NrJEtMin,NrJEtMax,AwJEtMin,AwJEtMax,TMath::Pi()*2./3);
