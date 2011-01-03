@@ -23,16 +23,16 @@ void effJetCentAll(
 
   Float_t leftSpace=leftMargin/2., downSpace=bottomMargin/2.;
   c1->cd(1);
-  effJet(0,"dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127.root",30,100,0,true,0);
+  effJet(0,"dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127v2.root",30,100,0,true,0);
   drawText("CMS",0.28,0.90);
   drawText("30-100%",leftSpace+0.43,0.51);
 
   c1->cd(2);
-  effJet(0,"dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127.root",10,30,0,true,1);
+  effJet(0,"dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127v2.root",10,30,0,true,1);
   drawText("10-30%",0.43,0.51);
 
   c1->cd(3);
-  effJet(0,"dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127.root",0,10,0,true,0);
+  effJet(0,"dj_Data_MinBias_DijetUnquenched50_d20101127_MatchedJetGoodTrk1127v2.root",0,10,0,true,0);
   //drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.56,0.82);
   //drawText("#intL dt = 6.7 #mub^{-1}",0.56,0.74);
   drawText("0-10%",0.43,0.51);
