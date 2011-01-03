@@ -105,7 +105,8 @@ void anaJetFrag(
   jana.cut.DJCutType = DJCutType;
   jana.cut.TrkPtMin = TrkPtMin;
   jana.cut.ConeSize = 0.8;
-  if (modName=="djcalo_genp"||modName=="djgen") {
+  if (modName=="djcalo_genp"||modName=="djgen"
+      || inFile0Name.Contains("djcalo_genp")||inFile0Name.Contains("djgen")) {
     jana.anaGenpType_=1;
     jana.doTrackingEffFakeCorr_ = false;
   }
