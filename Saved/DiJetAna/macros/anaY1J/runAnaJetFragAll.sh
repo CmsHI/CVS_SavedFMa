@@ -1,5 +1,5 @@
 #!/bin/bash -
-anaV=CorrEtaTrkEffv13
+anaV=CorrEtaTrkEffv15
 
 for module in djcalo djcalo_genp; do
   ./runAnaJetFragHI.sh dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_${module}_120_50.root HCPR_J50U $anaV $module 0
