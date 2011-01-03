@@ -20,13 +20,15 @@ TH1D *calcEff(TH1D* h1, TH1D* h2)
    return h2;
 }
 
-void drawErrorShift(TH1* hOld=0, float dx=0) {
+void drawErrorShift(TH1* hOld=0, float dx=0, float addSysErr=0.1) {
    int nBins = hOld->GetNbinsX();
    TLine* tl[100];
    for ( int i =1; i<=nBins ; i ++ ) { 
       float px = hOld->GetBinCenter(i);
       float py = hOld->GetBinContent(i);
-      float tErr = hOld->GetBinError(i);
+      float tErrSta = hOld->GetBinError(i);
+      float tErrSys = addSysErr*py;
+      float tErr = sqrt( tErrSta*tErrSta + tErrSys*tErrSys);
       tl[i] = new TLine(px+dx,py-tErr, px+dx,py+tErr);
       tl[i]->SetLineWidth(1);
       tl[i]->Draw();
@@ -36,11 +38,11 @@ void drawErrorShift(TH1* hOld=0, float dx=0) {
 void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_120_50.root",
                     TCut myCut = "cent<30", char *title = "",bool drawLegend = false,
                     bool drawSys = true
-                   )
+		    )
 {
    TFile *inf = new TFile(infname);
    TTree *t = (TTree*)inf->Get("ntjt");
-  
+   
    t->SetAlias("metxMerged0","metx0+metx1+metx2+metx3");
    t->SetAlias("metxMerged1","metx1+metx2+metx3");
    t->SetAlias("metxMerged2","metx2+metx3");
@@ -48,8 +50,8 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    t->SetAlias("metxMerged4","metx4+metx5");
    const int nBin = 5;
    double bins[nBin+1] = {0.5,1.0,1.5,4,8,1000};  
-   double colors[nBin] = {kRed-6,38, kOrange-8,kBlue-3,kRed};
-
+   double colors[nBin] = {kRed-3,38, kOrange-8,kGreen-8,kRed-7};
+   
    const int nBinAj = 4;
    double ajBins[nBinAj+1] = {0.0001,0.11,0.22,0.33,0.49999};
    // Selection cut
@@ -112,13 +114,17 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    pall->SetAxisRange(-59.9,59.9,"Y");
    pall->SetMarkerSize(1);
    pall->Draw("E");
+   float addSys = 0;
+   if ( drawSys==1)   addSys=0.1;
    for (int i=0;i<nBin;++i) {
       p[i]->SetLineWidth(1);
       //      p[i]->SetMarkerSize(0.1);
       p[i]->Draw("hist same");
-      if ( i==0 )       drawErrorShift(p[i],-0.01);
-      if ( i==1 || i==3 || i==4)       drawErrorShift(p[i],0);
-      if ( i==2 )       drawErrorShift(p[i],0.01);
+      if ( i==0 )       drawErrorShift(p[i],-0.016, addSys);
+      if ( i==1 || i==4)       drawErrorShift(p[i],-0.008,addSys);
+      if ( i==2 )       drawErrorShift(p[i],0.008,addSys);
+      if ( i==3 )       drawErrorShift(p[i],0.016,addSys);
+
    }
    pall->Draw("E same");
    
@@ -191,7 +197,7 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
    drawText("CMS",0.33,0.90);
    drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
    drawText("#intL dt = 6.7 #mub^{-1}",0.33,0.78);
-   drawText("30-100%",0.85,0.9);
+   drawText("30-100%",0.85,0.93);
    float pty1(0.4);
    drawText("P_{T,1}  > 120GeV/c",ptx,pty1);
    drawText("P_{T,2}  > 50GeV/c",ptx,pty1-0.07);
@@ -200,7 +206,7 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
 
    c1->cd(4);
    balanceMetVsAj("nt_dj_data120_cor.root","cent<30","",false);
-   drawText("0-30%",0.8,0.9);
+   drawText("0-30%",0.8,0.93);
    
    c1->SaveAs("missingPtParallel-Corrected-data-allCent.eps");
 
