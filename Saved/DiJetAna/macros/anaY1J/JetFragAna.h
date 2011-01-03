@@ -39,7 +39,11 @@ public :
    Bool_t doJetOnly_;
    Int_t anaGenpType_;
    Int_t numDJ_;
+   Int_t numJ1_;
+   Int_t numJ2_;
    Float_t numDJReWeighted_;
+   Float_t numJ1ReWeighted_;
+   Float_t numJ2ReWeighted_;
    std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
    std::vector<math::PtEtaPhiMLorentzVector> refJets_;
    std::vector<math::PtEtaPhiMLorentzVector> particles_;
