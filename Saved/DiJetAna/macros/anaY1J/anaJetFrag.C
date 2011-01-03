@@ -119,6 +119,14 @@ void anaJetFrag(
   jana.trackingEtaBin_ = (TH1D*)hTrackingEff[0]->ProjectionX();
   jana.trackingPtBin_ = (TH1D*)hTrackingEff[0]->ProjectionY();
 
+  // Some Print out
+  cout << "======================================================" << endl;
+  cout << "Analysis Setting Summary: " << endl;
+  cout << "======================================================" << endl;
+  cout << "  doEvtSel: " << jana.doEvtSel_ << " doCentReWt: " << jana.doCentralityReweighting_
+    << " doEtaCorr: " << jana.doEtaCorr_ << " doTrkEffCorr: " << jana.doTrackingEffFakeCorr_
+    << " anaGenpType: " << jana.anaGenpType_ << endl;
+
   for (int i=0;i<5;i++) {
      jana.trackingEffCorr_[i] = hTrackingEff[i];
      jana.trackingFakeCorr_[i] = hTrackingFake[i];
