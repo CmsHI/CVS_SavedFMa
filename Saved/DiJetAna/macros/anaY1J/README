@@ -5,3 +5,4 @@ v12: dR bin width = 0.1
 v13: Jet |eta|<1.6
 v14: J1, J2 separate normalization implementation.
 v15: Cut on corrected jet eta for background region calculation. Ntuple saves dijets before background exclusion.
+v16: dR bin widht = 0.08
