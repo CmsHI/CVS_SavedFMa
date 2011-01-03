@@ -13,7 +13,7 @@
 using namespace std;
 
 void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
-			  TString anaV="CorrEtaTrkEffPtBin5RBin20v11",
+			  TString anaV="CorrEtaTrkEffv12",
 			  //TString anaV="CorrEtaTrkEffPtBin5RBin20v1",
 			  TString module="djcalo",
 			  TString BckSub="SubEtaRefl",
@@ -49,9 +49,9 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   drawText("SubLeading Jet",j2x,j2y,15);
   
   float ptx(0.05),pty(0.88);
-  drawText("P_{T,1} > 120GeV/c",ptx,pty,15);
-  drawText("P_{T,2} >  50GeV/c",ptx,pty-0.08,15);
-  drawText("#Delta#phi_{1,2} >  #frac{2}{3}#pi",ptx,pty-0.16,15);
+  drawText("P_{T,1}  > 120GeV/c",ptx,pty,15);
+  drawText("P_{T,2}  > 50GeV/c",ptx,pty-0.08,15);
+  drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty-0.16,15);
 
   c1->cd(3);
   drawTrkEnergy("jfh"+anaV+"ReWt_Hydjet_"+module+"_genp_Cent0to30_Aj22to33_"+BckSub+".root",true,true,logScale,normType);
@@ -83,9 +83,9 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   drawText("SubLeading Jet",j2x,j2y+downSpace+0.02,15);
   
   float pty1(0.92);
-  drawText("P_{T,1} > 120GeV/c",ptx,pty1,15);
-  drawText("P_{T,2} >  50GeV/c",ptx,pty1-0.07,15);
-  drawText("#Delta#phi_{1,2} >  #frac{2}{3}#pi",ptx,pty1-0.14,15);
+  drawText("P_{T,1}  > 120GeV/c",ptx,pty1,15);
+  drawText("P_{T,2}  > 50GeV/c",ptx,pty1-0.07,15);
+  drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty1-0.14,15);
 
   c1->cd(7);
   drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj22to33_"+BckSub+".root",false,false,logScale,normType);
