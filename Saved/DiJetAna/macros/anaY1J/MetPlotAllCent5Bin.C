@@ -115,7 +115,7 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    pall->SetMarkerSize(1);
    pall->Draw("E");
    float addSys = 0;
-   if ( drawSys==1)   addSys=0.1;
+   if ( drawSys==1)   addSys=0; // No sys error at this moment
    for (int i=0;i<nBin;++i) {
       p[i]->SetLineWidth(1);
       //      p[i]->SetMarkerSize(0.1);
