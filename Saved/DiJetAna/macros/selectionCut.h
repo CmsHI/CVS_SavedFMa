@@ -169,9 +169,9 @@ selectionCut::selectionCut(TString name, int mc, TString base, double NrEtMin, d
   // cone
   ConeSize(0.8),
   // plot
-  numJEtBins(50),
+  numJEtBins(200),
   hisJEtMin(0),
-  hisJEtMax(350),
+  hisJEtMax(1000),
   numJEtaBins(50),
   hisJEtaMin(-3.0),
   hisJEtaMax(3.0),

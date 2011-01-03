@@ -72,8 +72,8 @@ void getDRHists(TFile * f,
   TTree * ntjt = (TTree*)f->Get("ntjt");
   TH1D * hWt = new TH1D("hWt","hWt",10000,0,100);
   ntjt->Project("hWt","weight");
-  cout << "Evt by evt SigSubConePt - Nr: " << hNrCPtBgSub->GetMean() << " Aw: " << hAwCPtBgSub->GetMean() << endl;
-  cout << " Average weight: " << hWt->GetMean() << endl;
+  Float_t wt=hWt->GetMean();
+  cout << "Evt by evt SigSubConePt - <Weight>: " << wt << " Nr: " << hNrCPtBgSub->GetMean()/wt << " Aw: " << hAwCPtBgSub->GetMean()/wt << endl;
   delete hWt;
 }
 
