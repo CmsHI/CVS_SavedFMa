@@ -20,6 +20,19 @@ TH1D *calcEff(TH1D* h1, TH1D* h2)
    return h2;
 }
 
+void drawErrorShift(TH1* hOld=0, float dx=0) {
+   int nBins = hOld->GetNbinsX();
+   TLine* tl[100];
+   for ( int i =1; i<=nBins ; i ++ ) { 
+      float px = hOld->GetBinCenter(i);
+      float py = hOld->GetBinContent(i);
+      float tErr = hOld->GetBinError(i);
+      tl[i] = new TLine(px+dx,py-tErr, px+dx,py+tErr);
+      tl[i]->SetLineWidth(1);
+      tl[i]->Draw();
+   }
+}
+
 void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_120_50.root",
                     TCut myCut = "cent<30", char *title = "",bool drawLegend = false,
                     bool drawSys = true
@@ -101,10 +114,17 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    pall->Draw("E");
    for (int i=0;i<nBin;++i) {
       p[i]->SetLineWidth(1);
+      //      p[i]->SetMarkerSize(0.1);
       p[i]->Draw("hist same");
+      if ( i==0 )       drawErrorShift(p[i],-0.01);
+      if ( i==1 || i==3 || i==4)       drawErrorShift(p[i],0);
+      if ( i==2 )       drawErrorShift(p[i],0.01);
    }
    pall->Draw("E same");
-
+   
+      
+   
+   
    if (drawSys == 1) {
       for(int i = 0; i < nBinAj; ++i){
         double x = pall->GetBinCenter(i+1);
@@ -154,8 +174,13 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
    c1->cd(1);
    balanceMetVsAj("nt_dj_mix120_Gen.root","cent>=30","",false,false);
    //balanceMetVsAj("nt_dj_mix100_Gen_yj.root","cent>=30","",false,false);
-   drawText("HYDJET+PYTHIA",0.43,0.82);
+   drawText("PYTHIA+HYDJET",0.33,0.82);
    drawText("30-100%",0.85,0.9);
+   float ptx(0.32),pty(0.25);
+   drawText("P_{T,1}  > 120GeV/c",ptx,pty);
+   drawText("P_{T,2}  > 50GeV/c",ptx,pty-0.08);
+   drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty-0.16);
+   
    c1->cd(2);
    balanceMetVsAj("nt_dj_mix120_Gen.root","cent<30","",true,false);
    //balanceMetVsAj("nt_dj_mix100_Gen_yj.root","cent<30","",true,false);
@@ -163,11 +188,21 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
 
    c1->cd(3);
    balanceMetVsAj("nt_dj_data120_cor.root","cent>=30","",false);
-   drawText("CMS",0.43,0.90);
-   drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.43,0.84);
-   drawText("#intL dt = 6.7 #mub^{-1}",0.43,0.78);
+   drawText("CMS",0.33,0.90);
+   drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
+   drawText("#intL dt = 6.7 #mub^{-1}",0.33,0.78);
    drawText("30-100%",0.85,0.9);
+   float pty1(0.4);
+   drawText("P_{T,1}  > 120GeV/c",ptx,pty1);
+   drawText("P_{T,2}  > 50GeV/c",ptx,pty1-0.07);
+   drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty1-0.14);
+
+
    c1->cd(4);
    balanceMetVsAj("nt_dj_data120_cor.root","cent<30","",false);
    drawText("0-30%",0.8,0.9);
+   
+   c1->SaveAs("missingPtParallel-Corrected-data-allCent.eps");
+
 }
+
