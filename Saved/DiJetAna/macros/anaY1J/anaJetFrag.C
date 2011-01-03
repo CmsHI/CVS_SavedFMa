@@ -16,16 +16,16 @@ void anaJetFrag(
     // Data
     //const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0.root",
     TString inFile0Name = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_djcalo_120_50.root",
-    TString SrcName = "HCPR_J50U",
-    // MC
-    //const char * inFile0Name="dj_PyquenUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.root",
-    //TString SrcName = "PyquenUQ80" 
-    int doMC=0,
-    TString AnaVersion = "testtree",
-    TString modName = "djcalo",
     Bool_t doEvtSel = false,
     Bool_t doReWeight = false,
     TString BkgSubType = "None", // EtaRefl, PhiRot, None
+    int doMC=0,
+    // MC
+    //const char * inFile0Name="dj_PyquenUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.root",
+    //TString SrcName = "PyquenUQ80" 
+    TString SrcName = "HCPR_J50U",
+    TString AnaVersion = "testtree",
+    TString modName = "djcalo",
     Double_t CentMin = 0,
     Double_t CentMax = 100,
     Double_t AjMin = 0,
