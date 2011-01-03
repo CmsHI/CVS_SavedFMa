@@ -152,20 +152,22 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
    Float_t leftMargin=0.28,bottomMargin=0.18;
    makeMultiPanelCanvas(c1,2,2,0.0,0.0,leftMargin,bottomMargin,0.02);
    c1->cd(1);
-   balanceMetVsAj("nt_dj_mix100_Gen.root","cent>=30","",false,false);
+   balanceMetVsAj("nt_dj_mix120_Gen.root","cent>=30","",false,false);
+   //balanceMetVsAj("nt_dj_mix100_Gen_yj.root","cent>=30","",false,false);
    drawText("HYDJET+PYTHIA",0.43,0.82);
    drawText("30-100%",0.85,0.9);
    c1->cd(2);
-   balanceMetVsAj("nt_dj_mix100_Gen.root","cent<30","",true,false);
+   balanceMetVsAj("nt_dj_mix120_Gen.root","cent<30","",true,false);
+   //balanceMetVsAj("nt_dj_mix100_Gen_yj.root","cent<30","",true,false);
    drawText("0-30%",0.8,0.9);
 
    c1->cd(3);
-   balanceMetVsAj("nt_dj_data100_cor.root","cent>=30","",false);
+   balanceMetVsAj("nt_dj_data120_cor.root","cent>=30","",false);
    drawText("CMS",0.43,0.90);
    drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.43,0.84);
    drawText("#intL dt = 6.7 #mub^{-1}",0.43,0.78);
    drawText("30-100%",0.85,0.9);
    c1->cd(4);
-   balanceMetVsAj("nt_dj_data100_cor.root","cent<30","",false);
+   balanceMetVsAj("nt_dj_data120_cor.root","cent<30","",false);
    drawText("0-30%",0.8,0.9);
 }
