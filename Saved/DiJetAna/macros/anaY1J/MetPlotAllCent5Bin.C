@@ -185,7 +185,7 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
    float ptx(0.32),pty(0.25);
    drawText("P_{T,1}  > 120GeV/c",ptx,pty);
    drawText("P_{T,2}  > 50GeV/c",ptx,pty-0.08);
-   drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty-0.16);
+   drawText("#Delta#phi_{12}>  #frac{2}{3}#pi",ptx,pty-0.16);
    
    c1->cd(2);
    balanceMetVsAj("nt_dj_mix120_Gen.root","cent<30","",true,false);
