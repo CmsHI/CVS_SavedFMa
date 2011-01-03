@@ -95,7 +95,8 @@ void getTotalNum(TH1D* h) {
    delete hSim;
 }
 
-TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Left=true) {
+TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Left=true,
+    Int_t sysErrorType=0) {
   // Get Bin Info
   Int_t nbin0=near->GetNbinsX();
   Int_t nbinc=nbin0*2;
@@ -143,14 +144,15 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
   hcombine->GetYaxis()->SetLabelSize(22);
 
   // Additional Systematic Error ---------------------------------
-  AdditionalSysUncert(hcombine,0.2);
+  if (sysErrorType==1) AdditionalSysUncert(hcombine,0.2);
 
   return hcombine;
 }
 
 //------------------------------------------------------
 void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEtaRefl.root",
-		   bool drawLeg=false, bool drawYLab=false, Int_t logScale=0, Int_t normType=0)
+		   bool drawLeg=false, bool drawYLab=false, Int_t logScale=0, Int_t normType=0,
+		   Int_t sysErrorType=0)
 {
   gStyle->SetMarkerStyle(0);
 
@@ -204,10 +206,10 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   TH1D* hcRight[nbin];
   int fillLeft = 3004;
   for (Int_t i=0; i<nbin; ++i) {
-    hcLeft[i] = combine(Nr[i],Aw[i],normType,norm);
+    hcLeft[i] = combine(Nr[i],Aw[i],normType,norm,true,sysErrorType);
     hcLeft[i]->SetFillStyle(3004);
     if (i!=0) hcLeft[i]->SetLineColor(colors[i]);
-    hcRight[i] = combine(Nr[i],Aw[i],normType,norm,false);
+    hcRight[i] = combine(Nr[i],Aw[i],normType,norm,false,sysErrorType);
   }
 
   // =========================================================================
