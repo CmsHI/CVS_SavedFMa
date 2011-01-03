@@ -50,9 +50,9 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    // Histograms
    const Int_t numDRBins = 20;
    Double_t dRBins[numDRBins+1];
-   for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = TMath::PiOver2()/((double)numDRBins)*i; }
+   for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = 2./((double)numDRBins)*i; }
    const Int_t numPtBins = 6;
-   Double_t ptBins[numPtBins+1]={0.5,1.0,1.5,4,8,20,180}; // v10
+   Double_t ptBins[numPtBins+1]={0.5,1.0,1.5,4,8,20,180}; // v10,11,12
    const Int_t numDPhiBins = 20;
    Double_t dPhiBins[numDPhiBins+1];
    for (int i=0;i<numDPhiBins+1;i++)   { dPhiBins[i] = PI/2./((double)numDPhiBins)*i; }
