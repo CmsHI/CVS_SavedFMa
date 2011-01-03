@@ -27,6 +27,17 @@ TH1D * projectDR(TH2D * h2d,Int_t iBeg,Int_t iEnd)
   return hDr;
 }
 
+void subtractError(TH1* h1, TH1* h2) {
+   int nBins = h1->GetNbinsX();
+   for ( int i = 1 ; i<=nBins ; i++ ) {
+      float oldErr = h1->GetBinError(i);
+      float Err2   = h2->GetBinError(i);
+      float newErr = sqrt ( oldErr*oldErr - Err2*Err2) ;
+      h1->SetBinError(i,newErr);
+   }
+}
+
+
 TH2D * bkgSub(TH2D * hSig, TH2D * hBkg, TString name)
 {
   //hSig->Sumw2();
@@ -58,9 +69,22 @@ void getDRHists(TFile * f,
   TH2D * hPtPNDRSub = bkgSub(hPtPNDR,hPtPNDRBg,inFileNameStrip+"Nr");
   TH2D * hPtPADRSub = bkgSub(hPtPADR,hPtPADRBg,inFileNameStrip+"Aw");
 
+  TH1D* NrE[100] ;
+  TH1D* AwE[100] ;
+
   for (Int_t i=0; i<nbin; ++i) {
     Nr[i] = projectDR(hPtPNDRSub,begbins[0],endbins[i]);
     Aw[i] = projectDR(hPtPADRSub,begbins[0],endbins[i]);
+    if ( i>0) {
+       NrE[i]= projectDR(hPtPNDRSub,begbins[i],endbins[i]);
+       AwE[i]= projectDR(hPtPADRSub,begbins[i],endbins[i]);
+       
+       int jBins = Nr[i]->GetNbinsX();
+       for ( int j = 1 ; j<= jBins ; j++ ) { 
+	  Nr[i]->SetBinError(j,   NrE[i]->GetBinError(j));
+	  Aw[i]->SetBinError(j,   AwE[i]->GetBinError(j));
+       }
+    }
     // Print
     //cout << Form("%.1f < P_{T} < %.1f GeV: ",hPt->GetBinLowEdge(begbins[0]),hPt->GetBinLowEdge(endbins[i]+1))
     //  << " SigSubBkg Integral - Nr: " << Nr[i]->Integral() << " Aw: " << Aw[i]->Integral() << endl;
@@ -94,9 +118,8 @@ void getTotalNum(TH1D* h) {
    cout << hSim->GetBinContent(1) << " (" << hSim->GetBinError(1) << ")";
    delete hSim;
 }
-
 TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Left=true,
-    Int_t sysErrorType=0) {
+	      Int_t sysErrorType=0) {
   // Get Bin Info
   Int_t nbin0=near->GetNbinsX();
   Int_t nbinc=nbin0*2;
@@ -151,18 +174,19 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
 
 //------------------------------------------------------
 void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEtaRefl.root",
+
 		   bool drawLeg=false, bool drawYLab=false, Int_t logScale=0, Int_t normType=0,
 		   Int_t sysErrorType=0)
 {
-  gStyle->SetMarkerStyle(0);
+   gStyle->SetMarkerStyle(0);
 
   // =========================================================================
   // Basic Plot Parameters
   // =========================================================================
   Float_t ymin=-5;
   //Int_t colors[5] = {38,kOrange-8,kBlue-3,kGray,kRed};
-  Int_t colors[3] = {kOrange-8,kBlue-3,kRed};
-
+  Int_t colors[3] = {kOrange-8,kGreen-8,kRed-7};
+  
   // =========================================================================
   // Inputs
   // =========================================================================
@@ -191,6 +215,8 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   // accumulation histograms
   TH1D *Nr[nbin];
   TH1D *Aw[nbin];
+  
+
   getDRHists(f,nbin,begbins,endbins,Nr,Aw,hPt);
   for (Int_t i=0; i<nbin; ++i) {
     Nr[i]->SetFillColor(colors[i]);
@@ -223,6 +249,12 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   hcLeft[nbin-1]->SetAxisRange(ymin,70,"Y"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis); 
   fixedFontHist(hcLeft[nbin-1]);
   
+  //correct stat error
+  //  subtractError(hcLeft[2],hcLeft[1]);
+  //  subtractError(hcLeft[1],hcLeft[0]);
+  //  subtractError(hcRight[2],hcRight[1]);
+  //  subtractError(hcRight[1],hcRight[0]);
+
   // =========================================================================
   // Draw Final Plot
   // =========================================================================
