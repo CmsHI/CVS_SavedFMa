@@ -504,8 +504,10 @@ void JetFragAna::Loop()
 	// If we want to restrict eta for j1,j2 separately
 	// Classify events into j1 events or j2 events
 	bool j1Evt=true,j2Evt=true;
-	if (fabs(anaJets_[0].eta())<cut.ConeSize) j1Evt=false;
-	if (fabs(anaJets_[1].eta())<cut.ConeSize) j2Evt=false;
+	if (cut.BkgSubType=="EtaReflSingle") {
+	  if (fabs(anaJets_[0].eta())<cut.ConeSize) j1Evt=false;
+	  if (fabs(anaJets_[1].eta())<cut.ConeSize) j2Evt=false;
+	}
  
         int cBin = hCent->FindBin(cent);
         double weight=1;
