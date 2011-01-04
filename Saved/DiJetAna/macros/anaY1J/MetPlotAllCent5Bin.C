@@ -50,17 +50,21 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
                     bool drawSys = true
 		    )
 {
+   // ===========================================================
+   // Get Input
+   // ===========================================================
    TFile *inf = new TFile(infname);
    TTree *t = (TTree*)inf->Get("ntjt");
-   
    t->SetAlias("metxMergedAll","(metx0+metx1+metx2+metx3+metx4+metx5)");
-   t->SetAlias("metxMergedAllE","(abs(metx0)+abs(metx1)+abs(metx2)+abs(metx3)+abs(metx4)+abs(metx5))");
-   
    t->SetAlias("metxMerged0","(metx0+metx1+metx2+metx3)");
    t->SetAlias("metxMerged1","(metx1+metx2+metx3)");
    t->SetAlias("metxMerged2","(metx2+metx3)");
    t->SetAlias("metxMerged3","(metx3)");
    t->SetAlias("metxMerged4","(metx4+metx5)");
+
+   // ===========================================================
+   // Analysis Setup
+   // ===========================================================
    const int nBin = 5;
    double bins[nBin+1] = {0.5,1.0,1.5,4,8,1000};  
    double colors[nBin] = {kRed-3,38, kOrange-8,kGreen-8,kRed-7};
@@ -72,6 +76,22 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
 
    cout << "Sel evt: " << t->GetEntries(evtCut&&myCut) << endl;
 
+   // ===========================================================
+   // Find Average Weights
+   // ===========================================================
+   TH1D *hw[nBinAj];
+   float meanWt[nBinAj];
+   for ( int iaj = 0 ; iaj< nBinAj ; iaj++) {
+      hw[iaj] = new TH1D(Form("hw_aj%d",iaj),"",1000,0,100);
+      TCut ajCut = Form("Aj>%f && Aj<%f", ajBins[iaj],ajBins[iaj+1]);
+      t->Draw(Form("weight>>hw_aj%d",iaj), evtCut&&myCut&&ajCut);
+      meanWt[iaj] = hw[iaj]->GetMean();
+      cout << " <Weight>: " << meanWt[iaj] << endl;
+   }
+
+   // ===========================================================
+   // Draw Weighted Averages
+   // ===========================================================
    TH1D *p[nBin];
    TH1D *pe[nBin];
    for (int i=0;i<nBin;i++)
@@ -80,10 +100,11 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
       TH1D *h2 = new TH1D(Form("h2%d",i),"",nBinAj,ajBins);
       TH1D *he[nBinAj];
       
+      // =================================
+      // Get Weighted Mean for each Aj bin
+      // =================================
       h1->Sumw2();
       h2->Sumw2();
-      //    t->Project(Form("h%d",i),"Aj", "1"*(evtCut&&myCut));
-      //      t->Project(Form("h2%d",i),"Aj", Form("((-1*metxMerged%d))",i)*(evtCut&&myCut));
       t->Draw(Form("Aj>>h1%d",i), "weight"*(evtCut&&myCut));
       t->Draw(Form("Aj>>h2%d",i), Form("((-weight*metxMerged%d))",i)*(evtCut&&myCut));
       
@@ -96,56 +117,52 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
       //      p[i]->SetFillStyle(3004+fabs(i-1));
       p[i]->SetFillStyle(1001);
 
+      // =================================
+      // Caculated Stat Error of the Mean
+      // =================================
+      cout << "Stat Error for pt bin " << i << ": ";
       for ( int iaj = 0 ; iaj< nBinAj ; iaj++) {
          he[iaj] = new TH1D(Form("he%d_aj%d",i,iaj),"",100,-200,200);
          TCut ajCut = Form("Aj>%f && Aj<%f", ajBins[iaj],ajBins[iaj+1]);
          t->Draw(Form("((metxMerged%d))>>he%d_aj%d",i,i,iaj), "weight" * evtCut&&myCut&&ajCut);
-         float theError = he[iaj]->GetRMS()/ sqrt(he[iaj]->GetEntries());
-         cout << theError << endl;
-	 p[i]->SetBinError(iaj+1,  theError);
+         float theError = he[iaj]->GetRMS()/ (sqrt(he[iaj]->GetEntries()));
+	 cout << theError << " ";
+	 p[i]->SetBinError(iaj+1, theError);
       }
-      
-      
-      
+      cout << endl;
    }
    // correct the error bars..  cummulative -> it's own.
    subtractError(p[0],p[1]);
    subtractError(p[1],p[2]);
    subtractError(p[2],p[3]);
-   //   t->SetAlias("metxMerged0","metx0+metx1+metx2+metx3");
-   //   t->SetAlias("metxMerged1","metx1+metx2+metx3");
-   //   t->SetAlias("metxMerged2","metx2+metx3");
-   //   t->SetAlias("metxMerged3","metx3");
    
    TH1D *pall;
    TH1D *pallE;
    TH1D *h1 = new TH1D(Form("hAll1"),"",nBinAj,ajBins);
    TH1D *h2 = new TH1D(Form("hAll2"),"",nBinAj,ajBins);
-   TH1D *hE = new TH1D(Form("hAllE"),"",nBinAj,ajBins);
 
    h1->Sumw2();
    h2->Sumw2();
-   hE->Sumw2();
    t->Draw(Form("Aj>>hAll1"), "weight"*(evtCut&&myCut));
    //   t->Draw(Form("Aj>>hAll2"), Form("((-weight*metx))")*(evtCut&&myCut));
    t->Draw(Form("Aj>>hAll2"), Form("((-weight*metxMergedAll))")*(evtCut&&myCut));
-   t->Draw(Form("Aj>>hAllE"), Form("(abs(weight*metxMergedAllE))")*(evtCut&&myCut));
-   
    pall=(TH1D*)h2->Clone();
    pall->SetName("pall");
    pall->Divide(h1);
+
    // replace the sys error from pallE to pall 
    TH1D *he[nBinAj];
+   cout << "Stat Error for All pt: ";
    for ( int iaj = 0 ; iaj< nBinAj ; iaj++) {
       he[iaj] = new TH1D(Form("heAll_aj%d",iaj),"",100,-200,200);
       TCut ajCut = Form("Aj>%f && Aj<%f", ajBins[iaj],ajBins[iaj+1]);
       t->Draw(Form("((metxMergedAll))>>heAll_aj%d",iaj), "weight" * evtCut&&myCut&&ajCut);
-      float theError = he[iaj]->GetRMS()/ sqrt(he[iaj]->GetEntries());
-      cout << theError << endl;
+      float theError = he[iaj]->GetRMS()/ (sqrt(he[iaj]->GetEntries()));
+      cout << theError << " ";
       pall->SetBinError(iaj+1,  theError);
    }
+   cout << endl;
 
-   
    pall->SetXTitle("A_{J}");
    pall->SetYTitle("<#slash{p}_{T}^{#parallel}> (GeV/c)");
    pall->GetXaxis()->CenterTitle();
@@ -160,21 +177,25 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    pall->GetYaxis()->SetTitleFont(43);
    pall->GetXaxis()->SetTitleOffset(1.8);
    pall->GetYaxis()->SetTitleOffset(2.4);
-
-
-
    pall->SetNdivisions(505);
    pall->SetAxisRange(-59.9,59.9,"Y");
    pall->SetMarkerSize(1);
    pall->Draw("E");
    float addSys = 0;
    if ( drawSys==1)   addSys=0; // No sys error at this moment
+
+   // ====================
+   // Finally Draw
+   // ====================
    for (int i=0;i<nBin;++i) {
       p[i]->SetLineWidth(1);
       //      p[i]->SetMarkerSize(0.1);
       p[i]->Draw("hist same");
    }
    
+   // ====================
+   // Draw Statistical Error bars
+   // ====================
    for (int i=0;i<nBin;++i) {
       if ( i==0 )       drawErrorShift(p[i],-0.016, addSys);
       if ( i==1 || i==4)       drawErrorShift(p[i],-0.008,addSys);
@@ -182,21 +203,23 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
       if ( i==3 )       drawErrorShift(p[i],0.016,addSys);
    }
    pall->Draw("E same");
-         
    
-   
+   // ====================
+   // Draw Systematic Errors
+   // ====================
    if (drawSys == 1) {
       for(int i = 0; i < nBinAj; ++i){
         double x = pall->GetBinCenter(i+1);
         double y = pall->GetBinContent(i+1);
         // Quote the difference between GEN and RECO in >8 Bin (20%) before adjusting eff as systematics
         double err = -p[nBin-1]->GetBinContent(i+1)*0.2;
- 
         DrawTick(y,err,err,x,1,0.02,1);
       }
    }
 
-   // Legend
+   // ====================
+   // Draw Legend
+   // ====================
    TLegend *leg = new TLegend(0.10,0.68,0.70,0.96);
    leg->SetFillStyle(0);
    leg->SetBorderSize(0);
