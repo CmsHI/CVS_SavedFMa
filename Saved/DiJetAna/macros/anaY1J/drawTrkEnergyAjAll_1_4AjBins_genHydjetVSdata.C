@@ -92,7 +92,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   drawText("Leading Jet",j1x,j1y+downSpace+0.02,15);
   drawText("SubLeading Jet",j2x,j2y+downSpace+0.02,15);
 
-  c1->Print(anaV+"_SubEtaRefl_TrackTrackEnergyPtRBkgSubAjAll_leadSubd5_genTrack_VS_data.gif");
-  c1->Print(anaV+"_SubEtaRefl_TrackTrackEnergyPtRBkgSubAjAll_leadSubd5_genTrack_VS_data.C");
-  c1->Print(anaV+"_SubEtaRefl_TrackTrackEnergyPtRBkgSubAjAll_leadSubd5_genTrack_VS_data.eps");
+  c1->Print(anaV+"_"+BckSub+"_TrackTrackEnergyPtRBkgSubAjAll_leadSubd5_genTrack_VS_data.gif");
+  c1->Print(anaV+"_"+BckSub+"_TrackTrackEnergyPtRBkgSubAjAll_leadSubd5_genTrack_VS_data.C");
+  c1->Print(anaV+"_"+BckSub+"_TrackTrackEnergyPtRBkgSubAjAll_leadSubd5_genTrack_VS_data.eps");
 }
