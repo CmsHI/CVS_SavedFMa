@@ -7,25 +7,39 @@
 #include <TLegend.h>
 #include <TNtuple.h>
 #include <TTree.h>
+#include "TSystem.h"
 
 
 void sysError(
     TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl.root",
-    TString inFileNameGen="jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl.root",
     Int_t sysMode = 0, // 0 for simple plot, 1 for difference
+    TString outdir = ".",
     TString title = "test"
     ) {
+  // ===============================================
+  // Inputs
+  // ===============================================
   TFile *f = new TFile(inFileName);
   TString inFileNameStrip(inFileName); inFileNameStrip.ReplaceAll(".root","");
+  TString inFileNameGen(inFileName);
+  inFileNameGen.ReplaceAll("djcalo","djcalo_genp");
   TFile *fgen = new TFile(inFileNameGen);
   TString inFileNameStripGen(inFileNameGen); inFileNameStripGen.ReplaceAll(".root","");
 
+  // ===============================================
+  // Setup
+  // ===============================================
+  TString tag=Form("sysError_%s_%s_%d",inFileNameStrip.Data(),title.Data(),sysMode);
+
+  // ===============================================
+  // Analyze
+  // ===============================================
   TH2D * hPtPNDR = (TH2D*) f->Get("hPtPNDR");
   TH2D * hPtPADR = (TH2D*) f->Get("hPtPADR");
   TH2D * hPtPNDRBg = (TH2D*) f->Get("hPtPNDRBg");
   TH2D * hPtPADRBg = (TH2D*) f->Get("hPtPADRBg");
-  TH2D * hPtPNDRSub = (TH2D*)hPtPNDR->Clone(inFileNameStrip+"hPtPNDRSub");
-  TH2D * hPtPADRSub = (TH2D*)hPtPADR->Clone(inFileNameStrip+"hPtPADRSub");
+  TH2D * hPtPNDRSub = (TH2D*)hPtPNDR->Clone(tag+"hPtPNDRSub");
+  TH2D * hPtPADRSub = (TH2D*)hPtPADR->Clone(tag+"hPtPADRSub");
   hPtPNDRSub->Add(hPtPNDR,hPtPNDRBg,1,-1);
   hPtPADRSub->Add(hPtPADR,hPtPADRBg,1,-1);
 
@@ -33,34 +47,39 @@ void sysError(
   TH2D * hPtPADRGen = (TH2D*) fgen->Get("hPtPADR");
   TH2D * hPtPNDRBgGen = (TH2D*) fgen->Get("hPtPNDRBg");
   TH2D * hPtPADRBgGen = (TH2D*) fgen->Get("hPtPADRBg");
-  TH2D * hPtPNDRSubGen = (TH2D*)hPtPNDRGen->Clone(inFileNameStripGen+"hPtPNDRSub");
-  TH2D * hPtPADRSubGen = (TH2D*)hPtPADRGen->Clone(inFileNameStripGen+"hPtPADRSub");
+  TH2D * hPtPNDRSubGen = (TH2D*)hPtPNDRGen->Clone(tag+"hPtPNDRSub");
+  TH2D * hPtPADRSubGen = (TH2D*)hPtPADRGen->Clone(tag+"hPtPADRSub");
   hPtPNDRSubGen->Add(hPtPNDRGen,hPtPNDRBgGen,1,-1);
   hPtPADRSubGen->Add(hPtPADRGen,hPtPADRBgGen,1,-1);
 
+  // ===============================================
+  // Draw
+  // ===============================================
   // Get Pt info
   Int_t numPtBins=hPtPNDR->GetNbinsX();
   TH1D * hPt = (TH1D*)hPtPNDR->ProjectionX("hPt");
+  /*
   cout << "Pt bins: " << numPtBins << endl;
   for (Int_t i=0; i<numPtBins+2; ++i) {
     cout << "Pt Bin " << i << " Low Edge: " << hPt->GetBinLowEdge(i) << endl;
   }
+  */
 
   // What pt bins to draw
   const Int_t numPtBinsDraw=3;
 
-  TCanvas * c6 = new TCanvas("c6","c6",1400,500);
+  TCanvas * c6 = new TCanvas("c"+tag,"c"+tag,1400,500);
   c6->Divide(3,1);
   for (Int_t i=0; i<numPtBinsDraw; ++i) {
     Int_t iBeg,iEnd;
-    if (i==0) { iBeg=1; iEnd=2;}
-    if (i==1) { iBeg=3; iEnd=3;}
-    if (i==2) { iBeg=4; iEnd=numPtBins;}
+    if (i==0) { iBeg=2; iEnd=3;}
+    if (i==1) { iBeg=4; iEnd=4;}
+    if (i==2) { iBeg=5; iEnd=numPtBins;}
     cout << "Bin: " << iBeg <<  " to " << iEnd << endl;
-    TH1D * hNr = (TH1D*)hPtPNDRSub->ProjectionY(Form("hPNDRSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
-    TH1D * hAw = (TH1D*)hPtPADRSub->ProjectionY(Form("hPADRSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
-    TH1D * hNrGen = (TH1D*)hPtPNDRSubGen->ProjectionY(Form("hPNDRSubGen_%d_%d",iBeg,iEnd),iBeg,iEnd);
-    TH1D * hAwGen = (TH1D*)hPtPADRSubGen->ProjectionY(Form("hPADRSubGen_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hNr = (TH1D*)hPtPNDRSub->ProjectionY(tag+Form("hPNDRSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hAw = (TH1D*)hPtPADRSub->ProjectionY(tag+Form("hPADRSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hNrGen = (TH1D*)hPtPNDRSubGen->ProjectionY(tag+Form("hPNDRSubGen_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hAwGen = (TH1D*)hPtPADRSubGen->ProjectionY(tag+Form("hPADRSubGen_%d_%d",iBeg,iEnd),iBeg,iEnd);
     if (sysMode==1) {
       hNr->Add(hNrGen,-1);
       hAw->Add(hAwGen,-1);
@@ -90,7 +109,7 @@ void sysError(
     }
     if (sysMode==2) {
       hNr->SetYTitle("Reco/Gen (GeV/c)");
-      hNr->SetAxisRange(0,2,"Y");
+      hNr->SetAxisRange(-2,6,"Y");
     }
     hNr->SetXTitle("#Delta R");
     hNr->SetAxisRange(0,0.8,"X");
@@ -126,5 +145,28 @@ void sysError(
     leg->SetTextSize(0.05);
     leg->Draw();
   }
-  c6->Print(Form("plot/%s_%s_%s_sysError%d.gif",inFileNameStrip.Data(),inFileNameStripGen.Data(),title.Data(),sysMode));
+
+  // ===============================================
+  // Save
+  // ===============================================
+  c6->Print(Form("%s/%s.gif",outdir.Data(),tag.Data()));
+  c6->Print(Form("%s/%s.eps",outdir.Data(),tag.Data()));
+  c6->Print(Form("%s/%s.C",outdir.Data(),tag.Data()));
+}
+
+void sysErrorAll(
+    TString anaV="CorrEtaTrkEffv16ReWt",
+    TString BckSub="SubEtaReflSingle"
+    )
+{
+  TString outdir=anaV+BckSub;
+  gSystem->mkdir(outdir.Data(),kTRUE);
+
+  Int_t sysModes[3] = {0,1,2};
+  for (Int_t m=0; m<3;++m) {
+    sysError("jfh"+anaV+"_Hydjet_djcalo_Cent0to30_Aj0to11_"+BckSub+".root",sysModes[m],outdir);
+    sysError("jfh"+anaV+"_Hydjet_djcalo_Cent0to30_Aj11to22_"+BckSub+".root",sysModes[m],outdir);
+    sysError("jfh"+anaV+"_Hydjet_djcalo_Cent0to30_Aj22to33_"+BckSub+".root",sysModes[m],outdir);
+    sysError("jfh"+anaV+"_Hydjet_djcalo_Cent0to30_Aj33to100_"+BckSub+".root",sysModes[m],outdir);
+  }
 }
