@@ -17,6 +17,7 @@ void anaJetFrag(
     //const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0.root",
     TString inFile0Name = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_djcalo_120_50.root",
     Bool_t doEvtSel = false,
+    Bool_t doEtaCorr = true,
     Bool_t doReWeight = false,
     TString BkgSubType = "None", // EtaRefl, PhiRot, None
     int doMC=0,
@@ -92,7 +93,7 @@ void anaJetFrag(
 
   JetFragAna jana(djTree,SrcName,doMC);
   jana.doEvtSel_ = doEvtSel;
-  jana.doEtaCorr_ = true;
+  jana.doEtaCorr_ = doEtaCorr;
   jana.doTrackingEffFakeCorr_ = true;
   jana.doCentralityReweighting_ = doReWeight;
   jana.doJetOnly_ = false;
