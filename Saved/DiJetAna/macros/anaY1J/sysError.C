@@ -12,6 +12,7 @@
 
 void sysError(
     TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl.root",
+    Int_t compMode = 0,
     Int_t sysMode = 0, // 0 for simple plot, 1 for difference
     TString outdir = ".",
     TString title = "test"
@@ -22,9 +23,14 @@ void sysError(
   TFile *f = new TFile(inFileName);
   TString inFileNameStrip(inFileName); inFileNameStrip.ReplaceAll(".root","");
   TString inFileNameGen(inFileName);
-  inFileNameGen.ReplaceAll("djcalo","djcalo_genp");
+  if (compMode==0) inFileNameGen.ReplaceAll("djcalo","djcalo_genp");
+  else if (compMode==1) inFileNameGen.ReplaceAll("Hydjet","Hydjetv4");
+  else if (compMode==5) inFileNameGen.ReplaceAll("djcalo_genp","djgen");
   TFile *fgen = new TFile(inFileNameGen);
   TString inFileNameStripGen(inFileNameGen); inFileNameStripGen.ReplaceAll(".root","");
+  cout << "==========================================================" << endl;
+  cout << "Compare: " << inFileName << " vs " << inFileNameGen << endl;
+  cout << "==========================================================" << endl;
 
   // ===============================================
   // Setup
@@ -103,13 +109,25 @@ void sysError(
       hNr->SetYTitle("Background Subtracted Signal (GeV/c)");
       hNr->SetAxisRange(-5,60,"Y");
     }
-    if (sysMode==1) {
-      hNr->SetYTitle("Reco-Gen (GeV/c)");
-      hNr->SetAxisRange(-20,20,"Y");
+    if (compMode==0) {
+      if (sysMode==1) {
+	hNr->SetYTitle("(Reco Trk)-(Sig GenP) (GeV/c)");
+	hNr->SetAxisRange(-20,20,"Y");
+      }
+      if (sysMode==2) {
+	hNr->SetYTitle("(Reco Trk)/(Sig GenP) (GeV/c)");
+	hNr->SetAxisRange(-2,6,"Y");
+      }
     }
-    if (sysMode==2) {
-      hNr->SetYTitle("Reco/Gen (GeV/c)");
-      hNr->SetAxisRange(-2,6,"Y");
+    if (compMode==1) {
+      if (sysMode==1) {
+	hNr->SetYTitle("All GenP - Sig GenP (GeV/c)");
+	hNr->SetAxisRange(-20,20,"Y");
+      }
+      if (sysMode==2) {
+	hNr->SetYTitle("(All GenP)/(Sig GenP) (GeV/c)");
+	hNr->SetAxisRange(-2,6,"Y");
+      }
     }
     hNr->SetXTitle("#Delta R");
     hNr->SetAxisRange(0,0.8,"X");
@@ -138,10 +156,24 @@ void sysError(
     leg->SetBorderSize(0);
     leg->SetFillStyle(0);
     leg->AddEntry(hNr,Form("%.1f < P_{T} < %.1f GeV",hPt->GetBinLowEdge(iBeg),hPt->GetBinLowEdge(iEnd+1)),"");
-    leg->AddEntry(hNr,"Leading (Reco)","pl");
-    if (sysMode==0) leg->AddEntry(hNrGen,"Leading (Gen)","l");
-    leg->AddEntry(hAw,"SubLeading (Reco)","pl");
-    if (sysMode==0) leg->AddEntry(hAwGen,"SubLeading (Gen)","l");
+    if (sysMode==0) {
+      if (compMode==0) {
+	leg->AddEntry(hNr,"Leading (Reco)","pl");
+	leg->AddEntry(hNrGen,"Leading (Gen)","l");
+	leg->AddEntry(hAw,"SubLeading (Reco)","pl");
+	leg->AddEntry(hAwGen,"SubLeading (Gen)","l");
+      }
+      if (compMode==1) {
+	leg->AddEntry(hNr,"Leading (All GenP)","pl");
+	leg->AddEntry(hNrGen,"Leading (Sig Genp)","l");
+	leg->AddEntry(hAw,"SubLeading (All GenP)","pl");
+	leg->AddEntry(hAwGen,"SubLeading (Sig GenP)","l");
+      }
+    }
+    if (sysMode>0) {
+      leg->AddEntry(hNr,"Leading","pl");
+      leg->AddEntry(hAw,"SubLeading","pl");
+    }
     leg->SetTextSize(0.05);
     leg->Draw();
   }
@@ -164,9 +196,9 @@ void sysErrorAll(
 
   Int_t sysModes[3] = {0,1,2};
   for (Int_t m=0; m<3;++m) {
-    sysError("jfh"+anaV+"_Hydjet_djcalo_Cent0to30_Aj0to11_"+BckSub+".root",sysModes[m],outdir);
-    sysError("jfh"+anaV+"_Hydjet_djcalo_Cent0to30_Aj11to22_"+BckSub+".root",sysModes[m],outdir);
-    sysError("jfh"+anaV+"_Hydjet_djcalo_Cent0to30_Aj22to33_"+BckSub+".root",sysModes[m],outdir);
-    sysError("jfh"+anaV+"_Hydjet_djcalo_Cent0to30_Aj33to100_"+BckSub+".root",sysModes[m],outdir);
+    sysError("jfh"+anaV+"_Hydjet_djcalo_Cent0to30_Aj0to11_"+BckSub+".root",0,sysModes[m],outdir);
+    sysError("jfh"+anaV+"_Hydjet_djcalo_Cent0to30_Aj11to22_"+BckSub+".root",0,sysModes[m],outdir);
+    sysError("jfh"+anaV+"_Hydjet_djcalo_Cent0to30_Aj22to33_"+BckSub+".root",0,sysModes[m],outdir);
+    sysError("jfh"+anaV+"_Hydjet_djcalo_Cent0to30_Aj33to100_"+BckSub+".root",0,sysModes[m],outdir);
   }
 }
