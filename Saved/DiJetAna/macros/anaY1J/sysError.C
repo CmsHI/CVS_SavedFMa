@@ -8,6 +8,7 @@
 #include <TNtuple.h>
 #include <TTree.h>
 #include "TSystem.h"
+#include "TF1.h"
 
 
 void sysError(
@@ -23,8 +24,12 @@ void sysError(
   TFile *f = new TFile(inFileName);
   TString inFileNameStrip(inFileName); inFileNameStrip.ReplaceAll(".root","");
   TString inFileNameGen(inFileName);
-  if (compMode==0) inFileNameGen.ReplaceAll("djcalo","djcalo_genp");
-  else if (compMode==1) inFileNameGen.ReplaceAll("Hydjet","Hydjetv4");
+  if (compMode==0) { 
+    inFileNameGen.ReplaceAll("djcalo","djcalo_genp");
+    inFileNameGen.ReplaceAll("HydjetAll","HydjetSig");
+  }
+  if (compMode==1) inFileNameGen.ReplaceAll("djcalo","djcalo_genp");
+  else if (compMode==3) inFileNameGen.ReplaceAll("HydjetAll","HydjetSig");
   else if (compMode==5) inFileNameGen.ReplaceAll("djcalo_genp","djgen");
   TFile *fgen = new TFile(inFileNameGen);
   TString inFileNameStripGen(inFileNameGen); inFileNameStripGen.ReplaceAll(".root","");
@@ -35,7 +40,7 @@ void sysError(
   // ===============================================
   // Setup
   // ===============================================
-  TString tag=Form("sysError_%s_%s_%d",inFileNameStrip.Data(),title.Data(),sysMode);
+  TString tag=Form("sysError_%s_%s_%d_%d",inFileNameStrip.Data(),title.Data(),compMode,sysMode);
 
   // ===============================================
   // Analyze
@@ -112,17 +117,17 @@ void sysError(
     if (compMode==0) {
       if (sysMode==1) {
 	hNr->SetYTitle("(Reco Trk)-(Sig GenP) (GeV/c)");
-	hNr->SetAxisRange(-20,20,"Y");
+	//hNr->SetAxisRange(-20,20,"Y");
       }
       if (sysMode==2) {
 	hNr->SetYTitle("(Reco Trk)/(Sig GenP) (GeV/c)");
 	hNr->SetAxisRange(-2,6,"Y");
       }
     }
-    if (compMode==1) {
+    if (compMode=3) {
       if (sysMode==1) {
 	hNr->SetYTitle("All GenP - Sig GenP (GeV/c)");
-	hNr->SetAxisRange(-20,20,"Y");
+	//hNr->SetAxisRange(-3,3,"Y");
       }
       if (sysMode==2) {
 	hNr->SetYTitle("(All GenP)/(Sig GenP) (GeV/c)");
@@ -135,6 +140,14 @@ void sysError(
     hNr->GetXaxis()->CenterTitle();
     hNr->GetYaxis()->CenterTitle();
     c6->cd(i+1);
+    // Fit
+    if (sysMode>0) {
+      TF1 * f0 = new TF1("f0","pol0");
+      f0->SetLineStyle(2);
+      f0->SetLineWidth(1);
+      hNr->Fit("f0");
+      hAw->Fit("f0");
+    }
     // Draw to Inspect
     hNr->Draw();
     hAw->Draw("same");
