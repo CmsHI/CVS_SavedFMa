@@ -31,7 +31,7 @@ void filter_chain(TString inputDir,
 
   // clone tree
   TTree* newtree = fChain->CloneTree(0);
-  newtree->SetMaxTreeSize(4000000000);
+  newtree->SetMaxTreeSize(7000000000.);
   cout << "Saving "  << endfix << " tree" << endl;
 
   Long64_t nentries = fChain->GetEntries();
