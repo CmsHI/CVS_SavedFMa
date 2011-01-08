@@ -24,6 +24,33 @@ const Float_t PI = 3.1415926535897932384626;
 const Float_t HPI = PI/2.;
 const Int_t kMax = 2;
 const Int_t MAXTRK = 100000;
+#ifdef __MAKECINT__
+#pragma link C++ class std::vector < std::vector<float> >+;   
+#endif
+
+struct JetCone {
+  vector<vector<Float_t> > lcpt;
+  vector<vector<Float_t> > lcptbg;
+  JetCone() :
+    lcpt(2),
+    lcptbg(2)
+  {}
+  void clear() {
+    for (Int_t i=0; i<lcpt.size(); ++i) {
+      for (Int_t j=0; j<lcpt[i].size(); ++j) {
+	lcpt[i][j]=0;
+	lcptbg[i][j]=0;
+	//cout << "jet " << i << " bin " << j << " cleared lcpt: " << lcpt[i][j] << " lcptbg: " << lcptbg[i][j] << endl;
+      }
+    }
+  }
+  void resizePtBins(Int_t n) {
+    for (Int_t i=0; i<lcpt.size(); ++i) {
+      lcpt[i].resize(n);
+      lcptbg[i].resize(n);
+    }
+  }
+};
 
 class JetFragAna {
 public :
@@ -46,7 +73,8 @@ public :
    Float_t numJ2ReWeighted_;
    std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
    std::vector<math::PtEtaPhiMLorentzVector> refJets_;
-   std::vector<math::PtEtaPhiMLorentzVector> particles_;
+   std::vector<math::PtEtaPhiMLorentzVector> p_;
+   JetCone jc_;
 
    // Corrections
    std::map<TString,TF1*> jetaCorr_;
@@ -61,6 +89,7 @@ public :
 
    // Ntuples
    TNtuple * ntjt;
+   TTree * tcone;
 
    // Histograms
    // jet
@@ -87,32 +116,10 @@ public :
    TH1D * hAwCPPt;
    TH1D * hAwCPPtBg;
    TH1D * hAwCPPtBgSub;
-   TH1D * hPNDR;
-   TH1D * hPADR;
-   TH1D * hPNDRBg;
-   TH1D * hPADRBg;
    TH2D * hPtPNDR;
    TH2D * hPtPADR;
    TH2D * hPtPNDRBg;
    TH2D * hPtPADRBg;
-
-   TH1D * hPNDRDens;
-   TH1D * hPADRDens;
-   TH1D * hPNDRDensBg;
-   TH1D * hPADRDensBg;
-   TH2D * hPtPNDRDens;
-   TH2D * hPtPADRDens;
-   TH2D * hPtPNDRDensBg;
-   TH2D * hPtPADRDensBg;
-
-   TH1D * hPNDPhi;
-   TH1D * hPADPhi;
-   TH1D * hPNDPhiBg;
-   TH1D * hPADPhiBg;
-   TH2D * hPtPNDPhi;
-   TH2D * hPtPADPhi;
-   TH2D * hPtPNDPhiBg;
-   TH2D * hPtPADPhiBg;
 
    // Event cut for centrality reweighting
    TCut evtCut;

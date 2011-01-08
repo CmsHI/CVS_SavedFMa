@@ -47,15 +47,17 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    ntjt->SetAlias("metyMerged1","mety2");
    ntjt->SetAlias("metyMerged2","mety3+mety4");
 
+   // trees
+   tcone = new TTree("tcone","jet cone tree");
+   tcone->Branch("lcpt",&jc_.lcpt);
+   tcone->Branch("lcptbg",&jc_.lcptbg);
+
    // Histograms
    const Int_t numDRBins = 20;
    Double_t dRBins[numDRBins+1];
    for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = 1.6/((double)numDRBins)*i; }
    const Int_t numPtBins = 6;
    Double_t ptBins[numPtBins+1]={0.5,1.0,1.5,4,8,20,180}; // v10,11,12
-   const Int_t numDPhiBins = 20;
-   Double_t dPhiBins[numDPhiBins+1];
-   for (int i=0;i<numDPhiBins+1;i++)   { dPhiBins[i] = PI/2./((double)numDPhiBins)*i; }
 
    // -- 2D hists --
    hPtPNDR = new TH2D("hPtPNDR","",numPtBins,ptBins,numDRBins,dRBins);
@@ -121,15 +123,6 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    hAwCPPtBg->Sumw2();
    hAwCPPtBgSub = new TH1D("hAwCPPtBgSub","",numPPtBins,pptBins);
    hAwCPPtBgSub->Sumw2();
-
-   hPNDR = new TH1D("hPNDR","",numDRBins,dRBins);
-   hPNDR->Sumw2();
-   hPADR = new TH1D("hPADR","",numDRBins,dRBins);
-   hPADR->Sumw2();
-   hPNDRBg = new TH1D("hPNDRBg","",numDRBins,dRBins);
-   hPNDRBg->Sumw2();
-   hPADRBg = new TH1D("hPADRBg","",numDRBins,dRBins);
-   hPADRBg->Sumw2();
 }
 
 JetFragAna::~JetFragAna()
@@ -405,10 +398,10 @@ Int_t JetFragAna::GetEntry(Long64_t entry)
 	//cout << "entry: " << entry << " old eta: " << etain << "  new eta: " << etaout << " " << anaJets_[i] << endl;
       }
     }
-    particles_.clear();
+    p_.clear();
     if (!doJetOnly_) {
       for (Int_t i=0; i<evtnp; ++i) {
-	particles_.push_back(math::PtEtaPhiMLorentzVector(ppt[i],peta[i],pphi[i],0.13957));
+	p_.push_back(math::PtEtaPhiMLorentzVector(ppt[i],peta[i],pphi[i],0.13957));
       }
     }
   } // finished with entry
@@ -468,6 +461,10 @@ void JetFragAna::Loop()
 
    // Pt Bin
    TH1D * hPt = (TH1D*)hPtPNDR->ProjectionX();
+   Int_t numPtBins = hPt->GetNbinsX();
+
+   // Set Tree Pt bins
+   jc_.resizePtBins(numPtBins);
 
    // =====================================================
    // Centrality ReWeighting
@@ -545,20 +542,22 @@ void JetFragAna::Loop()
 
 	if (doJetOnly_) continue;
 
-	// =====================================================
-	// Particle Level Histograms
-	// =====================================================
+	// Initialize Counters
 	Double_t nrConePt=0,nrConePtBg=0;
 	Double_t awConePt=0,awConePtBg=0;
 	Double_t metx=0,metx0=0,metx1=0,metx2=0,metx3=0,metx4=0,metx5=0;
 	Double_t mety=0,mety0=0,mety1=0,mety2=0,mety3=0,mety4=0,mety5=0;
+	jc_.clear();
+	// =====================================================
+	// Particle Loop
+	// =====================================================
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
 	  if (ppt[i]<cut.TrkPtMin||fabs(peta[i])>=2.4) continue;
           double trackWeight=1;
           if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(ppt[i],peta[i],cent);
-	  //cout << "particle " << i << ": ch " << pch[i] << " pt: " << ppt[i] << " pndr: " << pndr[i] << endl;
+	  //cout << "particle " << i << ": ch " << pch[i] << " pt: " << ppt[i] << " pndr: " << pndr[i] << " trkwt: " << trackWeight << endl;
 	  // Trk histograms
 
 	  // met calculation
@@ -587,8 +586,43 @@ void JetFragAna::Loop()
             mety5+=ppty;
           }
 
+	  // =====================================================
+	  // Calculate Cone Sums
+	  // =====================================================
+	  // particle jet correlation
+	  Double_t pdr[2]={ 9999,9999 };
+	  Double_t pdrbg[2]={ 9999,9999 };
+	  for (Int_t j=0; j<2; ++j) {
+	    // signal
+	    pdr[j] = reco::deltaR(p_[i].eta(),p_[i].phi(),anaJets_[j].eta(),anaJets_[j].phi());
+	    // bcksub
+	    if (cut.BkgSubType.Contains("EtaRefl")) {
+	      pdrbg[j] = reco::deltaR(p_[i].eta(),p_[i].phi(),-1*anaJets_[j].eta(),anaJets_[j].phi());
+	    }
+	  }
+
+	  // cone sum
+	  Float_t trkEnergy=p_[i].pt();
+	  for (Int_t j=0; j<2; ++j) {
+	    for (Int_t b=0; b<numPtBins; ++b) {
+	      if (trkEnergy>=hPt->GetBinLowEdge(b+1)&&trkEnergy<hPt->GetBinLowEdge(b+2)) {
+		// Signal Cone
+		if (pdr[j]<cut.ConeSize) {
+		  jc_.lcpt[j][b]+=trkEnergy*trackWeight;
+		  //cout << " jet " << j << " bin " << b << "(" << hPt->GetBinLowEdge(b+1) << "-" << hPt->GetBinLowEdge(b+2) << ")" << " sum: " << jc_.lcpt[j][b] << endl;
+		}
+		// Bkg Cone
+		if (pdrbg[j]<cut.ConeSize) {
+		  jc_.lcptbg[j][b]+=trkEnergy*trackWeight;
+		  //cout << " jet " << j << " bin " << b << "(" << hPt->GetBinLowEdge(b+1) << "-" << hPt->GetBinLowEdge(b+2) << ")" << " bg sum: " << jc_.lcptbg[j][b] << " peta: " << p_[i].eta() << " jeta: " << anaJets_[j].eta() << endl;
+		}
+		break;
+	      }
+	    }
+	  }
+
           // Take the reweighting into account for later histogram
-          // This should not be applied before the met calculation.
+          // **This should not be applied before the met calculation.**
           trackWeight *= weight;
 
 	  // =====================================================
@@ -612,13 +646,11 @@ void JetFragAna::Loop()
 	  if (j1Evt && pndr[i]<cut.ConeSize) {
 	    nrConePt+=ppt[i]*trackWeight;
 	    hNrCPPt->Fill(ppt[i],trackWeight);
-	    hPNDR->Fill(pndr[i],ppt[i]*trackWeight);
 	    hPtPNDR->Fill(ppt[i],pndr[i],ppt[i]*trackWeight);
 	  }
 	  if (j2Evt && padr[i]<cut.ConeSize) {
 	    hAwCPPt->Fill(ppt[i],trackWeight);
 	    awConePt+=ppt[i]*trackWeight;
-	    hPADR->Fill(padr[i],ppt[i]*trackWeight);
 	    hPtPADR->Fill(ppt[i],padr[i],ppt[i]*trackWeight);
 	  }
 
@@ -626,13 +658,11 @@ void JetFragAna::Loop()
 	  if (j1Evt && PNdRBkg<cut.ConeSize) {
 	    hNrCPPtBg->Fill(ppt[i],trackWeight);
 	    nrConePtBg+=ppt[i]*trackWeight;
-	    hPNDRBg->Fill(PNdRBkg,ppt[i]*trackWeight);
 	    hPtPNDRBg->Fill(ppt[i],PNdRBkg,ppt[i]*trackWeight);
 	  }
 	  if (j2Evt && PAdRBkg<cut.ConeSize) {
 	    hAwCPPtBg->Fill(ppt[i],trackWeight);
 	    awConePtBg+=ppt[i]*trackWeight;
-	    hPADRBg->Fill(PAdRBkg,ppt[i]*trackWeight);
 	    hPtPADRBg->Fill(ppt[i],PAdRBkg,ppt[i]*trackWeight);
 	  }
 	} // end of particles loop
@@ -677,6 +707,8 @@ void JetFragAna::Loop()
         var[20]=jdphi;
         var[21]=weight;
 	ntjt->Fill(var);
+
+	tcone->Fill();
       } // End of Main Event Selection
       // if (Cut(ientry) < 0) continue;
    }
@@ -719,12 +751,6 @@ void JetFragAna::Loop()
    hAwCPt->Scale(1./(numJ2ReWeighted_));
    hAwCPtBg->Scale(1./(numJ2ReWeighted_));
    hAwCPtBgSub->Scale(1./(numJ2ReWeighted_));
-
-   hPNDR->Scale(1./(numJ1ReWeighted_));
-   hPNDRBg->Scale(1./(numJ1ReWeighted_));
-
-   hPADR->Scale(1./(numJ2ReWeighted_));
-   hPADRBg->Scale(1./(numJ2ReWeighted_));
 
    hPtPNDR->Scale(1./(numJ1ReWeighted_));
    hPtPNDRBg->Scale(1./(numJ1ReWeighted_));
