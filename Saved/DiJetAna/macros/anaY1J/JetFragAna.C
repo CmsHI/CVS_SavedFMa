@@ -29,7 +29,9 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    // event cut for centrality reweighting:
    evtCut = "nljet>120&&abs(nljeta)<2&&aljet>50&&abs(aljeta)<2&&jdphi>2./3*TMath::Pi()";
 
+   // ===================================================
    // ntuples
+   // ===================================================
    ntjt = new TNtuple("ntjt","jet-trk nt","nljet:nljetacorr:aljet:aljetacorr:"
                                           "metx:metx0:metx1:metx2:metx3:metx4:metx5:"
                                           "mety:mety0:mety1:mety2:mety3:mety4:mety5:"
@@ -49,25 +51,30 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
 
    // trees
    tcone = new TTree("tcone","jet cone tree");
-   tcone->Branch("lcpt",&jc_.lcpt);
-   tcone->Branch("lcptbg",&jc_.lcptbg);
+   tcone->Branch("cpt",&jc_.cpt);
+   tcone->Branch("cptbg",&jc_.cptbg);
 
+   // ===================================================
    // Histograms
+   // ===================================================
+   TString labelShort[2] = { "N","A" };
+   TString label[2] = { "Nr","Aw" };
    const Int_t numDRBins = 20;
    Double_t dRBins[numDRBins+1];
    for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = 1.6/((double)numDRBins)*i; }
    const Int_t numPtBins = 6;
    Double_t ptBins[numPtBins+1]={0.5,1.0,1.5,4,8,20,180}; // v10,11,12
+   // trk distribution
+   const Int_t numPPtBins=18;
+   Float_t pptBins[numPPtBins+1] = {0.0,0.2,1,2,3,4,6,8,10,14,18,22,26,30,40,50,60,70,80};
 
    // -- 2D hists --
-   hPtPNDR = new TH2D("hPtPNDR","",numPtBins,ptBins,numDRBins,dRBins);
-   hPtPNDR->Sumw2();
-   hPtPADR = new TH2D("hPtPADR","",numPtBins,ptBins,numDRBins,dRBins);
-   hPtPADR->Sumw2();
-   hPtPNDRBg = new TH2D("hPtPNDRBg","",numPtBins,ptBins,numDRBins,dRBins);
-   hPtPNDRBg->Sumw2();
-   hPtPADRBg = new TH2D("hPtPADRBg","",numPtBins,ptBins,numDRBins,dRBins);
-   hPtPADRBg->Sumw2();
+   for (Int_t j=0; j<2; ++j) {
+     hPtPDR[j] = new TH2D("hPtP"+labelShort[j]+"DR","",numPtBins,ptBins,numDRBins,dRBins);
+     hPtPDR[j]->Sumw2();
+     hPtPDRBg[j] = new TH2D("hPtP"+labelShort[j]+"DRBg","",numPtBins,ptBins,numDRBins,dRBins);
+     hPtPDRBg[j]->Sumw2();
+   }
 
    // -- 1D hists --
    //TH1::SetDefaultSumw2();
@@ -78,51 +85,35 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    // jet
    hJDPhi = new TH1D("hJDPhi","",50,0,PI);
    hJDPhi->Sumw2();
-   hJEtNr = new TH1D("hJEtNr","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
-   hJEtNr->Sumw2();
-   hJEtAw = new TH1D("hJEtAw","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
-   hJEtAw->Sumw2();
-   hAj = new TH1D("hAj","",20,0,1);
-   hAj->Sumw2();
-   hJEtaNr = new TH1D("hJEtaNr","",50,-3,3);
-   hJEtaNr->Sumw2();
-   hJEtaAw = new TH1D("hJEtaAw","",50,-3,3);
-   hJEtaAw->Sumw2();
    hJDEta = new TH1D("hJDEta","",50,-6,6);
    hJDEta->Sumw2();
-   hRefJEtNr = new TH1D("hRefJEtNr","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
-   hRefJEtNr->Sumw2();
-   hRefJEtAw = new TH1D("hRefJEtAw","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
-   hRefJEtAw->Sumw2();
-   // cone
-   hNrCPt = new TH1D("hNrCPt","",cut.numJEtBins*2,cut.hisJEtMin,cut.hisJEtMax);
-   hNrCPt->Sumw2();
-   hNrCPtBg = new TH1D("hNrCPtBg","",cut.numJEtBins*2,cut.hisJEtMin,cut.hisJEtMax);
-   hNrCPtBg->Sumw2();
-   hNrCPtBgSub = new TH1D("hNrCPtBgSub","",cut.numJEtBins*2,-1*cut.hisJEtMax,cut.hisJEtMax);
-   hNrCPtBgSub->Sumw2();
-   hAwCPt = new TH1D("hAwCPt","",cut.numJEtBins*2,cut.hisJEtMin,cut.hisJEtMax);
-   hAwCPt->Sumw2();
-   hAwCPtBg = new TH1D("hAwCPtBg","",cut.numJEtBins*2,cut.hisJEtMin,cut.hisJEtMax);
-   hAwCPtBg->Sumw2();
-   hAwCPtBgSub = new TH1D("hAwCPtBgSub","",cut.numJEtBins*2,-1*cut.hisJEtMax,cut.hisJEtMax);
-   hAwCPtBgSub->Sumw2();
+   hAj = new TH1D("hAj","",20,0,1);
+   hAj->Sumw2();
+   for (Int_t j=0; j<2; ++j) {
+     hJEt[j] = new TH1D("hJEt"+label[j],"",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+     hJEt[j]->Sumw2();
+     hJEta[j] = new TH1D("hJEta"+label[j],"",cut.numJEtaBins,cut.hisJEtaMin,cut.hisJEtaMax);
+     hJEta[j]->Sumw2();
+     hRefJEt[j] = new TH1D("hRefJEt"+label[j],"",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+     hRefJEt[j]->Sumw2();
+   }
 
-   // trk
-   const Int_t numPPtBins=18;
-   Float_t pptBins[numPPtBins+1] = {0.0,0.2,1,2,3,4,6,8,10,14,18,22,26,30,40,50,60,70,80};
-   hNrCPPt = new TH1D("hNrCPPt","",numPPtBins,pptBins);
-   hNrCPPt->Sumw2();
-   hNrCPPtBg = new TH1D("hNrCPPtBg","",numPPtBins,pptBins);
-   hNrCPPtBg->Sumw2();
-   hNrCPPtBgSub = new TH1D("hNrCPPtBgSub","",numPPtBins,pptBins);
-   hNrCPPtBgSub->Sumw2();
-   hAwCPPt = new TH1D("hAwCPPt","",numPPtBins,pptBins);
-   hAwCPPt->Sumw2();
-   hAwCPPtBg = new TH1D("hAwCPPtBg","",numPPtBins,pptBins);
-   hAwCPPtBg->Sumw2();
-   hAwCPPtBgSub = new TH1D("hAwCPPtBgSub","",numPPtBins,pptBins);
-   hAwCPPtBgSub->Sumw2();
+   for (Int_t j=0; j<2; ++j) {
+     // cone
+     hCPt[j] = new TH1D("h"+label[j]+"CPt","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+     hCPt[j]->Sumw2();
+     hCPtBg[j] = new TH1D("h"+label[j]+"CPtBg","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
+     hCPtBg[j]->Sumw2();
+     hCPtBgSub[j] = new TH1D("h"+label[j]+"CPtBgSub","",cut.numJEtBins*2,-1*cut.hisJEtMax,cut.hisJEtMax);
+     hCPtBgSub[j]->Sumw2();
+     // trk
+     hCPPt[j] = new TH1D("h"+label[j]+"CPPt","",numPPtBins,pptBins);
+     hCPPt[j]->Sumw2();
+     hCPPtBg[j] = new TH1D("h"+label[j]+"CPPtBg","",numPPtBins,pptBins);
+     hCPPtBg[j]->Sumw2();
+     hCPPtBgSub[j] = new TH1D("h"+label[j]+"CPPtBgSub","",numPPtBins,pptBins);
+     hCPPtBgSub[j]->Sumw2();
+   }
 }
 
 JetFragAna::~JetFragAna()
@@ -158,19 +149,6 @@ void JetFragAna::Init(TTree *tree)
 
    // Set object pointer
    hlt = 0;
-   ljcnp = 0;
-   ljcnpbg = 0;
-   ljcpt = 0;
-   ljcpt2 = 0;
-   ljcptr = 0;
-   ljcptbg = 0;
-   ljcpt2bg = 0;
-   ljcptrbg = 0;
-   lppt = 0;
-   lpjdr = 0;
-   lgppt = 0;
-   lgpch = 0;
-   lgppid = 0;
 
    // Set branch addresses and branch pointers
    if (!tree) return;
@@ -240,28 +218,6 @@ void JetFragAna::Init(TTree *tree)
    fChain->SetBranchAddress("padphi", padphi, &b_padphi);
    fChain->SetBranchAddress("padr", padr, &b_padr);
    fChain->SetBranchAddress("padrbg", padrbg, &b_padrbg);
-   fChain->SetBranchAddress("lp", &lp_, &b__);
-   fChain->SetBranchAddress("lp.fCoordinates.fRho", lp_fCoordinates_fRho, &b_lp_fCoordinates_fRho);
-   fChain->SetBranchAddress("lp.fCoordinates.fEta", lp_fCoordinates_fEta, &b_lp_fCoordinates_fEta);
-   fChain->SetBranchAddress("lp.fCoordinates.fPhi", lp_fCoordinates_fPhi, &b_lp_fCoordinates_fPhi);
-   fChain->SetBranchAddress("trkNHits", trkNHits, &b_trkNHits);
-   fChain->SetBranchAddress("trkdz", trkdz, &b_trkdz);
-   fChain->SetBranchAddress("trkdze", trkdze, &b_trkdze);
-   fChain->SetBranchAddress("trkd0", trkd0, &b_trkd0);
-   fChain->SetBranchAddress("trkd0e", trkd0e, &b_trkd0e);
-   fChain->SetBranchAddress("ljcnp", &ljcnp, &b_ljcnp);
-   fChain->SetBranchAddress("ljcnpbg", &ljcnpbg, &b_ljcnpbg);
-   fChain->SetBranchAddress("ljcpt", &ljcpt, &b_ljcpt);
-   fChain->SetBranchAddress("ljcpt2", &ljcpt2, &b_ljcpt2);
-   fChain->SetBranchAddress("ljcptr", &ljcptr, &b_ljcptr);
-   fChain->SetBranchAddress("ljcptbg", &ljcptbg, &b_ljcptbg);
-   fChain->SetBranchAddress("ljcpt2bg", &ljcpt2bg, &b_ljcpt2bg);
-   fChain->SetBranchAddress("ljcptrbg", &ljcptrbg, &b_ljcptrbg);
-   fChain->SetBranchAddress("lppt", &lppt, &b_lppt);
-   fChain->SetBranchAddress("lpjdr", &lpjdr, &b_lpjdr);
-   fChain->SetBranchAddress("lgppt", &lgppt, &b_lgppt);
-   fChain->SetBranchAddress("lgpch", &lgpch, &b_lgpch);
-   fChain->SetBranchAddress("lgppid", &lgppid, &b_lgppid);
    Notify();
 }
 
@@ -454,13 +410,15 @@ void JetFragAna::Loop()
    // Initialize Counters
    // =====================================================
    numDJ_=0,numDJReWeighted_=0;
-   numJ1_=0,numJ1ReWeighted_=0;
-   numJ2_=0,numJ2ReWeighted_=0;
+   for (Int_t i=0; i<2; ++i) {
+     numJ_[i]=0;
+     numJReWeighted_[i]=0;
+   }
    Int_t numTotEvt=0, numDJNoBkgLimit=0;
    Long64_t nbytes = 0, nb = 0;
 
    // Pt Bin
-   TH1D * hPt = (TH1D*)hPtPNDR->ProjectionX();
+   TH1D * hPt = (TH1D*)hPtPDR[0]->ProjectionX();
    Int_t numPtBins = hPt->GetNbinsX();
 
    // Set Tree Pt bins
@@ -492,20 +450,27 @@ void JetFragAna::Loop()
       // =====================================================
       if (!doEvtSel_||(Cut(ientry)>=0&&!GetEvtMask())) {
 	++numDJNoBkgLimit;
+	// =====================================================
+	// Jet Phase Space Limit (if Bkg Subtraction)
+	// =====================================================
 	if (cut.BkgSubType=="EtaRefl") {
 	  if (fabs(anaJets_[0].eta())<cut.ConeSize||fabs(anaJets_[1].eta())<cut.ConeSize) continue;
 	}
 	if (cut.BkgSubType=="PhiRot") {
 	  if (fabs(anaJets_[0].eta()-anaJets_[1].eta())<cut.ConeSize*2) continue;
 	}
-	// If we want to restrict eta for j1,j2 separately
-	// Classify events into j1 events or j2 events
-	bool j1Evt=true,j2Evt=true;
+	// If we want to restrict eta for j0,j1 separately
+	// Classify events into j0 events or j1 events
+	bool jetEvt[2] = { true, true };
 	if (cut.BkgSubType=="EtaReflSingle") {
-	  if (fabs(anaJets_[0].eta())<cut.ConeSize) j1Evt=false;
-	  if (fabs(anaJets_[1].eta())<cut.ConeSize) j2Evt=false;
+	  for (Int_t j=0; j<2; ++j) {
+	    if (fabs(anaJets_[j].eta())<cut.ConeSize) jetEvt[j]=false;
+	  }
 	}
  
+	// =====================================================
+	// Set Centrality Weight
+	// =====================================================
         int cBin = hCent->FindBin(cent);
         double weight=1;
         if (doCentralityReweighting_) {
@@ -517,7 +482,7 @@ void JetFragAna::Loop()
         }
 
 	// =====================================================
-	// Event Level Histograms
+	// Fill Event Level Histograms
 	// =====================================================
 	hJDPhi->Fill(jdphi,weight);
 	hAj->Fill((anaJets_[0].pt()-anaJets_[1].pt())/(anaJets_[0].pt()+anaJets_[1].pt()),weight);
@@ -526,25 +491,20 @@ void JetFragAna::Loop()
 	++numDJ_;
 	numDJReWeighted_+=weight;
 
-	if (j1Evt) {
-	  hJEtNr->Fill(anaJets_[0].pt(),weight);
-	  hJEtaNr->Fill(anaJets_[0].eta(),weight);
-	  ++numJ1_;
-	  numJ1ReWeighted_+=weight;
-	}
-
-	if (j2Evt) {
-	  hJEtAw->Fill(anaJets_[1].pt(),weight);
-	  hJEtaAw->Fill(anaJets_[1].eta(),weight);
-	  ++numJ2_;
-	  numJ2ReWeighted_+=weight;
+	for (Int_t j=0; j<2; ++j) {
+	  if (jetEvt[j]) {
+	    hJEt[j]->Fill(anaJets_[j].pt(),weight);
+	    hJEta[j]->Fill(anaJets_[j].eta(),weight);
+	    ++numJ_[j];
+	    numJReWeighted_[j]+=weight;
+	  }
 	}
 
 	if (doJetOnly_) continue;
 
 	// Initialize Counters
-	Double_t nrConePt=0,nrConePtBg=0;
-	Double_t awConePt=0,awConePtBg=0;
+	Double_t conePtSum[2] = { 0,0 };
+	Double_t conePtBgSum[2] = { 0,0 };
 	Double_t metx=0,metx0=0,metx1=0,metx2=0,metx3=0,metx4=0,metx5=0;
 	Double_t mety=0,mety0=0,mety1=0,mety2=0,mety3=0,mety4=0,mety5=0;
 	jc_.clear();
@@ -601,83 +561,60 @@ void JetFragAna::Loop()
 	    }
 	  }
 
-	  // cone sum
 	  Float_t trkEnergy=p_[i].pt();
+	  // cone sum
 	  for (Int_t j=0; j<2; ++j) {
 	    for (Int_t b=0; b<numPtBins; ++b) {
 	      if (trkEnergy>=hPt->GetBinLowEdge(b+1)&&trkEnergy<hPt->GetBinLowEdge(b+2)) {
 		// Signal Cone
 		if (pdr[j]<cut.ConeSize) {
-		  jc_.lcpt[j][b]+=trkEnergy*trackWeight;
-		  //cout << " jet " << j << " bin " << b << "(" << hPt->GetBinLowEdge(b+1) << "-" << hPt->GetBinLowEdge(b+2) << ")" << " sum: " << jc_.lcpt[j][b] << endl;
+		  jc_.cpt[j][b]+=trkEnergy*trackWeight;
 		}
 		// Bkg Cone
 		if (pdrbg[j]<cut.ConeSize) {
-		  jc_.lcptbg[j][b]+=trkEnergy*trackWeight;
-		  //cout << " jet " << j << " bin " << b << "(" << hPt->GetBinLowEdge(b+1) << "-" << hPt->GetBinLowEdge(b+2) << ")" << " bg sum: " << jc_.lcptbg[j][b] << " peta: " << p_[i].eta() << " jeta: " << anaJets_[j].eta() << endl;
+		  jc_.cptbg[j][b]+=trkEnergy*trackWeight;
 		}
 		break;
 	      }
 	    }
 	  }
 
+	  // =====================================================
           // Take the reweighting into account for later histogram
           // **This should not be applied before the met calculation.**
+	  // =====================================================
           trackWeight *= weight;
 
 	  // =====================================================
-	  // Calculate Cone Variables
+	  // Fill Jet-Particle Histograms
 	  // =====================================================
-	  // For the moment cone analysis start from 1GeV
-	  if (ppt[i]<hPt->GetBinLowEdge(2)) continue;
-
-	  // bcksub
-	  Double_t PNdRBkg=999,PAdRBkg=999;
-	  if (cut.BkgSubType.Contains("EtaRefl")) {
-	    PNdRBkg = reco::deltaR(peta[i],pphi[i],-1*anaJets_[0].eta(),anaJets_[0].phi());
-	    PAdRBkg = reco::deltaR(peta[i],pphi[i],-1*anaJets_[1].eta(),anaJets_[1].phi());
-	  }
-	  if (cut.BkgSubType.Contains("PhiRot")) {
-	    PNdRBkg = reco::deltaR(peta[i],pphi[i],anaJets_[0].eta(),anaJets_[0].phi()+TMath::Pi());
-	    PAdRBkg = reco::deltaR(peta[i],pphi[i],anaJets_[1].eta(),anaJets_[1].phi()+TMath::Pi());
-	  }
-
-	  // Signal Cone
-	  if (j1Evt && pndr[i]<cut.ConeSize) {
-	    nrConePt+=ppt[i]*trackWeight;
-	    hNrCPPt->Fill(ppt[i],trackWeight);
-	    hPtPNDR->Fill(ppt[i],pndr[i],ppt[i]*trackWeight);
-	  }
-	  if (j2Evt && padr[i]<cut.ConeSize) {
-	    hAwCPPt->Fill(ppt[i],trackWeight);
-	    awConePt+=ppt[i]*trackWeight;
-	    hPtPADR->Fill(ppt[i],padr[i],ppt[i]*trackWeight);
-	  }
-
-	  // Background Cone
-	  if (j1Evt && PNdRBkg<cut.ConeSize) {
-	    hNrCPPtBg->Fill(ppt[i],trackWeight);
-	    nrConePtBg+=ppt[i]*trackWeight;
-	    hPtPNDRBg->Fill(ppt[i],PNdRBkg,ppt[i]*trackWeight);
-	  }
-	  if (j2Evt && PAdRBkg<cut.ConeSize) {
-	    hAwCPPtBg->Fill(ppt[i],trackWeight);
-	    awConePtBg+=ppt[i]*trackWeight;
-	    hPtPADRBg->Fill(ppt[i],PAdRBkg,ppt[i]*trackWeight);
+	  for (Int_t j=0; j<2; ++j) {
+	    if (jetEvt[j]) {
+	      // Signal Cone
+	      if (pdr[j]<cut.ConeSize) {
+		conePtSum[j]+=trkEnergy*trackWeight;
+		hCPPt[j]->Fill(trkEnergy,trackWeight);
+		hPtPDR[j]->Fill(trkEnergy,pdr[j],trkEnergy*trackWeight);
+	      }
+	      // Background Cone
+	      if (pdrbg[j]<cut.ConeSize) {
+		hCPPtBg[j]->Fill(trkEnergy,trackWeight);
+		conePtBgSum[j]+=trkEnergy*trackWeight;
+		hPtPDRBg[j]->Fill(trkEnergy,pdrbg[j],trkEnergy*trackWeight);
+	      }
+	    }
 	  }
 	} // end of particles loop
+
 	// =====================================================
 	// Fill Cone Sums
 	// =====================================================
-	if (j1Evt) {
-	  hNrCPt->Fill(nrConePt);
-	  hNrCPtBg->Fill(nrConePtBg);
-	  hNrCPtBgSub->Fill(nrConePt-nrConePtBg);
-	}
-	if (j2Evt) {
-	  hAwCPt->Fill(awConePt);
-	  hAwCPtBg->Fill(awConePtBg);
-	  hAwCPtBgSub->Fill(awConePt-awConePtBg);
+	for (Int_t j=0; j<2; ++j) {
+	  if (jetEvt[j]) {
+	    hCPt[j]->Fill(conePtSum[j]);
+	    hCPtBg[j]->Fill(conePtBgSum[j]);
+	    hCPtBgSub[j]->Fill(conePtSum[j]-conePtBgSum[j]);
+	  }
 	}
 
 	// =====================================================
@@ -719,42 +656,31 @@ void JetFragAna::Loop()
    cout << "Total Events: " << numTotEvt << endl;
    cout << "DiJets Selected w/o Bkg Limit: " << numDJNoBkgLimit << " (same as draw cut unless there is jet eta correction)" << endl;
    cout << "DiJets Selected: " << numDJ_ << " Reweighted: " << numDJReWeighted_ << endl;
-   cout << "J1's Selected: " << numJ1_ << " Reweighted: " << numJ1ReWeighted_ << endl;
-   cout << "J2's Selected: " << numJ2_ << " Reweighted: " << numJ2ReWeighted_ << endl;
+   for (Int_t j=0; j<2; ++j) {
+     cout << "num Jet" << j << " Selected: " << numJ_[j] << " Reweighted: " << numJReWeighted_[j] << endl;
+   }
 
    // =====================================================
    // Normalize by Number of Selected Events
    // =====================================================
    hJDPhi->Scale(1./(numDJReWeighted_));
-   hAj->Scale(1./(numDJReWeighted_));
    hJDEta->Scale(1./(numDJReWeighted_));
+   hAj->Scale(1./(numDJReWeighted_));
    hCentReWeighted->Scale(1./(numDJReWeighted_));
 
-   hJEtNr->Scale(1./(numJ1ReWeighted_));
-   hJEtaNr->Scale(1./(numJ1ReWeighted_));
+   for (Int_t j=0; j<2; ++j) {
+     hJEt[j]->Scale(1./(numJReWeighted_[j]));
+     hJEta[j]->Scale(1./(numJReWeighted_[j]));
 
-   hJEtAw->Scale(1./(numJ2ReWeighted_));
-   hJEtaAw->Scale(1./(numJ2ReWeighted_));
+     hCPPt[j]->Scale(1./numJReWeighted_[j]);
+     hCPPtBg[j]->Scale(1./numJReWeighted_[j]);
+     hCPPtBgSub[j]->Add(hCPPt[j],hCPPtBg[j],1,-1);
 
-   hNrCPPt->Scale(1./numJ1ReWeighted_);
-   hNrCPPtBg->Scale(1./numJ1ReWeighted_);
-   hNrCPPtBgSub->Add(hNrCPPt,hNrCPPtBg,1,-1);
+     hCPt[j]->Scale(1./(numJReWeighted_[j]));
+     hCPtBg[j]->Scale(1./(numJReWeighted_[j]));
+     hCPtBgSub[j]->Scale(1./(numJReWeighted_[j]));
 
-   hAwCPPt->Scale(1./numJ2ReWeighted_);
-   hAwCPPtBg->Scale(1./numJ2ReWeighted_);
-   hAwCPPtBgSub->Add(hAwCPPt,hAwCPPtBg,1,-1);
-
-   hNrCPt->Scale(1./(numJ1ReWeighted_));
-   hNrCPtBg->Scale(1./(numJ1ReWeighted_));
-   hNrCPtBgSub->Scale(1./(numJ1ReWeighted_));
-
-   hAwCPt->Scale(1./(numJ2ReWeighted_));
-   hAwCPtBg->Scale(1./(numJ2ReWeighted_));
-   hAwCPtBgSub->Scale(1./(numJ2ReWeighted_));
-
-   hPtPNDR->Scale(1./(numJ1ReWeighted_));
-   hPtPNDRBg->Scale(1./(numJ1ReWeighted_));
-
-   hPtPADR->Scale(1./(numJ2ReWeighted_));
-   hPtPADRBg->Scale(1./(numJ2ReWeighted_));
+     hPtPDR[j]->Scale(1./(numJReWeighted_[j]));
+     hPtPDRBg[j]->Scale(1./(numJReWeighted_[j]));
+   }
 }

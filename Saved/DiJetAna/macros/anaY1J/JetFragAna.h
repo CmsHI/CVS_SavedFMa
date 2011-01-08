@@ -29,25 +29,25 @@ const Int_t MAXTRK = 100000;
 #endif
 
 struct JetCone {
-  vector<vector<Float_t> > lcpt;
-  vector<vector<Float_t> > lcptbg;
+  vector<vector<Float_t> > cpt;
+  vector<vector<Float_t> > cptbg;
   JetCone() :
-    lcpt(2),
-    lcptbg(2)
+    cpt(2),
+    cptbg(2)
   {}
   void clear() {
-    for (Int_t i=0; i<lcpt.size(); ++i) {
-      for (Int_t j=0; j<lcpt[i].size(); ++j) {
-	lcpt[i][j]=0;
-	lcptbg[i][j]=0;
-	//cout << "jet " << i << " bin " << j << " cleared lcpt: " << lcpt[i][j] << " lcptbg: " << lcptbg[i][j] << endl;
+    for (Int_t i=0; i<cpt.size(); ++i) {
+      for (Int_t j=0; j<cpt[i].size(); ++j) {
+	cpt[i][j]=0;
+	cptbg[i][j]=0;
+	//cout << "jet " << i << " bin " << j << " cleared cpt: " << cpt[i][j] << " cptbg: " << cptbg[i][j] << endl;
       }
     }
   }
   void resizePtBins(Int_t n) {
-    for (Int_t i=0; i<lcpt.size(); ++i) {
-      lcpt[i].resize(n);
-      lcptbg[i].resize(n);
+    for (Int_t i=0; i<cpt.size(); ++i) {
+      cpt[i].resize(n);
+      cptbg[i].resize(n);
     }
   }
 };
@@ -66,11 +66,9 @@ public :
    Bool_t doJetOnly_;
    Int_t anaGenpType_;
    Int_t numDJ_;
-   Int_t numJ1_;
-   Int_t numJ2_;
+   Int_t numJ_[2];
    Float_t numDJReWeighted_;
-   Float_t numJ1ReWeighted_;
-   Float_t numJ2ReWeighted_;
+   Float_t numJReWeighted_[2];
    std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
    std::vector<math::PtEtaPhiMLorentzVector> refJets_;
    std::vector<math::PtEtaPhiMLorentzVector> p_;
@@ -94,32 +92,21 @@ public :
    // Histograms
    // jet
    TH1D * hJDPhi;
-   TH1D * hJEtNr;
-   TH1D * hJEtAw;
-   TH1D * hAj;
-   TH1D * hJEtaNr;
-   TH1D * hJEtaAw;
    TH1D * hJDEta;
-   TH1D * hRefJEtNr;
-   TH1D * hRefJEtAw;
+   TH1D * hAj;
+   TH1D * hJEt[2];
+   TH1D * hJEta[2];
+   TH1D * hRefJEt[2];
    // cone
-   TH1D * hNrCPt;
-   TH1D * hNrCPtBg;
-   TH1D * hNrCPtBgSub;
-   TH1D * hAwCPt;
-   TH1D * hAwCPtBg;
-   TH1D * hAwCPtBgSub;
+   TH1D * hCPt[2];
+   TH1D * hCPtBg[2];
+   TH1D * hCPtBgSub[2];
    // trk
-   TH1D * hNrCPPt;
-   TH1D * hNrCPPtBg;
-   TH1D * hNrCPPtBgSub;
-   TH1D * hAwCPPt;
-   TH1D * hAwCPPtBg;
-   TH1D * hAwCPPtBgSub;
-   TH2D * hPtPNDR;
-   TH2D * hPtPADR;
-   TH2D * hPtPNDRBg;
-   TH2D * hPtPADRBg;
+   TH1D * hCPPt[2];
+   TH1D * hCPPtBg[2];
+   TH1D * hCPPtBgSub[2];
+   TH2D * hPtPDR[2];
+   TH2D * hPtPDRBg[2];
 
    // Event cut for centrality reweighting
    TCut evtCut;
@@ -188,28 +175,6 @@ public :
    Float_t         padphi[MAXTRK];   //[evtnp]
    Float_t         padr[MAXTRK];   //[evtnp]
    Float_t         padrbg[MAXTRK];   //[evtnp]
-   Int_t           lp_;
-   Double_t        lp_fCoordinates_fRho[kMax];   //[_]
-   Double_t        lp_fCoordinates_fEta[kMax];   //[_]
-   Double_t        lp_fCoordinates_fPhi[kMax];   //[_]
-   Int_t           trkNHits[MAXTRK];   //[evtnp]
-   Float_t         trkdz[MAXTRK];   //[evtnp]
-   Float_t         trkdze[MAXTRK];   //[evtnp]
-   Float_t         trkd0[MAXTRK];   //[evtnp]
-   Float_t         trkd0e[MAXTRK];   //[evtnp]
-   vector<int>     *ljcnp;
-   vector<int>     *ljcnpbg;
-   vector<float>   *ljcpt;
-   vector<float>   *ljcpt2;
-   vector<float>   *ljcptr;
-   vector<float>   *ljcptbg;
-   vector<float>   *ljcpt2bg;
-   vector<float>   *ljcptrbg;
-   vector<float>   *lppt;
-   vector<float>   *lpjdr;
-   vector<float>   *lgppt;
-   vector<float>   *lgpch;
-   vector<float>   *lgppid;
 
    // List of branches
    TBranch        *b_run;   //!
@@ -275,27 +240,6 @@ public :
    TBranch        *b_padr;   //!
    TBranch        *b_padrbg;   //!
    TBranch        *b__;   //!
-   TBranch        *b_lp_fCoordinates_fRho;   //!
-   TBranch        *b_lp_fCoordinates_fEta;   //!
-   TBranch        *b_lp_fCoordinates_fPhi;   //!
-   TBranch        *b_trkNHits;   //!
-   TBranch        *b_trkdz;   //!
-   TBranch        *b_trkdze;   //!
-   TBranch        *b_trkd0;   //!
-   TBranch        *b_trkd0e;   //!
-   TBranch        *b_ljcnp;   //!
-   TBranch        *b_ljcnpbg;   //!
-   TBranch        *b_ljcpt;   //!
-   TBranch        *b_ljcpt2;   //!
-   TBranch        *b_ljcptr;   //!
-   TBranch        *b_ljcptbg;   //!
-   TBranch        *b_ljcpt2bg;   //!
-   TBranch        *b_ljcptrbg;   //!
-   TBranch        *b_lppt;   //!
-   TBranch        *b_lpjdr;   //!
-   TBranch        *b_lgppt;   //!
-   TBranch        *b_lgpch;   //!
-   TBranch        *b_lgppid;   //!
 
    JetFragAna(TTree *tree=0,TString tag="Data",Int_t doMC=0);
    ~JetFragAna();
