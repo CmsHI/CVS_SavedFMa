@@ -111,6 +111,7 @@ void anaJetFrag(
   if (modName=="djcalo_genp"||modName=="djgen"
       || inFile0Name.Contains("djcalo_genp")||inFile0Name.Contains("djgen")) {
     jana.anaGenpType_=1;
+    if (SrcName.Contains("Sig")) jana.anaGenpType_=10;
     jana.doTrackingEffFakeCorr_ = false;
   }
   jana.cut.BkgSubType = BkgSubType;
