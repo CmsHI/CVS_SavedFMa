@@ -14,7 +14,7 @@
 using namespace std;
 
 void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSrecoHydjet(
-			  TString anaV="v17ReWt",
+			  TString anaV="v18J100ReWt",
 			  TString module="djcalo",
 			  TString BckSub="SubEtaReflSingle",
 			  TString title="_Track",
