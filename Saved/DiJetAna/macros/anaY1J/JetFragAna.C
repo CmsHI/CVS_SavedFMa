@@ -570,10 +570,12 @@ void JetFragAna::Loop()
 		// Signal Cone
 		if (pdr[j]<cut.ConeSize) {
 		  jc_.cpt[j][b]+=trkEnergy*trackWeight;
+		  //jc_.cpt[j][b]+=cos(reco::deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
 		}
 		// Bkg Cone
 		if (pdrbg[j]<cut.ConeSize) {
 		  jc_.cptbg[j][b]+=trkEnergy*trackWeight;
+		  //jc_.cptbg[j][b]+=cos(reco::deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
 		}
 		break;
 	      }
