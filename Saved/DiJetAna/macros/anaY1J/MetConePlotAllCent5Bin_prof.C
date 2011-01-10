@@ -12,6 +12,30 @@
 #include "commonUtility.h"
 #include "DrawTick.C"
 
+void subtractError(TH1* h1, TH1* h2)   {
+   int nBins = h1->GetNbinsX();
+   for ( int i = 1 ; i<=nBins ; i++ ) { 
+      float oldErr = h1->GetBinError(i);
+      float Err2   = h2->GetBinError(i);
+      float newErr = sqrt ( oldErr*oldErr - Err2*Err2) ;
+      h1->SetBinError(i,newErr);
+   }
+}
+      
+void drawErrorShift(TH1* hOld=0, float dx=0, float addSysErr=0.1) {
+   int nBins = hOld->GetNbinsX();
+   TLine* tl[100];
+   for ( int i =1; i<=nBins ; i ++ ) { 
+      float px = hOld->GetBinCenter(i);
+      float py = hOld->GetBinContent(i);
+      float tErrSta = hOld->GetBinError(i);
+      float tErrSys = addSysErr*py;
+      float tErr = sqrt( tErrSta*tErrSta + tErrSys*tErrSys);
+      tl[i] = new TLine(px+dx,py-tErr, px+dx,py+tErr);
+      tl[i]->SetLineWidth(1);
+      tl[i]->Draw();
+   }
+}
 
 void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_120_50.root",
                     TCut myCut = "cent<30", char *title = "",bool drawLegend = false,
@@ -24,15 +48,16 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    TFile *inf = new TFile(infname);
    TTree *t = (TTree*)inf->Get("ntjt");
    t->AddFriend("tcone");
+   TString op("-");
+   //t->SetAlias("metxMerged0","(Sum$(cpt[0]))"+op+"(Sum$(cpt[1]))");
+   t->SetAlias("metxMerged0","(Sum$(cpt[0])-cpt[0][0])"+op+"(Sum$(cpt[1])-cpt[1][0])");
+   t->SetAlias("metxMerged1","((cpt[0][0]+cpt[0][1]+cpt[0][2]+cpt[0][3])"+op+"(cpt[1][0]+cpt[1][1]+cpt[1][2]+cpt[1][3]))");
+   t->SetAlias("metxMerged2","((cpt[0][1]+cpt[0][2]+cpt[0][3])"+op+"(cpt[1][1]+cpt[1][2]+cpt[1][3]))");
+   t->SetAlias("metxMerged3","((cpt[0][2]+cpt[0][3])"+op+"(cpt[1][2]+cpt[1][3]))");
+   t->SetAlias("metxMerged4","((cpt[0][3])"+op+"(cpt[1][3]))");
+   t->SetAlias("metxMerged5","((cpt[0][4]+cpt[0][5])"+op+"(cpt[1][4]+cpt[1][5]))");
    /*
-   t->SetAlias("metxMerged0","(Sum$(cpt[0]))-(Sum$(cpt[1]))");
-   t->SetAlias("metxMerged1","((cpt[0][0]+cpt[0][1]+cpt[0][2]+cpt[0][3])-(cpt[1][0]+cpt[1][1]+cpt[1][2]+cpt[1][3]))");
-   t->SetAlias("metxMerged2","((cpt[0][1]+cpt[0][2]+cpt[0][3])-(cpt[1][1]+cpt[1][2]+cpt[1][3]))");
-   t->SetAlias("metxMerged3","((cpt[0][2]+cpt[0][3])-(cpt[1][2]+cpt[1][3]))");
-   t->SetAlias("metxMerged4","((cpt[0][3])-(cpt[1][3]))");
-   t->SetAlias("metxMerged5","((cpt[0][4]+cpt[0][5])-(cpt[1][4]+cpt[1][5]))");
-   */
-   t->SetAlias("metxMerged0Tot","(Sum$(cpt[0]))-(Sum$(cpt[1]))");
+   t->SetAlias("metxMerged0Tot","(Sum$(cpt[0])-cpt[0][0])-(Sum$(cpt[1])-cpt[1][0])");
    t->SetAlias("metxMerged1Tot","((cpt[0][0]+cpt[0][1]+cpt[0][2]+cpt[0][3])-(cpt[1][0]+cpt[1][1]+cpt[1][2]+cpt[1][3]))");
    t->SetAlias("metxMerged2Tot","((cpt[0][1]+cpt[0][2]+cpt[0][3])-(cpt[1][1]+cpt[1][2]+cpt[1][3]))");
    t->SetAlias("metxMerged3Tot","((cpt[0][2]+cpt[0][3])-(cpt[1][2]+cpt[1][3]))");
@@ -50,6 +75,7 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    t->SetAlias("metxMerged3","(metxMerged3Tot-metxMerged3Bkg)");
    t->SetAlias("metxMerged4","(metxMerged4Tot-metxMerged4Bkg)");
    t->SetAlias("metxMerged5","(metxMerged5Tot-metxMerged5Bkg)");
+   */
 
    // ===========================================================
    // Analysis Setup
@@ -86,7 +112,7 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
      
    }
    p[0]->SetXTitle("A_{J}");
-   p[0]->SetYTitle("<#slash{p}_{T}^{#parallel}> (GeV/c)");
+   p[0]->SetYTitle("<#slash{p}_{T}> (GeV/c)");
    p[0]->GetXaxis()->CenterTitle();
    p[0]->GetYaxis()->CenterTitle();
    p[0]->GetXaxis()->SetLabelSize(22);
@@ -105,9 +131,27 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    p[0]->Draw("E");
    for (int i=1;i<=nBin;++i) {
       //if (i>1) continue;
-      p[i]->Draw("hist E same");
+      p[i]->Draw("hist same");
+     
    }
    p[0]->Draw("E same");
+
+   // correct the error bars..  cummulative -> it's own.
+   subtractError(p[1],p[2]);
+   subtractError(p[2],p[3]);
+   subtractError(p[3],p[4]);
+
+   // ====================
+   // Draw Statistical Error bars
+   // ====================
+   bool addSys = 0;
+   for (int i=1;i<=nBin;++i) {
+      if ( i==1 || i==4)       drawErrorShift(p[i],-0.008,addSys);
+      if ( i==2 )       drawErrorShift(p[i],0.008,addSys);
+      if ( i==3 )       drawErrorShift(p[i],0.016,addSys);
+      if ( i==5)       drawErrorShift(p[i],-0.016,addSys);
+   }
+  
 
    // ===========================================================
    // Draw Systematic Error
@@ -130,7 +174,10 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    leg->SetBorderSize(0);
    leg->SetTextFont(63);
    leg->SetTextSize(16);
-   leg->AddEntry(p[0],Form("> %.1f GeV/c",bins[0]),"pl");
+   leg->AddEntry(p[0],Form("> %.1f GeV/c",bins[1]),"pl");
+   TH1D *hh = new TH1D("hh","",100,0,1);
+   hh->SetMarkerStyle(4);
+   leg->AddEntry(hh,Form("> %.1f GeV/c Rocket Plot",bins[1]),"pl");
    for (int i=0;i<nBin;++i) {
       if (i!=nBin-1){
          leg->AddEntry(p[i+1],Form("%.1f - %.1f GeV/c",bins[i],bins[i+1]),"f");
@@ -172,6 +219,22 @@ void MetConePlotAllCent5Bin_prof(char *inputFile="data.root")
    balanceMetVsAj("nt_dj_mix100_Gen.root","cent<30","",true,false);
    drawText("0-30%",0.8,0.9);
 
+   const int nBinAj = 4;
+   double ajBins[nBinAj+1] = {0.0001+0.016,0.11+0.016,0.22+0.016,0.33+0.016,0.49999+0.016};
+   TH1D *h2 = new TH1D("h2","",nBinAj,ajBins);
+   h2->SetBinContent(1 , -1.31 );
+   h2->SetBinError(1 , 2.94362 );
+   h2->SetBinContent(2 , -8.06 );
+   h2->SetBinError(2 , 2.90401 );
+   h2->SetBinContent(3 , -23.31 );
+   h2->SetBinError(3 , 3.94974 );
+   h2->SetBinContent(4 , -22.01 );
+   h2->SetBinError(4 , 4.75925 );
+   h2->SetMarkerStyle(4);
+   h2->Draw("same");
+
+
+
    c1->cd(3);
    balanceMetVsAj("nt_dj_data100_cor.root","cent>=30","",false);
    drawText("CMS",0.33,0.90);
@@ -183,10 +246,23 @@ void MetConePlotAllCent5Bin_prof(char *inputFile="data.root")
    drawText("p_{T,2}  > 50GeV/c",ptx,pty1-0.07);
    drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty1-0.14);
 
+
    c1->cd(4);
    balanceMetVsAj("nt_dj_data100_cor.root","cent<30","",false);
    drawText("0-30%",0.8,0.93);
    
+   TH1D *h = new TH1D("h","",nBinAj,ajBins);
+   h->SetBinContent(1 , -9.33 );
+   h->SetBinError(1 , 4.51263 );
+   h->SetBinContent(2 , 0.01 );
+   h->SetBinError(2 , 3.59884 );
+   h->SetBinContent(3 , -13.01 );
+   h->SetBinError(3 , 3.22952 );
+   h->SetBinContent(4 , -31.17 );
+   h->SetBinError(4 , 3.01733 );
+
+   h->SetMarkerStyle(4);
+   h->Draw("same");
    c1->SaveAs("missingPtParallel-Corrected-data-allCent.eps");
 
 }
