@@ -129,13 +129,15 @@ void jumSun(double x1=0,double y1=0,double x2=1,double y2=1,int color=1, double 
    t1->Draw();
 }
 
-void getTotalNum(TH1D* h) {
-   TH1D* hSim = (TH1D*)h->Clone(Form("%s_oneBin",h->GetName()));
-   hSim->Rebin(hSim->GetNbinsX());
-   //   cout << " bin numbers = " << hSim->GetNbinsX() << endl;
-   cout.precision(4);
-   cout << hSim->GetBinContent(1) << " (" << hSim->GetBinError(1) << ")";
-   delete hSim;
+void getTotalNum(TH1D* h, Float_t sysErrorFrac=0.2) {
+  Float_t maxYValue = h->GetBinContent(h->GetMaximumBin());
+  Float_t sysError = maxYValue*sysErrorFrac;
+  TH1D* hSim = (TH1D*)h->Clone(Form("%s_oneBin",h->GetName()));
+  hSim->Rebin(hSim->GetNbinsX());
+  //   cout << " bin numbers = " << hSim->GetNbinsX() << endl;
+  cout.precision(4);
+  cout << hSim->GetBinContent(1) << " (" << hSim->GetBinError(1) << ", " << sysError << ")";
+  delete hSim;
 }
 TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Left=true,
 	      Int_t sysErrorType=0) {
