@@ -36,8 +36,8 @@ struct JetCone {
     cptbg(2)
   {}
   void clear() {
-    for (Int_t i=0; i<cpt.size(); ++i) {
-      for (Int_t j=0; j<cpt[i].size(); ++j) {
+    for (Int_t i=0; i<(Int_t)cpt.size(); ++i) {
+      for (Int_t j=0; j<(Int_t)cpt[i].size(); ++j) {
 	cpt[i][j]=0;
 	cptbg[i][j]=0;
 	//cout << "jet " << i << " bin " << j << " cleared cpt: " << cpt[i][j] << " cptbg: " << cptbg[i][j] << endl;
@@ -45,7 +45,7 @@ struct JetCone {
     }
   }
   void resizePtBins(Int_t n) {
-    for (Int_t i=0; i<cpt.size(); ++i) {
+    for (Int_t i=0; i<(Int_t)cpt.size(); ++i) {
       cpt[i].resize(n);
       cptbg[i].resize(n);
     }

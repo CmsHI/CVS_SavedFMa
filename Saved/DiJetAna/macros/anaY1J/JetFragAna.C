@@ -35,6 +35,8 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    ntjt = new TNtuple("ntjt","jet-trk nt","nljet:nljetacorr:aljet:aljetacorr:"
                                           "metx:metx0:metx1:metx2:metx3:metx4:metx5:"
                                           "mety:mety0:mety1:mety2:mety3:mety4:mety5:"
+                                          "metConex:metConex0:metConex1:metConex2:metConex3:metConex4:metConex5:"
+                                          "metOutOfConex:metOutOfConex0:metOutOfConex1:metOutOfConex2:metOutOfConex3:metOutOfConex4:metOutOfConex5:"
                                           "maskEvt:cent:jdphi:weight");
    ntjt->SetAlias("et1","nljet");
    ntjt->SetAlias("et2","aljet");
@@ -243,48 +245,48 @@ void JetFragAna::Show(Long64_t entry)
 Bool_t JetFragAna::GetEvtMask()
 {
   // Bad hcal events from Marguerite
-  if(run== 151211 && evt == 555881 && lumi ==  103 ) return true;;
-  if(run== 151238 && evt == 581194 && lumi ==  105 ) return true;;
-  if(run== 151238 && evt == 1299690 && lumi ==  242) return true;;
-  if(run== 151352 && evt == 55195 && lumi ==  10   ) return true;;
-  if(run== 151878 && evt == 594808 && lumi ==  135 ) return true;;
-  if(run== 152047 && evt == 666877 && lumi ==  114 ) return true;;
-  if(run== 152112 && evt == 2207843 && lumi ==  426) return true;;
-  if(run== 152112 && evt == 3151220 && lumi ==  608) return true;;
-  if(run== 152349 && evt == 939393 && lumi ==  220 ) return true;;
-  if(run== 152350 && evt == 595632 && lumi ==  111 ) return true;;
-  if(run== 152350 && evt == 2482917 && lumi ==  472) return true;;
-  if(run== 152350 && evt == 2686548 && lumi ==  512) return true;;
-  if(run== 152474 && evt == 2085185 && lumi ==  403) return true;;
-  if(run== 152477 && evt == 1890056 && lumi ==  392) return true;;
-  if(run== 152485 && evt == 55917 && lumi ==  12   ) return true;;
-  if(run== 152561 && evt == 3406888 && lumi ==  606) return true;;
-  if(run== 152561 && evt == 3758331 && lumi ==  670) return true;;
-  if(run== 152561 && evt == 4478132 && lumi ==  803) return true;;
-  if(run== 152561 && evt == 4797830 && lumi ==  863) return true;;
-  if(run== 152561 && evt == 5176016 && lumi ==  936) return true;;
-  if(run== 152592 && evt == 22234 && lumi ==  4    ) return true;;
-  if(run== 152592 && evt == 402212 && lumi ==  66  ) return true;;
-  if(run== 152594 && evt == 587793 && lumi ==  110 ) return true;;
-  if(run== 152601 && evt == 1417393 && lumi ==  267) return true;;
-  if(run== 152602 && evt == 686565 && lumi ==  111 ) return true;;
-  if(run== 152602 && evt == 3940942 && lumi ==  684) return true;;
-  if(run== 152624 && evt == 995626 && lumi ==  170 ) return true;;
-  if(run== 152624 && evt == 1063452 && lumi ==  182) return true;;
-  if(run== 152624 && evt == 1250655 && lumi ==  215) return true;;
-  if(run== 152624 && evt == 1846646 && lumi ==  322) return true;;
-  if(run== 152625 && evt == 1634959 && lumi ==  282) return true;;
-  if(run== 152625 && evt == 3162245 && lumi ==  563) return true;;
-  if(run== 152641 && evt == 173478 && lumi ==  31  ) return true;;
-  if(run== 152642 && evt == 359181 && lumi ==  57  ) return true;;
-  if(run== 152642 && evt == 1764595 && lumi ==  286) return true;;
-  if(run== 152642 && evt == 2686223 && lumi ==  446) return true;;
-  if(run== 152721 && evt == 1304320 && lumi ==  249) return true;;
-  if(run== 152721 && evt == 1983505 && lumi ==  358) return true;;
-  if(run== 152722 && evt == 2963949 && lumi ==  485) return true;;
-  if(run== 152741 && evt == 558533 && lumi ==  91  ) return true;;
-  if(run== 152751 && evt == 3432123 && lumi ==  582) return true;;
-  if(run== 152791 && evt == 246343 && lumi ==  39  ) return true;;
+  if(run== 151211 && evt == 555881 && lumi ==  103 ) return true;
+  if(run== 151238 && evt == 581194 && lumi ==  105 ) return true;
+  if(run== 151238 && evt == 1299690 && lumi ==  242) return true;
+  if(run== 151352 && evt == 55195 && lumi ==  10   ) return true;
+  if(run== 151878 && evt == 594808 && lumi ==  135 ) return true;
+  if(run== 152047 && evt == 666877 && lumi ==  114 ) return true;
+  if(run== 152112 && evt == 2207843 && lumi ==  426) return true;
+  if(run== 152112 && evt == 3151220 && lumi ==  608) return true;
+  if(run== 152349 && evt == 939393 && lumi ==  220 ) return true;
+  if(run== 152350 && evt == 595632 && lumi ==  111 ) return true;
+  if(run== 152350 && evt == 2482917 && lumi ==  472) return true;
+  if(run== 152350 && evt == 2686548 && lumi ==  512) return true;
+  if(run== 152474 && evt == 2085185 && lumi ==  403) return true;
+  if(run== 152477 && evt == 1890056 && lumi ==  392) return true;
+  if(run== 152485 && evt == 55917 && lumi ==  12   ) return true;
+  if(run== 152561 && evt == 3406888 && lumi ==  606) return true;
+  if(run== 152561 && evt == 3758331 && lumi ==  670) return true;
+  if(run== 152561 && evt == 4478132 && lumi ==  803) return true;
+  if(run== 152561 && evt == 4797830 && lumi ==  863) return true;
+  if(run== 152561 && evt == 5176016 && lumi ==  936) return true;
+  if(run== 152592 && evt == 22234 && lumi ==  4    ) return true;
+  if(run== 152592 && evt == 402212 && lumi ==  66  ) return true;
+  if(run== 152594 && evt == 587793 && lumi ==  110 ) return true;
+  if(run== 152601 && evt == 1417393 && lumi ==  267) return true;
+  if(run== 152602 && evt == 686565 && lumi ==  111 ) return true;
+  if(run== 152602 && evt == 3940942 && lumi ==  684) return true;
+  if(run== 152624 && evt == 995626 && lumi ==  170 ) return true;
+  if(run== 152624 && evt == 1063452 && lumi ==  182) return true;
+  if(run== 152624 && evt == 1250655 && lumi ==  215) return true;
+  if(run== 152624 && evt == 1846646 && lumi ==  322) return true;
+  if(run== 152625 && evt == 1634959 && lumi ==  282) return true;
+  if(run== 152625 && evt == 3162245 && lumi ==  563) return true;
+  if(run== 152641 && evt == 173478 && lumi ==  31  ) return true;
+  if(run== 152642 && evt == 359181 && lumi ==  57  ) return true;
+  if(run== 152642 && evt == 1764595 && lumi ==  286) return true;
+  if(run== 152642 && evt == 2686223 && lumi ==  446) return true;
+  if(run== 152721 && evt == 1304320 && lumi ==  249) return true;
+  if(run== 152721 && evt == 1983505 && lumi ==  358) return true;
+  if(run== 152722 && evt == 2963949 && lumi ==  485) return true;
+  if(run== 152741 && evt == 558533 && lumi ==  91  ) return true;
+  if(run== 152751 && evt == 3432123 && lumi ==  582) return true;
+  if(run== 152791 && evt == 246343 && lumi ==  39  ) return true;
   return false;
 }
 
@@ -507,18 +509,16 @@ void JetFragAna::Loop()
 	Double_t conePtBgSum[2] = { 0,0 };
 	Double_t metx=0,metx0=0,metx1=0,metx2=0,metx3=0,metx4=0,metx5=0;
 	Double_t mety=0,mety0=0,mety1=0,mety2=0,mety3=0,mety4=0,mety5=0;
-	jc_.clear();
-	// =====================================================
-	// Particle Loop
-	// =====================================================
+	Double_t metConex=0,metConex0=0,metConex1=0,metConex2=0,metConex3=0,metConex4=0,metConex5=0;
+	Double_t metOutOfConex=0,metOutOfConex0=0,metOutOfConex1=0,metOutOfConex2=0,metOutOfConex3=0,metOutOfConex4=0,metOutOfConex5=0;
+        jc_.clear();
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
-	  if (anaGenpType_==10 && (psube[i]>0 || pch[i]==0)) continue;
 	  if (ppt[i]<cut.TrkPtMin||fabs(peta[i])>=2.4) continue;
           double trackWeight=1;
           if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(ppt[i],peta[i],cent);
-	  //cout << "particle " << i << ": ch " << pch[i] << " pt: " << ppt[i] << " pndr: " << pndr[i] << " trkwt: " << trackWeight << endl;
+	  //cout << "particle " << i << ": ch " << pch[i] << " pt: " << ppt[i] << " pndr: " << pndr[i] << endl;
 	  // Trk histograms
 
 	  // met calculation
@@ -526,25 +526,32 @@ void JetFragAna::Loop()
 	  metx+=pptx;
 	  Float_t ppty=sin(pndphi[i])*ppt[i]*trackWeight;
 	  mety+=ppty;
+          if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex+=pptx; else metOutOfConex+=pptx;
 	  //for (int i=0;i<hPt->GetNbinsX()+2;++i) cout << "Bin " << i << " ledge: " << hPt->GetBinLowEdge(i) << endl;
 	  if (ppt[i]>=hPt->GetBinLowEdge(1)&&ppt[i]<hPt->GetBinLowEdge(2)) {
             metx0+=pptx;
             mety0+=ppty;
+            if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex0+=pptx; else metOutOfConex0+=pptx;
           } else if (ppt[i]>=hPt->GetBinLowEdge(2)&&ppt[i]<hPt->GetBinLowEdge(3)) {
             metx1+=pptx;
             mety1+=ppty;
+            if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex1+=pptx; else metOutOfConex1+=pptx;
           } else if (ppt[i]>=hPt->GetBinLowEdge(3)&&ppt[i]<hPt->GetBinLowEdge(4)) {
             metx2+=pptx;
             mety2+=ppty;
+            if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex2+=pptx; else metOutOfConex2+=pptx;
           } else if (ppt[i]>=hPt->GetBinLowEdge(4)&&ppt[i]<hPt->GetBinLowEdge(5)) {
             metx3+=pptx;
             mety3+=ppty;
+            if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex3+=pptx; else metOutOfConex3+=pptx;
           } else if (ppt[i]>=hPt->GetBinLowEdge(5)&&ppt[i]<hPt->GetBinLowEdge(6)) { 
             metx4+=pptx;
             mety4+=ppty;
+            if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex4+=pptx; else metOutOfConex4+=pptx;
           } else if (ppt[i]>=hPt->GetBinLowEdge(6)&&ppt[i]<hPt->GetBinLowEdge(7)) { 
             metx5+=pptx;
             mety5+=ppty;
+            if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex5+=pptx; else metOutOfConex5+=pptx;
           }
 
 	  // =====================================================
@@ -642,11 +649,25 @@ void JetFragAna::Loop()
         var[15]=mety3;
         var[16]=mety4;
         var[17]=mety5;
-        var[18]=GetEvtMask();
-        var[19]=cent;
-        var[20]=jdphi;
-        var[21]=weight;
-	ntjt->Fill(var);
+        var[18]=metConex;
+        var[19]=metConex0;
+        var[20]=metConex1;
+        var[21]=metConex2;
+        var[22]=metConex3;
+        var[23]=metConex4;
+        var[24]=metConex5;
+        var[25]=metOutOfConex;
+        var[26]=metOutOfConex0;
+        var[27]=metOutOfConex1;
+        var[28]=metOutOfConex2;
+        var[29]=metOutOfConex3;
+        var[30]=metOutOfConex4;
+        var[31]=metOutOfConex5;
+        var[32]=GetEvtMask();
+        var[33]=cent;
+        var[34]=jdphi;
+        var[35]=weight;
+	ntjt->Fill(var);    // fit ntuple
 
 	tcone->Fill();
       } // End of Main Event Selection
