@@ -517,6 +517,7 @@ void JetFragAna::Loop()
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
+	   if (anaGenpType_==10 && (psube[i]>0 || pch[i]==0)) continue;
 	  if (ppt[i]<cut.TrkPtMin||fabs(peta[i])>=2.4) continue;
           double trackWeight=1;
           if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(ppt[i],peta[i],cent);
