@@ -210,10 +210,13 @@ void sysErrorAll(
   TString outdir=anaV+BckSub;
   gSystem->mkdir(outdir.Data(),kTRUE);
 
-  Int_t sysModes[2] = {0,2};
-  for (Int_t m=0; m<2;++m) {
-    sysError("jfh"+anaV+"_HydjetAll_djcalo_Cent0to30_Aj0to100_"+BckSub+".root",0,sysModes[m],outdir);
-    sysError("jfh"+anaV+"_HydjetAll_djcalo_Cent0to30_Aj0to100_"+BckSub+".root",1,sysModes[m],outdir);
-    sysError("jfh"+anaV+"_HydjetAll_djcalo_genp_Cent0to30_Aj0to100_"+BckSub+".root",3,sysModes[m],outdir);
+  Int_t sysModes[3] = {0,1,2};
+  TString Ajs[5]= { "0to100","0to11","11to22","22to33","33to100" };
+  for (Int_t m=0; m<3;++m) {
+    for (Int_t a=0; a<5; ++a) {
+      sysError("jfh"+anaV+"_HydjetAll_djcalo_Cent0to30_Aj"+Ajs[a]+"_"+BckSub+".root",0,sysModes[m],outdir);
+      sysError("jfh"+anaV+"_HydjetAll_djcalo_Cent0to30_Aj"+Ajs[a]+"_"+BckSub+".root",1,sysModes[m],outdir);
+      sysError("jfh"+anaV+"_HydjetAll_djcalo_genp_Cent0to30_Aj"+Ajs[a]+"_"+BckSub+".root",3,sysModes[m],outdir);
+    }
   }
 }
