@@ -54,24 +54,18 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    // Get Input
    // ===========================================================
    TFile *inf = new TFile(infname);
-   cout << infname << endl;
-   cout << "metType: " << metType << endl;
    TTree *t = (TTree*)inf->Get("ntjt");
+
    vector<TString> mergedPt,target;
    mergedPt.push_back("metxMergedAll"); target.push_back("(metx0+metx1+metx2+metx3+metx4+metx5)");
-   mergedPt.push_back("metxMerged0"); target.push_back("(metx0+metx1+metx2+metx3)");
-   mergedPt.push_back("metxMerged1"); target.push_back("(metx1+metx2+metx3)");
-   mergedPt.push_back("metxMerged2"); target.push_back("(metx2+metx3)");
+   mergedPt.push_back("metxMerged0"); target.push_back("(metx0)");
+   mergedPt.push_back("metxMerged1"); target.push_back("(metx1)");
+   mergedPt.push_back("metxMerged2"); target.push_back("(metx2)");
    mergedPt.push_back("metxMerged3"); target.push_back("(metx3)");
    mergedPt.push_back("metxMerged4"); target.push_back("(metx4+metx5)");
    for (Int_t i=0; i<mergedPt.size(); ++i) {
      if (metType!="") {
        target[i].ReplaceAll("metx",metType);
-     }
-     if (metType == "metOutOfConex") {
-       if (i==1) target[i] = metType;
-       if (i>1)
-	 target[i]=target[i-1]+Form("-%s%d",metType.Data(),i-2);
      }
      cout << "Alias: " << mergedPt[i] << " target: " << target[i] << endl;
      t->SetAlias(mergedPt[i],target[i]);
@@ -107,7 +101,8 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    // ===========================================================
    // Draw Weighted Averages
    // ===========================================================
-   TH1D *p[nBin];
+   TH1D *ppos[nBin];
+   TH1D *pneg[nBin];
    TH1D *pe[nBin];
    for (int i=0;i<nBin;i++)
    {
@@ -123,14 +118,19 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
       t->Draw(Form("Aj>>h1%d",i), "weight"*(evtCut&&myCut));
       t->Draw(Form("Aj>>h2%d",i), Form("((-weight*metxMerged%d))",i)*(evtCut&&myCut));
       
-      p[i]=(TH1D*)h2->Clone();
-      p[i]->SetName(Form("p%d",i));     
-      p[i]->Divide(h1);
-      p[i]->SetLineColor(1);     
-      p[i]->SetMarkerColor(colors[i]);
-      p[i]->SetFillColor(colors[i]);
-      //      p[i]->SetFillStyle(3004+fabs(i-1));
-      p[i]->SetFillStyle(1001);
+      pe[i]=(TH1D*)h2->Clone();
+      pe[i]->SetName(Form("p%d",i));     
+      pe[i]->Divide(h1);
+      ppos[i] = new TH1D(Form("ppos%d",i),"",nBinAj,ajBins);
+      ppos[i]->SetLineColor(1);     
+      ppos[i]->SetMarkerColor(colors[i]);
+      ppos[i]->SetFillColor(colors[i]);
+      ppos[i]->SetFillStyle(1001);
+      pneg[i] = new TH1D(Form("pneg%d",i),"",nBinAj,ajBins);
+      pneg[i]->SetLineColor(1);     
+      pneg[i]->SetMarkerColor(colors[i]);
+      pneg[i]->SetFillColor(colors[i]);
+      pneg[i]->SetFillStyle(1001);
 
       // =================================
       // Caculated Stat Error of the Mean
@@ -142,14 +142,38 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
          t->Draw(Form("((metxMerged%d))>>he%d_aj%d",i,i,iaj), "weight" * evtCut&&myCut&&ajCut);
          float theError = he[iaj]->GetRMS()/ (sqrt(he[iaj]->GetEntries()));
 	 cout << theError << " ";
-	 p[i]->SetBinError(iaj+1, theError);
+	 pe[i]->SetBinError(iaj+1, theError);
       }
       cout << endl;
    }
-   // correct the error bars..  cummulative -> it's own.
-   subtractError(p[0],p[1]);
-   subtractError(p[1],p[2]);
-   subtractError(p[2],p[3]);
+
+   // Stack
+   for (int i=nBin-1;i>=0;i--)
+   {
+      for(int iaj = 0 ; iaj< nBinAj ; iaj++) {
+         double posVal=0, negVal=0;
+         double posValErr=0, negValErr=0;
+         if (i!=nBin-1) {
+            posVal = ppos[i+1]->GetBinContent(iaj+1);
+            posValErr = ppos[i+1]->GetBinError(iaj+1);
+            negVal = pneg[i+1]->GetBinContent(iaj+1);
+            negValErr = pneg[i+1]->GetBinError(iaj+1);
+         }
+         if (pe[i]->GetBinContent(iaj+1)<0) {
+            negVal+=pe[i]->GetBinContent(iaj+1);
+            negValErr=pe[i]->GetBinError(iaj+1);
+            posValErr=0;
+         } else if (pe[i]->GetBinContent(iaj+1)>0) {
+            posVal+=pe[i]->GetBinContent(iaj+1);
+            posValErr=pe[i]->GetBinError(iaj+1);
+            negValErr=0;
+         } 
+         ppos[i]->SetBinContent(iaj+1,posVal);
+         ppos[i]->SetBinError(iaj+1,posValErr);
+         pneg[i]->SetBinContent(iaj+1,negVal);
+         pneg[i]->SetBinError(iaj+1,negValErr);
+      }
+   }
    
    TH1D *pall;
    TH1D *pallE;
@@ -159,7 +183,6 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    h1->Sumw2();
    h2->Sumw2();
    t->Draw(Form("Aj>>hAll1"), "weight"*(evtCut&&myCut));
-   //   t->Draw(Form("Aj>>hAll2"), Form("((-weight*metx))")*(evtCut&&myCut));
    t->Draw(Form("Aj>>hAll2"), Form("((-weight*metxMergedAll))")*(evtCut&&myCut));
    pall=(TH1D*)h2->Clone();
    pall->SetName("pall");
@@ -203,19 +226,24 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    // Finally Draw
    // ====================
    for (int i=0;i<nBin;++i) {
-      p[i]->SetLineWidth(1);
-      //      p[i]->SetMarkerSize(0.1);
-      p[i]->Draw("hist same");
+      ppos[i]->SetLineWidth(1);
+      ppos[i]->Draw("hist same");
+      pneg[i]->SetLineWidth(1);
+      pneg[i]->Draw("hist same");
    }
    
    // ====================
    // Draw Statistical Error bars
    // ====================
    for (int i=0;i<nBin;++i) {
-      if ( i==0 )       drawErrorShift(p[i],-0.016, addSys);
-      if ( i==1 || i==4)       drawErrorShift(p[i],-0.008,addSys);
-      if ( i==2 )       drawErrorShift(p[i],0.008,addSys);
-      if ( i==3 )       drawErrorShift(p[i],0.016,addSys);
+      if ( i==0 )       drawErrorShift(ppos[i],-0.016, addSys);
+      if ( i==1 || i==4)       drawErrorShift(ppos[i],-0.008,addSys);
+      if ( i==2 )       drawErrorShift(ppos[i],0.008,addSys);
+      if ( i==3 )       drawErrorShift(ppos[i],0.016,addSys);
+      if ( i==0 )       drawErrorShift(pneg[i],-0.016, addSys);
+      if ( i==1 || i==4)       drawErrorShift(pneg[i],-0.008,addSys);
+      if ( i==2 )       drawErrorShift(pneg[i],0.008,addSys);
+      if ( i==3 )       drawErrorShift(pneg[i],0.016,addSys);
    }
    pall->Draw("E same");
    
@@ -227,8 +255,8 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
         double x = pall->GetBinCenter(i+1);
         double y = pall->GetBinContent(i+1);
         // Quote the difference between GEN and RECO in >8 Bin (20%) before adjusting eff as systematics
-        double err = -p[nBin-1]->GetBinContent(i+1)*0.2;
-        DrawTick(y,err,err,x,1,0.02,1);
+        double err = fabs(pe[nBin-1]->GetBinContent(i+1)*0.2);
+        //DrawTick(y,err,err,x,1,0.02,1);
       }
    }
 
@@ -243,9 +271,9 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    leg->AddEntry(pall,Form("> %.1f GeV/c",bins[0]),"pl");
    for (int i=0;i<nBin;++i) {
       if (i!=nBin-1){
-         leg->AddEntry(p[i],Form("%.1f - %.1f GeV/c",bins[i],bins[i+1]),"f");
+         leg->AddEntry(ppos[i],Form("%.1f - %.1f GeV/c",bins[i],bins[i+1]),"f");
       } else {
-         leg->AddEntry(p[i],Form("> %.1f GeV/c",bins[i]),"f");
+         leg->AddEntry(ppos[i],Form("> %.1f GeV/c",bins[i]),"f");
       }
    }
 
@@ -259,7 +287,6 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    TLine * l1 = new TLine(0.0001,-10,0.0001,10);
    l1->Draw();
 }
-
 
 void MetPlotInConeOutCone(char *inputFile="data.root")
 {
@@ -297,4 +324,3 @@ void MetPlotInConeOutCone(char *inputFile="data.root")
    c1->SaveAs("missingPtParallel-Corrected-data-InConeOutCone.eps");
    c1->SaveAs("missingPtParallel-Corrected-data-InConeOutCone.gif");
 }
-
