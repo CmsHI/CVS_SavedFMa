@@ -13,9 +13,9 @@
 using namespace std;
 
 void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
-			  TString anaV="v18J100",
+			  TString anaV="v18",
 			  TString module="djcalo",
-			  TString BckSub="SubEtaReflSingle",
+			  TString BckSub="SubEtaReflSingle", // for paper: SubEtaReflSingle
 			  TString title="_Track",
 			  TString drawV="d5",
 			  Int_t logScale=0,
@@ -32,7 +32,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   Float_t ax=0.52,ay=0.77;
   
   c1->cd(1);
-  drawTrkEnergy("jfh"+anaV+"ReWt_"+mc+"_"+module+"_genp_Cent0to30_Aj0to11_"+BckSub+".root",false,true,logScale,normType,0);
+  drawTrkEnergy("jfh"+anaV+"ReWt_"+mc+"_"+module+"_genp_Cent30to100_Aj0to11_"+BckSub+".root",false,true,logScale,normType,0);
   drawText("A_{J} < 0.11",leftSpace+ax+0.1,ay);
   drawText("Leading Jet",j1x+0.23,j1y,15);
   drawText("SubLeading Jet",j2x+leftSpace,j2y,15);
@@ -42,7 +42,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   drawPatch(0,0.0,0.28,0.1);
   
   c1->cd(2);
-  drawTrkEnergy("jfh"+anaV+"ReWt_"+mc+"_"+module+"_genp_Cent0to30_Aj11to22_"+BckSub+".root",false,true,logScale,normType,0);
+  drawTrkEnergy("jfh"+anaV+"ReWt_"+mc+"_"+module+"_genp_Cent30to100_Aj11to22_"+BckSub+".root",false,true,logScale,normType,0);
   drawText("0.11 < A_{J} < 0.22",ax,ay);
   drawText("Leading Jet",j1x,j1y,15);
   drawText("SubLeading Jet",j2x,j2y,15);
@@ -53,20 +53,20 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty-0.16,15);
 
   c1->cd(3);
-  drawTrkEnergy("jfh"+anaV+"ReWt_"+mc+"_"+module+"_genp_Cent0to30_Aj22to33_"+BckSub+".root",true,true,logScale,normType,0);
+  drawTrkEnergy("jfh"+anaV+"ReWt_"+mc+"_"+module+"_genp_Cent30to100_Aj22to33_"+BckSub+".root",true,true,logScale,normType,0);
   drawText("0.22 < A_{J} < 0.33",ax,ay);
   drawText("Leading Jet",j1x,j1y,15);
   drawText("SubLeading Jet",j2x,j2y,15);
 
   c1->cd(4);
-  drawTrkEnergy("jfh"+anaV+"ReWt_"+mc+"_"+module+"_genp_Cent0to30_Aj33to100_"+BckSub+".root",false,true,logScale,normType,0);
+  drawTrkEnergy("jfh"+anaV+"ReWt_"+mc+"_"+module+"_genp_Cent30to100_Aj33to100_"+BckSub+".root",false,true,logScale,normType,0);
   drawText("A_{J} > 0.33",ax+0.1,ay);
   drawText("Leading Jet",j1x,j1y,15);
   drawText("SubLeading Jet",j2x,j2y,15);
   
 
   c1->cd(5);
-  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to11_"+BckSub+".root",false,true,logScale,normType,1);
+  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent30to100_Aj0to11_"+BckSub+".root",false,true,logScale,normType,1);
   drawText("A_{J} < 0.11",leftSpace+0.63,downSpace+0.73);
   drawText("Leading Jet",j1x+0.23,j1y+downSpace+0.02,15);
   drawText("SubLeading Jet",j2x+leftSpace,j2y+downSpace+0.02,15);
@@ -76,19 +76,19 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   drawText("0-30%",0.33,downSpace+0.51);
 
   c1->cd(6);
-  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj11to22_"+BckSub+".root",false,false,logScale,normType,1);
+  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent30to100_Aj11to22_"+BckSub+".root",false,false,logScale,normType,1);
   drawText("0.11 < A_{J} < 0.22",0.52,downSpace+0.73);
   drawText("Leading Jet",j1x,j1y+downSpace+0.02,15);
   drawText("SubLeading Jet",j2x,j2y+downSpace+0.02,15);
   
   c1->cd(7);
-  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj22to33_"+BckSub+".root",false,false,logScale,normType,1);
+  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent30to100_Aj22to33_"+BckSub+".root",false,false,logScale,normType,1);
   drawText("0.22 < A_{J} < 0.33",0.52,downSpace+0.73);
   drawText("Leading Jet",j1x,j1y+downSpace+0.02,15);
   drawText("SubLeading Jet",j2x,j2y+downSpace+0.02,15);
 
   c1->cd(8);
-  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj33to100_"+BckSub+".root",false,false,logScale,normType,1);
+  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent30to100_Aj33to100_"+BckSub+".root",false,false,logScale,normType,1);
   drawText("A_{J} > 0.33",0.63,downSpace+0.73);
   drawText("Leading Jet",j1x,j1y+downSpace+0.02,15);
   drawText("SubLeading Jet",j2x,j2y+downSpace+0.02,15);
