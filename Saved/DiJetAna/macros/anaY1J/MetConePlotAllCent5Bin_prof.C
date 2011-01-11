@@ -228,6 +228,11 @@ void MetConePlotAllCent5Bin_prof(char *inputFile="data.root")
    TCanvas *c1 = new TCanvas("c1","",1000,1000);
    Float_t leftMargin=0.28,bottomMargin=0.18;
    makeMultiPanelCanvas(c1,2,2,0.0,0.0,leftMargin,bottomMargin,0.02);
+
+   // For Rocket plot comparison
+   const int nBinAj = 4;
+   double ajBins[nBinAj+1] = {0.0001+0.022,0.11+0.022,0.22+0.022,0.33+0.022,0.49999+0.022};
+
    c1->cd(1);
    balanceMetVsAj("nt_dj_mix100_Gen.root","cent>=30","",false,false);
    drawText("PYTHIA+HYDJET",0.33,0.82);
@@ -237,9 +242,17 @@ void MetConePlotAllCent5Bin_prof(char *inputFile="data.root")
    drawText("p_{T,2}  > 50GeV/c",ptx,pty-0.08);
    drawText("#Delta#phi_{12}>  #frac{2}{3}#pi",ptx,pty-0.16);
    
-   // For Rocket plot comparison
-   const int nBinAj = 4;
-   double ajBins[nBinAj+1] = {0.0001+0.022,0.11+0.022,0.22+0.022,0.33+0.022,0.49999+0.022};
+   TH1D *hMC30 = new TH1D("hMC30","",nBinAj,ajBins);
+   hMC30->SetBinContent(1 , 0.61 );
+   hMC30->SetBinError(1 , 2.90014 );
+   hMC30->SetBinContent(2 , -7.72 );
+   hMC30->SetBinError(2 , 2.89756 );
+   hMC30->SetBinContent(3 , -15.26 );
+   hMC30->SetBinError(3 , 3.77447 );
+   hMC30->SetBinContent(4 , -27.78 );
+   hMC30->SetBinError(4 , 4.73507 );
+   hMC30->SetMarkerStyle(4);
+   hMC30->Draw("same");
 
    c1->cd(2);
    balanceMetVsAj("nt_dj_mix100_Gen.root","cent<30","",true,false);
@@ -270,6 +283,23 @@ void MetConePlotAllCent5Bin_prof(char *inputFile="data.root")
    drawText("p_{T,1}  > 120GeV/c",ptx,pty1);
    drawText("p_{T,2}  > 50GeV/c",ptx,pty1-0.07);
    drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty1-0.14);
+
+   // Rocket plot value
+   TH1D *h30 = new TH1D("h30","",nBinAj,ajBins);
+   h30->SetBinContent(1 , 1.47 );
+   h30->SetBinError(1 , 8.37549 );
+   DrawTick(1.47,15.2547,15.2547,h30->GetBinCenter(1),1,0.01,1);
+   h30->SetBinContent(2 , -9.51 );
+   h30->SetBinError(2 , 5.79854 );
+   DrawTick(-9.51,11.1502,11.1502,h30->GetBinCenter(2),1,0.01,1);
+   h30->SetBinContent(3 , -10.57 );
+   h30->SetBinError(3 , 8.78092 );
+   DrawTick(-10.57,10.2905,10.2905,h30->GetBinCenter(3),1,0.01,1);
+   h30->SetBinContent(4 , -26.79 );
+   h30->SetBinError(4 , 8.11864 );
+   DrawTick(-26.79,10.9476,10.9476,h30->GetBinCenter(4),1,0.01,1);
+   h30->SetMarkerStyle(4);
+   h30->Draw("sameE");
 
 
    c1->cd(4);
