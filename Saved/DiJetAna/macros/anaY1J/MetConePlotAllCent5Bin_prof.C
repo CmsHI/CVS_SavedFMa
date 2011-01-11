@@ -288,16 +288,17 @@ void MetConePlotAllCent5Bin_prof(char *inputFile="data.root")
    TH1D *h30 = new TH1D("h30","",nBinAj,ajBins);
    h30->SetBinContent(1 , 1.47 );
    h30->SetBinError(1 , 8.37549 );
-   DrawTick(1.47,15.2547,15.2547,h30->GetBinCenter(1),1,0.01,1);
+   DrawTick(1.47,fabs(3),fabs(3),h30->GetBinCenter(1),1,0.01,1);
    h30->SetBinContent(2 , -9.51 );
    h30->SetBinError(2 , 5.79854 );
-   DrawTick(-9.51,11.1502,11.1502,h30->GetBinCenter(2),1,0.01,1);
+   DrawTick(-9.51,fabs(3.3285),fabs(3.3285),h30->GetBinCenter(2),1,0.01,1);
    h30->SetBinContent(3 , -10.57 );
    h30->SetBinError(3 , 8.78092 );
-   DrawTick(-10.57,10.2905,10.2905,h30->GetBinCenter(3),1,0.01,1);
+   DrawTick(-10.57,fabs(3.6995),fabs(3.6995),h30->GetBinCenter(3),1,0.01,1);
    h30->SetBinContent(4 , -26.79 );
    h30->SetBinError(4 , 8.11864 );
-   DrawTick(-26.79,10.9476,10.9476,h30->GetBinCenter(4),1,0.01,1);
+   DrawTick(-26.79,fabs(6.6975),fabs(6.6975),h30->GetBinCenter(4),1,0.01,1);
+
    h30->SetMarkerStyle(4);
    h30->Draw("sameE");
 
@@ -311,16 +312,16 @@ void MetConePlotAllCent5Bin_prof(char *inputFile="data.root")
 
    h->SetBinContent(1 , -9.33 );
    h->SetBinError(1 , 4.51263 );
-   DrawTick(-9.33,13.9923,13.9923,h->GetBinCenter(1),1,0.01,1);
+   DrawTick(-9.33,fabs(3.2655),fabs(3.2655),h->GetBinCenter(1),1,0.01,1);
    h->SetBinContent(2 , 0.01 );
    h->SetBinError(2 , 3.59884 );
-   DrawTick(0.01,10.7268,10.7268,h->GetBinCenter(2),1,0.01,1);
+   DrawTick(0.01,fabs(3),fabs(3),h->GetBinCenter(2),1,0.01,1);
    h->SetBinContent(3 , -13.01 );
    h->SetBinError(3 , 3.22952 );
-   DrawTick(-13.01,9.43643,9.43643,h->GetBinCenter(3),1,0.01,1);
+   DrawTick(-13.01,fabs(4.5535),fabs(4.5535),h->GetBinCenter(3),1,0.01,1);
    h->SetBinContent(4 , -31.17 );
    h->SetBinError(4 , 3.01733 );
-   DrawTick(-31.17,9.79724,9.79724,h->GetBinCenter(4),1,0.01,1);
+   DrawTick(-31.17,fabs(7.7925),fabs(7.7925),h->GetBinCenter(4),1,0.01,1);
 
    h->SetMarkerStyle(4);
    h->Draw("sameE");
