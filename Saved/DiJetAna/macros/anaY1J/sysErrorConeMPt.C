@@ -11,7 +11,7 @@
 #include "TF1.h"
 
 
-void sysError(
+void sysErrorConeMPt(
     TString inFileName="jfh_HCPR_J50U_Cent30to100_Aj0to100_SubEtaRefl.root",
     Int_t compMode = 0, // Compare mode: 0 reco-genSig, 1 reco-genAll, 3 genAll-genSig, 4 calo_genp-allGen
     Int_t sysMode = 0, // Plot mode: 0 for simple plot, 1 for difference
@@ -42,7 +42,7 @@ void sysError(
   // ===============================================
   // Setup
   // ===============================================
-  TString tag=Form("sysError_%s_%s_%d_%d",inFileNameStrip.Data(),title.Data(),compMode,sysMode);
+  TString tag=Form("sysErrorConeMPt_%s_%s_%d_%d",inFileNameStrip.Data(),title.Data(),compMode,sysMode);
 
   // ===============================================
   // Analyze
@@ -51,19 +51,15 @@ void sysError(
   TH2D * hPtPADR = (TH2D*) f->Get("hPtPADR");
   TH2D * hPtPNDRBg = (TH2D*) f->Get("hPtPNDRBg");
   TH2D * hPtPADRBg = (TH2D*) f->Get("hPtPADRBg");
-  TH2D * hPtPNDRSub = (TH2D*)hPtPNDR->Clone(tag+"hPtPNDRSub");
-  TH2D * hPtPADRSub = (TH2D*)hPtPADR->Clone(tag+"hPtPADRSub");
-  hPtPNDRSub->Add(hPtPNDR,hPtPNDRBg,1,-1);
-  hPtPADRSub->Add(hPtPADR,hPtPADRBg,1,-1);
+  TH2D * hPtDRMPt = (TH2D*)hPtPNDR->Clone(tag+"hPtDRMPt");
+  hPtDRMPt->Add(hPtPNDR,hPtPADR,1,-1);
 
   TH2D * hPtPNDRGen = (TH2D*) fgen->Get("hPtPNDR");
   TH2D * hPtPADRGen = (TH2D*) fgen->Get("hPtPADR");
   TH2D * hPtPNDRBgGen = (TH2D*) fgen->Get("hPtPNDRBg");
   TH2D * hPtPADRBgGen = (TH2D*) fgen->Get("hPtPADRBg");
-  TH2D * hPtPNDRSubGen = (TH2D*)hPtPNDRGen->Clone(tag+"hPtPNDRSub");
-  TH2D * hPtPADRSubGen = (TH2D*)hPtPADRGen->Clone(tag+"hPtPADRSub");
-  hPtPNDRSubGen->Add(hPtPNDRGen,hPtPNDRBgGen,1,-1);
-  hPtPADRSubGen->Add(hPtPADRGen,hPtPADRBgGen,1,-1);
+  TH2D * hPtDRMPtGen = (TH2D*)hPtPNDRGen->Clone(tag+"hPtDRMPtGen");
+  hPtDRMPtGen->Add(hPtPNDRGen,hPtPADRGen,1,-1);
 
   // ===============================================
   // Draw
@@ -89,32 +85,24 @@ void sysError(
     if (i==1) { iBeg=4; iEnd=4;}
     if (i==2) { iBeg=5; iEnd=numPtBins;}
     cout << "Bin: " << iBeg <<  " to " << iEnd << endl;
-    TH1D * hNr = (TH1D*)hPtPNDRSub->ProjectionY(tag+Form("hPNDRSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
-    TH1D * hAw = (TH1D*)hPtPADRSub->ProjectionY(tag+Form("hPADRSub_%d_%d",iBeg,iEnd),iBeg,iEnd);
-    TH1D * hNrGen = (TH1D*)hPtPNDRSubGen->ProjectionY(tag+Form("hPNDRSubGen_%d_%d",iBeg,iEnd),iBeg,iEnd);
-    TH1D * hAwGen = (TH1D*)hPtPADRSubGen->ProjectionY(tag+Form("hPADRSubGen_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hNr = (TH1D*)hPtDRMPt->ProjectionY(tag+Form("hMPt_%d_%d",iBeg,iEnd),iBeg,iEnd);
+    TH1D * hNrGen = (TH1D*)hPtDRMPtGen->ProjectionY(tag+Form("hMPtGen_%d_%d",iBeg,iEnd),iBeg,iEnd);
     if (sysMode==1) {
       hNr->Add(hNrGen,-1);
-      hAw->Add(hAwGen,-1);
     }
     if (sysMode==2) {
       hNr->Divide(hNrGen);
-      hAw->Divide(hAwGen);
     }
     // Print
     cout << Form("%.1f < P_{T} < %.1f GeV: ",hPt->GetBinLowEdge(iBeg),hPt->GetBinLowEdge(iEnd+1))
-      << " SigSubBkg Integral - Nr: " << hNr->Integral() << " Aw: " << hAw->Integral() << endl
-      << " Gen - Nr: " << hNrGen->Integral() << " Aw: " << hAwGen->Integral() << endl;
+      << " Cone MPt: " << hNr->Integral() << " Gen: " << hNrGen->Integral() << endl;
     // Styles
     hNr->SetMarkerColor(kRed);
     hNr->SetLineColor(kRed);
-    hAw->SetMarkerColor(kBlue);
-    hAw->SetLineColor(kBlue);
-    hAwGen->SetLineStyle(2);
     // Axis Range
     if (sysMode==0) {
-      hNr->SetYTitle("Background Subtracted Signal (GeV/c)");
-      hNr->SetAxisRange(-5,60,"Y");
+      hNr->SetYTitle("Cone MPt (GeV/c)");
+      hNr->SetAxisRange(-20,20,"Y");
     }
     if (sysMode==2) {
       hNr->SetAxisRange(-2,6,"Y");
@@ -136,10 +124,11 @@ void sysError(
       }
       if (sysMode==2) {
 	hNr->SetYTitle("(All GenP)/(Sig GenP) (GeV/c)");
+	hNr->SetAxisRange(-2,6,"Y");
       }
     }
     hNr->SetXTitle("#Delta R");
-    hNr->SetAxisRange(0,0.79999,"X");
+    hNr->SetAxisRange(0,0.799,"X");
     hNr->SetTitleOffset(1.5,"X");
     hNr->GetXaxis()->CenterTitle();
     hNr->GetYaxis()->CenterTitle();
@@ -150,14 +139,11 @@ void sysError(
       f0->SetLineStyle(2);
       f0->SetLineWidth(1);
       hNr->Fit("f0");
-      hAw->Fit("f0");
     }
     // Draw to Inspect
     hNr->Draw();
-    hAw->Draw("same");
     if (sysMode==0) {
       hNrGen->Draw("hist same");
-      hAwGen->Draw("hist same");
     }
     if (sysMode==0||sysMode==1) {
       TLine *l = new TLine(0,0,0.8,0);
@@ -174,21 +160,13 @@ void sysError(
     leg->AddEntry(hNr,Form("%.1f < P_{T} < %.1f GeV",hPt->GetBinLowEdge(iBeg),hPt->GetBinLowEdge(iEnd+1)),"");
     if (sysMode==0) {
       if (compMode==0) {
-	leg->AddEntry(hNr,"Leading (RecoTrk)","pl");
-	leg->AddEntry(hNrGen,"Leading (Sig. GenP)","l");
-	leg->AddEntry(hAw,"SubLeading (RecoTrk)","pl");
-	leg->AddEntry(hAwGen,"SubLeading (Sig. GenP)","l");
+	leg->AddEntry(hNr,"Reco Trk","pl");
+	leg->AddEntry(hNrGen,"Sig. GenP","l");
       }
       if (compMode==1) {
-	leg->AddEntry(hNr,"Leading (RecoTrk)","pl");
-	leg->AddEntry(hNrGen,"Leading (All GenP)","l");
-	leg->AddEntry(hAw,"SubLeading (RecoTrk)","pl");
-	leg->AddEntry(hAwGen,"SubLeading (All GenP)","l");
+	leg->AddEntry(hNr,"Reco Trk","pl");
+	leg->AddEntry(hNrGen,"All GenP","l");
       }
-    }
-    if (sysMode>0) {
-      leg->AddEntry(hNr,"Leading","pl");
-      leg->AddEntry(hAw,"SubLeading","pl");
     }
     leg->SetTextSize(0.05);
     leg->Draw();
@@ -204,7 +182,7 @@ void sysError(
 
 void sysErrorAll(
     TString anaV="v18ReWt",
-    TString BckSub="SubEtaReflSingle"
+    TString BckSub="SubNone"
     )
 {
   TString outdir=anaV+BckSub;
@@ -212,8 +190,8 @@ void sysErrorAll(
 
   Int_t sysModes[2] = {0,2};
   for (Int_t m=0; m<2;++m) {
-    sysError("jfh"+anaV+"_HydjetAll_djcalo_Cent0to30_Aj0to100_"+BckSub+".root",0,sysModes[m],outdir);
-    sysError("jfh"+anaV+"_HydjetAll_djcalo_Cent0to30_Aj0to100_"+BckSub+".root",1,sysModes[m],outdir);
-    sysError("jfh"+anaV+"_HydjetAll_djcalo_genp_Cent0to30_Aj0to100_"+BckSub+".root",3,sysModes[m],outdir);
+    sysErrorConeMPt("jfh"+anaV+"_HydjetAll_djcalo_Cent0to30_Aj0to100_"+BckSub+".root",0,sysModes[m],outdir);
+    sysErrorConeMPt("jfh"+anaV+"_HydjetAll_djcalo_Cent0to30_Aj0to100_"+BckSub+".root",1,sysModes[m],outdir);
+    sysErrorConeMPt("jfh"+anaV+"_HydjetAll_djcalo_genp_Cent0to30_Aj0to100_"+BckSub+".root",3,sysModes[m],outdir);
   }
 }
