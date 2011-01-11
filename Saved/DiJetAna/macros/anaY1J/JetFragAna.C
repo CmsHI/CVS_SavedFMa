@@ -55,6 +55,8 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    tcone = new TTree("tcone","jet cone tree");
    tcone->Branch("cpt",&jc_.cpt);
    tcone->Branch("cptbg",&jc_.cptbg);
+   tcone->Branch("cptpara",&jc_.cptpara);
+   tcone->Branch("cptparabg",&jc_.cptparabg);
 
    // ===================================================
    // Histograms
@@ -564,7 +566,8 @@ void JetFragAna::Loop()
 	    // signal
 	    pdr[j] = reco::deltaR(p_[i].eta(),p_[i].phi(),anaJets_[j].eta(),anaJets_[j].phi());
 	    // bcksub
-	    if (cut.BkgSubType.Contains("EtaRefl")) {
+	    // * If don't do event selection, make eta reflection the default bkg axis
+	    if (cut.BkgSubType.Contains("EtaRefl"||!doEvtSel_)) {
 	      pdrbg[j] = reco::deltaR(p_[i].eta(),p_[i].phi(),-1*anaJets_[j].eta(),anaJets_[j].phi());
 	    }
 	  }
@@ -577,12 +580,12 @@ void JetFragAna::Loop()
 		// Signal Cone
 		if (pdr[j]<cut.ConeSize) {
 		  jc_.cpt[j][b]+=trkEnergy*trackWeight;
-		  //jc_.cpt[j][b]+=cos(reco::deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
+		  jc_.cptpara[j][b]+=cos(reco::deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
 		}
 		// Bkg Cone
 		if (pdrbg[j]<cut.ConeSize) {
 		  jc_.cptbg[j][b]+=trkEnergy*trackWeight;
-		  //jc_.cptbg[j][b]+=cos(reco::deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
+		  jc_.cptparabg[j][b]+=cos(reco::deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
 		}
 		break;
 	      }

@@ -31,15 +31,21 @@ const Int_t MAXTRK = 100000;
 struct JetCone {
   vector<vector<Float_t> > cpt;
   vector<vector<Float_t> > cptbg;
+  vector<vector<Float_t> > cptpara;
+  vector<vector<Float_t> > cptparabg;
   JetCone() :
     cpt(2),
-    cptbg(2)
+    cptbg(2),
+    cptpara(2),
+    cptparabg(2)
   {}
   void clear() {
     for (Int_t i=0; i<(Int_t)cpt.size(); ++i) {
       for (Int_t j=0; j<(Int_t)cpt[i].size(); ++j) {
 	cpt[i][j]=0;
 	cptbg[i][j]=0;
+	cptpara[i][j]=0;
+	cptparabg[i][j]=0;
 	//cout << "jet " << i << " bin " << j << " cleared cpt: " << cpt[i][j] << " cptbg: " << cptbg[i][j] << endl;
       }
     }
@@ -48,6 +54,8 @@ struct JetCone {
     for (Int_t i=0; i<(Int_t)cpt.size(); ++i) {
       cpt[i].resize(n);
       cptbg[i].resize(n);
+      cptpara[i].resize(n);
+      cptparabg[i].resize(n);
     }
   }
 };
