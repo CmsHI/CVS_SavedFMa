@@ -184,7 +184,7 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
         double y = p[0]->GetBinContent(i+1);
         // Quote the difference between GEN and RECO in >8 Bin (20%) before adjusting eff as systematics
         double err = -p[nBin]->GetBinContent(i+1)*0.2;
-        DrawTick(y,err,err,x,1,0.02,1);
+        DrawTick(y,err,err,x,1,0.01,1);
       }
    }
 
@@ -237,23 +237,26 @@ void MetConePlotAllCent5Bin_prof(char *inputFile="data.root")
    drawText("p_{T,2}  > 50GeV/c",ptx,pty-0.08);
    drawText("#Delta#phi_{12}>  #frac{2}{3}#pi",ptx,pty-0.16);
    
+   // For Rocket plot comparison
+   const int nBinAj = 4;
+   double ajBins[nBinAj+1] = {0.0001+0.022,0.11+0.022,0.22+0.022,0.33+0.022,0.49999+0.022};
+
    c1->cd(2);
    balanceMetVsAj("nt_dj_mix100_Gen.root","cent<30","",true,false);
    drawText("0-30%",0.8,0.9);
 
-   const int nBinAj = 4;
-   double ajBins[nBinAj+1] = {0.0001+0.016,0.11+0.016,0.22+0.016,0.33+0.016,0.49999+0.016};
-   TH1D *h2 = new TH1D("h2","",nBinAj,ajBins);
-   h2->SetBinContent(1 , -1.31 );
-   h2->SetBinError(1 , 2.94362 );
-   h2->SetBinContent(2 , -8.06 );
-   h2->SetBinError(2 , 2.90401 );
-   h2->SetBinContent(3 , -23.31 );
-   h2->SetBinError(3 , 3.94974 );
-   h2->SetBinContent(4 , -22.01 );
-   h2->SetBinError(4 , 4.75925 );
-   h2->SetMarkerStyle(4);
-   h2->Draw("same");
+   // Rocket plot value
+   TH1D *hMC = new TH1D("hMC","",nBinAj,ajBins);
+   hMC->SetBinContent(1 , -1.31 );
+   hMC->SetBinError(1 , 2.94362 );
+   hMC->SetBinContent(2 , -8.06 );
+   hMC->SetBinError(2 , 2.90401 );
+   hMC->SetBinContent(3 , -23.31 );
+   hMC->SetBinError(3 , 3.94974 );
+   hMC->SetBinContent(4 , -22.01 );
+   hMC->SetBinError(4 , 4.75925 );
+   hMC->SetMarkerStyle(4);
+   hMC->Draw("same");
 
 
 
@@ -273,20 +276,28 @@ void MetConePlotAllCent5Bin_prof(char *inputFile="data.root")
    balanceMetVsAj("nt_dj_data100_cor.root","cent<30","",false);
    drawText("0-30%",0.8,0.93);
    
+   // Rocket plot value
    TH1D *h = new TH1D("h","",nBinAj,ajBins);
+
    h->SetBinContent(1 , -9.33 );
    h->SetBinError(1 , 4.51263 );
+   DrawTick(-9.33,13.9923,13.9923,h->GetBinCenter(1),1,0.01,1);
    h->SetBinContent(2 , 0.01 );
    h->SetBinError(2 , 3.59884 );
+   DrawTick(0.01,10.7268,10.7268,h->GetBinCenter(2),1,0.01,1);
    h->SetBinContent(3 , -13.01 );
    h->SetBinError(3 , 3.22952 );
+   DrawTick(-13.01,9.43643,9.43643,h->GetBinCenter(3),1,0.01,1);
    h->SetBinContent(4 , -31.17 );
    h->SetBinError(4 , 3.01733 );
+   DrawTick(-31.17,9.79724,9.79724,h->GetBinCenter(4),1,0.01,1);
 
    h->SetMarkerStyle(4);
    h->Draw("sameE");
+
    c1->SaveAs("missingPtCone-Corrected-data-allCent.eps");
    c1->SaveAs("missingPtCone-Corrected-data-allCent.gif");
+
 }
 
 
