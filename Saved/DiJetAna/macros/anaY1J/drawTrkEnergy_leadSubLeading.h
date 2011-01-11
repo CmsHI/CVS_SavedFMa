@@ -98,14 +98,12 @@ void getDRHists(TFile * f,
   // Get Evt-by-Evt histograms
   //TH1D * hNrCPtBgSub = (TH1D*)f->Get("hNrCPtBgSub");
   //TH1D * hAwCPtBgSub = (TH1D*)f->Get("hAwCPtBgSub");
-  TH1D * hNrCPtBgSub = new TH1D("hCPtBgSubMerge0","",10000,-1000,1000);
-  TH1D * hAwCPtBgSub = new TH1D("hCPtBgSubMerge1","",10000,-1000,1000);
-  ntjt->SetAlias("cptMerge0","(Sum$(cpt[0])-cpt[0][0])");
-  ntjt->SetAlias("cptbgMerge0","(Sum$(cptbg[0])-cptbg[0][0])");
-  ntjt->SetAlias("cptMerge1","(Sum$(cpt[1])-cpt[1][0])");
-  ntjt->SetAlias("cptbgMerge1","(Sum$(cptbg[1])-cptbg[1][0])");
-  ntjt->Project("hCPtBgSubMerge0","(cptMerge0-cptbgMerge0)","weight*(abs(nljetacorr)>0.8)");
-  ntjt->Project("hCPtBgSubMerge1","(cptMerge1-cptbgMerge1)","weight*(abs(aljetacorr)>0.8)");
+  TH1D * hNrCPtBgSub = new TH1D(inFileNameStrip+"hCPt0BgSubMerge","",10000,-1000,1000);
+  TH1D * hAwCPtBgSub = new TH1D(inFileNameStrip+"hCPt1BgSubMerge","",10000,-1000,1000);
+  ntjt->SetAlias("cpt0bgsubMerge","(Sum$(cpt[0])-cpt[0][0])-(Sum$(cptbg[0])-cptbg[0][0])");
+  ntjt->SetAlias("cpt1bgsubMerge","(Sum$(cpt[1])-cpt[1][0])-(Sum$(cptbg[1])-cptbg[1][0])");
+  ntjt->Project(inFileNameStrip+"hCPt0BgSubMerge","(cpt0bgsubMerge)","weight*(abs(nljetacorr)>0.8)");
+  ntjt->Project(inFileNameStrip+"hCPt1BgSubMerge","(cpt1bgsubMerge)","weight*(abs(aljetacorr)>0.8)");
   Float_t meanNr = hNrCPtBgSub->GetMean();
   Float_t meanAw = hAwCPtBgSub->GetMean();
 
