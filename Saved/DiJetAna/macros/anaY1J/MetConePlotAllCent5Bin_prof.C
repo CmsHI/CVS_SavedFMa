@@ -48,34 +48,51 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    TFile *inf = new TFile(infname);
    TTree *t = (TTree*)inf->Get("ntjt");
    t->AddFriend("tcone");
-   TString op("-");
-   //t->SetAlias("metxMerged0","(Sum$(cpt[0]))"+op+"(Sum$(cpt[1]))");
-   t->SetAlias("metxMerged0","(Sum$(cpt[0])-cpt[0][0])"+op+"(Sum$(cpt[1])-cpt[1][0])");
-   t->SetAlias("metxMerged1","((cpt[0][0]+cpt[0][1]+cpt[0][2]+cpt[0][3])"+op+"(cpt[1][0]+cpt[1][1]+cpt[1][2]+cpt[1][3]))");
-   t->SetAlias("metxMerged2","((cpt[0][1]+cpt[0][2]+cpt[0][3])"+op+"(cpt[1][1]+cpt[1][2]+cpt[1][3]))");
-   t->SetAlias("metxMerged3","((cpt[0][2]+cpt[0][3])"+op+"(cpt[1][2]+cpt[1][3]))");
-   t->SetAlias("metxMerged4","((cpt[0][3])"+op+"(cpt[1][3]))");
-   t->SetAlias("metxMerged5","((cpt[0][4]+cpt[0][5])"+op+"(cpt[1][4]+cpt[1][5]))");
-   /*
-   t->SetAlias("metxMerged0Tot","(Sum$(cpt[0])-cpt[0][0])-(Sum$(cpt[1])-cpt[1][0])");
-   t->SetAlias("metxMerged1Tot","((cpt[0][0]+cpt[0][1]+cpt[0][2]+cpt[0][3])-(cpt[1][0]+cpt[1][1]+cpt[1][2]+cpt[1][3]))");
-   t->SetAlias("metxMerged2Tot","((cpt[0][1]+cpt[0][2]+cpt[0][3])-(cpt[1][1]+cpt[1][2]+cpt[1][3]))");
-   t->SetAlias("metxMerged3Tot","((cpt[0][2]+cpt[0][3])-(cpt[1][2]+cpt[1][3]))");
-   t->SetAlias("metxMerged4Tot","((cpt[0][3])-(cpt[1][3]))");
-   t->SetAlias("metxMerged5Tot","((cpt[0][4]+cpt[0][5])-(cpt[1][4]+cpt[1][5]))");
-   t->SetAlias("metxMerged0Bkg","(Sum$(cptbg[0]))-(Sum$(cptbg[1]))");
-   t->SetAlias("metxMerged1Bkg","((cptbg[0][0]+cptbg[0][1]+cptbg[0][2]+cptbg[0][3])-(cptbg[1][0]+cptbg[1][1]+cptbg[1][2]+cptbg[1][3]))");
-   t->SetAlias("metxMerged2Bkg","((cptbg[0][1]+cptbg[0][2]+cptbg[0][3])-(cptbg[1][1]+cptbg[1][2]+cptbg[1][3]))");
-   t->SetAlias("metxMerged3Bkg","((cptbg[0][2]+cptbg[0][3])-(cptbg[1][2]+cptbg[1][3]))");
-   t->SetAlias("metxMerged4Bkg","((cptbg[0][3])-(cptbg[1][3]))");
-   t->SetAlias("metxMerged5Bkg","((cptbg[0][4]+cptbg[0][5])-(cptbg[1][4]+cptbg[1][5]))");
-   t->SetAlias("metxMerged0","(metxMerged0Tot-metxMerged0Bkg)");
-   t->SetAlias("metxMerged1","(metxMerged1Tot-metxMerged1Bkg)");
-   t->SetAlias("metxMerged2","(metxMerged2Tot-metxMerged2Bkg)");
-   t->SetAlias("metxMerged3","(metxMerged3Tot-metxMerged3Bkg)");
-   t->SetAlias("metxMerged4","(metxMerged4Tot-metxMerged4Bkg)");
-   t->SetAlias("metxMerged5","(metxMerged5Tot-metxMerged5Bkg)");
-   */
+
+   // ==========================================================
+   // Alias for Cone Subtraction
+   // ==========================================================
+   // For the sake of cross check we don't do bkg subtraction to see
+   // if we can get similar results than with bkg subtraction
+   bool doBkgSub = false;
+   if (doBkgSub) {
+     // Case 1 Do Background subtraction
+     // Note
+     // * for this case we need to exclude jets from certain eta region
+     // * For the final sum we start from ptbin1 to compare to Rocket in paper
+     t->SetAlias("cpt0bgsubMerge0","(Sum$(cpt[0])-cpt[0][0])-(Sum$(cptbg[0])-cptbg[0][0])");
+     t->SetAlias("cpt1bgsubMerge0","(Sum$(cpt[1])-cpt[1][0])-(Sum$(cptbg[1])-cptbg[1][0])");
+     t->SetAlias("cpt0bgsubMerge1","(cpt[0][0]+cpt[0][1]+cpt[0][2]+cpt[0][3])-(cptbg[0][0]+cptbg[0][1]+cptbg[0][2]+cptbg[0][3])");
+     t->SetAlias("cpt1bgsubMerge1","(cpt[1][0]+cpt[1][1]+cpt[1][2]+cpt[1][3])-(cptbg[1][0]+cptbg[1][1]+cptbg[1][2]+cptbg[1][3])");
+     t->SetAlias("cpt0bgsubMerge2","(cpt[0][1]+cpt[0][2]+cpt[0][3])-(cptbg[0][1]+cptbg[0][2]+cptbg[0][3])");
+     t->SetAlias("cpt1bgsubMerge2","(cpt[1][1]+cpt[1][2]+cpt[1][3])-(cptbg[1][1]+cptbg[1][2]+cptbg[1][3])");
+     t->SetAlias("cpt0bgsubMerge3","(cpt[0][2]+cpt[0][3])-(cptbg[0][2]+cptbg[0][3])");
+     t->SetAlias("cpt1bgsubMerge3","(cpt[1][2]+cpt[1][3])-(cptbg[1][2]+cptbg[1][3])");
+     t->SetAlias("cpt0bgsubMerge4","(cpt[0][3])-(cptbg[0][3])");
+     t->SetAlias("cpt1bgsubMerge4","(cpt[1][3])-(cptbg[1][3])");
+     t->SetAlias("cpt0bgsubMerge5","(cpt[0][4]+cpt[0][5])-(cptbg[0][4]+cptbg[0][5])");
+     t->SetAlias("cpt1bgsubMerge5","(cpt[1][4]+cpt[1][5])-(cptbg[1][4]+cptbg[1][5])");
+     t->SetAlias("metxMerged0","(cpt0bgsubMerge0-cpt1bgsubMerge0)");
+     t->SetAlias("metxMerged1","(cpt0bgsubMerge1-cpt1bgsubMerge1)");
+     t->SetAlias("metxMerged2","(cpt0bgsubMerge2-cpt1bgsubMerge2)");
+     t->SetAlias("metxMerged3","(cpt0bgsubMerge3-cpt1bgsubMerge3)");
+     t->SetAlias("metxMerged4","(cpt0bgsubMerge4-cpt1bgsubMerge4)");
+     t->SetAlias("metxMerged5","(cpt0bgsubMerge5-cpt1bgsubMerge5)");
+   }
+   else {
+     // Case 2 Direct Cone subtraction --- no Bkg sub applied, this is closer to MPT
+     // Note
+     // * For the final sum we start from ptbin1 to compare to Rocket in paper
+     // * op should be "+" if using cptpara, b/c there cos has been multiplied
+     //   and so the sign is already there.
+     TString op("-");
+     t->SetAlias("metxMerged0","(Sum$(cpt[0])-cpt[0][0])"+op+"(Sum$(cpt[1])-cpt[1][0])");
+     t->SetAlias("metxMerged1","((cpt[0][0]+cpt[0][1]+cpt[0][2]+cpt[0][3])"+op+"(cpt[1][0]+cpt[1][1]+cpt[1][2]+cpt[1][3]))");
+     t->SetAlias("metxMerged2","((cpt[0][1]+cpt[0][2]+cpt[0][3])"+op+"(cpt[1][1]+cpt[1][2]+cpt[1][3]))");
+     t->SetAlias("metxMerged3","((cpt[0][2]+cpt[0][3])"+op+"(cpt[1][2]+cpt[1][3]))");
+     t->SetAlias("metxMerged4","((cpt[0][3])"+op+"(cpt[1][3]))");
+     t->SetAlias("metxMerged5","((cpt[0][4]+cpt[0][5])"+op+"(cpt[1][4]+cpt[1][5]))");
+   }
 
    // ===========================================================
    // Analysis Setup
@@ -86,9 +103,14 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
 
    const int nBinAj = 4;
    double ajBins[nBinAj+1] = {0.0001,0.11,0.22,0.33,0.49999};
+   //
    // Selection cut
+   //
    TCut evtCut = "nljet>120&&abs(nljetacorr)<1.6&&aljet>50&&abs(aljetacorr)<1.6&&jdphi>2./3*TMath::Pi()&&!maskEvt";
+   // Require at least one jet to have |eta|>0.8 to better match with paper
    TCut exclCut = "abs(nljetacorr)>0.8||abs(aljetacorr)>0.8";
+   // Need to apply both jet exclusion cut if doing bkg subtraction
+   //exclCut = "abs(nljetacorr)>0.8&&abs(aljetacorr)>0.8";
    evtCut = evtCut&&exclCut;
 
    cout << "Sel evt: " << t->GetEntries(evtCut&&myCut) << endl;
@@ -262,9 +284,9 @@ void MetConePlotAllCent5Bin_prof(char *inputFile="data.root")
    h->SetBinError(4 , 3.01733 );
 
    h->SetMarkerStyle(4);
-   h->Draw("same");
-   c1->SaveAs("missingPtParallel-Corrected-data-allCent.eps");
-
+   h->Draw("sameE");
+   c1->SaveAs("missingPtCone-Corrected-data-allCent.eps");
+   c1->SaveAs("missingPtCone-Corrected-data-allCent.gif");
 }
 
 
