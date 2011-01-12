@@ -169,14 +169,14 @@ TH1D* combine(TH1D* near, TH1D* away, Int_t normType=0, Float_t norm=1., bool Le
   hcombine->SetFillColor(near->GetFillColor());
   hcombine->SetStats(0);
   hcombine->SetNdivisions(505,"Y");
-  hcombine->SetMinimum(-10);
+  //hcombine->SetMinimum(-10);
   if (normType==0) {
-    hcombine->SetMaximum(59.9);
+    //hcombine->SetMaximum(59.9);
     //    hcombine->SetTitle(";;#frac{1}{N_{dijet}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR } (GeV/c)"); // no 2piR in denominator
     hcombine->SetTitle(";;#Sigmap_{T} per bin (GeV/c)");
   }
   if (normType==1) {
-    hcombine->SetMaximum(7.8);
+    //hcombine->SetMaximum(7.8);
     hcombine->SetTitle(";;#frac{1}{N_{dijet} #scale[0.9]{#sum_{p_{T}>1.5GeV #in Jet1}}p_{T}^{track}} #frac{d#scale[0.9]{#sum}p_{T}^{track} }{ dR }"); // no 2piR in denominator
   }
   hcombine->GetYaxis()->SetTitleFont(63);
@@ -203,7 +203,8 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   // =========================================================================
   // Basic Plot Parameters
   // =========================================================================
-  Float_t ymin=-5;
+  Float_t ymin=-5,ymax=69.9;
+  if (logScale==1) ymin=0.3;
   //Int_t colors[5] = {38,kOrange-8,kBlue-3,kGray,kRed};
   Int_t colors[3] = {kOrange-8,kGreen-8,kRed-7};
   
@@ -263,7 +264,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   float shftAxis= hcLeft[nbin-1]->GetBinWidth(1)/2.*gab;
   float drRange = 0.8;
   hcLeft[nbin-1]->SetAxisRange(-0.85,0.85,"X"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis);
-  hcLeft[nbin-1]->SetAxisRange(ymin,70,"Y"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis); 
+  hcLeft[nbin-1]->SetAxisRange(ymin,ymax,"Y"); //TMath::Pi()/2 - drRange-shftAxis, TMath::Pi()/2 + drRange-shftAxis); 
   fixedFontHist(hcLeft[nbin-1]);
   
   //correct stat error
