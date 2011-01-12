@@ -40,6 +40,7 @@ if (isData or isDataEmbed):
 # === Sample specific configs ===
 for i,m in enumerate([process.djcalo,
   process.djcalo_tower,
+  process.djcalo_pfcand,
   process.djcalo_genp,
   process.djgen,
   process.djcaloic5,
@@ -59,32 +60,32 @@ from Saved.DiJetAna.customise_cfi import *
 # Event Selection
 #enableTrigger(process,"Jet")
 # HLT Ana
-enableOpenHlt(process,process.dijetAna_seq,isData)
-process.hltanalysis.hltresults = cms.InputTag( 'TriggerResults','',hltProcess)
-process.hltanalysis.HLTProcessName = hltProcess
+#enableOpenHlt(process,process.dijetAna_seq,isData)
+#process.hltanalysis.hltresults = cms.InputTag( 'TriggerResults','',hltProcess)
+#process.hltanalysis.HLTProcessName = hltProcess
 
 #enableRECO(process,"MC","HI")
 #enablePp(process,"PpRECO") # options: "PpRECO", "HIRECO"
 
 # FJ
-process.dijetAna_seq*=process.djcaloic5
-process.dijetAna_seq*=process.djcaloak5
-process.dijetAna_seq*=process.djpfic5
-process.dijetAna_seq*=process.djpfak5
+#process.dijetAna_seq*=process.djcaloic5
+#process.dijetAna_seq*=process.djcaloak5
+#process.dijetAna_seq*=process.djpfic5
+#process.dijetAna_seq*=process.djpfak5
 
 # For MB
 #for m in [process.djcalo,process.djcalo_tower]:
 #  m.nearJetPtMin = 40
 
 # First look at data
-process.djcalo.nearJetPtMin = 80
-process.djcalo_tower.nearJetPtMin = 120
+process.djcalo.nearJetPtMin = 100
+process.djcalo_pfcand.nearJetPtMin = 100
 process.djcalo_genp.nearJetPtMin = 80
 process.djcalo_genp.anaGenpType = 0 # 0 for all charge, 1 for charged
-process.djcalo_genp.trksrc = cms.InputTag("hiGenParticles","","HISIGNAL")
+process.djcalo_genp.trksrc = cms.InputTag("hiGenParticles","","HIJETS") # "HISIGNAL", "HIJETS"
 process.djgen.nearJetPtMin = 80
 process.djgen.anaGenpType = 0 # for all charge
-process.djgen.trksrc = cms.InputTag("hiGenParticles","","HISIGNAL")
+process.djgen.trksrc = cms.InputTag("hiGenParticles","","HIJETS")
 # For Embedding
 if isDataEmbed:
   enableDataMixMC(process)

@@ -2,7 +2,7 @@ import os
 os.system("./create_custom_python_cfg.sh")
 
 scratch="/net/hidsk0001/d00/scratch/frankma"
-jobTag="OfficialSelv2"
+jobTag="OfficialSelv3"
 
 # ================== 362 ===============
 samples  = {
@@ -22,8 +22,8 @@ samples  = {
     # v1 is crab
     #"HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_152561_to_152643_RECOPAT-v1_VtxPatch":"ana"
     # Final dataset (https://twiki.cern.ch/twiki/bin/view/CMS/HighPtFirstYearMeasurements#High_Pt_Skims_and_Trees)
-    #"HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_150883_to_152485_RECOPAT-v1_Pub":"ana",
-    #"HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_152561_to_152643_RECOPAT-v2_Pub":"ana",
+    "HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_150883_to_152485_RECOPAT-v1_Pub":"ana",
+    "HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_152561_to_152643_RECOPAT-v2_Pub":"ana",
     "HCPR-J50U-OfficialJSON_hiGoodMergedTracks_Runs_152652_to_152957_RECOPAT-v1_Pub":"ana"
     }
 

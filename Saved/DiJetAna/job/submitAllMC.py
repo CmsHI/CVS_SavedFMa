@@ -2,7 +2,7 @@ import os
 os.system("./create_custom_python_cfg.sh")
 
 scratch="/net/hidsk0001/d00/scratch/frankma"
-jobTag="OfficialSelv4"
+jobTag="OfficialSelv5"
 
 # ================== 362 ===============
 samples  = {
@@ -15,7 +15,7 @@ samples  = {
     #"Pyquen_DJUQ80_Pat_hiGoodMergedTracks_VtxPatch_v1":"ana",
     #"Pyquen_DJUQ50_Pat_hiGoodMergedTracks_VtxPatch_v1":"ana"
     "HydjetQ_DJUQ80_Pat_hiGoodMergedTracks_VtxPatch_v1":"ana",
-    "HydjetQ_DJUQ50_Pat_hiGoodMergedTracks_VtxPatch_v1":"ana"
+    #"HydjetQ_DJUQ50_Pat_hiGoodMergedTracks_VtxPatch_v1":"ana"
     # Embedded in Data
     #"Data_MinBias_DijetUnquenched80_d20101125and1126":"ana",
     #"Data_MinBias_DijetUnquenched50_d20101127":"ana"
