@@ -17,11 +17,10 @@ for c in '0,30' '30,100'; do
   done
 done
 
-#for c in '0,30'; do
-#for c in '30,100'; do
-#  alist='0,0.11 0.11,0.22 0.22,0.33 0.33,1'
-#  for a in $alist; do
-#    echo cent: $c  Aj: $a
-#    root -b -q 'anaJetFrag.C+("'$infile'",1,'$EtaCorr','$doReWeight',"'$BkgSub'",0,"'$srcName'","'$anaV'","'$module'",'$c','$a')'
-#  done
-#done
+for c in '0,30' '30,100'; do
+  alist='0,0.11 0.11,0.22 0.22,0.33 0.33,1'
+  for a in $alist; do
+    echo cent: $c  Aj: $a
+    root -b -q 'anaJetFrag.C+("'$infile'",1,'$EtaCorr','$doReWeight',"'$BkgSub'",0,"'$srcName'","'$anaV'","'$module'",'$c','$a')'
+  done
+done
