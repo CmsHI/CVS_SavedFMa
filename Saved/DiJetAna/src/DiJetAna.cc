@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.65 2010/11/27 20:51:03 frankma Exp $
+// $Id: DiJetAna.cc,v 1.66 2010/12/09 10:33:12 frankma Exp $
 //
 //
 
@@ -41,6 +41,7 @@ Implementation:
 #include "FWCore/Common/interface/TriggerNames.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
@@ -418,11 +419,13 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
       ++selTrkCt;
     }
     jd.evtnp_			 = selTrkCt;
-  } else if (trkType==0||trkType==3) {
+  } else {
     edm::Handle<reco::CandidateView> trks;
     edm::Handle<reco::GenParticleCollection> genps;
+    edm::Handle<reco::PFCandidateCollection> pfcands;
     iEvent.getByLabel(trksrc_,trks);
     if (trkType==0) iEvent.getByLabel(trksrc_, genps);
+    if (trkType==4) iEvent.getByLabel(trksrc_, pfcands);
 
     int selTrkCt = 0;
     for (unsigned int it=0; it<(*trks).size();++it) {
@@ -441,6 +444,10 @@ void  DiJetAna::FillTrks(const edm::Event& iEvent, TreeDiJetEventData & jd,
       if (trkType==0) {
 	const reco::GenParticle & p    = (*genps)[it];
 	jd.psube_[selTrkCt]	       = p.collisionId();
+      }
+      // fill pfcand id if pfcand
+      if (trkType==4) {
+	jd.pfid_[selTrkCt]	       = (*pfcands)[it].particleId();
       }
       // fill frag candidates basic info
       jd.ppid_[selTrkCt]	       = trk.pdgId();
@@ -656,9 +663,7 @@ void DiJetAna::InclTrkAna(const edm::Event& iEvent, Int_t trkType)
       hTrkEtaEvtPreSel_->Fill(trk.eta());
       hTrkPtEtaEvtPreSel_->Fill(trk.eta(),trk.pt());
     }
-  }
-
-  if (trkType==0||trkType==3) {
+  } else {
     edm::Handle<reco::CandidateView> trks;
     iEvent.getByLabel(trksrc_,trks);
     djEvt_.ntrks_ = (*trks).size();
@@ -755,9 +760,7 @@ void DiJetAna::PrintTrks(const edm::Event& iEvent, Int_t trkType)
       if (it<20 || it>(tracks->size()-20))
 	cout << "trk " << it << " pt|eta|phi: " << trk.pt() << "|" << trk.eta() << "|" << trk.phi() << endl;
     }
-  }
-
-  if (trkType==0||trkType==3) {
+  } else {
     edm::Handle<reco::CandidateView> trks;
     iEvent.getByLabel(trksrc_, trks);
     cout << "# of (type" << trkType <<")" << "trks: " << trks->size() << endl;

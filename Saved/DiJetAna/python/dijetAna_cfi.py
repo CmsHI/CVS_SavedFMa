@@ -29,7 +29,7 @@ djcalo = cms.EDAnalyzer('DiJetAna',
     djDPhiMin = cms.double(3.14159/30.),
     # trk selection
     nearJetPtMin = cms.double(200), # Note: this is only for deciding whether to save the tracks in event
-    trksrc = cms.InputTag("hiGoodMergedTracks"), # 2, reco tracks; 3, candidate
+    trksrc = cms.InputTag("hiGoodMergedTracks"), # 0 genp, 2 recoTrk, 3 chcandidate, 4 pfcand
     anaTrkType = cms.int32(2),
     trkPtMin = cms.double(0.15),
     anaGenpType = cms.int32(1),
@@ -69,10 +69,17 @@ djcalo_tower = djcalo.clone(
     trkPtMin = cms.double(0.7)
     )
 
+djcalo_pfcand = djcalo.clone(
+    # trk selection
+    anaTrkType = cms.int32(4),
+    trksrc = cms.InputTag("particleFlow","")
+    )
+
 # Analysis Sequences
 dijetAna_seq = cms.Sequence(
     djcalo *
     djcalo_tower *
+    djcalo_pfcand *
     #djgen_trk *
     djcalo_genp *
     djgen

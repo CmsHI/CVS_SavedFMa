@@ -264,6 +264,9 @@ void TreeDiJetEventData::SetBranches(Int_t jetType, Int_t trkType)
     tree_->Branch("trkd0",this->trkd0_,"trkd0[evtnp]/F");
     tree_->Branch("trkd0e",this->trkd0e_,"trkd0e[evtnp]/F");
   }
+  if (trkType==4) {
+    tree_->Branch("pfid",this->pfid_,"pfid[evtnp]/I");
+  }
 
   // -- jet cone info --
   tree_->Branch("ljcnp", &ljcnp_);

@@ -93,6 +93,9 @@ class TreeDiJetEventData
     Int_t	       	    trkNHits_[MAXTRK];
     Float_t	       	    trkPtErr_[MAXTRK],trkdz_[MAXTRK],trkdze_[MAXTRK],trkd0_[MAXTRK],trkd0e_[MAXTRK];
 
+    //  - pfcand -
+    Int_t		    pfid_[MAXTRK];
+
     // -- jet cone info --
     std::vector<Int_t>	    ljcnp_,ljcnpbg_;
     std::vector<Float_t>    ljcpt_,ljcpt2_,ljcptr_,ljcptbg_,ljcpt2bg_,ljcptrbg_;
