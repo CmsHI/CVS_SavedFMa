@@ -31,11 +31,11 @@ void anaJetFrag(
     Double_t CentMax = 30,
     Double_t AjMin = 0,
     Double_t AjMax = .11,
-    Double_t NrJEtMin = 100,
+    Double_t NrJEtMin = 120,
     Double_t NrJEtMax = 500,
     Double_t AwJEtMin = 50,
     Double_t AwJEtMax = 500,
-    Double_t TrkPtMin = 0.5,
+    Double_t TrkPtMin = 0.5, // 0.5 for paper
     TString evtBase="S1",
     TString DJCutType = "Ana") // Ana
 {
