@@ -222,6 +222,9 @@ void JetFragAna::Init(TTree *tree)
    fChain->SetBranchAddress("padphi", padphi, &b_padphi);
    fChain->SetBranchAddress("padr", padr, &b_padr);
    fChain->SetBranchAddress("padrbg", padrbg, &b_padrbg);
+   if (cut.Name.Contains("PF")) {
+     fChain->SetBranchAddress("pfid", pfid, &b_pfid);
+   }
    Notify();
 }
 
@@ -517,7 +520,9 @@ void JetFragAna::Loop()
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
-	   if (anaGenpType_==10 && (psube[i]>0 || pch[i]==0)) continue;
+	  if (anaGenpType_==10 && (psube[i]>0 || pch[i]==0)) continue;
+	  if (cut.Name.Contains("PFChHad") && pfid[i]!=1) continue;
+	  if (cut.Name.Contains("PFPhoton") && pfid[i]!=4) continue;
 	  if (ppt[i]<cut.TrkPtMin||fabs(peta[i])>=2.4) continue;
           double trackWeight=1;
           if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(ppt[i],peta[i],cent);

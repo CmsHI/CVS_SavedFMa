@@ -183,6 +183,7 @@ public :
    Float_t         padphi[MAXTRK];   //[evtnp]
    Float_t         padr[MAXTRK];   //[evtnp]
    Float_t         padrbg[MAXTRK];   //[evtnp]
+   Int_t	   pfid[MAXTRK];
 
    // List of branches
    TBranch        *b_run;   //!
@@ -248,6 +249,7 @@ public :
    TBranch        *b_padr;   //!
    TBranch        *b_padrbg;   //!
    TBranch        *b__;   //!
+   TBranch        *b_pfid;   //!
 
    JetFragAna(TTree *tree=0,TString tag="Data",Int_t doMC=0);
    ~JetFragAna();
