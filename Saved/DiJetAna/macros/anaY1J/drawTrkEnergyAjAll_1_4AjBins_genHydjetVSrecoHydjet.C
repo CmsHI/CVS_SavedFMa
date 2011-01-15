@@ -32,7 +32,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSrecoHydjet(
 
   Float_t leftSpace=leftMargin/2., downSpace=bottomMargin/2.;
   c1->cd(1);
-  drawTrkEnergy("jfh"+anaV+"_"+mc2+"_"+module+"_genp_Cent30to100_Aj0to11_"+BckSub+".root",false,true,logScale,normType,0);
+  drawTrkEnergy("jfh"+anaV+"_"+mc2+"_"+module+"_genp_Cent0to30_Aj0to11_"+BckSub+".root",false,true,logScale,normType,0);
   drawText("A_{J} < 0.11",leftSpace+0.63,0.82);
   drawText("Leading jet",0.4,downSpace+0.15,15);
   drawText("Sub-leading jet",0.72,downSpace+0.15,15);
@@ -44,26 +44,26 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSrecoHydjet(
   drawPatch(0,0.0,0.28,0.1);
   
   c1->cd(2);
-  drawTrkEnergy("jfh"+anaV+"_"+mc2+"_"+module+"_genp_Cent30to100_Aj11to22_"+BckSub+".root",true,true,logScale,normType,0);
+  drawTrkEnergy("jfh"+anaV+"_"+mc2+"_"+module+"_genp_Cent0to30_Aj11to22_"+BckSub+".root",true,true,logScale,normType,0);
   drawText("0.11 < A_{J} < 0.22",0.52,0.82);
   drawText("Leading jet",0.15,downSpace+0.15,15);
   drawText("Sub-leading jet",0.6,downSpace+0.15,15);
  
   c1->cd(3);
-  drawTrkEnergy("jfh"+anaV+"_"+mc2+"_"+module+"_genp_Cent30to100_Aj22to33_"+BckSub+".root",false,true,logScale,normType,0);
+  drawTrkEnergy("jfh"+anaV+"_"+mc2+"_"+module+"_genp_Cent0to30_Aj22to33_"+BckSub+".root",false,true,logScale,normType,0);
   drawText("0.22 < A_{J} < 0.33",0.52,0.82);
   drawText("Leading jet",0.15,downSpace+0.15,15);
   drawText("Sub-leading jet",0.6,downSpace+0.15,15);
 
   c1->cd(4);
-  drawTrkEnergy("jfh"+anaV+"_"+mc2+"_"+module+"_genp_Cent30to100_Aj33to100_"+BckSub+".root",false,true,logScale,normType,0);
+  drawTrkEnergy("jfh"+anaV+"_"+mc2+"_"+module+"_genp_Cent0to30_Aj33to100_"+BckSub+".root",false,true,logScale,normType,0);
   drawText("A_{J} > 0.33",0.63,0.82);
   drawText("Leading jet",0.15,downSpace+0.15,15);
   drawText("Sub-leading jet",0.6,downSpace+0.15,15);
   
 
   c1->cd(5);
-  drawTrkEnergy("jfh"+anaV+"_"+mc+"_"+module+"_Cent30to100_Aj0to11_"+BckSub+".root",false,true,logScale,normType,1);
+  drawTrkEnergy("jfh"+anaV+"_"+mc+"_"+module+"_Cent0to30_Aj0to11_"+BckSub+".root",false,true,logScale,normType,1);
   drawText("A_{J} < 0.11",leftSpace+0.63,downSpace+0.73);
   drawText("Leading jet",0.4,3*downSpace+0.1,15);
   drawText("Sub-leading jet",0.72,3*downSpace+0.1,15);
@@ -73,19 +73,19 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSrecoHydjet(
   drawText("0-30%",0.33,downSpace+0.51);
 
   c1->cd(6);
-  drawTrkEnergy("jfh"+anaV+"_"+mc+"_"+module+"_Cent30to100_Aj11to22_"+BckSub+".root",false,false,logScale,normType,1);
+  drawTrkEnergy("jfh"+anaV+"_"+mc+"_"+module+"_Cent0to30_Aj11to22_"+BckSub+".root",false,false,logScale,normType,1);
   drawText("0.11 < A_{J} < 0.22",0.52,downSpace+0.73);
   drawText("Leading jet",0.15,3*downSpace+0.1,15);
   drawText("Sub-leading jet",0.63,3*downSpace+0.1,15);
 
   c1->cd(7);
-  drawTrkEnergy("jfh"+anaV+"_"+mc+"_"+module+"_Cent30to100_Aj22to33_"+BckSub+".root",false,false,logScale,normType,1);
+  drawTrkEnergy("jfh"+anaV+"_"+mc+"_"+module+"_Cent0to30_Aj22to33_"+BckSub+".root",false,false,logScale,normType,1);
   drawText("0.22 < A_{J} < 0.33",0.52,downSpace+0.73);
   drawText("Leading jet",0.15,3*downSpace+0.1,15);
   drawText("Sub-leading jet",0.6,3*downSpace+0.1,15);
 
   c1->cd(8);
-  drawTrkEnergy("jfh"+anaV+"_"+mc+"_"+module+"_Cent30to100_Aj33to100_"+BckSub+".root",false,false,logScale,normType,1);
+  drawTrkEnergy("jfh"+anaV+"_"+mc+"_"+module+"_Cent0to30_Aj33to100_"+BckSub+".root",false,false,logScale,normType,1);
   drawText("A_{J} > 0.33",0.63,downSpace+0.73);
   drawText("Leading jet",0.15,3*downSpace+0.1,15);
   drawText("Sub-leading jet",0.6,3*downSpace+0.1,15);
