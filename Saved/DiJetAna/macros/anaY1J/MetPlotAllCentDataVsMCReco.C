@@ -256,8 +256,10 @@ void MetPlotAllCentDataVsMCReco(char *inputFile="data.root")
    Float_t leftMargin=0.28,bottomMargin=0.18;
    makeMultiPanelCanvas(c1,2,2,0.0,0.0,leftMargin,bottomMargin,0.02);
    c1->cd(1);
-   balanceMetVsAj("../ntv1_dj_HyUQ80v5_djcalo_pfcand4_100_50.root","cent>=30","",false,false);
-   drawText("PYTHIA+HYDJET PF Photon",0.33,0.82);
+   balanceMetVsAj("../ntv1_dj_HyUQ80v3_djcalo_100_50_raw.root","cent>=30","",false,false);
+   drawText("PYTHIA+HYDJET RECO (Raw Trks)",0.33,0.82);
+   //balanceMetVsAj("../ntv1_dj_HyUQ80v5_djcalo_pfcand4_100_50.root","cent>=30","",false,false);
+   //drawText("PYTHIA+HYDJET PF Photon",0.33,0.82);
    drawText("30-100%",0.85,0.9);
    float ptx(0.32),pty(0.25);
    drawText("p_{T,1}  > 120GeV/c",ptx,pty);
@@ -266,13 +268,16 @@ void MetPlotAllCentDataVsMCReco(char *inputFile="data.root")
    drawText("|#eta_{1,2}| < 2",ptx+0.16,pty-0.16);
    
    c1->cd(2);
-   balanceMetVsAj("../ntv1_dj_HyUQ80v5_djcalo_pfcand4_100_50.root","cent<30","",true,false);
+   //balanceMetVsAj("../ntv1_dj_HyUQ80v5_djcalo_pfcand4_100_50.root","cent<30","",true,false);
+   balanceMetVsAj("../ntv1_dj_HyUQ80v3_djcalo_100_50_raw.root","cent<30","",true,false);
    //balanceMetVsAj("nt_dj_mix100_Gen_yj.root","cent<30","",true,false);
    drawText("0-30%",0.8,0.9);
 
    c1->cd(3);
-   balanceMetVsAj("../ntv1_dj_HCPR-J50U_OfficialSelv3_djcalo_pfcand4_100_50.root","cent>=30","",false);
-   drawText("CMS PF Photon",0.33,0.90);
+   balanceMetVsAj("../ntv1_dj_HCPR-J50U_OfficialSelv2_djcalo_100_50_raw.root","cent>=30","",false);
+   drawText("CMS (Raw Trks)",0.33,0.90);
+   //balanceMetVsAj("../ntv1_dj_HCPR-J50U_OfficialSelv3_djcalo_pfcand4_100_50.root","cent>=30","",false);
+   //drawText("CMS PF Photon",0.33,0.90);
    drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
    drawText("#intL dt = 6.7 #mub^{-1}",0.33,0.78);
    drawText("30-100%",0.85,0.93);
@@ -284,7 +289,8 @@ void MetPlotAllCentDataVsMCReco(char *inputFile="data.root")
 
 
    c1->cd(4);
-   balanceMetVsAj("../ntv1_dj_HCPR-J50U_OfficialSelv3_djcalo_pfcand4_100_50.root","cent<30","",false);
+   balanceMetVsAj("../ntv1_dj_HCPR-J50U_OfficialSelv2_djcalo_100_50_raw.root","cent<30","",false);
+   //balanceMetVsAj("../ntv1_dj_HCPR-J50U_OfficialSelv3_djcalo_pfcand4_100_50.root","cent<30","",false);
    drawText("0-30%",0.8,0.93);
    
    c1->SaveAs("missingPtParallel-Corrected-data-allCent.eps");
