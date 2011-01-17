@@ -42,7 +42,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   drawText("+HYDJET",0.33,0.73);
   drawText("0-30%",0.33,0.60);
   drawPatch(0,0.0,0.28,0.1);
-
+  drawText("(a)",0.33,0.91);
   c1->cd(2);
   drawTrkEnergy("jfh"+anaV+"ReWt_"+mc+"_"+module+"_genp_Cent0to30_Aj11to22_"+BckSub+".root",false,true,logScale,normType,0);
   drawText("0.11 < A_{J} < 0.22",ax,ay);
@@ -52,9 +52,10 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   }
 
   float ptx(0.05),pty(0.88);
-  drawText("p_{T,1}  > 120GeV/c",ptx,pty,15);
-  drawText("p_{T,2}  > 50GeV/c",ptx,pty-0.08,15);
-  drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty-0.16,15);
+  drawText("p_{T,1}  > 120GeV/c",ptx,pty-0.05,15);
+  drawText("p_{T,2}  > 50GeV/c",ptx,pty-0.13,15);
+  drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty-0.21,15);
+  drawText("(b)",ptx,0.91);
 
   c1->cd(3);
   drawTrkEnergy("jfh"+anaV+"ReWt_"+mc+"_"+module+"_genp_Cent0to30_Aj22to33_"+BckSub+".root",true,true,logScale,normType,0);
@@ -63,7 +64,8 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
     drawText("Leading Jet",j1x,j1y,15);
     drawText("Subleading Jet",j2x,j2y,15);
   }
-
+  drawText("(c)",ptx,0.91);
+  
   c1->cd(4);
   drawTrkEnergy("jfh"+anaV+"ReWt_"+mc+"_"+module+"_genp_Cent0to30_Aj33to100_"+BckSub+".root",false,true,logScale,normType,0);
   drawText("A_{J} > 0.33",ax+0.1,ay);
@@ -71,6 +73,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
     drawText("Leading Jet",j1x,j1y,15);
     drawText("Subleading Jet",j2x,j2y,15);
   }
+  drawText("(d)",ptx,0.91);
 
 
   c1->cd(5);
@@ -80,10 +83,12 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
     drawText("Leading Jet",j1x+0.23,j1y+downSpace+0.02,15);
     drawText("Subleading Jet",j2x+leftSpace,j2y+downSpace+0.02,15);
   }
-  drawText("CMS",0.31,downSpace+0.80);
-  drawText("PbPb  #sqrt{s}_{_{NN}}=2.76 TeV",0.31,0.82,14);
-  drawText("#intL dt = 6.7 #mub^{-1}",0.31,0.74,14);
-  drawText("0-30%",0.33,downSpace+0.51);
+  
+  drawText("(e)",0.33,0.93);
+  drawText("CMS",0.31,downSpace+0.76);
+  drawText("PbPb  #sqrt{s}_{_{NN}}=2.76 TeV",0.31,0.79,13);
+  drawText("#intL dt = 6.7 #mub^{-1}",0.31,0.71,14);
+  drawText("0-30%",0.33,downSpace+0.47);
 
   c1->cd(6);
   drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj11to22_"+BckSub+".root",false,false,logScale,normType,1);
@@ -96,6 +101,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
     drawText("Leading Jet",j1x,j1y+downSpace+0.46,15);
     drawText("Subleading Jet",j2x,j2y+downSpace+0.46,15);
   }
+  drawText("(f)",ptx,0.93);
 
   c1->cd(7);
   drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj22to33_"+BckSub+".root",false,false,logScale,normType,1);
@@ -104,6 +110,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
     drawText("Leading Jet",j1x,j1y+downSpace+0.02,15);
     drawText("Subleading Jet",j2x,j2y+downSpace+0.02,15);
   }
+  drawText("(g)",ptx,0.93);
 
   c1->cd(8);
   drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj33to100_"+BckSub+".root",false,false,logScale,normType,1);
@@ -112,6 +119,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
     drawText("Leading Jet",j1x,j1y+downSpace+0.02,15);
     drawText("Subleading Jet",j2x,j2y+downSpace+0.02,15);
   }
+  drawText("(h)",ptx,0.93);
 
   c1->Print(anaV+"_"+BckSub+Form("_TrkPtDR_AjAll_genP_vs_data_log%d.gif",logScale));
   c1->Print(anaV+"_"+BckSub+Form("_TrkPtDR_AjAll_genP_vs_data_log%d.C",logScale));
