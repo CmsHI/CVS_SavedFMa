@@ -299,7 +299,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
 
   naxis->SetTitle("#DeltaR^{Leading jet}"); naxis->CenterTitle(); naxis->SetTitleOffset(1.7);
   fixedFontAxis(naxis);
-  aaxis->SetTitle("#DeltaR^{SubLeading jet}"); aaxis->CenterTitle(); aaxis->SetTitleOffset(1.7);
+  aaxis->SetTitle("#DeltaR^{Subleading jet}"); aaxis->CenterTitle(); aaxis->SetTitleOffset(1.7);
   fixedFontAxis(aaxis);
   naxis->SetTitleSize(22);
   aaxis->SetTitleSize(22);
