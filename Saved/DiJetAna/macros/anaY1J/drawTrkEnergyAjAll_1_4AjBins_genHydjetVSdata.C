@@ -38,8 +38,8 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
     drawText("Leading Jet",j1x+0.23,j1y,15);
     drawText("SubLeading Jet",j2x+leftSpace,j2y,15);
   }
-  drawText("HYDJET",0.33,0.81);
-  drawText("+PYTHIA",0.33,0.73);
+  drawText("PYTHIA",0.33,0.81);
+  drawText("+HYDJET",0.33,0.73);
   drawText("0-30%",0.33,0.60);
   drawPatch(0,0.0,0.28,0.1);
 

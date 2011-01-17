@@ -205,8 +205,8 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   // =========================================================================
   Float_t ymin=-5,ymax=69.9;
   if (logScale==1) ymin=0.3;
-  //Int_t colors[5] = {38,kOrange-8,kBlue-3,kGray,kRed};
-  Int_t colors[3] = {kOrange-8,kGreen-8,kRed-7};
+  //  double colors[nBin] = {kBlue+1,kGreen-8, kYellow-7,kOrange-4,kRed-3};
+  Int_t colors[3] = {kGreen-8,kOrange-4,kRed-3};
   
   // =========================================================================
   // Inputs
@@ -248,10 +248,10 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   Float_t norm = 1./(Nr[nbin-1]->Integral()*Nr[nbin-1]->GetBinWidth(1));
   TH1D* hcLeft[nbin];
   TH1D* hcRight[nbin];
-  int fillLeft = 3004;
+  int fillLeft = 3013;
   for (Int_t i=0; i<nbin; ++i) {
     hcLeft[i] = combine(Nr[i],Aw[i],normType,norm,true,sysErrorType);
-    hcLeft[i]->SetFillStyle(3004);
+    hcLeft[i]->SetFillStyle(fillLeft);
     //if (i!=0) hcLeft[i]->SetLineColor(colors[i]);
     hcRight[i] = combine(Nr[i],Aw[i],normType,norm,false,sysErrorType);
   }
@@ -314,16 +314,25 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   // Draw Legend
   // =========================================================================
   if (drawLeg) {
-     TLegend *leg = new TLegend(0.01425723,0.6506156,0.4549146,0.9576504);
+     TLegend *leg = new TLegend(0.1201672,0.6548998,0.5002153,0.9644227,NULL,"brNDC");
      leg->SetFillStyle(0);
      leg->SetBorderSize(0);
      leg->SetNColumns(1);
      leg->SetTextSize(0.05);
+     TLegend *legLeft = new TLegend(0.04637139,0.6548998,0.5075949,0.9644227,NULL,"brNDC");
+     legLeft->SetFillStyle(0);
+     legLeft->SetBorderSize(0);
+     legLeft->SetNColumns(1);
+     legLeft->SetTextSize(0.05);
      for (Int_t i=nbin-1;i>=0;--i) {
        if (i==nbin-1) leg->AddEntry(hcRight[i],Form("> %.0f GeV/c",hPt->GetBinLowEdge(begbins[i])),"f");
        else leg->AddEntry(hcRight[i],Form("%.0f-%.0f GeV/c",hPt->GetBinLowEdge(begbins[i]),hPt->GetBinLowEdge(endbins[i]+1)),"f");
+       if (i==nbin-1) legLeft->AddEntry(hcLeft[i],"","f");
+       else legLeft->AddEntry(hcLeft[i],"","f");
      }
-    leg->Draw();
+     legLeft->Draw();
+     leg->Draw();
+     
   }
 
   // =========================================================================

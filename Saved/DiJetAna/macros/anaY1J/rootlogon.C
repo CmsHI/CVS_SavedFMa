@@ -4,6 +4,8 @@
   // in your rootlogon.C, the CMS setup is executed only if the CMS
   // environment is set up.
   //
+
+   gStyle->SetErrorX(0);
   TString cmsswbase = getenv("CMSSW_BASE");
   if (cmsswbase.Length() > 0) {
     //
@@ -36,7 +38,7 @@
   //gStyle->SetPadLeftMargin(0.2);
   gStyle->SetOptFit(0);
   gStyle->SetMarkerSize(1.);
-  gStyle->SetHistLineWidth(2);
+  gStyle->SetHistLineWidth(1);
 
 
   // helper classes
