@@ -67,7 +67,7 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    // ===========================================================
    const int nBin = 5;
    double bins[nBin+1] = {0.5,1.0,1.5,4,8,1000};  
-   double colors[nBin] = {kRed-3,38, kOrange-8,kGreen-8,kRed-7};
+   double colors[nBin] = {kBlue+1,kGreen-8, kYellow-7,kOrange-4,kRed-3};
    
    const int nBinAj = 4;
    double ajBins[nBinAj+1] = {0.0001,0.11,0.22,0.33,0.49999};
