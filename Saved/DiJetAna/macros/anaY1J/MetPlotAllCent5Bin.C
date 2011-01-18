@@ -11,7 +11,7 @@
 #include <TText.h>
 #include "commonUtility.h"
 #include "DrawTick.C"
-
+#include "colorScheme.h"
 
 
 TH1D *calcEff(TH1D* h1, TH1D* h2)
@@ -67,7 +67,6 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    // ===========================================================
    const int nBin = 5;
    double bins[nBin+1] = {0.5,1.0,1.5,4,8,1000};  
-   double colors[nBin] = {kBlue-10,kYellow-7, kOrange-2,kGreen-5,kRed-3};
    
    const int nBinAj = 4;
    double ajBins[nBinAj+1] = {0.0001,0.11,0.22,0.33,0.49999};
