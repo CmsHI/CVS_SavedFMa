@@ -205,8 +205,8 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   // =========================================================================
   Float_t ymin=-5,ymax=69.9;
   if (logScale==1) ymin=0.3;
-  //  double colors[nBin] = {kBlue+1,kGreen-8, kYellow-7,kOrange-4,kRed-3};
-  Int_t colors[3] = {kGreen-8,kOrange-4,kRed-3};
+  //  double colors[nBin] = {kBlue-10,kYellow-7, kOrange-2,kGreen-5,kRed-3};
+  Int_t colors[3] = {,kYellow-7, kGreen-5,kRed-3}; 
   
   // =========================================================================
   // Inputs
@@ -314,12 +314,12 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   // Draw Legend
   // =========================================================================
   if (drawLeg) {
-     TLegend *leg = new TLegend(0.1201672,0.6548998,0.5002153,0.9644227,NULL,"brNDC");
+     TLegend *leg = new TLegend(0.1201672,0.5748998,0.5002153,0.8744227,NULL,"brNDC");
      leg->SetFillStyle(0);
      leg->SetBorderSize(0);
      leg->SetNColumns(1);
      leg->SetTextSize(0.05);
-     TLegend *legLeft = new TLegend(0.04637139,0.6548998,0.5075949,0.9644227,NULL,"brNDC");
+     TLegend *legLeft = new TLegend(0.04637139,0.5748998,0.5075949,0.8744227,NULL,"brNDC");
      legLeft->SetFillStyle(0);
      legLeft->SetBorderSize(0);
      legLeft->SetNColumns(1);
