@@ -37,6 +37,7 @@
    gStyle->SetOptFit(0);
    gStyle->SetMarkerSize(1.);
    gStyle->SetHistLineWidth(2);
+   gStyle->SetErrorX(0);                                                                                                                        
 
 
    // helper classes
