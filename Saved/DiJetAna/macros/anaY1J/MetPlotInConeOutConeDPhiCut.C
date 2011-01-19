@@ -11,7 +11,7 @@
 #include <TText.h>
 #include "commonUtility.h"
 #include "DrawTick.C"
-
+#include "colorScheme.h"
 
 
 TH1D *calcEff(TH1D* h1, TH1D* h2)
@@ -76,12 +76,11 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    // ===========================================================
    const int nBin = 5;
    double bins[nBin+1] = {0.5,1.0,1.5,4,8,1000};  
-   double colors[nBin] = {kRed-3,38, kOrange-8,kGreen-8,kRed-7};
    
    const int nBinAj = 4;
    double ajBins[nBinAj+1] = {0.0001,0.11,0.22,0.33,0.49999};
    // Selection cut
-   TCut evtCut = "nljet>120&&abs(nljetacorr)<2&&aljet>50&&abs(aljetacorr)<2&&jdphi>3&&!maskEvt";
+   TCut evtCut = "nljet>120&&abs(nljetacorr)<1.6&&aljet>50&&abs(aljetacorr)<1.6&&jdphi>5./6*TMath::Pi()&&!maskEvt";
 
    cout << "Sel evt: " << t->GetEntries(evtCut&&myCut) << endl;
 
@@ -301,13 +300,15 @@ void MetPlotInConeOutConeDPhiCut(char *inputFile="data.root")
    float ptx(0.32),pty(0.25);
    drawText("p_{T,1}  > 120GeV/c",ptx,pty);
    drawText("p_{T,2}  > 50GeV/c",ptx,pty-0.08);
-   drawText("#Delta#phi_{12}> 3",ptx,pty-0.16);
-   drawText("|#eta_{1,2}| < 2",ptx+0.16,pty-0.16);
+   drawText("#Delta#phi_{12}> #frac{5}{6}#pi",ptx,pty-0.16);
+   drawText("|#eta_{1,2}| < 1.6",ptx+0.16,pty-0.16);
+   drawText("(a)",0.31,0.91);
    
    c1->cd(2);
    balanceMetVsAj("nt_dj_mix100_Gen.root","cent<30","metOutOfConex",true,false);
    drawText("Out-of-Cone",0.7,0.9);
    drawText("#DeltaR#geq0.8",0.7,0.9-0.06);
+   drawText("(b)",0.04,0.91);
 
    c1->cd(3);
    balanceMetVsAj("nt_dj_data100_cor.root","cent<30","metConex",false);
@@ -319,13 +320,15 @@ void MetPlotInConeOutConeDPhiCut(char *inputFile="data.root")
    float pty1(0.4);
    drawText("p_{T,1}  > 120GeV/c",ptx,pty1);
    drawText("p_{T,2}  > 50GeV/c",ptx,pty1-0.07);
-   drawText("#Delta#phi_{1,2}> 3",ptx,pty1-0.14);
-   drawText("|#eta_{1,2}| < 2",ptx+0.16,pty1-0.14);
+   drawText("#Delta#phi_{1,2}> #frac{5}{6}#pi",ptx,pty1-0.14);
+   drawText("|#eta_{1,2}| < 1.6",ptx+0.16,pty1-0.14);
+   drawText("(c)",0.31,0.95);
 
    c1->cd(4);
    balanceMetVsAj("nt_dj_data100_cor.root","cent<30","metOutOfConex",false);
    drawText("Out-of-Cone",0.7,0.93);
    drawText("#DeltaR#geq0.8",0.7,0.93-0.06);
+   drawText("(d)",0.04,0.95);
    
    c1->SaveAs("missingPtParallel-Corrected-data-InConeOutConeDPhiCut.eps");
    c1->SaveAs("missingPtParallel-Corrected-data-InConeOutConeDPhiCut.gif");
