@@ -302,11 +302,12 @@ void MetPlotInConeOutConeDPhiCut(char *inputFile="data.root")
    drawText("p_{T,1}  > 120GeV/c",ptx,pty);
    drawText("p_{T,2}  > 50GeV/c",ptx,pty-0.08);
    drawText("#Delta#phi_{12}> 3",ptx,pty-0.16);
+   drawText("|#eta_{1,2}| < 2",ptx+0.16,pty-0.16);
    
    c1->cd(2);
    balanceMetVsAj("nt_dj_mix100_Gen.root","cent<30","metOutOfConex",true,false);
    drawText("Out-of-Cone",0.7,0.9);
-   drawText("#DeltaR>=0.8",0.7,0.9-0.06);
+   drawText("#DeltaR#geq0.8",0.7,0.9-0.06);
 
    c1->cd(3);
    balanceMetVsAj("nt_dj_data100_cor.root","cent<30","metConex",false);
@@ -314,16 +315,17 @@ void MetPlotInConeOutConeDPhiCut(char *inputFile="data.root")
    drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
    drawText("#intL dt = 6.7 #mub^{-1}",0.33,0.78);
    drawText("In-Cone",0.85,0.93);
-   drawText("#DeltaR<0.8",0.7,0.9-0.06);
+   drawText("#DeltaR<0.8",0.85,0.93-0.06);
    float pty1(0.4);
    drawText("p_{T,1}  > 120GeV/c",ptx,pty1);
    drawText("p_{T,2}  > 50GeV/c",ptx,pty1-0.07);
    drawText("#Delta#phi_{1,2}> 3",ptx,pty1-0.14);
+   drawText("|#eta_{1,2}| < 2",ptx+0.16,pty1-0.14);
 
    c1->cd(4);
    balanceMetVsAj("nt_dj_data100_cor.root","cent<30","metOutOfConex",false);
    drawText("Out-of-Cone",0.7,0.93);
-   drawText("#DeltaR>=0.8",0.7,0.9-0.06);
+   drawText("#DeltaR#geq0.8",0.7,0.93-0.06);
    
    c1->SaveAs("missingPtParallel-Corrected-data-InConeOutConeDPhiCut.eps");
    c1->SaveAs("missingPtParallel-Corrected-data-InConeOutConeDPhiCut.gif");
