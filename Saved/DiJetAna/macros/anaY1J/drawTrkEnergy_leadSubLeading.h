@@ -204,7 +204,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
   // Basic Plot Parameters
   // =========================================================================
   Float_t ymin=-5,ymax=69.9;
-  if (logScale==1) ymin=0.3;
+  if (logScale==1) { ymin=0.3; ymax=200;}
   //  double colors[nBin] = {kBlue-10,kYellow-7, kOrange-2,kGreen-5,kRed-3};
   Int_t colors[3] = {kYellow-7, kGreen-5,kRed-3}; 
   

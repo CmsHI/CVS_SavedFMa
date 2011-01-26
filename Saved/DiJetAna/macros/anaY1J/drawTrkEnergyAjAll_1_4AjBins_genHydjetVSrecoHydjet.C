@@ -19,7 +19,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSrecoHydjet(
 			  TString BckSub="SubEtaReflSingle",
 			  TString title="_Track",
 			  TString drawV="d5",
-			  Int_t logScale=0,
+			  Int_t logScale=1,
 			  Int_t normType=0)
 {
   TCanvas *c1 = new TCanvas("c1","",1199,645);

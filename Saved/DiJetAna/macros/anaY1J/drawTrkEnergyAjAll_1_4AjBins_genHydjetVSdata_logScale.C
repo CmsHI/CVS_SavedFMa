@@ -12,7 +12,7 @@
 #include "drawTrkEnergy_leadSubLeading.h"
 using namespace std;
 
-void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
+void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
     TString anaV="v18", // for paper: v18
     TString module="djcalo",
     TString BckSub="SubEtaReflSingle", // for paper: SubEtaReflSingle
@@ -30,7 +30,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   Float_t leftSpace=leftMargin/2., downSpace=bottomMargin/2.;
   Float_t j1x=0.14,j1y=4*downSpace,j2x=0.56,j2y=4*downSpace;
   Float_t ax=0.52,ay=0.77;
-
+  
   c1->cd(1);
   drawTrkEnergy("jfh"+anaV+"ReWt_"+mc+"_"+module+"_genp_Cent0to30_Aj0to11_"+BckSub+".root",false,true,logScale,normType,0);
   drawText("A_{J} < 0.11",leftSpace+ax+0.1,ay);
@@ -38,6 +38,11 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
     drawText("Leading Jet",j1x+0.23,j1y,15);
     drawText("Subleading Jet",j2x+leftSpace,j2y,15);
   }
+  if (logScale==1) {
+     drawText("Leading Jet",j1x+0.21, 0.46,15);
+     drawText("Subleading Jet",j2x+leftSpace+.02, 0.46,15);
+  }
+
   drawText("PYTHIA",0.33,0.81);
   drawText("+HYDJET",0.33,0.73);
   drawText("0-30%",0.33,0.60);
@@ -49,6 +54,10 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   if (logScale==0) {
     drawText("Leading Jet",j1x,j1y,15);
     drawText("Subleading Jet",j2x,j2y,15);
+  }
+  if (logScale==1) {
+     drawText("Leading Jet",j1x - 0.05, 0.46,15);
+     drawText("Subleading Jet",j2x+.06, 0.46,15);
   }
 
   float ptx(0.05),pty(0.88);
@@ -64,6 +73,10 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
     drawText("Leading Jet",j1x,j1y,15);
     drawText("Subleading Jet",j2x,j2y,15);
   }
+  if (logScale==1) {
+     drawText("Leading Jet",j1x - 0.05, 0.46,15);
+     drawText("Subleading Jet",j2x+.06, 0.46,15);
+  }
   drawText("(c)",ptx,0.91);
   
   c1->cd(4);
@@ -72,6 +85,10 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   if (logScale==0) {
     drawText("Leading Jet",j1x,j1y,15);
     drawText("Subleading Jet",j2x,j2y,15);
+  }
+  if (logScale==1) {
+     drawText("Leading Jet",j1x - 0.05, 0.46,15);
+     drawText("Subleading Jet",j2x+.06, 0.46,15);
   }
   drawText("(d)",ptx,0.91);
 
@@ -83,12 +100,16 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
     drawText("Leading Jet",j1x+0.23,j1y+downSpace+0.02,15);
     drawText("Subleading Jet",j2x+leftSpace,j2y+downSpace+0.02,15);
   }
-  
+  if (logScale==1) {
+     drawText("Leading Jet",j1x + 0.21, 0.48+downSpace,15);
+     drawText("Subleading Jet",j2x+leftSpace+.02, 0.48+downSpace,15);
+  }
+
   drawText("(e)",0.33,0.93);
   drawText("CMS",0.31,downSpace+0.76);
-  drawText("PbPb  #sqrt{s}_{_{NN}}=2.76 TeV",0.31,0.79,13);
-  drawText("#intL dt = 6.7 #mub^{-1}",0.31,0.71,14);
-  drawText("0-30%",0.33,downSpace+0.47);
+  drawText("PbPb  #sqrt{s}_{_{NN}}=2.76 TeV",0.31,0.8,12);
+  drawText("#intL dt = 6.7 #mub^{-1}",0.31,0.73,12);
+  drawText("0-30%",0.32,downSpace+0.56);
 
   c1->cd(6);
   drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj11to22_"+BckSub+".root",false,false,logScale,normType,0);  // express sys error by error band for log scale
@@ -98,9 +119,10 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
     drawText("Subleading Jet",j2x,j2y+downSpace+0.02,15);
   }
   if (logScale==1) {
-    drawText("Leading Jet",j1x,j1y+downSpace+0.46,15);
-    drawText("Subleading Jet",j2x,j2y+downSpace+0.46,15);
+     drawText("Leading Jet",j1x - 0.05, 0.48+downSpace,15);
+     drawText("Subleading Jet",j2x+.06, 0.48+downSpace,15);
   }
+ 
   drawText("(f)",ptx,0.93);
 
   c1->cd(7);
@@ -110,6 +132,11 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
     drawText("Leading Jet",j1x,j1y+downSpace+0.02,15);
     drawText("Subleading Jet",j2x,j2y+downSpace+0.02,15);
   }
+  if (logScale==1) {
+     drawText("Leading Jet",j1x - 0.05, 0.48+downSpace,15);
+     drawText("Subleading Jet",j2x+.06, 0.48+downSpace,15);
+  }
+
   drawText("(g)",ptx,0.93);
 
   c1->cd(8);
@@ -118,6 +145,10 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata(
   if (logScale==0) {
     drawText("Leading Jet",j1x,j1y+downSpace+0.02,15);
     drawText("Subleading Jet",j2x,j2y+downSpace+0.02,15);
+  }
+  if (logScale==1) {
+     drawText("Leading Jet",j1x - 0.05, 0.48+downSpace,15);
+     drawText("Subleading Jet",j2x+.06, 0.48+downSpace,15);
   }
   drawText("(h)",ptx,0.93);
 
