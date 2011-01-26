@@ -474,6 +474,17 @@ void JetFragAna::Loop()
 	    if (fabs(anaJets_[j].eta())<cut.ConeSize) jetEvt[j]=false;
 	  }
 	}
+	// systematic checks on eta regions
+	if (cut.BkgSubType=="EtaReflSingleEtaPos") {
+	  for (Int_t j=0; j<2; ++j) {
+	    if (fabs(anaJets_[j].eta())<cut.ConeSize||anaJets_[j].eta()<0) jetEvt[j]=false;
+	  }
+	}
+	if (cut.BkgSubType=="EtaReflSingleEtaNeg") {
+	  for (Int_t j=0; j<2; ++j) {
+	    if (fabs(anaJets_[j].eta())<cut.ConeSize||anaJets_[j].eta()>=0) jetEvt[j]=false;
+	  }
+	}
  
 	// =====================================================
 	// Set Centrality Weight
@@ -517,6 +528,9 @@ void JetFragAna::Loop()
 	Double_t metConex=0,metConex0=0,metConex1=0,metConex2=0,metConex3=0,metConex4=0,metConex5=0;
 	Double_t metOutOfConex=0,metOutOfConex0=0,metOutOfConex1=0,metOutOfConex2=0,metOutOfConex3=0,metOutOfConex4=0,metOutOfConex5=0;
         jc_.clear();
+	// =====================================================
+	// Fill Particle Level Histograms
+	// =====================================================
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
