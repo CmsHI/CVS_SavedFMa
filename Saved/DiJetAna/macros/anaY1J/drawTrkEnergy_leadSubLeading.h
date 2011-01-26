@@ -19,7 +19,16 @@
 using namespace std;
 int gab = 0;
 
-TH1D * projectDR(TH2D * h2d,Int_t iBeg,Int_t iEnd)
+
+void drawErrorBox(float x1,float y1, float x2, float y2, int theColor=kSpring+8)
+{
+   TBox* tt = new TBox(x1,y1,x2,y2);
+   tt->SetFillColor(theColor);
+   tt->SetFillStyle(3001);
+   tt->Draw();
+}
+
+TH1D *projectDR(TH2D * h2d,Int_t iBeg,Int_t iEnd)
 {
   TH1D * hDr = (TH1D*)h2d->ProjectionY(Form("%s_%d_%d",h2d->GetName(),iBeg,iEnd),iBeg,iEnd);
   //hDr->Sumw2();

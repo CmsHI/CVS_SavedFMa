@@ -104,6 +104,12 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
      drawText("Leading Jet",j1x + 0.21, 0.48+downSpace,15);
      drawText("Subleading Jet",j2x+leftSpace+.02, 0.48+downSpace,15);
   }
+  if (logScale==1) {
+     drawErrorBox(.22,22,.30,22 * 1.2,1); //20% of uncertainty  
+     drawText("Systematic",j2x+leftSpace+.08, 0.64+downSpace,15);
+     drawText("uncertainty",j2x+leftSpace+.08, 0.58+downSpace,15);
+   
+  }
 
   drawText("(e)",0.33,0.93);
   drawText("CMS",0.31,downSpace+0.76);
@@ -122,7 +128,6 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
      drawText("Leading Jet",j1x - 0.05, 0.48+downSpace,15);
      drawText("Subleading Jet",j2x+.06, 0.48+downSpace,15);
   }
- 
   drawText("(f)",ptx,0.93);
 
   c1->cd(7);
