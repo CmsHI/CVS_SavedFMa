@@ -66,12 +66,12 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    // Analysis Setup
    // ===========================================================
    const int nBin = 5;
-   double bins[nBin+1] = {0.5,1.0,1.5,4,8,1000};  
+   double bins[nBin+1] = {0.5,1.0,2,4,8,1000};  
    
    const int nBinAj = 4;
    double ajBins[nBinAj+1] = {0.0001,0.11,0.22,0.33,0.49999};
    // Selection cut
-   TCut evtCut = "nljet>120&&abs(nljetacorr)<1.6&&aljet>50&&abs(aljetacorr)<1.6&&jdphi>5./6*TMath::Pi()&&!maskEvt";
+   TCut evtCut = "nljet>120&&abs(nljetacorr)<1.6&&aljet>50&&abs(aljetacorr)<1.6&&jdphi>2./3*TMath::Pi()&&!maskEvt";
 
    cout << "Sel evt: " << t->GetEntries(evtCut&&myCut) << endl;
 
@@ -254,26 +254,27 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
    Float_t leftMargin=0.28,bottomMargin=0.18;
    makeMultiPanelCanvas(c1,2,2,0.0,0.0,leftMargin,bottomMargin,0.02);
    c1->cd(1);
-   balanceMetVsAj("nt_dj_mix100_Gen.root","cent>=30","",false,false);
-   //balanceMetVsAj("nt_dj_mix100_Gen_yj.root","cent>=30","",false,false);
+   //balanceMetVsAj("nt_dj_mix100_Gen.root","cent>=30","",false,false);
+   balanceMetVsAj("../ntv2_dj_HyUQ80v3_djcalo_genp_100_50.root","cent>=30","",false,false);
    drawText("(a)",0.31,0.91);
    drawText("PYTHIA+HYDJET",0.33,0.82);
    drawText("30-100%",0.85,0.9);
    float ptx(0.32),pty(0.25);
    drawText("p_{T,1}  > 120GeV/c",ptx,pty);
    drawText("p_{T,2}  > 50GeV/c",ptx,pty-0.08);
-   drawText("#Delta#phi_{12}>  #frac{5}{6}#pi",ptx,pty-0.16);
+   drawText("#Delta#phi_{12}>  #frac{2}{3}#pi",ptx,pty-0.16);
    drawText("|#eta_{1,2}| < 1.6",ptx+0.16,pty-0.16);
    gPad->RedrawAxis();
    c1->cd(2);
-   balanceMetVsAj("nt_dj_mix100_Gen.root","cent<30","",true,false);
-   //balanceMetVsAj("nt_dj_mix100_Gen_yj.root","cent<30","",true,false);
+   //balanceMetVsAj("nt_dj_mix100_Gen.root","cent<30","",true,false);
+   balanceMetVsAj("../ntv2_dj_HyUQ80v3_djcalo_genp_100_50.root","cent<30","",true,false);
    drawText("0-30%",0.8,0.9);
    drawText("(b)",0.04,0.91);
    gPad->RedrawAxis();
 
    c1->cd(3);
-   balanceMetVsAj("nt_dj_data100_cor.root","cent>=30","",false);
+   //balanceMetVsAj("nt_dj_data100_cor.root","cent>=30","",false);
+   balanceMetVsAj("../ntv2_dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_djcalo_100_50.root","cent>=30","",false);
    drawText("CMS",0.33,0.90);
    drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
    drawText("#intL dt = 6.7 #mub^{-1}",0.33,0.78);
@@ -281,14 +282,15 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
    float pty1(0.4);
    drawText("p_{T,1}  > 120GeV/c",ptx,pty1);
    drawText("p_{T,2}  > 50GeV/c",ptx,pty1-0.07);
-   drawText("#Delta#phi_{1,2}>  #frac{5}{6}#pi",ptx,pty1-0.14);
+   drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty1-0.14);
    drawText("|#eta_{1,2}| < 1.6",ptx+0.16,pty1-0.14);
    drawText("(c)",0.31,0.95);
    gPad->RedrawAxis();
 
 
    c1->cd(4);
-   balanceMetVsAj("nt_dj_data100_cor.root","cent<30","",false);
+   //balanceMetVsAj("nt_dj_data100_cor.root","cent<30","",false);
+   balanceMetVsAj("../ntv2_dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_djcalo_100_50.root","cent<30","",false);
    drawText("0-30%",0.8,0.93);
    drawText("(d)",0.04,0.95);
    gPad->RedrawAxis();
