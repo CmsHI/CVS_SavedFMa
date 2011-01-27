@@ -541,7 +541,8 @@ void JetFragAna::Loop()
           double trackWeight=1;
           if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(ppt[i],peta[i],cent);
 	  //cout << "particle " << i << ": ch " << pch[i] << " pt: " << ppt[i] << " pndr: " << pndr[i] << endl;
-	  // Trk histograms
+	  // Dead forward pixel xcheck
+	  //if (peta[i]>2&&pphi[i]>-0.1&&pphi[i]<0.8) trackWeight=0;
 
 	  // met calculation
 	  Float_t pptx=cos(pndphi[i])*ppt[i]*trackWeight;
