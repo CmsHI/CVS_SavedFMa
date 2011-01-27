@@ -1,5 +1,5 @@
 #!/bin/bash -
-anaV=v19DeadForPix
+anaV=v19
 
 #for BkgSub in "EtaReflSingle" "EtaRefl" "None"; do
 for BkgSub in "EtaReflSingle"; do

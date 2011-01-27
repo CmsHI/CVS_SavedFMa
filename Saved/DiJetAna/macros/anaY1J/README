@@ -9,6 +9,9 @@ v16: dR bin widht = 0.08
 v17: reprocess with all genp (HyUQ80v4), generalize names
 v17J100: reprocess with leading jet Et>100
 v18: Back to J120. Use the jet corrected eta for particle-jet correlation. Cleaned up histograms. Added jet cone ntuple.
+v19: PF photon xcheck
+v20: new pt binning
+  * DeadForPix: exclude dead forward pixels for mc
 
 === nt Versions ===
 v0: First version with tcone (2011.01.08)
