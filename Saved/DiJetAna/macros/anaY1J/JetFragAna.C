@@ -67,7 +67,7 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    Double_t dRBins[numDRBins+1];
    for (int i=0;i<numDRBins+1;i++)   { dRBins[i] = 1.6/((double)numDRBins)*i; }
    const Int_t numPtBins = 6;
-   Double_t ptBins[numPtBins+1]={0.5,1.0,1.5,4,8,20,180}; // v10,11,12
+   Double_t ptBins[numPtBins+1]={0.5,1.0,2,4,8,20,180};
    // trk distribution
    const Int_t numPPtBins=18;
    Float_t pptBins[numPPtBins+1] = {0.0,0.2,1,2,3,4,6,8,10,14,18,22,26,30,40,50,60,70,80};
