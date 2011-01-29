@@ -59,13 +59,10 @@ enableDataFilter(process,"HI")
 #process.dijetAna_seq*=process.djcalokt4
 #process.dijetAna_seq*=process.djpfak5
 
-# For MB
-#for m in [process.djcalo,process.djcalo_tower]:
-#  m.nearJetPtMin = 40
-
 # First look at data
-process.djcalo.nearJetPtMin = 100
-process.djcalo_pfcand.nearJetPtMin = 100
+process.djcalo.nearJetPtMin = -1
+process.djcalo_pfcand.nearJetPtMin = -1
+process.djcalo_tower.nearJetPtMin = -1
 
 process.reco = cms.Path( process.eventSelection * process.dj_reco_extra )
 process.ana  = cms.Path( process.eventSelection * process.dijetAna_seq )
