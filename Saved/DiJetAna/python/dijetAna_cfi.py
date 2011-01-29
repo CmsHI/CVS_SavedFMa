@@ -78,7 +78,7 @@ djcalo_pfcand = djcalo.clone(
 # Analysis Sequences
 dijetAna_seq = cms.Sequence(
     djcalo *
-    #djcalo_tower *
+    djcalo_tower *
     djcalo_pfcand *
     #djgen_trk *
     djcalo_genp *
