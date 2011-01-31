@@ -135,6 +135,7 @@ void anaJetFrag(
   // Independent Jet Collection
   // ====================================================================
   jana.SetJetTree(1,"dj_data50v2_djcalo_100_50.root","djTree");
+  jana.jetTreeMode_=1;
 
   // Some Print out
   cout << "======================================================" << endl;

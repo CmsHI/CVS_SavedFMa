@@ -447,6 +447,11 @@ void JetFragAna::Loop()
    if (fChain == 0) return;
 
    Long64_t nentries = fChain->GetEntriesFast();
+   Long64_t jetTreeNEntries[10] = {0,jetTree_[1]->GetEntries(),0,0,0};
+   cout << "==============" << endl;
+   cout << " Begin Loop" << endl;
+   cout << "Tree: " << nentries << " jetTree: " << jetTreeNEntries[jetTreeMode_] << endl;
+   cout << "==============" << endl;
 
    // =====================================================
    // Initialize Counters
@@ -480,13 +485,12 @@ void JetFragAna::Loop()
   //=======================================================================================================================
    // Main Loop 
   //=======================================================================================================================
-   //for (Long64_t jentry=0; jentry<nentries;jentry++) {
-   for (Long64_t jentry=0; jentry<500;jentry++) {
+   for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (jentry%500==0) cout << "jentry: " << jentry << " " << jentry/float(nentries) << endl;
       if (ientry < 0) break;
       nb = GetEntry(jentry);   nbytes += nb;
-      GetJetEntry(jetTree_[1],vj_[1],jentry);
+      GetJetEntry(jetTree_[jetTreeMode_],vj_[jetTreeMode_],jentry%jetTreeNEntries[jetTreeMode_]);
       ++numTotEvt;
 
       // =====================================================
