@@ -88,6 +88,7 @@ void anaJetFrag(
   TString outName(Form("draw/jfh%s_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",AnaVersion.Data(),SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()));
   if (!doEvtSel) {
     outName=TString("nt_")+inFile0Name;
+    outName.ReplaceAll("dj_","");
     //outName.ReplaceAll(".root",Form("_offset%d.root",mixOffset));
   }
   cout << "Output: " << outName << endl;
@@ -134,8 +135,9 @@ void anaJetFrag(
   // ====================================================================
   // Independent Jet Collection
   // ====================================================================
+  jana.SetJetTree(0,inFile0Name,"djTree");
   jana.SetJetTree(1,"dj_data50v2_djcalo_100_50.root","djTree");
-  jana.jetTreeMode_=1;
+  jana.jetTreeMode_=0;
 
   // Some Print out
   cout << "======================================================" << endl;

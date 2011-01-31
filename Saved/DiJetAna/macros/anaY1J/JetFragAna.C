@@ -343,27 +343,6 @@ Int_t JetFragAna::GetEntry(Long64_t entry)
   if (result<0) return result;
   // Got Entry
   else {
-    anaJets_[0].SetCoordinates(nljet,nljeta,nljphi,0);
-    anaJets_[1].SetCoordinates(aljet,aljeta,aljphi,0);
-    if (doEtaCorr_) {
-      for (Int_t i=0;i<2;++i) {
-	if (anaJets_[i].pt()<0) continue;
-	Float_t etain = anaJets_[i].eta();
-	Float_t etaout = etain;
-	if(etain<-1.5)
-	  etaout = etain-jetaCorr_["ec1"]->Eval(etain);
-	else if(etain<-0.8)
-	  etaout = etain-jetaCorr_["ec2"]->Eval(etain);
-	else if(etain<0.9)
-	  etaout = etain-jetaCorr_["ec3"]->Eval(etain);
-	else if(etain<1.5)
-	  etaout = etain-jetaCorr_["ec4"]->Eval(etain);
-	else if(etain<2.5)
-	  etaout = etain-jetaCorr_["ec5"]->Eval(etain);
-	anaJets_[i].SetEta(etaout);
-	//cout << "entry: " << entry << " old eta: " << etain << "  new eta: " << etaout << " " << anaJets_[i] << endl;
-      }
-    }
     p_.clear();
     if (!doJetOnly_) {
       for (Int_t i=0; i<evtnp; ++i) {
@@ -447,7 +426,7 @@ void JetFragAna::Loop()
    if (fChain == 0) return;
 
    Long64_t nentries = fChain->GetEntriesFast();
-   Long64_t jetTreeNEntries[10] = {0,jetTree_[1]->GetEntries(),0,0,0};
+   Long64_t jetTreeNEntries[10] = {nentries,jetTree_[1]->GetEntries(),0,0,0};
    cout << "==============" << endl;
    cout << " Begin Loop" << endl;
    cout << "Tree: " << nentries << " jetTree: " << jetTreeNEntries[jetTreeMode_] << endl;
