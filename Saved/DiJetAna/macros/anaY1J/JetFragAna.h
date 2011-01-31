@@ -81,6 +81,7 @@ public :
    std::vector<math::PtEtaPhiMLorentzVector> refJets_;
    std::vector<math::PtEtaPhiMLorentzVector> p_;
    JetCone jc_;
+   Int_t mixOffset_;
 
    // Corrections
    std::map<TString,TF1*> jetaCorr_;

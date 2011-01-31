@@ -16,7 +16,8 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
   doJetOnly_(true),
   anaGenpType_(0),
   anaJets_(2),
-  refJets_(2)
+  refJets_(2),
+  mixOffset_(0)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -531,7 +532,7 @@ void JetFragAna::Loop()
 	// =====================================================
 	// Fill Particle Level Histograms
 	// =====================================================
-	GetEntry((jentry+1)%nentries);
+	GetEntry((jentry+mixOffset_)%nentries);
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
