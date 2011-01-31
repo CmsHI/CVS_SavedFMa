@@ -17,7 +17,9 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
   anaGenpType_(0),
   anaJets_(2),
   refJets_(2),
-  mixOffset_(0)
+  mixOffset_(0),
+  jetTreeMode_(0),
+  particleTreeMode_(0)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -372,6 +374,38 @@ Int_t JetFragAna::GetEntry(Long64_t entry)
   return result;
 }
 
+Int_t JetFragAna::GetJetEntry(TChain * t, AnaJet & jet, Long64_t entry)
+{
+  // Read contents of entry.
+  if (!t) return 0;
+  Int_t result = t->GetEntry(entry);
+  if (result<0) return result;
+  // Got Entry
+  else {
+    anaJets_[0].SetCoordinates(jet.nljet,jet.nljeta,jet.nljphi,0);
+    anaJets_[1].SetCoordinates(jet.aljet,jet.aljeta,jet.aljphi,0);
+    if (doEtaCorr_) {
+      for (Int_t i=0;i<2;++i) {
+	if (anaJets_[i].pt()<0) continue;
+	Float_t etain = anaJets_[i].eta();
+	Float_t etaout = etain;
+	if(etain<-1.5)
+	  etaout = etain-jetaCorr_["ec1"]->Eval(etain);
+	else if(etain<-0.8)
+	  etaout = etain-jetaCorr_["ec2"]->Eval(etain);
+	else if(etain<0.9)
+	  etaout = etain-jetaCorr_["ec3"]->Eval(etain);
+	else if(etain<1.5)
+	  etaout = etain-jetaCorr_["ec4"]->Eval(etain);
+	else if(etain<2.5)
+	  etaout = etain-jetaCorr_["ec5"]->Eval(etain);
+	anaJets_[i].SetEta(etaout);
+	//cout << "entry: " << entry << " old eta: " << etain << "  new eta: " << etaout << " " << anaJets_[i] << endl;
+      }
+    }
+  } // finished with entry
+  return result;
+}
 double JetFragAna::getEffFakeCorrection(double pt,double eta, double cent)
 {
    
@@ -446,11 +480,13 @@ void JetFragAna::Loop()
   //=======================================================================================================================
    // Main Loop 
   //=======================================================================================================================
-   for (Long64_t jentry=0; jentry<nentries;jentry++) {
+   //for (Long64_t jentry=0; jentry<nentries;jentry++) {
+   for (Long64_t jentry=0; jentry<500;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (jentry%500==0) cout << "jentry: " << jentry << " " << jentry/float(nentries) << endl;
       if (ientry < 0) break;
       nb = GetEntry(jentry);   nbytes += nb;
+      GetJetEntry(jetTree_[1],vj_[1],jentry);
       ++numTotEvt;
 
       // =====================================================
@@ -532,7 +568,7 @@ void JetFragAna::Loop()
 	// =====================================================
 	// Fill Particle Level Histograms
 	// =====================================================
-	GetEntry((jentry+mixOffset_)%nentries);
+	//GetEntry((jentry+mixOffset_)%nentries);
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
@@ -641,7 +677,7 @@ void JetFragAna::Loop()
 	    }
 	  }
 	} // end of particles loop
-	GetEntry(jentry);
+	//GetEntry(jentry);
 
 	// =====================================================
 	// Fill Cone Sums
@@ -736,4 +772,23 @@ void JetFragAna::Loop()
      hPtPDR[j]->Scale(1./(numJReWeighted_[j]));
      hPtPDRBg[j]->Scale(1./(numJReWeighted_[j]));
    }
+}
+
+//
+// Set 
+//
+void JetFragAna::SetJetTree(Int_t mode, TString tfile, TString tname)
+{
+  jetTreeMode_=mode;
+
+  // GetTree
+  jetTree_[mode] = new TChain(tname);
+  jetTree_[mode]->Add(tfile);
+  
+   jetTree_[mode]->SetBranchAddress("nljet",&vj_[mode].nljet);
+   jetTree_[mode]->SetBranchAddress("nljeta",&vj_[mode].nljeta);
+   jetTree_[mode]->SetBranchAddress("nljphi",&vj_[mode].nljphi);
+   jetTree_[mode]->SetBranchAddress("aljet",&vj_[mode].aljet);
+   jetTree_[mode]->SetBranchAddress("aljeta",&vj_[mode].aljeta);
+   jetTree_[mode]->SetBranchAddress("aljphi",&vj_[mode].aljphi);  
 }

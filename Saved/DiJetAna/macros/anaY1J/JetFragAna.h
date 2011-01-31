@@ -60,6 +60,10 @@ struct JetCone {
   }
 };
 
+struct AnaJet {
+  Float_t nljet,nljeta,nljphi,aljet,aljeta,aljphi;
+};
+
 class JetFragAna {
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
@@ -82,6 +86,9 @@ public :
    std::vector<math::PtEtaPhiMLorentzVector> p_;
    JetCone jc_;
    Int_t mixOffset_;
+   Int_t jetTreeMode_,particleTreeMode_;
+   TChain * jetTree_[10];
+   AnaJet vj_[10];
 
    // Corrections
    std::map<TString,TF1*> jetaCorr_;
@@ -256,6 +263,7 @@ public :
    ~JetFragAna();
    Int_t    Cut(Long64_t entry);
    Int_t    GetEntry(Long64_t entry);
+   Int_t    GetJetEntry(TChain * t, AnaJet & jet, Long64_t entry);
    Long64_t LoadTree(Long64_t entry);
    void	    Init(TTree *tree);
    void     Loop();
@@ -263,6 +271,7 @@ public :
    void     Show(Long64_t entry = -1);
    Bool_t   GetEvtMask();
    double   getEffFakeCorrection(double pt,double eta, double cent);
+   void	    SetJetTree(Int_t mode, TString tfile, TString tname);
 };
 
 #endif

@@ -37,8 +37,8 @@ void anaJetFrag(
     Double_t AwJEtMax = 500,
     Double_t TrkPtMin = 0.5, // 0.5 for paper
     TString evtBase="S1",
-    TString DJCutType = "Ana", // Ana
-    Int_t mixOffset=0)
+    TString DJCutType = "Ana") // Ana
+    //Int_t mixOffset=0)
 {
   // Load Class
   gROOT->ProcessLine(".L JetFragAna.C+");
@@ -88,7 +88,7 @@ void anaJetFrag(
   TString outName(Form("draw/jfh%s_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",AnaVersion.Data(),SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()));
   if (!doEvtSel) {
     outName=TString("nt_")+inFile0Name;
-    outName.ReplaceAll(".root",Form("_offset%d.root",mixOffset));
+    //outName.ReplaceAll(".root",Form("_offset%d.root",mixOffset));
   }
   cout << "Output: " << outName << endl;
   TFile * outf = new TFile(outName,"RECREATE");
@@ -129,7 +129,12 @@ void anaJetFrag(
   jana.trackingEtaBin_ = (TH1D*)hTrackingEff[0]->ProjectionX();
   jana.trackingPtBin_ = (TH1D*)hTrackingEff[0]->ProjectionY();
 
-  jana.mixOffset_ = mixOffset;
+  //jana.mixOffset_ = mixOffset;
+
+  // ====================================================================
+  // Independent Jet Collection
+  // ====================================================================
+  jana.SetJetTree(1,"dj_data50v2_djcalo_100_50.root","djTree");
 
   // Some Print out
   cout << "======================================================" << endl;
@@ -138,7 +143,7 @@ void anaJetFrag(
   cout << "  doEvtSel: " << jana.doEvtSel_ << " doCentReWt: " << jana.doCentralityReweighting_
     << " doEtaCorr: " << jana.doEtaCorr_ << " doTrkEffCorr: " << jana.doTrackingEffFakeCorr_
     << " anaGenpType: " << jana.anaGenpType_ << endl;
-  cout << "  mixOffset: " << jana.mixOffset_ << endl;
+  //cout << "  mixOffset: " << jana.mixOffset_ << endl;
 
   for (int i=0;i<5;i++) {
      jana.trackingEffCorr_[i] = hTrackingEff[i];
