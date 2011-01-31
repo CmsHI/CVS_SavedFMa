@@ -32,7 +32,7 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    // ===================================================
    // ntuples
    // ===================================================
-   ntjt = new TNtuple("ntjt","jet-trk nt","nljet:nljetacorr:aljet:aljetacorr:"
+   ntjt = new TNtuple("ntjt","jet-trk nt","nljet:nljetacorr:nljphi:aljet:aljetacorr:aljphi:"
                                           "metx:metx0:metx1:metx2:metx3:metx4:metx5:"
                                           "mety:mety0:mety1:mety2:mety3:mety4:mety5:"
                                           "metConex:metConex0:metConex1:metConex2:metConex3:metConex4:metConex5:"
@@ -531,6 +531,7 @@ void JetFragAna::Loop()
 	// =====================================================
 	// Fill Particle Level Histograms
 	// =====================================================
+	GetEntry((jentry+1)%nentries);
 	for (Int_t i=0; i<evtnp;++i) {
 	  // Trk Cut
 	  if (anaGenpType_==1 && pch[i]==0) continue;
@@ -639,6 +640,7 @@ void JetFragAna::Loop()
 	    }
 	  }
 	} // end of particles loop
+	GetEntry(jentry);
 
 	// =====================================================
 	// Fill Cone Sums
@@ -655,42 +657,44 @@ void JetFragAna::Loop()
 	// Fill Ntuple
 	// =====================================================
         Float_t var[100];
-        var[0]=anaJets_[0].pt();
-        var[1]=anaJets_[0].eta();
-        var[2]=anaJets_[1].pt();
-        var[3]=anaJets_[1].eta();
-        var[4]=metx;
-        var[5]=metx0;
-        var[6]=metx1;
-        var[7]=metx2;
-        var[8]=metx3;
-        var[9]=metx4;
-        var[10]=metx5;
-        var[11]=mety;
-        var[12]=mety0;
-        var[13]=mety1;
-        var[14]=mety2;
-        var[15]=mety3;
-        var[16]=mety4;
-        var[17]=mety5;
-        var[18]=metConex;
-        var[19]=metConex0;
-        var[20]=metConex1;
-        var[21]=metConex2;
-        var[22]=metConex3;
-        var[23]=metConex4;
-        var[24]=metConex5;
-        var[25]=metOutOfConex;
-        var[26]=metOutOfConex0;
-        var[27]=metOutOfConex1;
-        var[28]=metOutOfConex2;
-        var[29]=metOutOfConex3;
-        var[30]=metOutOfConex4;
-        var[31]=metOutOfConex5;
-        var[32]=GetEvtMask();
-        var[33]=cent;
-        var[34]=jdphi;
-        var[35]=weight;
+	var[0]=anaJets_[0].pt();
+	var[1]=anaJets_[0].eta();
+	var[2]=anaJets_[0].phi();
+	var[3]=anaJets_[1].pt();
+	var[4]=anaJets_[1].eta();
+	var[5]=anaJets_[1].phi();
+	var[6]=metx;
+	var[7]=metx0;
+	var[8]=metx1;
+	var[9]=metx2;
+	var[10]=metx3;
+	var[11]=metx4;
+	var[12]=metx5;
+	var[13]=mety;
+	var[14]=mety0;
+	var[15]=mety1;
+	var[16]=mety2;
+	var[17]=mety3;
+	var[18]=mety4;
+	var[19]=mety5;
+	var[20]=metConex;
+	var[21]=metConex0;
+	var[22]=metConex1;
+	var[23]=metConex2;
+	var[24]=metConex3;
+	var[25]=metConex4;
+	var[26]=metConex5;
+	var[27]=metOutOfConex;
+	var[28]=metOutOfConex0;
+	var[29]=metOutOfConex1;
+	var[30]=metOutOfConex2;
+	var[31]=metOutOfConex3;
+	var[32]=metOutOfConex4;
+	var[33]=metOutOfConex5;
+	var[34]=GetEvtMask();
+	var[35]=cent;
+	var[36]=jdphi;
+	var[37]=weight;
 	ntjt->Fill(var);    // fit ntuple
 
 	tcone->Fill();
