@@ -83,6 +83,7 @@ public :
    Float_t numDJReWeighted_;
    Float_t numJReWeighted_[2];
    std::vector<math::PtEtaPhiMLorentzVector> anaJets_;
+   Float_t anaJetDPhi_;
    std::vector<math::PtEtaPhiMLorentzVector> refJets_;
    std::vector<math::PtEtaPhiMLorentzVector> p_;
    JetCone jc_;
@@ -147,40 +148,12 @@ public :
    Int_t           npart;
    Int_t           ncoll;
    Float_t         cent;
-   Float_t         djmass;
-   Float_t         rdjmass;
-   Float_t         cmeta;
-   Int_t           nlrjid;
-   Int_t           nlrjstat;
-   Float_t         nlrjet;
-   Float_t         nlrjeta;
-   Float_t         nlrjphi;
-   Int_t           alrjid;
-   Int_t           alrjstat;
-   Float_t         alrjet;
-   Float_t         alrjeta;
-   Float_t         alrjphi;
-   Float_t         rjdphi;
    Float_t         nljet;
-   Float_t         nljrawet;
    Float_t         nljeta;
    Float_t         nljphi;
-   Float_t         nljarea;
    Float_t         aljet;
-   Float_t         aljrawet;
    Float_t         aljeta;
    Float_t         aljphi;
-   Float_t         aljarea;
-   Float_t         nljemf;
-   Int_t           nljN90hits;
-   Float_t         nljfhpd;
-   Float_t         aljemf;
-   Int_t           aljN90hits;
-   Float_t         aljfhpd;
-   Float_t         jdphi;
-   Int_t           numJec;
-   Float_t         njec[15];   //[numJec]
-   Float_t         ajec[15];   //[numJec]
    Int_t           evtnp;
    Int_t           psube[MAXTRK];   //[evtnp]
    Float_t         ppt[MAXTRK];   //[evtnp]
@@ -188,12 +161,6 @@ public :
    Float_t         pphi[MAXTRK];   //[evtnp]
    Int_t	   pch[MAXTRK];
    Int_t	   ppid[MAXTRK];
-   Float_t         pndphi[MAXTRK];   //[evtnp]
-   Float_t         pndr[MAXTRK];   //[evtnp]
-   Float_t         pndrbg[MAXTRK];   //[evtnp]
-   Float_t         padphi[MAXTRK];   //[evtnp]
-   Float_t         padr[MAXTRK];   //[evtnp]
-   Float_t         padrbg[MAXTRK];   //[evtnp]
    Int_t	   pfid[MAXTRK];
 
    // List of branches
@@ -212,40 +179,12 @@ public :
    TBranch        *b_npart;   //!
    TBranch        *b_ncoll;   //!
    TBranch        *b_cent;   //!
-   TBranch        *b_djmass;   //!
-   TBranch        *b_rdjmass;   //!
-   TBranch        *b_cmeta;   //!
-   TBranch        *b_nlrjid;   //!
-   TBranch        *b_nlrjstat;   //!
-   TBranch        *b_nlrjet;   //!
-   TBranch        *b_nlrjeta;   //!
-   TBranch        *b_nlrjphi;   //!
-   TBranch        *b_alrjid;   //!
-   TBranch        *b_alrjstat;   //!
-   TBranch        *b_alrjet;   //!
-   TBranch        *b_alrjeta;   //!
-   TBranch        *b_alrjphi;   //!
-   TBranch        *b_rjdphi;   //!
    TBranch        *b_nljet;   //!
-   TBranch        *b_nljrawet;   //!
    TBranch        *b_nljeta;   //!
    TBranch        *b_nljphi;   //!
-   TBranch        *b_nljarea;   //!
    TBranch        *b_aljet;   //!
-   TBranch        *b_aljrawet;   //!
    TBranch        *b_aljeta;   //!
    TBranch        *b_aljphi;   //!
-   TBranch        *b_aljarea;   //!
-   TBranch        *b_nljemf;   //!
-   TBranch        *b_nljN90hits;   //!
-   TBranch        *b_nljfhpd;   //!
-   TBranch        *b_aljemf;   //!
-   TBranch        *b_aljN90hits;   //!
-   TBranch        *b_aljfhpd;   //!
-   TBranch        *b_jdphi;   //!
-   TBranch        *b_numJec;   //!
-   TBranch        *b_njec;   //!
-   TBranch        *b_ajec;   //!
    TBranch        *b_evtnp;   //!
    TBranch        *b_psube;   //!
    TBranch        *b_ppt;   //!
@@ -253,13 +192,6 @@ public :
    TBranch        *b_pphi;   //!
    TBranch        *b_pch;   //!
    TBranch        *b_ppid;   //!
-   TBranch        *b_pndphi;   //!
-   TBranch        *b_pndr;   //!
-   TBranch        *b_pndrbg;   //!
-   TBranch        *b_padphi;   //!
-   TBranch        *b_padr;   //!
-   TBranch        *b_padrbg;   //!
-   TBranch        *b__;   //!
    TBranch        *b_pfid;   //!
 
    JetFragAna(TTree *tree=0,TString tag="Data",Int_t doMC=0);

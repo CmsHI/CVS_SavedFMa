@@ -180,40 +180,12 @@ void JetFragAna::Init(TTree *tree)
    fChain->SetBranchAddress("npart", &npart, &b_npart);
    fChain->SetBranchAddress("ncoll", &ncoll, &b_ncoll);
    fChain->SetBranchAddress("cent", &cent, &b_cent);
-   fChain->SetBranchAddress("djmass", &djmass, &b_djmass);
-   fChain->SetBranchAddress("rdjmass", &rdjmass, &b_rdjmass);
-   fChain->SetBranchAddress("cmeta", &cmeta, &b_cmeta);
-   fChain->SetBranchAddress("nlrjid", &nlrjid, &b_nlrjid);
-   fChain->SetBranchAddress("nlrjstat", &nlrjstat, &b_nlrjstat);
-   fChain->SetBranchAddress("nlrjet", &nlrjet, &b_nlrjet);
-   fChain->SetBranchAddress("nlrjeta", &nlrjeta, &b_nlrjeta);
-   fChain->SetBranchAddress("nlrjphi", &nlrjphi, &b_nlrjphi);
-   fChain->SetBranchAddress("alrjid", &alrjid, &b_alrjid);
-   fChain->SetBranchAddress("alrjstat", &alrjstat, &b_alrjstat);
-   fChain->SetBranchAddress("alrjet", &alrjet, &b_alrjet);
-   fChain->SetBranchAddress("alrjeta", &alrjeta, &b_alrjeta);
-   fChain->SetBranchAddress("alrjphi", &alrjphi, &b_alrjphi);
-   fChain->SetBranchAddress("rjdphi", &rjdphi, &b_rjdphi);
    fChain->SetBranchAddress("nljet", &nljet, &b_nljet);
-   fChain->SetBranchAddress("nljrawet", &nljrawet, &b_nljrawet);
    fChain->SetBranchAddress("nljeta", &nljeta, &b_nljeta);
    fChain->SetBranchAddress("nljphi", &nljphi, &b_nljphi);
-   fChain->SetBranchAddress("nljarea", &nljarea, &b_nljarea);
    fChain->SetBranchAddress("aljet", &aljet, &b_aljet);
-   fChain->SetBranchAddress("aljrawet", &aljrawet, &b_aljrawet);
    fChain->SetBranchAddress("aljeta", &aljeta, &b_aljeta);
    fChain->SetBranchAddress("aljphi", &aljphi, &b_aljphi);
-   fChain->SetBranchAddress("aljarea", &aljarea, &b_aljarea);
-   fChain->SetBranchAddress("nljemf", &nljemf, &b_nljemf);
-   fChain->SetBranchAddress("nljN90hits", &nljN90hits, &b_nljN90hits);
-   fChain->SetBranchAddress("nljfhpd", &nljfhpd, &b_nljfhpd);
-   fChain->SetBranchAddress("aljemf", &aljemf, &b_aljemf);
-   fChain->SetBranchAddress("aljN90hits", &aljN90hits, &b_aljN90hits);
-   fChain->SetBranchAddress("aljfhpd", &aljfhpd, &b_aljfhpd);
-   fChain->SetBranchAddress("jdphi", &jdphi, &b_jdphi);
-   fChain->SetBranchAddress("numJec", &numJec, &b_numJec);
-   fChain->SetBranchAddress("njec", njec, &b_njec);
-   fChain->SetBranchAddress("ajec", ajec, &b_ajec);
    fChain->SetBranchAddress("evtnp", &evtnp, &b_evtnp);
    fChain->SetBranchAddress("psube", psube, &b_psube);
    fChain->SetBranchAddress("ppt", ppt, &b_ppt);
@@ -221,12 +193,6 @@ void JetFragAna::Init(TTree *tree)
    fChain->SetBranchAddress("pphi", pphi, &b_pphi);
    fChain->SetBranchAddress("pch", pch, &b_pch);
    fChain->SetBranchAddress("ppid", ppid, &b_ppid);
-   fChain->SetBranchAddress("pndphi", pndphi, &b_pndphi);
-   fChain->SetBranchAddress("pndr", pndr, &b_pndr);
-   fChain->SetBranchAddress("pndrbg", pndrbg, &b_pndrbg);
-   fChain->SetBranchAddress("padphi", padphi, &b_padphi);
-   fChain->SetBranchAddress("padr", padr, &b_padr);
-   fChain->SetBranchAddress("padrbg", padrbg, &b_padrbg);
    if (cut.Name.Contains("PF")) {
      fChain->SetBranchAddress("pfid", pfid, &b_pfid);
    }
@@ -329,7 +295,7 @@ Int_t JetFragAna::Cut(Long64_t entry)
   if (cut.DJCutType=="Ana") {
     if (anaJets_[0].pt()>=cut.NrJEtMin && anaJets_[0].pt()<cut.NrJEtMax && fabs(anaJets_[0].eta())<cut.NrJEtaMax &&
 	anaJets_[1].pt()>=cut.AwJEtMin && anaJets_[1].pt()<cut.AwJEtMax && fabs(anaJets_[1].eta())<cut.AwJEtaMax &&
-	jdphi>cut.DjDPhiMin
+	anaJetDPhi_>cut.DjDPhiMin
        )
       result=1;
   }
@@ -384,9 +350,9 @@ Int_t JetFragAna::GetJetEntry(TChain * t, AnaJet & jet, Long64_t entry)
 	//cout << "entry: " << entry << " old eta: " << etain << "  new eta: " << etaout << " " << anaJets_[i] << endl;
       }
     }
-    //for (Int_t i=0;i<2;++i) {
-    //  anaJets_[i].SetPhi(r3->Rndm()*TMath::TwoPi()-TMath::Pi());
-    //}
+    anaJetDPhi_ = reco::deltaPhi(anaJets_[0].phi(),anaJets_[1].phi());
+    //anaJets_[0].SetPhi(r3->Rndm()*TMath::TwoPi()-TMath::Pi());
+    //anaJets_[1].SetPhi(anaJets_[0].phi()+(anaJets_[1].phi()-anaJets_[0].phi()));
   } // finished with entry
   return result;
 }
@@ -530,7 +496,7 @@ void JetFragAna::Loop()
 	// =====================================================
 	// Fill Event Level Histograms
 	// =====================================================
-	hJDPhi->Fill(jdphi,weight);
+	hJDPhi->Fill(anaJetDPhi_,weight);
 	hAj->Fill((anaJets_[0].pt()-anaJets_[1].pt())/(anaJets_[0].pt()+anaJets_[1].pt()),weight);
 	hJDEta->Fill(anaJets_[1].eta()-anaJets_[0].eta(),weight);
 	hCentReWeighted->Fill(cent,weight);
@@ -731,7 +697,7 @@ void JetFragAna::Loop()
 	var[33]=metOutOfConex5;
 	var[34]=GetEvtMask();
 	var[35]=cent;
-	var[36]=jdphi;
+	var[36]=anaJetDPhi_;
 	var[37]=weight;
 	ntjt->Fill(var);    // fit ntuple
 
