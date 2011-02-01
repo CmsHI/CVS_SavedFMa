@@ -70,6 +70,10 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
      cout << "Alias: " << mergedPt[i] << " target: " << target[i] << endl;
      t->SetAlias(mergedPt[i],target[i]);
    }
+   //TString name2(infname);
+   //name2.ReplaceAll("ntv2deadforpix_","");
+   //name2.ReplaceAll("ntv2_","");
+   //t->AddFriend("dj=djTree",name2);
 
    // ===========================================================
    // Analysis Setup
@@ -254,7 +258,9 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
         double x = pall->GetBinCenter(i+1);
         double y = pall->GetBinContent(i+1);
         // Quote the difference between GEN and RECO in >8 Bin (20%) before adjusting eff as systematics
-        double err = fabs(pe[nBin-1]->GetBinContent(i+1)*0.2);
+        double errReco = -pe[nBin-1]->GetBinContent(i+1)*0.2;
+	double errBck = 3.0; // compare HYDJET+SIG to SIG
+	double err = sqrt(errReco*errReco+errBck*errBck);
         DrawTick(y,err,err,x,1,0.02,1);
       }
    }
@@ -293,8 +299,7 @@ void MetPlotInConeOutConeDPhiCut(char *inputFile="data.root")
    Float_t leftMargin=0.28,bottomMargin=0.18;
    makeMultiPanelCanvas(c1,2,2,0.0,0.0,leftMargin,bottomMargin,0.02);
    c1->cd(1);
-   //balanceMetVsAj("nt_dj_mix100_Gen.root","cent<30","metConex",false,false);
-   balanceMetVsAj("../ntv2_dj_HyUQ80v3_djcalo_genp_100_50.root","cent<30","metConex",false,false);
+   balanceMetVsAj("../ntv5_HyUQ80v3_djcalo_genp_100_50.root","cent<30","metConex",false,false);
    drawText("PYTHIA+HYDJET 0-30%",0.33,0.82);
    drawText("In-Cone",0.85,0.9);
    drawText("#DeltaR<0.8",0.85,0.9-0.06);
@@ -306,16 +311,16 @@ void MetPlotInConeOutConeDPhiCut(char *inputFile="data.root")
    drawText("(a)",0.31,0.91);
    
    c1->cd(2);
-   //balanceMetVsAj("nt_dj_mix100_Gen.root","cent<30","metOutOfConex",true,false);
-   balanceMetVsAj("../ntv2_dj_HyUQ80v3_djcalo_genp_100_50.root","cent<30","metOutOfConex",true,false);
+   balanceMetVsAj("../ntv5_HyUQ80v3_djcalo_genp_100_50.root","cent<30","metOutOfConex",true,false);
    drawText("Out-of-Cone",0.7,0.9);
    drawText("#DeltaR#geq0.8",0.7,0.9-0.06);
    drawText("(b)",0.04,0.91);
 
    c1->cd(3);
-   //balanceMetVsAj("nt_dj_data100_cor.root","cent<30","metConex",false);
-   balanceMetVsAj("../ntv2_dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_djcalo_100_50.root","cent<30","metConex",false);
-   drawText("CMS 0-30%",0.33,0.90);
+   TCut phiSysCut;
+   //phiSysCut = "dj.nljphi>0.45-TMath::PiOver2()&&dj.nljphi<0.45+TMath::PiOver2()";
+   balanceMetVsAj("../ntv5_data50v2_djcalo_100_50.root","cent<30","metConex",false);
+   drawText("CMS 0-30% (Away Dead Pix Hemi)",0.33,0.90);
    drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
    drawText("#intL dt = 6.7 #mub^{-1}",0.33,0.78);
    drawText("In-Cone",0.85,0.93);
@@ -328,12 +333,10 @@ void MetPlotInConeOutConeDPhiCut(char *inputFile="data.root")
    drawText("(c)",0.31,0.95);
 
    c1->cd(4);
-   //balanceMetVsAj("nt_dj_data100_cor.root","cent<30","metOutOfConex",false);
-   balanceMetVsAj("../ntv2_dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_djcalo_100_50.root","cent<30","metOutOfConex",false);
+   balanceMetVsAj("../ntv5_data50v2_djcalo_100_50.root","cent<30","metOutOfConex",false);
    drawText("Out-of-Cone",0.7,0.93);
    drawText("#DeltaR#geq0.8",0.7,0.93-0.06);
    drawText("(d)",0.04,0.95);
    
    c1->SaveAs("missingPtParallel-Corrected-data-InConeOutConeDPhiCut.eps");
-   c1->SaveAs("missingPtParallel-Corrected-data-InConeOutConeDPhiCut.gif");
 }
