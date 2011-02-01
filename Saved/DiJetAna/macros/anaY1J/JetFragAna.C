@@ -121,6 +121,9 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
      hCPPtBgSub[j] = new TH1D("h"+label[j]+"CPPtBgSub","",numPPtBins,pptBins);
      hCPPtBgSub[j]->Sumw2();
    }
+
+   // Random Number
+   r3 = new TRandom3(1);
 }
 
 JetFragAna::~JetFragAna()
@@ -382,6 +385,9 @@ Int_t JetFragAna::GetJetEntry(TChain * t, AnaJet & jet, Long64_t entry)
 	//cout << "entry: " << entry << " old eta: " << etain << "  new eta: " << etaout << " " << anaJets_[i] << endl;
       }
     }
+    //for (Int_t i=0;i<2;++i) {
+    //  anaJets_[i].SetPhi(r3->Rndm()*TMath::TwoPi()-TMath::Pi());
+    //}
   } // finished with entry
   return result;
 }
@@ -553,59 +559,31 @@ void JetFragAna::Loop()
 	// =====================================================
 	//GetEntry((jentry+mixOffset_)%nentries);
 	for (Int_t i=0; i<evtnp;++i) {
+	  // ------------------------
 	  // Trk Cut
+	  // ------------------------
 	  if (anaGenpType_==1 && pch[i]==0) continue;
 	  if (anaGenpType_==10 && (psube[i]>0 || pch[i]==0)) continue;
 	  if (cut.Name.Contains("PFChHad") && pfid[i]!=1) continue;
 	  if (cut.Name.Contains("PFPhoton") && pfid[i]!=4) continue;
 	  if (ppt[i]<cut.TrkPtMin||fabs(peta[i])>=2.4) continue;
+	  // ------------------------
+	  // Track Efficiency/Fake Correction
+	  // ------------------------
           double trackWeight=1;
           if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(ppt[i],peta[i],cent);
-	  //cout << "particle " << i << ": ch " << pch[i] << " pt: " << ppt[i] << " pndr: " << pndr[i] << endl;
 	  // Dead forward pixel xcheck
 	  //if (peta[i]>2&&pphi[i]>-0.1&&pphi[i]<0.8) trackWeight=0;
 
-	  // met calculation
-	  Float_t pptx=cos(pndphi[i])*ppt[i]*trackWeight;
-	  metx+=pptx;
-	  Float_t ppty=sin(pndphi[i])*ppt[i]*trackWeight;
-	  mety+=ppty;
-          if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex+=pptx; else metOutOfConex+=pptx;
-	  //for (int i=0;i<hPt->GetNbinsX()+2;++i) cout << "Bin " << i << " ledge: " << hPt->GetBinLowEdge(i) << endl;
-	  if (ppt[i]>=hPt->GetBinLowEdge(1)&&ppt[i]<hPt->GetBinLowEdge(2)) {
-            metx0+=pptx;
-            mety0+=ppty;
-            if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex0+=pptx; else metOutOfConex0+=pptx;
-          } else if (ppt[i]>=hPt->GetBinLowEdge(2)&&ppt[i]<hPt->GetBinLowEdge(3)) {
-            metx1+=pptx;
-            mety1+=ppty;
-            if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex1+=pptx; else metOutOfConex1+=pptx;
-          } else if (ppt[i]>=hPt->GetBinLowEdge(3)&&ppt[i]<hPt->GetBinLowEdge(4)) {
-            metx2+=pptx;
-            mety2+=ppty;
-            if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex2+=pptx; else metOutOfConex2+=pptx;
-          } else if (ppt[i]>=hPt->GetBinLowEdge(4)&&ppt[i]<hPt->GetBinLowEdge(5)) {
-            metx3+=pptx;
-            mety3+=ppty;
-            if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex3+=pptx; else metOutOfConex3+=pptx;
-          } else if (ppt[i]>=hPt->GetBinLowEdge(5)&&ppt[i]<hPt->GetBinLowEdge(6)) { 
-            metx4+=pptx;
-            mety4+=ppty;
-            if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex4+=pptx; else metOutOfConex4+=pptx;
-          } else if (ppt[i]>=hPt->GetBinLowEdge(6)&&ppt[i]<hPt->GetBinLowEdge(7)) { 
-            metx5+=pptx;
-            mety5+=ppty;
-            if (fabs(pndr[i])<0.8||fabs(padr[i])<0.8) metConex5+=pptx; else metOutOfConex5+=pptx;
-          }
-
-	  // =====================================================
-	  // Calculate Cone Sums
-	  // =====================================================
-	  // particle jet correlation
+	  // ------------------------
+	  // calculate particle jet correlations
+	  // ------------------------
+	  Double_t pdphi[2]={ 9999,9999 };
 	  Double_t pdr[2]={ 9999,9999 };
 	  Double_t pdrbg[2]={ 9999,9999 };
 	  for (Int_t j=0; j<2; ++j) {
 	    // signal
+	    pdphi[j] = reco::deltaPhi(p_[i].phi(),anaJets_[j].phi());
 	    pdr[j] = reco::deltaR(p_[i].eta(),p_[i].phi(),anaJets_[j].eta(),anaJets_[j].phi());
 	    // bcksub
 	    // * If don't do event selection, make eta reflection the default bkg axis
@@ -615,6 +593,44 @@ void JetFragAna::Loop()
 	  }
 
 	  Float_t trkEnergy=p_[i].pt();
+	  // ------------------------
+	  // met calculation
+	  // ------------------------
+	  Float_t pptx=cos(pdphi[0])*trkEnergy*trackWeight;
+	  metx+=pptx;
+	  Float_t ppty=sin(pdphi[0])*trkEnergy*trackWeight;
+	  mety+=ppty;
+          if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex+=pptx; else metOutOfConex+=pptx;
+	  //for (int i=0;i<hPt->GetNbinsX()+2;++i) cout << "Bin " << i << " ledge: " << hPt->GetBinLowEdge(i) << endl;
+	  if (trkEnergy>=hPt->GetBinLowEdge(1)&&trkEnergy<hPt->GetBinLowEdge(2)) {
+            metx0+=pptx;
+            mety0+=ppty;
+            if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex0+=pptx; else metOutOfConex0+=pptx;
+          } else if (trkEnergy>=hPt->GetBinLowEdge(2)&&trkEnergy<hPt->GetBinLowEdge(3)) {
+            metx1+=pptx;
+            mety1+=ppty;
+            if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex1+=pptx; else metOutOfConex1+=pptx;
+          } else if (trkEnergy>=hPt->GetBinLowEdge(3)&&trkEnergy<hPt->GetBinLowEdge(4)) {
+            metx2+=pptx;
+            mety2+=ppty;
+            if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex2+=pptx; else metOutOfConex2+=pptx;
+          } else if (trkEnergy>=hPt->GetBinLowEdge(4)&&trkEnergy<hPt->GetBinLowEdge(5)) {
+            metx3+=pptx;
+            mety3+=ppty;
+            if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex3+=pptx; else metOutOfConex3+=pptx;
+          } else if (trkEnergy>=hPt->GetBinLowEdge(5)&&trkEnergy<hPt->GetBinLowEdge(6)) { 
+            metx4+=pptx;
+            mety4+=ppty;
+            if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex4+=pptx; else metOutOfConex4+=pptx;
+          } else if (trkEnergy>=hPt->GetBinLowEdge(6)&&trkEnergy<hPt->GetBinLowEdge(7)) { 
+            metx5+=pptx;
+            mety5+=ppty;
+            if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex5+=pptx; else metOutOfConex5+=pptx;
+          }
+
+	  // =====================================================
+	  // Calculate Cone Sums
+	  // =====================================================
 	  // cone sum
 	  for (Int_t j=0; j<2; ++j) {
 	    for (Int_t b=0; b<numPtBins; ++b) {

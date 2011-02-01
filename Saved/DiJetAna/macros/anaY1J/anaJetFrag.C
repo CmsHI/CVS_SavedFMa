@@ -136,7 +136,7 @@ void anaJetFrag(
   // Independent Jet Collection
   // ====================================================================
   jana.SetJetTree(0,inFile0Name,"djTree");
-  jana.SetJetTree(1,"dj_data50v2_djcalo_100_50.root","djTree");
+  jana.SetJetTree(1,"dj_data50v2_djcalo_100_50_c0to30.root","djTree");
   jana.jetTreeMode_=0;
 
   // Some Print out

@@ -19,6 +19,7 @@
 #include "TH2.h"
 #include "TNtuple.h"
 //#include "TF1.h"
+#include "TRandom3.h"
 #include "selectionCut.h"
 const Float_t PI = 3.1415926535897932384626;
 const Float_t HPI = PI/2.;
@@ -89,6 +90,7 @@ public :
    Int_t jetTreeMode_,particleTreeMode_;
    TChain * jetTree_[10];
    AnaJet vj_[10];
+   TRandom * r3;
 
    // Corrections
    std::map<TString,TF1*> jetaCorr_;
