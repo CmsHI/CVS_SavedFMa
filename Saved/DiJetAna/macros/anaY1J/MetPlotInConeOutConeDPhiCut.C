@@ -320,7 +320,7 @@ void MetPlotInConeOutConeDPhiCut(char *inputFile="data.root")
    TCut phiSysCut;
    //phiSysCut = "dj.nljphi>0.45-TMath::PiOver2()&&dj.nljphi<0.45+TMath::PiOver2()";
    balanceMetVsAj("../ntv5_data50v2_djcalo_100_50.root","cent<30","metConex",false);
-   drawText("CMS 0-30% (Away Dead Pix Hemi)",0.33,0.90);
+   drawText("CMS 0-30%",0.33,0.90);
    drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
    drawText("#intL dt = 6.7 #mub^{-1}",0.33,0.78);
    drawText("In-Cone",0.85,0.93);
