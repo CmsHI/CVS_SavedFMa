@@ -120,6 +120,7 @@ public :
    TH1D * hCPtBg[2];
    TH1D * hCPtBgSub[2];
    // trk
+   TH1D * hPJDPhi[2];
    TH1D * hCPPt[2];
    TH1D * hCPPtBg[2];
    TH1D * hCPPtBgSub[2];

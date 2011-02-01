@@ -114,6 +114,8 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
      hCPtBgSub[j] = new TH1D("h"+label[j]+"CPtBgSub","",cut.numJEtBins*2,-1*cut.hisJEtMax,cut.hisJEtMax);
      hCPtBgSub[j]->Sumw2();
      // trk
+     hPJDPhi[j] = new TH1D("h"+label[j]+"PJDPhi","",40,-TMath::Pi(),TMath::Pi());
+     hPJDPhi[j]->Sumw2();
      hCPPt[j] = new TH1D("h"+label[j]+"CPPt","",numPPtBins,pptBins);
      hCPPt[j]->Sumw2();
      hCPPtBg[j] = new TH1D("h"+label[j]+"CPPtBg","",numPPtBins,pptBins);
@@ -123,7 +125,7 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    }
 
    // Random Number
-   r3 = new TRandom3(1);
+   r3 = new TRandom3(21);
 }
 
 JetFragAna::~JetFragAna()
@@ -460,7 +462,7 @@ void JetFragAna::Loop()
    // Centrality ReWeighting
    // =====================================================
    TH1D *hCent = new TH1D("hCent","",40,0,100);
-   fChain->Project("hCent","cent",evtCut);
+   fChain->Project("hCent","cent",""); // no evt sel, assume centrality distribution of bkg is independent of the signal
    hCent->Scale(1./hCent->GetEntries());   
    // Centrality Weight
    hCentralityWeight_->Divide(hCentralityData_,hCent);
@@ -590,6 +592,8 @@ void JetFragAna::Loop()
 	    if (cut.BkgSubType.Contains("EtaRefl"||!doEvtSel_)) {
 	      pdrbg[j] = reco::deltaR(p_[i].eta(),p_[i].phi(),-1*anaJets_[j].eta(),anaJets_[j].phi());
 	    }
+	    // monitor histograms
+	    hPJDPhi[j]->Fill(pdphi[j],trackWeight);
 	  }
 
 	  Float_t trkEnergy=p_[i].pt();
