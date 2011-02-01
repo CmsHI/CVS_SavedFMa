@@ -48,12 +48,14 @@ export castorFrank=/castor/cern.ch/user/f/frankma/data
 
 #---My shortcuts---
 alias ema='emacs -nw'
+alias gm='gvim'
 alias xterm='xterm -fg green -bg black'
 alias cvsdhead='cvs diff -rHEAD'
 alias l='ls --color=auto'
 alias ll='ls -ltr --color=auto'
 alias la='ls -a --color=auto'
 alias rm='rm -i'
+alias mv='mv -i'
 #--my universal CMSSW shortcuts--
 #alias cvscms=". $SavedFMa/bin/cvsinit.sh"
 # --clusters--
