@@ -123,9 +123,6 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
      hCPPtBgSub[j] = new TH1D("h"+label[j]+"CPPtBgSub","",numPPtBins,pptBins);
      hCPPtBgSub[j]->Sumw2();
    }
-
-   // Random Number
-   r3 = new TRandom3(21);
 }
 
 JetFragAna::~JetFragAna()
@@ -439,6 +436,9 @@ void JetFragAna::Loop()
    cout << " Begin Loop" << endl;
    cout << "Tree: " << nentries << " jetTree: " << jetTreeNEntries[jetTreeMode_] << endl;
    cout << "==============" << endl;
+
+   // Random Number
+   r3 = new TRandom3(mixOffset_);
 
    // =====================================================
    // Initialize Counters
