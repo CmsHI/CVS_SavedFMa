@@ -477,7 +477,7 @@ void JetFragAna::Loop()
       if (jentry%500==0) cout << "jentry: " << jentry << " " << jentry/float(nentries) << endl;
       if (ientry < 0) break;
       nb = GetEntry(jentry);   nbytes += nb;
-      GetJetEntry(jetTree_[jetTreeMode_],vj_[jetTreeMode_],jentry%jetTreeNEntries[jetTreeMode_]);
+      GetJetEntry(jetTree_[jetTreeMode_],vj_[jetTreeMode_],(jentry+mixOffset_)%jetTreeNEntries[jetTreeMode_]);
       ++numTotEvt;
 
       // =====================================================
@@ -559,7 +559,6 @@ void JetFragAna::Loop()
 	// =====================================================
 	// Fill Particle Level Histograms
 	// =====================================================
-	//GetEntry((jentry+mixOffset_)%nentries);
 	for (Int_t i=0; i<evtnp;++i) {
 	  // ------------------------
 	  // Trk Cut
@@ -680,7 +679,6 @@ void JetFragAna::Loop()
 	    }
 	  }
 	} // end of particles loop
-	//GetEntry(jentry);
 
 	// =====================================================
 	// Fill Cone Sums
