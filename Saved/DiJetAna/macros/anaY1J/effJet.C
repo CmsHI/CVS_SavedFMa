@@ -12,7 +12,7 @@
 #include <iostream>
 using namespace std;
 
-#include "Saved/DiJetAna/macros/aliases_dijet.C"
+#include "aliases_dijet.C"
 #include "Saved/DiJetAna/macros/commonUtility.h"
 #include "Saved/Utilities/macros/graph/tgraphTools.C"
 
@@ -156,7 +156,7 @@ TChain * effJet(bool doMC=0,
     t->SetFillStyle(0);
     t->SetTextSize(0.05);
     t->AddEntry(g0,"Leading Jet","pl");
-    t->AddEntry(g1,"SubLeading Jet","pl");
+    t->AddEntry(g1,"Subleading Jet","pl");
     t->Draw();
   }
 
