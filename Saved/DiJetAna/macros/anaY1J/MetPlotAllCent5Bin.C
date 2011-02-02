@@ -260,7 +260,7 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
    Float_t leftMargin=0.28,bottomMargin=0.18;
    makeMultiPanelCanvas(c1,2,2,0.0,0.0,leftMargin,bottomMargin,0.02);
    c1->cd(1);
-   balanceMetVsAj("../ntv5_HyUQ80v3_djcalo_genp_100_50.root","cent>=30","",false,false);
+   balanceMetVsAj("../ntv6_HyUQ80v3_djcalo_genp_100_50.root","cent>=30","",false,false);
    drawText("(a)",0.31,0.91);
    drawText("PYTHIA+HYDJET",0.33,0.82);
    drawText("30-100%",0.85,0.9);
@@ -271,7 +271,7 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
    drawText("|#eta_{1,2}| < 1.6",ptx+0.16,pty-0.16);
    gPad->RedrawAxis();
    c1->cd(2);
-   balanceMetVsAj("../ntv5_HyUQ80v3_djcalo_genp_100_50.root","cent<30","",true,false);
+   balanceMetVsAj("../ntv6_HyUQ80v3_djcalo_genp_100_50.root","cent<30","",true,false);
    drawText("0-30%",0.8,0.9);
    drawText("(b)",0.04,0.91);
    gPad->RedrawAxis();
@@ -279,7 +279,7 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
    c1->cd(3);
    TCut phiSysCut;
    //phiSysCut = "nljphi>0.45-TMath::PiOver2()&&nljphi<0.45+TMath::PiOver2()";
-   balanceMetVsAj("../ntv5_data50v2_djcalo_100_50.root","cent>=30","",false);
+   balanceMetVsAj("../ntv6_data50v2_djcalo_100_50.root","cent>=30","",false);
    drawText("CMS",0.33,0.90);
    drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
    drawText("#intL dt = 6.7 #mub^{-1}",0.33,0.78);
@@ -294,7 +294,7 @@ void MetPlotAllCent5Bin(char *inputFile="data.root")
 
 
    c1->cd(4);
-   balanceMetVsAj("../ntv5_data50v2_djcalo_100_50.root","cent<30","",false);
+   balanceMetVsAj("../ntv6_data50v2_djcalo_100_50.root","cent<30","",false);
    drawText("0-30%",0.8,0.93);
    drawText("(d)",0.04,0.95);
    gPad->RedrawAxis();
