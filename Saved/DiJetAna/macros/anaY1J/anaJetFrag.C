@@ -137,7 +137,7 @@ void anaJetFrag(
   // ====================================================================
   jana.SetJetTree(0,inFile0Name,"djTree");
   jana.SetJetTree(1,"dj_data50v2_djcalo_100_50_c0to30.root","djTree");
-  jana.jetTreeMode_=1; // 0 for final analysis, 1 for inputsample_trk+data50_jet mix
+  jana.jetTreeMode_=0; // 0 for final analysis, 1 for inputsample_trk+data50_jet mix
 
   // Some Print out
   cout << "======================================================" << endl;
