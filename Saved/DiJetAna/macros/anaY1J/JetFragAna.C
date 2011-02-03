@@ -350,9 +350,16 @@ Int_t JetFragAna::GetJetEntry(TChain * t, AnaJet & jet, Long64_t entry)
 	//cout << "entry: " << entry << " old eta: " << etain << "  new eta: " << etaout << " " << anaJets_[i] << endl;
       }
     }
-    anaJetDPhi_ = fabs(reco::deltaPhi(anaJets_[0].phi(),anaJets_[1].phi()));
+    Float_t deltaPhi = reco::deltaPhi(anaJets_[0].phi(),anaJets_[1].phi());
+    anaJetDPhi_ = fabs(deltaPhi);
+    //
+    // Random phi
+    //
     //anaJets_[0].SetPhi(r3->Rndm()*TMath::TwoPi()-TMath::Pi());
-    //anaJets_[1].SetPhi(anaJets_[0].phi()+(anaJets_[1].phi()-anaJets_[0].phi()));
+    //Float_t newphi2 = anaJets_[0].phi()+deltaPhi;
+    //if (newphi2>TMath::Pi()) newphi2-=TMath::TwoPi();
+    //else if (newphi2<-TMath::Pi()) newphi2+=TMath::TwoPi();
+    //anaJets_[1].SetPhi(newphi2);
   } // finished with entry
   return result;
 }
