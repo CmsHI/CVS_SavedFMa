@@ -109,6 +109,8 @@ void getDRHists(TFile * f,
   //TH1D * hAwCPtBgSub = (TH1D*)f->Get("hAwCPtBgSub");
   TH1D * hNrCPtBgSub = new TH1D(inFileNameStrip+"hCPt0BgSubMerge","",10000,-1000,1000);
   TH1D * hAwCPtBgSub = new TH1D(inFileNameStrip+"hCPt1BgSubMerge","",10000,-1000,1000);
+  cout << "Near: " << ntjt->GetEntries("abs(nljetacorr)>0.8")
+    << " Away: " << ntjt->GetEntries("abs(aljetacorr)>0.8");
   ntjt->SetAlias("cpt0bgsubMerge","(Sum$(cpt[0])-cpt[0][0])-(Sum$(cptbg[0])-cptbg[0][0])");
   ntjt->SetAlias("cpt1bgsubMerge","(Sum$(cpt[1])-cpt[1][0])-(Sum$(cptbg[1])-cptbg[1][0])");
   ntjt->Project(inFileNameStrip+"hCPt0BgSubMerge","(cpt0bgsubMerge)","weight*(abs(nljetacorr)>0.8)");
