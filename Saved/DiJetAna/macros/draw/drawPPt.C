@@ -41,12 +41,12 @@ void drawPPt(TString infileData="",
   hAwBgSubHyPy->SetMarkerColor(kBlue);
   hAwBgSubHyPy->SetMarkerStyle(kFullSquare);
 
-  TFile * infPy = new TFile(infilePy);
-  TH1D * hNrBgSubPy = (TH1D*)infPy->Get("hNrCPPtBgSub");
-  normHist(hNrBgSubPy,0,true);
-  TH1D * hAwBgSubPy = (TH1D*)infPy->Get("hAwCPPtBgSub");
-  normHist(hAwBgSubPy,0,true);
-  hNrBgSubPy->SetLineStyle(7);
+  //TFile * infPy = new TFile(infilePy);
+  //TH1D * hNrBgSubPy = (TH1D*)infPy->Get("hNrCPPtBgSub");
+  //normHist(hNrBgSubPy,0,true);
+  //TH1D * hAwBgSubPy = (TH1D*)infPy->Get("hAwCPPtBgSub");
+  //normHist(hAwBgSubPy,0,true);
+  //hNrBgSubPy->SetLineStyle(7);
 
   // Print out sums
   Float_t nrConePtData=0, awConePtData=0, nrConePtPy=0, awConePtPy=0,nrConePtHyPy=0, awConePtHyPy=0;
@@ -62,18 +62,18 @@ void drawPPt(TString infileData="",
   for (Int_t i=0; i<hAwBgSubHyPy->GetNbinsX(); ++i) {
     awConePtHyPy+=(hAwBgSubHyPy->GetBinContent(i)*hAwBgSubHyPy->GetBinCenter(i)*hAwBgSubHyPy->GetBinWidth(i));
   }
-  for (Int_t i=0; i<hNrBgSubPy->GetNbinsX(); ++i) {
-    nrConePtPy+=(hNrBgSubPy->GetBinContent(i)*hNrBgSubPy->GetBinCenter(i)*hNrBgSubPy->GetBinWidth(i));
-  }
-  for (Int_t i=0; i<hAwBgSubPy->GetNbinsX(); ++i) {
-    awConePtPy+=(hAwBgSubPy->GetBinContent(i)*hAwBgSubPy->GetBinCenter(i)*hAwBgSubPy->GetBinWidth(i));
-  }
+  //for (Int_t i=0; i<hNrBgSubPy->GetNbinsX(); ++i) {
+    //nrConePtPy+=(hNrBgSubPy->GetBinContent(i)*hNrBgSubPy->GetBinCenter(i)*hNrBgSubPy->GetBinWidth(i));
+  //}
+  //for (Int_t i=0; i<hAwBgSubPy->GetNbinsX(); ++i) {
+   // awConePtPy+=(hAwBgSubPy->GetBinContent(i)*hAwBgSubPy->GetBinCenter(i)*hAwBgSubPy->GetBinWidth(i));
+  //}
   cout << "Data cone pt sum - Nr: " << nrConePtData
     << " Aw: " << awConePtData << endl;
   cout << "HyPy cone pt sum - Nr: " << nrConePtHyPy
     << " Aw: " << awConePtHyPy << endl;
-  cout << "Py cone pt sum - Nr: " << nrConePtPy
-    << " Aw: " << awConePtPy << endl;
+  //cout << "Py cone pt sum - Nr: " << nrConePtPy
+   // << " Aw: " << awConePtPy << endl;
 
   // Plot
   //TCanvas * c2 = new TCanvas("c2","c2",500,500);
@@ -87,8 +87,8 @@ void drawPPt(TString infileData="",
     hAwBgSubHyPy->Draw("sameE");
     hNrBgSubData->Draw("sameE");
     hAwBgSubData->Draw("sameE");
-    hNrBgSubPy->Draw("same hist");
-    hAwBgSubPy->Draw("same hist");
+    //hNrBgSubPy->Draw("same hist");
+    //hAwBgSubPy->Draw("same hist");
 
     if (doLeg) {
       TLegend * l = new TLegend(0.34,0.62,0.63,0.92);
@@ -100,8 +100,8 @@ void drawPPt(TString infileData="",
       l->AddEntry(hAwBgSubData,"Sub-Leading Jet Pythia+Hydjet Trk","pl");
       l->AddEntry(hNrBgSubHyPy,"Leading Jet Pythia+Hydjet GenParticle","pl");
       l->AddEntry(hAwBgSubHyPy,"Sub-Leading Jet Pythia+Hydjet GenParticle","pl");
-      l->AddEntry(hNrBgSubPy,"Leading Jet Pythia GenParticle","l");
-      l->AddEntry(hAwBgSubPy,"Sub-Leading Jet Pythia GenParticle","l");
+      //l->AddEntry(hNrBgSubPy,"Leading Jet Pythia GenParticle","l");
+      //l->AddEntry(hAwBgSubPy,"Sub-Leading Jet Pythia GenParticle","l");
       l->Draw();
     }
   }
