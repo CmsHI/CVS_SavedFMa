@@ -1,3 +1,0 @@
-{
-  gROOT->Macro("CPlot.cc+");
-}
