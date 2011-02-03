@@ -263,6 +263,7 @@ void drawTrkEnergy(TString infile="drawn_jfh_HCPR_J50U_Cent0to10_Aj24to100_SubEt
     hcLeft[i]->SetFillStyle(fillLeft);
     //if (i!=0) hcLeft[i]->SetLineColor(colors[i]);
     hcRight[i] = combine(Nr[i],Aw[i],normType,norm,false,sysErrorType);
+    hcRight[i]->SetFillStyle(1001);
   }
 
   // =========================================================================
