@@ -1,4 +1,5 @@
 === Histogram Versions ===
+runAnaJetFragAll.sh
 v10: New Pt binning: 0.5,1.5,4,8,20,180
 v11: extended bkg subtracted cone pt range for evt-by-evt check
 v12: dR bin width = 0.1
@@ -12,8 +13,10 @@ v18: Back to J120. Use the jet corrected eta for particle-jet correlation. Clean
 v19: PF photon xcheck
 v20: new pt binning
   * DeadForPix: exclude dead forward pixels for mc
+  * RandomCone: random cone study for rocket
 
 === nt Versions ===
+anaJetFrag.C
 v0: First version with tcone (2011.01.08)
 v1: Correctly Fills Bkg. Also add ptpara.
 v2: New pt binning, 1,1.5,4 --> 1,2,4
@@ -21,3 +24,8 @@ v3: Add jphi
 v4: recalculate jet-trk correlation for mpt
 v5: no event selection for centrality reweighting
 v6: clear all jet related correlation and calculate afresh in loop.
+
+=== Final Macros: ===
+- Fig. 13: drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale.C
+- Fig. 14: MetPlotAllCent5Bin.C
+- Fig. 15: MetPlotInConeOutConeDPhiCut.C
