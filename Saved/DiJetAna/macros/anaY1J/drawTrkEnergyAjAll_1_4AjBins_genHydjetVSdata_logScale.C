@@ -13,7 +13,7 @@
 using namespace std;
 
 void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
-    TString anaV="v18", // for paper: v18
+    TString anaV="v20", // for paper: v20
     TString module="djcalo",
     TString BckSub="SubEtaReflSingle", // for paper: SubEtaReflSingle
     TString title="_Track",
@@ -28,7 +28,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
   makeMultiPanelCanvas(c1,4,2,0.0,0.0,leftMargin,bottomMargin,0.02);
 
   Float_t leftSpace=leftMargin/2., downSpace=bottomMargin/2.;
-  Float_t j1x=0.14,j1y=4*downSpace,j2x=0.56,j2y=4*downSpace;
+  Float_t j1x=0.14,j1y=4*downSpace,j2x=0.56,j2y=4*downSpace, j1ylog=0.475;
   Float_t ax=0.52,ay=0.77;
   
   c1->cd(1);
@@ -39,8 +39,8 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
     drawText("Subleading Jet",j2x+leftSpace,j2y,15);
   }
   if (logScale==1) {
-     drawText("Leading Jet",j1x+0.21, 0.46,15);
-     drawText("Subleading Jet",j2x+leftSpace+.02, 0.46,15);
+     drawText("Leading Jet",j1x+0.21, j1ylog,15);
+     drawText("Subleading Jet",j2x+leftSpace+.02, j1ylog,15);
   }
 
   drawText("PYTHIA",0.33,0.81);
@@ -56,8 +56,8 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
     drawText("Subleading Jet",j2x,j2y,15);
   }
   if (logScale==1) {
-     drawText("Leading Jet",j1x - 0.05, 0.46,15);
-     drawText("Subleading Jet",j2x+.06, 0.46,15);
+     drawText("Leading Jet",j1x - 0.05, j1ylog,15);
+     drawText("Subleading Jet",j2x+.06, j1ylog,15);
   }
 
   float ptx(0.05),pty(0.88);
@@ -74,8 +74,8 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
     drawText("Subleading Jet",j2x,j2y,15);
   }
   if (logScale==1) {
-     drawText("Leading Jet",j1x - 0.05, 0.46,15);
-     drawText("Subleading Jet",j2x+.06, 0.46,15);
+     drawText("Leading Jet",j1x - 0.05, j1ylog,15);
+     drawText("Subleading Jet",j2x+.06, j1ylog,15);
   }
   drawText("(c)",ptx,0.91);
   
@@ -87,8 +87,8 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
     drawText("Subleading Jet",j2x,j2y,15);
   }
   if (logScale==1) {
-     drawText("Leading Jet",j1x - 0.05, 0.46,15);
-     drawText("Subleading Jet",j2x+.06, 0.46,15);
+     drawText("Leading Jet",j1x - 0.05, j1ylog,15);
+     drawText("Subleading Jet",j2x+.06, j1ylog,15);
   }
   drawText("(d)",ptx,0.91);
 
@@ -101,8 +101,8 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
     drawText("Subleading Jet",j2x+leftSpace,j2y+downSpace+0.02,15);
   }
   if (logScale==1) {
-     drawText("Leading Jet",j1x + 0.21, 0.48+downSpace,15);
-     drawText("Subleading Jet",j2x+leftSpace+.02, 0.48+downSpace,15);
+     drawText("Leading Jet",j1x + 0.21, j1ylog+0.02+downSpace,15);
+     drawText("Subleading Jet",j2x+leftSpace+.02, j1ylog+0.02+downSpace,15);
   }
   if (logScale==1) {
      drawErrorBox(.22,22,.30,22 * 1.2,1); //20% of uncertainty  
@@ -125,8 +125,8 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
     drawText("Subleading Jet",j2x,j2y+downSpace+0.02,15);
   }
   if (logScale==1) {
-     drawText("Leading Jet",j1x - 0.05, 0.48+downSpace,15);
-     drawText("Subleading Jet",j2x+.06, 0.48+downSpace,15);
+     drawText("Leading Jet",j1x - 0.05, j1ylog+0.02+downSpace,15);
+     drawText("Subleading Jet",j2x+.06, j1ylog+0.02+downSpace,15);
   }
   drawText("(f)",ptx,0.93);
 
@@ -138,8 +138,8 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
     drawText("Subleading Jet",j2x,j2y+downSpace+0.02,15);
   }
   if (logScale==1) {
-     drawText("Leading Jet",j1x - 0.05, 0.48+downSpace,15);
-     drawText("Subleading Jet",j2x+.06, 0.48+downSpace,15);
+     drawText("Leading Jet",j1x - 0.05, j1ylog+0.02+downSpace,15);
+     drawText("Subleading Jet",j2x+.06, j1ylog+0.02+downSpace,15);
   }
 
   drawText("(g)",ptx,0.93);
@@ -152,8 +152,8 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
     drawText("Subleading Jet",j2x,j2y+downSpace+0.02,15);
   }
   if (logScale==1) {
-     drawText("Leading Jet",j1x - 0.05, 0.48+downSpace,15);
-     drawText("Subleading Jet",j2x+.06, 0.48+downSpace,15);
+     drawText("Leading Jet",j1x - 0.05, j1ylog+0.02+downSpace,15);
+     drawText("Subleading Jet",j2x+.06, j1ylog+0.02+downSpace,15);
   }
   drawText("(h)",ptx,0.93);
 
