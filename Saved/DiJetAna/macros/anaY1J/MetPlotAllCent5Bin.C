@@ -230,7 +230,7 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    leg->SetBorderSize(0);
    leg->SetTextFont(63);
    leg->SetTextSize(16);
-   leg->AddEntry(pall,Form("> %.1f GeV/c",bins[0]),"pl");
+   leg->AddEntry(pall,Form("> %.1f GeV/c",bins[0]),"p");
    for (int i=0;i<nBin;++i) {
       if (i!=nBin-1){
          leg->AddEntry(p[i],Form("%.1f - %.1f GeV/c",bins[i],bins[i+1]),"f");
