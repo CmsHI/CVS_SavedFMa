@@ -94,7 +94,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
 
 
   c1->cd(5);
-  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to11_"+BckSub+".root",false,true,logScale,normType,0);  // express sys error by error band for log scale
+  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj0to11_"+BckSub+".root",false,true,logScale,normType,1);  // express sys error by error band for log scale
   drawText("A_{J} < 0.11",leftSpace+0.63,downSpace+0.73);
   if (logScale==0) {
     drawText("Leading Jet",j1x+0.23,j1y+downSpace+0.02,15);
@@ -105,10 +105,9 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
      drawText("Subleading Jet",j2x+leftSpace+.02, j1ylog+0.02+downSpace,15);
   }
   if (logScale==1) {
-     drawErrorBox(.22,22,.30,22 * 1.2,1); //20% of uncertainty  
-     drawText("Systematic",j2x+leftSpace+.08, 0.64+downSpace,15);
-     drawText("uncertainty",j2x+leftSpace+.08, 0.58+downSpace,15);
-   
+     //drawErrorBox(.22,22,.30,22 * 1.2,1); //20% of uncertainty  
+     //drawText("Systematic",j2x+leftSpace+.08, 0.64+downSpace,15);
+     //drawText("uncertainty",j2x+leftSpace+.08, 0.58+downSpace,15);
   }
 
   drawText("(e)",0.33,0.93);
@@ -118,7 +117,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
   drawText("0-30%",0.32,downSpace+0.56);
 
   c1->cd(6);
-  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj11to22_"+BckSub+".root",false,false,logScale,normType,0);  // express sys error by error band for log scale
+  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj11to22_"+BckSub+".root",false,false,logScale,normType,1);  // express sys error by error band for log scale
   drawText("0.11 < A_{J} < 0.22",0.52,downSpace+0.73);
   if (logScale==0) {
     drawText("Leading Jet",j1x,j1y+downSpace+0.02,15);
@@ -131,7 +130,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
   drawText("(f)",ptx,0.93);
 
   c1->cd(7);
-  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj22to33_"+BckSub+".root",false,false,logScale,normType,0);  // express sys error by error band for log scale
+  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj22to33_"+BckSub+".root",false,false,logScale,normType,1);  // express sys error by error band for log scale
   drawText("0.22 < A_{J} < 0.33",0.52,downSpace+0.73);
   if (logScale==0) {
     drawText("Leading Jet",j1x,j1y+downSpace+0.02,15);
@@ -145,7 +144,7 @@ void drawTrkEnergyAjAll_1_4AjBins_genHydjetVSdata_logScale(
   drawText("(g)",ptx,0.93);
 
   c1->cd(8);
-  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj33to100_"+BckSub+".root",false,false,logScale,normType,0);  // express sys error by error band for log scale
+  drawTrkEnergy("jfh"+anaV+"_HCPR_J50U_"+module+"_Cent0to30_Aj33to100_"+BckSub+".root",false,false,logScale,normType,1);  // express sys error by error band for log scale
   drawText("A_{J} > 0.33",0.63,downSpace+0.73);
   if (logScale==0) {
     drawText("Leading Jet",j1x,j1y+downSpace+0.02,15);
