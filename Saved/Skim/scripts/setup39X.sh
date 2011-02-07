@@ -1,6 +1,9 @@
 # event selection
 cvs co HeavyIonsAnalysis/Configuration
 
+# spike cleaning
+cvs co -d CmsHi/PhotonAnalysis UserCode/CmsHi/PhotonAnalysis
+
 # analyzers
 cvs co -r V03-03-08 HLTrigger/HLTanalyzers
 cvs co -r HI_HLT_2010_11_20 RecoHI/HiEgammaAlgos
