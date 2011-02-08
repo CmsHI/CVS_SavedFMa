@@ -49,7 +49,7 @@ void compareTree(TTree * t1, TTree * t2, TString var, TCut sel, TCut cut, TStrin
   leg->Draw();
 }
 
-void compareReco(TString infname = "data.root",
+TTree * compareReco(TString infname = "data.root",
     TString infname2 = "data2.root",
     TCut myCut = "cent<30"
     )
@@ -59,7 +59,8 @@ void compareReco(TString infname = "data.root",
    // ===========================================================
    TH1::SetDefaultSumw2();
    TFile *inf = new TFile(infname);
-   TTree *t = (TTree*)inf->Get("djTree");
+   TTree *t = (TTree*)inf->Get("djcalo_tower/djTree");
+   t->AddFriend("comp = djcalo_tower/djTree",infname2);
    TChain * t2 = new TChain("djcalo_tower/djTree");
    t2->Add(infname2);
 
@@ -68,7 +69,8 @@ void compareReco(TString infname = "data.root",
    // ===========================================================
   // Selection cut
    //TCut evtCut = "nljet>120&&abs(nljeta)<1.6&&aljet>50&&abs(aljeta)<1.6&&jdphi>2./3*TMath::Pi()&&!maskEvt";
-   TCut evtCut = "";
+   //TCut evtCut = "lumi==9||lumi==100||lumi==98||lumi==194||lumi==91||lumi==228||lumi==93||lumi==207||lumi==50||lumi==67";
+   TCut evtCut = "lumi==67||lumi==91||lumi==194||lumi==207";
    Float_t numSel = t->GetEntries(evtCut&&myCut);
    Float_t numSel2 = t2->GetEntries((evtCut&&myCut));
    cout << "Base Sel evt: " << numSel << endl;
@@ -82,10 +84,12 @@ void compareReco(TString infname = "data.root",
    compareTree(t,t2,"ppt",evtCut&&myCut,"abs(peta)<3","hPPt",";tower p_{T} (GeV);count/event;",50,0,50);
 
    TCanvas * c3 = new TCanvas("c3","c3",600,600);
-   compareTree(t,t2,"peta",evtCut&&myCut,"abs(peta)<3","hPEta",";tower #eta;count/event;",100,-3,3,0,25);
+   compareTree(t,t2,"peta",evtCut&&myCut,"abs(peta)<3","hPEta",";tower #eta;count/event;",100,-3,3,0,30);
 
    TCanvas * c4 = new TCanvas("c4","c4",600,600);
-   compareTree(t,t2,"pphi",evtCut&&myCut,"abs(peta)<3","hPPhi",";tower #phi;count/event;",36,-3.14,3.14,0,25); // 72
+   compareTree(t,t2,"pphi",evtCut&&myCut,"abs(peta)<3","hPPhi",";tower #phi;count/event;",36,-3.14,3.14,0,30); // 72
+
+   return t;
 }
 
 
