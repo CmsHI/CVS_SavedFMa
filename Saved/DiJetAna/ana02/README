@@ -1,7 +1,0 @@
-TTree *j1t0, *j2t0, *j2t3
-_file0->GetObject("dijetAna_mc_genjet_genp/djTree",j1t0)
-_file0->GetObject("dijetAna_mc_calojet_genp/djTree",j2t0)
-_file0->GetObject("dijetAna_mc/djTree",j2t3)
-.x aliases_dijet.C(j1t0)
-.x aliases_dijet.C(j2t0)
-.x aliases_dijet.C(j2t3)
