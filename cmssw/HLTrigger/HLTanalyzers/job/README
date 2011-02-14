@@ -1,3 +1,0 @@
-ln -s /net/hisrv0001/home/frankma/work/HI/HLT/sw/hiCMSSW_3_8_2/src/HLTrigger/HLTanalyzers/test/HI_HLTAnalysis_cfg.py
-ln -s /net/hisrv0001/home/frankma/UserCode/SavedFMa/cmssw/HLTrigger/HLTanalyzers/test/mycustom_options.py
-create_custom_cfg.sh HI_HLTAnalysis_cfg.py mycustom_options.py
