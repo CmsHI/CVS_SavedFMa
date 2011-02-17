@@ -55,6 +55,23 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    ntjt->SetAlias("metyMerged2","mety3+mety4");
 
    // trees
+   tjttrk = new TTree("tjttrk","jet trk tree");
+   tjttrk->Branch("cent",&jettrk_.cent,"cent/F");
+   tjttrk->Branch("centwt",&jettrk_.centwt,"centwt/F");
+   tjttrk->Branch("jtpt",&jettrk_.jtpt);
+   tjttrk->Branch("jteta",&jettrk_.jteta);
+   tjttrk->Branch("jtphi",&jettrk_.jtphi);
+   tjttrk->Branch("jdphi",&jettrk_.jdphi,"jdphi/F");
+   tjttrk->Branch("ppt",&jettrk_.ppt);
+   tjttrk->Branch("peta",&jettrk_.peta);
+   tjttrk->Branch("pphi",&jettrk_.pphi);
+   tjttrk->Branch("trkeff",&jettrk_.trkeff);
+   tjttrk->Branch("trkfak",&jettrk_.trkfak);
+   tjttrk->Branch("trkmul",&jettrk_.trkmul);
+   tjttrk->Branch("trksec",&jettrk_.trksec);
+   tjttrk->Branch("pdr",&jettrk_.pdr);
+   tjttrk->Branch("pdrbg",&jettrk_.pdrbg);
+
    tcone = new TTree("tcone","jet cone tree");
    tcone->Branch("cpt",&jc_.cpt);
    tcone->Branch("cptbg",&jc_.cptbg);
@@ -453,6 +470,10 @@ void JetFragAna::Loop()
       GetJetEntry(jetTree_[jetTreeMode_],vj_[jetTreeMode_],(jentry+mixOffset_)%jetTreeNEntries[jetTreeMode_]);
       ++numTotEvt;
 
+      // Clear counters
+      jettrk_.clear();
+      jc_.clear();
+
       // =====================================================
       // Main Event Selection
       // =====================================================
@@ -509,15 +530,21 @@ void JetFragAna::Loop()
 	hCentReWeighted->Fill(cent,weight);
 	++numDJ_;
 	numDJReWeighted_+=weight;
+	jettrk_.cent = cent;
+	jettrk_.centwt = weight;
 
 	for (Int_t j=0; j<2; ++j) {
 	  if (jetEvt[j]) {
 	    hJEt[j]->Fill(anaJets_[j].pt(),weight);
 	    hJEta[j]->Fill(anaJets_[j].eta(),weight);
+	    jettrk_.jtpt[j] = anaJets_[j].pt();
+	    jettrk_.jteta[j] = anaJets_[j].eta();
+	    jettrk_.jtphi[j] = anaJets_[j].phi();
 	    ++numJ_[j];
 	    numJReWeighted_[j]+=weight;
 	  }
 	}
+	jettrk_.jdphi = anaJetDPhi_;
 
 	if (doJetOnly_) continue;
 
@@ -528,7 +555,6 @@ void JetFragAna::Loop()
 	Double_t mety=0,mety0=0,mety1=0,mety2=0,mety3=0,mety4=0,mety5=0;
 	Double_t metConex=0,metConex0=0,metConex1=0,metConex2=0,metConex3=0,metConex4=0,metConex5=0;
 	Double_t metOutOfConex=0,metOutOfConex0=0,metOutOfConex1=0,metOutOfConex2=0,metOutOfConex3=0,metOutOfConex4=0,metOutOfConex5=0;
-        jc_.clear();
 	// =====================================================
 	// Fill Particle Level Histograms
 	// =====================================================
@@ -549,6 +575,13 @@ void JetFragAna::Loop()
 	  // Dead forward pixel xcheck
 	  //if (peta[i]>2&&pphi[i]>-0.1&&pphi[i]<0.8) trackWeight=0;
 
+	  jettrk_.ppt.push_back(p_[i].pt());
+	  jettrk_.peta.push_back(p_[i].eta());
+	  jettrk_.pphi.push_back(p_[i].phi());
+	  jettrk_.trkeff.push_back(0.7);
+	  jettrk_.trkfak.push_back(0.05);
+	  jettrk_.trkmul.push_back(0.001);
+	  jettrk_.trksec.push_back(0.02);
 	  // ------------------------
 	  // calculate particle jet correlations
 	  // ------------------------
@@ -566,6 +599,8 @@ void JetFragAna::Loop()
 	    }
 	    // monitor histograms
 	    hPJDPhi[j]->Fill(pdphi[j],trackWeight);
+	    jettrk_.pdr[j].push_back(pdr[j]);
+	    jettrk_.pdrbg[j].push_back(pdrbg[j]);
 	  }
 
 	  Float_t trkEnergy=p_[i].pt();
@@ -707,6 +742,8 @@ void JetFragAna::Loop()
 	var[36]=anaJetDPhi_;
 	var[37]=weight;
 	ntjt->Fill(var);    // fit ntuple
+
+	tjttrk->Fill();
 
 	tcone->Fill();
       } // End of Main Event Selection

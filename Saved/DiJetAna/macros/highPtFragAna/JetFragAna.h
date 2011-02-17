@@ -29,6 +29,44 @@ const Int_t MAXTRK = 100000;
 #pragma link C++ class std::vector < std::vector<float> >+;   
 #endif
 
+struct JetFrag {
+  Float_t cent;
+  Float_t centwt;
+  vector<Float_t> jtpt;
+  vector<Float_t> jteta;
+  vector<Float_t> jtphi;
+  Float_t jdphi;
+  vector<Float_t> ppt;
+  vector<Float_t> peta;
+  vector<Float_t> pphi;
+  vector<Float_t> trkeff;
+  vector<Float_t> trkfak;
+  vector<Float_t> trkmul;
+  vector<Float_t> trksec;
+  vector<vector<Float_t> > pdr;
+  vector<vector<Float_t> > pdrbg;
+  JetFrag() :
+    jtpt(2),
+    jteta(2),
+    jtphi(2),
+    pdr(2),
+    pdrbg(2)
+  {}
+  void clear() {
+    ppt.clear();
+    peta.clear();
+    pphi.clear();
+    trkeff.clear();
+    trkfak.clear();
+    trkmul.clear();
+    trksec.clear();
+    for (Int_t j=0; j<2; ++j) {
+      pdr[j].clear();
+      pdrbg[j].clear();
+    }
+  }
+};
+
 struct JetCone {
   vector<vector<Float_t> > cpt;
   vector<vector<Float_t> > cptbg;
@@ -86,6 +124,7 @@ public :
    Float_t anaJetDPhi_;
    std::vector<math::PtEtaPhiMLorentzVector> refJets_;
    std::vector<math::PtEtaPhiMLorentzVector> p_;
+   JetFrag jettrk_;
    JetCone jc_;
    Int_t mixOffset_;
    Int_t jetTreeMode_,particleTreeMode_;
@@ -106,6 +145,7 @@ public :
 
    // Ntuples
    TNtuple * ntjt;
+   TTree * tjttrk;
    TTree * tcone;
 
    // Histograms
