@@ -17,6 +17,7 @@
 #include "TMath.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TH3.h"
 #include "TNtuple.h"
 //#include "TF1.h"
 #include "TRandom3.h"
@@ -134,10 +135,15 @@ public :
 
    // Corrections
    std::map<TString,TF1*> jetaCorr_;
-   TH2D *trackingEffCorr_[10];
-   TH2D *trackingFakeCorr_[10];
+   std::vector<TFile*> fileTrackingCorr_;
+   std::vector<std::vector<TH3F*> > trackingEffCorr_;
+   std::vector<std::vector<TH3F*> > trackingFakCorr_;
+   std::vector<std::vector<TH3F*> > trackingMulCorr_;
+   std::vector<std::vector<TH3F*> > trackingSecCorr_;
    TH1D *trackingPtBin_;
    TH1D *trackingEtaBin_;
+   TH1D *trackingJEtBin_;
+   std::vector<TString> trackingCentBin_;
 
    // Centrality Reweighting
    TH1D *hCentralityData_;

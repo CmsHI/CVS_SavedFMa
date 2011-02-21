@@ -4,6 +4,7 @@
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TH3.h"
 #include "TF1.h"
 #include "TROOT.h"
 #include "TChain.h"
@@ -35,7 +36,7 @@ void anaJetFrag(
     Double_t NrJEtMax = 500,
     Double_t AwJEtMin = 50,
     Double_t AwJEtMax = 500,
-    Double_t TrkPtMin = 0.5, // 0.5 for paper
+    Double_t TrkPtMin = 3, // 0.5 for first paper
     TString evtBase="S1",
     TString DJCutType = "Ana", // Ana
     Int_t mixOffset=0)
@@ -68,14 +69,50 @@ void anaJetFrag(
   //=======================================================================================================================
   // tracking efficiency correction
   //=======================================================================================================================
-  TFile *fTrackingEffCorr = new TFile("trkCorrJet_bass10k.root");
-  TH2D *hTrackingEff[10];
-  TH2D *hTrackingFake[10];
-  for (int i=0;i<5;i++)
-  {
-     hTrackingEff[i]=(TH2D*)fTrackingEffCorr->FindObjectAny(Form("rEff_cbin%d",i));
-     hTrackingFake[i]=(TH2D*)fTrackingEffCorr->FindObjectAny(Form("rFak_cbin%d",i));
+  TString trkCorrModule("hitrkEffAnalyzer");
+  vector<TFile*> fileTrackingCorr;
+  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet30.root"));
+  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet50.root"));
+  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet80.root"));
+  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet110.root"));
+  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet170.root"));
+  vector<TString> cbins;
+  cbins.push_back("0to1");
+  cbins.push_back("2to3");
+  cbins.push_back("4to11");
+  cbins.push_back("12to19");
+  cbins.push_back("20to39");
+  Int_t nfile=fileTrackingCorr.size(), ncbin=cbins.size();
+  vector<vector<TH3F * > > hTrackingEffCorr(nfile,vector<TH3F*>(ncbin));
+  vector<vector<TH3F * > > hTrackingFakCorr(nfile,vector<TH3F*>(ncbin));
+  vector<vector<TH3F * > > hTrackingMulCorr(nfile,vector<TH3F*>(ncbin));
+  vector<vector<TH3F * > > hTrackingSecCorr(nfile,vector<TH3F*>(ncbin));
+  for (int i=0;i<fileTrackingCorr.size();++i) {
+    for (int j=0;j<cbins.size();++j)
+    {
+      //cout << fileTrackingCorr[i]->GetName() << " " << trkCorrModule+"/heff3D_cbin"+cbins[j] << endl;
+      TH3F * hNum =(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/heff3D_cbin"+cbins[j]);
+      TH3F * hDen =(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hsim3D_cbin"+cbins[j]);
+      hTrackingEffCorr[i][j]=(TH3F*)hNum->Clone("hTrkEff_"+cbins[j]);
+      hTrackingEffCorr[i][j]->Divide(hDen);
+
+      hNum=(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hfak3D_cbin"+cbins[j]);
+      hDen=(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hrec3D_cbin"+cbins[j]);
+      hTrackingFakCorr[i][j]=(TH3F*)hNum->Clone("hTrkFak_"+cbins[j]);
+      hTrackingFakCorr[i][j]->Divide(hDen);
+
+      hNum=(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hmul3D_cbin"+cbins[j]);
+      hDen=(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hsim3D_cbin"+cbins[j]);
+      hTrackingMulCorr[i][j]=(TH3F*)hNum->Clone("hTrkMul_"+cbins[j]);
+      hTrackingMulCorr[i][j]->Divide(hDen);
+
+      hNum=(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hsec3D_cbin"+cbins[j]);
+      hDen=(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hrec3D_cbin"+cbins[j]);
+      hTrackingSecCorr[i][j]=(TH3F*)hNum->Clone("hTrkSec_"+cbins[j]);
+      hTrackingSecCorr[i][j]->Divide(hDen);
+    }
   }
+
   //=======================================================================================================================
   // centrality reweighting
   //=======================================================================================================================
@@ -127,9 +164,6 @@ void anaJetFrag(
   jana.jetaCorr_ = jetaCorr;
   jana.hCentralityData_ = hCentralityData;  // centrality distribution from data
 
-  jana.trackingEtaBin_ = (TH1D*)hTrackingEff[0]->ProjectionX();
-  jana.trackingPtBin_ = (TH1D*)hTrackingEff[0]->ProjectionY();
-
   jana.mixOffset_ = mixOffset;
 
   // ====================================================================
@@ -148,11 +182,20 @@ void anaJetFrag(
     << " anaGenpType: " << jana.anaGenpType_ << endl;
   cout << "  mixOffset: " << jana.mixOffset_ << endl;
 
-  for (int i=0;i<5;i++) {
-     jana.trackingEffCorr_[i] = hTrackingEff[i];
-     jana.trackingFakeCorr_[i] = hTrackingFake[i];
-
+  jana.fileTrackingCorr_=fileTrackingCorr;
+  jana.trackingCentBin_=cbins;
+  for (int i=0;i<fileTrackingCorr.size();++i) {
+    for (int j=0;j<cbins.size();++j)
+    {
+     jana.trackingEffCorr_ = hTrackingEffCorr;
+     jana.trackingFakCorr_ = hTrackingFakCorr;
+     jana.trackingMulCorr_ = hTrackingMulCorr;
+     jana.trackingSecCorr_ = hTrackingSecCorr;
+    }
   }
+  jana.trackingEtaBin_ = (TH1D*)hTrackingEffCorr[0][0]->Project3D("x");
+  jana.trackingPtBin_ = (TH1D*)hTrackingEffCorr[0][0]->Project3D("y");
+  jana.trackingJEtBin_ = (TH1D*)hTrackingEffCorr[0][0]->Project3D("z");
 
   // -- analysis selections --
   cout << endl << "====== DJ Selection: " << jana.cut.DJCutType << " ======" << endl;

@@ -382,7 +382,9 @@ Int_t JetFragAna::GetJetEntry(TChain * t, AnaJet & jet, Long64_t entry)
 }
 double JetFragAna::getEffFakeCorrection(double pt,double eta, double cent)
 {
+  return 1;
    
+/*
    int bin = 0;
 
    // Get the corresponding centrality bin
@@ -414,375 +416,389 @@ double JetFragAna::getEffFakeCorrection(double pt,double eta, double cent)
    if (pt>20) eff*=1.20;
    return (1-fake)/eff;
 //   return 1.3;
+*/
 }
 
 void JetFragAna::Loop()
 {
-   if (fChain == 0) return;
+  if (fChain == 0) return;
 
-   Long64_t nentries = fChain->GetEntriesFast();
-   Long64_t jetTreeNEntries[10] = {nentries,jetTree_[1]->GetEntries(),0,0,0};
-   cout << "==============" << endl;
-   cout << " Begin Loop" << endl;
-   cout << "Tree: " << nentries << " jetTree: " << jetTreeNEntries[jetTreeMode_] << endl;
-   cout << "==============" << endl;
+  Long64_t nentries = fChain->GetEntriesFast();
+  Long64_t jetTreeNEntries[10] = {nentries,jetTree_[1]->GetEntries(),0,0,0};
+  cout << "==============" << endl;
+  cout << " Begin Loop" << endl;
+  cout << "Tree: " << nentries << " jetTree: " << jetTreeNEntries[jetTreeMode_] << endl;
+  cout << "==============" << endl;
 
-   // Random Number
-   r3 = new TRandom3(mixOffset_);
+  for (int i=0;i<fileTrackingCorr_.size();++i) {
+    cout << fileTrackingCorr_[i]->GetName() << endl;
+    for (int j=0;j<trackingCentBin_.size();++j)
+    {
+      cout << trackingCentBin_[j];
+      cout << " Eff: " << trackingEffCorr_[i][j]->GetEntries();
+      cout << " Fak: " << trackingFakCorr_[i][j]->GetEntries();
+      cout << " Mul: " << trackingMulCorr_[i][j]->GetEntries();
+      cout << " Sec: " << trackingSecCorr_[i][j]->GetEntries();
+      cout << endl;
+    }
+  }
 
-   // =====================================================
-   // Initialize Counters
-   // =====================================================
-   numDJ_=0,numDJReWeighted_=0;
-   for (Int_t i=0; i<2; ++i) {
-     numJ_[i]=0;
-     numJReWeighted_[i]=0;
-   }
-   Int_t numTotEvt=0, numDJNoBkgLimit=0;
-   Long64_t nbytes = 0, nb = 0;
+  // Random Number
+  r3 = new TRandom3(mixOffset_);
 
-   // Pt Bin
-   TH1D * hPt = (TH1D*)hPtPDR[0]->ProjectionX();
-   Int_t numPtBins = hPt->GetNbinsX();
+  // =====================================================
+  // Initialize Counters
+  // =====================================================
+  numDJ_=0,numDJReWeighted_=0;
+  for (Int_t i=0; i<2; ++i) {
+    numJ_[i]=0;
+    numJReWeighted_[i]=0;
+  }
+  Int_t numTotEvt=0, numDJNoBkgLimit=0;
+  Long64_t nbytes = 0, nb = 0;
 
-   // Set Tree Pt bins
-   jc_.resizePtBins(numPtBins);
+  // Pt Bin
+  TH1D * hPt = (TH1D*)hPtPDR[0]->ProjectionX();
+  Int_t numPtBins = hPt->GetNbinsX();
 
-   // =====================================================
-   // Centrality ReWeighting
-   // =====================================================
-   TH1D *hCent = new TH1D("hCent","",40,0,100);
-   fChain->Project("hCent","cent",""); // no evt sel, assume centrality distribution of bkg is independent of the signal
-   hCent->Scale(1./hCent->GetEntries());   
-   // Centrality Weight
-   hCentralityWeight_->Divide(hCentralityData_,hCent);
-   // ReWeighted Centrality distribution
-   TH1D *hCentReWeighted = new TH1D("hCentReWeighted","",40,0,100);
+  // Set Tree Pt bins
+  jc_.resizePtBins(numPtBins);
+
+  // =====================================================
+  // Centrality ReWeighting
+  // =====================================================
+  TH1D *hCent = new TH1D("hCent","",40,0,100);
+  fChain->Project("hCent","cent",""); // no evt sel, assume centrality distribution of bkg is independent of the signal
+  hCent->Scale(1./hCent->GetEntries());   
+  // Centrality Weight
+  hCentralityWeight_->Divide(hCentralityData_,hCent);
+  // ReWeighted Centrality distribution
+  TH1D *hCentReWeighted = new TH1D("hCentReWeighted","",40,0,100);
 
   //=======================================================================================================================
-   // Main Loop 
+  // Main Loop 
   //=======================================================================================================================
-   for (Long64_t jentry=0; jentry<nentries;jentry++) {
-      Long64_t ientry = LoadTree(jentry);
-      if (jentry%500==0) cout << "jentry: " << jentry << " " << jentry/float(nentries) << endl;
-      if (ientry < 0) break;
-      nb = GetEntry(jentry);   nbytes += nb;
-      GetJetEntry(jetTree_[jetTreeMode_],vj_[jetTreeMode_],(jentry+mixOffset_)%jetTreeNEntries[jetTreeMode_]);
-      ++numTotEvt;
+  for (Long64_t jentry=0; jentry<nentries;jentry++) {
+    Long64_t ientry = LoadTree(jentry);
+    if (jentry%500==0) cout << "jentry: " << jentry << " " << jentry/float(nentries) << endl;
+    if (ientry < 0) break;
+    nb = GetEntry(jentry);   nbytes += nb;
+    GetJetEntry(jetTree_[jetTreeMode_],vj_[jetTreeMode_],(jentry+mixOffset_)%jetTreeNEntries[jetTreeMode_]);
+    ++numTotEvt;
 
-      // Clear counters
-      jettrk_.clear();
-      jc_.clear();
+    // Clear counters
+    jettrk_.clear();
+    jc_.clear();
 
+    // =====================================================
+    // Main Event Selection
+    // =====================================================
+    if (!doEvtSel_||(Cut(ientry)>=0&&!GetEvtMask())) {
+      ++numDJNoBkgLimit;
       // =====================================================
-      // Main Event Selection
+      // Jet Phase Space Limit (if Bkg Subtraction)
       // =====================================================
-      if (!doEvtSel_||(Cut(ientry)>=0&&!GetEvtMask())) {
-	++numDJNoBkgLimit;
-	// =====================================================
-	// Jet Phase Space Limit (if Bkg Subtraction)
-	// =====================================================
-	if (cut.BkgSubType=="EtaRefl") {
-	  if (fabs(anaJets_[0].eta())<cut.ConeSize||fabs(anaJets_[1].eta())<cut.ConeSize) continue;
-	}
-	if (cut.BkgSubType=="PhiRot") {
-	  if (fabs(anaJets_[0].eta()-anaJets_[1].eta())<cut.ConeSize*2) continue;
-	}
-	// If we want to restrict eta for j0,j1 separately
-	// Classify events into j0 events or j1 events
-	bool jetEvt[2] = { true, true };
-	if (cut.BkgSubType=="EtaReflSingle") {
-	  for (Int_t j=0; j<2; ++j) {
-	    if (fabs(anaJets_[j].eta())<cut.ConeSize) jetEvt[j]=false;
-	  }
-	}
-	// systematic checks on eta regions
-	if (cut.BkgSubType=="EtaReflSingleEtaPos") {
-	  for (Int_t j=0; j<2; ++j) {
-	    if (fabs(anaJets_[j].eta())<cut.ConeSize||anaJets_[j].eta()<0) jetEvt[j]=false;
-	  }
-	}
-	if (cut.BkgSubType=="EtaReflSingleEtaNeg") {
-	  for (Int_t j=0; j<2; ++j) {
-	    if (fabs(anaJets_[j].eta())<cut.ConeSize||anaJets_[j].eta()>=0) jetEvt[j]=false;
-	  }
-	}
- 
-	// =====================================================
-	// Set Centrality Weight
-	// =====================================================
-        int cBin = hCent->FindBin(cent);
-        double weight=1;
-        if (doCentralityReweighting_) {
-           if (hCentralityData_->GetBinContent(cBin)==0 || hCent->GetBinContent(cBin)==0) {
-             weight = 0; 
-           } else {
-             weight = hCentralityWeight_->GetBinContent(cBin);
-           }
-        }
-
-	// =====================================================
-	// Fill Event Level Histograms
-	// =====================================================
-	hJDPhi->Fill(anaJetDPhi_,weight);
-	hAj->Fill((anaJets_[0].pt()-anaJets_[1].pt())/(anaJets_[0].pt()+anaJets_[1].pt()),weight);
-	hJDEta->Fill(anaJets_[1].eta()-anaJets_[0].eta(),weight);
-	hCentReWeighted->Fill(cent,weight);
-	++numDJ_;
-	numDJReWeighted_+=weight;
-	jettrk_.cent = cent;
-	jettrk_.centwt = weight;
-
+      if (cut.BkgSubType=="EtaRefl") {
+	if (fabs(anaJets_[0].eta())<cut.ConeSize||fabs(anaJets_[1].eta())<cut.ConeSize) continue;
+      }
+      if (cut.BkgSubType=="PhiRot") {
+	if (fabs(anaJets_[0].eta()-anaJets_[1].eta())<cut.ConeSize*2) continue;
+      }
+      // If we want to restrict eta for j0,j1 separately
+      // Classify events into j0 events or j1 events
+      bool jetEvt[2] = { true, true };
+      if (cut.BkgSubType=="EtaReflSingle") {
 	for (Int_t j=0; j<2; ++j) {
-	  if (jetEvt[j]) {
-	    hJEt[j]->Fill(anaJets_[j].pt(),weight);
-	    hJEta[j]->Fill(anaJets_[j].eta(),weight);
-	    jettrk_.jtpt[j] = anaJets_[j].pt();
-	    jettrk_.jteta[j] = anaJets_[j].eta();
-	    jettrk_.jtphi[j] = anaJets_[j].phi();
-	    ++numJ_[j];
-	    numJReWeighted_[j]+=weight;
-	  }
+	  if (fabs(anaJets_[j].eta())<cut.ConeSize) jetEvt[j]=false;
 	}
-	jettrk_.jdphi = anaJetDPhi_;
+      }
+      // systematic checks on eta regions
+      if (cut.BkgSubType=="EtaReflSingleEtaPos") {
+	for (Int_t j=0; j<2; ++j) {
+	  if (fabs(anaJets_[j].eta())<cut.ConeSize||anaJets_[j].eta()<0) jetEvt[j]=false;
+	}
+      }
+      if (cut.BkgSubType=="EtaReflSingleEtaNeg") {
+	for (Int_t j=0; j<2; ++j) {
+	  if (fabs(anaJets_[j].eta())<cut.ConeSize||anaJets_[j].eta()>=0) jetEvt[j]=false;
+	}
+      }
 
-	if (doJetOnly_) continue;
+      // =====================================================
+      // Set Centrality Weight
+      // =====================================================
+      int cBin = hCent->FindBin(cent);
+      double weight=1;
+      if (doCentralityReweighting_) {
+	if (hCentralityData_->GetBinContent(cBin)==0 || hCent->GetBinContent(cBin)==0) {
+	  weight = 0; 
+	} else {
+	  weight = hCentralityWeight_->GetBinContent(cBin);
+	}
+      }
 
-	// Initialize Counters
-	Double_t conePtSum[2] = { 0,0 };
-	Double_t conePtBgSum[2] = { 0,0 };
-	Double_t metx=0,metx0=0,metx1=0,metx2=0,metx3=0,metx4=0,metx5=0;
-	Double_t mety=0,mety0=0,mety1=0,mety2=0,mety3=0,mety4=0,mety5=0;
-	Double_t metConex=0,metConex0=0,metConex1=0,metConex2=0,metConex3=0,metConex4=0,metConex5=0;
-	Double_t metOutOfConex=0,metOutOfConex0=0,metOutOfConex1=0,metOutOfConex2=0,metOutOfConex3=0,metOutOfConex4=0,metOutOfConex5=0;
-	// =====================================================
-	// Fill Particle Level Histograms
-	// =====================================================
-	for (Int_t i=0; i<evtnp;++i) {
-	  // ------------------------
-	  // Trk Cut
-	  // ------------------------
-	  if (anaGenpType_==1 && pch[i]==0) continue;
-	  if (anaGenpType_==10 && (psube[i]>0 || pch[i]==0)) continue;
-	  if (cut.Name.Contains("PFChHad") && pfid[i]!=1) continue;
-	  if (cut.Name.Contains("PFPhoton") && pfid[i]!=4) continue;
-	  if (ppt[i]<cut.TrkPtMin||fabs(peta[i])>=2.4) continue;
-	  // ------------------------
-	  // Track Efficiency/Fake Correction
-	  // ------------------------
-          double trackWeight=1;
-          if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(ppt[i],peta[i],cent);
-	  // Dead forward pixel xcheck
-	  //if (peta[i]>2&&pphi[i]>-0.1&&pphi[i]<0.8) trackWeight=0;
+      // =====================================================
+      // Fill Event Level Histograms
+      // =====================================================
+      hJDPhi->Fill(anaJetDPhi_,weight);
+      hAj->Fill((anaJets_[0].pt()-anaJets_[1].pt())/(anaJets_[0].pt()+anaJets_[1].pt()),weight);
+      hJDEta->Fill(anaJets_[1].eta()-anaJets_[0].eta(),weight);
+      hCentReWeighted->Fill(cent,weight);
+      ++numDJ_;
+      numDJReWeighted_+=weight;
+      jettrk_.cent = cent;
+      jettrk_.centwt = weight;
 
-	  jettrk_.ppt.push_back(p_[i].pt());
-	  jettrk_.peta.push_back(p_[i].eta());
-	  jettrk_.pphi.push_back(p_[i].phi());
-	  jettrk_.trkeff.push_back(0.7);
-	  jettrk_.trkfak.push_back(0.05);
-	  jettrk_.trkmul.push_back(0.001);
-	  jettrk_.trksec.push_back(0.02);
-	  // ------------------------
-	  // calculate particle jet correlations
-	  // ------------------------
-	  Double_t pdphi[2]={ 9999,9999 };
-	  Double_t pdr[2]={ 9999,9999 };
-	  Double_t pdrbg[2]={ 9999,9999 };
-	  for (Int_t j=0; j<2; ++j) {
-	    // signal
-	    pdphi[j] = reco::deltaPhi(p_[i].phi(),anaJets_[j].phi());
-	    pdr[j] = reco::deltaR(p_[i].eta(),p_[i].phi(),anaJets_[j].eta(),anaJets_[j].phi());
-	    // bcksub
-	    // * If don't do event selection, make eta reflection the default bkg axis
-	    if (cut.BkgSubType.Contains("EtaRefl"||!doEvtSel_)) {
-	      pdrbg[j] = reco::deltaR(p_[i].eta(),p_[i].phi(),-1*anaJets_[j].eta(),anaJets_[j].phi());
-	    }
-	    // monitor histograms
-	    hPJDPhi[j]->Fill(pdphi[j],trackWeight);
-	    jettrk_.pdr[j].push_back(pdr[j]);
-	    jettrk_.pdrbg[j].push_back(pdrbg[j]);
+      for (Int_t j=0; j<2; ++j) {
+	if (jetEvt[j]) {
+	  hJEt[j]->Fill(anaJets_[j].pt(),weight);
+	  hJEta[j]->Fill(anaJets_[j].eta(),weight);
+	  jettrk_.jtpt[j] = anaJets_[j].pt();
+	  jettrk_.jteta[j] = anaJets_[j].eta();
+	  jettrk_.jtphi[j] = anaJets_[j].phi();
+	  ++numJ_[j];
+	  numJReWeighted_[j]+=weight;
+	}
+      }
+      jettrk_.jdphi = anaJetDPhi_;
+
+      if (doJetOnly_) continue;
+
+      // Initialize Counters
+      Double_t conePtSum[2] = { 0,0 };
+      Double_t conePtBgSum[2] = { 0,0 };
+      Double_t metx=0,metx0=0,metx1=0,metx2=0,metx3=0,metx4=0,metx5=0;
+      Double_t mety=0,mety0=0,mety1=0,mety2=0,mety3=0,mety4=0,mety5=0;
+      Double_t metConex=0,metConex0=0,metConex1=0,metConex2=0,metConex3=0,metConex4=0,metConex5=0;
+      Double_t metOutOfConex=0,metOutOfConex0=0,metOutOfConex1=0,metOutOfConex2=0,metOutOfConex3=0,metOutOfConex4=0,metOutOfConex5=0;
+      // =====================================================
+      // Fill Particle Level Histograms
+      // =====================================================
+      for (Int_t i=0; i<evtnp;++i) {
+	// ------------------------
+	// Trk Cut
+	// ------------------------
+	if (anaGenpType_==1 && pch[i]==0) continue;
+	if (anaGenpType_==10 && (psube[i]>0 || pch[i]==0)) continue;
+	if (cut.Name.Contains("PFChHad") && pfid[i]!=1) continue;
+	if (cut.Name.Contains("PFPhoton") && pfid[i]!=4) continue;
+	if (ppt[i]<cut.TrkPtMin||fabs(peta[i])>=2.4) continue;
+	// ------------------------
+	// Track Efficiency/Fake Correction
+	// ------------------------
+	double trackWeight=1;
+	if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(ppt[i],peta[i],cent);
+	// Dead forward pixel xcheck
+	//if (peta[i]>2&&pphi[i]>-0.1&&pphi[i]<0.8) trackWeight=0;
+
+	jettrk_.ppt.push_back(p_[i].pt());
+	jettrk_.peta.push_back(p_[i].eta());
+	jettrk_.pphi.push_back(p_[i].phi());
+	jettrk_.trkeff.push_back(0.7);
+	jettrk_.trkfak.push_back(0.05);
+	jettrk_.trkmul.push_back(0.001);
+	jettrk_.trksec.push_back(0.02);
+	// ------------------------
+	// calculate particle jet correlations
+	// ------------------------
+	Double_t pdphi[2]={ 9999,9999 };
+	Double_t pdr[2]={ 9999,9999 };
+	Double_t pdrbg[2]={ 9999,9999 };
+	for (Int_t j=0; j<2; ++j) {
+	  // signal
+	  pdphi[j] = reco::deltaPhi(p_[i].phi(),anaJets_[j].phi());
+	  pdr[j] = reco::deltaR(p_[i].eta(),p_[i].phi(),anaJets_[j].eta(),anaJets_[j].phi());
+	  // bcksub
+	  // * If don't do event selection, make eta reflection the default bkg axis
+	  if (cut.BkgSubType.Contains("EtaRefl"||!doEvtSel_)) {
+	    pdrbg[j] = reco::deltaR(p_[i].eta(),p_[i].phi(),-1*anaJets_[j].eta(),anaJets_[j].phi());
 	  }
+	  // monitor histograms
+	  hPJDPhi[j]->Fill(pdphi[j],trackWeight);
+	  jettrk_.pdr[j].push_back(pdr[j]);
+	  jettrk_.pdrbg[j].push_back(pdrbg[j]);
+	}
 
-	  Float_t trkEnergy=p_[i].pt();
-	  // ------------------------
-	  // met calculation
-	  // ------------------------
-	  Float_t pptx=cos(pdphi[0])*trkEnergy*trackWeight;
-	  metx+=pptx;
-	  Float_t ppty=sin(pdphi[0])*trkEnergy*trackWeight;
-	  mety+=ppty;
-          if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex+=pptx; else metOutOfConex+=pptx;
-	  //for (int i=0;i<hPt->GetNbinsX()+2;++i) cout << "Bin " << i << " ledge: " << hPt->GetBinLowEdge(i) << endl;
-	  if (trkEnergy>=hPt->GetBinLowEdge(1)&&trkEnergy<hPt->GetBinLowEdge(2)) {
-            metx0+=pptx;
-            mety0+=ppty;
-            if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex0+=pptx; else metOutOfConex0+=pptx;
-          } else if (trkEnergy>=hPt->GetBinLowEdge(2)&&trkEnergy<hPt->GetBinLowEdge(3)) {
-            metx1+=pptx;
-            mety1+=ppty;
-            if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex1+=pptx; else metOutOfConex1+=pptx;
-          } else if (trkEnergy>=hPt->GetBinLowEdge(3)&&trkEnergy<hPt->GetBinLowEdge(4)) {
-            metx2+=pptx;
-            mety2+=ppty;
-            if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex2+=pptx; else metOutOfConex2+=pptx;
-          } else if (trkEnergy>=hPt->GetBinLowEdge(4)&&trkEnergy<hPt->GetBinLowEdge(5)) {
-            metx3+=pptx;
-            mety3+=ppty;
-            if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex3+=pptx; else metOutOfConex3+=pptx;
-          } else if (trkEnergy>=hPt->GetBinLowEdge(5)&&trkEnergy<hPt->GetBinLowEdge(6)) { 
-            metx4+=pptx;
-            mety4+=ppty;
-            if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex4+=pptx; else metOutOfConex4+=pptx;
-          } else if (trkEnergy>=hPt->GetBinLowEdge(6)&&trkEnergy<hPt->GetBinLowEdge(7)) { 
-            metx5+=pptx;
-            mety5+=ppty;
-            if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex5+=pptx; else metOutOfConex5+=pptx;
-          }
+	Float_t trkEnergy=p_[i].pt();
+	// ------------------------
+	// met calculation
+	// ------------------------
+	Float_t pptx=cos(pdphi[0])*trkEnergy*trackWeight;
+	metx+=pptx;
+	Float_t ppty=sin(pdphi[0])*trkEnergy*trackWeight;
+	mety+=ppty;
+	if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex+=pptx; else metOutOfConex+=pptx;
+	//for (int i=0;i<hPt->GetNbinsX()+2;++i) cout << "Bin " << i << " ledge: " << hPt->GetBinLowEdge(i) << endl;
+	if (trkEnergy>=hPt->GetBinLowEdge(1)&&trkEnergy<hPt->GetBinLowEdge(2)) {
+	  metx0+=pptx;
+	  mety0+=ppty;
+	  if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex0+=pptx; else metOutOfConex0+=pptx;
+	} else if (trkEnergy>=hPt->GetBinLowEdge(2)&&trkEnergy<hPt->GetBinLowEdge(3)) {
+	  metx1+=pptx;
+	  mety1+=ppty;
+	  if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex1+=pptx; else metOutOfConex1+=pptx;
+	} else if (trkEnergy>=hPt->GetBinLowEdge(3)&&trkEnergy<hPt->GetBinLowEdge(4)) {
+	  metx2+=pptx;
+	  mety2+=ppty;
+	  if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex2+=pptx; else metOutOfConex2+=pptx;
+	} else if (trkEnergy>=hPt->GetBinLowEdge(4)&&trkEnergy<hPt->GetBinLowEdge(5)) {
+	  metx3+=pptx;
+	  mety3+=ppty;
+	  if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex3+=pptx; else metOutOfConex3+=pptx;
+	} else if (trkEnergy>=hPt->GetBinLowEdge(5)&&trkEnergy<hPt->GetBinLowEdge(6)) { 
+	  metx4+=pptx;
+	  mety4+=ppty;
+	  if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex4+=pptx; else metOutOfConex4+=pptx;
+	} else if (trkEnergy>=hPt->GetBinLowEdge(6)&&trkEnergy<hPt->GetBinLowEdge(7)) { 
+	  metx5+=pptx;
+	  mety5+=ppty;
+	  if (fabs(pdr[0])<0.8||fabs(pdr[1])<0.8) metConex5+=pptx; else metOutOfConex5+=pptx;
+	}
 
-	  // =====================================================
-	  // Calculate Cone Sums
-	  // =====================================================
-	  // cone sum
-	  for (Int_t j=0; j<2; ++j) {
-	    for (Int_t b=0; b<numPtBins; ++b) {
-	      if (trkEnergy>=hPt->GetBinLowEdge(b+1)&&trkEnergy<hPt->GetBinLowEdge(b+2)) {
-		// Signal Cone
-		if (pdr[j]<cut.ConeSize) {
-		  jc_.cpt[j][b]+=trkEnergy*trackWeight;
-		  jc_.cptpara[j][b]+=cos(reco::deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
-		}
-		// Bkg Cone
-		if (pdrbg[j]<cut.ConeSize) {
-		  jc_.cptbg[j][b]+=trkEnergy*trackWeight;
-		  jc_.cptparabg[j][b]+=cos(reco::deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
-		}
-		break;
-	      }
-	    }
-	  }
-
-	  // =====================================================
-          // Take the reweighting into account for later histogram
-          // **This should not be applied before the met calculation.**
-	  // =====================================================
-          trackWeight *= weight;
-
-	  // =====================================================
-	  // Fill Jet-Particle Histograms
-	  // =====================================================
-	  for (Int_t j=0; j<2; ++j) {
-	    if (jetEvt[j]) {
+	// =====================================================
+	// Calculate Cone Sums
+	// =====================================================
+	// cone sum
+	for (Int_t j=0; j<2; ++j) {
+	  for (Int_t b=0; b<numPtBins; ++b) {
+	    if (trkEnergy>=hPt->GetBinLowEdge(b+1)&&trkEnergy<hPt->GetBinLowEdge(b+2)) {
 	      // Signal Cone
 	      if (pdr[j]<cut.ConeSize) {
-		conePtSum[j]+=trkEnergy*trackWeight;
-		hCPPt[j]->Fill(trkEnergy,trackWeight);
-		hPtPDR[j]->Fill(trkEnergy,pdr[j],trkEnergy*trackWeight);
+		jc_.cpt[j][b]+=trkEnergy*trackWeight;
+		jc_.cptpara[j][b]+=cos(reco::deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
 	      }
-	      // Background Cone
+	      // Bkg Cone
 	      if (pdrbg[j]<cut.ConeSize) {
-		hCPPtBg[j]->Fill(trkEnergy,trackWeight);
-		conePtBgSum[j]+=trkEnergy*trackWeight;
-		hPtPDRBg[j]->Fill(trkEnergy,pdrbg[j],trkEnergy*trackWeight);
+		jc_.cptbg[j][b]+=trkEnergy*trackWeight;
+		jc_.cptparabg[j][b]+=cos(reco::deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
 	      }
+	      break;
 	    }
-	  }
-	} // end of particles loop
-
-	// =====================================================
-	// Fill Cone Sums
-	// =====================================================
-	for (Int_t j=0; j<2; ++j) {
-	  if (jetEvt[j]) {
-	    hCPt[j]->Fill(conePtSum[j]);
-	    hCPtBg[j]->Fill(conePtBgSum[j]);
-	    hCPtBgSub[j]->Fill(conePtSum[j]-conePtBgSum[j]);
 	  }
 	}
 
 	// =====================================================
-	// Fill Ntuple
+	// Take the reweighting into account for later histogram
+	// **This should not be applied before the met calculation.**
 	// =====================================================
-        Float_t var[100];
-	var[0]=anaJets_[0].pt();
-	var[1]=anaJets_[0].eta();
-	var[2]=anaJets_[0].phi();
-	var[3]=anaJets_[1].pt();
-	var[4]=anaJets_[1].eta();
-	var[5]=anaJets_[1].phi();
-	var[6]=metx;
-	var[7]=metx0;
-	var[8]=metx1;
-	var[9]=metx2;
-	var[10]=metx3;
-	var[11]=metx4;
-	var[12]=metx5;
-	var[13]=mety;
-	var[14]=mety0;
-	var[15]=mety1;
-	var[16]=mety2;
-	var[17]=mety3;
-	var[18]=mety4;
-	var[19]=mety5;
-	var[20]=metConex;
-	var[21]=metConex0;
-	var[22]=metConex1;
-	var[23]=metConex2;
-	var[24]=metConex3;
-	var[25]=metConex4;
-	var[26]=metConex5;
-	var[27]=metOutOfConex;
-	var[28]=metOutOfConex0;
-	var[29]=metOutOfConex1;
-	var[30]=metOutOfConex2;
-	var[31]=metOutOfConex3;
-	var[32]=metOutOfConex4;
-	var[33]=metOutOfConex5;
-	var[34]=GetEvtMask();
-	var[35]=cent;
-	var[36]=anaJetDPhi_;
-	var[37]=weight;
-	ntjt->Fill(var);    // fit ntuple
+	trackWeight *= weight;
 
-	tjttrk->Fill();
+	// =====================================================
+	// Fill Jet-Particle Histograms
+	// =====================================================
+	for (Int_t j=0; j<2; ++j) {
+	  if (jetEvt[j]) {
+	    // Signal Cone
+	    if (pdr[j]<cut.ConeSize) {
+	      conePtSum[j]+=trkEnergy*trackWeight;
+	      hCPPt[j]->Fill(trkEnergy,trackWeight);
+	      hPtPDR[j]->Fill(trkEnergy,pdr[j],trkEnergy*trackWeight);
+	    }
+	    // Background Cone
+	    if (pdrbg[j]<cut.ConeSize) {
+	      hCPPtBg[j]->Fill(trkEnergy,trackWeight);
+	      conePtBgSum[j]+=trkEnergy*trackWeight;
+	      hPtPDRBg[j]->Fill(trkEnergy,pdrbg[j],trkEnergy*trackWeight);
+	    }
+	  }
+	}
+      } // end of particles loop
 
-	tcone->Fill();
-      } // End of Main Event Selection
-      // if (Cut(ientry) < 0) continue;
-   }
+      // =====================================================
+      // Fill Cone Sums
+      // =====================================================
+      for (Int_t j=0; j<2; ++j) {
+	if (jetEvt[j]) {
+	  hCPt[j]->Fill(conePtSum[j]);
+	  hCPtBg[j]->Fill(conePtBgSum[j]);
+	  hCPtBgSub[j]->Fill(conePtSum[j]-conePtBgSum[j]);
+	}
+      }
 
-   // =====================================================
-   // Summarize Event Loop
-   // =====================================================
-   cout << "Total Events: " << numTotEvt << endl;
-   cout << "DiJets Selected w/o Bkg Limit: " << numDJNoBkgLimit << " (same as draw cut unless there is jet eta correction)" << endl;
-   cout << "DiJets Selected: " << numDJ_ << " Reweighted: " << numDJReWeighted_ << endl;
-   for (Int_t j=0; j<2; ++j) {
-     cout << "num Jet" << j << " Selected: " << numJ_[j] << " Reweighted: " << numJReWeighted_[j] << endl;
-   }
+      // =====================================================
+      // Fill Ntuple
+      // =====================================================
+      Float_t var[100];
+      var[0]=anaJets_[0].pt();
+      var[1]=anaJets_[0].eta();
+      var[2]=anaJets_[0].phi();
+      var[3]=anaJets_[1].pt();
+      var[4]=anaJets_[1].eta();
+      var[5]=anaJets_[1].phi();
+      var[6]=metx;
+      var[7]=metx0;
+      var[8]=metx1;
+      var[9]=metx2;
+      var[10]=metx3;
+      var[11]=metx4;
+      var[12]=metx5;
+      var[13]=mety;
+      var[14]=mety0;
+      var[15]=mety1;
+      var[16]=mety2;
+      var[17]=mety3;
+      var[18]=mety4;
+      var[19]=mety5;
+      var[20]=metConex;
+      var[21]=metConex0;
+      var[22]=metConex1;
+      var[23]=metConex2;
+      var[24]=metConex3;
+      var[25]=metConex4;
+      var[26]=metConex5;
+      var[27]=metOutOfConex;
+      var[28]=metOutOfConex0;
+      var[29]=metOutOfConex1;
+      var[30]=metOutOfConex2;
+      var[31]=metOutOfConex3;
+      var[32]=metOutOfConex4;
+      var[33]=metOutOfConex5;
+      var[34]=GetEvtMask();
+      var[35]=cent;
+      var[36]=anaJetDPhi_;
+      var[37]=weight;
+      ntjt->Fill(var);    // fit ntuple
 
-   // =====================================================
-   // Normalize by Number of Selected Events
-   // =====================================================
-   hJDPhi->Scale(1./(numDJReWeighted_));
-   hJDEta->Scale(1./(numDJReWeighted_));
-   hAj->Scale(1./(numDJReWeighted_));
-   hCentReWeighted->Scale(1./(numDJReWeighted_));
+      tjttrk->Fill();
 
-   for (Int_t j=0; j<2; ++j) {
-     hJEt[j]->Scale(1./(numJReWeighted_[j]));
-     hJEta[j]->Scale(1./(numJReWeighted_[j]));
+      tcone->Fill();
+    } // End of Main Event Selection
+    // if (Cut(ientry) < 0) continue;
+  }
 
-     hCPPt[j]->Scale(1./numJReWeighted_[j]);
-     hCPPtBg[j]->Scale(1./numJReWeighted_[j]);
-     hCPPtBgSub[j]->Add(hCPPt[j],hCPPtBg[j],1,-1);
+  // =====================================================
+  // Summarize Event Loop
+  // =====================================================
+  cout << "Total Events: " << numTotEvt << endl;
+  cout << "DiJets Selected w/o Bkg Limit: " << numDJNoBkgLimit << " (same as draw cut unless there is jet eta correction)" << endl;
+  cout << "DiJets Selected: " << numDJ_ << " Reweighted: " << numDJReWeighted_ << endl;
+  for (Int_t j=0; j<2; ++j) {
+    cout << "num Jet" << j << " Selected: " << numJ_[j] << " Reweighted: " << numJReWeighted_[j] << endl;
+  }
 
-     hCPt[j]->Scale(1./(numJReWeighted_[j]));
-     hCPtBg[j]->Scale(1./(numJReWeighted_[j]));
-     hCPtBgSub[j]->Scale(1./(numJReWeighted_[j]));
+  // =====================================================
+  // Normalize by Number of Selected Events
+  // =====================================================
+  hJDPhi->Scale(1./(numDJReWeighted_));
+  hJDEta->Scale(1./(numDJReWeighted_));
+  hAj->Scale(1./(numDJReWeighted_));
+  hCentReWeighted->Scale(1./(numDJReWeighted_));
 
-     hPtPDR[j]->Scale(1./(numJReWeighted_[j]));
-     hPtPDRBg[j]->Scale(1./(numJReWeighted_[j]));
-   }
+  for (Int_t j=0; j<2; ++j) {
+    hJEt[j]->Scale(1./(numJReWeighted_[j]));
+    hJEta[j]->Scale(1./(numJReWeighted_[j]));
+
+    hCPPt[j]->Scale(1./numJReWeighted_[j]);
+    hCPPtBg[j]->Scale(1./numJReWeighted_[j]);
+    hCPPtBgSub[j]->Add(hCPPt[j],hCPPtBg[j],1,-1);
+
+    hCPt[j]->Scale(1./(numJReWeighted_[j]));
+    hCPtBg[j]->Scale(1./(numJReWeighted_[j]));
+    hCPtBgSub[j]->Scale(1./(numJReWeighted_[j]));
+
+    hPtPDR[j]->Scale(1./(numJReWeighted_[j]));
+    hPtPDRBg[j]->Scale(1./(numJReWeighted_[j]));
+  }
 }
 
 //
