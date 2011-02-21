@@ -93,22 +93,22 @@ void anaJetFrag(
       //cout << fileTrackingCorr[i]->GetName() << " " << trkCorrModule+"/heff3D_cbin"+cbins[j] << endl;
       TH3F * hNum =(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/heff3D_cbin"+cbins[j]);
       TH3F * hDen =(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hsim3D_cbin"+cbins[j]);
-      hTrackingEffCorr[i][j]=(TH3F*)hNum->Clone("hTrkEff_"+cbins[j]);
+      hTrackingEffCorr[i][j]=(TH3F*)hNum->Clone(Form("hTrkEff_f%d_c%d",i,j));
       hTrackingEffCorr[i][j]->Divide(hDen);
 
       hNum=(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hfak3D_cbin"+cbins[j]);
       hDen=(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hrec3D_cbin"+cbins[j]);
-      hTrackingFakCorr[i][j]=(TH3F*)hNum->Clone("hTrkFak_"+cbins[j]);
+      hTrackingFakCorr[i][j]=(TH3F*)hNum->Clone(Form("hTrkFak_f%d_c%d",i,j));
       hTrackingFakCorr[i][j]->Divide(hDen);
 
       hNum=(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hmul3D_cbin"+cbins[j]);
       hDen=(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hsim3D_cbin"+cbins[j]);
-      hTrackingMulCorr[i][j]=(TH3F*)hNum->Clone("hTrkMul_"+cbins[j]);
+      hTrackingMulCorr[i][j]=(TH3F*)hNum->Clone(Form("hTrkMul_f%d_c%d",i,j));
       hTrackingMulCorr[i][j]->Divide(hDen);
 
       hNum=(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hsec3D_cbin"+cbins[j]);
       hDen=(TH3F*)fileTrackingCorr[i]->Get(trkCorrModule+"/hrec3D_cbin"+cbins[j]);
-      hTrackingSecCorr[i][j]=(TH3F*)hNum->Clone("hTrkSec_"+cbins[j]);
+      hTrackingSecCorr[i][j]=(TH3F*)hNum->Clone(Form("hTrkSec_f%d_c%d",i,j));
       hTrackingSecCorr[i][j]->Divide(hDen);
     }
   }
@@ -184,18 +184,22 @@ void anaJetFrag(
 
   jana.fileTrackingCorr_=fileTrackingCorr;
   jana.trackingCentBin_=cbins;
+  jana.trackingEffCorr_ = hTrackingEffCorr;
+  jana.trackingFakCorr_ = hTrackingFakCorr;
+  jana.trackingMulCorr_ = hTrackingMulCorr;
+  jana.trackingSecCorr_ = hTrackingSecCorr;
+  jana.trackingEtaBin_ = (TH1D*)hTrackingEffCorr[3][0]->Project3D("x");
+  jana.trackingPtBin_ = (TH1D*)hTrackingEffCorr[3][0]->Project3D("y");
+  jana.trackingJEtBin_ = (TH1D*)hTrackingEffCorr[3][0]->Project3D("z");
   for (int i=0;i<fileTrackingCorr.size();++i) {
     for (int j=0;j<cbins.size();++j)
     {
-     jana.trackingEffCorr_ = hTrackingEffCorr;
-     jana.trackingFakCorr_ = hTrackingFakCorr;
-     jana.trackingMulCorr_ = hTrackingMulCorr;
-     jana.trackingSecCorr_ = hTrackingSecCorr;
+      hTrackingEffCorr[i][j]->Write();
+      hTrackingFakCorr[i][j]->Write();
+      hTrackingMulCorr[i][j]->Write();
+      hTrackingSecCorr[i][j]->Write();
     }
   }
-  jana.trackingEtaBin_ = (TH1D*)hTrackingEffCorr[0][0]->Project3D("x");
-  jana.trackingPtBin_ = (TH1D*)hTrackingEffCorr[0][0]->Project3D("y");
-  jana.trackingJEtBin_ = (TH1D*)hTrackingEffCorr[0][0]->Project3D("z");
 
   // -- analysis selections --
   cout << endl << "====== DJ Selection: " << jana.cut.DJCutType << " ======" << endl;
