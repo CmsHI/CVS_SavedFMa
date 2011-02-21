@@ -380,43 +380,42 @@ Int_t JetFragAna::GetJetEntry(TChain * t, AnaJet & jet, Long64_t entry)
   } // finished with entry
   return result;
 }
-double JetFragAna::getEffFakeCorrection(double pt,double eta, double cent)
+double JetFragAna::getEffFakeCorrection(double pt,double eta, double jet, double cent, Float_t * corr)
 {
-  return 1;
-   
-/*
-   int bin = 0;
+  Int_t bin = -1;
 
-   // Get the corresponding centrality bin
-   if (cent<10) {
-      bin = 0;
-   } else if (cent<20) {
-      bin = 1;
-   } else if (cent<30) {
-      bin = 2;
-   } else if (cent<50) {
-      bin = 3;   
-   } else if (cent<100) {
-      bin = 4;   
-   }          
-   
-   int etaBin = trackingEtaBin_->FindBin(fabs(eta));
-   int ptBin = trackingPtBin_->FindBin(pt);
-   
-   if (ptBin>21) ptBin= 21;
- 
-   double eff = trackingEffCorr_[bin]->GetBinContent(etaBin,ptBin);
-   double effErr = trackingEffCorr_[bin]->GetBinError(etaBin,ptBin);
-   double fake = trackingFakeCorr_[bin]->GetBinContent(etaBin,ptBin);
-   if ((1-fake)/eff>10) {
-      cout <<"Correction: Pt = "<<pt <<" eta = "<<eta<<" cent = "<<cent<<endl;
-      cout <<"Correction: Fake = "<<fake <<" eff = "<<eff<<" cor = "<<(1-fake)/eff<<endl;
-      cout <<"Err = "<<effErr/eff<<endl;
-   }
-   if (pt>20) eff*=1.20;
-   return (1-fake)/eff;
-//   return 1.3;
-*/
+  // Get the corresponding centrality bin
+  if (cent<5) {
+    bin = 0;
+  } else if (cent<10) {
+    bin = 1;
+  } else if (cent<30) {
+    bin = 2;
+  } else if (cent<50) {
+    bin = 3;   
+  } else if (cent<100) {
+    bin = 4;   
+  }          
+
+  if (pt>60) pt=60;
+  Int_t ptBin = trackingPtBin_->FindBin(pt);
+  Int_t etaBin = trackingEtaBin_->FindBin(eta);
+  Int_t jetBin = trackingJEtBin_->FindBin(jet);
+  double eff = trackingEffCorr_[3][bin]->GetBinContent(etaBin,ptBin,jetBin);
+  double effErr = trackingEffCorr_[3][bin]->GetBinError(etaBin,ptBin,jetBin);
+  double fake = trackingFakCorr_[3][bin]->GetBinContent(etaBin,ptBin,jetBin);
+
+  if ((1-fake)/eff>10) {
+    cout <<"Correction: Pt = "<<pt <<" eta = "<<eta<<" jet = " << jet << " cent = "<<cent<<endl;
+    cout <<"Correction: Fake = "<<fake <<" eff = "<<eff<<" cor = "<<(1-fake)/eff<<endl;
+    cout <<"Err = "<<effErr/eff<<endl;
+  }
+
+  corr[0]=eff;
+  corr[1]=fake;
+  corr[2]=trackingMulCorr_[3][bin]->GetBinError(etaBin,ptBin,jetBin);
+  corr[3]=trackingSecCorr_[3][bin]->GetBinError(etaBin,ptBin,jetBin);
+  return (1-fake)/eff;
 }
 
 void JetFragAna::Loop()
@@ -586,18 +585,21 @@ void JetFragAna::Loop()
 	// ------------------------
 	// Track Efficiency/Fake Correction
 	// ------------------------
-	double trackWeight=1;
-	if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(ppt[i],peta[i],cent);
+	Double_t trackWeight=1;
+	Float_t trkcorr[4]={1,1,1,1};
+	if (doTrackingEffFakeCorr_) {
+	  trackWeight = getEffFakeCorrection(ppt[i],peta[i],anaJets_[0].pt(),cent,trkcorr);
+	}
 	// Dead forward pixel xcheck
 	//if (peta[i]>2&&pphi[i]>-0.1&&pphi[i]<0.8) trackWeight=0;
 
 	jettrk_.ppt.push_back(p_[i].pt());
 	jettrk_.peta.push_back(p_[i].eta());
 	jettrk_.pphi.push_back(p_[i].phi());
-	jettrk_.trkeff.push_back(0.7);
-	jettrk_.trkfak.push_back(0.05);
-	jettrk_.trkmul.push_back(0.001);
-	jettrk_.trksec.push_back(0.02);
+	jettrk_.trkeff.push_back(trkcorr[0]);
+	jettrk_.trkfak.push_back(trkcorr[1]);
+	jettrk_.trkmul.push_back(trkcorr[2]);
+	jettrk_.trksec.push_back(trkcorr[3]);
 	// ------------------------
 	// calculate particle jet correlations
 	// ------------------------

@@ -251,7 +251,7 @@ public :
    Bool_t   Notify();
    void     Show(Long64_t entry = -1);
    Bool_t   GetEvtMask();
-   double   getEffFakeCorrection(double pt,double eta, double cent);
+   double   getEffFakeCorrection(double pt,double eta, double jet, double cent, Float_t * corr);
    void	    SetJetTree(Int_t mode, TString tfile, TString tname);
 };
 
