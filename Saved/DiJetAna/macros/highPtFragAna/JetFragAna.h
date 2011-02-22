@@ -66,6 +66,23 @@ struct JetFrag {
       pdrbg[j].clear();
     }
   }
+  void SetBranches(TTree * t) {
+   t->Branch("cent",&(this->cent),"cent/F");
+   t->Branch("centwt",&(this->centwt),"centwt/F");
+   t->Branch("jtpt",&(this->jtpt));
+   t->Branch("jteta",&(this->jteta));
+   t->Branch("jtphi",&(this->jtphi));
+   t->Branch("jdphi",&(this->jdphi),"jdphi/F");
+   t->Branch("ppt",&(this->ppt));
+   t->Branch("peta",&(this->peta));
+   t->Branch("pphi",&(this->pphi));
+   t->Branch("trkeff",&(this->trkeff));
+   t->Branch("trkfak",&(this->trkfak));
+   t->Branch("trkmul",&(this->trkmul));
+   t->Branch("trksec",&(this->trksec));
+   t->Branch("pdr",&(this->pdr));
+   t->Branch("pdrbg",&(this->pdrbg));
+  }
 };
 
 struct JetCone {

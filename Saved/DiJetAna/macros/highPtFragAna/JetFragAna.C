@@ -56,21 +56,7 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
 
    // trees
    tjttrk = new TTree("tjttrk","jet trk tree");
-   tjttrk->Branch("cent",&jettrk_.cent,"cent/F");
-   tjttrk->Branch("centwt",&jettrk_.centwt,"centwt/F");
-   tjttrk->Branch("jtpt",&jettrk_.jtpt);
-   tjttrk->Branch("jteta",&jettrk_.jteta);
-   tjttrk->Branch("jtphi",&jettrk_.jtphi);
-   tjttrk->Branch("jdphi",&jettrk_.jdphi,"jdphi/F");
-   tjttrk->Branch("ppt",&jettrk_.ppt);
-   tjttrk->Branch("peta",&jettrk_.peta);
-   tjttrk->Branch("pphi",&jettrk_.pphi);
-   tjttrk->Branch("trkeff",&jettrk_.trkeff);
-   tjttrk->Branch("trkfak",&jettrk_.trkfak);
-   tjttrk->Branch("trkmul",&jettrk_.trkmul);
-   tjttrk->Branch("trksec",&jettrk_.trksec);
-   tjttrk->Branch("pdr",&jettrk_.pdr);
-   tjttrk->Branch("pdrbg",&jettrk_.pdrbg);
+   jettrk_.SetBranches(tjttrk);
 
    tcone = new TTree("tcone","jet cone tree");
    tcone->Branch("cpt",&jc_.cpt);
@@ -397,7 +383,7 @@ double JetFragAna::getEffFakeCorrection(double pt,double eta, double jet, double
     bin = 4;   
   }          
 
-  if (pt>60) pt=60;
+  //if (pt>60) pt=60;
   Int_t ptBin = trackingPtBin_->FindBin(pt);
   Int_t etaBin = trackingEtaBin_->FindBin(eta);
   Int_t jetBin = trackingJEtBin_->FindBin(jet);
@@ -406,6 +392,7 @@ double JetFragAna::getEffFakeCorrection(double pt,double eta, double jet, double
   double fake = trackingFakCorr_[3][bin]->GetBinContent(etaBin,ptBin,jetBin);
 
   if ((1-fake)/eff>10) {
+    cout << fileTrackingCorr_[3]->GetName() << endl;
     cout <<"Correction: Pt = "<<pt <<" eta = "<<eta<<" jet = " << jet << " cent = "<<cent<<endl;
     cout <<"Correction: Fake = "<<fake <<" eff = "<<eff<<" cor = "<<(1-fake)/eff<<endl;
     cout <<"Err = "<<effErr/eff<<endl;
