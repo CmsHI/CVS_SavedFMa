@@ -56,9 +56,12 @@ void checkTrkInputs(
   hPPtRat->Sumw2();
   hPPtRat->Divide(hPPtRecRaw,hPPtGen);
 
+  hsim_pt->SetTitle(";p_{T} (GeV/c); count");
+  hRecSimRat->SetTitle(";p_{T} (GeV/c); reco/gen ratio");
   hsim_pt->SetLineColor(kRed);
   hPPtGen->SetMarkerColor(kRed);
   hPPtGen->SetLineColor(kRed);
+  hRecSimRat->SetLineColor(kRed);
   TCanvas *cRec = new TCanvas("cRec","Rec",500,900);
   cRec->Divide(1,2);
   cRec->cd(1);
