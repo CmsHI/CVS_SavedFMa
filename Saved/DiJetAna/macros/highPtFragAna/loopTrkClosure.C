@@ -130,8 +130,8 @@ void loopTrkClosure(
     vhPPtGen.push_back(new TH1D(Form("hPPtGen_j%d",i),";In-Cone Trk p_{T} (GeV/c); #frac{1}{N_{Jet}} #frac{dN}{dp_{T}}",numPPtBins,pptBins));
     vhPPtRat.push_back(new TH1D(Form("hPPtRat_j%d",i),";In-Cone Trk p_{T} (GeV/c); RecTrk/GenParticle",numPPtBins,pptBins));
     vhPPtGen[i]->Sumw2();
-    vhTrkEff.push_back(new TH2D(Form("hTrkEff_j%d",i),";In-Cone Trk p_{T} (GeV/c); Eff.",50,0,100,50,0,1));
-    vhTrkFak.push_back(new TH2D(Form("hTrkFak_j%d",i),";In-Cone Trk p_{T} (GeV/c); Fake Rate",50,0,100,50,0,1));
+    vhTrkEff.push_back(new TH2D(Form("hTrkEff_j%d",i),";In-Cone Trk p_{T} (GeV/c); Eff.",50,0,100,50,-0.2,1.2));
+    vhTrkFak.push_back(new TH2D(Form("hTrkFak_j%d",i),";In-Cone Trk p_{T} (GeV/c); Fake Rate",50,0,100,50,-0.2,1.2));
 
     vhPPtRecCorrLv.resize(5);
     vhPPtRatLv.resize(5);
@@ -169,7 +169,8 @@ void loopTrkClosure(
       Float_t fak = (*jttrk.trkfak)[ip];
       Float_t mul = (*jttrk.trkmul)[ip];
       Float_t sec = (*jttrk.trksec)[ip];
-      if (eff<1e-5) eff=1;
+      if ((eff<1e-5||eff>0.9999)&&trkEnergy>40) eff=0.5;
+      if (eff<1e-5) { eff=1; }
       Float_t trkwt = (1-fak)*(1-sec)/(eff*(1+mul));
       if (trkwt<0||trkwt>20) {
 	cout << trkEnergy << " " << fak << " " << eff << " " << trkwt << endl;
