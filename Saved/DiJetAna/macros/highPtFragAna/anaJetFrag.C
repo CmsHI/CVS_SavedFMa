@@ -14,17 +14,12 @@
 using namespace std;
 
 void anaJetFrag(
-    // Data
-    //const char * inFile0Name="/net/hisrv0001/home/frankma/scratch01/ana/merge/dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0.root",
     TString inFile0Name = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialSelv2_Final0_djcalo_120_50.root",
     Bool_t doEvtSel = false,
     Bool_t doEtaCorr = true,
     Bool_t doReWeight = false,
     TString BkgSubType = "None", // EtaRefl, PhiRot, None
     int doMC=0,
-    // MC
-    //const char * inFile0Name="dj_PyquenUQ80_hiGoodMergedTracks_VtxPatch_v1_OfficialSelv2GenAll.root",
-    //TString SrcName = "PyquenUQ80" 
     TString SrcName = "HCPR_J50U",
     TString AnaVersion = "testtree",
     TString modName = "djcalo",
@@ -43,14 +38,15 @@ void anaJetFrag(
 {
   // Load Class
   gROOT->ProcessLine(".L JetFragAna.C+");
+  Int_t treeType=0; // 0 djana, 10 filtered djana
 
   //TH1::SetDefaultSumw2();
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
   cout << "Analyze: " << modName << endl;
-  //TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
-  TChain * djTree = new TChain("djTree","dijet Tree");
+  if (treeType==0) TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
+  else if (treeType==10) TChain * djTree = new TChain("djTree","dijet Tree");
   djTree->Add(inFile0Name);
   aliases_dijet(djTree,doMC);
   cout << " # entries: " << djTree->GetEntries() << endl;
@@ -71,11 +67,13 @@ void anaJetFrag(
   //=======================================================================================================================
   TString trkCorrModule("hitrkEffAnalyzer");
   vector<TFile*> fileTrackingCorr;
-  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet30.root"));
-  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet50.root"));
-  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet80.root"));
-  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet110.root"));
-  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet170.root"));
+  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet30.root")); //f0
+  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet50.root")); //f1
+  //fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet80.root")); //f2
+  //fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet110.root")); //f3
+  fileTrackingCorr.push_back(new TFile("djtrkhist_hydjetBassv2_djuq80.root")); //f2
+  fileTrackingCorr.push_back(new TFile("djtrkhist_hydjetBassv2_djuq110.root")); //f3
+  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet170.root")); //f4
   vector<TString> cbins;
   cbins.push_back("0to1");
   cbins.push_back("2to3");
@@ -127,6 +125,10 @@ void anaJetFrag(
     outName=TString("nt_")+inFile0Name;
     outName.ReplaceAll("dj_","");
     outName.ReplaceAll(".root",Form("_offset%d.root",mixOffset));
+    if (inFile0Name.Contains("/")) {
+      outName=inFile0Name;
+      outName.ReplaceAll(".root","_nt.root");
+    }
   }
   cout << "Output: " << outName << endl;
   TFile * outf = new TFile(outName,"RECREATE");
@@ -169,7 +171,8 @@ void anaJetFrag(
   // ====================================================================
   // Independent Jet Collection
   // ====================================================================
-  jana.SetJetTree(0,inFile0Name,"djTree");
+  if (treeType==0) jana.SetJetTree(0,inFile0Name,modName+"/djTree");
+  else if (treeType==10) jana.SetJetTree(0,inFile0Name,"djTree");
   jana.SetJetTree(1,"dj_data50v2_djcalo_100_50_c0to30.root","djTree");
   jana.jetTreeMode_=0; // 0 for final analysis, 1 for inputsample_trk+data50_jet mix
 
