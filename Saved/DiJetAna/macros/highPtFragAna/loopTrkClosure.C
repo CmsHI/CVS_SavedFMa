@@ -78,12 +78,14 @@ vector<Float_t> numJetRec;
 vector<Float_t> numJetGen;
 vector<TH1D*> vhPPtRecCorr;
 vector<TH1D*> vhPPtRecRaw;
+vector<vector<TH1D*> > vhPPtRecCorrLv;
 vector<TH1D*> vhPPtGen;
 vector<TH1D*> vhPPtRat;
+vector<vector<TH1D*> > vhPPtRatLv;
 vector<TH2D*> vhTrkEff;
 vector<TH2D*> vhTrkFak;
 
-void loop_plotTrkClosure(
+void loopTrkClosure(
     TString infrec="nt_djhp_HyUQ110v0_djcalo_100_50_offset0.root",
     TString infgen="nt_djhp_HyUQ110v0_djcalo_genp_100_50_offset0.root",
     TCut evtCut="cent<30")
@@ -123,12 +125,21 @@ void loop_plotTrkClosure(
     vhPPtRecCorr.push_back(new TH1D(Form("hPPtRecCorr_j%d",i),";In-Cone Trk p_{T} (GeV/c); #frac{1}{N_{Jet}} #frac{dN}{dp_{T}}",numPPtBins,pptBins));
     vhPPtRecCorr[i]->Sumw2();
     vhPPtRecRaw.push_back(new TH1D(Form("hPPtRecRaw_j%d",i),";In-Cone Trk p_{T} (GeV/c); #frac{1}{N_{Jet}} #frac{dN}{dp_{T}}",numPPtBins,pptBins));
+
     vhPPtRecRaw[i]->Sumw2();
     vhPPtGen.push_back(new TH1D(Form("hPPtGen_j%d",i),";In-Cone Trk p_{T} (GeV/c); #frac{1}{N_{Jet}} #frac{dN}{dp_{T}}",numPPtBins,pptBins));
     vhPPtRat.push_back(new TH1D(Form("hPPtRat_j%d",i),";In-Cone Trk p_{T} (GeV/c); RecTrk/GenParticle",numPPtBins,pptBins));
     vhPPtGen[i]->Sumw2();
     vhTrkEff.push_back(new TH2D(Form("hTrkEff_j%d",i),";In-Cone Trk p_{T} (GeV/c); Eff.",50,0,100,50,0,1));
     vhTrkFak.push_back(new TH2D(Form("hTrkFak_j%d",i),";In-Cone Trk p_{T} (GeV/c); Fake Rate",50,0,100,50,0,1));
+
+    vhPPtRecCorrLv.resize(5);
+    vhPPtRatLv.resize(5);
+    for (Int_t lv=0; lv<=4; ++lv) {
+      vhPPtRecCorrLv[lv].push_back(new TH1D(Form("hPPtRecCorrLv%d_j%d",lv,i),";In-Cone Trk p_{T} (GeV/c); #frac{1}{N_{Jet}} #frac{dN}{dp_{T}}",numPPtBins,pptBins));
+      vhPPtRatLv[lv].push_back(new TH1D(Form("hPPtRatLv%d_j%d",lv,i),";In-Cone Trk p_{T} (GeV/c); ratio",numPPtBins,pptBins));
+    }
+
   }
 
   // ===================================
@@ -170,6 +181,11 @@ void loop_plotTrkClosure(
 	  vhTrkFak[j]->Fill(trkEnergy,fak);
 	  vhPPtRecCorr[j]->Fill(trkEnergy,trkwt);
 	  vhPPtRecRaw[j]->Fill(trkEnergy);
+	  vhPPtRecCorrLv[0][j]->Fill(trkEnergy);
+	  vhPPtRecCorrLv[1][j]->Fill(trkEnergy,1./eff);
+	  vhPPtRecCorrLv[2][j]->Fill(trkEnergy,(1-fak)/eff);
+	  vhPPtRecCorrLv[3][j]->Fill(trkEnergy,(1-fak)/(eff*(1+mul)));
+	  vhPPtRecCorrLv[4][j]->Fill(trkEnergy,trkwt);
 	}
       }
     }
@@ -212,40 +228,68 @@ void loop_plotTrkClosure(
     normHist(vhPPtRecCorr[j],0,true,1./numJetRec[j]);
     normHist(vhPPtRecRaw[j],0,true,1./numJetRec[j]);
     normHist(vhPPtGen[j],0,true,1./numJetGen[j]);
+    for (Int_t lv=0; lv<=4; ++lv) {
+      normHist(vhPPtRecCorrLv[lv][j],0,true,1./numJetRec[j]);
+    }
 
     vhPPtRat[j]->Divide(vhPPtRecCorr[j],vhPPtGen[j]);
+    for (Int_t lv=0; lv<=4; ++lv) {
+      vhPPtRatLv[lv][j]->Divide(vhPPtRecCorrLv[lv][j],vhPPtGen[j]);
+    }
   }
 
   // ===================================
   // Plot
   // ===================================
+  Int_t colors[10] = {kBlack,kGray+2,kViolet,kBlue+1,kGreen+2,kOrange+2,kMagenta,kRed};
   for (Int_t j=0; j<jetCut.size(); ++j) {
     vhPPtGen[j]->SetAxisRange(1,100,"X");
     vhPPtGen[j]->SetAxisRange(1e-3,1e1,"Y");
     vhPPtGen[j]->SetLineColor(kRed);
     vhPPtGen[j]->SetMarkerColor(kRed);
     vhPPtGen[j]->SetMarkerStyle(kOpenCircle);
+    vhPPtRecRaw[j]->SetMarkerStyle(kOpenCircle);
+    for (Int_t lv=0; lv<=4; ++lv) {
+      vhPPtRecCorrLv[lv][j]->SetMarkerStyle(kOpenSquare);
+      vhPPtRecCorrLv[lv][j]->SetMarkerColor(colors[lv]);
+      vhPPtRecCorrLv[lv][j]->SetLineColor(colors[lv]);
+      vhPPtRatLv[lv][j]->SetMarkerStyle(kOpenSquare);
+      vhPPtRatLv[lv][j]->SetMarkerColor(colors[lv]);
+      vhPPtRatLv[lv][j]->SetLineColor(colors[lv]);
+    }
   }
   TCanvas *c2 = new TCanvas("c2","closure",500,900);
   c2->Divide(1,2);
   c2->cd(1);
   c2->GetPad(1)->SetLogy();
   vhPPtGen[0]->Draw("hist");
+  vhPPtRecRaw[0]->Draw("sameE");
   vhPPtRecCorr[0]->Draw("sameE");
+  for (Int_t lv=0; lv<=4; ++lv) {
+    vhPPtRecCorrLv[lv][0]->Draw("sameE");
+  }
   c2->cd(2);
   vhPPtRat[0]->Draw("E");
+  vhPPtRat[0]->SetAxisRange(0,1.5,"Y");
+  for (Int_t lv=0; lv<=4; ++lv) {
+    vhPPtRatLv[lv][0]->Draw("sameE");
+  }
 
   // ====================
   TLine *l = new TLine(1,1,100,1);
   l->Draw();
 
+  TString corrLevelName[5] = { "Raw","Eff","Fake","Mul. Rec","Sec" };
   c2->cd(1);
-  TLegend *leg = new TLegend(0.61,0.78,0.91,0.91);
+  TLegend *leg = new TLegend(0.61,0.57,0.91,0.91);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
   leg->SetTextSize(0.035);
   leg->AddEntry(vhPPtGen[0],"#DeltaR(jet,trk)<0.5","");
   leg->AddEntry(vhPPtGen[0],"Gen. Particle","pl");
+  for (Int_t lv=0; lv<=4; ++lv) {
+    leg->AddEntry(vhPPtRecCorrLv[lv][0],"Trk Corr. "+corrLevelName[lv],"pl");
+  }
   leg->AddEntry(vhPPtRecCorr[0],"Trk Corr.","pl");
   leg->Draw();
 
