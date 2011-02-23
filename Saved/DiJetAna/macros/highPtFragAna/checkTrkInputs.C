@@ -49,19 +49,22 @@ void checkTrkInputs(
   hPPtGen->Reset();
   trec->Project("hPPtRecRaw","ppt","");
   tgen->Project("hPPtGen","ppt","");
-  TH1D * hRecSimRat = (TH1D*)hrec_pt->Clone("hRecSimRat");
-  hRecSimRat->Sumw2();
-  hRecSimRat->Divide(hrec_pt,hsim_pt);
+  TH1D * hRecSimRat_pt = (TH1D*)hrec_pt->Clone("hRecSimRat_pt");
+  hRecSimRat_pt->Sumw2();
+  hRecSimRat_pt->Divide(hrec_pt,hsim_pt);
   TH1D * hPPtRat = (TH1D*)hrec_pt->Clone("hPPtRat");
   hPPtRat->Sumw2();
   hPPtRat->Divide(hPPtRecRaw,hPPtGen);
 
+  hsim_pt->SetAxisRange(0,100,"X");
   hsim_pt->SetTitle(";p_{T} (GeV/c); count");
-  hRecSimRat->SetTitle(";p_{T} (GeV/c); reco/gen ratio");
+  hRecSimRat_pt->SetTitle(";p_{T} (GeV/c); reco/gen ratio");
   hsim_pt->SetLineColor(kRed);
   hPPtGen->SetMarkerColor(kRed);
   hPPtGen->SetLineColor(kRed);
-  hRecSimRat->SetLineColor(kRed);
+  hRecSimRat_pt->SetAxisRange(0,100,"X");
+  hRecSimRat_pt->SetAxisRange(-0.2,1.2,"Y");
+  hRecSimRat_pt->SetLineColor(kRed);
   TCanvas *cRec = new TCanvas("cRec","Rec",500,900);
   cRec->Divide(1,2);
   cRec->cd(1);
@@ -71,7 +74,7 @@ void checkTrkInputs(
   hrec_pt->Draw("hist same");
   hPPtRecRaw->Draw("sameE");
   cRec->cd(2);
-  hRecSimRat->Draw("hist");
+  hRecSimRat_pt->Draw("hist");
   hPPtRat->Draw("sameE");
 
   // ====================
