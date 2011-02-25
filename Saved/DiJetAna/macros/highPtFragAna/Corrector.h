@@ -35,6 +35,8 @@ class Corrector
     void Init();
     Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
+    void Write();
+    void InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet);
 };
 
 Corrector::Corrector() :
@@ -197,4 +199,45 @@ TH2D* Corrector::ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend)
   h3->GetZaxis()->SetRange(zbinbeg,zbinend);
   TH2D * h2 = (TH2D*)h3->Project3D(Form("yx_%d_%d",zbinbeg,zbinend));
   return h2;
+}
+
+void Corrector::Write()
+{
+  for (Int_t lv=0; lv<numLevels_; ++lv) {
+    for (Int_t s=0; s<numSamples_; ++s) {
+      for (Int_t c=0; c<numCentBins_; ++c) {
+	for (Int_t m=0; m<2; ++m) {
+	  for (Int_t j=1; j<=numJEtBins_; ++j) {
+	    correction_[lv][s][c][j][m]->Write();
+	  }
+	}
+      }
+    }
+  }
+}
+
+void Corrector::InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet)
+{
+  Int_t jetBin = jetBin_->FindBin(jet);
+  TH2D *hNum=0, *hDen=0, *hCorr;
+  if (s>=0) {
+    hNum = correction_[lv][s][c][jetBin][0];
+    hDen = correction_[lv][s][c][jetBin][1];
+    cout << levelName_[lv] << ": " << sample_[s]->GetName() << " (cbin,jetbin): " << c << " " << jetBin << endl;
+    hCorr = (TH2D*)hNum->Clone(Form("%s_corr",hNum->GetName()));
+  } else {
+    hNum = correction_[lv][0][c][jetBin][0];
+    hDen = correction_[lv][0][c][jetBin][1];
+    for (Int_t i=1; i<sample_.size(); ++i) {
+      hNum->Add(correction_[lv][i][c][jetBin][0]);
+      hDen->Add(correction_[lv][i][c][jetBin][1]);
+    }
+    cout << levelName_[lv] << ": all samples (cbin,jetbin): " << c << " " << jetBin << endl;
+    hCorr = (TH2D*)hNum->Clone(Form("%s_corrAllSample",hNum->GetName()));
+  }
+
+  hCorr->Divide(hNum,hDen);
+
+  hCorr->SetAxisRange(0,100,"Y");
+  hCorr->Draw("colz");
 }
