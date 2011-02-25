@@ -27,6 +27,8 @@ TH1D * projectPt(TH3F * h3,Int_t xbin, Int_t zbin)
 }
 
 void checkTrkCorrection(
+    Int_t corrLevel=0,
+    Int_t sampleIndex=3,
     TString infrec="nt_djhp_HyUQ110v0_djcalo.root",
     TString infgen="nt_djhp_HyUQ110v0_djcalo_genp.root",
     TCut evtCut="cent<30")
@@ -56,8 +58,6 @@ void checkTrkCorrection(
   TH1D * trackingEtaBin = (TH1D*)vhCorr[0][3][0]->Project3D("x");
   TH1D * trackingPtBin = (TH1D*)vhCorr[0][3][0]->Project3D("y");
   TH1D * trackingJEtBin = (TH1D*)vhCorr[0][3][0]->Project3D("z");
-  Float_t corrLevel=0;
-  Float_t sampleIndex=3;
   for (Int_t icbin=0; icbin<ncbin; ++icbin) {
     TString name=Form("Corr_cbin%d",icbin);
     TCanvas *cCorr = new TCanvas("c"+name,name,1200,1000);
@@ -95,6 +95,7 @@ void checkTrkCorrection(
 	}
       }
     }
+    cCorr->Print(Form("out/hTrk%s_f%d_c%d.gif",lvName[corrLevel].Data(),sampleIndex,icbin));
   }
 
   // ====================
