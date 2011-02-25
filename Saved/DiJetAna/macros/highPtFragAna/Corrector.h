@@ -15,7 +15,11 @@ class Corrector
     TH1D * ptBin_;
     TH1D * etaBin_;
     TH1D * jetBin_;
+
+    // setup
     TString trkCorrModule_;
+    Int_t ptRebinFactor_;
+    Int_t sampleMode_; // 0 choose individually, 1 merge samples
 
     vector<TString> levelName_;
     vector<vector<TString> > levelInput_;
@@ -36,11 +40,13 @@ class Corrector
     Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
     void Write();
-    void InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet);
+    void InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet,Int_t mode=0);
 };
 
 Corrector::Corrector() :
-  trkCorrModule_("hitrkEffAnalyzer")
+  trkCorrModule_("hitrkEffAnalyzer"),
+  ptRebinFactor_(6),
+  sampleMode_(0)
 {
   centBin_.push_back("0to1");
   centBin_.push_back("2to3");
@@ -109,7 +115,10 @@ Corrector::Corrector() :
 
 void Corrector::Init()
 {
-  Int_t ptRebinFactor=6;
+  cout << "==============================================" << endl;
+  cout << " Setup Tracking Correction" << endl;
+  cout << "==============================================" << endl;
+  cout << "ptRebinFactor: " << ptRebinFactor_ << ", sampleMode: " << sampleMode_ << endl;
   for (Int_t lv=0; lv<numLevels_; ++lv) {
     cout << "Load " << levelName_[lv] << " Histograms for ptHatMin";
     for (Int_t s=0; s<numSamples_; ++s) {
@@ -122,7 +131,7 @@ void Corrector::Init()
 	  for (Int_t j=1; j<=numJEtBins_; ++j) {
 	    TH2D * h2 = ProjectPtEta(h3,j,j);
 	    h2->SetName(Form("h%s_f%.0f_c%d_j%d_%d",levelName_[lv].Data(),ptHatMin_[s],c,j,m));
-	    h2->RebinY(ptRebinFactor);
+	    h2->RebinY(ptRebinFactor_);
 	    //cout << h2->GetName() << endl;
 	    correction_[lv][s][c][j][m] = h2;
 	  }
@@ -132,7 +141,7 @@ void Corrector::Init()
     cout << endl;
   }
 
-  if (ptRebinFactor>1) {
+  if (ptRebinFactor_>1) {
     ptBin_  = (TH1D*)correction_[0][0][0][7][0]->ProjectionY();
     numPtBins_ = ptBin_->GetNbinsX();
   }
@@ -179,7 +188,13 @@ Float_t Corrector::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, D
   vector<vector<Double_t> > mat(numLevels_,vector<Double_t>(2));
   for (Int_t lv=0; lv<numLevels_; ++lv) {
     for (Int_t m=0; m<2; ++m) {
-      mat[lv][m] = correction_[lv][isample][bin][jetBin][m]->GetBinContent(etaBin,ptBin);
+      if (sampleMode_==0) {
+	mat[lv][m] = correction_[lv][isample][bin][jetBin][m]->GetBinContent(etaBin,ptBin);
+      } else if (sampleMode_==1) {
+	for (Int_t s=0; s<sample_.size(); ++s) {
+	  mat[lv][m] += correction_[lv][s][bin][jetBin][m]->GetBinContent(etaBin,ptBin);
+	}
+      }
     }
     if (mat[lv][1]>0) corr[lv] = mat[lv][0]/mat[lv][1];
     else {
@@ -187,6 +202,8 @@ Float_t Corrector::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, D
       cout << "No " << levelName_[lv] << " for pt,eta,jet,cent: " << pt << " " << eta << " " << jet << " " << cent << endl;
     }
   }
+
+  // Done
   Double_t eff = corr[0];
   Double_t fake = corr[1];
   Double_t mul = corr[2];
@@ -216,10 +233,10 @@ void Corrector::Write()
   }
 }
 
-void Corrector::InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet)
+void Corrector::InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet, Int_t mode)
 {
   Int_t jetBin = jetBin_->FindBin(jet);
-  TH2D *hNum=0, *hDen=0, *hCorr;
+  TH2D *hNum=0, *hDen=0, *hCorr=0;
   if (s>=0) {
     hNum = correction_[lv][s][c][jetBin][0];
     hDen = correction_[lv][s][c][jetBin][1];
@@ -236,8 +253,26 @@ void Corrector::InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet)
     hCorr = (TH2D*)hNum->Clone(Form("%s_corrAllSample",hNum->GetName()));
   }
 
-  hCorr->Divide(hNum,hDen);
+  TH1D * hCorr1D=0;
+  if (mode==0) {
+    hCorr->Divide(hNum,hDen);
+    hCorr->SetAxisRange(0,25.2+3*6*4,"Y");
+    hCorr->Draw("colz");
+  } else if (mode==1) {
+    TH1D * hNum1D = hNum->ProjectionX();
+    TH1D * hDen1D = hDen->ProjectionX();
+    hCorr1D = (TH1D*)hNum1D->Clone();
+    hCorr1D->Divide(hNum1D,hDen1D);
+    hCorr1D->SetAxisRange(0,1.2,"Y");
+    hCorr1D->Draw();
+  } else if (mode==2) {
+    TH1D * hNum1D = hNum->ProjectionY();
+    TH1D * hDen1D = hDen->ProjectionY();
+    hCorr1D = (TH1D*)hNum1D->Clone();
+    hCorr1D->Divide(hNum1D,hDen1D);
+    hCorr1D->SetAxisRange(0,1.2,"Y");
+    hCorr1D->SetAxisRange(0,25.2+3*6*4,"X");
+    hCorr1D->Draw();
+  }
 
-  hCorr->SetAxisRange(0,100,"Y");
-  hCorr->Draw("colz");
 }

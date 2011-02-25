@@ -105,6 +105,8 @@ void loopTrkClosure(
   SetJetFragTree(tgen,jtgenp);
 
   Corrector trkCorr;
+  trkCorr.ptRebinFactor_ = 1;
+  trkCorr.sampleMode_ = 0; // 0 for choosing individual sample, 1 for merge samples
   trkCorr.Init();
 
   const Int_t numPPtBins=19;
