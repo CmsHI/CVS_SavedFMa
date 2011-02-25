@@ -33,7 +33,7 @@ class Corrector
 
     Corrector();
     void Init();
-    void GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Float_t * corr);
+    Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
 };
 
@@ -96,7 +96,7 @@ Corrector::Corrector() :
   vector<vector<vector<vector<vector<TH2D*> > > > > v(numLevels_,
       vector<vector<vector<vector<TH2D*> > > > (numSamples_,
 	vector<vector<vector<TH2D*> > > (numCentBins_,
-	  vector<vector<TH2D*> > (numJEtBins_,
+	  vector<vector<TH2D*> > (numJEtBins_+1,
 	    vector<TH2D*>(2)
 	    )
 	  )
@@ -107,10 +107,11 @@ Corrector::Corrector() :
 
 void Corrector::Init()
 {
+  Int_t ptRebinFactor=6;
   for (Int_t lv=0; lv<numLevels_; ++lv) {
     cout << "Load " << levelName_[lv] << " Histograms for ptHatMin";
     for (Int_t s=0; s<numSamples_; ++s) {
-      cout << " " << ptHatMin_[s] <<;
+      cout << " " << ptHatMin_[s];
       for (Int_t c=0; c<numCentBins_; ++c) {
 	for (Int_t m=0; m<2; ++m) {
 	  TString hname(Form("%s/%s_cbin%s",trkCorrModule_.Data(),levelInput_[lv][m].Data(),centBin_[c].Data()));
@@ -119,13 +120,76 @@ void Corrector::Init()
 	  for (Int_t j=1; j<=numJEtBins_; ++j) {
 	    TH2D * h2 = ProjectPtEta(h3,j,j);
 	    h2->SetName(Form("h%s_f%.0f_c%d_j%d_%d",levelName_[lv].Data(),ptHatMin_[s],c,j,m));
+	    h2->RebinY(ptRebinFactor);
 	    //cout << h2->GetName() << endl;
+	    correction_[lv][s][c][j][m] = h2;
 	  }
 	}
       }
     }
     cout << endl;
   }
+
+  if (ptRebinFactor>1) {
+    ptBin_  = (TH1D*)correction_[0][0][0][7][0]->ProjectionY();
+    numPtBins_ = ptBin_->GetNbinsX();
+  }
+}
+
+Float_t Corrector::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr)
+{
+  Int_t bin = -1;
+  Int_t isample=-1;
+
+  // Get the corresponding centrality bin
+  if (cent<5) {
+    bin = 0;
+  } else if (cent<10) {
+    bin = 1;
+  } else if (cent<30) {
+    bin = 2;
+  } else if (cent<50) {
+    bin = 3;   
+  } else if (cent<100) {
+    bin = 4;
+  }
+
+  // Get the corresponding pt_hat min sample
+  if (jet>=170) {
+    isample=4;
+  }  else if (jet>=110) {
+    isample=3;
+  }  else if (jet>=80) {
+    isample=2;
+  } else if (jet>=50) {
+    isample=1;
+  } else { 
+    isample=0;
+  }
+
+  // Find Bin
+  Int_t ptBin = ptBin_->FindBin(pt);
+  Int_t etaBin = etaBin_->FindBin(eta);
+  Int_t jetBin = jetBin_->FindBin(jet);
+  if (jetBin>=numJEtBins_) jetBin = numJEtBins_; // make sure don't exceed vector bound
+  //cout << "bins: " << isample << " " << bin << " " << ptBin << " " << etaBin << " " << jetBin << endl;
+
+  vector<vector<Double_t> > mat(numLevels_,vector<Double_t>(2));
+  for (Int_t lv=0; lv<numLevels_; ++lv) {
+    for (Int_t m=0; m<2; ++m) {
+      mat[lv][m] = correction_[lv][isample][bin][jetBin][m]->GetBinContent(etaBin,ptBin);
+    }
+    if (mat[lv][1]>0) corr[lv] = mat[lv][0]/mat[lv][1];
+    else {
+      corr[lv]=1; // no correction
+      cout << "No " << levelName_[lv] << " for pt,eta,jet,cent: " << pt << " " << eta << " " << jet << " " << cent << endl;
+    }
+  }
+  Double_t eff = corr[0];
+  Double_t fake = corr[1];
+  Double_t mul = corr[2];
+  Double_t sec = corr[3];
+  return (1-fake)*(1-sec)/(eff*(1+mul));
 }
 
 TH2D* Corrector::ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend)

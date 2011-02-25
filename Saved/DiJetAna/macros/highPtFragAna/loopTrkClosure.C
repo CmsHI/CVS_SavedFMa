@@ -10,6 +10,7 @@
 #include "TLegend.h"
 #include "TPad.h"
 #include "HisMath.C"
+#include "Corrector.h"
 #ifdef __MAKECINT__
 #pragma link C++ class std::vector < std::vector<float> >+;   
 #endif
@@ -103,6 +104,9 @@ void loopTrkClosure(
   SetJetFragTree(trec,jttrk);
   SetJetFragTree(tgen,jtgenp);
 
+  Corrector trkCorr;
+  trkCorr.Init();
+
   const Int_t numPPtBins=19;
   Float_t pptBins[numPPtBins+1] = {0.0,0.2,1,2,3,4,6,8,10,14,18,22,26,30,40,50,60,70,80,100};
 
@@ -165,15 +169,26 @@ void loopTrkClosure(
     }
     for (Int_t ip=0; ip<jttrk.ppt->size(); ++ip) {
       Float_t trkEnergy = (*jttrk.ppt)[ip];
+      Float_t trkEta = (*jttrk.peta)[ip];
+      /*
       Float_t eff = (*jttrk.trkeff)[ip];
       Float_t fak = (*jttrk.trkfak)[ip];
       Float_t mul = (*jttrk.trkmul)[ip];
       Float_t sec = (*jttrk.trksec)[ip];
-      if ((eff<1e-5||eff>0.9999)&&trkEnergy>40) eff=0.5;
+      */
+      Double_t corr[4];
+      trkCorr.GetCorr(trkEnergy,trkEta,(*jttrk.jtpt)[0],jttrk.cent,corr);
+      Float_t eff = corr[0];
+      Float_t fak = corr[1];
+      Float_t mul = corr[2];
+      Float_t sec = corr[3];
+      //if ((eff<1e-5||eff>0.9999)) continue;
+      //if ((eff<1e-5||eff>0.9999)&&trkEnergy>40) eff=0.5;
       if (eff<1e-5) { eff=1; }
+
       Float_t trkwt = (1-fak)*(1-sec)/(eff*(1+mul));
       if (trkwt<0||trkwt>20) {
-	cout << trkEnergy << " " << fak << " " << eff << " " << trkwt << endl;
+	cout << trkEnergy << " " << eff << " " << fak << " " << mul << " " << sec << " " << trkwt << endl;
       }
       for (Int_t j=0; j<2; ++j) {
 	//cout << (*jttrk.pdr)[j][ip] << endl;
