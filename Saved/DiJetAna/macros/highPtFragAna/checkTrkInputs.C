@@ -56,6 +56,13 @@ void checkTrkInputs(
   hPPtRat->Sumw2();
   hPPtRat->Divide(hPPtRecRaw,hPPtGen);
 
+  // Normalize
+  normHist(hsim_pt,0,true,1);
+  normHist(hrec_pt,0,true,1);
+  normHist(hPPtGen,0,true,1);
+  normHist(hPPtRecRaw,0,true,1);
+
+  // Plot
   hsim_pt->SetAxisRange(0,100,"X");
   hsim_pt->SetTitle(";p_{T} (GeV/c); count");
   hRecSimRat_pt->SetTitle(";p_{T} (GeV/c); reco/gen ratio");
