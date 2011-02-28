@@ -105,9 +105,9 @@ void loopTrkClosure(
   SetJetFragTree(tgen,jtgenp);
 
   Corrector trkCorr;
-  trkCorr.ptRebinFactor_ = 1;
+  trkCorr.ptRebinFactor_ = 12;
+  trkCorr.Init(1,"TrkCorr2D.root");
   trkCorr.sampleMode_ = 0; // 0 for choosing individual sample, 1 for merge samples
-  trkCorr.Init();
 
   const Int_t numPPtBins=19;
   Float_t pptBins[numPPtBins+1] = {0.0,0.2,1,2,3,4,6,8,10,14,18,22,26,30,40,50,60,70,80,100};
