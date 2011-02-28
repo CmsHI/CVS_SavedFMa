@@ -369,6 +369,7 @@ Int_t JetFragAna::GetJetEntry(TChain * t, AnaJet & jet, Long64_t entry)
 double JetFragAna::getEffFakeCorrection(double pt,double eta, double jet, double cent, Float_t * corr)
 {
   Int_t bin = -1;
+  Int_t isample=3;
 
   // Get the corresponding centrality bin
   if (cent<5) {
@@ -381,18 +382,31 @@ double JetFragAna::getEffFakeCorrection(double pt,double eta, double jet, double
     bin = 3;   
   } else if (cent<100) {
     bin = 4;   
-  }          
+  }
+
+  // Get the corresponding pt_hat min sample
+  if (jet>=170) {
+    isample=4;
+  }  else if (jet>=110) {
+    isample=3;
+  }  else if (jet>=80) {
+    isample=2;
+  } else if (jet>=50) {
+    isample=1;
+  } else { 
+    isample=0;
+  }
 
   //if (pt>60) pt=60;
   Int_t ptBin = trackingPtBin_->FindBin(pt);
   Int_t etaBin = trackingEtaBin_->FindBin(eta);
   Int_t jetBin = trackingJEtBin_->FindBin(jet);
-  double eff = trackingEffCorr_[3][bin]->GetBinContent(etaBin,ptBin,jetBin);
-  double effErr = trackingEffCorr_[3][bin]->GetBinError(etaBin,ptBin,jetBin);
-  double fake = trackingFakCorr_[3][bin]->GetBinContent(etaBin,ptBin,jetBin);
+  double eff = trackingEffCorr_[isample][bin]->GetBinContent(etaBin,ptBin,jetBin);
+  double effErr = trackingEffCorr_[isample][bin]->GetBinError(etaBin,ptBin,jetBin);
+  double fake = trackingFakCorr_[isample][bin]->GetBinContent(etaBin,ptBin,jetBin);
 
-  if ((1-fake)/eff>10) {
-    cout << fileTrackingCorr_[3]->GetName() << endl;
+  if (false&&(1-fake)/eff>10) {
+    cout << fileTrackingCorr_[isample]->GetName() << endl;
     cout <<"Correction: Pt = "<<pt <<" eta = "<<eta<<" jet = " << jet << " cent = "<<cent<<endl;
     cout <<"Correction: Fake = "<<fake <<" eff = "<<eff<<" cor = "<<(1-fake)/eff<<endl;
     cout <<"Err = "<<effErr/eff<<endl;
