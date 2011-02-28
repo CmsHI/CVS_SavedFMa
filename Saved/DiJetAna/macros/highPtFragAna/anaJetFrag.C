@@ -38,15 +38,16 @@ void anaJetFrag(
 {
   // Load Class
   gROOT->ProcessLine(".L JetFragAna.C+");
-  Int_t treeType=0; // 0 djana, 10 filtered djana
+  Int_t treeType=10; // 0 djana, 10 filtered djana
 
   //TH1::SetDefaultSumw2();
   // Define Inputs
   cout << "======= Inputs: ========" << endl;
   cout << inFile0Name << endl;
   cout << "Analyze: " << modName << endl;
-  if (treeType==0) TChain * djTree = new TChain(modName+"/djTree","dijet Tree");
-  else if (treeType==10) TChain * djTree = new TChain("djTree","dijet Tree");
+  TChain *djTree=0;
+  if (treeType==0) djTree = new TChain(modName+"/djTree","dijet Tree");
+  else if (treeType==10) djTree = new TChain("djTree","dijet Tree");
   djTree->Add(inFile0Name);
   aliases_dijet(djTree,doMC);
   cout << " # entries: " << djTree->GetEntries() << endl;
@@ -67,13 +68,16 @@ void anaJetFrag(
   //=======================================================================================================================
   TString trkCorrModule("hitrkEffAnalyzer");
   vector<TFile*> fileTrackingCorr;
-  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet30.root")); //f0
-  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet50.root")); //f1
+  //fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet30.root")); //f0
+  //fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet50.root")); //f1
   //fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet80.root")); //f2
   //fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet110.root")); //f3
+  //fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet170.root")); //f4
+  fileTrackingCorr.push_back(new TFile("djtrkhist_hydjetBassv2_djuq30.root")); //f0
+  fileTrackingCorr.push_back(new TFile("djtrkhist_hydjetBassv2_djuq50.root")); //f1
   fileTrackingCorr.push_back(new TFile("djtrkhist_hydjetBassv2_djuq80.root")); //f2
   fileTrackingCorr.push_back(new TFile("djtrkhist_hydjetBassv2_djuq110.root")); //f3
-  fileTrackingCorr.push_back(new TFile("trkhist_feb032011_v2_hydjetBass_dijet170.root")); //f4
+  fileTrackingCorr.push_back(new TFile("djtrkhist_hydjetBassv2_djuq170.root")); //f4
   vector<TString> cbins;
   cbins.push_back("0to1");
   cbins.push_back("2to3");
