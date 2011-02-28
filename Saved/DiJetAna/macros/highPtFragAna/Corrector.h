@@ -41,7 +41,7 @@ class Corrector
     Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
     void Write();
-    void InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet,Int_t mode=0);
+    void InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet,Int_t mode=0,Int_t begbin=0, Int_t endbin=-1);
 };
 
 Corrector::Corrector() :
@@ -252,46 +252,56 @@ void Corrector::Write()
   }
 }
 
-void Corrector::InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet, Int_t mode)
+void Corrector::InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet, Int_t mode, Int_t begbin, Int_t endbin)
 {
+  Int_t sampleMode=0;
+  if (s<0) sampleMode=1;
   Int_t jetBin = jetBin_->FindBin(jet);
   TH2D *hNum=0, *hDen=0, *hCorr=0;
-  if (s>=0) {
+  TH1D *hNum1D=0, *hDen1D=0, *hCorr1D=0;
+  if (sampleMode==0) {
     hNum = correction_[lv][s][c][jetBin][0];
     hDen = correction_[lv][s][c][jetBin][1];
-    cout << levelName_[lv] << ": " << sample_[s]->GetName() << " (cbin,jetbin): " << c << " " << jetBin << endl;
-    hCorr = (TH2D*)hNum->Clone(Form("%s_corr",hNum->GetName()));
-  } else {
+    //cout << levelName_[lv] << ": " << sample_[s]->GetName() << " (cbin,jetbin): " << c << " " << jetBin << endl;
+  } else if (sampleMode==1) {
     hNum = correction_[lv][0][c][jetBin][0];
     hDen = correction_[lv][0][c][jetBin][1];
     for (Int_t i=1; i<sample_.size(); ++i) {
       hNum->Add(correction_[lv][i][c][jetBin][0]);
       hDen->Add(correction_[lv][i][c][jetBin][1]);
     }
-    cout << levelName_[lv] << ": all samples (cbin,jetbin): " << c << " " << jetBin << endl;
-    hCorr = (TH2D*)hNum->Clone(Form("%s_corrAllSample",hNum->GetName()));
+    //cout << levelName_[lv] << ": all samples (cbin,jetbin): " << c << " " << jetBin << endl;
   }
 
-  TH1D * hCorr1D=0;
+
+  // ===============================================
+  // 2D Inspection
+  // ===============================================
   if (mode==0) {
+    hCorr = (TH2D*)hNum->Clone(Form("%s_corr_sampleMode%d",hNum->GetName(),sampleMode));
     hCorr->Divide(hNum,hDen);
     hCorr->SetAxisRange(0,25.2+3*6*4,"Y");
     hCorr->Draw("colz");
-  } else if (mode==1) {
-    TH1D * hNum1D = hNum->ProjectionX();
-    TH1D * hDen1D = hDen->ProjectionX();
-    hCorr1D = (TH1D*)hNum1D->Clone();
-    hCorr1D->Divide(hNum1D,hDen1D);
-    hCorr1D->SetAxisRange(0,1.2,"Y");
-    hCorr1D->Draw();
-  } else if (mode==2) {
-    TH1D * hNum1D = hNum->ProjectionY();
-    TH1D * hDen1D = hDen->ProjectionY();
-    hCorr1D = (TH1D*)hNum1D->Clone();
-    hCorr1D->Divide(hNum1D,hDen1D);
-    hCorr1D->SetAxisRange(0,1.2,"Y");
-    hCorr1D->SetAxisRange(0,25.2+3*6*4,"X");
-    hCorr1D->Draw();
+    return;
   }
 
+  // ===============================================
+  // 1D Projection
+  // ===============================================
+  if (mode==1) {
+    hNum1D = hNum->ProjectionX("_px",begbin,endbin);
+    hDen1D = hDen->ProjectionX("_px",begbin,endbin);
+  } else if (mode==2) {
+    hNum1D = hNum->ProjectionY("_py",begbin,endbin);
+    hDen1D = hDen->ProjectionY("_py",begbin,endbin);
+  }
+
+  // ===============================================
+  // 1D Inspection
+  // ===============================================
+  hCorr1D = (TH1D*)hNum1D->Clone(Form("%s_corr%d_sampleMode%d",hNum->GetName(),mode,sampleMode));
+  hCorr1D->Divide(hNum1D,hDen1D);
+  if (mode==2) hCorr1D->SetAxisRange(0,25.2+3*6*4,"X");
+  hCorr1D->SetAxisRange(0,1,"Y");
+  hCorr1D->Draw();
 }
