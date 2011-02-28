@@ -105,12 +105,25 @@ void loopTrkClosure(
   SetJetFragTree(tgen,jtgenp);
 
   Corrector trkCorr;
+  TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
+  Int_t numPtBinsUnRebin = trkCorr.numPtBins_;
   trkCorr.ptRebinFactor_ = 12;
   trkCorr.Init(1,"TrkCorr2D.root");
-  trkCorr.sampleMode_ = 0; // 0 for choosing individual sample, 1 for merge samples
+  trkCorr.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
 
+  hPtBinUnRebin->Rebin(4);
+  Int_t numPPtBins = numPtBinsUnRebin/4;
+  Float_t pptBins[numPPtBins+1];
+  for (Int_t i=0; i<numPPtBins+1; ++i) {
+    pptBins[i] = hPtBinUnRebin->GetBinLowEdge(i+1);
+  }
+  /*
   const Int_t numPPtBins=19;
   Float_t pptBins[numPPtBins+1] = {0.0,0.2,1,2,3,4,6,8,10,14,18,22,26,30,40,50,60,70,80,100};
+  */
+  cout << "pt bins: ";
+  for (Int_t i=0; i<numPPtBins+1; ++i) {cout << pptBins[i] << " ";}
+  cout << endl;
 
   vector<TCut> jetCut;
   jetCut.push_back("jtpt[0]>100&&jtpt[0]<200&&abs(jteta[0])<0.8");
@@ -261,8 +274,8 @@ void loopTrkClosure(
   // ===================================
   Int_t colors[10] = {kBlack,kGray+2,kViolet,kBlue+1,kGreen+2,kOrange+2,kMagenta,kRed};
   for (Int_t j=0; j<jetCut.size(); ++j) {
-    vhPPtGen[j]->SetAxisRange(1,100,"X");
-    vhPPtGen[j]->SetAxisRange(1e-3,1e1,"Y");
+    vhPPtGen[j]->SetAxisRange(3,100,"X");
+    vhPPtGen[j]->SetAxisRange(1e-3,5e1,"Y");
     vhPPtGen[j]->SetLineColor(kRed);
     vhPPtGen[j]->SetMarkerColor(kRed);
     vhPPtGen[j]->SetMarkerStyle(kOpenCircle);
@@ -280,6 +293,7 @@ void loopTrkClosure(
   c2->Divide(1,2);
   c2->cd(1);
   c2->GetPad(1)->SetLogy();
+  c2->GetPad(1)->SetLogx();
   vhPPtGen[0]->Draw("hist");
   vhPPtRecRaw[0]->Draw("sameE");
   vhPPtRecCorr[0]->Draw("sameE");
@@ -287,14 +301,17 @@ void loopTrkClosure(
     vhPPtRecCorrLv[lv][0]->Draw("sameE");
   }
   c2->cd(2);
+  c2->GetPad(2)->SetLogx();
   vhPPtRat[0]->Draw("E");
+  vhPPtRat[0]->SetAxisRange(3,100,"X");
   vhPPtRat[0]->SetAxisRange(0,1.5,"Y");
   for (Int_t lv=0; lv<=4; ++lv) {
     vhPPtRatLv[lv][0]->Draw("sameE");
   }
 
   // ====================
-  TLine *l = new TLine(1,1,100,1);
+  TLine *l = new TLine(3,1,100,1);
+  l->SetLineStyle(2);
   l->Draw();
 
   TString corrLevelName[5] = { "Raw","Eff","Fake","Mul. Rec","Sec" };
@@ -310,6 +327,9 @@ void loopTrkClosure(
   }
   leg->AddEntry(vhPPtRecCorr[0],"Trk Corr.","pl");
   leg->Draw();
+
+  c2->Print("ClosureTrkPt.gif");
+  c2->Print("ClosureTrkPt.pdf");
 
   // ====================
   TCanvas * chk0 = new TCanvas("chk0","check eff",500,500);
