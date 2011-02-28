@@ -9,7 +9,7 @@ void testCorr(Int_t corrLevel=0,
     )
 {
   Int_t mode=1; // 0 for write, 1 for read
-  Float_t jet=110;
+  Float_t jet=-1; // -1 for all jet bins
 
 
   Corrector trkCorr;

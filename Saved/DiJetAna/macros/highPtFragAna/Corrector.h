@@ -41,7 +41,7 @@ class Corrector
     Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
     void Write();
-    void InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet,Int_t mode=0,Int_t begbin=0, Int_t endbin=-1);
+    void InspectCorr(Int_t lv, Int_t isample, Int_t c, Float_t jet,Int_t mode=0,Int_t begbin=0, Int_t endbin=-1);
 };
 
 Corrector::Corrector() :
@@ -252,27 +252,32 @@ void Corrector::Write()
   }
 }
 
-void Corrector::InspectCorr(Int_t lv, Int_t s, Int_t c, Float_t jet, Int_t mode, Int_t begbin, Int_t endbin)
+void Corrector::InspectCorr(Int_t lv, Int_t isample, Int_t c, Float_t jet, Int_t mode, Int_t begbin, Int_t endbin)
 {
   Int_t sampleMode=0;
-  if (s<0) sampleMode=1;
+  Int_t jetMode=0;
+  if (isample<0) sampleMode=1;
+  if (jet<0) jetMode=1;
+
   Int_t jetBin = jetBin_->FindBin(jet);
+  if (jetBin>=numJEtBins_-1) jetBin = numJEtBins_-1; // make sure don't exceed vector bound
   TH2D *hNum=0, *hDen=0, *hCorr=0;
   TH1D *hNum1D=0, *hDen1D=0, *hCorr1D=0;
-  if (sampleMode==0) {
-    hNum = correction_[lv][s][c][jetBin][0];
-    hDen = correction_[lv][s][c][jetBin][1];
-    //cout << levelName_[lv] << ": " << sample_[s]->GetName() << " (cbin,jetbin): " << c << " " << jetBin << endl;
-  } else if (sampleMode==1) {
-    hNum = correction_[lv][0][c][jetBin][0];
-    hDen = correction_[lv][0][c][jetBin][1];
-    for (Int_t i=1; i<sample_.size(); ++i) {
-      hNum->Add(correction_[lv][i][c][jetBin][0]);
-      hDen->Add(correction_[lv][i][c][jetBin][1]);
-    }
-    //cout << levelName_[lv] << ": all samples (cbin,jetbin): " << c << " " << jetBin << endl;
-  }
 
+  hNum = (TH2D*)correction_[lv][3][c][7][0]->Clone("hNum");
+  hNum->Reset();
+  hDen = (TH2D*)correction_[lv][3][c][7][1]->Clone("hDen");
+  hDen->Reset();
+
+  for (Int_t s=1; s<sample_.size(); ++s) {
+    if (sampleMode==0&&s!=isample) continue;
+    for (Int_t j=1; j<=numJEtBins_;++j) {
+      if (jetMode==0&&j!=jetBin) continue;
+      hNum->Add(correction_[lv][s][c][j][0]);
+      hDen->Add(correction_[lv][s][c][j][1]);
+    }
+    //cout << levelName_[lv] << ": " << sample_[isample]->GetName() << " (cbin,jetbin): " << c << " " << jetBin << endl;
+  }
 
   // ===============================================
   // 2D Inspection
