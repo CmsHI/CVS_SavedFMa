@@ -104,13 +104,21 @@ void loopTrkClosure(
   SetJetFragTree(trec,jttrk);
   SetJetFragTree(tgen,jtgenp);
 
+  // ========================================================================
+  // Setup Trk Correction
+  // ========================================================================
   Corrector trkCorr;
   TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
   Int_t numPtBinsUnRebin = trkCorr.numPtBins_;
   trkCorr.ptRebinFactor_ = 12;
-  trkCorr.Init(1,"TrkCorr2D.root");
   trkCorr.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
+  trkCorr.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
+  trkCorr.Init(1,"TrkCorr2D.root");
 
+  // ========================================================================
+  // Book Analysis Histograms
+  // Setup Cuts
+  // ========================================================================
   hPtBinUnRebin->Rebin(4);
   Int_t numPPtBins = numPtBinsUnRebin/4;
   Float_t pptBins[numPPtBins+1];
@@ -274,7 +282,7 @@ void loopTrkClosure(
   // ===================================
   Int_t colors[10] = {kBlack,kGray+2,kViolet,kBlue+1,kGreen+2,kOrange+2,kMagenta,kRed};
   for (Int_t j=0; j<jetCut.size(); ++j) {
-    vhPPtGen[j]->SetAxisRange(3,100,"X");
+    vhPPtGen[j]->SetAxisRange(4,100,"X");
     vhPPtGen[j]->SetAxisRange(1e-3,5e1,"Y");
     vhPPtGen[j]->SetLineColor(kRed);
     vhPPtGen[j]->SetMarkerColor(kRed);
@@ -303,14 +311,14 @@ void loopTrkClosure(
   c2->cd(2);
   c2->GetPad(2)->SetLogx();
   vhPPtRat[0]->Draw("E");
-  vhPPtRat[0]->SetAxisRange(3,100,"X");
+  vhPPtRat[0]->SetAxisRange(4,100,"X");
   vhPPtRat[0]->SetAxisRange(0,1.5,"Y");
   for (Int_t lv=0; lv<=4; ++lv) {
     vhPPtRatLv[lv][0]->Draw("sameE");
   }
 
   // ====================
-  TLine *l = new TLine(3,1,100,1);
+  TLine *l = new TLine(4,1,100,1);
   l->SetLineStyle(2);
   l->Draw();
 
@@ -334,11 +342,13 @@ void loopTrkClosure(
   // ====================
   TCanvas * chk0 = new TCanvas("chk0","check eff",500,500);
   chk0->SetLogz();
+  chk0->SetRightMargin(0.15);
   vhTrkEff[0]->Draw("colz");
   vhTrkEff[0]->ProfileX()->Draw("same");
 
   TCanvas * chk1 = new TCanvas("chk1","check fake",500,500);
   chk1->SetLogz();
+  chk1->SetRightMargin(0.15);
   vhTrkFak[0]->Draw("colz");
   vhTrkFak[0]->ProfileX()->Draw("same");
 

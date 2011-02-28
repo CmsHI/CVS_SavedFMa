@@ -20,6 +20,7 @@ class Corrector
     TString trkCorrModule_;
     Int_t ptRebinFactor_;
     Int_t sampleMode_; // 0 choose individually, 1 merge samples
+    Int_t smoothLevel_;
 
     vector<TString> levelName_;
     vector<vector<TString> > levelInput_;
@@ -46,7 +47,8 @@ class Corrector
 Corrector::Corrector() :
   trkCorrModule_("hitrkEffAnalyzer"),
   ptRebinFactor_(6),
-  sampleMode_(0)
+  sampleMode_(0),
+  smoothLevel_(0)
 {
   centBin_.push_back("0to1");
   centBin_.push_back("2to3");
@@ -118,8 +120,8 @@ void Corrector::Init(Int_t inputMethod, TString corrFileName)
   cout << "==============================================" << endl;
   cout << " Setup Tracking Correction" << endl;
   cout << "==============================================" << endl;
-  cout << "inputMethod: " << inputMethod << endl;
-  cout << "ptRebinFactor: " << ptRebinFactor_ << ", sampleMode: " << sampleMode_ << endl;
+  cout << "inputMethod: " << inputMethod << ", ptRebinFactor: " << ptRebinFactor_ << endl;
+  cout << "Retrieval setup - sampleMode: " << sampleMode_ << " smoothLevel: " << smoothLevel_ << endl;
   TFile * corrFile=0;
   if (inputMethod==1) {
     corrFile = new TFile(corrFileName);
@@ -194,17 +196,22 @@ Float_t Corrector::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, D
   Int_t ptBin = ptBin_->FindBin(pt);
   Int_t etaBin = etaBin_->FindBin(eta);
   Int_t jetBin = jetBin_->FindBin(jet);
-  if (jetBin>=numJEtBins_) jetBin = numJEtBins_; // make sure don't exceed vector bound
+  if (jetBin>=numJEtBins_-1) jetBin = numJEtBins_-1; // make sure don't exceed vector bound
   //cout << "bins: " << isample << " " << bin << " " << ptBin << " " << etaBin << " " << jetBin << endl;
 
   vector<vector<Double_t> > mat(numLevels_,vector<Double_t>(2));
   for (Int_t lv=0; lv<numLevels_; ++lv) {
     for (Int_t m=0; m<2; ++m) {
-      if (sampleMode_==0) {
-	mat[lv][m] = correction_[lv][isample][bin][jetBin][m]->GetBinContent(etaBin,ptBin);
-      } else if (sampleMode_==1) {
-	for (Int_t s=0; s<sample_.size(); ++s) {
-	  mat[lv][m] += correction_[lv][s][bin][jetBin][m]->GetBinContent(etaBin,ptBin);
+      for (Int_t s=0; s<sample_.size(); ++s) {
+	if (sampleMode_==0 && s!=isample) continue;
+	if (jet<ptHatMin_[s]) continue;
+	for (Int_t j=jetBin; j<=jetBin+1; ++j) {
+	  if (smoothLevel_<1&&j!=jetBin) continue;
+	  for (Int_t e=etaBin-1; e<etaBin+1; ++e) {
+	    if (smoothLevel_<2&&e!=etaBin) continue;
+	    if (e<1||e>numEtaBins_) continue;
+	    mat[lv][m] += correction_[lv][s][bin][j][m]->GetBinContent(etaBin,ptBin);
+	  }
 	}
       }
     }
