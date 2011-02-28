@@ -36,7 +36,7 @@ class Corrector
     vector<vector<vector<vector<vector<TH2D*> > > > > correction_;
 
     Corrector();
-    void Init();
+    void Init(Int_t inputMethod=0, TString corrFileName="");
     Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
     void Write();
@@ -113,12 +113,18 @@ Corrector::Corrector() :
   correction_ = v;
 }
 
-void Corrector::Init()
+void Corrector::Init(Int_t inputMethod, TString corrFileName)
 {
   cout << "==============================================" << endl;
   cout << " Setup Tracking Correction" << endl;
   cout << "==============================================" << endl;
+  cout << "inputMethod: " << inputMethod << endl;
   cout << "ptRebinFactor: " << ptRebinFactor_ << ", sampleMode: " << sampleMode_ << endl;
+  TFile * corrFile=0;
+  if (inputMethod==1) {
+    corrFile = new TFile(corrFileName);
+    //corrFile->ls();
+  }
   for (Int_t lv=0; lv<numLevels_; ++lv) {
     cout << "Load " << levelName_[lv] << " Histograms for ptHatMin";
     for (Int_t s=0; s<numSamples_; ++s) {
@@ -129,8 +135,14 @@ void Corrector::Init()
 	  TH3F * h3 = (TH3F*)sample_[s]->Get(hname);
 	  //cout << hname << " " << h3->GetEntries() << endl;
 	  for (Int_t j=1; j<=numJEtBins_; ++j) {
-	    TH2D * h2 = ProjectPtEta(h3,j,j);
-	    h2->SetName(Form("h%s_f%.0f_c%d_j%d_%d",levelName_[lv].Data(),ptHatMin_[s],c,j,m));
+	    TH2D * h2 = 0;
+	    TString h2name = Form("h%s_f%.0f_c%d_j%d_%d",levelName_[lv].Data(),ptHatMin_[s],c,j,m);
+	    if (inputMethod==0) {
+	      h2 = ProjectPtEta(h3,j,j);
+	      h2->SetName(h2name);
+	    } else if (inputMethod==1) {
+	      h2 = (TH2D*)corrFile->Get(h2name);
+	    }
 	    h2->RebinY(ptRebinFactor_);
 	    //cout << h2->GetName() << endl;
 	    correction_[lv][s][c][j][m] = h2;
