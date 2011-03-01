@@ -95,7 +95,10 @@ class FragAnaLoop
     }
     Bool_t SelJet(const JetFrag & jf, Int_t j) {
       if (j==0 && (*jf.jtpt)[j]>=100 && (*jf.jtpt)[j]<200 && fabs((*jf.jteta)[j])<0.8) return true;
-      if (j==1 && (*jf.jtpt)[j]>=50 && (*jf.jtpt)[j]<200 && fabs((*jf.jteta)[j])<0.8) return true;
+      if (j==1
+	  && (*jf.jtpt)[0]>=100 && (*jf.jtpt)[0]<200 && fabs((*jf.jteta)[0])<2
+	  && (*jf.jtpt)[j]>=50 && (*jf.jtpt)[j]<100 && fabs((*jf.jteta)[j])<0.8
+	  ) return true;
       return false;
     }
     //Bool_t SelFragIncl();
@@ -181,7 +184,7 @@ void FragAnaLoop::Loop()
       // Fill
       for (Int_t j=0; j<2; ++j) {
 	//cout << (*jttrk_.pdr)[j][ip] << endl;
-	//if (SelJet(jttrk_,j)&&(*jttrk_.pdr)[j][ip]<0.5)
+	//if (SelJet(jttrk_,j)&&(*jttrk_.pdr)[j][ip]<0.5) {
 	if (SelJet(jttrk_,j)&&fabs(trkEta)<1) {
 	  vhPPtCorr_[j][0]->Fill(trkEnergy);
 	  if (anaTrkType_==0) continue;
