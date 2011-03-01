@@ -78,6 +78,7 @@ class FragAnaLoop
     // analysis histograms
     vector<Double_t> ptBin_;
     vector<vector<TH1D*> > vhPPtCorr_;
+    vector<vector<TH1D*> > vhPPtRat_;
 
     // monitor histograms
     vector<vector<TH2D*> > vhTrkCorrPPt_;
@@ -107,6 +108,7 @@ FragAnaLoop::FragAnaLoop(TString name) :
   numJet_(2),
   passJet_(2),
   vhPPtCorr_(2),
+  vhPPtRat_(2),
   vhTrkCorrPPt_(2),
   vhTrkCorrJEt_(2),
   vhTrkCorrCent_(2)
@@ -126,6 +128,8 @@ void FragAnaLoop::Init()
       if (anaTrkType_==0 && lv>0) continue;
       vhPPtCorr_[j].push_back(new TH1D(Form("h%sPPtCorr%d_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0]));
       vhPPtCorr_[j][lv]->Sumw2();
+      vhPPtRat_[j].push_back(new TH1D(Form("h%sPPtRat%d_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0]));
+      vhPPtRat_[j][lv]->Sumw2();
 
       vhTrkCorrPPt_[j].push_back(new TH2D(Form("h%sTrkCorr%dPPt_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",50,0,100,50,-0.2,1.2));
       vhTrkCorrJEt_[j].push_back(new TH2D(Form("h%sTrkCorr%dJEt_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",100,0,400,50,-0.2,1.2));
