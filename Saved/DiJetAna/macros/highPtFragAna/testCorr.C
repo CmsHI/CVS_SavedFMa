@@ -4,12 +4,12 @@
 
 void testCorr(Int_t corrLevel=0,
     Int_t isample=3, // -1 for all samples
-    Int_t cbin=0,
-    Int_t etaPM=0 // +/- 2 for |eta|<1
+    Float_t jet=110, // -1 for all jet bins
+    Int_t etaPM=2 // +/- 2 for |eta|<1
     )
 {
   Int_t mode=1; // 0 for write, 1 for read
-  Float_t jet=-1; // -1 for all jet bins
+  Int_t cbin=0;
 
 
   Corrector trkCorr;
@@ -36,6 +36,11 @@ void testCorr(Int_t corrLevel=0,
   trkCorr.InspectCorr(corrLevel,isample,cbin,jet,2,7-etaPM,7+etaPM);
   c2->cd(3);
   trkCorr.InspectCorr(corrLevel,isample,cbin,jet,1);
+
+  TCanvas * c3 = new TCanvas("c3","c3",500,500);
+  trkCorr.InspectCorr(0,isample,cbin,jet,2,7-etaPM,7+etaPM,"Ehist");
+  trkCorr.InspectCorr(1,isample,cbin,jet,2,7-etaPM,7+etaPM,"Ehistsame");
+  c3->Print("TrkCorrInspect.gif");
 
   if (mode==0) {
     TFile * fout = new TFile("TrkCorr2D.root","RECREATE");

@@ -1,3 +1,5 @@
+#ifndef Corrector_h
+#define Corrector_h
 #include <iostream>
 #include <vector>
 #include "TFile.h"
@@ -41,7 +43,7 @@ class Corrector
     Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
     void Write();
-    void InspectCorr(Int_t lv, Int_t isample, Int_t c, Float_t jet,Int_t mode=0,Int_t begbin=0, Int_t endbin=-1);
+    void InspectCorr(Int_t lv, Int_t isample, Int_t c, Float_t jet,Int_t mode=0,Int_t begbin=0, Int_t endbin=-1, TString drawopt="");
 };
 
 Corrector::Corrector() :
@@ -252,7 +254,7 @@ void Corrector::Write()
   }
 }
 
-void Corrector::InspectCorr(Int_t lv, Int_t isample, Int_t c, Float_t jet, Int_t mode, Int_t begbin, Int_t endbin)
+void Corrector::InspectCorr(Int_t lv, Int_t isample, Int_t c, Float_t jet, Int_t mode, Int_t begbin, Int_t endbin,TString drawopt)
 {
   Int_t sampleMode=0;
   Int_t jetMode=0;
@@ -266,8 +268,10 @@ void Corrector::InspectCorr(Int_t lv, Int_t isample, Int_t c, Float_t jet, Int_t
 
   hNum = (TH2D*)correction_[lv][3][c][7][0]->Clone("hNum");
   hNum->Reset();
+  hNum->Sumw2();
   hDen = (TH2D*)correction_[lv][3][c][7][1]->Clone("hDen");
   hDen->Reset();
+  hDen->Sumw2();
 
   for (Int_t s=1; s<sample_.size(); ++s) {
     if (sampleMode==0&&s!=isample) continue;
@@ -286,7 +290,7 @@ void Corrector::InspectCorr(Int_t lv, Int_t isample, Int_t c, Float_t jet, Int_t
     hCorr = (TH2D*)hNum->Clone(Form("%s_corr_sampleMode%d",hNum->GetName(),sampleMode));
     hCorr->Divide(hNum,hDen);
     hCorr->SetAxisRange(0,25.2+3*6*4,"Y");
-    hCorr->Draw("colz");
+    hCorr->Draw("colz"+drawopt);
     return;
   }
 
@@ -308,5 +312,6 @@ void Corrector::InspectCorr(Int_t lv, Int_t isample, Int_t c, Float_t jet, Int_t
   hCorr1D->Divide(hNum1D,hDen1D);
   if (mode==2) hCorr1D->SetAxisRange(0,25.2+3*6*4,"X");
   hCorr1D->SetAxisRange(0,1,"Y");
-  hCorr1D->Draw();
+  hCorr1D->Draw(drawopt);
 }
+#endif // Corrector_h
