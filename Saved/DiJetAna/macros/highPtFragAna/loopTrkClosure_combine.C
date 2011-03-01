@@ -3,6 +3,7 @@
 #include "TCanvas.h"
 #include "TLine.h"
 #include "TLegend.h"
+#include "TProfile.h"
 #include "FragAnaLoop.h"
 
 void loopTrkClosure_combine(
@@ -123,20 +124,20 @@ void loopTrkClosure_combine(
   c2->Print("ClosureTrkPt.gif");
   c2->Print("ClosureTrkPt.pdf");
 
-  /*
   // ====================
   TCanvas * chk0 = new TCanvas("chk0","check eff",500,500);
   chk0->SetLogz();
   chk0->SetRightMargin(0.15);
-  vhTrkEff[0]->Draw("colz");
-  vhTrkEff[0]->ProfileX()->Draw("same");
-  trkCorr.InspectCorr(0,-1,0,-1,2,7-2,7+2,"histsame");
+  recfana.vhTrkCorrPPt_[0][1]->Draw("colz");
+  recfana.vhTrkCorrPPt_[0][1]->ProfileX()->Draw("same");
+  //trkCorr.InspectCorr(0,-1,0,-1,2,7-2,7+2,"histsame");
+  chk0->Print("ChkTrkEffPPt.gif");
 
   TCanvas * chk1 = new TCanvas("chk1","check fake",500,500);
   chk1->SetLogz();
   chk1->SetRightMargin(0.15);
-  vhTrkFak[0]->Draw("colz");
-  vhTrkFak[0]->ProfileX()->Draw("same");
-  trkCorr.InspectCorr(1,-1,0,-1,2,7-2,7+2,"histsame");
-  */
+  recfana.vhTrkCorrPPt_[0][2]->Draw("colz");
+  recfana.vhTrkCorrPPt_[0][2]->ProfileX()->Draw("same");
+  //trkCorr.InspectCorr(1,-1,0,-1,2,7-2,7+2,"histsame");
+  chk1->Print("ChkTrkFakPPt.gif");
 }
