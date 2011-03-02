@@ -156,7 +156,7 @@ void FragAnaLoop::Loop()
     t_->GetEntry(i);
 
     for (Int_t j=0; j<2; ++j) {
-      if (SelJet(jttrk_,j)) {
+      if (SelEvt(jttrk_)&&SelJet(jttrk_,j)) {
 	passJet_[j]=true;
 	++numJet_[j];
 	//cout << jttrk_.jtpt->at(0) << " " << jttrk_.jteta->at(0) << " " << jttrk_.jtphi->at(0) << endl;
@@ -184,8 +184,8 @@ void FragAnaLoop::Loop()
       // Fill
       for (Int_t j=0; j<2; ++j) {
 	//cout << (*jttrk_.pdr)[j][ip] << endl;
-	//if (SelJet(jttrk_,j)&&(*jttrk_.pdr)[j][ip]<0.5) {
-	if (SelJet(jttrk_,j)&&fabs(trkEta)<1) {
+	//if (SelEvt(jttrk_)&&SelJet(jttrk_,j)&&(*jttrk_.pdr)[j][ip]<0.5) {
+	if (SelEvt(jttrk_)&&SelJet(jttrk_,j)&&fabs(trkEta)<1) {
 	  vhPPtCorr_[j][0]->Fill(trkEnergy);
 	  if (anaTrkType_==0) continue;
 	  vhPPtCorr_[j][1]->Fill(trkEnergy,1./eff);
