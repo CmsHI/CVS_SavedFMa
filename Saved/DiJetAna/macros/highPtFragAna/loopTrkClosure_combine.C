@@ -11,6 +11,9 @@ void loopTrkClosure_combine(
     TString infgen="nt_djhp_HyUQ110v0_djcalo_genp_100_50_offset0.root",
     TCut evtCut="cent<30")
 {
+  // ===================================
+  // Inputs
+  // ===================================
   TChain * trec = new TChain("tjttrk");
   trec->Add(infrec);
   TChain * tgen = new TChain("tjttrk");
@@ -18,20 +21,25 @@ void loopTrkClosure_combine(
   cout << infrec << " cut " << TString(evtCut) << ": " << trec->GetEntries() << endl;
   cout << infgen << " cut " << TString(evtCut) << ": " << tgen->GetEntries() << endl;
 
+  // ===================================
   // Correction
+  // ===================================
   Corrector trkCorr;
   TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
   trkCorr.ptRebinFactor_ = 12;
   trkCorr.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
-  trkCorr.smoothLevel_ = 0; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
+  trkCorr.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
   trkCorr.Init(1,"TrkCorr2D.root");
 
+  // ===================================
+  // Setup
+  // ===================================
   // bins
   //const Int_t numPPtBins=19;
   //Float_t pptBins[numPPtBins+1] = {0.0,0.2,1,2,3,4,6,8,10,14,18,22,26,30,40,50,60,70,80,100};
   //TH1D * hxbin = new TH1D("hxbin","",numPPtBins,pptBins);
   TH1D * hxbin = (TH1D*)hPtBinUnRebin->Clone("hxbin");
-  hxbin->Rebin(4);
+  hxbin->Rebin(12);
   vector<Double_t> ptBin;
   for (Int_t i=1; i<=hxbin->GetNbinsX()+1; ++i) {
     ptBin.push_back(hxbin->GetBinLowEdge(i));
@@ -40,7 +48,9 @@ void loopTrkClosure_combine(
   for (Int_t i=0; i<ptBin.size(); ++i) {cout << ptBin[i] << " ";}
   cout << endl;
 
-  // Ana
+  // ===================================
+  // Analyze
+  // ===================================
   TFile * outf = new TFile("testLoopHists.root","RECREATE");
   // rec trk
   FragAnaLoop recfana("Rec");
@@ -65,11 +75,14 @@ void loopTrkClosure_combine(
       recfana.vhPPtRat_[j][lv]->Divide(recfana.vhPPtCorr_[j][lv],genfana.vhPPtCorr_[j][0]);
     }
   }
+
   // ===================================
   // Plot
   // ===================================
   Int_t colors[10] = {kBlack,kGray+2,kViolet,kBlue+1,kGreen+2,kOrange+2,kMagenta,kRed};
   for (Int_t j=0; j<2; ++j) {
+    TString append(Form("_j%d",j));
+    // prepare histogram frame
     genfana.vhPPtCorr_[j][0]->SetAxisRange(4,100,"X");
     genfana.vhPPtCorr_[j][0]->SetAxisRange(1e-3,5e1,"Y");
     genfana.vhPPtCorr_[j][0]->SetLineColor(kRed);
@@ -83,10 +96,9 @@ void loopTrkClosure_combine(
       recfana.vhPPtRat_[j][lv]->SetMarkerColor(colors[lv]);
       recfana.vhPPtRat_[j][lv]->SetLineColor(colors[lv]);
     }
-  }
 
-  for (Int_t j=0; j<2; ++j) {
-    TCanvas *c2 = new TCanvas(Form("c2_j%d",j),"closure",500,900);
+    // draw spectrum
+    TCanvas *c2 = new TCanvas("c2"+append,"closure"+append,500,900);
     c2->Divide(1,2);
     c2->cd(1);
     c2->GetPad(1)->SetLogy();
@@ -96,6 +108,7 @@ void loopTrkClosure_combine(
     for (Int_t lv=1; lv<=4; ++lv) {
       recfana.vhPPtCorr_[j][lv]->Draw("sameE");
     }
+    // draw ratio
     c2->cd(2);
     c2->GetPad(2)->SetLogx();
     recfana.vhPPtRat_[j][0]->Draw("E");
@@ -123,23 +136,23 @@ void loopTrkClosure_combine(
     }
     leg->Draw();
 
-    c2->Print(Form("ClosureTrkPt_j%d.gif",j));
+    c2->Print(Form("ClosureTrkPt%s.gif",append.Data()));
 
     // ====================
-    TCanvas * chk0 = new TCanvas(Form("chk0_j%d",j),"check eff",500,500);
+    TCanvas * chk0 = new TCanvas("chk0"+append,"eff_vs_pt"+append,500,500);
     chk0->SetLogz();
     chk0->SetRightMargin(0.15);
     recfana.vhTrkCorrPPt_[0][1]->Draw("colz");
     recfana.vhTrkCorrPPt_[0][1]->ProfileX()->Draw("same");
     //trkCorr.InspectCorr(0,-1,0,-1,2,7-2,7+2,"histsame");
-    chk0->Print(Form("AppliedTrkEffPPt_j%d.gif",j));
+    chk0->Print(Form("AppliedTrkEffPPt%s.gif",append.Data()));
 
-    TCanvas * chk1 = new TCanvas(Form("chk1_j%d",j),"check fake",500,500);
+    TCanvas * chk1 = new TCanvas("chk1"+append,"fake_vs_pt"+append,500,500);
     chk1->SetLogz();
     chk1->SetRightMargin(0.15);
     recfana.vhTrkCorrPPt_[0][2]->Draw("colz");
     recfana.vhTrkCorrPPt_[0][2]->ProfileX()->Draw("same");
     //trkCorr.InspectCorr(1,-1,0,-1,2,7-2,7+2,"histsame");
-    chk1->Print(Form("AppliedTrkFakPPt_j%d.gif",j));
+    chk1->Print(Form("AppliedTrkFakPPt%s.gif",append.Data()));
   }
 }
