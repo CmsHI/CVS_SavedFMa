@@ -7,6 +7,7 @@
 #include "TString.h"
 #include "Corrector.h"
 #include "HisMath.C"
+#include "selectionCut.h"
 using namespace std;
 
 struct JetFrag
@@ -68,12 +69,12 @@ class FragAnaLoop
     TChain * t_;
     JetFrag jttrk_;
     Corrector * trkCorr_;
+    selectionCut * cut_;
 
     TString name_;
     Int_t anaTrkType_;
 
     vector<Double_t> numJet_;
-    vector<Bool_t> passJet_;
 
     // analysis histograms
     vector<Double_t> ptBin_;
@@ -91,14 +92,16 @@ class FragAnaLoop
     void Loop();
 
     Bool_t SelEvt(const JetFrag & jf) {
-      return (jf.cent<30);
+      return (jf.cent>=cut_->CentMin && jf.cent<cut_->CentMax);
     }
     Bool_t SelJet(const JetFrag & jf, Int_t j) {
-      if (j==0 && (*jf.jtpt)[j]>=100 && (*jf.jtpt)[j]<200 && fabs((*jf.jteta)[j])<0.8) return true;
-      if (j==1
-	  && (*jf.jtpt)[0]>=100 && (*jf.jtpt)[0]<200 && fabs((*jf.jteta)[0])<2
-	  && (*jf.jtpt)[j]>=50 && (*jf.jtpt)[j]<100 && fabs((*jf.jteta)[j])<0.8
-	  ) return true;
+      if (j==0
+	  && (*jf.jtpt)[j]>=cut_->JEtMin[j] && (*jf.jtpt)[j]<cut_->JEtMax[j] && fabs((*jf.jteta)[j])<cut_->JEtaMax[j]
+	 ) return true;
+      else if (j==1
+	  && (*jf.jtpt)[0]>=120 && (*jf.jtpt)[0]<250 && fabs((*jf.jteta)[0])<2
+	  && (*jf.jtpt)[j]>=cut_->JEtMin[j] && (*jf.jtpt)[j]<cut_->JEtMax[j] && fabs((*jf.jteta)[j])<cut_->JEtaMax[j]
+	 ) return true;
       return false;
     }
     //Bool_t SelFragIncl();
@@ -109,7 +112,6 @@ FragAnaLoop::FragAnaLoop(TString name) :
   name_(name),
   anaTrkType_(2),
   numJet_(2),
-  passJet_(2),
   vhPPtCorr_(2),
   vhPPtRat_(2),
   vhTrkCorrPPt_(2),
@@ -146,18 +148,15 @@ void FragAnaLoop::Loop()
   // Initialize counters
   for (Int_t j=0; j<2; ++j) {
     numJet_[j]=0;
-    passJet_[j]=false;
   }
 
   // Main Loop
   Int_t numEntries = t_->GetEntries();
-
   for (Int_t i=0; i<numEntries; ++i) {
     t_->GetEntry(i);
 
     for (Int_t j=0; j<2; ++j) {
       if (SelEvt(jttrk_)&&SelJet(jttrk_,j)) {
-	passJet_[j]=true;
 	++numJet_[j];
 	//cout << jttrk_.jtpt->at(0) << " " << jttrk_.jteta->at(0) << " " << jttrk_.jtphi->at(0) << endl;
       }
@@ -171,6 +170,7 @@ void FragAnaLoop::Loop()
       Double_t eff=1,fak=1,mul=1,sec=1,trkwt=1;
       if (anaTrkType_>=2) {
 	trkCorr_->GetCorr(trkEnergy,trkEta,(*jttrk_.jtpt)[0],jttrk_.cent,corr);
+	//trkCorr_->GetCorr(trkEnergy,trkEta,50,jttrk_.cent,corr);
 	eff = corr[0];
 	fak = corr[1];
 	mul = corr[2];
@@ -184,8 +184,8 @@ void FragAnaLoop::Loop()
       // Fill
       for (Int_t j=0; j<2; ++j) {
 	//cout << (*jttrk_.pdr)[j][ip] << endl;
-	//if (SelEvt(jttrk_)&&SelJet(jttrk_,j)&&(*jttrk_.pdr)[j][ip]<0.5) {
-	if (SelEvt(jttrk_)&&SelJet(jttrk_,j)&&fabs(trkEta)<1) {
+	if (SelEvt(jttrk_)&&SelJet(jttrk_,j)&&(*jttrk_.pdr)[j][ip]<0.5) {
+	//if (SelEvt(jttrk_)&&SelJet(jttrk_,j)&&fabs(trkEta)<1) {
 	  vhPPtCorr_[j][0]->Fill(trkEnergy);
 	  if (anaTrkType_==0) continue;
 	  vhPPtCorr_[j][1]->Fill(trkEnergy,1./eff);
