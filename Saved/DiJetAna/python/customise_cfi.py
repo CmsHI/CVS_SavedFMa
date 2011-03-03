@@ -38,8 +38,8 @@ def enableRECO(process,mode="MC",type="HI"):
       from PhysicsTools.PatAlgos.tools.coreTools import removeMCMatching
       removeMCMatching(process, ['All']) # turn off MC matching for data
   # JEC Set
-  from PhysicsTools.PatAlgos.tools.jetTools import switchJECSet
-  #switchJECSet( process, "Spring10") # Spring10 is the new default
+  #from PhysicsTools.PatAlgos.tools.jetTools import switchJECSet
+  #switchJECSet( process, "Spring10") # Spring10 is the new default, not needed in 39X+ when reading Corr from DB
   for i,m in enumerate([process.djcalo,
   process.djcalo_tower,
   process.djcalo_genp,
@@ -89,7 +89,8 @@ def enableOpenHlt(process, seq, isData=True):
   seq*=process.hltanalysis
 
 ### If Data
-def enableData(process):
+def enableData(process,stream="HICorePhysics"):
+  print "stream: ", stream
   process.dijetAna_seq.remove(process.djcalo_genp)
   process.dijetAna_seq.remove(process.djgen)
   for m in [process.djcalo,process.djcalo_tower,
@@ -99,6 +100,10 @@ def enableData(process):
     m.hltsrc = cms.InputTag("TriggerResults","","HLT")
     m.isMC = False
     m.refJetType = -1
+    if stream=="HICorePhysics":
+      m.hltNames = ["HLT_HIMinBiasHfOrBSC_Core","HLT_HIJet35U_Core","HLT_HIJet50U_Core","HLT_HIJet75U_Core","HLT_HIJet90U_Core","HLT_HIPhoton20_Core"]
+    elif stream=="HIAllPhysics":
+      m.hltNames = ["HLT_HIMinBiasHfOrBSC","HLT_HIJet35U","HLT_HIJet50U","HLT_HIJet75U","HLT_HIJet90U","HLT_HIPhoton20"]
 
 def enableDataFilter(process,dataType="HI"):
   #process.eventSelection*=process.hiEcalRecHitSpikeFilter
