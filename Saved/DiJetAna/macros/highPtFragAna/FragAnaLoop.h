@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include "TChain.h"
+#include "TNtuple.h"
 #include "TH1.h"
 #include "TH2.h"
 #include "TString.h"
@@ -72,6 +73,7 @@ class FragAnaLoop
     selectionCut * cut_;
 
     TString name_;
+    Double_t ptHatMin_;
     Int_t anaTrkType_;
 
     vector<Double_t> numJet_;
@@ -85,6 +87,9 @@ class FragAnaLoop
     vector<vector<TH2D*> > vhTrkCorrPPt_;
     vector<vector<TH2D*> > vhTrkCorrJEt_;
     vector<vector<TH2D*> > vhTrkCorrCent_;
+
+    // ntuples
+    TNtuple * ntCorr_;
 
     // Methods
     FragAnaLoop(TString name);
@@ -130,6 +135,7 @@ void FragAnaLoop::Init()
 
   SetJetFragTree(t_,jttrk_);
 
+  // Book Histograms
   for (Int_t j=0; j<2; ++j) {
     for (Int_t lv=0; lv<5; ++lv) {
       if (anaTrkType_==0 && lv>0) continue;
@@ -143,6 +149,13 @@ void FragAnaLoop::Init()
       vhTrkCorrCent_[j].push_back(new TH2D(Form("h%sTrkCorr%dCent_j%d",name_.Data(),lv,j),";Centrality (%);",10,0,100,50,-0.2,1.2));
     }
   }
+
+  // Book ntuples
+  ntCorr_ = new TNtuple("ntCorr","nt of trk corrections",
+      "cent:pthatmin:"
+      "jtpt1:jteta1:jtpt2:jteta2:"
+      "ppt:peta:pj1dr:pj2dr:"
+      "eff:fak");
 }
 
 void FragAnaLoop::Loop()
@@ -162,7 +175,7 @@ void FragAnaLoop::Loop()
     if (jttrk_.jtpt->at(0)<30) continue;
 
     for (Int_t j=0; j<2; ++j) {
-      if (SelEvt(jttrk_)&&SelJet(jttrk_,j)) {
+      if (!cut_->doSel||(SelEvt(jttrk_)&&SelJet(jttrk_,j))) {
 	++numJet_[j];
 	//cout << jttrk_.jtpt->at(0) << " " << jttrk_.jteta->at(0) << " " << jttrk_.jtphi->at(0) << endl;
       }
@@ -181,6 +194,11 @@ void FragAnaLoop::Loop()
 	fak = corr[1];
 	mul = corr[2];
 	sec = corr[3];
+	ntCorr_->Fill(jttrk_.cent,ptHatMin_,
+	    (*jttrk_.jtpt)[0],(*jttrk_.jteta)[0],(*jttrk_.jtpt)[1],(*jttrk_.jteta)[1],
+	    trkEnergy,trkEta,(*jttrk_.pdr)[0][ip],(*jttrk_.pdr)[1][ip],
+	    eff,fak
+	    );
 	if (eff<1e-5) { eff=1; }
 	trkwt = (1-fak)*(1-sec)/(eff*(1+mul));
 	//if (trkwt<0||trkwt>20) {
@@ -190,7 +208,7 @@ void FragAnaLoop::Loop()
       // Fill
       for (Int_t j=0; j<2; ++j) {
 	//cout << (*jttrk_.pdr)[j][ip] << endl;
-	if (SelEvt(jttrk_)&&SelJet(jttrk_,j)&&SelFrag(jttrk_,ip,j)) {
+	if (!cut_->doSel||(SelEvt(jttrk_)&&SelJet(jttrk_,j)&&SelFrag(jttrk_,ip,j))) {
 	  vhPPtCorr_[j][0]->Fill(trkEnergy);
 	  if (anaTrkType_==0) continue;
 	  vhPPtCorr_[j][1]->Fill(trkEnergy,1./eff);
