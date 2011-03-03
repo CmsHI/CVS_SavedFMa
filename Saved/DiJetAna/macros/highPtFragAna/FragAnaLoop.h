@@ -104,8 +104,10 @@ class FragAnaLoop
 	 ) return true;
       return false;
     }
-    //Bool_t SelFragIncl();
-    //Bool_t SelFragCone(Int_t j, Double_t r);
+    Bool_t SelFrag(const JetFrag & jf, Int_t ip, Int_t j) {
+	return ( abs((*jf.peta)[ip])<cut_->TrkEtaMax );
+	//return ( (*jf.pdr)[j][ip]<cut_->ConeSize );
+    }
 };
 
 FragAnaLoop::FragAnaLoop(TString name) :
@@ -154,6 +156,10 @@ void FragAnaLoop::Loop()
   Int_t numEntries = t_->GetEntries();
   for (Int_t i=0; i<numEntries; ++i) {
     t_->GetEntry(i);
+    // ===========================
+    // Basic Event preselection
+    // ===========================
+    if (jttrk_.jtpt->at(0)<30) continue;
 
     for (Int_t j=0; j<2; ++j) {
       if (SelEvt(jttrk_)&&SelJet(jttrk_,j)) {
@@ -177,15 +183,14 @@ void FragAnaLoop::Loop()
 	sec = corr[3];
 	if (eff<1e-5) { eff=1; }
 	trkwt = (1-fak)*(1-sec)/(eff*(1+mul));
-	if (trkwt<0||trkwt>20) {
-	  cout << trkEnergy << " " << eff << " " << fak << " " << mul << " " << sec << " " << trkwt << endl;
-	}
+	//if (trkwt<0||trkwt>20) {
+	//  cout << trkEnergy << " " << eff << " " << fak << " " << mul << " " << sec << " " << trkwt << endl;
+	//}
       }
       // Fill
       for (Int_t j=0; j<2; ++j) {
 	//cout << (*jttrk_.pdr)[j][ip] << endl;
-	if (SelEvt(jttrk_)&&SelJet(jttrk_,j)&&(*jttrk_.pdr)[j][ip]<0.5) {
-	//if (SelEvt(jttrk_)&&SelJet(jttrk_,j)&&fabs(trkEta)<1) {
+	if (SelEvt(jttrk_)&&SelJet(jttrk_,j)&&SelFrag(jttrk_,ip,j)) {
 	  vhPPtCorr_[j][0]->Fill(trkEnergy);
 	  if (anaTrkType_==0) continue;
 	  vhPPtCorr_[j][1]->Fill(trkEnergy,1./eff);
