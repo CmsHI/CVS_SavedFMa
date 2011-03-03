@@ -198,6 +198,7 @@ Float_t Corrector::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, D
   Int_t ptBin = ptBin_->FindBin(pt);
   Int_t etaBin = etaBin_->FindBin(eta);
   Int_t jetBin = jetBin_->FindBin(jet);
+  if (jetBin<1) jetBin = 1; // make sure don't exceed vector bound
   if (jetBin>=numJEtBins_-1) jetBin = numJEtBins_-1; // make sure don't exceed vector bound
   //cout << "bins: " << isample << " " << bin << " " << ptBin << " " << etaBin << " " << jetBin << endl;
 
