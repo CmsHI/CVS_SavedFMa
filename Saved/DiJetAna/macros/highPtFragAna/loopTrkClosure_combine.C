@@ -31,6 +31,7 @@ void loopTrkClosure_combine(Double_t ptHatMin=110)
   // Cuts
   // ===================================
   selectionCut cut;
+  cut.doSel = false;
   cut.CentMin=0;
   cut.CentMax=30;
   cut.JEtMin[0] = 50;
@@ -72,9 +73,12 @@ void loopTrkClosure_combine(Double_t ptHatMin=110)
   // ===================================
   // Analyze
   // ===================================
-  TFile * outf = new TFile("testLoopHists.root","RECREATE");
+  TString outName(Form("histsFragLoop_%.0f.root",ptHatMin));
+  if (!cut.doSel) outName = Form("histsFragLoop_%.0f_nt.root",ptHatMin);
+  TFile * outf = new TFile(outName,"RECREATE");
   // rec trk
   FragAnaLoop recfana("Rec");
+  recfana.ptHatMin_ = ptHatMin;
   recfana.anaTrkType_=2;
   recfana.t_ = trec;
   recfana.cut_ = &cut;
@@ -82,8 +86,10 @@ void loopTrkClosure_combine(Double_t ptHatMin=110)
   recfana.ptBin_ = ptBin;
   recfana.Init();
   recfana.Loop();
+  if (!cut.doSel) recfana.ntCorr_->Write();
   // gen partilce
   FragAnaLoop genfana("Gen");
+  genfana.ptHatMin_ = ptHatMin;
   genfana.anaTrkType_=0;
   genfana.t_ = tgen;
   genfana.cut_ = &cut;
