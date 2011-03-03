@@ -30,6 +30,7 @@ class selectionCut
     Double_t AjMax;
     // trk
     Double_t TrkPtMin;
+    Double_t TrkEtaMax;
     // cone
     Double_t ConeSize;
 };
@@ -45,6 +46,7 @@ selectionCut::selectionCut(Double_t et1min, Double_t et1max) :
   AjMin(0),
   AjMax(1),
   TrkPtMin(4),
+  TrkEtaMax(2.4),
   ConeSize(0.5)
 {
   for (Int_t j=0; j<2; ++j) {
