@@ -18,6 +18,8 @@ class selectionCut
     selectionCut(Double_t et1min=120, Double_t et1max=250);
     ~selectionCut(){}
 
+    // setup
+    Bool_t doSel;
     // -- ana ranges --
     Double_t CentMin;
     Double_t CentMax;
@@ -36,6 +38,7 @@ class selectionCut
 };
 
 selectionCut::selectionCut(Double_t et1min, Double_t et1max) :
+  doSel(true),
   CentMin(0),
   CentMax(30),
   JEtMin(2),
