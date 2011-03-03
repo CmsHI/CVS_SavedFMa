@@ -17,11 +17,12 @@ bscNoHalo = hltLevel1GTSeed.clone(
     )
 
 L1HfOrBscCoinc = l1Filter.clone(
-    algorithms = cms.vstring("L1_BscMinBiasInnerThreshold1","L1_HcalHfCoincidencePm")
+    algorithms = cms.vstring("L1_BscMinBiasThreshold1","L1_HcalHfCoincidencePm") # careful: check both are not enables
     )
 
 # HLT Selection
 from HLTrigger.HLTfilters.hltHighLevel_cfi import *
+hltMBHFOrMBBSC = hltHighLevel.clone( HLTPaths = ["HLT_HIMinBiasHF","HLT_HIMinBiasBSC"] )
 hltMB = hltHighLevel.clone( HLTPaths = ["HLT_HIMinBiasHfOrBSC_Core"] )
 hltJet = hltHighLevel.clone( HLTPaths = ["HLT_HIJet35U_Core","HLT_HIJet50U_Core","HLT_HIJet75U_Core","HLT_HIJet90U_Core"] )
 
@@ -35,7 +36,7 @@ from HeavyIonsAnalysis.Configuration.collisionEventSelection_cff import *
 
 # Noise Filters
 #from CmsHi.PhotonAnalysis.hiEcalRecHitSpikeFilter_cfi import *
-#hiEcalRecHitSpikeFilter.minEt = 50.0
+#hiEcalRecHitSpikeFilter.minEt = 20.0 # started with 50.0, but found it was too loose
 
 # Final Filter Sequences
 triggerSelection = cms.Sequence(physDeclFilter)
