@@ -6,7 +6,8 @@
 #include "TProfile.h"
 #include "FragAnaLoop.h"
 
-void loopTrkClosure_combine(Double_t ptHatMin=110)
+void loopTrkClosure_combine(Double_t ptHatMin=110,
+    Bool_t doSel=true)
 {
   // ===================================
   // Inputs
@@ -31,7 +32,7 @@ void loopTrkClosure_combine(Double_t ptHatMin=110)
   // Cuts
   // ===================================
   selectionCut cut;
-  cut.doSel = false;
+  cut.doSel = doSel;
   cut.CentMin=0;
   cut.CentMax=30;
   cut.JEtMin[0] = 50;
@@ -74,7 +75,7 @@ void loopTrkClosure_combine(Double_t ptHatMin=110)
   // Analyze
   // ===================================
   TString outName(Form("histsFragLoop_%.0f.root",ptHatMin));
-  if (!cut.doSel) outName = Form("histsFragLoop_%.0f_nt.root",ptHatMin);
+  if (!cut.doSel) outName = Form("histsntFragLoop_%.0f.root",ptHatMin);
   TFile * outf = new TFile(outName,"RECREATE");
   // rec trk
   FragAnaLoop recfana("Rec");
@@ -86,7 +87,6 @@ void loopTrkClosure_combine(Double_t ptHatMin=110)
   recfana.ptBin_ = ptBin;
   recfana.Init();
   recfana.Loop();
-  if (!cut.doSel) recfana.ntCorr_->Write();
   // gen partilce
   FragAnaLoop genfana("Gen");
   genfana.ptHatMin_ = ptHatMin;
@@ -200,4 +200,10 @@ void loopTrkClosure_combine(Double_t ptHatMin=110)
     //trkCorr.InspectCorr(0,-1,0,-1,2,7-2,7+2,"histsame");
     cCorrCent->Print(Form("AppliedTrkEffCent%s.gif",append.Data()));
   }
+
+  // ===================================
+  // All Done, Write output if choose
+  // ===================================
+  if (!cut.doSel) recfana.ntCorr_->Write();
+  else outf->Clear();
 }
