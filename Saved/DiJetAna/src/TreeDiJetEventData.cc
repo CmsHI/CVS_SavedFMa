@@ -236,19 +236,19 @@ void TreeDiJetEventData::SetBranches(Int_t jetType, Int_t trkType)
   // -- particle info --
   tree_->Branch("evtnp",&(this->evtnp_),"evtnp/I");
   tree_->Branch("psube",this->psube_,"psube[evtnp]/I");
-  tree_->Branch("ppid",this->ppid_,"ppid[evtnp]/I");
+  //tree_->Branch("ppid",this->ppid_,"ppid[evtnp]/I");
   tree_->Branch("pch",this->pch_,"pch[evtnp]/I");
   tree_->Branch("ppt",this->ppt_,"ppt[evtnp]/F");
   tree_->Branch("peta",this->peta_,"peta[evtnp]/F");
   tree_->Branch("pphi",this->pphi_,"pphi[evtnp]/F");
 
-  tree_->Branch("pndphi",this->pndphi_,"pndphi[evtnp]/F");
-  tree_->Branch("pndr",this->pndr_,"pndr[evtnp]/F");
-  tree_->Branch("pndrbg",this->pndrbg_,"pndrbg[evtnp]/F");
+  //tree_->Branch("pndphi",this->pndphi_,"pndphi[evtnp]/F");
+  //tree_->Branch("pndr",this->pndr_,"pndr[evtnp]/F");
+  //tree_->Branch("pndrbg",this->pndrbg_,"pndrbg[evtnp]/F");
 
-  tree_->Branch("padphi",this->padphi_,"padphi[evtnp]/F");
-  tree_->Branch("padr",this->padr_,"padr[evtnp]/F");
-  tree_->Branch("padrbg",this->padrbg_,"padrbg[evtnp]/F");
+  //tree_->Branch("padphi",this->padphi_,"padphi[evtnp]/F");
+  //tree_->Branch("padr",this->padr_,"padr[evtnp]/F");
+  //tree_->Branch("padrbg",this->padrbg_,"padrbg[evtnp]/F");
 
   //tree_->Branch("zn",this->zn_,"zn[evtnp]/F");
   //tree_->Branch("za",this->za_,"za[evtnp]/F");
