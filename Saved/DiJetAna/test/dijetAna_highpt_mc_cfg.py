@@ -91,7 +91,11 @@ process.djcalo_genp.trkPtMin=1.5
 #process.djgen.anaGenpType = 1
 #process.djgen.trksrc = cms.InputTag("hiGenParticles","","HIJETS")
 process.djgen.trkPtMin=1.5
-process.dijetAna_seq*=process.hitrkEffAna
+
+# trk eff ana
+process.dijetAna_seq=process.hitrkEffAna
+process.hitrkEffAnalyzer.fillNtuples = True
+process.hitrkEffAnalyzer.trkPtMin = 2
 
 # For Embedding
 if isDataEmbed:
