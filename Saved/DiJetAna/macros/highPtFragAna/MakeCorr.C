@@ -54,16 +54,36 @@ void MakeCorr()
   centBins.push_back(19);
   centBins.push_back(39);
 
-  TrkCorrHisAna hisana("A0");
-  hisana.outFile_ = outfile;
-  hisana.tsim_ = tsim;
-  hisana.trec_ = trec;
-  hisana.ptBins = ptBinsA0;
-  hisana.etaBins = etaBins;
-  hisana.jetBins = jetBins;
-  hisana.centBins = centBins;
-  hisana.DeclareHistograms();
-  hisana.LoopSim();
-  hisana.LoopRec();
-  hisana.WriteHistograms();
+  TrkCorrHisAna anaA0("A0");
+  anaA0.outFile_ = outfile;
+  anaA0.tsim_ = tsim;
+  anaA0.trec_ = trec;
+  anaA0.ptBins = ptBinsA0;
+  anaA0.etaBins = etaBins;
+  anaA0.jetBins = jetBins;
+  anaA0.centBins = centBins;
+  anaA0.DeclareHistograms();
+  anaA0.LoopSim();
+  anaA0.LoopRec();
+  anaA0.WriteHistograms();
+
+  // =========
+  // A1
+  // =========
+  vector<Double_t> ptBinsA1;
+  for(pt =   0  ; pt <   1.2-small; pt +=  0.05) ptBinsA1.push_back(pt); // 24 bins 
+  for(pt =   1.2; pt <   2.4-small; pt +=  0.1 ) ptBinsA1.push_back(pt); // 12 bins
+  for(pt =   2.4; pt <   7.2-small; pt +=  0.4 ) ptBinsA1.push_back(pt); // 12 bins
+  for(pt =   7.2; pt <  16.8-small; pt +=  1.6 ) ptBinsA1.push_back(pt); // 6 bins 
+  for(pt =  16.8; pt <  55.2-small; pt +=  6.4 ) ptBinsA1.push_back(pt); // 6 bins
+  for(pt =  55.2; pt < 170.4-small; pt +=  9.6 ) ptBinsA1.push_back(pt); // 12 bins
+  ptBinsA1.push_back(170.4);
+
+  TrkCorrHisAna anaA1(anaA0);
+  anaA1.name_ = "A1";
+  anaA1.ptBins = ptBinsA1;
+  anaA1.DeclareHistograms();
+  anaA1.LoopSim();
+  anaA1.LoopRec();
+  anaA1.WriteHistograms();
 }

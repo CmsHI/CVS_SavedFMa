@@ -99,6 +99,15 @@ class TrkCorrHisAna
 
     // methods
     TrkCorrHisAna(TString name);
+    TrkCorrHisAna(TrkCorrHisAna & orig) {
+      tsim_ = orig.tsim_;
+      trec_ = orig.trec_;
+      ptBins = orig.ptBins;
+      etaBins = orig.etaBins;
+      jetBins = orig.jetBins;
+      centBins = orig.centBins;
+      outFile_ = orig.outFile_;
+    };
     void DeclareHistograms();
     void FillSimHistograms(const SimTrack_t & s);
     void FillRecHistograms(const RecTrack_t & r);
