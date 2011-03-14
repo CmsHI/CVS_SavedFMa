@@ -14,6 +14,8 @@ void MakeCorr()
   trec->Add("~/scratch01/ana/HydjetBass_DJUQ110_GSR_v2_HighPtv0EffNt/mergeAll/all_nt.root");
   trec->Print();
 
+  TFile * outfile = new TFile("trkCorrHisAna.root","RECREATE");
+
   // =========
   // A0
   // =========
@@ -53,6 +55,7 @@ void MakeCorr()
   centBins.push_back(39);
 
   TrkCorrHisAna hisana("A0");
+  hisana.outFile_ = outfile;
   hisana.tsim_ = tsim;
   hisana.trec_ = trec;
   hisana.ptBins = ptBinsA0;
@@ -62,4 +65,5 @@ void MakeCorr()
   hisana.DeclareHistograms();
   hisana.LoopSim();
   hisana.LoopRec();
+  hisana.WriteHistograms();
 }

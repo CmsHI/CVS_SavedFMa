@@ -65,6 +65,7 @@ class TrkCorrHisAna
     vector<Int_t> centBins;
 
     TString name_;
+    TFile * outFile_;
     // SimTrack
     TH2F* hsim;
     TH2F* hacc;
@@ -114,6 +115,10 @@ TrkCorrHisAna::TrkCorrHisAna(TString name) :
 
 void TrkCorrHisAna::DeclareHistograms()
 {
+  // Setup output dir
+  outFile_->mkdir(name_);
+  outFile_->cd(name_);
+
   // simulated
   hsim = new TH2F("hsim","Sim Tracks;#eta;p_{T} (GeV/c)",
       etaBins.size()-1, &etaBins[0],
@@ -292,9 +297,9 @@ void TrkCorrHisAna::LoopSim()
   SimTrack_t s;
   tsim_->SetBranchAddress("simTrackValues",&s.ids);
   cout << name_ << " Sim Trk Loop" << endl;
-  for (Int_t i=0; i<tsim_->GetEntries(); ++i) {
+  for (Long_t i=0; i<tsim_->GetEntries(); ++i) {
     tsim_->GetEntry(i);
-    if (i%500000==0) cout << i << ": " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
+    if (i%1000000==0) cout << i/1000 << "k: " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
     FillSimHistograms(s);
   }
 }
@@ -304,10 +309,49 @@ void TrkCorrHisAna::LoopRec()
   RecTrack_t r;
   trec_->SetBranchAddress("recTrackValues",&r.charge);
   cout << name_ << " Rec Trk Loop" << endl;
-  for (Int_t i=0; i<trec_->GetEntries(); ++i) {
+  for (Long_t i=0; i<trec_->GetEntries(); ++i) {
     trec_->GetEntry(i);
-    if (i%500000==0) cout << i << ": " << r.charge << " " << r.etar << " " << r.ptr << " " << r.jetr << " " << r.cbin << endl;
+    if (i%1000000==0) cout << i/1000 << "k: " << r.charge << " " << r.etar << " " << r.ptr << " " << r.jetr << " " << r.cbin << endl;
     FillRecHistograms(r);
   }
+}
+
+void TrkCorrHisAna::WriteHistograms()
+{
+  outFile_->cd(name_);
+
+  // SimTrack
+  hsim->Write();
+  hacc->Write();
+  heff->Write();
+  hmul->Write();
+
+  hsim3D->Write();
+  heff3D->Write();
+  hmul3D->Write();
+  hresStoR3D->Write();
+
+  // RecTrack;
+  hrec->Write();
+  hfak->Write();
+  hsec->Write();
+
+  hrec3D->Write();
+  hfak3D->Write();
+  hsec3D->Write();
+
+  // vector of histograms
+  for(UInt_t i=0;i<centBins.size()-1;i++){
+    vhsim3D[i]->Write();
+    vheff3D[i]->Write();
+    vhmul3D[i]->Write();
+
+    vhrec3D[i]->Write();
+    vhfak3D[i]->Write();
+    vhsec3D[i]->Write();
+
+    vhresStoR3D[i]->Write();
+  }
+  outFile_->cd("");
 }
 #endif //TrkCorrHisAna_h
