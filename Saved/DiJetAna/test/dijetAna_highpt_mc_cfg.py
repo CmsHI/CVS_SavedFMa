@@ -22,7 +22,7 @@ process.source = cms.Source("PoolSource",
 process.GlobalTag.globaltag = "START39_V7HI::All"
 isData=False
 isDataEmbed=False
-hltProcess="HLT" # HLT, HISIGNAL, HLTMIX
+hltProcess="HLTSIGNAL" # HLT, HISIGNAL, HLTMIX
 
 # ===== Centrality =====
 from CmsHi.Analysis2010.CommonFunctions_cff import *
@@ -90,12 +90,13 @@ process.djcalo_genp.trkPtMin=1.5
 #process.djgen.nearJetPtMin = 80
 #process.djgen.anaGenpType = 1
 #process.djgen.trksrc = cms.InputTag("hiGenParticles","","HIJETS")
-process.djgen.trkPtMin=1.5
+#process.djgen.trkPtMin=1.5
+process.dijetAna_seq.remove(process.djgen)
 
 # trk eff ana
-process.dijetAna_seq=process.hitrkEffAna
+process.dijetAna_seq*=process.hitrkEffAna
 process.hitrkEffAnalyzer.fillNtuples = True
-process.hitrkEffAnalyzer.trkPtMin = 2
+process.hitrkEffAnalyzer.trkPtMin = 1.5
 
 # For Embedding
 if isDataEmbed:
