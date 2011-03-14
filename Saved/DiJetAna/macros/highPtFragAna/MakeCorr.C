@@ -86,4 +86,51 @@ void MakeCorr()
   anaA1.LoopSim();
   anaA1.LoopRec();
   anaA1.WriteHistograms();
+
+  // =========
+  // B0
+  // =========
+  Int_t nbin=120;
+  vector<Double_t> ptBinsB0;
+  cout << "B0: ";
+  Double_t a = 1;
+  for (Int_t i=nbin; i>0; --i) {
+    Double_t y = i/Double_t(nbin);
+    Double_t pt = pow(y,-1./a);
+    printf("%.3f ",pt);
+    ptBinsB0.push_back(pt);
+  }
+  if (ptBinsB0.back()<200) ptBinsB0.push_back(200);
+  cout << ptBinsB0.back() << endl;
+
+  TrkCorrHisAna anaB0(anaA0);
+  anaB0.name_ = "B0";
+  anaB0.ptBins = ptBinsB0;
+  anaB0.DeclareHistograms();
+  anaB0.LoopSim();
+  anaB0.LoopRec();
+  anaB0.WriteHistograms();
+
+  // =========
+  // B1
+  // =========
+  vector<Double_t> ptBinsB1;
+  cout << "B1: ";
+  a = 0.8;
+  for (Int_t i=nbin; i>0; --i) {
+    Double_t y = i/Double_t(nbin);
+    Double_t pt = pow(y,-1./a);
+    printf("%.3f ",pt);
+    ptBinsB1.push_back(pt);
+  }
+  if (ptBinsB1.back()<200) ptBinsB1.push_back(200);
+  cout << ptBinsB1.back() << endl;
+
+  TrkCorrHisAna anaB1(anaA0);
+  anaB1.name_ = "B1";
+  anaB1.ptBins = ptBinsB1;
+  anaB1.DeclareHistograms();
+  anaB1.LoopSim();
+  anaB1.LoopRec();
+  anaB1.WriteHistograms();
 }
