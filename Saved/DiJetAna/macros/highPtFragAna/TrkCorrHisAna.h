@@ -228,14 +228,74 @@ void TrkCorrHisAna::DeclareHistograms()
   }
 }
 
+void TrkCorrHisAna::FillSimHistograms(const SimTrack_t & s)
+{
+  if(s.status>0) {
+    hsim->Fill(s.etas, s.pts);
+    hsim3D->Fill(s.etas, s.pts, s.jetr);
+    if(s.acc)    hacc->Fill(s.etas, s.pts);
+    if(s.nrec==1) {
+       hresStoR3D->Fill(s.etas, s.pts, s.ptr);
+    }
+    if(s.nrec>0) heff->Fill(s.etas, s.pts), heff3D->Fill(s.etas, s.pts, s.jetr);
+    if(s.nrec>1) hmul->Fill(s.etas, s.pts), hmul3D->Fill(s.etas, s.pts, s.jetr);
+
+
+    // filling histogram in vector 
+    for(unsigned i=0;i<centBins.size()-1;i++){
+       if(i==0){
+          if(s.cbin<=centBins[i+1]){
+             vhsim3D[i]->Fill(s.etas, s.pts, s.jetr);
+	     if(s.nrec>0) vheff3D[i]->Fill(s.etas, s.pts, s.jetr);
+	     if(s.nrec==1) vhresStoR3D[i]->Fill(s.etas, s.pts, s.ptr);
+	     if(s.nrec>1) vhmul3D[i]->Fill(s.etas, s.pts, s.jetr);
+          }
+       }else{
+          if(s.cbin>centBins[i] && s.cbin<=centBins[i+1]){
+	     vhsim3D[i]->Fill(s.etas, s.pts, s.jetr);
+             if(s.nrec>0) vheff3D[i]->Fill(s.etas, s.pts, s.jetr);
+	     if(s.nrec==1) vhresStoR3D[i]->Fill(s.etas, s.pts, s.ptr);
+             if(s.nrec>1) vhmul3D[i]->Fill(s.etas, s.pts, s.jetr);
+          }
+       }
+    } // end of vector loop 
+  } // end of (s.status) loop 
+}
+
+void TrkCorrHisAna::FillRecHistograms(const RecTrack_t & r)
+{
+  hrec->Fill(r.etar, r.ptr);
+  hrec3D->Fill(r.etar, r.ptr, r.jetr);
+  if(!r.nsim) hfak->Fill(r.etar, r.ptr), hfak3D->Fill(r.etar, r.ptr, r.jetr);
+  if(r.nsim>0 && r.status<0) hsec->Fill(r.etar, r.ptr), hsec3D->Fill(r.etar, r.ptr, r.jetr); // nsim>0 redudant?
+
+  // filling histogram in vector
+  for(unsigned i=0;i<centBins.size()-1;i++){
+    if(i==0){
+      if(r.cbin<=centBins[i+1]){
+	vhrec3D[i]->Fill(r.etar, r.ptr, r.jetr);
+	if(!r.nsim) vhfak3D[i]->Fill(r.etar, r.ptr, r.jetr);
+	if(r.nsim>0 && r.status<0) vhsec3D[i]->Fill(r.etar, r.ptr, r.jetr);
+      }
+    }else{
+      if(r.cbin>centBins[i] && r.cbin<=centBins[i+1]){
+	vhrec3D[i]->Fill(r.etar, r.ptr, r.jetr);
+	if(!r.nsim) vhfak3D[i]->Fill(r.etar, r.ptr, r.jetr);
+	if(r.nsim>0 && r.status<0) vhsec3D[i]->Fill(r.etar, r.ptr, r.jetr);
+      }
+    }
+  } // end of vector loop
+}
+
 void TrkCorrHisAna::LoopSim()
 {
   SimTrack_t s;
   tsim_->SetBranchAddress("simTrackValues",&s.ids);
+  cout << name_ << " Sim Trk Loop" << endl;
   for (Int_t i=0; i<tsim_->GetEntries(); ++i) {
     tsim_->GetEntry(i);
-    if (s.pts<150) continue;
-    cout << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
+    if (i%500000==0) cout << i << ": " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
+    FillSimHistograms(s);
   }
 }
 
@@ -243,10 +303,11 @@ void TrkCorrHisAna::LoopRec()
 {
   RecTrack_t r;
   trec_->SetBranchAddress("recTrackValues",&r.charge);
+  cout << name_ << " Rec Trk Loop" << endl;
   for (Int_t i=0; i<trec_->GetEntries(); ++i) {
     trec_->GetEntry(i);
-    if (r.ptr<150) continue;
-    cout << r.charge << " " << r.etar << " " << r.ptr << " " << r.jetr << " " << r.cbin << endl;
+    if (i%500000==0) cout << i << ": " << r.charge << " " << r.etar << " " << r.ptr << " " << r.jetr << " " << r.cbin << endl;
+    FillRecHistograms(r);
   }
 }
 #endif //TrkCorrHisAna_h
