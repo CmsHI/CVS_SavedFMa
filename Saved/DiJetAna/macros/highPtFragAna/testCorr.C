@@ -8,11 +8,12 @@ void testCorr(Int_t corrLevel=0,
     Int_t etaPM=2 // +/- 2 for |eta|<1
     )
 {
-  Int_t mode=1; // 0 for write, 1 for read
+  Int_t mode=0; // 0 for write, 1 for read
+  TString outname("TrkCorr2DB0.root");
   Int_t cbin=0;
 
 
-  Corrector trkCorr;
+  Corrector trkCorr("B0");
   if (mode==0) {
     trkCorr.ptRebinFactor_ = 1;
     trkCorr.Init();
@@ -43,7 +44,7 @@ void testCorr(Int_t corrLevel=0,
   c3->Print("TrkCorrInspect.gif");
 
   if (mode==0) {
-    TFile * fout = new TFile("TrkCorr2D.root","RECREATE");
+    TFile * fout = new TFile(outname,"RECREATE");
     trkCorr.Write();
     fout->Close();
   }
