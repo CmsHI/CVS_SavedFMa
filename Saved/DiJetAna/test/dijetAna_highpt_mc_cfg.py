@@ -22,7 +22,7 @@ process.source = cms.Source("PoolSource",
 process.GlobalTag.globaltag = "START39_V7HI::All"
 isData=False
 isDataEmbed=False
-hltProcess="HLTSIGNAL" # HLT, HISIGNAL, HLTMIX
+hltProcess="HLT" # HLT, HISIGNAL, HLTMIX
 
 # ===== Centrality =====
 from CmsHi.Analysis2010.CommonFunctions_cff import *
