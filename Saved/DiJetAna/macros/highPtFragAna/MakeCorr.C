@@ -4,17 +4,18 @@
 #include "TrkCorrHisAna.h"
 using namespace std;
 
-void MakeCorr()
+void MakeCorr(Float_t ptHatMin=110)
 {
+  TString inFile(Form("~/scratch01/ana/HydjetBass_DJUQ%.0f_GSR_v2_HighPtv0EffNt/mergeAll/all_nt.root",ptHatMin));
   TChain * tsim = new TChain("hitrkEffAnalyzer/simTrackTree");
-  tsim->Add("~/scratch01/ana/HydjetBass_DJUQ110_GSR_v2_HighPtv0EffNt/mergeAll/all_nt.root");
+  tsim->Add(inFile);
   tsim->Print();
 
   TChain * trec = new TChain("hitrkEffAnalyzer/recTrackTree");
-  trec->Add("~/scratch01/ana/HydjetBass_DJUQ110_GSR_v2_HighPtv0EffNt/mergeAll/all_nt.root");
+  trec->Add(inFile);
   trec->Print();
 
-  TFile * outfile = new TFile("trkCorrHisAna.root","RECREATE");
+  TFile * outfile = new TFile(Form("trkCorrHisAna_djuq%.0f.root",ptHatMin),"RECREATE");
 
   // =========
   // A0
@@ -133,4 +134,13 @@ void MakeCorr()
   anaB1.LoopSim();
   anaB1.LoopRec();
   anaB1.WriteHistograms();
+}
+
+void MakeCorrAll()
+{
+  MakeCorr(30);
+  MakeCorr(50);
+  MakeCorr(80);
+  MakeCorr(110);
+  MakeCorr(170);
 }
