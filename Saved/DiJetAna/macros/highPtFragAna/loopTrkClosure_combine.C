@@ -28,6 +28,7 @@ void loopTrkClosure_combine(Double_t ptHatMin=110,
   cout << infrec << " cut " << TString(evtCut) << ": " << trec->GetEntries(evtCut) << endl;
   cout << infgen << " cut " << TString(evtCut) << ": " << tgen->GetEntries(evtCut) << endl;
 
+  TString tag("CorrUqB0");
   // ===================================
   // Cuts
   // ===================================
@@ -47,12 +48,12 @@ void loopTrkClosure_combine(Double_t ptHatMin=110,
   // ===================================
   // Correction
   // ===================================
-  Corrector trkCorr;
+  Corrector trkCorr("B0");
   TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
-  trkCorr.ptRebinFactor_ = 12;
+  trkCorr.ptRebinFactor_ = 1;
   trkCorr.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorr.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
-  trkCorr.Init(1,"TrkCorr2D.root");
+  trkCorr.Init(1,"TrkCorr2DB0.root");
 
   // ===================================
   // Setup
@@ -74,9 +75,10 @@ void loopTrkClosure_combine(Double_t ptHatMin=110,
   // ===================================
   // Analyze
   // ===================================
-  TString outName(Form("histsFragLoop_%.0f.root",ptHatMin));
-  if (!cut.doSel) outName = Form("histsntFragLoop_%.0f.root",ptHatMin);
-  TFile * outf = new TFile(outName,"RECREATE");
+  TString outName(Form("Ana%.0f_%s",ptHatMin,tag.Data()));
+  if (!cut.doSel) outName+="Nt";
+  TString outFileName(Form("histsFragLoop_%s.root",outName.Data()));
+  TFile * outf = new TFile(outFileName,"RECREATE");
   // rec trk
   FragAnaLoop recfana("Rec");
   recfana.ptHatMin_ = ptHatMin;
@@ -110,7 +112,7 @@ void loopTrkClosure_combine(Double_t ptHatMin=110,
   // ===================================
   Int_t colors[10] = {kGray+2,kViolet,kBlue+1,kGreen+2,kOrange+2,kMagenta,kRed};
   for (Int_t j=0; j<2; ++j) {
-    TString append(Form("_j%d",j));
+    TString append(Form("_j%d_%s",j,outName.Data()));
     // prepare histogram frame
     genfana.vhPPtCorr_[j][0]->SetAxisRange(4,100,"X");
     genfana.vhPPtCorr_[j][0]->SetAxisRange(1e-3,5e1,"Y");
