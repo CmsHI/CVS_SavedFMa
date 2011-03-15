@@ -75,6 +75,9 @@ djcalo_pfcand = djcalo.clone(
     trksrc = cms.InputTag("particleFlow","")
     )
 
+# trk ana
+from edwenger.HiTrkEffAnalyzer.hitrkEffAnalyzer_cff import *
+
 # Analysis Sequences
 dijetAna_seq = cms.Sequence(
     djcalo *
