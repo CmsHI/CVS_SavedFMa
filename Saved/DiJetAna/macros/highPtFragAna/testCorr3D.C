@@ -33,11 +33,14 @@ void testCorr3D(Int_t corrLevel=0,
   TCanvas * cEff = new TCanvas("cEff","cEff",500,500);
   TH1D * hCorrPtRef = (TH1D*) trkCorrRef.InspectCorr(corrLevel,isample,cbin,4,30,2,7-etaPM,7+etaPM);
   hCorrPtRef->SetAxisRange(0,200,"X");
-  hCorrPtRef->SetMarkerStyle(kOpenSquare);
-  hCorrPtRef->SetMarkerColor(kRed);
-  hCorrPtRef->SetLineColor(kRed);
+  hCorrPtRef->SetMarkerStyle(0);
+  hCorrPtRef->SetMarkerColor(kViolet);
+  hCorrPtRef->SetLineColor(kViolet);
   hCorrPtRef->Draw("histE");
   TH1D * hCorrPt = (TH1D*) trkCorr.InspectCorr(corrLevel,isample,cbin,4,30,2,7-etaPM,7+etaPM);
+  hCorrPt->SetMarkerStyle(0);
+  hCorrPt->SetMarkerColor(kBlue);
+  hCorrPt->SetLineColor(kBlue);
   hCorrPt->Draw("samehistE");
 
   /*
