@@ -132,8 +132,8 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
 	  TH3F * h3 = (TH3F*)sample_[s]->Get(hname);
 	  //cout << hname << " " << h3->GetEntries() << endl;
 	  TH3F * hsave = (TH3F*)h3->Clone(Form("h%s_f%.0f_c%d_%d",levelName_[lv].Data(),ptHatMin_[s],c,m));
-	  //cout << hsave->GetName() << endl;
 	  correction_[lv][s][c][m] = hsave;
+	  //cout << correction_[lv][s][c][m]->GetName() << ": " << correction_[lv][s][c][m] << endl;
 	}
       }
     }
@@ -246,18 +246,20 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin
   TH3F *hNum=0, *hDen=0;
   TH2D *hNum2D=0, *hDen2D=0, *hCorr2D=0;
   TH1D *hNum1D=0, *hDen1D=0, *hCorr1D=0;
+  TString inspName(Form("Insp%s_Lv%d_%d_%d_j%d_%d_%d",trkCorrModule_.Data(),lv,isample,c,jetBegBin,jetEndBin,mode));
+  if (mode>0) inspName+=Form("_%d_%d",begbin,endbin);
+  cout << inspName << endl;
 
-  hNum = (TH3F*)correction_[lv][3][c][0]->Clone("hNum");
+  hNum = (TH3F*)correction_[lv][3][c][0]->Clone(inspName+"hNum");
   hNum->Reset();
   hNum->Sumw2();
-  hDen = (TH3F*)correction_[lv][3][c][1]->Clone("hDen");
+  hDen = (TH3F*)correction_[lv][3][c][1]->Clone(inspName+"hDen");
   hDen->Reset();
   hDen->Sumw2();
   for (Int_t s=1; s<sample_.size(); ++s) {
     if (sampleMode==0&&s!=isample) continue;
     hNum->Add(correction_[lv][s][c][0]);
     hDen->Add(correction_[lv][s][c][1]);
-    //cout << levelName_[lv] << ": " << sample_[isample]->GetName() << " (cbin,jetbin): " << c << " " << jetBin << endl;
   }
 
   hNum->GetZaxis()->SetRange(jetBegBin,jetEndBin);
@@ -268,7 +270,7 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin
   // 2D Inspection
   // ===============================================
   if (mode==0) {
-    hCorr2D = (TH2D*)hNum2D->Clone(Form("%s_%s_corr_sampleMode%d",trkCorrModule_.Data(),hNum->GetName(),sampleMode));
+    hCorr2D = (TH2D*)hNum2D->Clone(inspName+"Corr2D");
     hCorr2D->Divide(hNum2D,hDen2D);
     hCorr2D->SetAxisRange(0,25.2+3*6*4,"Y");
     return hCorr2D;
@@ -278,17 +280,17 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin
   // 1D Projection
   // ===============================================
   if (mode==1) {
-    hNum1D = hNum2D->ProjectionX("_px",begbin,endbin);
-    hDen1D = hDen2D->ProjectionX("_px",begbin,endbin);
+    hNum1D = hNum2D->ProjectionX(inspName+"Num_px",begbin,endbin);
+    hDen1D = hDen2D->ProjectionX(inspName+"Den_px",begbin,endbin);
   } else if (mode==2) {
-    hNum1D = hNum2D->ProjectionY("_py",begbin,endbin);
-    hDen1D = hDen2D->ProjectionY("_py",begbin,endbin);
+    hNum1D = hNum2D->ProjectionY(inspName+"Num_py",begbin,endbin);
+    hDen1D = hDen2D->ProjectionY(inspName+"Den_py",begbin,endbin);
   }
 
   // ===============================================
   // 1D Inspection
   // ===============================================
-  hCorr1D = (TH1D*)hNum1D->Clone(Form("%s_%s_corr%d_sampleMode%d",trkCorrModule_.Data(),hNum->GetName(),mode,sampleMode));
+  hCorr1D = (TH1D*)hNum1D->Clone(inspName+"Corr1D");
   hCorr1D->Divide(hNum1D,hDen1D);
   if (mode==2) hCorr1D->SetAxisRange(0,25.2+3*6*4,"X");
   hCorr1D->SetAxisRange(0,1,"Y");
