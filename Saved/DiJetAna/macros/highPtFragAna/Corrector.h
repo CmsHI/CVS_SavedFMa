@@ -38,7 +38,7 @@ class Corrector
 
     vector<vector<vector<vector<vector<TH2D*> > > > > correction_;
 
-    Corrector();
+    Corrector(TString mod="hitrkEffAnalyzer");
     void Init(Int_t inputMethod=0, TString corrFileName="");
     Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
@@ -46,8 +46,8 @@ class Corrector
     void InspectCorr(Int_t lv, Int_t isample, Int_t c, Float_t jet,Int_t mode=0,Int_t begbin=0, Int_t endbin=-1, TString drawopt="");
 };
 
-Corrector::Corrector() :
-  trkCorrModule_("hitrkEffAnalyzer"),
+Corrector::Corrector(TString mod) :
+  trkCorrModule_(mod),
   ptRebinFactor_(6),
   sampleMode_(0),
   smoothLevel_(0)
@@ -74,14 +74,15 @@ Corrector::Corrector() :
   matName_.push_back("Num");
   matName_.push_back("Den");
 
-  ptHatMin_.push_back(30);
+  //ptHatMin_.push_back(30);
   ptHatMin_.push_back(50);
   ptHatMin_.push_back(80);
   ptHatMin_.push_back(110);
   ptHatMin_.push_back(170);
 
   for (Int_t i=0; i<ptHatMin_.size(); ++i) {
-    TString fname=Form("djtrkhist_hydjetBassv2_djuq%.0f.root",ptHatMin_[i]);
+    //TString fname=Form("djtrkhist_hydjetBassv2_djuq%.0f.root",ptHatMin_[i]);
+    TString fname=Form("trkCorrHisAna_djuq%.0f.root",ptHatMin_[i]);
     sample_.push_back(new TFile(fname));
     cout << sample_[i]->GetName() << endl;
   }
