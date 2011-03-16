@@ -13,13 +13,17 @@ void testCorr3D(Int_t corrLevel=0,
   Int_t cbin=0;
 
 
-  Corrector3D trkCorr(mod);
+  Corrector3D trkCorr("trkCorrHisAna_djuqv1",mod);
+  trkCorr.ptHatMin_.clear();
+  trkCorr.ptHatMin_.push_back(110);
   trkCorr.Init();
   trkCorr.sampleMode_ = 0; // 0 for choosing individual sample, 1 for merge samples
-  //Double_t corr[4];
-  //cout << trkCorr.GetCorr(10,0,110,0,corr) << endl;
+  Double_t corr[4];
+  cout << trkCorr.GetCorr(10,0,110,0,corr) << endl;
 
-  Corrector3D trkCorrRef(modref);
+  Corrector3D trkCorrRef("trkCorrHisAna_djuqv1",modref);
+  trkCorrRef.ptHatMin_.clear();
+  trkCorrRef.ptHatMin_.push_back(110);
   trkCorrRef.Init();
   trkCorrRef.sampleMode_ = 0; // 0 for choosing individual sample, 1 for merge samples
 
