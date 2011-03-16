@@ -19,6 +19,7 @@ class Corrector3D
     TH1D * jetBin_;
 
     // setup
+    TString corrSetName_;
     TString trkCorrModule_;
     Int_t ptRebinFactor_;
     Int_t sampleMode_; // 0 choose individually, 1 merge samples
@@ -38,7 +39,7 @@ class Corrector3D
 
     vector<vector<vector<vector<TH3F*> > > > correction_;
 
-    Corrector3D(TString mod="hitrkEffAnalyzer");
+    Corrector3D(TString name="trkCorrHisAna_djuqv1",TString mod="hitrkEffAnalyzer");
     void Init(Int_t inputMethod=0, TString corrFileName="");
     Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
@@ -46,9 +47,10 @@ class Corrector3D
     TH1 * InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin, Int_t jetEndBin,Int_t mode=0,Int_t begbin=0, Int_t endbin=-1);
 };
 
-Corrector3D::Corrector3D(TString mod) :
+Corrector3D::Corrector3D(TString name, TString mod) :
+  corrSetName_(name),
   trkCorrModule_(mod),
-  ptRebinFactor_(6),
+  ptRebinFactor_(1),
   sampleMode_(0),
   smoothLevel_(0)
 {
@@ -74,20 +76,38 @@ Corrector3D::Corrector3D(TString mod) :
   matName_.push_back("Num");
   matName_.push_back("Den");
 
-  ptHatMin_.push_back(30);
+  //ptHatMin_.push_back(30);
   ptHatMin_.push_back(50);
   ptHatMin_.push_back(80);
   ptHatMin_.push_back(110);
   ptHatMin_.push_back(170);
 
+}
+
+void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
+{
+  cout << "==============================================" << endl;
+  cout << " Setup Tracking Correction" << endl;
+  cout << "==============================================" << endl;
+  cout << "inputMethod: " << inputMethod << ", ptRebinFactor: " << ptRebinFactor_ << endl;
+  cout << "Retrieval setup - sampleMode: " << sampleMode_ << " smoothLevel: " << smoothLevel_ << endl;
+  // =============================
+  // Setup Inputs
+  // =============================
   for (Int_t i=0; i<ptHatMin_.size(); ++i) {
-    TString fname=Form("trkCorrHisAna_110.root",ptHatMin_[i]);
+    TString fname=Form("%s_%.0f.root",corrSetName_.Data(),ptHatMin_[i]);
     sample_.push_back(new TFile(fname));
     cout << sample_[i]->GetName() << endl;
   }
   numSamples_ = sample_.size();
+  if (numSamples_==0) {
+    cout << "No input correction file" << endl;
+    exit(1);
+  }
 
+  // =============================
   // Get x,y,z bins
+  // =============================
   TH3F* h3 = (TH3F*)sample_[0]->Get(trkCorrModule_+"/heff3D_cbin"+centBin_[0]);
   if (!h3) {
     cout << "bad input: " << sample_[0]->GetName() << endl;
@@ -105,6 +125,9 @@ Corrector3D::Corrector3D(TString mod) :
 
   cout << "nbins pt,eta,jet: " << numPtBins_ << " " << numEtaBins_ << " " << numJEtBins_ << endl;
 
+  // =============================
+  // allocate memory for correction table
+  // =============================
   vector<vector<vector<vector<TH3F*> > > > v(numLevels_,
       vector<vector<vector<TH3F*> > > (numSamples_,
 	vector<vector<TH3F*> > (numCentBins_,
@@ -113,15 +136,10 @@ Corrector3D::Corrector3D(TString mod) :
 	)
       );
   correction_ = v;
-}
 
-void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
-{
-  cout << "==============================================" << endl;
-  cout << " Setup Tracking Correction" << endl;
-  cout << "==============================================" << endl;
-  cout << "inputMethod: " << inputMethod << ", ptRebinFactor: " << ptRebinFactor_ << endl;
-  cout << "Retrieval setup - sampleMode: " << sampleMode_ << " smoothLevel: " << smoothLevel_ << endl;
+  // =============================
+  // load corrections
+  // =============================
   for (Int_t lv=0; lv<numLevels_; ++lv) {
     cout << "Load " << levelName_[lv] << " Histograms for ptHatMin";
     for (Int_t s=0; s<numSamples_; ++s) {
@@ -139,13 +157,6 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
     }
     cout << endl;
   }
-
-  /*
-  if (ptRebinFactor_>1) {
-    ptBin_  = (TH1D*)correction_[0][0][0][7][0]->ProjectionY();
-    numPtBins_ = ptBin_->GetNbinsX();
-  }
-  */
 }
 
 Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr)
@@ -167,16 +178,11 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
   }
 
   // Get the corresponding pt_hat min sample
-  if (jet>=170) {
-    isample=4;
-  }  else if (jet>=110) {
-    isample=3;
-  }  else if (jet>=80) {
-    isample=2;
-  } else if (jet>=50) {
-    isample=1;
-  } else { 
-    isample=0;
+  for (Int_t s=ptHatMin_.size()-1; s>=0; --s) {
+    if (jet>=ptHatMin_[s]) {
+      isample=s;
+      break;
+    }
   }
 
   // Find Bin
@@ -246,17 +252,17 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin
   TH3F *hNum=0, *hDen=0;
   TH2D *hNum2D=0, *hDen2D=0, *hCorr2D=0;
   TH1D *hNum1D=0, *hDen1D=0, *hCorr1D=0;
-  TString inspName(Form("Insp%s_Lv%d_%d_%d_j%d_%d_%d",trkCorrModule_.Data(),lv,isample,c,jetBegBin,jetEndBin,mode));
-  if (mode>0) inspName+=Form("_%d_%d",begbin,endbin);
+  TString inspName(Form("%s_%s_Lv%d_%d_%d_j%d_%d_%d",corrSetName_.Data(),trkCorrModule_.Data(),lv,isample,c,jetBegBin,jetEndBin,mode));
+  if (mode>0) inspName+=Form("bin_%d_%d",begbin,endbin);
   cout << inspName << endl;
 
-  hNum = (TH3F*)correction_[lv][3][c][0]->Clone(inspName+"hNum");
+  hNum = (TH3F*)correction_[lv][0][c][0]->Clone(inspName+"hNum");
   hNum->Reset();
   hNum->Sumw2();
-  hDen = (TH3F*)correction_[lv][3][c][1]->Clone(inspName+"hDen");
+  hDen = (TH3F*)correction_[lv][0][c][1]->Clone(inspName+"hDen");
   hDen->Reset();
   hDen->Sumw2();
-  for (Int_t s=1; s<sample_.size(); ++s) {
+  for (Int_t s=0; s<sample_.size(); ++s) {
     if (sampleMode==0&&s!=isample) continue;
     hNum->Add(correction_[lv][s][c][0]);
     hDen->Add(correction_[lv][s][c][1]);
