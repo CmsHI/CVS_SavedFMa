@@ -6,7 +6,7 @@ using namespace std;
 
 void MakeCorr(Float_t ptHatMin=110)
 {
-  TString inFile(Form("~/scratch01/ana/HydjetBass_DJUQ%.0f_GSR_v2_HighPtv0EffNt/mergeAll/all_nt.root",ptHatMin));
+  TString inFile(Form("inputs/tr_HyDJUQ%.0f_v1.root",ptHatMin));
   TChain * tsim = new TChain("hitrkEffAnalyzer/simTrackTree");
   tsim->Add(inFile);
   tsim->Print();
@@ -15,7 +15,7 @@ void MakeCorr(Float_t ptHatMin=110)
   trec->Add(inFile);
   trec->Print();
 
-  TFile * outfile = new TFile(Form("trkCorrHisAna_djuq%.0f.root",ptHatMin),"RECREATE");
+  TFile * outfile = new TFile(Form("trkCorrHisAna_djuqv1_%.0f.root",ptHatMin),"RECREATE");
 
   // =========
   // A0
@@ -138,7 +138,6 @@ void MakeCorr(Float_t ptHatMin=110)
 
 void MakeCorrAll()
 {
-  MakeCorr(30);
   MakeCorr(50);
   MakeCorr(80);
   MakeCorr(110);

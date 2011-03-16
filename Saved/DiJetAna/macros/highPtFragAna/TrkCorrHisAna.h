@@ -12,46 +12,48 @@ using namespace std;
 
 typedef struct
 {
-  int ids;
-  float etas;
-  float pts;
-  int hits;
-  int status;
-  int acc;
-  int nrec;
-  float ptr;
-  float dz;
-  float d0;
-  float pterr;
-  float d0err;
-  float dzerr;
-  int hitr;
-  int algo;
-  float jetr;
-  int cbin;
+  Int_t ids;
+  Float_t etas;
+  Float_t pts;
+  Int_t hits;
+  Int_t status;
+  Int_t acc;
+  Int_t nrec;
+  Float_t ptr;
+  Float_t dz;
+  Float_t d0;
+  Float_t pterr;
+  Float_t d0err;
+  Float_t dzerr;
+  Int_t hitr;
+  Int_t algo;
+  Float_t jetr;
+  Float_t jetar;
+  Int_t cbin;
 } SimTrack_t;
 
 typedef struct
 {
-  int charge;
-  float etar;
-  float ptr;
-  float phir;
-  float dz;
-  float d0;
-  float pterr;
-  float d0err;
-  float dzerr;
-  int hitr; 
-  int algo;
-  int nsim;
-  int status;
-  int ids;
-  int parids;
-  float etas;
-  float pts;
-  float jetr;
-  int cbin;
+  Int_t charge;
+  Float_t etar;
+  Float_t ptr;
+  Float_t phir;
+  Float_t dz;
+  Float_t d0;
+  Float_t pterr;
+  Float_t d0err;
+  Float_t dzerr;
+  Int_t hitr; 
+  Int_t algo;
+  Int_t nsim;
+  Int_t status;
+  Int_t ids;
+  Int_t parids;
+  Float_t etas;
+  Float_t pts;
+  Float_t jetr;
+  Float_t jetar;
+  Int_t cbin;
 } RecTrack_t;
 
 class TrkCorrHisAna
