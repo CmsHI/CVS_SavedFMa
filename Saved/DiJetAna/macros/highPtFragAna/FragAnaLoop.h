@@ -7,6 +7,7 @@
 #include "TH2.h"
 #include "TString.h"
 #include "Corrector.h"
+#include "Corrector3D.h"
 #include "HisMath.C"
 #include "selectionCut.h"
 using namespace std;
@@ -69,7 +70,7 @@ class FragAnaLoop
   public:
     TChain * t_;
     JetFrag jttrk_;
-    Corrector * trkCorr_;
+    Corrector3D * trkCorr_;
     selectionCut * cut_;
 
     TString name_;
@@ -172,7 +173,7 @@ void FragAnaLoop::Loop()
     // ===========================
     // Basic Event preselection
     // ===========================
-    if (jttrk_.jtpt->at(0)<30) continue;
+    if (jttrk_.jtpt->at(0)<50) continue;
 
     for (Int_t j=0; j<2; ++j) {
       if (!cut_->doSel||(SelEvt(jttrk_)&&SelJet(jttrk_,j))) {

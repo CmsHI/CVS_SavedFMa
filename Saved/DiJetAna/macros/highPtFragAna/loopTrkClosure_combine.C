@@ -48,27 +48,30 @@ void loopTrkClosure_combine(Double_t ptHatMin=110,
   // ===================================
   // Correction
   // ===================================
-  Corrector trkCorr("B0");
-  TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
+  Corrector3D trkCorr("trkCorrHisAna_djuqv1","B0");
   trkCorr.ptRebinFactor_ = 1;
   trkCorr.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorr.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
-  trkCorr.Init(1,"TrkCorr2DB0.root");
+  trkCorr.Init(0);
+  //TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
+  //trkCorr.Init(1,"TrkCorr2DB0.root");
 
   // ===================================
   // Setup
   // ===================================
   // bins
-  //const Int_t numPPtBins=19;
-  //Float_t pptBins[numPPtBins+1] = {0.0,0.2,1,2,3,4,6,8,10,14,18,22,26,30,40,50,60,70,80,100};
+  const Int_t numPPtBins=18;
+  Float_t pptBins[numPPtBins+1] = {0.5,1,1.5,2,2.5,3,4,5,7.5,10,12,15,20,25,30,45,60,90,120};
+  vector<Double_t> ptBin(pptBins,pptBins+numPPtBins+1);
   //TH1D * hxbin = new TH1D("hxbin","",numPPtBins,pptBins);
-  TH1D * hxbin = (TH1D*)hPtBinUnRebin->Clone("hxbin");
-  hxbin->Rebin(4);
-  vector<Double_t> ptBin;
-  for (Int_t i=1; i<=hxbin->GetNbinsX()+1; ++i) {
-    ptBin.push_back(hxbin->GetBinLowEdge(i));
-  }
-  cout << "pt bins: ";
+  //TH1D * hxbin = (TH1D*)hPtBinUnRebin->Clone("hxbin");
+  //TH1D * hxbin = (TH1D*)trkCorr.ptBin_->Clone("hxbin");
+  //hxbin->Rebin(2);
+  //vector<Double_t> ptBin;
+  //for (Int_t i=1; i<=hxbin->GetNbinsX()+1; ++i) {
+  //  ptBin.push_back(hxbin->GetBinLowEdge(i));
+  //}
+  cout << ptBin.size()-1 << " pt bins: ";
   for (Int_t i=0; i<ptBin.size(); ++i) {cout << ptBin[i] << " ";}
   cout << endl;
 
