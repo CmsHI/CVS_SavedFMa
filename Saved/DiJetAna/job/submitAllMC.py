@@ -2,7 +2,7 @@ import os
 os.system("./create_custom_python_cfg.sh")
 
 scratch="/net/hidsk0001/d00/scratch/frankma"
-jobTag="HighPtv1"
+jobTag="HighPtv2"
 
 # ================== 362 ===============
 samples  = {
@@ -12,8 +12,8 @@ samples  = {
     #"HydjetQ_DJUQ50_Pat_hiGoodMergedTracks_v1":"ana",
     #"Pyquen_DJUQ50_Pat_hiGoodMergedTracks_v1":"ana"
     #"HydjetQ_DJUQ80_PathiGoodMergedTracks1203":"ana"
-    "HydjetBass_DJQ110_GSR_384":"ana",
-    "HydjetBass_DJQ170_GSR_384":"ana",
+    #"HydjetBass_DJQ110_GSR_384":"ana",
+    #"HydjetBass_DJQ170_GSR_384":"ana",
     # Final MC
     #"Pyquen_DJUQ80_Pat_hiGoodMergedTracks_VtxPatch_v1":"ana",
     #"Pyquen_DJUQ50_Pat_hiGoodMergedTracks_VtxPatch_v1":"ana"
@@ -24,7 +24,7 @@ samples  = {
     #"Data_MinBias_DijetUnquenched50_d20101127":"ana"
     #"Data_MinBias_DijetUnquenched50_d20101211":"ana"
     # Tracking 50k per pt_hat in 393
-    #"HydjetBass_DJUQ30_GSR_v2":"ana",
+    "HydjetBass_DJUQ30_GSR_v2":"ana",
     "HydjetBass_DJUQ50_GSR_v2":"ana",
     "HydjetBass_DJUQ80_GSR_v2":"ana",
     "HydjetBass_DJUQ110_GSR_v2":"ana",

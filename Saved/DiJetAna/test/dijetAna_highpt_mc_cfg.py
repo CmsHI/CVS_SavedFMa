@@ -94,9 +94,11 @@ process.djcalo_genp.trkPtMin=1.5
 process.dijetAna_seq.remove(process.djgen)
 
 # trk eff ana
-process.dijetAna_seq*=process.hitrkEffAna
+process.dijetAna_seq=process.hitrkEffAna
+process.hitrkEffAnalyzer.trkAcceptedJet = True
 process.hitrkEffAnalyzer.fillNtuples = True
 process.hitrkEffAnalyzer.trkPtMin = 1.5
+process.hitrkEffAnalyzer.useJetEtMode = 2
 
 # For Embedding
 if isDataEmbed:
