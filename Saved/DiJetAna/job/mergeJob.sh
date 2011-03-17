@@ -18,6 +18,10 @@ nPerMerge=500
 N=`ls $inDir/*.root | grep $tag | wc -l`
 startDir=`pwd`
 echo $inDir: $N files
+if [ $N -eq 1 ]; then
+  echo "Nothing to do!"
+  exit 0
+fi
 
 # clean indir
 ./cleanJob2.sh $inDir
