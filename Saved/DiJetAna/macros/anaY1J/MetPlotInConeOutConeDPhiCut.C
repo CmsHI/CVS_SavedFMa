@@ -78,6 +78,7 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    // ===========================================================
    // Analysis Setup
    // ===========================================================
+   Int_t plotLayer=10; // 0 only >0.5, 1 >0.5 and highpt, 10 ~ all
    const int nBin = 5;
    double bins[nBin+1] = {0.5,1.0,2,4,8,1000};  
    
@@ -229,6 +230,8 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    // Finally Draw
    // ====================
    for (int i=0;i<nBin;++i) {
+      if (plotLayer==0) continue;
+      if (plotLayer==1&&i!=nBin-1) continue;
       ppos[i]->SetLineWidth(1);
       ppos[i]->Draw("hist same");
       pneg[i]->SetLineWidth(1);
@@ -239,6 +242,8 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    // Draw Statistical Error bars
    // ====================
    for (int i=0;i<nBin;++i) {
+      if (plotLayer==0) continue;
+      if (plotLayer==1&&i!=nBin-1) continue;
       if ( i==0 )       drawErrorShift(ppos[i],-0.016, addSys);
       if ( i==1 || i==4)       drawErrorShift(ppos[i],-0.008,addSys);
       if ( i==2 )       drawErrorShift(ppos[i],0.008,addSys);
@@ -275,6 +280,8 @@ void balanceMetVsAj(TString infname = "dj_HCPR-J50U-hiGoodMergedTracks_OfficialS
    leg->SetTextSize(16);
    leg->AddEntry(pall,Form("> %.1f GeV/c",bins[0]),"p");
    for (int i=0;i<nBin;++i) {
+      if (plotLayer==0) continue;
+      if (plotLayer==1&&i!=nBin-1) continue;
       if (i!=nBin-1){
          leg->AddEntry(ppos[i],Form("%.1f - %.1f GeV/c",bins[i],bins[i+1]),"f");
       } else {
