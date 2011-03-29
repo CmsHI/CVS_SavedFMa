@@ -104,6 +104,7 @@ class GeneralJetFragAna
     AnaJets anaJets_;
     AnaParticles anaPs_;
 
+    Float_t leadJetPtMin_;
     Float_t pptMin_;
 
     // ana members

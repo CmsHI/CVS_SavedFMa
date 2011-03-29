@@ -22,6 +22,7 @@ void anaGeneralJF()
   jfana.evtTree_ = tevt;
   jfana.jetTree_ = tjet;
   jfana.pTree_ = tp;
+  jfana.leadJetPtMin_=100;
   jfana.pptMin_=2;
   jfana.Init();
   jfana.Loop();

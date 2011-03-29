@@ -4,11 +4,14 @@ using namespace std;
 GeneralJetFragAna::GeneralJetFragAna()
   : anaJetv_(2)
 {
+  cout << "============================" << endl;
   cout << "GeneralJetFragAna" << endl;
+  cout << "============================" << endl;
 }
 
 void GeneralJetFragAna::Init()
 {
+  cout << "leadJetPtMin: " << leadJetPtMin_ << " pptMin: " << pptMin_ << endl;
   // Inputs
   anaEvt_.LoadBranches(evtTree_);
   anaJets_.LoadBranches(jetTree_);
@@ -36,12 +39,11 @@ void GeneralJetFragAna::Loop()
     evtTree_->GetEntry(ievt);
     jetTree_->GetEntry(ievt);
     pTree_->GetEntry(ievt);
-    if (ievt%1000==0) {
-      cout << "Entry " << ievt << endl;
+    if (ievt%5000==0) {
+      cout << "Entry " << ievt << " (" << (Float_t)ievt/numEvtEnt*100 << "%)" << endl;
       //cout << "run/lumi/evt: " << anaEvt_.run << "/" << anaEvt_.lumi << "/" << anaEvt_.evt << endl;
-      cout << "bin|vz: " << anaEvt_.bin << "|" << anaEvt_.vz << endl;
-      cout << "njet: " << anaJets_.njets << " jtpt0: " << anaJets_.jtpt[0] << endl;
-      //cout << "np: " << anaPs_.np << " ppt0: " << anaPs_.ppt[0] << endl;
+      cout << "bin|vz: " << anaEvt_.bin << "|" << anaEvt_.vz
+	<< " njet: " << anaJets_.njets << " jtpt0: " << anaJets_.jtpt[0] << endl;
     }
 
     // Initialize counters for each event
@@ -54,6 +56,7 @@ void GeneralJetFragAna::Loop()
 
     // Jet level vars
     Int_t leadJetInd  = GetLeadingJet(anaJets_,anaJetv_);
+    if (anaJets_.jtpt[leadJetInd]<leadJetPtMin_) continue; // leading jet selection
     Int_t jet2Ind     = GetJet2(anaJets_,anaJetv_,leadJetInd);
     for (Int_t j=0;j<anaJetv_.size();++j) {
       //cout << "best pt: " << anaJetv_[j].pt() << endl;
@@ -65,6 +68,7 @@ void GeneralJetFragAna::Loop()
     // Particle level vars
     for (Int_t ip=0; ip<anaPs_.np; ++ip) {
       if (anaPs_.ppt[ip]<pptMin_) continue;
+      if (fabs(anaPs_.peta[ip])>2.4) continue; // tracker acceptance
       jf_.ppt[jf_.np] = anaPs_.ppt[ip];
       jf_.peta[jf_.np] = anaPs_.peta[ip];
       jf_.pphi[jf_.np] = anaPs_.pphi[ip];
