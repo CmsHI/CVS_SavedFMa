@@ -35,11 +35,11 @@ struct AnaJets
   Float_t jtpt[MAXNJETS];
   Float_t jteta[MAXNJETS];
   Float_t jtphi[MAXNJETS];
-  void LoadBranches(TChain * t) {
-    t->SetBranchAddress("nj1",&(this->njets));
-    t->SetBranchAddress("corrpt_j1",this->jtpt);
-    t->SetBranchAddress("jteta_j1",this->jteta);
-    t->SetBranchAddress("jtphi_j1",this->jtphi);
+  void LoadBranches(TChain * t,TString name) {
+    t->SetBranchAddress("n"+name,&(this->njets));
+    t->SetBranchAddress("corrpt_"+name,this->jtpt);
+    t->SetBranchAddress("jteta_"+name,this->jteta);
+    t->SetBranchAddress("jtphi_"+name,this->jtphi);
   }
 };
 
@@ -96,6 +96,7 @@ class GeneralJetFragAna
 {
   public:
     // ana setup
+    TString name_;
     TChain * evtTree_;
     TChain * jetTree_;
     TChain * pTree_;
@@ -114,7 +115,7 @@ class GeneralJetFragAna
     std::vector<PtEtaPhiMLorentzVectorD> pv_;
 
     // methods
-    GeneralJetFragAna();
+    GeneralJetFragAna(TString name);
     void Init();
     void Loop();
     Int_t GetLeadingJet(AnaJets & jets,std::vector<PtEtaPhiMLorentzVectorD> & jv);

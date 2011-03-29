@@ -1,11 +1,12 @@
 #include "GeneralJetFragAna.h"
 using namespace std;
 
-GeneralJetFragAna::GeneralJetFragAna()
-  : anaJetv_(2)
+GeneralJetFragAna::GeneralJetFragAna(TString name) :
+  name_(name),
+  anaJetv_(2)
 {
   cout << "============================" << endl;
-  cout << "GeneralJetFragAna" << endl;
+  cout << "GeneralJetFragAna: " << name_ << endl;
   cout << "============================" << endl;
 }
 
@@ -14,7 +15,7 @@ void GeneralJetFragAna::Init()
   cout << "leadJetPtMin: " << leadJetPtMin_ << " pptMin: " << pptMin_ << endl;
   // Inputs
   anaEvt_.LoadBranches(evtTree_);
-  anaJets_.LoadBranches(jetTree_);
+  anaJets_.LoadBranches(jetTree_,name_);
   anaPs_.LoadBranches(pTree_);
 
   // Outputs

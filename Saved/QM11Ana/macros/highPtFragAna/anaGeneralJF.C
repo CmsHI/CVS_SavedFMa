@@ -7,18 +7,20 @@ void anaGeneralJF()
   gSystem->Load("libPhysics");
 
   // Inputs
+  TString fdataname("inputs/matt/Corrected_JetTrackPFCandTuple_HIJet50U_PFTowers.root");
+  //TString fdataname("inputs/matt/Corrected_JetTrackPFCandTuple_HI_pthat80_PFTowers.root");
   TChain * tevt = new TChain("t");
-  tevt->Add("inputs/matt/Corrected_JetTrackPFCandTuple_HIJet50U_PFTowers.root");
+  tevt->Add(fdataname);
 
   TChain * tjet = new TChain("t");
-  tjet->Add("inputs/matt/Corrected_JetTrackPFCandTuple_HIJet50U_PFTowers.root");
+  tjet->Add(fdataname);
 
   TChain * tp = new TChain("t");
-  tp->Add("inputs/matt/Corrected_JetTrackPFCandTuple_HIJet50U_PFTowers.root");
+  tp->Add(fdataname);
 
   // ana
-  TFile * outf = new TFile("tr_jf.root","RECREATE");
-  GeneralJetFragAna jfana;
+  TFile * outf = new TFile("tr_j4f_data.root","RECREATE");
+  GeneralJetFragAna jfana("j4");
   jfana.evtTree_ = tevt;
   jfana.jetTree_ = tjet;
   jfana.pTree_ = tp;
@@ -29,4 +31,5 @@ void anaGeneralJF()
 
   // All done
   outf->Write();
+  outf->Close();
 }
