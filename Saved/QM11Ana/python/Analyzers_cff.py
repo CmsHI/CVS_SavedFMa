@@ -17,9 +17,10 @@ trkAnalyzer = cms.EDAnalyzer("TrackAnalyzer",
     trackPtMin = cms.untracked.double(1.5)
     )
 
-genpAnalyzer = cms.EDAnalyzer('HydjetAnalyzer',
+genpAnalyzer = cms.EDAnalyzer('HiGenAnalyzer',
     useHepMCProduct = cms.untracked.bool(False),
     ptMin = cms.untracked.double(1.5),
+    chargedOnly = cms.untracked.bool(True),
     src = cms.untracked.InputTag("hiSignal"),
     genpSrc = cms.untracked.InputTag("hiGenParticles"),
     genHiSrc = cms.untracked.InputTag("heavyIon"),
