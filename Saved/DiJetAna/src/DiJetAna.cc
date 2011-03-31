@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.66 2010/12/09 10:33:12 frankma Exp $
+// $Id: DiJetAna.cc,v 1.67 2011/01/12 19:05:03 frankma Exp $
 //
 //
 
@@ -348,21 +348,21 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
     // -- jec --
     //cout << "Current JEC Step: " << "Nr: " << (*jets)[iNear_].corrStep() << " Aw: " <<  (*jets)[iAway_].corrStep() << endl;
     jd.nljrawet_	= (*jets)[iNear_].correctedP4("raw").pt();
-    jd.njec_[0]		= (*jets)[iNear_].corrFactor("raw");
+    jd.njec_[0]		= (*jets)[iNear_].jecFactor("raw");
     jd.njec_[1]         = anaJECs[iNear_];
-    jd.njec_[2]		= (*jets)[iNear_].corrFactor("rel");
-    jd.njec_[3]		= (*jets)[iNear_].corrFactor("abs");
-    jd.njec_[5]		= (*jets)[iNear_].corrFactor("had","uds");
-    jd.njec_[7]		= (*jets)[iNear_].corrFactor("part","uds");
+    jd.njec_[2]		= (*jets)[iNear_].jecFactor("rel");
+    jd.njec_[3]		= (*jets)[iNear_].jecFactor("abs");
+    jd.njec_[5]		= (*jets)[iNear_].jecFactor("had","uds");
+    jd.njec_[7]		= (*jets)[iNear_].jecFactor("part","uds");
 
     if (anajets.size()>=2) { // careful away jec is not reset if away not found
       jd.aljrawet_	= (*jets)[iAway_].correctedP4("raw").pt();
-      jd.ajec_[0]	= (*jets)[iAway_].corrFactor("raw");
+      jd.ajec_[0]	= (*jets)[iAway_].jecFactor("raw");
       jd.ajec_[1]       = anaJECs[iAway_];
-      jd.ajec_[2]	= (*jets)[iAway_].corrFactor("rel");
-      jd.ajec_[3]	= (*jets)[iAway_].corrFactor("abs");
-      jd.ajec_[5]	= (*jets)[iAway_].corrFactor("had","glu");
-      jd.ajec_[7]	= (*jets)[iAway_].corrFactor("part","glu");
+      jd.ajec_[2]	= (*jets)[iAway_].jecFactor("rel");
+      jd.ajec_[3]	= (*jets)[iAway_].jecFactor("abs");
+      jd.ajec_[5]	= (*jets)[iAway_].jecFactor("had","glu");
+      jd.ajec_[7]	= (*jets)[iAway_].jecFactor("part","glu");
     }
   }
 }
@@ -699,7 +699,7 @@ void DiJetAna::LoadAnaJECs(const edm::Event & iEvent, const vector<pat::Jet> & j
   // Fill Analysis Level Jet Energy Corrections
   for (unsigned j=0; j<jets.size();++j) {
     double anaCorr = 1;
-    anaCorr *= jets[j].corrFactor(JECLab1_);
+    anaCorr *= jets[j].jecFactor(JECLab1_);
     if (doFJL1Corr_) anaCorr *= CalcFJL1Corr(medianPtKt,jets[j]);
     JECs.push_back(anaCorr);
   }
