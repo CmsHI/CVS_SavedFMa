@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 process = cms.Process('HIJETS')
 
-process.Timing = cms.Service("Timing")
+#process.Timing = cms.Service("Timing")
 
 # Input source
 process.source = cms.Source("PoolSource",
@@ -98,7 +98,7 @@ process.load("Saved.QM11Ana.Analyzers_cff")
 
 # =============== Final Paths =====================
 process.extraReco = cms.Path(
-    process.makeCentralityTableTFile*
+    #process.makeCentralityTableTFile*
     process.hiTrackReco*
     process.hiGoodTracksSelection*
     #process.conformalPixelTrackReco *
