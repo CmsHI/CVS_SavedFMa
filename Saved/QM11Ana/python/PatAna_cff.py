@@ -49,6 +49,26 @@ icPu5patJets = patJets.clone(
   jetCorrFactorsSource = cms.VInputTag(cms.InputTag("icPu5corr"))
   )
 
+# === akPu5PF ===
+akPu5PFcorr = icPu5corr.clone(
+  src = cms.InputTag("akPu5PFJets"),
+  payload = cms.string('AK5PF')
+  )
+akPu5PFclean = heavyIonCleanedGenJets.clone( src = cms.InputTag('ak5HiGenJets') ) 
+akPu5PFmatch = patJetGenJetMatch.clone(
+  src = cms.InputTag("akPu5PFJets"),
+  matched = cms.InputTag("akPu5PFclean")
+  )
+akPu5PFparton = patJetPartonMatch.clone(
+  src = cms.InputTag("akPu5PFJets")
+)
+akPu5PFpatJets = patJets.clone(
+  jetSource = cms.InputTag("akPu5PFJets"),
+  genJetMatch = cms.InputTag("akPu5PFmatch"),
+  genPartonMatch = cms.InputTag("akPu5PFparton"),
+  jetCorrFactorsSource = cms.VInputTag(cms.InputTag("akPu5PFcorr"))
+  )
+
 # === akPu3PF ===
 akPu3PFcorr = icPu5corr.clone(
   src = cms.InputTag("akPu3PFJets"),
@@ -77,6 +97,13 @@ icPu5patSequence = cms.Sequence(
   icPu5patJets
   )
 
+akPu5PFpatSequence = cms.Sequence(
+  akPu5PFJets *
+  akPu5PFcorr *
+  akPu5PFclean * akPu5PFmatch * akPu5PFparton *
+  akPu5PFpatJets
+  )
+
 akPu3PFpatSequence = cms.Sequence(
   akPu3PFJets *
   akPu3PFcorr *
@@ -88,5 +115,6 @@ akPu3PFpatSequence = cms.Sequence(
 runAllJets = cms.Sequence(
   PFTowers *
   icPu5patSequence *
+  akPu5PFpatSequence *
   akPu3PFpatSequence
   )

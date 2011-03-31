@@ -3,12 +3,17 @@ import FWCore.ParameterSet.Config as cms
 from MNguyen.InclusiveJetAnalyzer.inclusiveJetAnalyzer_cff import *
 inclusiveJetAnalyzer.eventInfoTag = cms.InputTag("hiSignal")
 
+akPu5PFJetAnalyzer = inclusiveJetAnalyzer.clone(
+    jetTag = 'akPu5PFpatJets',
+    genjetTag = 'ak5HiGenJets'
+    )
+
 akPu3PFJetAnalyzer = inclusiveJetAnalyzer.clone(
     jetTag = 'akPu3PFpatJets',
     genjetTag = 'ak3HiGenJets'
     )
 
-jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu3PFJetAnalyzer)
+jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer)
 
 #from MitHig.PixelTrackletAnalyzer
 trkAnalyzer = cms.EDAnalyzer("TrackAnalyzer",
