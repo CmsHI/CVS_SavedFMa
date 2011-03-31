@@ -9,19 +9,25 @@ from RecoJets.Configuration.GenJetParticles_cff import *
 from RecoHI.HiJetAlgos.HiGenJets_cff import *
 from RecoHI.HiJetAlgos.HiGenCleaner_cff import *
 
-hiGenParticles.srcVector = cms.vstring('hiSignal')
+#hiGenParticles.srcVector = cms.vstring('hiSignal')
 
 hiGen = cms.Sequence(
   heavyIon * # GenHIEventProducer
-  hiGenParticles *
+  #hiGenParticles *
   hiGenParticlesForJets *
   hiRecoGenJets *
   genPartons *
   hiPartons
   )
 
-# tracks
+# good track selection
 from edwenger.HiTrkEffAnalyzer.TrackSelections_cff import *
+# merge with pixel tracks
+#from Appeltel.PixelTracksRun2010.HiLowPtPixelTracksFromReco_cff import *
+#from Appeltel.PixelTracksRun2010.HiMultipleMergedTracks_cff import *
 
-hiextraTrack = cms.Sequence(hiGoodTracksSelection)
-
+hiextraTrackReco = cms.Sequence(
+    hiGoodTracksSelection
+    #* conformalPixelTrackReco
+    #* hiGoodMergedTracks
+    )
