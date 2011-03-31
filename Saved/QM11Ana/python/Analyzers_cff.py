@@ -33,10 +33,13 @@ genpAnalyzer = cms.EDAnalyzer('HiGenAnalyzer',
 
 # trk eff
 from edwenger.HiTrkEffAnalyzer.hitrkEffAnalyzer_cff import *
-hitrkEffAnalyzer.neededCentBins = cms.untracked.vint32(0, 1, 3, 11, 19, 35)
-hitrkEffAnalyzer.trkPtMin = 1.5
-hitrkEffAnalyzer.fillNtuples = True
-hitrkEffAnalyzer.jets = 'akPu3PFpatJets'
+hitrkEffAnalyzer_nt = hitrkEffAnalyzer.clone(
+    neededCentBins = cms.untracked.vint32(0, 1, 3, 11, 19, 35),
+    trkPtMin = 1.5,
+    fillNtuples = True,
+    jets = 'akPu3PFpatJets'
+    )
+hitrkEffAna.replace(hitrkEffAnalyzer,hitrkEffAnalyzer_nt)
 
 # final trk ana seq
 trkana_seq = cms.Sequence( trkAnalyzer * genpAnalyzer * (hitrkEffAna))
