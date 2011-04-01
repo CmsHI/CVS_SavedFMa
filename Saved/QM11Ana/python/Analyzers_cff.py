@@ -19,7 +19,8 @@ jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJe
 trkAnalyzer = cms.EDAnalyzer("TrackAnalyzer",
     trackSrc = cms.InputTag("hiGoodTracks"),
     vertexSrc = cms.vstring("hiSelectedVertex"),
-    trackPtMin = cms.untracked.double(1.5)
+    trackPtMin = cms.untracked.double(1.5),
+    fiducialCut = cms.untracked.bool(True)
     )
 
 genpAnalyzer = cms.EDAnalyzer('HiGenAnalyzer',
