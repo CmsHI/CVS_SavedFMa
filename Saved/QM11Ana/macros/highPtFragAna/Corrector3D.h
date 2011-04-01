@@ -20,6 +20,7 @@ class Corrector3D
 
     // setup
     TString corrSetName_;
+    TString corrSetNameApp_;
     TString trkCorrModule_;
     Int_t ptRebinFactor_;
     Int_t sampleMode_; // 0 choose individually, 1 merge samples
@@ -39,7 +40,7 @@ class Corrector3D
 
     vector<vector<vector<vector<TH3F*> > > > correction_;
 
-    Corrector3D(TString name="trkCorrHisAna_djuqv1",TString mod="hitrkEffAnalyzer");
+    Corrector3D(TString name="trkCorrHisAna_djuqv1",TString app="",TString mod="hitrkEffAnalyzer");
     void Init(Int_t inputMethod=0, TString corrFileName="");
     Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
@@ -47,8 +48,9 @@ class Corrector3D
     TH1 * InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin, Int_t jetEndBin,Int_t mode=0,Int_t begbin=0, Int_t endbin=-1);
 };
 
-Corrector3D::Corrector3D(TString name, TString mod) :
+Corrector3D::Corrector3D(TString name, TString append, TString mod) :
   corrSetName_(name),
+  corrSetNameApp_(append),
   trkCorrModule_(mod),
   ptRebinFactor_(1),
   sampleMode_(0),
@@ -58,7 +60,8 @@ Corrector3D::Corrector3D(TString name, TString mod) :
   centBin_.push_back("2to3");
   centBin_.push_back("4to11");
   centBin_.push_back("12to19");
-  centBin_.push_back("20to39");
+  centBin_.push_back("20to35");
+  //centBin_.push_back("20to39");
   numCentBins_ = centBin_.size();
 
   levelName_.push_back("Eff");
@@ -95,7 +98,7 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
   // Setup Inputs
   // =============================
   for (Int_t i=0; i<ptHatMin_.size(); ++i) {
-    TString fname=Form("%s_%.0f.root",corrSetName_.Data(),ptHatMin_[i]);
+    TString fname=Form("trkcorr/%s%.0f%s.root",corrSetName_.Data(),ptHatMin_[i],corrSetNameApp_.Data());
     sample_.push_back(new TFile(fname));
     cout << sample_[i]->GetName() << endl;
   }
@@ -252,7 +255,7 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin
   TH3F *hNum=0, *hDen=0;
   TH2D *hNum2D=0, *hDen2D=0, *hCorr2D=0;
   TH1D *hNum1D=0, *hDen1D=0, *hCorr1D=0;
-  TString inspName(Form("%s_%s_Lv%d_%d_%d_j%d_%d_%d",corrSetName_.Data(),trkCorrModule_.Data(),lv,isample,c,jetBegBin,jetEndBin,mode));
+  TString inspName(Form("%s_%s_Lv%d_%d_%d_j%d_%d_%d",(corrSetName_+corrSetNameApp_).Data(),trkCorrModule_.Data(),lv,isample,c,jetBegBin,jetEndBin,mode));
   if (mode>0) inspName+=Form("bin_%d_%d",begbin,endbin);
   cout << inspName << endl;
 
