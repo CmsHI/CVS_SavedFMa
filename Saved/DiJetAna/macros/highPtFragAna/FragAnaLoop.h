@@ -111,8 +111,8 @@ class FragAnaLoop
       return false;
     }
     Bool_t SelFrag(const JetFrag & jf, Int_t ip, Int_t j) {
-	return ( abs((*jf.peta)[ip])<cut_->TrkEtaMax );
-	//return ( (*jf.pdr)[j][ip]<cut_->ConeSize );
+	//return ( abs((*jf.peta)[ip])<cut_->TrkEtaMax );
+	return ( (*jf.pdr)[j][ip]<cut_->ConeSize );
     }
 };
 
