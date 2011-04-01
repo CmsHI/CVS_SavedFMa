@@ -28,7 +28,6 @@ void loopTrkClosure_combine(Double_t ptHatMin=110,
   cout << infrec << " cut " << TString(evtCut) << ": " << trec->GetEntries(evtCut) << endl;
   cout << infgen << " cut " << TString(evtCut) << ": " << tgen->GetEntries(evtCut) << endl;
 
-  TString tag("CorrUqB0");
   // ===================================
   // Cuts
   // ===================================
@@ -48,7 +47,7 @@ void loopTrkClosure_combine(Double_t ptHatMin=110,
   // ===================================
   // Correction
   // ===================================
-  Corrector3D trkCorr("trkCorrHisAna_djuqv1","B0");
+  Corrector3D trkCorr("trkCorrHisAna_djuqv2","B2InCone");
   trkCorr.ptRebinFactor_ = 1;
   trkCorr.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorr.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
@@ -78,7 +77,7 @@ void loopTrkClosure_combine(Double_t ptHatMin=110,
   // ===================================
   // Analyze
   // ===================================
-  TString outName(Form("Ana%.0f_%s",ptHatMin,tag.Data()));
+  TString outName(Form("Ana%.0f_%s",ptHatMin,(trkCorr.corrSetName_+trkCorr.trkCorrModule_).Data()));
   if (!cut.doSel) outName+="Nt";
   TString outFileName(Form("histsFragLoop_%s.root",outName.Data()));
   TFile * outf = new TFile(outFileName,"RECREATE");
