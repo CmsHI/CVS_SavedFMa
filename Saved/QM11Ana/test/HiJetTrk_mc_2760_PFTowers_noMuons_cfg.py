@@ -19,7 +19,7 @@ process.maxEvents = cms.untracked.PSet(
 
 #load some general stuff
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-process.GlobalTag.globaltag = 'START39_V9::All'
+process.GlobalTag.globaltag = 'START39_V7::All'
 
 process.load('Configuration.StandardSequences.GeometryExtended_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
@@ -73,6 +73,6 @@ process.load("Saved.QM11Ana.Analyzers_cff")
 process.extraTrkReco = cms.Path( process.hiTrackReco * process.hiextraTrackReco )
 process.extraPfReco = cms.Path( process.HiParticleFlowRecoNoJets )
 process.extraJetReco = cms.Path( process.hiGen * process.runAllJets )
-process.ana_step = cms.Path( process.jetana_seq * process.trkana_seq )
+process.ana_step = cms.Path( process.trkana_seq * process.jetana_seq )
 
 process.schedule = cms.Schedule(process.extraTrkReco,process.extraPfReco,process.extraJetReco,process.ana_step)
