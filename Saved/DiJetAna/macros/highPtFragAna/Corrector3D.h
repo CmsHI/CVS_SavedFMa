@@ -149,7 +149,7 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
 	  TString hname(Form("%s/%s_cbin%s",trkCorrModule_.Data(),levelInput_[lv][m].Data(),centBin_[c].Data()));
 	  TH3F * h3 = (TH3F*)sample_[s]->Get(hname);
 	  //cout << hname << " " << h3->GetEntries() << endl;
-	  TH3F * hsave = (TH3F*)h3->Clone(Form("h%s_f%.0f_c%d_%d",levelName_[lv].Data(),ptHatMin_[s],c,m));
+	  TH3F * hsave = (TH3F*)h3->Clone(Form("h%s_%s_f%.0f_c%d_%d",corrSetName_.Data(),levelName_[lv].Data(),ptHatMin_[s],c,m));
 	  correction_[lv][s][c][m] = hsave;
 	  //cout << correction_[lv][s][c][m]->GetName() << ": " << correction_[lv][s][c][m] << endl;
 	}
@@ -269,6 +269,7 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin
   }
 
   hNum->GetZaxis()->SetRange(jetBegBin,jetEndBin);
+  hDen->GetZaxis()->SetRange(jetBegBin,jetEndBin);
   hNum2D = (TH2D*)hNum->Project3D("yx");
   hDen2D = (TH2D*)hDen->Project3D("yx");
 
