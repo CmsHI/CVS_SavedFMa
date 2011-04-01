@@ -117,6 +117,7 @@ class TrkCorrHisAna
       centBins = orig.centBins;
       outFile_ = orig.outFile_;
       selMode_ = orig.selMode_;
+      ConeRadius_ = orig.ConeRadius_;
     };
     void DeclareHistograms();
     void FillSimHistograms(const SimTrack_t & s);
@@ -256,8 +257,15 @@ void TrkCorrHisAna::DeclareHistograms()
 
 void TrkCorrHisAna::FillSimHistograms(const SimTrack_t & s)
 {
+  //cout << "selMode: " << selMode_ << " jrdr: " << s.jrdr << " ind: " << s.jrind << endl;
+  //cout << "not in cone(" << ConeRadius_ << ")? " << (s.jrdr>ConeRadius_) << " not j2? " << (s.jrind!=1) << endl;
+  //cout << "not in cone2? " << (s.jrdr>ConeRadius_||s.jrind!=1) << endl;
   if (selMode_==1 && s.jrdr>ConeRadius_) return;
-  if (selMode_==11 && s.jrdr<ConeRadius_) return;
+  else if (selMode_==2 && (s.jrdr>ConeRadius_||s.jrind!=0)) return;
+  else if (selMode_==3 && (s.jrdr>ConeRadius_||s.jrind!=1)) return;
+  else if (selMode_==11 && (s.jrind==0||s.jrind==1)) return;
+  //if (selMode_==2 && s.pts>10) cout << "lead " << s.pts << " " << s.jrind << endl;
+  //if (selMode_==3 && s.pts>10) cout << "slead " << s.pts << " " << s.jrind << endl;
   if(s.status>0) {
     hsim->Fill(s.etas, s.pts);
     hsim3D->Fill(s.etas, s.pts, s.jetr);
@@ -293,7 +301,11 @@ void TrkCorrHisAna::FillSimHistograms(const SimTrack_t & s)
 void TrkCorrHisAna::FillRecHistograms(const RecTrack_t & r)
 {
   if (selMode_==1 && r.jrdr>ConeRadius_) return;
-  if (selMode_==11 && r.jrdr<ConeRadius_) return;
+  else if (selMode_==2 && (r.jrdr>ConeRadius_||r.jrind!=0)) return;
+  else if (selMode_==3 && (r.jrdr>ConeRadius_||r.jrind!=1)) return;
+  else if (selMode_==11 && (r.jrind==0||r.jrind==1)) return;
+  //if (selMode_==2) cout << "lead " << r.pts << " " << r.jrind << endl;
+  //if (selMode_==3) cout << "slead " << r.pts << " " << r.jrind << endl;
   hrec->Fill(r.etar, r.ptr);
   hrec3D->Fill(r.etar, r.ptr, r.jetr);
   if(!r.nsim) hfak->Fill(r.etar, r.ptr), hfak3D->Fill(r.etar, r.ptr, r.jetr);
@@ -324,7 +336,8 @@ void TrkCorrHisAna::LoopSim()
   cout << name_ << " Sim Trk Loop" << endl;
   for (Long_t i=0; i<tsim_->GetEntries(); ++i) {
     tsim_->GetEntry(i);
-    if (i%1000000==0) cout << i/1000 << "k: " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
+    if (i%1000==0) cout << i/1000 << "k: " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
+    //if (i%1000000==0) cout << i/1000 << "k: " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
     FillSimHistograms(s);
   }
 }

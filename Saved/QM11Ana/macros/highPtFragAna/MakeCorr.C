@@ -6,7 +6,7 @@ using namespace std;
 
 void MakeCorr(Float_t ptHatMin=110)
 {
-  TString inFile(Form("trees/tr_HyDJUQ%.0f_v2.root",ptHatMin));
+  TString inFile(Form("trees/tr_hydjuq%.0f_jtv2.root",ptHatMin));
   TChain * tsim = new TChain("hitrkEffAnalyzer_nt/simTrackTree");
   tsim->Add(inFile);
   tsim->Print();
@@ -15,7 +15,7 @@ void MakeCorr(Float_t ptHatMin=110)
   trec->Add(inFile);
   trec->Print();
 
-  TFile * outfile = new TFile(Form("trkCorrHisAna_djuq_cv3_%.0f.root",ptHatMin),"RECREATE");
+  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_cv0.root",ptHatMin),"RECREATE");
 
   // =========
   // A0
@@ -90,6 +90,7 @@ void MakeCorr(Float_t ptHatMin=110)
   anaA1.WriteHistograms();
   */
 
+  /*
   // =========
   // B0
   // =========
@@ -114,7 +115,6 @@ void MakeCorr(Float_t ptHatMin=110)
   anaB0.LoopRec();
   anaB0.WriteHistograms();
 
-  /*
   // =========
   // B1
   // =========
@@ -161,32 +161,43 @@ void MakeCorr(Float_t ptHatMin=110)
   TrkCorrHisAna anaB2(anaA0);
   anaB2.name_ = "B2";
   anaB2.ptBins = ptBinsB2;
-  anaB2.DeclareHistograms();
-  anaB2.LoopSim();
-  anaB2.LoopRec();
-  anaB2.WriteHistograms();
+  //anaB2.DeclareHistograms();
+  //anaB2.LoopSim();
+  //anaB2.LoopRec();
+  //anaB2.WriteHistograms();
 
   // =========
-  // B2InCone
+  // B2InConeJ1
   // =========
-  TrkCorrHisAna anaB2InCone(anaB2);
-  anaB2InCone.name_ = "B2InCone";
-  anaB2InCone.selMode_ = 1;
-  anaB2InCone.DeclareHistograms();
-  anaB2InCone.LoopSim();
-  anaB2InCone.LoopRec();
-  anaB2InCone.WriteHistograms();
+  TrkCorrHisAna anaB2InConeJ1(anaB2);
+  anaB2InConeJ1.name_ = "B2InConeJ1";
+  anaB2InConeJ1.selMode_ = 2;
+  anaB2InConeJ1.DeclareHistograms();
+  anaB2InConeJ1.LoopSim();
+  anaB2InConeJ1.LoopRec();
+  anaB2InConeJ1.WriteHistograms();
 
   // =========
-  // B2OutCone
+  // B2InConeJ2
   // =========
-  TrkCorrHisAna anaB2OutCone(anaB2);
-  anaB2OutCone.name_ = "B2OutCone";
-  anaB2OutCone.selMode_ = 11;
-  anaB2OutCone.DeclareHistograms();
-  anaB2OutCone.LoopSim();
-  anaB2OutCone.LoopRec();
-  anaB2OutCone.WriteHistograms();
+  TrkCorrHisAna anaB2InConeJ2(anaB2);
+  anaB2InConeJ2.name_ = "B2InConeJ2";
+  anaB2InConeJ2.selMode_ = 3;
+  anaB2InConeJ2.DeclareHistograms();
+  anaB2InConeJ2.LoopSim();
+  anaB2InConeJ2.LoopRec();
+  anaB2InConeJ2.WriteHistograms();
+
+  // =========
+  // B2NoneJet
+  // =========
+  TrkCorrHisAna anaB2NoneJet(anaB2);
+  anaB2NoneJet.name_ = "B2NoneJet";
+  anaB2NoneJet.selMode_ = 11;
+  //anaB2NoneJet.DeclareHistograms();
+  //anaB2NoneJet.LoopSim();
+  //anaB2NoneJet.LoopRec();
+  //anaB2NoneJet.WriteHistograms();
 }
 
 void MakeCorrAll()
