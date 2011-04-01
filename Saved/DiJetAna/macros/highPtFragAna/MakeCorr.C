@@ -6,7 +6,7 @@ using namespace std;
 
 void MakeCorr(Float_t ptHatMin=110)
 {
-  TString inFile(Form("inputs/tr_HyDJUQ%.0f_v1.root",ptHatMin));
+  TString inFile(Form("inputs/tr_HyDJUQ%.0f_v2.root",ptHatMin));
   TChain * tsim = new TChain("hitrkEffAnalyzer/simTrackTree");
   tsim->Add(inFile);
   tsim->Print();
@@ -15,7 +15,7 @@ void MakeCorr(Float_t ptHatMin=110)
   trec->Add(inFile);
   trec->Print();
 
-  TFile * outfile = new TFile(Form("trkCorrHisAna_djuqv1_%.0f.root",ptHatMin),"RECREATE");
+  TFile * outfile = new TFile(Form("trkCorrHisAna_djuqv2_%.0f.root",ptHatMin),"RECREATE");
 
   // =========
   // A0
@@ -63,6 +63,7 @@ void MakeCorr(Float_t ptHatMin=110)
   anaA0.etaBins = etaBins;
   anaA0.jetBins = jetBins;
   anaA0.centBins = centBins;
+  /*
   anaA0.DeclareHistograms();
   anaA0.LoopSim();
   anaA0.LoopRec();
@@ -87,6 +88,7 @@ void MakeCorr(Float_t ptHatMin=110)
   anaA1.LoopSim();
   anaA1.LoopRec();
   anaA1.WriteHistograms();
+  */
 
   // =========
   // B0
@@ -112,6 +114,7 @@ void MakeCorr(Float_t ptHatMin=110)
   anaB0.LoopRec();
   anaB0.WriteHistograms();
 
+  /*
   // =========
   // B1
   // =========
@@ -134,10 +137,61 @@ void MakeCorr(Float_t ptHatMin=110)
   anaB1.LoopSim();
   anaB1.LoopRec();
   anaB1.WriteHistograms();
+  */
+
+  // =========
+  // B2
+  // =========
+  vector<Double_t> ptBinsB2;
+  cout << "B2: ";
+  for(pt =   0  ; pt <   1.2-small; pt +=  0.05) ptBinsB2.push_back(pt); // 24 bins 
+  for(pt =   1.2; pt <   2.4-small; pt +=  0.1 ) ptBinsB2.push_back(pt); // 12 bins
+  for(pt =   2.4; pt <   7.2-small; pt +=  0.4 ) ptBinsB2.push_back(pt); // 12 bins
+  for(pt =   7.2; pt <  20.0-small; pt +=  1.6 ) ptBinsB2.push_back(pt); // 8 bins 
+  for(pt =  20.0; pt <  24-small;	 pt +=  2.0 ) ptBinsB2.push_back(pt); // 2 bins
+  for(pt =  24.0; pt <  30-small;	 pt +=  3.0 ) ptBinsB2.push_back(pt); // 2 bins
+  for(pt =  30.0; pt <  40-small;	 pt +=  5.0 ) ptBinsB2.push_back(pt); // 2 bins
+  for(pt =  40.0; pt <  60-small;	 pt += 10.0 ) ptBinsB2.push_back(pt); // 2 bins
+  for(pt =  60.0; pt < 300-small;	 pt += 30.0 ) ptBinsB2.push_back(pt); // 8 bins
+  ptBinsB2.push_back(400);
+  cout << ptBinsB2.size()-1 << " bins - ";
+  for (Int_t i=0; i<ptBinsB2.size(); ++i) { cout << ptBinsB2[i] << " "; }
+  cout << endl;
+
+  TrkCorrHisAna anaB2(anaA0);
+  anaB2.name_ = "B2";
+  anaB2.ptBins = ptBinsB2;
+  anaB2.DeclareHistograms();
+  anaB2.LoopSim();
+  anaB2.LoopRec();
+  anaB2.WriteHistograms();
+
+  // =========
+  // B2InCone
+  // =========
+  TrkCorrHisAna anaB2InCone(anaB2);
+  anaB2InCone.name_ = "B2InCone";
+  anaB2InCone.selMode_ = 1;
+  anaB2InCone.DeclareHistograms();
+  anaB2InCone.LoopSim();
+  anaB2InCone.LoopRec();
+  anaB2InCone.WriteHistograms();
+
+  // =========
+  // B2OutCone
+  // =========
+  TrkCorrHisAna anaB2OutCone(anaB2);
+  anaB2OutCone.name_ = "B2OutCone";
+  anaB2OutCone.selMode_ = 11;
+  anaB2OutCone.DeclareHistograms();
+  anaB2OutCone.LoopSim();
+  anaB2OutCone.LoopRec();
+  anaB2OutCone.WriteHistograms();
 }
 
 void MakeCorrAll()
 {
+  MakeCorr(30);
   MakeCorr(50);
   MakeCorr(80);
   MakeCorr(110);

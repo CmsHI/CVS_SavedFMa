@@ -28,8 +28,10 @@ typedef struct
   Int_t hitr;
   Int_t algo;
   Float_t jetr;
-  Float_t jetar;
   Int_t cbin;
+  Float_t jetar;
+  Float_t jrdr;
+  Int_t jrind;
 } SimTrack_t;
 
 typedef struct
@@ -52,8 +54,10 @@ typedef struct
   Float_t etas;
   Float_t pts;
   Float_t jetr;
-  Float_t jetar;
   Int_t cbin;
+  Float_t jetar;
+  Float_t jrdr;
+  Int_t jrind;
 } RecTrack_t;
 
 class TrkCorrHisAna
@@ -68,6 +72,7 @@ class TrkCorrHisAna
 
     TString name_;
     TFile * outFile_;
+    Int_t selMode_;
     // SimTrack
     TH2F* hsim;
     TH2F* hacc;
@@ -109,6 +114,7 @@ class TrkCorrHisAna
       jetBins = orig.jetBins;
       centBins = orig.centBins;
       outFile_ = orig.outFile_;
+      selMode_ = orig.selMode_;
     };
     void DeclareHistograms();
     void FillSimHistograms(const SimTrack_t & s);
@@ -120,7 +126,8 @@ class TrkCorrHisAna
 
 
 TrkCorrHisAna::TrkCorrHisAna(TString name) :
-  name_(name)
+  name_(name),
+  selMode_(0)
 {
 }
 
@@ -246,6 +253,8 @@ void TrkCorrHisAna::DeclareHistograms()
 
 void TrkCorrHisAna::FillSimHistograms(const SimTrack_t & s)
 {
+  if (selMode_==1 && s.jrdr>0.5) return;
+  if (selMode_==11 && s.jrdr<0.5) return;
   if(s.status>0) {
     hsim->Fill(s.etas, s.pts);
     hsim3D->Fill(s.etas, s.pts, s.jetr);
@@ -280,6 +289,8 @@ void TrkCorrHisAna::FillSimHistograms(const SimTrack_t & s)
 
 void TrkCorrHisAna::FillRecHistograms(const RecTrack_t & r)
 {
+  if (selMode_==1 && r.jrdr>0.5) return;
+  if (selMode_==11 && r.jrdr<0.5) return;
   hrec->Fill(r.etar, r.ptr);
   hrec3D->Fill(r.etar, r.ptr, r.jetr);
   if(!r.nsim) hfak->Fill(r.etar, r.ptr), hfak3D->Fill(r.etar, r.ptr, r.jetr);
