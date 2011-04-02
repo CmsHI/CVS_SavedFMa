@@ -42,7 +42,7 @@ hitrkEffAnalyzer_nt = hitrkEffAnalyzer.clone(
     fillNtuples = True,
     jets = 'akPu3PFpatJets'
     )
-hitrkEffAna.replace(hitrkEffAnalyzer,hitrkEffAnalyzer_nt)
+hitrkEffAna_nt = cms.Sequence(cutsTPForFak*cutsTPForEff*hitrkEffAnalyzer_nt)
 
 # final trk ana seq
-trkana_seq = cms.Sequence( (hitrkEffAna) * trkAnalyzer * genpAnalyzer )
+trkana_seq = cms.Sequence( (hitrkEffAna_nt) * trkAnalyzer * genpAnalyzer )
