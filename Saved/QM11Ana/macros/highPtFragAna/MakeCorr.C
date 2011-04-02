@@ -6,16 +6,16 @@ using namespace std;
 
 void MakeCorr(Float_t ptHatMin=110)
 {
-  TString inFile(Form("trees/tr_hydjuq%.0f_jtv2.root",ptHatMin));
+  TString inFile(Form("trees/tr_hydjuq%.0f_jtv2_2_50k.root",ptHatMin));
   TChain * tsim = new TChain("hitrkEffAnalyzer_nt/simTrackTree");
   tsim->Add(inFile);
-  tsim->Print();
+  //tsim->Print();
 
   TChain * trec = new TChain("hitrkEffAnalyzer_nt/recTrackTree");
   trec->Add(inFile);
-  trec->Print();
+  //trec->Print();
 
-  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_cv0.root",ptHatMin),"RECREATE");
+  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_2_50k_cv0.root",ptHatMin),"RECREATE");
 
   // =========
   // A0
@@ -161,10 +161,10 @@ void MakeCorr(Float_t ptHatMin=110)
   TrkCorrHisAna anaB2(anaA0);
   anaB2.name_ = "B2";
   anaB2.ptBins = ptBinsB2;
-  //anaB2.DeclareHistograms();
-  //anaB2.LoopSim();
-  //anaB2.LoopRec();
-  //anaB2.WriteHistograms();
+  anaB2.DeclareHistograms();
+  anaB2.LoopSim();
+  anaB2.LoopRec();
+  anaB2.WriteHistograms();
 
   // =========
   // B2InConeJ1

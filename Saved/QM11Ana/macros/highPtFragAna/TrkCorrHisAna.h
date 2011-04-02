@@ -106,6 +106,10 @@ class TrkCorrHisAna
 
     std::vector<TH3F*> vhresStoR3D;
 
+    // monitors
+    TH2F * hPJDRJIndRec;
+    TH2F * hPJDRJIndSim;
+
     // methods
     TrkCorrHisAna(TString name);
     TrkCorrHisAna(TrkCorrHisAna & orig) {
@@ -131,12 +135,14 @@ class TrkCorrHisAna
 TrkCorrHisAna::TrkCorrHisAna(TString name) :
   name_(name),
   selMode_(0),
-  ConeRadius_(0.8)
+  ConeRadius_(0.5)
 {
 }
 
 void TrkCorrHisAna::DeclareHistograms()
 {
+  cout << "===== " << name_ << " =====" << endl;
+  cout << " selMode: " << selMode_ << " ConeRadius: " << ConeRadius_ << endl;
   // Setup output dir
   outFile_->mkdir(name_);
   outFile_->cd(name_);
@@ -253,20 +259,27 @@ void TrkCorrHisAna::DeclareHistograms()
       vhresStoR3D[i]->SetName(Form("hresStoR3D_cbin%dto%d",centBins[i]+1,centBins[i+1]));
     }
   }
+
+  // monitors
+  hPJDRJIndRec = new TH2F("hPJDRJIndRec",";Jet Index;dR;",150,-100,50,50,0,1.6);
+  hPJDRJIndSim = new TH2F("hPJDRJIndSim",";Jet Index;dR;",150,-100,50,50,0,1.6);
 }
 
 void TrkCorrHisAna::FillSimHistograms(const SimTrack_t & s)
 {
-  //cout << "selMode: " << selMode_ << " jrdr: " << s.jrdr << " ind: " << s.jrind << endl;
   //cout << "not in cone(" << ConeRadius_ << ")? " << (s.jrdr>ConeRadius_) << " not j2? " << (s.jrind!=1) << endl;
   //cout << "not in cone2? " << (s.jrdr>ConeRadius_||s.jrind!=1) << endl;
   if (selMode_==1 && s.jrdr>ConeRadius_) return;
   else if (selMode_==2 && (s.jrdr>ConeRadius_||s.jrind!=0)) return;
   else if (selMode_==3 && (s.jrdr>ConeRadius_||s.jrind!=1)) return;
   else if (selMode_==11 && (s.jrind==0||s.jrind==1)) return;
+  //if (selMode_==0) cout << "selMode: " << selMode_ << " jrdr: " << s.jrdr << " ind: " << s.jrind << endl;
   //if (selMode_==2 && s.pts>10) cout << "lead " << s.pts << " " << s.jrind << endl;
   //if (selMode_==3 && s.pts>10) cout << "slead " << s.pts << " " << s.jrind << endl;
   if(s.status>0) {
+    // monitor
+    hPJDRJIndSim->Fill(s.jrind,s.jrdr);
+    // corrections
     hsim->Fill(s.etas, s.pts);
     hsim3D->Fill(s.etas, s.pts, s.jetr);
     if(s.acc)    hacc->Fill(s.etas, s.pts);
@@ -306,6 +319,9 @@ void TrkCorrHisAna::FillRecHistograms(const RecTrack_t & r)
   else if (selMode_==11 && (r.jrind==0||r.jrind==1)) return;
   //if (selMode_==2) cout << "lead " << r.pts << " " << r.jrind << endl;
   //if (selMode_==3) cout << "slead " << r.pts << " " << r.jrind << endl;
+  // monitor
+  hPJDRJIndRec->Fill(r.jrind,r.jrdr);
+  // corrections
   hrec->Fill(r.etar, r.ptr);
   hrec3D->Fill(r.etar, r.ptr, r.jetr);
   if(!r.nsim) hfak->Fill(r.etar, r.ptr), hfak3D->Fill(r.etar, r.ptr, r.jetr);
@@ -336,7 +352,7 @@ void TrkCorrHisAna::LoopSim()
   cout << name_ << " Sim Trk Loop" << endl;
   for (Long_t i=0; i<tsim_->GetEntries(); ++i) {
     tsim_->GetEntry(i);
-    if (i%1000==0) cout << i/1000 << "k: " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
+    if (i%1000000==0) cout << i/1000 << "k: " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
     //if (i%1000000==0) cout << i/1000 << "k: " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
     FillSimHistograms(s);
   }
@@ -390,6 +406,10 @@ void TrkCorrHisAna::WriteHistograms()
 
     vhresStoR3D[i]->Write();
   }
+
+  // monitors
+  hPJDRJIndSim->Write();
+  hPJDRJIndRec->Write();
   outFile_->cd("");
 }
 #endif //TrkCorrHisAna_h
