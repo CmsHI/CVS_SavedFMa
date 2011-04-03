@@ -89,7 +89,7 @@ akPu3PFpatJets = patJets.clone(
   jetCorrFactorsSource = cms.VInputTag(cms.InputTag("akPu3PFcorr"))
   )
 
-# === sequences ===
+# === mc sequences ===
 icPu5patSequence = cms.Sequence(
   iterativeConePu5CaloJets *
   icPu5corr *
@@ -117,4 +117,35 @@ runAllJets = cms.Sequence(
   icPu5patSequence *
   akPu5PFpatSequence *
   akPu3PFpatSequence
+  )
+
+# === data sequences ===
+from Saved.QM11Ana.customise_cfi import *
+removePatMCMatch(icPu5patJets)
+icPu5patSequence_data = cms.Sequence(
+  iterativeConePu5CaloJets *
+  icPu5corr *
+  icPu5patJets
+  )
+
+removePatMCMatch(akPu5PFpatJets)
+akPu5PFpatSequence_data = cms.Sequence(
+  akPu5PFJets *
+  akPu5PFcorr *
+  akPu5PFpatJets
+  )
+
+removePatMCMatch(akPu3PFpatJets)
+akPu3PFpatSequence_data = cms.Sequence(
+  akPu3PFJets *
+  akPu3PFcorr *
+  akPu3PFpatJets
+  )
+
+
+runAllJets_data = cms.Sequence(
+  PFTowers *
+  icPu5patSequence_data *
+  akPu5PFpatSequence_data *
+  akPu3PFpatSequence_data
   )
