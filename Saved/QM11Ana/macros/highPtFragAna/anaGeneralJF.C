@@ -2,6 +2,7 @@
 #include "TFile.h"
 #include "GeneralJetFragAna.C"
 void anaGeneralJF(
+  Int_t ptHatMin=110,
   Int_t particleType=2 // 0 for genp, 2 for trk
   )
 
@@ -10,10 +11,7 @@ void anaGeneralJF(
   gSystem->Load("libPhysics");
 
   // Inputs
-  //TString fdataname("inputs/matt/Corrected_JetTrackPFCandTuple_HIJet50U_PFTowers.root");
-  //TString fdataname("inputs/matt/Corrected_JetTrackPFCandTuple_HI_pthat80_PFTowers.root");
-  //TString fdataname("trees/tr_hydjuq110_jtv2_2_50k.root");
-  TString fdataname("trees/tr_hydjuq110_jtv2_2.root");
+  TString fdataname(Form("trees/tr_hydjuq%d_jtv2_2.root",ptHatMin));
   TChain * tevt = new TChain("akPu3PFJetAnalyzer/t");
   tevt->Add(fdataname);
 
@@ -29,7 +27,7 @@ void anaGeneralJF(
   tp->Add(fdataname);
 
   // ana
-  TFile * outf = new TFile(Form("trana_hydjuq110_mc_akpu3pf_t%d.root",particleType),"RECREATE");
+  TFile * outf = new TFile(Form("trana_hydjuq%d_mc_akpu3pf_t%d.root",ptHatMin,particleType),"RECREATE");
   GeneralJetFragAna jfana("");
   jfana.evtTree_ = tevt;
   jfana.jetTree_ = tjet;

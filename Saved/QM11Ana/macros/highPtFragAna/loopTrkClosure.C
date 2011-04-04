@@ -75,12 +75,14 @@ void loopTrkClosure(Double_t ptHatMin=110,
   vector<Double_t> ptBin(pptBins,pptBins+numPPtBins+1);
   //TH1D * hxbin = new TH1D("hxbin","",numPPtBins,pptBins);
   //TH1D * hxbin = (TH1D*)hPtBinUnRebin->Clone("hxbin");
-  //TH1D * hxbin = (TH1D*)trkCorr.ptBin_->Clone("hxbin");
-  //hxbin->Rebin(2);
-  //vector<Double_t> ptBin;
-  //for (Int_t i=1; i<=hxbin->GetNbinsX()+1; ++i) {
-  //  ptBin.push_back(hxbin->GetBinLowEdge(i));
-  //}
+  /*
+  TH1D * hxbin = (TH1D*)trkCorr.ptBin_->Clone("hxbin");
+  hxbin->Rebin(2);
+  vector<Double_t> ptBin;
+  for (Int_t i=1; i<=hxbin->GetNbinsX()+1; ++i) {
+    ptBin.push_back(hxbin->GetBinLowEdge(i));
+  }
+  */
   cout << ptBin.size()-1 << " pt bins: ";
   for (Int_t i=0; i<ptBin.size(); ++i) {cout << ptBin[i] << " ";}
   cout << endl;
