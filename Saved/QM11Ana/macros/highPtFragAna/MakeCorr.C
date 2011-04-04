@@ -15,7 +15,7 @@ void MakeCorr(Float_t ptHatMin=110)
   trec->Add(inFile);
   //trec->Print();
 
-  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_2_cv1.root",ptHatMin),"RECREATE");
+  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_2_cv2.root",ptHatMin),"RECREATE");
 
   // =========
   // A0
@@ -142,6 +142,7 @@ void MakeCorr(Float_t ptHatMin=110)
   // =========
   // B2
   // =========
+  /*
   vector<Double_t> ptBinsB2;
   cout << "B2: ";
   for(pt =   0  ; pt <   1.2-small; pt +=  0.05) ptBinsB2.push_back(pt); // 24 bins 
@@ -159,6 +160,10 @@ void MakeCorr(Float_t ptHatMin=110)
   vector<Double_t> ptBinsB2Rebin;
   for (Int_t i=0; i<ptBinsB2.size(); i+=rebinFactor) { ptBinsB2Rebin.push_back(ptBinsB2[i]); }
   ptBinsB2 = ptBinsB2Rebin;
+  */
+  const Int_t numPPtBins=18;
+  Float_t pptBins[numPPtBins+1] = {0.5,1,1.5,2,2.5,3,4,5,7.5,10,12,15,20,25,30,45,60,90,120};
+  vector<Double_t> ptBinsB2(pptBins,pptBins+numPPtBins+1);
   // Print
   cout << ptBinsB2.size()-1 << " bins - ";
   for (Int_t i=0; i<ptBinsB2.size(); ++i) { cout << ptBinsB2[i] << " "; }
