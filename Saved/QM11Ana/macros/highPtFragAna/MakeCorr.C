@@ -15,7 +15,7 @@ void MakeCorr(Float_t ptHatMin=110)
   trec->Add(inFile);
   //trec->Print();
 
-  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_2_cv0.root",ptHatMin),"RECREATE");
+  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_2_cv1.root",ptHatMin),"RECREATE");
 
   // =========
   // A0
@@ -154,6 +154,12 @@ void MakeCorr(Float_t ptHatMin=110)
   for(pt =  40.0; pt <  60-small;	 pt += 10.0 ) ptBinsB2.push_back(pt); // 2 bins
   for(pt =  60.0; pt < 300-small;	 pt += 30.0 ) ptBinsB2.push_back(pt); // 8 bins
   ptBinsB2.push_back(400);
+  // Rebin
+  Int_t rebinFactor=2;
+  vector<Double_t> ptBinsB2Rebin;
+  for (Int_t i=0; i<ptBinsB2.size(); i+=rebinFactor) { ptBinsB2Rebin.push_back(ptBinsB2[i]); }
+  ptBinsB2 = ptBinsB2Rebin;
+  // Print
   cout << ptBinsB2.size()-1 << " bins - ";
   for (Int_t i=0; i<ptBinsB2.size(); ++i) { cout << ptBinsB2[i] << " "; }
   cout << endl;
