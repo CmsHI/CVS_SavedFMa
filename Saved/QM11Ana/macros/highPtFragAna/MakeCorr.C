@@ -6,7 +6,7 @@ using namespace std;
 
 void MakeCorr(Float_t ptHatMin=110)
 {
-  TString inFile(Form("trees/tr_hydjuq%.0f_jtv2_2_50k.root",ptHatMin));
+  TString inFile(Form("trees/tr_hydjuq%.0f_jtv2_2.root",ptHatMin));
   TChain * tsim = new TChain("hitrkEffAnalyzer_nt/simTrackTree");
   tsim->Add(inFile);
   //tsim->Print();
@@ -15,7 +15,7 @@ void MakeCorr(Float_t ptHatMin=110)
   trec->Add(inFile);
   //trec->Print();
 
-  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_2_50k_cv0.root",ptHatMin),"RECREATE");
+  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_2_cv0.root",ptHatMin),"RECREATE");
 
   // =========
   // A0

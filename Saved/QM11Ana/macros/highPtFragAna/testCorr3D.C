@@ -2,18 +2,18 @@
 #include "TStyle.h"
 #include "Corrector3D.h"
 
-void testCorr3D(Int_t corrLevel=1,
+void testCorr3D(Int_t corrLevel=0,
     TString mod="B2InConeJ2",
     TString modref="B2InConeJ1",
-    TString app="_jtv2_cv0",
-    TString appref="_jtv2_cv0",
+    TString app="_jtv2_2_cv0",
+    TString appref="_jtv2_2_cv0",
     Int_t isample=0, // -1 for all samples
     Int_t etaPM=2 // +/- 2 for |eta|<1
     )
 {
   Int_t mode=1; // 0 for write, 1 for read
   Int_t cbin=0;
-  Float_t ptHatMin=80;
+  Float_t ptHatMin=110;
 
 
   Corrector3D trkCorr("trkCorrHisAna_djuq",app,mod);
