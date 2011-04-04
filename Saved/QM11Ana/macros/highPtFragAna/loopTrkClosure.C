@@ -12,10 +12,10 @@ void loopTrkClosure(Double_t ptHatMin=110,
   // ===================================
   // Inputs
   // ===================================
-  //TString infrec="nt_djhp_HyUQ110v0_djcalo_100_50_offset0.root";
-  //TString infgen="nt_djhp_HyUQ110v0_djcalo_genp_100_50_offset0.root";
-  TString infrec=Form("trana_hydjuq%.0f_mc_akpu3pf_t2.root",ptHatMin);
-  TString infgen=Form("trana_hydjuq%.0f_mc_akpu3pf_t0.root",ptHatMin);
+  TString infrec=Form("trana_hydjuq%.0f_mc_akpu3pf_t2_50k.root",ptHatMin);
+  TString infgen=Form("trana_hydjuq%.0f_mc_akpu3pf_t0_50k.root",ptHatMin);
+  //TString infrec=Form("trana_hydjuq%.0f_mc_akpu3pf_t2.root",ptHatMin);
+  //TString infgen=Form("trana_hydjuq%.0f_mc_akpu3pf_t0.root",ptHatMin);
   if (ptHatMin<0) {
     infrec="nt_djhp_HyUQAllv0_djcalo.root";
     infgen="nt_djhp_HyUQAllv0_djcalo_genp.root";
@@ -30,7 +30,7 @@ void loopTrkClosure(Double_t ptHatMin=110,
   if (tgen->GetEntries()>0) cout << infgen << " cut " << TString(evtCut) << ": " << tgen->GetEntries(evtCut) << endl;
   else { cout << infgen << " has 0 entries" << endl; exit(1); }
 
-  TString tag("CorrUqB2Jet");
+  TString tag("CorrUqB2Jetcv2");
   // ===================================
   // Cuts
   // ===================================
@@ -38,12 +38,12 @@ void loopTrkClosure(Double_t ptHatMin=110,
   cut.doSel = doSel;
   cut.CentMin=0;
   cut.CentMax=30;
-  cut.JEtMin[0] = 150;
+  cut.JEtMin[0] = 110;
   cut.JEtMax[0] = 250;
   cut.JEtMin[1] = 50;
   cut.JEtMax[1] = 250;
-  cut.JEtaMax[0] = 0.8;
-  cut.JEtaMax[1] = 0.8;
+  cut.JEtaMax[0] = 1.6;
+  cut.JEtaMax[1] = 1.6;
   cut.TrkEtaMax = 1;
   cut.ConeSize = 0.5;
 
