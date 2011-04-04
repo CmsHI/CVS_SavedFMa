@@ -36,6 +36,9 @@ struct JetFragRel
     t->Branch("ppt",this->ppt,"ppt[np]/F");
     t->Branch("peta",this->peta,"peta[np]/F");
     t->Branch("pphi",this->pphi,"pphi[np]/F");
+    t->Branch("jdphi",&(this->jdphi),"jdphi/F");
+    t->Branch("pj0dr",(this->pjdr)[0],"pj0dr[np]/F");
+    t->Branch("pj1dr",(this->pjdr)[1],"pj1dr[np]/F");
   }
   void LoadBranches(TTree * t) {
     t->SetBranchAddress("cent",&(this->cent));
@@ -67,6 +70,7 @@ class FragAnaLoop
     Corrector3D * trkCorr_;
     vector<Corrector3D *> vtrkCorr_;
     selectionCut * cut_;
+    TTree * tout_;
 
     TString name_;
     Double_t ptHatMin_;
@@ -154,6 +158,8 @@ void FragAnaLoop::Init()
       "jtpt1:jteta1:jtpt2:jteta2:"
       "ppt:peta:pj1dr:pj2dr:"
       "eff:fak");
+  tout_ = new TTree("tjfr"+name_,"jet-trk relations");
+  jfr_.SetBranches(tout_);
 }
 
 void FragAnaLoop::Loop()
@@ -245,6 +251,9 @@ void FragAnaLoop::Loop()
 	  }
 	}
       }
+    }
+    if (!cut_->doSel||(SelEvt(jfr_))) {
+      tout_->Fill();
     }
   } // end of main loop
 
