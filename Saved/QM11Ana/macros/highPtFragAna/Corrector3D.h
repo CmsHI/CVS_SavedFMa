@@ -79,7 +79,7 @@ Corrector3D::Corrector3D(TString name, TString append, TString mod) :
   matName_.push_back("Num");
   matName_.push_back("Den");
 
-  //ptHatMin_.push_back(30);
+  ptHatMin_.push_back(30);
   ptHatMin_.push_back(50);
   ptHatMin_.push_back(80);
   ptHatMin_.push_back(110);
@@ -90,7 +90,7 @@ Corrector3D::Corrector3D(TString name, TString append, TString mod) :
 void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
 {
   cout << "==============================================" << endl;
-  cout << " Setup Tracking Correction" << endl;
+  cout << " Setup: " << corrSetName_+corrSetNameApp_ << "/" << trkCorrModule_ << endl;
   cout << "==============================================" << endl;
   cout << "inputMethod: " << inputMethod << ", ptRebinFactor: " << ptRebinFactor_ << endl;
   cout << "Retrieval setup - sampleMode: " << sampleMode_ << " smoothLevel: " << smoothLevel_ << endl;
@@ -152,7 +152,7 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
 	  TString hname(Form("%s/%s_cbin%s",trkCorrModule_.Data(),levelInput_[lv][m].Data(),centBin_[c].Data()));
 	  TH3F * h3 = (TH3F*)sample_[s]->Get(hname);
 	  //cout << hname << " " << h3->GetEntries() << endl;
-	  TH3F * hsave = (TH3F*)h3->Clone(Form("h%s_f%.0f_c%d_%d",levelName_[lv].Data(),ptHatMin_[s],c,m));
+	  TH3F * hsave = (TH3F*)h3->Clone(Form("h%s_f%.0f_c%d_%d",(corrSetName_+corrSetNameApp_+levelName_[lv]).Data(),ptHatMin_[s],c,m));
 	  correction_[lv][s][c][m] = hsave;
 	  //cout << correction_[lv][s][c][m]->GetName() << ": " << correction_[lv][s][c][m] << endl;
 	}
