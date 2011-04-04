@@ -36,10 +36,16 @@ struct AnaJets
   Float_t jteta[MAXNJETS];
   Float_t jtphi[MAXNJETS];
   void LoadBranches(TChain * t,TString name) {
+    /*
     t->SetBranchAddress("n"+name,&(this->njets));
     t->SetBranchAddress("corrpt_"+name,this->jtpt);
     t->SetBranchAddress("jteta_"+name,this->jteta);
     t->SetBranchAddress("jtphi_"+name,this->jtphi);
+    */
+    t->SetBranchAddress("nref",&(this->njets));
+    t->SetBranchAddress("jtpt",this->jtpt);
+    t->SetBranchAddress("jteta",this->jteta);
+    t->SetBranchAddress("jtphi",this->jtphi);
   }
 };
 
@@ -49,11 +55,26 @@ struct AnaParticles
   Float_t ppt[MAXNP];
   Float_t peta[MAXNP];
   Float_t pphi[MAXNP];
-  void LoadBranches(TChain * t) {
+  void LoadBranches(TChain * t, Int_t pType) {
+    /*
     t->SetBranchAddress("ntrack",&(this->np));
     t->SetBranchAddress("trackpt",this->ppt);
     t->SetBranchAddress("tracketa",this->peta);
     t->SetBranchAddress("trackphi",this->pphi);
+    */
+    if (pType==2) {
+      // trkAna
+      t->SetBranchAddress("nTrk",&(this->np));
+      t->SetBranchAddress("trkPt",this->ppt);
+      t->SetBranchAddress("trkEta",this->peta);
+      t->SetBranchAddress("trkPhi",this->pphi);
+    } else if (pType==0) {
+      // genpAna
+      t->SetBranchAddress("mult",&(this->np));
+      t->SetBranchAddress("pt",this->ppt);
+      t->SetBranchAddress("eta",this->peta);
+      t->SetBranchAddress("phi",this->pphi);
+    }
   }
 };
 
@@ -116,7 +137,7 @@ class GeneralJetFragAna
 
     // methods
     GeneralJetFragAna(TString name);
-    void Init();
+    void Init(Int_t pType);
     void Loop();
     Int_t GetLeadingJet(AnaJets & jets,std::vector<PtEtaPhiMLorentzVectorD> & jv);
     Int_t GetJet2(AnaJets & jets,std::vector<PtEtaPhiMLorentzVectorD> & jv, Int_t leadJetInd);

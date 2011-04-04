@@ -10,13 +10,14 @@ GeneralJetFragAna::GeneralJetFragAna(TString name) :
   cout << "============================" << endl;
 }
 
-void GeneralJetFragAna::Init()
+void GeneralJetFragAna::Init(Int_t pType)
 {
   cout << "leadJetPtMin: " << leadJetPtMin_ << " pptMin: " << pptMin_ << endl;
+  cout << "particleType: " << pType << endl;
   // Inputs
   anaEvt_.LoadBranches(evtTree_);
   anaJets_.LoadBranches(jetTree_,name_);
-  anaPs_.LoadBranches(pTree_);
+  anaPs_.LoadBranches(pTree_,pType);
 
   // Outputs
   jfTree_ = new TTree("tjf","jet frag tree");
