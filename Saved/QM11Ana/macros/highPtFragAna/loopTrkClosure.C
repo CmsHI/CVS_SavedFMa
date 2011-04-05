@@ -12,14 +12,10 @@ void loopTrkClosure(Double_t ptHatMin=110,
   // ===================================
   // Inputs
   // ===================================
-  TString infrec=Form("trana_hydjuq%.0f_mc_akpu3pf_t2_50k.root",ptHatMin);
-  TString infgen=Form("trana_hydjuq%.0f_mc_akpu3pf_t0_50k.root",ptHatMin);
+  TString infrec=Form("ntout/trana_hydjuq%.0f_mc_akpu3pf_t2_50k.root",ptHatMin);
+  TString infgen=Form("ntout/trana_hydjuq%.0f_mc_akpu3pf_t0_50k.root",ptHatMin);
   //TString infrec=Form("trana_hydjuq%.0f_mc_akpu3pf_t2.root",ptHatMin);
   //TString infgen=Form("trana_hydjuq%.0f_mc_akpu3pf_t0.root",ptHatMin);
-  if (ptHatMin<0) {
-    infrec="nt_djhp_HyUQAllv0_djcalo.root";
-    infgen="nt_djhp_HyUQAllv0_djcalo_genp.root";
-  }
   TChain * trec = new TChain("tjf");
   trec->Add(infrec);
   TChain * tgen = new TChain("tjf");
@@ -30,7 +26,7 @@ void loopTrkClosure(Double_t ptHatMin=110,
   if (tgen->GetEntries()>0) cout << infgen << " cut " << TString(evtCut) << ": " << tgen->GetEntries(evtCut) << endl;
   else { cout << infgen << " has 0 entries" << endl; exit(1); }
 
-  TString tag("CorrUqB2Jetcv2");
+  TString tag("CorrUqB2Jetcv3");
   // ===================================
   // Cuts
   // ===================================
@@ -50,18 +46,18 @@ void loopTrkClosure(Double_t ptHatMin=110,
   // ===================================
   // Correction
   // ===================================
-  Corrector3D trkCorr("trkCorrHisAna_djuq","_jtv2_2_cv2","B2");
+  Corrector3D trkCorr("trkCorrHisAna_djuq","_jtv2_2_cv3","B2");
   trkCorr.ptRebinFactor_ = 1;
   trkCorr.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorr.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
   trkCorr.Init(0);
   //TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
   //trkCorr.Init(1,"TrkCorr2DB0.root");
-  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_jtv2_2_cv2","B2InConeJ1");
+  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_jtv2_2_cv3","B2InConeJ1");
   trkCorrJ1.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrJ1.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
   trkCorrJ1.Init();
-  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_jtv2_2_cv2","B2InConeJ2");
+  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_jtv2_2_cv3","B2InConeJ2");
   trkCorrJ2.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrJ2.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
   trkCorrJ2.Init();

@@ -15,7 +15,12 @@ void MakeCorr(Float_t ptHatMin=110)
   trec->Add(inFile);
   //trec->Print();
 
-  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_2_cv2.root",ptHatMin),"RECREATE");
+  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_2_cv3.root",ptHatMin),"RECREATE");
+  cout << "Output: " << outfile.Name() << endl;
+
+  // JEC
+  AnaJEC anajec;
+  anajec.Init();
 
   // =========
   // A0
@@ -166,11 +171,13 @@ void MakeCorr(Float_t ptHatMin=110)
   vector<Double_t> ptBinsB2(pptBins,pptBins+numPPtBins+1);
   // Print
   cout << ptBinsB2.size()-1 << " bins - ";
-  for (Int_t i=0; i<ptBinsB2.size(); ++i) { cout << ptBinsB2[i] << " "; }
+  for (UInt_t i=0; i<ptBinsB2.size(); ++i) { cout << ptBinsB2[i] << " "; }
   cout << endl;
 
   TrkCorrHisAna anaB2(anaA0);
   anaB2.name_ = "B2";
+  anaB2.doJEC_ = 1;
+  anaB2.anajec_ = &anajec;
   anaB2.ptBins = ptBinsB2;
   anaB2.DeclareHistograms();
   anaB2.LoopSim();
