@@ -7,6 +7,7 @@
 #include "TH2.h"
 #include "TH3.h"
 #include "TString.h"
+#include "TLine.h"
 using namespace std;
 
 class Corrector3D
@@ -249,9 +250,6 @@ void Corrector3D::Write()
 
 TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin, Int_t jetEndBin, Int_t mode, Int_t begbin, Int_t endbin)
 {
-  Int_t sampleMode=0;
-  if (isample<0) sampleMode=1;
-
   TH3F *hNum=0, *hDen=0;
   TH2D *hNum2D=0, *hDen2D=0, *hCorr2D=0;
   TH1D *hNum1D=0, *hDen1D=0, *hCorr1D=0;
@@ -266,12 +264,13 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin
   hDen->Reset();
   hDen->Sumw2();
   for (Int_t s=0; s<sample_.size(); ++s) {
-    if (sampleMode==0&&s!=isample) continue;
+    if (sampleMode_==0&&s!=isample) continue;
     hNum->Add(correction_[lv][s][c][0]);
     hDen->Add(correction_[lv][s][c][1]);
   }
 
   hNum->GetZaxis()->SetRange(jetBegBin,jetEndBin);
+  hDen->GetZaxis()->SetRange(jetBegBin,jetEndBin);
   hNum2D = (TH2D*)hNum->Project3D("yx");
   hDen2D = (TH2D*)hDen->Project3D("yx");
 
@@ -302,7 +301,10 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin
   hCorr1D = (TH1D*)hNum1D->Clone(inspName+"Corr1D");
   hCorr1D->Divide(hNum1D,hDen1D);
   if (mode==2) hCorr1D->SetAxisRange(0,25.2+3*6*4,"X");
-  hCorr1D->SetAxisRange(0,1,"Y");
+  hCorr1D->SetAxisRange(0,1.5,"Y");
+  TLine * l = new TLine(0,1,120,1);
+  l->SetLineStyle(2);
+  l->Draw();
 
   return hCorr1D;
 }
