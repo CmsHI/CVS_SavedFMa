@@ -27,6 +27,9 @@ struct JetFragRel
   Float_t jdphi;
   Float_t pjdr[2][MAXNP];
   Float_t pjdrbg[2][MAXNP];
+  // corr
+  Float_t trkeff[MAXNP];
+  Float_t trkfak[MAXNP];
   void SetBranches(TTree * t) {
     t->Branch("cent",&(this->cent),"cent/F");
     t->Branch("jtpt",this->jtpt,"jtpt[2]/F");
@@ -39,6 +42,8 @@ struct JetFragRel
     t->Branch("jdphi",&(this->jdphi),"jdphi/F");
     t->Branch("pj0dr",(this->pjdr)[0],"pj0dr[np]/F");
     t->Branch("pj1dr",(this->pjdr)[1],"pj1dr[np]/F");
+    t->Branch("trkeff",this->trkeff,"trkeff[np]/F");
+    t->Branch("trkfak",this->trkfak,"trkfak[np]/F");
   }
   void LoadBranches(TTree * t) {
     t->SetBranchAddress("cent",&(this->cent));
@@ -233,6 +238,8 @@ void FragAnaLoop::Loop()
 	    fak = corr[1];
 	    mul = corr[2];
 	    sec = corr[3];
+	    jfr_.trkeff[ip] = eff;
+	    jfr_.trkfak[ip] = fak;
 	    if (eff<1e-5) { eff=1; }
 	    trkwt = (1-fak)*(1-sec)/(eff*(1+mul));
 	  }
