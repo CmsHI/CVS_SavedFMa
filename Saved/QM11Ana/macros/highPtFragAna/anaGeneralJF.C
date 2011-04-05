@@ -12,6 +12,7 @@ void anaGeneralJF(
 
   // Inputs
   TString fdataname(Form("trees/tr_hydjuq%d_jtv2_2.root",ptHatMin));
+  cout << fdataname << endl;
   TChain * tevt = new TChain("akPu3PFJetAnalyzer/t");
   tevt->Add(fdataname);
 
@@ -26,11 +27,17 @@ void anaGeneralJF(
   }
   tp->Add(fdataname);
 
+  // JEC
+  AnaJEC anajec;
+  anajec.Init();
+
   // ana
   TFile * outf = new TFile(Form("trana_hydjuq%d_mc_akpu3pf_t%d.root",ptHatMin,particleType),"RECREATE");
   GeneralJetFragAna jfana("");
   jfana.evtTree_ = tevt;
   jfana.jetTree_ = tjet;
+  jfana.doJEC_ = 1;
+  jfana.anajec_ = &anajec;
   jfana.pTree_ = tp;
   jfana.leadJetPtMin_=100;
   jfana.pptMin_=2;

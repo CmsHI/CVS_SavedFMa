@@ -5,15 +5,15 @@ GeneralJetFragAna::GeneralJetFragAna(TString name) :
   name_(name),
   anaJetv_(2)
 {
-  cout << "============================" << endl;
-  cout << "GeneralJetFragAna: " << name_ << endl;
-  cout << "============================" << endl;
 }
 
 void GeneralJetFragAna::Init(Int_t pType)
 {
+  cout << "============================" << endl;
+  cout << "GeneralJetFragAna: " << name_ << " doJEC: " << doJEC_ << endl;
   cout << "leadJetPtMin: " << leadJetPtMin_ << " pptMin: " << pptMin_ << endl;
   cout << "particleType: " << pType << endl;
+  cout << "============================" << endl;
   // Inputs
   anaEvt_.LoadBranches(evtTree_);
   anaJets_.LoadBranches(jetTree_,name_);
@@ -46,6 +46,13 @@ void GeneralJetFragAna::Loop()
       //cout << "run/lumi/evt: " << anaEvt_.run << "/" << anaEvt_.lumi << "/" << anaEvt_.evt << endl;
       cout << "bin|vz: " << anaEvt_.bin << "|" << anaEvt_.vz
 	<< " njet: " << anaJets_.njets << " jtpt0: " << anaJets_.jtpt[0] << endl;
+    }
+
+    // JEC
+    if (doJEC_==1) {
+      for (Int_t j=0; j<anaJets_.njets; ++j) {
+	anaJets_.jtpt[j]*=anajec_->GetJEC(anaJets_.jtpt[j],anaJets_.jteta[j]);
+      }
     }
 
     // Initialize counters for each event

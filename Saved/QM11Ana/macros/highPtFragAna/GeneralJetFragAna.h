@@ -7,6 +7,7 @@
 #include "Math/Vector3D.h"
 #include "Math/LorentzVector.h"
 #include "Math/PtEtaPhiM4D.h"
+#include "AnaJEC.h"
 using namespace ROOT::Math;
 const Int_t MAXNJETS = 2000;
 const Int_t MAXNP = 100000;
@@ -121,6 +122,9 @@ class GeneralJetFragAna
     TChain * evtTree_;
     TChain * jetTree_;
     TChain * pTree_;
+
+    Int_t doJEC_;
+    AnaJEC * anajec_;
 
     AnaEvt anaEvt_;
     AnaJets anaJets_;

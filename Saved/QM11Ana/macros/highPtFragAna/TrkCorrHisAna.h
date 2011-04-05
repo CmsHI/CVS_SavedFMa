@@ -5,6 +5,7 @@
 #include "TH2F.h"
 #include "TH3F.h"
 #include "TString.h"
+#include "AnaJEC.h"
 
 #include <iostream>
 #include <cmath>
@@ -74,6 +75,7 @@ class TrkCorrHisAna
     TFile * outFile_;
     Int_t selMode_;
     Float_t ConeRadius_;
+    Float_t doJEC_;
 
     // SimTrack
     TH2F* hsim;
@@ -110,6 +112,9 @@ class TrkCorrHisAna
     TH2F * hPJDRJIndRec;
     TH2F * hPJDRJIndSim;
 
+    // JEC
+    AnaJEC * anajec_;
+
     // methods
     TrkCorrHisAna(TString name);
     TrkCorrHisAna(TrkCorrHisAna & orig) {
@@ -122,6 +127,8 @@ class TrkCorrHisAna
       outFile_ = orig.outFile_;
       selMode_ = orig.selMode_;
       ConeRadius_ = orig.ConeRadius_;
+      doJEC_ = orig.doJEC_;
+      anajec_ = orig.anajec_;
     };
     void DeclareHistograms();
     void FillSimHistograms(const SimTrack_t & s);
@@ -143,6 +150,7 @@ void TrkCorrHisAna::DeclareHistograms()
 {
   cout << "===== " << name_ << " =====" << endl;
   cout << " selMode: " << selMode_ << " ConeRadius: " << ConeRadius_ << endl;
+  cout << " doJEC: " << doJEC_ << endl;
   // Setup output dir
   outFile_->mkdir(name_);
   outFile_->cd(name_);
@@ -267,15 +275,6 @@ void TrkCorrHisAna::DeclareHistograms()
 
 void TrkCorrHisAna::FillSimHistograms(const SimTrack_t & s)
 {
-  //cout << "not in cone(" << ConeRadius_ << ")? " << (s.jrdr>ConeRadius_) << " not j2? " << (s.jrind!=1) << endl;
-  //cout << "not in cone2? " << (s.jrdr>ConeRadius_||s.jrind!=1) << endl;
-  if (selMode_==1 && s.jrdr>ConeRadius_) return;
-  else if (selMode_==2 && (s.jrdr>ConeRadius_||s.jrind!=0)) return;
-  else if (selMode_==3 && (s.jrdr>ConeRadius_||s.jrind!=1)) return;
-  else if (selMode_==11 && (s.jrind==0||s.jrind==1)) return;
-  //if (selMode_==0) cout << "selMode: " << selMode_ << " jrdr: " << s.jrdr << " ind: " << s.jrind << endl;
-  //if (selMode_==2 && s.pts>10) cout << "lead " << s.pts << " " << s.jrind << endl;
-  //if (selMode_==3 && s.pts>10) cout << "slead " << s.pts << " " << s.jrind << endl;
   if(s.status>0) {
     // monitor
     hPJDRJIndSim->Fill(s.jrind,s.jrdr);
@@ -313,12 +312,6 @@ void TrkCorrHisAna::FillSimHistograms(const SimTrack_t & s)
 
 void TrkCorrHisAna::FillRecHistograms(const RecTrack_t & r)
 {
-  if (selMode_==1 && r.jrdr>ConeRadius_) return;
-  else if (selMode_==2 && (r.jrdr>ConeRadius_||r.jrind!=0)) return;
-  else if (selMode_==3 && (r.jrdr>ConeRadius_||r.jrind!=1)) return;
-  else if (selMode_==11 && (r.jrind==0||r.jrind==1)) return;
-  //if (selMode_==2) cout << "lead " << r.pts << " " << r.jrind << endl;
-  //if (selMode_==3) cout << "slead " << r.pts << " " << r.jrind << endl;
   // monitor
   hPJDRJIndRec->Fill(r.jrind,r.jrdr);
   // corrections
@@ -352,8 +345,17 @@ void TrkCorrHisAna::LoopSim()
   cout << name_ << " Sim Trk Loop" << endl;
   for (Long_t i=0; i<tsim_->GetEntries(); ++i) {
     tsim_->GetEntry(i);
+    if (doJEC_==1) s.jetr*=anajec_->GetJEC(s.jetr,s.jetar);
     if (i%1000000==0) cout << i/1000 << "k: " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
-    //if (i%1000000==0) cout << i/1000 << "k: " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
+    //cout << "not in cone(" << ConeRadius_ << ")? " << (s.jrdr>ConeRadius_) << " not j2? " << (s.jrind!=1) << endl;
+    //cout << "not in cone2? " << (s.jrdr>ConeRadius_||s.jrind!=1) << endl;
+    if (selMode_==1 && s.jrdr>ConeRadius_) continue;
+    else if (selMode_==2 && (s.jrdr>ConeRadius_||s.jrind!=0)) continue;
+    else if (selMode_==3 && (s.jrdr>ConeRadius_||s.jrind!=1)) continue;
+    else if (selMode_==11 && (s.jrind==0||s.jrind==1)) continue;
+    //if (selMode_==0) cout << "selMode: " << selMode_ << " jrdr: " << s.jrdr << " ind: " << s.jrind << endl;
+    //if (selMode_==2 && s.pts>10) cout << "lead " << s.pts << " " << s.jrind << endl;
+    //if (selMode_==3 && s.pts>10) cout << "slead " << s.pts << " " << s.jrind << endl;
     FillSimHistograms(s);
   }
 }
@@ -365,7 +367,14 @@ void TrkCorrHisAna::LoopRec()
   cout << name_ << " Rec Trk Loop" << endl;
   for (Long_t i=0; i<trec_->GetEntries(); ++i) {
     trec_->GetEntry(i);
+    if (doJEC_==1) r.jetr*=anajec_->GetJEC(r.jetr,r.jetar);
     if (i%1000000==0) cout << i/1000 << "k: " << r.charge << " " << r.etar << " " << r.ptr << " " << r.jetr << " " << r.cbin << endl;
+    if (selMode_==1 && r.jrdr>ConeRadius_) continue;
+    else if (selMode_==2 && (r.jrdr>ConeRadius_||r.jrind!=0)) continue;
+    else if (selMode_==3 && (r.jrdr>ConeRadius_||r.jrind!=1)) continue;
+    else if (selMode_==11 && (r.jrind==0||r.jrind==1)) continue;
+    //if (selMode_==2) cout << "lead " << r.pts << " " << r.jrind << endl;
+    //if (selMode_==3) cout << "slead " << r.pts << " " << r.jrind << endl;
     FillRecHistograms(r);
   }
 }
