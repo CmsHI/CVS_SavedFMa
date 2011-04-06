@@ -33,6 +33,7 @@ typedef struct
   Float_t jetar;
   Float_t jrdr;
   Int_t jrind;
+  Int_t jrflavor;
 } SimTrack_t;
 
 typedef struct
@@ -59,6 +60,7 @@ typedef struct
   Float_t jetar;
   Float_t jrdr;
   Int_t jrind;
+  Int_t jrflavor;
 } RecTrack_t;
 
 class TrkCorrHisAna
@@ -346,13 +348,16 @@ void TrkCorrHisAna::LoopSim()
   for (Long_t i=0; i<tsim_->GetEntries(); ++i) {
     tsim_->GetEntry(i);
     if (doJEC_==1) s.jetr*=anajec_->GetJEC(s.jetr,s.jetar);
-    if (i%1000000==0) cout << i/1000 << "k: " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << endl;
+    if (i%1000000==0) cout << i/1000 << "k: " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << " parton: " << s.jrflavor << endl;
     //cout << "not in cone(" << ConeRadius_ << ")? " << (s.jrdr>ConeRadius_) << " not j2? " << (s.jrind!=1) << endl;
     //cout << "not in cone2? " << (s.jrdr>ConeRadius_||s.jrind!=1) << endl;
     if (selMode_==1 && s.jrdr>ConeRadius_) continue;
     else if (selMode_==2 && (s.jrdr>ConeRadius_||s.jrind!=0)) continue;
     else if (selMode_==3 && (s.jrdr>ConeRadius_||s.jrind!=1)) continue;
     else if (selMode_==11 && (s.jrind==0||s.jrind==1)) continue;
+    else if (selMode_==102 && (s.jrdr>ConeRadius_||abs(s.jrflavor)>6)) continue;
+    else if (selMode_==103 && (s.jrdr>ConeRadius_||s.jrflavor!=21)) continue;
+    //if (selMode_==103) cout << "gluon " << s.pts << " " << s.jrind << " " << s.jrflavor << endl;
     //if (selMode_==0) cout << "selMode: " << selMode_ << " jrdr: " << s.jrdr << " ind: " << s.jrind << endl;
     //if (selMode_==2 && s.pts>10) cout << "lead " << s.pts << " " << s.jrind << endl;
     //if (selMode_==3 && s.pts>10) cout << "slead " << s.pts << " " << s.jrind << endl;
@@ -368,13 +373,16 @@ void TrkCorrHisAna::LoopRec()
   for (Long_t i=0; i<trec_->GetEntries(); ++i) {
     trec_->GetEntry(i);
     if (doJEC_==1) r.jetr*=anajec_->GetJEC(r.jetr,r.jetar);
-    if (i%1000000==0) cout << i/1000 << "k: " << r.charge << " " << r.etar << " " << r.ptr << " " << r.jetr << " " << r.cbin << endl;
+    if (i%1000000==0) cout << i/1000 << "k: " << r.charge << " " << r.etar << " " << r.ptr << " " << r.jetr << " " << r.cbin << r.jrflavor << endl;
     if (selMode_==1 && r.jrdr>ConeRadius_) continue;
     else if (selMode_==2 && (r.jrdr>ConeRadius_||r.jrind!=0)) continue;
     else if (selMode_==3 && (r.jrdr>ConeRadius_||r.jrind!=1)) continue;
     else if (selMode_==11 && (r.jrind==0||r.jrind==1)) continue;
+    else if (selMode_==102 && (r.jrdr>ConeRadius_||abs(r.jrflavor)>6)) continue;
+    else if (selMode_==103 && (r.jrdr>ConeRadius_||r.jrflavor!=21)) continue;
     //if (selMode_==2) cout << "lead " << r.pts << " " << r.jrind << endl;
     //if (selMode_==3) cout << "slead " << r.pts << " " << r.jrind << endl;
+    //if (selMode_==103) cout << "slead " << r.pts << " " << r.jrind << " " << r.jrflavor << endl;
     FillRecHistograms(r);
   }
 }

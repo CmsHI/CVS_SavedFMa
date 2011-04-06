@@ -3,10 +3,10 @@
 #include "Corrector3D.h"
 
 void testCorr3D(Int_t corrLevel=0,
-    TString mod="B2InConeJ2",
-    TString modref="B2InConeJ1",
-    TString app="_jtv2_2_cv3",
-    TString appref="_jtv2_2_cv3",
+    TString mod="B2InConeGluon",
+    TString modref="B2InConeQuark",
+    TString app="_jtv3_2_cv4qg",
+    TString appref="_jtv3_2_cv4qg",
     Int_t isample=0, // -1 for all samples
     Int_t etaPM=2 // +/- 2 for |eta|<1
     )

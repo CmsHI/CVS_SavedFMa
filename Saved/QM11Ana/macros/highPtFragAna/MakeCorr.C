@@ -6,7 +6,7 @@ using namespace std;
 
 void MakeCorr(Float_t ptHatMin=110)
 {
-  TString inFile(Form("trees/tr_hydjuq%.0f_jtv2_2.root",ptHatMin));
+  TString inFile(Form("trees/tr_hydjuq%.0f_jtv3_2.root",ptHatMin));
   TChain * tsim = new TChain("hitrkEffAnalyzer_nt/simTrackTree");
   tsim->Add(inFile);
   //tsim->Print();
@@ -15,8 +15,8 @@ void MakeCorr(Float_t ptHatMin=110)
   trec->Add(inFile);
   //trec->Print();
 
-  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_2_cv3.root",ptHatMin),"RECREATE");
-  cout << "Output: " << outfile.Name() << endl;
+  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv3_2_cv4_2qg.root",ptHatMin),"RECREATE");
+  cout << "Output: " << outfile->GetName() << endl;
 
   // JEC
   AnaJEC anajec;
@@ -176,7 +176,7 @@ void MakeCorr(Float_t ptHatMin=110)
 
   TrkCorrHisAna anaB2(anaA0);
   anaB2.name_ = "B2";
-  anaB2.doJEC_ = 1;
+  anaB2.doJEC_ = 0;
   anaB2.anajec_ = &anajec;
   anaB2.ptBins = ptBinsB2;
   anaB2.DeclareHistograms();
@@ -184,6 +184,7 @@ void MakeCorr(Float_t ptHatMin=110)
   anaB2.LoopRec();
   anaB2.WriteHistograms();
 
+  /*
   // =========
   // B2InConeJ1
   // =========
@@ -216,6 +217,29 @@ void MakeCorr(Float_t ptHatMin=110)
   //anaB2NoneJet.LoopSim();
   //anaB2NoneJet.LoopRec();
   //anaB2NoneJet.WriteHistograms();
+  */
+
+  // =========
+  // B2InConeQuark
+  // =========
+  TrkCorrHisAna anaB2InConeQuark(anaB2);
+  anaB2InConeQuark.name_ = "B2InConeQuark";
+  anaB2InConeQuark.selMode_ = 102;
+  anaB2InConeQuark.DeclareHistograms();
+  anaB2InConeQuark.LoopSim();
+  anaB2InConeQuark.LoopRec();
+  anaB2InConeQuark.WriteHistograms();
+
+  // =========
+  // B2InConeGluon
+  // =========
+  TrkCorrHisAna anaB2InConeGluon(anaB2);
+  anaB2InConeGluon.name_ = "B2InConeGluon";
+  anaB2InConeGluon.selMode_ = 103;
+  anaB2InConeGluon.DeclareHistograms();
+  anaB2InConeGluon.LoopSim();
+  anaB2InConeGluon.LoopRec();
+  anaB2InConeGluon.WriteHistograms();
 }
 
 void MakeCorrAll()
