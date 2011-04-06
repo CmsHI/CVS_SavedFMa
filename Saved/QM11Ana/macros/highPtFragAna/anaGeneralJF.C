@@ -10,9 +10,18 @@ void anaGeneralJF(
   gSystem->Load("libMathCore");
   gSystem->Load("libPhysics");
 
-  // Inputs
+  // Inputs/Output
+  /*
   TString fdataname(Form("trees/tr_hydjuq%d_jtv2_2.root",ptHatMin));
-  cout << fdataname << endl;
+  TString tag(Form("trana_hydjuq%d_mc_akpu3pf_t%d.root",ptHatMin,particleType));
+  cout << fdataname << " output: " << tag << endl;
+  */
+  TString fdataname(Form("trees/merged_JetAnalysisTTrees_hiGoodTracks_condor_v2.root"));
+  TString tag(Form("trana_datav0_akpu3pf"));
+  cout << "Input: " << fdataname << endl;
+  cout << "Output: " << tag << endl;
+
+  // Load Trees
   TChain * tevt = new TChain("akPu3PFJetAnalyzer/t");
   tevt->Add(fdataname);
 
@@ -31,8 +40,10 @@ void anaGeneralJF(
   AnaJEC anajec;
   anajec.Init();
 
+  // output
+  TFile * outf = new TFile(tag+".root","RECREATE");
+
   // ana
-  TFile * outf = new TFile(Form("trana_hydjuq%d_mc_akpu3pf_t%d.root",ptHatMin,particleType),"RECREATE");
   GeneralJetFragAna jfana("");
   jfana.evtTree_ = tevt;
   jfana.jetTree_ = tjet;
@@ -40,7 +51,7 @@ void anaGeneralJF(
   jfana.anajec_ = &anajec;
   jfana.pTree_ = tp;
   jfana.leadJetPtMin_=100;
-  jfana.pptMin_=2;
+  jfana.pptMin_=1.5;
   jfana.Init(particleType);
   jfana.Loop();
 
