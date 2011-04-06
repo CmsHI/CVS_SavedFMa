@@ -23,8 +23,8 @@ void loopMulFF(Int_t inputSample=0,
   }
 
   if (inputSample==1) {
-    infrec=Form("ntout/trana_hydjuq%.0f_mc_akpu3pf_t2_50k.root",ptHatMin);
-    infgen=Form("ntout/trana_hydjuq%.0f_mc_akpu3pf_t0_50k.root",ptHatMin);
+    infrec=Form("ntout/trana_hydjuq%.0f_mc_akpu3pf_t2.root",ptHatMin);
+    infgen=Form("ntout/trana_hydjuq%.0f_mc_akpu3pf_t0.root",ptHatMin);
     tgen->Add(infgen);
     if (tgen->GetEntries()>0) cout << infgen << ": " << tgen->GetEntries() << endl;
     else { cout << infgen << " has 0 entries" << endl; exit(1); }
@@ -53,7 +53,7 @@ void loopMulFF(Int_t inputSample=0,
   cut.TrkPtMin = 4.;
   cut.TrkEtaMax = 1;
   cut.ConeSize = 0.5;
-  if (!cut.doSel) outFileName = Form("histntff_%s.root",outName.Data());
+  if (!cut.doSel) outFileName = Form("histntff_%s.root",tag.Data());
 
   // ===================================
   // Correction
@@ -233,10 +233,11 @@ void loopMulFF(Int_t inputSample=0,
   // ===================================
   // All Done, Write output if choose
   // ===================================
-  recfana.tout_->Write();
-  if (inputSample==1) {
-    genfana.tout_->Write();
+  if (cut.doSel) {
+    outf->Delete(recfana.tout_->GetName());
+    if (inputSample==1) {
+      outf->Delete(genfana.tout_->GetName());
+    }
   }
-  //if (!cut.doSel) recfana.ntCorr_->Write();
-  //else outf->Clear();
+  outf->Write();
 }

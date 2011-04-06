@@ -28,6 +28,8 @@ struct JetFragRel
   Float_t clppt[2];
   Int_t clpind[2];
   Float_t cltrkwt[2];
+  Float_t cpptsum[2];
+  Int_t cnp[2];
   Float_t pjdr[2][MAXNP];
   Float_t pjdrbg[2][MAXNP];
   // corr
@@ -47,6 +49,8 @@ struct JetFragRel
     t->Branch("clppt",this->clppt,"clppt[2]/F");
     t->Branch("clpind",this->clpind,"clpind[2]/I");
     t->Branch("cltrkwt",this->cltrkwt,"cltrkwt[2]/F");
+    t->Branch("cpptsum",this->cpptsum,"cpptsum[2]/F");
+    t->Branch("cnp",this->cnp,"cnp[2]/I");
     t->Branch("pj0dr",(this->pjdr)[0],"pj0dr[np]/F");
     t->Branch("pj1dr",(this->pjdr)[1],"pj1dr[np]/F");
     t->Branch("trkeff",this->trkeff,"trkeff[np]/F");
@@ -100,9 +104,6 @@ class FragAnaLoop
     vector<vector<TH2D*> > vhTrkCorrPPt_;
     vector<vector<TH2D*> > vhTrkCorrJEt_;
     vector<vector<TH2D*> > vhTrkCorrCent_;
-
-    // ntuples
-    TNtuple * ntCorr_;
 
     // Methods
     FragAnaLoop(TString name);
@@ -165,13 +166,10 @@ void FragAnaLoop::Init()
   }
 
   // Book ntuples
-  ntCorr_ = new TNtuple("ntCorr","nt of trk corrections",
-      "cent:pthatmin:"
-      "jtpt1:jteta1:jtpt2:jteta2:"
-      "ppt:peta:pj1dr:pj2dr:"
-      "eff:fak");
   tout_ = new TTree("tjfr"+name_,"jet-trk relations");
   jfr_.SetBranches(tout_);
+  tout_->SetAlias("Aj","(jtpt[0]-jtpt[1])/(jtpt[0]+jtpt[1])");
+  tout_->SetAlias("dPt","(jtpt[0]-jtpt[1])");
 }
 
 void FragAnaLoop::Loop()
@@ -198,6 +196,8 @@ void FragAnaLoop::Loop()
       jfr_.clppt[j] = -99;
       jfr_.clpind[j] = -99;
       jfr_.cltrkwt[j] = 1;
+      jfr_.cpptsum[j] = 0;
+      jfr_.cnp[j] = 0;
     }
 
     // ===========================
@@ -209,7 +209,7 @@ void FragAnaLoop::Loop()
     // jet count
     // ===========================
     for (Int_t j=0; j<2; ++j) {
-      if (!cut_->doSel||(SelEvt(jfr_)&&SelJet(jfr_,j))) {
+      if (SelEvt(jfr_)&&SelJet(jfr_,j)) {
 	++numJet_[j];
       }
     }
@@ -244,16 +244,24 @@ void FragAnaLoop::Loop()
 	  trkwt = (1-fak)*(1-sec)/(eff*(1+mul));
 	  jfr_.trkwt[ip] = trkwt;
 	}
-	// leading particle
-	if (jfr_.pjdr[j][ip]<cut_->ConeSize&&trkEnergy>jfr_.clppt[j]) {
-	  jfr_.clppt[j]=trkEnergy;
-	  jfr_.clpind[j]=ip;
-	  jfr_.cltrkwt[j] = trkwt;
+	// Cone ana
+	if (jfr_.pjdr[j][ip]<cut_->ConeSize) {
+	  // leading particle in cone
+	  if (trkEnergy>jfr_.clppt[j]) {
+	    jfr_.clppt[j]=trkEnergy;
+	    jfr_.clpind[j]=ip;
+	    jfr_.cltrkwt[j] = trkwt;
+	  }
+	  // cone sum properties
+	  if (trkEnergy>4) {
+	    jfr_.cpptsum[j]+=trkEnergy*trkwt;
+	    jfr_.cnp[j]+=trkwt;
+	  }
 	}
 	// =======================
 	// Histogram Ana
 	// =======================
-	if (!cut_->doSel||(SelEvt(jfr_)&&SelJet(jfr_,j)&&SelFrag(jfr_,ip,j))) {
+	if (SelEvt(jfr_)&&SelJet(jfr_,j)&&SelFrag(jfr_,ip,j)) {
 	  vhPPtCorr_[j][0]->Fill(trkEnergy);
 	  if (anaTrkType_==0) continue;
 	  vhPPtCorr_[j][1]->Fill(trkEnergy,1./eff);
