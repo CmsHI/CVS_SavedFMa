@@ -1,0 +1,13 @@
+*.root
+*.so
+*.d
+*.gif
+data
+CondFormats
+final/*.so
+final/*.d
+final/*.root
+out
+ntout
+trees
+org
