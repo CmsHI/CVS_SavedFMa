@@ -1,31 +1,47 @@
 #include "TROOT.h"
 #include "TFile.h"
 #include "GeneralJetFragAna.C"
+//////////////////////////////////////////////////////////////
+//
+// Note
+// - Only when running on akpu3pf, akpu4pf do we need jec
+//
+//////////////////////////////////////////////////////////////
+
 void anaGeneralJF(
-  Int_t ptHatMin=110,
-  Int_t particleType=2 // 0 for genp, 2 for trk
+  Int_t particleType=2, // 0 for genp, 2 for trk
+  Int_t ptHatMin=110
   )
 
 {
   gSystem->Load("libMathCore");
   gSystem->Load("libPhysics");
+  TString version("v1");
 
   // Inputs/Output
-  /*
   TString fdataname(Form("trees/tr_hydjuq%d_jtv2_2.root",ptHatMin));
-  TString tag(Form("trana_hydjuq%d_mc_akpu3pf_t%d.root",ptHatMin,particleType));
-  cout << fdataname << " output: " << tag << endl;
-  */
+  //TString tag(Form("trana%s_hydjuq%d_mc_akpu3pf_t%d.root",version.Data(),ptHatMin,particleType));
+  /*
   TString fdataname(Form("trees/merged_JetAnalysisTTrees_hiGoodTracks_condor_v2.root"));
-  TString tag(Form("trana_datav0_akpu3pf"));
+  */
+  //TString algo = "akPu3PFJetAnalyzer";
+  //Int_t doJEC = 1;
+  //TString tag(Form("trana%s_data_akpu3pf",version.Data()));
+  TString algo = "inclusiveJetAnalyzer";
+  Int_t doJEC = 0;
+  //TString tag(Form("trana%s_data_icpu5",version.Data()));
+  TString tag(Form("trana%s_hydjuq%d_mc_icpu5_t%d.root",version.Data(),ptHatMin,particleType));
+
+  cout << fdataname << " output: " << tag << endl;
   cout << "Input: " << fdataname << endl;
+  cout << " Jet: " << algo << endl;
   cout << "Output: " << tag << endl;
 
   // Load Trees
-  TChain * tevt = new TChain("akPu3PFJetAnalyzer/t");
+  TChain * tevt = new TChain(algo+"/t");
   tevt->Add(fdataname);
 
-  TChain * tjet = new TChain("inclusiveJetAnalyzer/t");
+  TChain * tjet = new TChain(algo+"/t");
   tjet->Add(fdataname);
 
   TChain * tp=0;
@@ -41,17 +57,17 @@ void anaGeneralJF(
   anajec.Init();
 
   // output
-  TFile * outf = new TFile(tag+".root","RECREATE");
+  TFile * outf = new TFile(Form("ntout/%s.root",tag.Data()),"RECREATE");
 
   // ana
   GeneralJetFragAna jfana("");
   jfana.evtTree_ = tevt;
   jfana.jetTree_ = tjet;
-  jfana.doJEC_ = 1;
+  jfana.doJEC_ = doJEC;
   jfana.anajec_ = &anajec;
   jfana.pTree_ = tp;
-  jfana.leadJetPtMin_=100;
-  jfana.pptMin_=1.5;
+  jfana.leadJetPtMin_=90;
+  jfana.pptMin_=1;
   jfana.Init(particleType);
   jfana.Loop();
 
