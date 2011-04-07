@@ -45,4 +45,5 @@ hitrkEffAnalyzer_nt = hitrkEffAnalyzer.clone(
 hitrkEffAna_nt = cms.Sequence(cutsTPForFak*cutsTPForEff*hitrkEffAnalyzer_nt)
 
 # final trk ana seq
-trkana_seq = cms.Sequence( (hitrkEffAna_nt) * trkAnalyzer * genpAnalyzer )
+trkcorr_seq = cms.Sequence( (hitrkEffAna_nt) )
+trkana_seq = cms.Sequence( trkAnalyzer * genpAnalyzer )
