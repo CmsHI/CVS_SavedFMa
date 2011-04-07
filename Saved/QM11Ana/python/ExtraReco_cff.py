@@ -23,11 +23,9 @@ hiGen = cms.Sequence(
 # good track selection
 from edwenger.HiTrkEffAnalyzer.TrackSelections_cff import *
 # merge with pixel tracks
-#from Appeltel.PixelTracksRun2010.HiLowPtPixelTracksFromReco_cff import *
-#from Appeltel.PixelTracksRun2010.HiMultipleMergedTracks_cff import *
+from Appeltel.PixelTracksRun2010.HiLowPtPixelTracksFromReco_cff import *
+from Appeltel.PixelTracksRun2010.HiMultipleMergedTracks_cff import *
 
 hiextraTrackReco = cms.Sequence(
     hiGoodTracksSelection
-    #* conformalPixelTrackReco
-    #* hiGoodMergedTracks
     )

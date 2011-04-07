@@ -8,3 +8,8 @@ def removePatMCMatch(patJets):
   patJets.getJetMCFlavour     = False
   patJets.JetPartonMapSource  = ''
 
+def usehiGoodMergedTracks(process):
+  print "hiGoodMergedTracks is used (except PF re-reco)! --> re-reco of conformalPixelTrackReco!"
+  process.hiextraTrackReco *= process.conformalPixelTrackReco
+  process.hiextraTrackReco *= process.hiGoodMergedTracks
+
