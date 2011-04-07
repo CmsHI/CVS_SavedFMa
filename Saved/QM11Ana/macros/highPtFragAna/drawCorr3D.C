@@ -8,11 +8,13 @@ void drawCorr3D(Int_t corrLevel=0,
     Int_t etaPM=2 // +/- 2 for |eta|<1
     )
 {
-  TString mod="B2InConeJ2";
-  TString modref="B2InConeJ1";
+  //TString mod="B2InConeJ2";
+  //TString modref="B2InConeJ1";
+  TString mod="B2InConeGluon";
+  TString modref="B2InConeQuark";
   //TString modref="B2",
-  TString app="_jtv2_2_cv3";
-  TString appref="_jtv2_2_cv3";
+  TString app="_jtv3_2_cv4_2qg";
+  TString appref="_jtv3_2_cv4_2qg";
   Int_t isample=0;
   Int_t sampleMode = 0; //0 for choosing individual sample, 1 for merge samples
   TString tag(Form("TrkCorr%d_%s_%s_%.0f",corrLevel,mod.Data(),modref.Data(),ptHatMin));
