@@ -13,6 +13,7 @@ def usehiGoodMergedTracks(process):
   process.hiextraTrackReco *= process.conformalPixelTrackReco
   process.hiextraTrackReco *= process.hiGoodMergedTracks
   print "change trk analyzers to include low pt trks"
+  process.trkAnalyzer.trackSrc = "hiGoodMergedTracks"
   process.trkAnalyzer.trackPtMin = 0.5
   process.genpAnalyzer.ptMin = 0.5
 
