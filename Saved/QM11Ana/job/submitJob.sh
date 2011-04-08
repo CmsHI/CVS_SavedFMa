@@ -26,7 +26,7 @@ do
   fi
   echo $cmd
   eval $cmd
-  if [ $((ct%1)) -eq 0 ]; then echo "job $ct sleep"; sleep 1; fi
+  if [ $((ct%1)) -eq 0 ]; then echo "job $ct sleep"; sleep 2; fi
   ct=$((ct+1))
 done
 
