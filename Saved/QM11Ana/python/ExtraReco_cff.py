@@ -29,3 +29,23 @@ from Appeltel.PixelTracksRun2010.HiMultipleMergedTracks_cff import *
 hiextraTrackReco = cms.Sequence(
     hiGoodTracksSelection
     )
+
+# particle flow
+from RecoHI.Configuration.Reconstruction_hiPF_cff import *
+trackerDrivenElectronSeeds.TkColList = cms.VInputTag("hiGoodTracks")
+HiParticleFlowRecoNoJets = cms.Sequence(
+    particleFlowCluster
+    * trackerDrivenElectronSeeds
+    * particleFlowReco
+    )
+
+#  --- Track and muon reconstruction (needed to run particle fllow) ---
+# pixel triplet tracking (HI Tracking)
+from RecoLocalTracker.Configuration.RecoLocalTracker_cff import *
+from RecoHI.Configuration.Reconstruction_HI_cff import *
+from RecoHI.HiTracking.LowPtTracking_PbPb_cff import *
+# Needed to produce "HcalSeverityLevelComputerRcd" used by CaloTowersCreator/towerMakerPF
+from RecoLocalCalo.Configuration.hcalLocalReco_cff import *
+#Track Reco
+rechits = cms.Sequence(siPixelRecHits * siStripMatchedRecHits)
+hiTrackReReco = cms.Sequence(rechits * heavyIonTracking)

@@ -69,6 +69,14 @@ hitrkEffAnalyzer_nt = hitrkEffAnalyzer.clone(
     )
 hitrkEffAna_nt = cms.Sequence(cutsTPForFak*cutsTPForEff*hitrkEffAnalyzer_nt)
 
+# centrality
+makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
+    isMC = cms.untracked.bool(True),
+    makeDBFromTFile = cms.untracked.bool(False),
+    makeTFileFromDB = cms.untracked.bool(True)
+    )
+
+
 # final sequences
 trkcorr_seq = cms.Sequence( (hitrkEffAna_nt) )
 trkana_seq = cms.Sequence( trkAnalyzer * genpAnalyzer )

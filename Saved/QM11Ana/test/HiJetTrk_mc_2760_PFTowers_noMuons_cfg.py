@@ -33,44 +33,22 @@ process.HeavyIonGlobalParameters = cms.PSet(
            centralitySrc = cms.InputTag("hiCentrality")
                      )
 
-process.makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
-                                                  isMC = cms.untracked.bool(True),
-                                                  makeDBFromTFile = cms.untracked.bool(False),
-                                                  makeTFileFromDB = cms.untracked.bool(True)
-                                                  )
-
-
-#  --- Track and muon reconstruction ---
-# pixel triplet tracking (HI Tracking)
-process.load("RecoLocalTracker.Configuration.RecoLocalTracker_cff")
-process.load("RecoHI.Configuration.Reconstruction_HI_cff")
-process.load("RecoHI.HiTracking.LowPtTracking_PbPb_cff")
-# Needed to produce "HcalSeverityLevelComputerRcd" used by CaloTowersCreator/towerMakerPF
-process.load("RecoLocalCalo.Configuration.hcalLocalReco_cff")
-#Track Reco
-process.rechits = cms.Sequence(process.siPixelRecHits * process.siStripMatchedRecHits)
-process.hiTrackReco = cms.Sequence(process.rechits * process.heavyIonTracking)
-
-# for PF
-process.load("RecoHI.Configuration.Reconstruction_hiPF_cff")
-process.HiParticleFlowRecoNoJets = cms.Sequence(
-    process.particleFlowCluster
-    * process.trackerDrivenElectronSeeds
-    * process.particleFlowReco
-    )
-process.trackerDrivenElectronSeeds.TkColList = cms.VInputTag("hiGoodTracks")
-
 #for tree output
 process.TFileService = cms.Service("TFileService",
                                   fileName=cms.string("JetAnalysisTTrees_hiGoodTracks_v1.root"))
 
-# ----- jet reco extra and analyzers -----
+# =============== Extra Sequences ==================
 process.load("Saved.QM11Ana.ExtraReco_cff")
 process.load("Saved.QM11Ana.Analyzers_cff")
 
+# =============== customization ==================
+from Saved.QM11Ana.customise_cfi import *
+# custom extra reco
+#usehiGoodMergedTracks(process)
+
 # =============== Final Paths =====================
 #process.extraHiReco = cms.Path( process.makeCentralityTableTFile )
-process.extraTrkReco = cms.Path( process.hiTrackReco * process.hiextraTrackReco )
+process.extraTrkReco = cms.Path( process.hiTrackReReco * process.hiextraTrackReco )
 process.extraPfReco = cms.Path( process.HiParticleFlowRecoNoJets )
 process.extraJetReco = cms.Path( process.hiGen * process.runAllJets )
 process.ana_step = cms.Path( process.trkcorr_seq * process.trkana_seq * process.jetana_seq )
