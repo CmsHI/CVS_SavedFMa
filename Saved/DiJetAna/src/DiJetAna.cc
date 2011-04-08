@@ -13,7 +13,7 @@ Implementation:
 //
 // Original Author:  Frank Ma,32 4-A06,+41227676980,
 //         Created:  Thu May  6 10:29:52 CEST 2010
-// $Id: DiJetAna.cc,v 1.67 2011/01/12 19:05:03 frankma Exp $
+// $Id: DiJetAna.cc,v 1.68 2011/03/31 16:43:54 frankma Exp $
 //
 //
 
@@ -347,22 +347,22 @@ void  DiJetAna::FillJets(const edm::Event& iEvent, TreeDiJetEventData & jd,
 
     // -- jec --
     //cout << "Current JEC Step: " << "Nr: " << (*jets)[iNear_].corrStep() << " Aw: " <<  (*jets)[iAway_].corrStep() << endl;
-    jd.nljrawet_	= (*jets)[iNear_].correctedP4("raw").pt();
-    jd.njec_[0]		= (*jets)[iNear_].jecFactor("raw");
+    jd.nljrawet_	= (*jets)[iNear_].correctedP4("Uncorrected").pt();
+    jd.njec_[0]		= (*jets)[iNear_].jecFactor("Uncorrected");
     jd.njec_[1]         = anaJECs[iNear_];
-    jd.njec_[2]		= (*jets)[iNear_].jecFactor("rel");
-    jd.njec_[3]		= (*jets)[iNear_].jecFactor("abs");
-    jd.njec_[5]		= (*jets)[iNear_].jecFactor("had","uds");
-    jd.njec_[7]		= (*jets)[iNear_].jecFactor("part","uds");
+    jd.njec_[2]		= (*jets)[iNear_].jecFactor("L2Relative");
+    jd.njec_[3]		= (*jets)[iNear_].jecFactor("L3Absolute");
+    //jd.njec_[5]		= (*jets)[iNear_].jecFactor("L5Flavor","qJ");
+    //jd.njec_[7]		= (*jets)[iNear_].jecFactor("L7Parton","qJ");
 
     if (anajets.size()>=2) { // careful away jec is not reset if away not found
-      jd.aljrawet_	= (*jets)[iAway_].correctedP4("raw").pt();
-      jd.ajec_[0]	= (*jets)[iAway_].jecFactor("raw");
+      jd.aljrawet_	= (*jets)[iAway_].correctedP4("Uncorrected").pt();
+      jd.ajec_[0]	= (*jets)[iAway_].jecFactor("Uncorrected");
       jd.ajec_[1]       = anaJECs[iAway_];
-      jd.ajec_[2]	= (*jets)[iAway_].jecFactor("rel");
-      jd.ajec_[3]	= (*jets)[iAway_].jecFactor("abs");
-      jd.ajec_[5]	= (*jets)[iAway_].jecFactor("had","glu");
-      jd.ajec_[7]	= (*jets)[iAway_].jecFactor("part","glu");
+      jd.ajec_[2]	= (*jets)[iAway_].jecFactor("L2Relative");
+      jd.ajec_[3]	= (*jets)[iAway_].jecFactor("L3Absolute");
+      //jd.ajec_[5]	= (*jets)[iAway_].jecFactor("L5Flavor","gJ");
+      //jd.ajec_[7]	= (*jets)[iAway_].jecFactor("L7Parton","gJ");
     }
   }
 }
