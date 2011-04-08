@@ -120,28 +120,24 @@ runAllJets = cms.Sequence(
   )
 
 # === data sequences ===
-from Saved.QM11Ana.customise_cfi import *
-removePatMCMatch(icPu5patJets)
+# Note still need to use enableData function in cfg to remove mc dep of patjet
 icPu5patSequence_data = cms.Sequence(
   iterativeConePu5CaloJets *
   icPu5corr *
   icPu5patJets
   )
 
-removePatMCMatch(akPu5PFpatJets)
 akPu5PFpatSequence_data = cms.Sequence(
   akPu5PFJets *
   akPu5PFcorr *
   akPu5PFpatJets
   )
 
-removePatMCMatch(akPu3PFpatJets)
 akPu3PFpatSequence_data = cms.Sequence(
   akPu3PFJets *
   akPu3PFcorr *
   akPu3PFpatJets
   )
-
 
 runAllJets_data = cms.Sequence(
   PFTowers *
