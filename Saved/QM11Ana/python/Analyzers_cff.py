@@ -16,7 +16,6 @@ akPu3PFJetAnalyzer = inclusiveJetAnalyzer.clone(
 # For backward xcheck
 from Saved.DiJetAna.dijetAna_cfi import *
 djicpu5 = djcalo.clone (
-  hltNames = ['HLT_HIMinBiasHfOrBSC','HLT_HIJet35U', 'HLT_HIJet50U','HLT_HIJet75U'], # for allphysics
   jetsrc = "icPu5patJets",
   refjetsrc = "icPu5patJets",
   nearJetPtMin = 1000,
