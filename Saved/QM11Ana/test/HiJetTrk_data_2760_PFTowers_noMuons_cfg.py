@@ -73,6 +73,6 @@ enableData(process)
 process.extraTrkReco = cms.Path( process.jetSkimSequence * process.hiTrackReco * process.hiextraTrackReco )
 process.extraPfReco = cms.Path( process.jetSkimSequence * process.HiParticleFlowRecoNoJets )
 process.extraJetReco = cms.Path( process.jetSkimSequence * process.runAllJets_data )
-process.ana_step = cms.Path( process.jetSkimSequence * process.trkana_seq_data * process.jetana_seq )
+process.ana_step = cms.Path( process.jetSkimSequence * process.trkana_seq_data * process.jetana_seq_data )
 
 process.schedule = cms.Schedule(process.extraTrkReco,process.extraPfReco,process.extraJetReco,process.ana_step)
