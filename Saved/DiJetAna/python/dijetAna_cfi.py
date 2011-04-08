@@ -20,7 +20,7 @@ djcalo = cms.EDAnalyzer('DiJetAna',
     anaJetType = cms.int32(2),
     jetEtaMax = cms.double(2.0),
     # jet energy correction
-    JECLab1 = cms.string("abs"),
+    JECLab1 = cms.string("L3Absolute"),
     doFJL1Corr = cms.bool(False), # currently on top of the pp default JEC
     # jet mc matching
     refjetsrc = cms.InputTag("icPu5patJets"), # careful: this should be same collection as anajets, if anajets is patjet
@@ -34,7 +34,7 @@ djcalo = cms.EDAnalyzer('DiJetAna',
     trkPtMin = cms.double(0.15),
     anaGenpType = cms.int32(1),
     # debug
-    verbosity = cms.untracked.int32(2)
+    verbosity = cms.untracked.int32(0) # 2 for debug
     )
 
 djgen_trk = djcalo.clone(
