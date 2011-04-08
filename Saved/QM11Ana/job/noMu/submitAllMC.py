@@ -2,7 +2,7 @@ import os
 os.system("./create_custom_python_cfg.sh")
 
 scratch="/net/hidsk0001/d00/scratch/frankma"
-jobTag="JetTrkv4"
+jobTag="JetTrkv5"
 
 # ================== 362 ===============
 samples  = {
@@ -26,9 +26,9 @@ samples  = {
     # Tracking 50k per pt_hat in 393
     "HydjetBass_DJUQ30_GSR_v2":"ana",
     "HydjetBass_DJUQ50_GSR_v2":"ana",
-    "HydjetBass_DJUQ80_GSR_v2":"ana",
-    "HydjetBass_DJUQ110_GSR_v2":"ana",
-    "HydjetBass_DJUQ170_GSR_v2":"ana",
+    #"HydjetBass_DJUQ80_GSR_v2":"ana",
+    #"HydjetBass_DJUQ110_GSR_v2":"ana",
+    #"HydjetBass_DJUQ170_GSR_v2":"ana",
     # Tracking high_pt high stat
     "HydjetBass_DJUQ80_GSR_393_300k":"ana",
     "HydjetBass_DJUQ110_GSR_393_300k":"ana",
@@ -38,6 +38,7 @@ samples  = {
 for sample,PD in samples.items():
   inputList="~/inputs_mc/"+sample+".txt"
   outputDir=scratch+"/"+PD+"/"+sample+"_"+jobTag
-  cmd="./submitJob.sh custom_HiJetTrk_mc_2760_PFTowers_noMuons_cfg.py "+inputList+" "+outputDir
+  #cmd="./submitJob.sh custom_HiJetTrk_mc_2760_PFTowers_noMuons_cfg.py "+inputList+" "+outputDir
+  cmd="./submitMergedJob.sh custom_HiJetTrk_mc_2760_PFTowers_noMuons_cfg.py "+inputList+" "+outputDir
   print cmd
   os.system(cmd)
