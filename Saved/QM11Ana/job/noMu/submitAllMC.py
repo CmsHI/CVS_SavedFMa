@@ -2,7 +2,7 @@ import os
 os.system("./create_custom_python_cfg.sh")
 
 scratch="/net/hidsk0001/d00/scratch/frankma"
-jobTag="JetTrkv3_2"
+jobTag="JetTrkv4"
 
 # ================== 362 ===============
 samples  = {
@@ -24,15 +24,15 @@ samples  = {
     #"Data_MinBias_DijetUnquenched50_d20101127":"ana"
     #"Data_MinBias_DijetUnquenched50_d20101211":"ana"
     # Tracking 50k per pt_hat in 393
-    #"HydjetBass_DJUQ30_GSR_v2":"ana",
-    #"HydjetBass_DJUQ50_GSR_v2":"ana",
-    #"HydjetBass_DJUQ80_GSR_v2":"ana",
-    #"HydjetBass_DJUQ110_GSR_v2":"ana",
-    #"HydjetBass_DJUQ170_GSR_v2":"ana",
+    "HydjetBass_DJUQ30_GSR_v2":"ana",
+    "HydjetBass_DJUQ50_GSR_v2":"ana",
+    "HydjetBass_DJUQ80_GSR_v2":"ana",
+    "HydjetBass_DJUQ110_GSR_v2":"ana",
+    "HydjetBass_DJUQ170_GSR_v2":"ana",
     # Tracking high_pt high stat
-    #"HydjetBass_DJUQ80_GSR_393_300k":"ana",
-    "HydjetBass_DJUQ110_GSR_393_300k":"ana"
-    #"HydjetBass_DJUQ170_GSR_393_300k":"ana"
+    "HydjetBass_DJUQ80_GSR_393_300k":"ana",
+    "HydjetBass_DJUQ110_GSR_393_300k":"ana",
+    "HydjetBass_DJUQ170_GSR_393_300k":"ana"
     }
 
 for sample,PD in samples.items():
