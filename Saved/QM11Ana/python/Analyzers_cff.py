@@ -13,19 +13,33 @@ akPu3PFJetAnalyzer = inclusiveJetAnalyzer.clone(
     genjetTag = 'ak3HiGenJets'
     )
 
-jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer)
+# For backward xcheck
+from Saved.DiJetAna.dijetAna_cff import djcalo
+djicpu5 = djcalo.clone (
+  hltNames = ['HLT_HIMinBiasHfOrBSC','HLT_HIJet35U', 'HLT_HIJet50U','HLT_HIJet75U'], # for allphysics
+  jetsrc = "icPu5patJets",
+  JECLab1 = "L3Absolute",
+  refjetsrc = "icPu5patJets",
+  nearJetPtMin = 1000,
+  trksrc = "hiGoodTracks",
+  verbosity = 1
+  )
+djakpu3pf = djicpu5.clone(
+    jetsrc = "akPu3PFpatJets",
+    refjetsrc = "akPu3PFpatJets"
+    )
 
 #from MitHig.PixelTrackletAnalyzer
 trkAnalyzer = cms.EDAnalyzer("TrackAnalyzer",
     trackSrc = cms.InputTag("hiGoodTracks"),
     vertexSrc = cms.vstring("hiSelectedVertex"),
-    trackPtMin = cms.untracked.double(1.5),
+    trackPtMin = cms.untracked.double(0.9),
     fiducialCut = cms.untracked.bool(True)
     )
 
 genpAnalyzer = cms.EDAnalyzer('HiGenAnalyzer',
     useHepMCProduct = cms.untracked.bool(False),
-    ptMin = cms.untracked.double(1.5),
+    ptMin = cms.untracked.double(0.9),
     chargedOnly = cms.untracked.bool(True),
     src = cms.untracked.InputTag("hiSignal"),
     genpSrc = cms.untracked.InputTag("hiGenParticles"),
@@ -37,13 +51,16 @@ from edwenger.HiTrkEffAnalyzer.hitrkEffAnalyzer_cff import *
 hitrkEffAnalyzer_nt = hitrkEffAnalyzer.clone(
     neededCentBins = cms.untracked.vint32(0, 1, 3, 11, 19, 35),
     tracks = "hiGoodTracks",
-    trkPtMin = 1.5,
+    trkPtMin = 0.9, # for hiGoodTracks
     fiducialCut = True,
     fillNtuples = True,
     jets = 'akPu3PFpatJets'
     )
 hitrkEffAna_nt = cms.Sequence(cutsTPForFak*cutsTPForEff*hitrkEffAnalyzer_nt)
 
-# final trk ana seq
+# final sequences
 trkcorr_seq = cms.Sequence( (hitrkEffAna_nt) )
 trkana_seq = cms.Sequence( trkAnalyzer * genpAnalyzer )
+trkana_seq_data = cms.Sequence( trkAnalyzer )
+jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djicpu5 * djakpu3pf)
+
