@@ -60,28 +60,19 @@ process.TFileService = cms.Service("TFileService",
 # ----- jet reco extra and analyzers -----
 process.load("Saved.QM11Ana.ExtraReco_cff")
 process.load("Saved.QM11Ana.Analyzers_cff")
-process.load("Saved.DiJetAna.dijetAna_cff")
 process.load("MNguyen.Configuration.HI_JetSkim_cff")
 
 # =============== customization ==================
 process.hltJetHI.HLTPaths = ["HLT_HIJet35U"]
 from Saved.QM11Ana.customise_cfi import *
+enableData(process)
 # custom extra reco
-usehiGoodMergedTracks(process)
-# custom analyzers
-process.trkana_seq.remove(process.genpAnalyzer)
-process.djcalo.isMC = False
-process.djcalo.refJetType = -1
-process.djcalo.hltNames = ['HLT_HIMinBiasHfOrBSC','HLT_HIJet35U', 'HLT_HIJet35U','HLT_HIJet50U'] # for allphysics
-process.djcalo.jetsrc = "icPu5patJets"
-process.djcalo.nearJetPtMin = 80
-process.djcalo.verbosity = 1
-process.trkana_seq*=process.djcalo
+#usehiGoodMergedTracks(process)
 
 # =============== Final Paths =====================
 process.extraTrkReco = cms.Path( process.jetSkimSequence * process.hiTrackReco * process.hiextraTrackReco )
 process.extraPfReco = cms.Path( process.jetSkimSequence * process.HiParticleFlowRecoNoJets )
 process.extraJetReco = cms.Path( process.jetSkimSequence * process.runAllJets_data )
-process.ana_step = cms.Path( process.jetSkimSequence * process.trkana_seq * process.jetana_seq )
+process.ana_step = cms.Path( process.jetSkimSequence * process.trkana_seq_data * process.jetana_seq )
 
 process.schedule = cms.Schedule(process.extraTrkReco,process.extraPfReco,process.extraJetReco,process.ana_step)
