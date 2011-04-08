@@ -51,6 +51,9 @@ process.load("MNguyen.Configuration.HI_JetSkim_cff")
 
 # =============== customization ==================
 process.hltJetHI.HLTPaths = ["HLT_HIJet35U"]
+process.jetEtFilter.etMin = 50
+process.jetSkimSequence*=process.icPu5CaloJetsL2L3
+process.jetSkimSequence*=process.jetEtFilter
 from Saved.QM11Ana.customise_cfi import *
 enableData(process)
 # custom extra reco
