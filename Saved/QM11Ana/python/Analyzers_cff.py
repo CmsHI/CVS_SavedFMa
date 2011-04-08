@@ -14,20 +14,31 @@ akPu3PFJetAnalyzer = inclusiveJetAnalyzer.clone(
     )
 
 # For backward xcheck
-from Saved.DiJetAna.dijetAna_cff import djcalo
+from Saved.DiJetAna.dijetAna_cfi import *
 djicpu5 = djcalo.clone (
   hltNames = ['HLT_HIMinBiasHfOrBSC','HLT_HIJet35U', 'HLT_HIJet50U','HLT_HIJet75U'], # for allphysics
   jetsrc = "icPu5patJets",
-  JECLab1 = "L3Absolute",
   refjetsrc = "icPu5patJets",
   nearJetPtMin = 1000,
   trksrc = "hiGoodTracks",
   verbosity = 1
   )
-djakpu3pf = djicpu5.clone(
-    jetsrc = "akPu3PFpatJets",
-    refjetsrc = "akPu3PFpatJets"
-    )
+djakpu3pf_pfcand = djicpu5.clone(
+  jetsrc = "akPu3PFpatJets",
+  refjetsrc = "akPu3PFpatJets",
+  nearJetPtMin = 70,
+  anaTrkType = cms.int32(4),
+  trksrc = cms.InputTag("particleFlow",""),
+  trkPtMin = 0.5
+  )
+djgenic5 = djgen.clone(
+  refjetsrc = "icPu5patJets",
+  nearJetPtMin = 1000
+  )
+djgenak3 = djgenic5.clone(
+  jetsrc = "ak3HiGenJets",
+  refjetsrc = "akPu3PFpatJets"
+  )
 
 #from MitHig.PixelTrackletAnalyzer
 trkAnalyzer = cms.EDAnalyzer("TrackAnalyzer",
@@ -62,5 +73,6 @@ hitrkEffAna_nt = cms.Sequence(cutsTPForFak*cutsTPForEff*hitrkEffAnalyzer_nt)
 trkcorr_seq = cms.Sequence( (hitrkEffAna_nt) )
 trkana_seq = cms.Sequence( trkAnalyzer * genpAnalyzer )
 trkana_seq_data = cms.Sequence( trkAnalyzer )
-jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djicpu5 * djakpu3pf)
+jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djicpu5 * djakpu3pf_pfcand * djgenic5 * djgenak3)
+jetana_seq_data = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djicpu5 * djakpu3pf_pfcand )
 
