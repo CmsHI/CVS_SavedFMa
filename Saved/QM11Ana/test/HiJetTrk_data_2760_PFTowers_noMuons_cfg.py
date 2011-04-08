@@ -15,6 +15,13 @@ process.maxEvents = cms.untracked.PSet(
             input = cms.untracked.int32(10)
     )
 
+# Lumi Ranges from json
+import PhysicsTools.PythonAnalysis.LumiList as LumiList
+import FWCore.ParameterSet.Types as CfgTypes
+myLumis = LumiList.LumiList(filename = 'json.txt').getCMSSWString().split(',')
+process.source.lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
+process.source.lumisToProcess.extend(myLumis)
+
 #load some general stuff
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.GlobalTag.globaltag = 'GR_R_39X_V6B::All'
