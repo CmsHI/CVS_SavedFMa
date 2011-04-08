@@ -25,5 +25,4 @@ def enableData(process):
   process.akPu5PFJetAnalyzer.isMC = False
   process.akPu3PFJetAnalyzer.isMC = False
   process.djicpu5.isMC = False
-  process.djakpu3pf.isMC = False
-
+  process.djakpu3pf_pfcand.isMC = False
