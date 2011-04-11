@@ -15,7 +15,7 @@ const Int_t MAXNP = 100000;
 
 struct JetFragRel
 {
-  Float_t cent;
+  Int_t cbin;
   Float_t jtpt[2];
   Float_t jteta[2];
   Float_t jtphi[2];
@@ -37,7 +37,7 @@ struct JetFragRel
   Float_t trkfak[MAXNP];
   Float_t trkwt[MAXNP];
   void SetBranches(TTree * t) {
-    t->Branch("cent",&(this->cent),"cent/F");
+    t->Branch("cbin",&(this->cbin),"cbin/I");
     t->Branch("jtpt",this->jtpt,"jtpt[2]/F");
     t->Branch("jteta",this->jteta,"jteta[2]/F");
     t->Branch("jtphi",this->jtphi,"jtphi[2]/F");
@@ -58,7 +58,7 @@ struct JetFragRel
     t->Branch("trkwt",this->trkwt,"trkwt[np]/F");
   }
   void LoadBranches(TTree * t) {
-    t->SetBranchAddress("cent",&(this->cent));
+    t->SetBranchAddress("cbin",&(this->cbin));
     t->SetBranchAddress("jtpt",this->jtpt);
     t->SetBranchAddress("jteta",this->jteta);
     t->SetBranchAddress("jtphi",this->jtphi);
@@ -111,7 +111,7 @@ class FragAnaLoop
     void Loop();
 
     Bool_t SelEvt(const JetFragRel & jfr) {
-      return (jfr.cent>=cut_->CentMin && jfr.cent<cut_->CentMax);
+      return (jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax);
     }
     Bool_t SelJet(const JetFragRel & jfr, Int_t j) {
       if (j==0
@@ -161,7 +161,7 @@ void FragAnaLoop::Init()
 
       vhTrkCorrPPt_[j].push_back(new TH2D(Form("h%sTrkCorr%dPPt_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",50,0,100,50,-0.2,1.2));
       vhTrkCorrJEt_[j].push_back(new TH2D(Form("h%sTrkCorr%dJEt_j%d",name_.Data(),lv,j),";Jet p_{T} (GeV/c);",100,0,400,50,-0.2,1.2));
-      vhTrkCorrCent_[j].push_back(new TH2D(Form("h%sTrkCorr%dCent_j%d",name_.Data(),lv,j),";Centrality (%);",10,0,100,50,-0.2,1.2));
+      vhTrkCorrCent_[j].push_back(new TH2D(Form("h%sTrkCorr%dCent_j%d",name_.Data(),lv,j),";Centrality (%);",10,0,40,50,-0.2,1.2));
     }
   }
 
@@ -186,7 +186,7 @@ void FragAnaLoop::Loop()
   // ===========================
   for (Int_t i=0; i<numEntries; ++i) {
     t_->GetEntry(i);
-    //cout << jfr_.jtpt[0] << " " << jfr_.jteta[0] << " " << jfr_.jtphi[0] << endl;
+    if (i%5000==0) cout << "Entry " << i << " (" << (Float_t)i/numEntries*100 << "%) cbin: " << jfr_.cbin << " jet0: " << jfr_.jtpt[0] << " " << jfr_.jteta[0] << " " << jfr_.jtphi[0] << endl;
     // Calc Dijet properties
     jfr_.jdphi = deltaPhi(jfr_.jtphi[0],jfr_.jtphi[1]);
     // ===========================
@@ -232,8 +232,8 @@ void FragAnaLoop::Loop()
 	// =======================
 	// Get Corrections
 	// =======================
-	if (anaTrkType_>=2) {
-	  vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cent,corr);
+	if (anaTrkType_>=2&&jfr_.pjdr[j][ip]<0.8) {
+	  vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cbin,corr);
 	  eff = corr[0];
 	  fak = corr[1];
 	  mul = corr[2];
@@ -272,7 +272,7 @@ void FragAnaLoop::Loop()
 	  for (Int_t lv=1; lv<=4; ++lv) {
 	    vhTrkCorrPPt_[j][lv]->Fill(trkEnergy,corr[lv-1]);
 	    vhTrkCorrJEt_[j][lv]->Fill(jfr_.jtpt[j],corr[lv-1]);
-	    vhTrkCorrCent_[j][lv]->Fill(jfr_.cent,corr[lv-1]);
+	    vhTrkCorrCent_[j][lv]->Fill(jfr_.cbin,corr[lv-1]);
 	  }
 	}
       }
