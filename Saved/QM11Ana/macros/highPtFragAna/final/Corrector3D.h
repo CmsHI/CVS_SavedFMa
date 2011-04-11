@@ -172,13 +172,13 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
   Int_t isample=-1;
 
   // Get the corresponding centrality bin
-  if (cent<1) {
+  if (cent<2) {
     bin = 0;
-  } else if (cent<3) {
+  } else if (cent<4) {
     bin = 1;
-  } else if (cent<11) {
+  } else if (cent<12) {
     bin = 2;
-  } else if (cent<19) {
+  } else if (cent<20) {
     bin = 3;   
   } else if (cent<40) {
     bin = 4;
