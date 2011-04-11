@@ -26,6 +26,7 @@ class Corrector3D
     Int_t ptRebinFactor_;
     Int_t sampleMode_; // 0 choose individually, 1 merge samples
     Int_t smoothLevel_;
+    Bool_t isLeadingJet_;
 
     vector<TString> levelName_;
     vector<vector<TString> > levelInput_;
@@ -55,7 +56,8 @@ Corrector3D::Corrector3D(TString name, TString append, TString mod) :
   trkCorrModule_(mod),
   ptRebinFactor_(1),
   sampleMode_(0),
-  smoothLevel_(0)
+  smoothLevel_(0),
+  isLeadingJet_(true)
 {
   centBin_.push_back("0to1");
   centBin_.push_back("2to3");
@@ -95,11 +97,12 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
   cout << "==============================================" << endl;
   cout << "inputMethod: " << inputMethod << ", ptRebinFactor: " << ptRebinFactor_ << endl;
   cout << "Retrieval setup - sampleMode: " << sampleMode_ << " smoothLevel: " << smoothLevel_ << endl;
+  cout << "isLeadingJet: " << isLeadingJet_ << endl;
   // =============================
   // Setup Inputs
   // =============================
   for (Int_t i=0; i<ptHatMin_.size(); ++i) {
-    TString fname=Form("trkcorr/%s%.0f%s.root",corrSetName_.Data(),ptHatMin_[i],corrSetNameApp_.Data());
+    TString fname=Form("../trkcorr/%s%.0f%s.root",corrSetName_.Data(),ptHatMin_[i],corrSetNameApp_.Data());
     sample_.push_back(new TFile(fname));
     cout << sample_[i]->GetName() << endl;
   }
@@ -169,15 +172,15 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
   Int_t isample=-1;
 
   // Get the corresponding centrality bin
-  if (cent<5) {
+  if (cent<1) {
     bin = 0;
-  } else if (cent<10) {
+  } else if (cent<3) {
     bin = 1;
-  } else if (cent<30) {
+  } else if (cent<11) {
     bin = 2;
-  } else if (cent<50) {
+  } else if (cent<19) {
     bin = 3;   
-  } else if (cent<100) {
+  } else if (cent<40) {
     bin = 4;
   }
 
@@ -202,8 +205,12 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
     for (Int_t m=0; m<2; ++m) {
       for (Int_t s=0; s<sample_.size(); ++s) {
 	if (sampleMode_==0 && s!=isample) continue;
-	if (jet<ptHatMin_[s]) continue;
-	for (Int_t j=jetBin; j<=jetBin+1; ++j) {
+	if (isLeadingJet_) {
+	  if (jet<ptHatMin_[s]) continue;
+	} else {
+	  if (jet<ptHatMin_[s]-20) continue;
+	}
+	for (Int_t j=jetBin-1; j<=jetBin+1; ++j) {
 	  if (smoothLevel_<1&&j!=jetBin) continue;
 	  for (Int_t e=etaBin-1; e<etaBin+1; ++e) {
 	    if (smoothLevel_<2&&e!=etaBin) continue;
