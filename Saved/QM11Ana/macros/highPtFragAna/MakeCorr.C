@@ -7,20 +7,20 @@ using namespace std;
 void MakeCorr(Float_t ptHatMin, TString infname="")
 {
   //TString inFile(infname);
-  TString inFile(Form("trees/tr_hydjuq%.0f_jtv2_2.root",ptHatMin));
-  //TString inFile(Form("trees/tr_hydjuq%.0f_jtv5_simTrackTree.root",ptHatMin));
-  TChain * tsim = new TChain("hitrkEffAnalyzer_nt/simTrackTree");
-  //TChain * tsim = new TChain("simTrackTree");
+  //TString inFile(Form("trees/tr_hydjuq%.0f_jtv2_2.root",ptHatMin));
+  TString inFile(Form("trees/tr_hydjuq%.0f_jtv5_simTrackTree.root",ptHatMin));
+  //TChain * tsim = new TChain("hitrkEffAnalyzer_nt/simTrackTree");
+  TChain * tsim = new TChain("simTrackTree");
   tsim->Add(inFile);
   //tsim->Print();
 
-  //inFile = Form("trees/tr_hydjuq%.0f_jtv5_recTrackTree.root",ptHatMin);
-  TChain * trec = new TChain("hitrkEffAnalyzer_nt/recTrackTree");
-  //TChain * trec = new TChain("recTrackTree");
+  inFile = Form("trees/tr_hydjuq%.0f_jtv5_recTrackTree.root",ptHatMin);
+  //TChain * trec = new TChain("hitrkEffAnalyzer_nt/recTrackTree");
+  TChain * trec = new TChain("recTrackTree");
   trec->Add(inFile);
   //trec->Print();
 
-  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv2_2_cv6.root",ptHatMin),"RECREATE");
+  TFile * outfile = new TFile(Form("trkcorr/trkCorrHisAna_djuq%.0f_jtv5_cv6.root",ptHatMin),"RECREATE");
   cout << "Output: " << outfile->GetName() << endl;
 
   // JEC
@@ -190,6 +190,7 @@ void MakeCorr(Float_t ptHatMin, TString infname="")
   anaB2.LoopRec();
   anaB2.WriteHistograms();
 
+  /*
   // =========
   // B2J1
   // =========
@@ -211,6 +212,7 @@ void MakeCorr(Float_t ptHatMin, TString infname="")
   anaB2J2.LoopSim();
   anaB2J2.LoopRec();
   anaB2J2.WriteHistograms();
+  */
 
   // =========
   // B2InConeJ1
