@@ -351,9 +351,10 @@ void TrkCorrHisAna::LoopSim()
     if (i%1000000==0) cout << i/1000 << "k: " << s.ids << " " << s.etas << " " << s.pts << " " << s.jetr << " " << s.cbin << " parton: " << s.jrflavor << endl;
     //cout << "not in cone(" << ConeRadius_ << ")? " << (s.jrdr>ConeRadius_) << " not j2? " << (s.jrind!=1) << endl;
     //cout << "not in cone2? " << (s.jrdr>ConeRadius_||s.jrind!=1) << endl;
-    if (selMode_==1 && s.jrdr>ConeRadius_) continue;
-    else if (selMode_==2 && (s.jrdr>ConeRadius_||s.jrind!=0)) continue;
-    else if (selMode_==3 && (s.jrdr>ConeRadius_||s.jrind!=1)) continue;
+    if (selMode_==1 && (s.jrind!=0)) continue;
+    else if (selMode_==2 && (s.jrind!=1)) continue;
+    else if (selMode_==3 && (s.jrdr>ConeRadius_||s.jrind!=0)) continue;
+    else if (selMode_==4 && (s.jrdr>ConeRadius_||s.jrind!=1)) continue;
     else if (selMode_==11 && (s.jrind==0||s.jrind==1)) continue;
     else if (selMode_==102 && (s.jrdr>ConeRadius_||abs(s.jrflavor)>6)) continue;
     else if (selMode_==103 && (s.jrdr>ConeRadius_||s.jrflavor!=21)) continue;
@@ -374,9 +375,10 @@ void TrkCorrHisAna::LoopRec()
     trec_->GetEntry(i);
     if (doJEC_==1) r.jetr*=anajec_->GetJEC(r.jetr,r.jetar);
     if (i%1000000==0) cout << i/1000 << "k: " << r.charge << " " << r.etar << " " << r.ptr << " " << r.jetr << " " << r.cbin << r.jrflavor << endl;
-    if (selMode_==1 && r.jrdr>ConeRadius_) continue;
-    else if (selMode_==2 && (r.jrdr>ConeRadius_||r.jrind!=0)) continue;
-    else if (selMode_==3 && (r.jrdr>ConeRadius_||r.jrind!=1)) continue;
+    if (selMode_==1 && (r.jrind!=0)) continue;
+    else if (selMode_==2 && (r.jrind!=1)) continue;
+    else if (selMode_==3 && (r.jrdr>ConeRadius_||r.jrind!=0)) continue;
+    else if (selMode_==4 && (r.jrdr>ConeRadius_||r.jrind!=1)) continue;
     else if (selMode_==11 && (r.jrind==0||r.jrind==1)) continue;
     else if (selMode_==102 && (r.jrdr>ConeRadius_||abs(r.jrflavor)>6)) continue;
     else if (selMode_==103 && (r.jrdr>ConeRadius_||r.jrflavor!=21)) continue;
