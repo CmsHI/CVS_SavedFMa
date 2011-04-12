@@ -12,19 +12,19 @@ void loopTrkClosure(Int_t inputSample=1,
   // ===================================
   // Inputs
   // ===================================
-  Double_t ptHatMin=170;
+  Double_t ptHatMin=80;
   TString infrec,infgen;
-  TString tag,outName;
+  TString tag;
   TChain * trec = new TChain("tjf");
   TChain * tgen = new TChain("tjf");
   //TString algo="akpu3pf";
   TString algo="akpu3pf";
-  TString trkcorrVersion="cv3";
+  TString trkcorrVersion="cv6";
   cout << "=============== MulFF Ana ======================" << endl;
   cout << "  jet: " << algo << " trkCorr: " << trkcorrVersion << endl;
   if (inputSample==0) {
     infrec=Form("../ntout/tranav2_data_%s.root",algo.Data());
-    tag = Form("tv1data_%s_%s",algo.Data(),trkcorrVersion.Data());
+    tag = Form("tv2data_%s_%s",algo.Data(),trkcorrVersion.Data());
   }
 
   if (inputSample==1) {
@@ -33,7 +33,7 @@ void loopTrkClosure(Int_t inputSample=1,
     tgen->Add(infgen);
     if (tgen->GetEntries()>0) cout << infgen << ": " << tgen->GetEntries() << endl;
     else { cout << infgen << " has 0 entries" << endl; exit(1); }
-    tag = Form("tv1mc%.0f_%s_%s",ptHatMin,algo.Data(),trkcorrVersion.Data());
+    tag = Form("tv2mc%.0f_%s_%s",ptHatMin,algo.Data(),trkcorrVersion.Data());
   }
 
   trec->Add(infrec);
@@ -50,7 +50,7 @@ void loopTrkClosure(Int_t inputSample=1,
   cut.doSel = doSel;
   cut.CentMin=0;
   cut.CentMax=8;
-  cut.JEtMin[0] = 100;
+  cut.JEtMin[0] = ptHatMin+10;
   cut.JEtMax[0] = 250;
   cut.JEtMin[1] = 50;
   cut.JEtMax[1] = 250;
@@ -71,17 +71,15 @@ void loopTrkClosure(Int_t inputSample=1,
   //trkCorr.Init(0);
   //TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
   //trkCorr.Init(1,"TrkCorr2DB0.root");
-  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_jtv2_2_cv5","B2InConeJ1");
+  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_jtv2_2_"+trkcorrVersion,"B2InConeJ1");
   //Corrector3D trkCorrJ1("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_slead","hitrkEffAnalyzer");
   trkCorrJ1.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrJ1.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
-  trkCorrJ1.isLeadingJet_ = true;
   trkCorrJ1.Init();
-  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_jtv2_2_cv5","B2InConeJ2");
+  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_jtv2_2_"+trkcorrVersion,"B2InConeJ2");
   //Corrector3D trkCorrJ2("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_lead","hitrkEffAnalyzer");
   trkCorrJ2.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrJ2.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
-  trkCorrJ2.isLeadingJet_ = false;
   trkCorrJ2.Init();
 
   // ===================================
@@ -147,7 +145,7 @@ void loopTrkClosure(Int_t inputSample=1,
   // ===================================
   Int_t colors[10] = {kGray+2,kViolet,kBlue+1,kGreen+2,kOrange+2,kMagenta,kRed};
   for (Int_t j=0; j<2; ++j) {
-    TString append(Form("_j%d_%s",j,outName.Data()));
+    TString append(Form("_j%d_%s",j,tag.Data()));
     // prepare histogram frame
     genfana.vhPPtCorr_[j][0]->SetAxisRange(4,100,"X");
     genfana.vhPPtCorr_[j][0]->SetAxisRange(1e-3,5e1,"Y");

@@ -233,7 +233,7 @@ void FragAnaLoop::Loop()
 	// Get Corrections
 	// =======================
 	if (anaTrkType_>=2&&jfr_.pjdr[j][ip]<0.8) {
-	  vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cbin,corr);
+	  vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cbin,corr,jfr_.jtpt[0]);
 	  eff = corr[0];
 	  fak = corr[1];
 	  mul = corr[2];

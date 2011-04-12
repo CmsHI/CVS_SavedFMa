@@ -26,7 +26,6 @@ class Corrector3D
     Int_t ptRebinFactor_;
     Int_t sampleMode_; // 0 choose individually, 1 merge samples
     Int_t smoothLevel_;
-    Bool_t isLeadingJet_;
 
     vector<TString> levelName_;
     vector<vector<TString> > levelInput_;
@@ -44,7 +43,7 @@ class Corrector3D
 
     Corrector3D(TString name="trkCorrHisAna_djuqv1",TString app="",TString mod="hitrkEffAnalyzer");
     void Init(Int_t inputMethod=0, TString corrFileName="");
-    Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
+    Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr, Float_t jet1);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
     void Write();
     TH1 * InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin, Int_t jetEndBin,Int_t mode=0,Int_t begbin=0, Int_t endbin=-1);
@@ -56,8 +55,7 @@ Corrector3D::Corrector3D(TString name, TString append, TString mod) :
   trkCorrModule_(mod),
   ptRebinFactor_(1),
   sampleMode_(0),
-  smoothLevel_(0),
-  isLeadingJet_(true)
+  smoothLevel_(0)
 {
   centBin_.push_back("0to1");
   centBin_.push_back("2to3");
@@ -97,7 +95,6 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
   cout << "==============================================" << endl;
   cout << "inputMethod: " << inputMethod << ", ptRebinFactor: " << ptRebinFactor_ << endl;
   cout << "Retrieval setup - sampleMode: " << sampleMode_ << " smoothLevel: " << smoothLevel_ << endl;
-  cout << "isLeadingJet: " << isLeadingJet_ << endl;
   // =============================
   // Setup Inputs
   // =============================
@@ -166,7 +163,7 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
   }
 }
 
-Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr)
+Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr, Float_t jet1)
 {
   Int_t bin = -1;
   Int_t isample=-1;
@@ -205,12 +202,8 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
     for (Int_t m=0; m<2; ++m) {
       for (Int_t s=0; s<sample_.size(); ++s) {
 	if (sampleMode_==0 && s!=isample) continue;
-	if (isLeadingJet_) {
-	  if (jet<ptHatMin_[s]) continue;
-	} else {
-	  if (jet<ptHatMin_[s]-20) continue;
-	}
-	for (Int_t j=jetBin-1; j<=jetBin+1; ++j) {
+	if (jet1<ptHatMin_[s]) continue;
+	for (Int_t j=jetBin; j<=jetBin+1; ++j) {
 	  if (smoothLevel_<1&&j!=jetBin) continue;
 	  for (Int_t e=etaBin-1; e<etaBin+1; ++e) {
 	    if (smoothLevel_<2&&e!=etaBin) continue;
