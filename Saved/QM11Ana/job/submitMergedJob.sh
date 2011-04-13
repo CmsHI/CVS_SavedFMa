@@ -1,18 +1,18 @@
 #~/bin/bash -
 if [ $# -lt 3 ]; then
   echo Usage:
-  echo "  $0 <cfg> <input_list> <output_dir>"
+  echo "  $0 <cfg> <input_list> <output_dir> <n_per_merge>"
   exit 1
 fi
 
 cfg=$1
 inputList=$2
 output_dir=$3
+nPerMerge=$4
 
 # initialize
 ct=0
 cmd=
-nPerMerge=10
 N=`cat $inputList | wc -l`
 startDir=`pwd`
 echo $inputList: $N files

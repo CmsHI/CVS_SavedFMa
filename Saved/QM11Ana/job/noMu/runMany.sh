@@ -11,7 +11,7 @@ outputDir=$2
 outputFile=$3
 maxEvents=$4
 inputFiles=$5
-swenv=swenv=/net/hibat0003/d00/scratch/frankma/HI/jet/QM11_399p1_noMu/env.sh
+swenv=/net/hibat0003/d00/scratch/frankma/HI/jet/QM11_399p1_noMu/env.sh
 
 # check
 if [ ! -e $cfg ]; then
@@ -24,7 +24,7 @@ echo $outputFile
 outputFileName=${outputFile##*/}
 echo $outputFileName
 logDir=$outputDir/log
-logFile=$logDir/${outputFileName%.root}.txt
+logFile=${outputFileName%.root}.txt
 echo $logFile
 
 
@@ -41,3 +41,15 @@ echo $cmd
 
 # run!
 eval $cmd
+mv $logFile $logDir/
+fsize=`stat -c%s $outputFile`
+echo $fsize
+if [ $fsize -lt 50 ]; then
+  echo bad file: $outputFile
+  exit 1
+fi
+
+grep 'Event  Summary' $logDir/$logFile
+if [ $? -eq 0 ]; then
+  mv $outputFile $outputDir/
+fi
