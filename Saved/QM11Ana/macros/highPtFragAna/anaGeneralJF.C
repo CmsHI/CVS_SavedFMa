@@ -24,9 +24,10 @@ void anaGeneralJF(
   //TString fdataname(Form("trees/tr_hydjuq%d_jtv2_2_50k.root",ptHatMin));
   //TString fdataname(Form("trees/merged_JetAnalysisTTrees_hiGoodTracks_condor_v2.root"));
   //TString tag(Form("trana%s_hydjuq%d_mc_akpu3pf_t%d_50k",version.Data(),ptHatMin,particleType));
-  TString algo = "akPu3PFJetAnalyzer";
+  //TString algo = "akPu3PFJetAnalyzer";
+  TString algo = "j4";
   Int_t doJEC = 0;
-  TString tag(Form("trana%s_datamattv1_akpu3pf_hiGoodMerged",version.Data()));
+  TString tag(Form("trana%s_datamattpfv1_akpu3pf_hiGoodMerged",version.Data()));
   //TString algo = "inclusiveJetAnalyzer";
   //Int_t doJEC = 0;
   //TString tag(Form("trana%s_data_icpu5",version.Data()));
@@ -63,7 +64,7 @@ void anaGeneralJF(
   TFile * outf = new TFile(Form("ntout/%s.root",tag.Data()),"RECREATE");
 
   // ana
-  GeneralJetFragAna jfana("j4");
+  GeneralJetFragAna jfana(algo);
   //GeneralJetFragAna jfana("");
   jfana.evtTree_ = tevt;
   jfana.jetTree_ = tjet;
