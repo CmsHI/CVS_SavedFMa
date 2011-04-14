@@ -58,15 +58,48 @@ genpAnalyzer = cms.EDAnalyzer('HiGenAnalyzer',
 
 # trk eff
 from edwenger.HiTrkEffAnalyzer.hitrkEffAnalyzer_cff import *
-hitrkEffAnalyzer_nt = hitrkEffAnalyzer.clone(
+hitrkEffAnalyzer_akpu3pf = hitrkEffAnalyzer.clone(
+    # evt
     neededCentBins = cms.untracked.vint32(0, 1, 3, 11, 19, 35),
+    # trk selection
     tracks = "hiGoodTracks",
-    trkPtMin = 0.9, # for hiGoodTracks
+    # trkPtMin = 0.9, # for nt
     fiducialCut = True,
-    fillNtuples = True,
-    jets = 'akPu3PFpatJets'
+    # setup
+    fillNtuples = False,
+    ptBinScheme = 3, # coarse binning for jet ana
+    # jet-trk
+    jets = 'akPu3PFpatJets',
+    trkAcceptedJet = True, # jet |eta|<2
+    useJetEtMode = 2, # mode2: jet1, jet1 or jet_pt=0
+    jetTrkOnly = False # only trks in 0.8 cone or not
     )
-hitrkEffAna_nt = cms.Sequence(cutsTPForFak*cutsTPForEff*hitrkEffAnalyzer_nt)
+hitrkEffAnalyzer_akpu3pf_j1 = hitrkEffAnalyzer_akpu3pf.clone(
+    useJetEtMode = 1,
+    jetTrkOnly = True
+    )
+hitrkEffAnalyzer_akpu3pf_j2 = hitrkEffAnalyzer_akpu3pf.clone(
+    useJetEtMode = 1,
+    jetTrkOnly = True,
+    useSubLeadingJet = True
+    )
+hitrkEffAna_akpu3pf = cms.Sequence(cutsTPForFak*cutsTPForEff*hitrkEffAnalyzer_akpu3pf*hitrkEffAnalyzer_akpu3pf_j1*hitrkEffAnalyzer_akpu3pf_j2)
+
+hipixtrkEffAnalyzer_akpu3pf = hitrkEffAnalyzer_akpu3pf.clone(
+    tracks = "hiGoodMergedTracks",
+    label_tp_effic = "cutsTPForEffPxl",
+    label_tp_fake = "cutsTPForFakPxl"
+    )
+hipixtrkEffAnalyzer_akpu3pf_j1 = hipixtrkEffAnalyzer_akpu3pf.clone(
+    useJetEtMode = 1,
+    jetTrkOnly = True
+    )
+hipixtrkEffAnalyzer_akpu3pf_j2 = hipixtrkEffAnalyzer_akpu3pf.clone(
+    useJetEtMode = 1,
+    jetTrkOnly = True,
+    useSubLeadingJet = True
+    )
+hipixtrkEffAna_akpu3pf = cms.Sequence(cutsTPForFakPxl * cutsTPForEffPxl* hipixtrkEffAnalyzer_akpu3pf * hipixtrkEffAnalyzer_akpu3pf_j1 * hipixtrkEffAnalyzer_akpu3pf_j2)
 
 # centrality
 makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
@@ -77,7 +110,7 @@ makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
 
 
 # final sequences
-trkcorr_seq = cms.Sequence( (hitrkEffAna_nt) )
+trkcorr_seq = cms.Sequence( (hitrkEffAna_akpu3pf) )
 trkana_seq = cms.Sequence( trkAnalyzer * genpAnalyzer )
 trkana_seq_data = cms.Sequence( trkAnalyzer )
 jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djicpu5 * djakpu3pf_pfcand * djgenic5 * djgenak3)

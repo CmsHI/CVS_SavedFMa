@@ -12,6 +12,8 @@ def usehiGoodMergedTracks(process):
   print "hiGoodMergedTracks is used (except PF re-reco)! --> re-reco of conformalPixelTrackReco!"
   process.hiextraTrackReco *= process.conformalPixelTrackReco
   process.hiextraTrackReco *= process.hiGoodMergedTracks
+  print "add pixtrk eff ana"
+  process.trkcorr_seq *= process.hipixtrkEffAna_akpu3pf
   print "change trk analyzers to include low pt trks"
   process.trkAnalyzer.trackSrc = "hiGoodMergedTracks"
   process.trkAnalyzer.trackPtMin = 0.5
