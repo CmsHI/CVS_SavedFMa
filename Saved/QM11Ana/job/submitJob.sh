@@ -22,7 +22,7 @@ do
   inputTopDir=${i%/*.root}
   if [ -f $output_dir/tr_$ifile ];
   then echo file exits: $output_dir/dj_$ifile
-  else cmd="./condor64Basic.sh runOne.sh $cfg $inputTopDir $ifile $output_dir -1"
+  else cmd="./condor64Data.sh runOne.sh $cfg $inputTopDir $ifile $output_dir -1"
   fi
   echo $cmd
   eval $cmd
