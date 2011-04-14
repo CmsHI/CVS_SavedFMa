@@ -27,9 +27,11 @@ process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 
 # load centrality
+from CmsHi.Analysis2010.CommonFunctions_cff import *
+overrideCentrality(process)
 process.HeavyIonGlobalParameters = cms.PSet(
            centralityVariable = cms.string("HFhits"),
-           nonDefaultGlauberModel = cms.string("Hydjet_2760GeV"),
+           nonDefaultGlauberModel = cms.string("Hydjet_Bass"),
            centralitySrc = cms.InputTag("hiCentrality")
                      )
 
@@ -44,14 +46,15 @@ process.load("Saved.QM11Ana.Analyzers_cff")
 # =============== customization ==================
 from Saved.QM11Ana.customise_cfi import *
 # custom extra reco
-#usehiGoodMergedTracks(process)
+usehiGoodMergedTracks(process)
 
 # =============== Final Paths =====================
 #process.extraHiReco = cms.Path( process.makeCentralityTableTFile )
 process.extraTrkReco = cms.Path( process.hiTrackReReco * process.hiextraTrackReco )
 process.extraPfReco = cms.Path( process.HiParticleFlowRecoNoJets )
 process.extraJetReco = cms.Path( process.hiGen * process.runAllJets )
-process.ana_step = cms.Path( process.trkcorr_seq * process.trkana_seq * process.jetana_seq )
+#process.ana_step = cms.Path( process.trkcorr_seq * process.trkana_seq * process.jetana_seq )
 #process.ana_step = cms.Path( process.trkcorr_seq * process.jetana_seq )
+process.ana_step = cms.Path( process.trkcorr_seq * process.inclusiveJetAnalyzer * process.akPu3PFJetAnalyzer)
 
 process.schedule = cms.Schedule(process.extraTrkReco,process.extraPfReco,process.extraJetReco,process.ana_step)
