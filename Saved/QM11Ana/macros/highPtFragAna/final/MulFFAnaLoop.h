@@ -233,15 +233,15 @@ void FragAnaLoop::Loop()
 	// Get Corrections
 	// =======================
 	if (anaTrkType_>=2&&jfr_.pjdr[j][ip]<0.8) {
-	  vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cbin,corr,jfr_.jtpt[0]);
+	  trkwt = vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cbin,corr,jfr_.jtpt[0]);
 	  eff = corr[0];
 	  fak = corr[1];
 	  mul = corr[2];
 	  sec = corr[3];
 	  jfr_.trkeff[ip] = eff;
 	  jfr_.trkfak[ip] = fak;
-	  if (eff<1e-5) { eff=1; }
-	  trkwt = (1-fak)*(1-sec)/(eff*(1+mul));
+	  //if (eff<1e-5) { eff=1; }
+	  //trkwt = (1-fak)*(1-sec)/(eff*(1+mul));
 	  jfr_.trkwt[ip] = trkwt;
 	}
 	// Cone ana
