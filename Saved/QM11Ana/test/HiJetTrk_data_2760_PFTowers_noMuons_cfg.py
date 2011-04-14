@@ -7,7 +7,8 @@ process = cms.Process('HIJETS')
 # Input source
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(
-    '/store/hidata/HIRun2010/HIAllPhysics/RECO/SDmaker_3SD_1CS_PDHIAllPhysicsZSv2_SD_JetHI-v1/0055/A2915765-B04F-E011-BB14-003048FEADDC.root'
+    #'/store/hidata/HIRun2010/HIAllPhysics/RECO/SDmaker_3SD_1CS_PDHIAllPhysicsZSv2_SD_JetHI-v1/0055/A2915765-B04F-E011-BB14-003048FEADDC.root'
+    '/store/hidata/HIRun2010/HIAllPhysics/RECO/SDmaker_3SD_1CS_PDHIAllPhysicsZSv2_SD_JetHI-v1/0055/C4FC8A6D-B04F-E011-904A-003048FE9D54.root'
     )
                             )
 
@@ -57,12 +58,13 @@ process.jetSkimSequence*=process.jetEtFilter
 from Saved.QM11Ana.customise_cfi import *
 enableData(process)
 # custom extra reco
-#usehiGoodMergedTracks(process)
+usehiGoodMergedTracks(process)
 
 # =============== Final Paths =====================
 process.extraTrkReco = cms.Path( process.jetSkimSequence * process.hiTrackReReco * process.hiextraTrackReco )
 process.extraPfReco = cms.Path( process.jetSkimSequence * process.HiParticleFlowRecoNoJets )
 process.extraJetReco = cms.Path( process.jetSkimSequence * process.runAllJets_data )
-process.ana_step = cms.Path( process.jetSkimSequence * process.trkana_seq_data * process.jetana_seq_data )
+#process.ana_step = cms.Path( process.jetSkimSequence * process.trkana_seq_data * process.jetana_seq_data )
+process.ana_step = cms.Path( process.jetSkimSequence * process.jetana_seq_data )
 
 process.schedule = cms.Schedule(process.extraTrkReco,process.extraPfReco,process.extraJetReco,process.ana_step)
