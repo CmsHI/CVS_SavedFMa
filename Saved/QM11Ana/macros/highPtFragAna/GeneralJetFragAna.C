@@ -3,7 +3,8 @@ using namespace std;
 
 GeneralJetFragAna::GeneralJetFragAna(TString name) :
   name_(name),
-  anaJetv_(2)
+  anaJetv_(2),
+  treeFormat_(0)
 {
 }
 
@@ -12,12 +13,12 @@ void GeneralJetFragAna::Init(Int_t pType)
   cout << "============================" << endl;
   cout << "GeneralJetFragAna: " << name_ << " doJEC: " << doJEC_ << endl;
   cout << "leadJetPtMin: " << leadJetPtMin_ << " pptMin: " << pptMin_ << endl;
-  cout << "particleType: " << pType << endl;
+  cout << "treeFormat: " << treeFormat_ << "particleType: " << pType << endl;
   cout << "============================" << endl;
   // Inputs
-  anaEvt_.LoadBranches(evtTree_);
-  anaJets_.LoadBranches(jetTree_,name_);
-  anaPs_.LoadBranches(pTree_,pType);
+  anaEvt_.LoadBranches(evtTree_,treeFormat_);
+  anaJets_.LoadBranches(jetTree_,treeFormat_,name_);
+  anaPs_.LoadBranches(pTree_,treeFormat_,pType);
 
   // Outputs
   jfTree_ = new TTree("tjf","jet frag tree");

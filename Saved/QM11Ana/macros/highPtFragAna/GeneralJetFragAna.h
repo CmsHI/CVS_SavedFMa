@@ -21,7 +21,7 @@ struct AnaEvt
 {
   Int_t run, evt, lumi, cbin;
   Float_t cent,vz;
-  void LoadBranches(TChain * t) {
+  void LoadBranches(TChain * t, Int_t treeFormat) {
     t->SetBranchAddress("run",&(this->run));
     t->SetBranchAddress("evt",&(this->evt));
     t->SetBranchAddress("lumi",&(this->lumi));
@@ -37,18 +37,19 @@ struct AnaJets
   Float_t rawpt[MAXNJETS];
   Float_t jteta[MAXNJETS];
   Float_t jtphi[MAXNJETS];
-  void LoadBranches(TChain * t,TString name) {
-    /*
-    t->SetBranchAddress("n"+name,&(this->njets));
-    t->SetBranchAddress("corrpt_"+name,this->jtpt);
-    t->SetBranchAddress("jteta_"+name,this->jteta);
-    t->SetBranchAddress("jtphi_"+name,this->jtphi);
-    */
-    t->SetBranchAddress("nref",&(this->njets));
-    t->SetBranchAddress("jtpt",this->jtpt);
-    t->SetBranchAddress("rawpt",this->rawpt);
-    t->SetBranchAddress("jteta",this->jteta);
-    t->SetBranchAddress("jtphi",this->jtphi);
+  void LoadBranches(TChain * t, Int_t treeFormat, TString name="") {
+    if (treeFormat==0) {
+      t->SetBranchAddress("nref",&(this->njets));
+      t->SetBranchAddress("jtpt",this->jtpt);
+      t->SetBranchAddress("rawpt",this->rawpt);
+      t->SetBranchAddress("jteta",this->jteta);
+      t->SetBranchAddress("jtphi",this->jtphi);
+    } else if (treeFormat==1) {
+      t->SetBranchAddress("n"+name,&(this->njets));
+      t->SetBranchAddress("corrpt_"+name,this->jtpt);
+      t->SetBranchAddress("jteta_"+name,this->jteta);
+      t->SetBranchAddress("jtphi_"+name,this->jtphi);
+    }
   }
 };
 
@@ -58,19 +59,21 @@ struct AnaParticles
   Float_t ppt[MAXNP];
   Float_t peta[MAXNP];
   Float_t pphi[MAXNP];
-  void LoadBranches(TChain * t, Int_t pType) {
+  void LoadBranches(TChain * t, Int_t treeFormat, Int_t pType) {
     if (pType==2) {
-      // trkAna
-      /*
-      t->SetBranchAddress("ntrack",&(this->np));
-      t->SetBranchAddress("trackpt",this->ppt);
-      t->SetBranchAddress("tracketa",this->peta);
-      t->SetBranchAddress("trackphi",this->pphi);
-       */
-      t->SetBranchAddress("nTrk",&(this->np));
-      t->SetBranchAddress("trkPt",this->ppt);
-      t->SetBranchAddress("trkEta",this->peta);
-      t->SetBranchAddress("trkPhi",this->pphi);
+      if (treeFormat==0) {
+	// trkAna
+	t->SetBranchAddress("nTrk",&(this->np));
+	t->SetBranchAddress("trkPt",this->ppt);
+	t->SetBranchAddress("trkEta",this->peta);
+	t->SetBranchAddress("trkPhi",this->pphi);
+      } else if (treeFormat==1) {
+	// pf ana
+	t->SetBranchAddress("ntrack",&(this->np));
+	t->SetBranchAddress("trackpt",this->ppt);
+	t->SetBranchAddress("tracketa",this->peta);
+	t->SetBranchAddress("trackphi",this->pphi);
+      }
     } else if (pType==0) {
       // genpAna
       t->SetBranchAddress("mult",&(this->np));
@@ -97,6 +100,7 @@ struct JetFrag
   Float_t peta[MAXNP];
   Float_t pphi[MAXNP];
   void SetBranches(TTree * t) {
+    t->Branch("cent",&(this->cent),"cent/F");
     t->Branch("cbin",&(this->cbin),"cbin/I");
     t->Branch("jtpt",this->jtpt,"jtpt[2]/F");
     t->Branch("rawpt",this->rawpt,"rawpt[2]/F");
@@ -137,6 +141,7 @@ class GeneralJetFragAna
 
     Float_t leadJetPtMin_;
     Float_t pptMin_;
+    Int_t treeFormat_;
 
     // ana members
     TTree * jfTree_;

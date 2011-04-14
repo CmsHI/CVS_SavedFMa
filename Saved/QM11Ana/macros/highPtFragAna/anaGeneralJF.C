@@ -16,18 +16,20 @@ void anaGeneralJF(
 {
   gSystem->Load("libMathCore");
   gSystem->Load("libPhysics");
-  TString version("v3");
+  TString version("v4");
 
+  Int_t treeFormat = 1; // 0 for jra, 1 for pfana
+  Int_t doJEC = 0;
   // Inputs/Output
-  TString fdataname(Form("matttrees/Corrected_JetTrackPFCandTuple_HIJet35U_PFTowers_hiGoodMergedTracks.root"));
-  //TString fdataname(Form("matttrees/Corrected_JetTrackPFCandTuple_HIJet35U_PFTowers_hiGoodTracks_v2.root"));
+  //TString fdataname(Form("matttrees/Corrected_JetTrackPFCandTuple_HIJet35U_PFTowers_hiGoodMergedTracks.root"));
+  TString fdataname(Form("matttrees/Corrected_JetTrackPFCandTuple_HIJet35U_PFTowers_hiGoodTracks_v2.root"));
   //TString fdataname(Form("trees/tr_hydjuq%d_jtv2_2_50k.root",ptHatMin));
   //TString fdataname(Form("trees/merged_JetAnalysisTTrees_hiGoodTracks_condor_v2.root"));
   //TString tag(Form("trana%s_hydjuq%d_mc_akpu3pf_t%d_50k",version.Data(),ptHatMin,particleType));
   //TString algo = "akPu3PFJetAnalyzer";
+  //TString tag(Form("trana%s_datamattv2_akpu3pf_hiGood",version.Data()));
   TString algo = "j4";
-  Int_t doJEC = 0;
-  TString tag(Form("trana%s_datamattpfv1_akpu3pf_hiGoodMerged",version.Data()));
+  TString tag(Form("trana%s_datamattpfv2_akpu3pf_hiGood",version.Data()));
   //TString algo = "inclusiveJetAnalyzer";
   //Int_t doJEC = 0;
   //TString tag(Form("trana%s_data_icpu5",version.Data()));
@@ -39,18 +41,20 @@ void anaGeneralJF(
   cout << "Output: " << tag << endl;
 
   // Load Trees
-  //TChain * tevt = new TChain(algo+"/t");
-  TChain * tevt = new TChain("t");
+  TChain * tevt = 0;
+  if (treeFormat==0) tevt = new TChain(algo+"/t");
+  else if (treeFormat==1) tevt = new TChain("t");
   tevt->Add(fdataname);
 
-  //TChain * tjet = new TChain(algo+"/t");
-  TChain * tjet = new TChain("t");
+  TChain * tjet = 0;
+  if (treeFormat==0) tjet = new TChain(algo+"/t");
+  else if (treeFormat==1) tjet = new TChain("t");
   tjet->Add(fdataname);
 
   TChain * tp=0;
   if (particleType==2) {
-    //tp = new TChain("trkAnalyzer/trackTree");
-    tp = new TChain("t");
+    if (treeFormat==0) tp = new TChain("trkAnalyzer/trackTree");
+    else if (treeFormat==1) tp = new TChain("t");
   } else if (particleType==0) {
     tp = new TChain("genpAnalyzer/hi");
   }
@@ -73,6 +77,7 @@ void anaGeneralJF(
   jfana.pTree_ = tp;
   jfana.leadJetPtMin_=90;
   jfana.pptMin_=-1;
+  jfana.treeFormat_=treeFormat; // 0 for jra, 1 for pftree
   jfana.Init(particleType);
   jfana.Loop();
 
