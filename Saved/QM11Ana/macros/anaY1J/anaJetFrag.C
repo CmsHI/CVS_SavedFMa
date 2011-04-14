@@ -78,6 +78,23 @@ void anaJetFrag(
      hTrackingEff[i]=(TH2D*)fTrackingEffCorr->FindObjectAny(Form("rEff_cbin%d",i));
      hTrackingFake[i]=(TH2D*)fTrackingEffCorr->FindObjectAny(Form("rFak_cbin%d",i));
   }
+  // ===================================
+  // hiGood Correction
+  // ===================================
+  TString trkcorrVersion="cv6";
+  Corrector3D trkCorr("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2");
+  trkCorr.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
+  trkCorr.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
+  trkCorr.Init(0);
+  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ1");
+  trkCorrJ1.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
+  trkCorrJ1.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
+  trkCorrJ1.Init();
+  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ2");
+  trkCorrJ2.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
+  trkCorrJ2.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
+  trkCorrJ2.Init();
+
   //=======================================================================================================================
   // centrality reweighting
   //=======================================================================================================================
@@ -133,6 +150,10 @@ void anaJetFrag(
   jana.trackingPtBin_ = (TH1D*)hTrackingEff[0]->ProjectionY();
 
   jana.mixOffset_ = mixOffset;
+
+  jana.trkCorr_ = &trkCorr;
+  jana.vtrkCorr_[0] = &trkCorrJ1;
+  jana.vtrkCorr_[1] = &trkCorrJ2;
 
   // ====================================================================
   // Independent Jet Collection

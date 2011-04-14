@@ -21,6 +21,8 @@
 //#include "TF1.h"
 #include "TRandom3.h"
 #include "selectionCut.h"
+#include "../helpers.h"
+#include "../highPtFragAna/final/Corrector3D.h"
 const Float_t PI = 3.1415926535897932384626;
 const Float_t HPI = PI/2.;
 const Int_t kMax = 2;
@@ -134,6 +136,8 @@ public :
    TH2D *trackingFakeCorr_[10];
    TH1D *trackingPtBin_;
    TH1D *trackingEtaBin_;
+   Corrector3D * trkCorr_;
+   vector<Corrector3D *> vtrkCorr_;
 
    // Centrality Reweighting
    TH1D *hCentralityData_;
@@ -162,6 +166,9 @@ public :
    TH1D * hCPPtBgSub[2];
    TH2D * hPtPDR[2];
    TH2D * hPtPDRBg[2];
+   // trkcorr
+   TH2D * hTrkEffNoJet;
+   TH2D * hTrkEffJet[2];
 
    // Event cut for centrality reweighting
    TCut evtCut;
@@ -183,12 +190,7 @@ public :
    Int_t           npart;
    Int_t           ncoll;
    Float_t         cent;
-   Float_t         nljet;
-   Float_t         nljeta;
-   Float_t         nljphi;
-   Float_t         aljet;
-   Float_t         aljeta;
-   Float_t         aljphi;
+   Int_t	   centBin;
 
    // List of branches
    TBranch        *b_run;   //!
@@ -206,6 +208,7 @@ public :
    TBranch        *b_npart;   //!
    TBranch        *b_ncoll;   //!
    TBranch        *b_cent;   //!
+   TBranch        *b_centBin;   //!
 
    JetFragAna(TTree *tree=0,TString tag="Data",Int_t doMC=0);
    ~JetFragAna();

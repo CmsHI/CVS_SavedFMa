@@ -1,7 +1,7 @@
 #include <iostream>
 #include "TF1.h"
-#include "DataFormats/Math/interface/deltaR.h"
-#include "DataFormats/Math/interface/deltaPhi.h"
+//#include "DataFormats/Math/interface/deltaR.h"
+//#include "DataFormats/Math/interface/deltaPhi.h"
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
@@ -19,7 +19,8 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
   refJets_(2),
   mixOffset_(0),
   jetTreeMode_(0),
-  particleTreeMode_(0)
+  particleTreeMode_(0),
+  vtrkCorr_(2)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -105,6 +106,7 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
      hRefJEt[j]->Sumw2();
    }
 
+   hTrkEffNoJet = new TH2D("hTrkEffNoJet","",50,0,100,50,-0.2,1.2);
    for (Int_t j=0; j<2; ++j) {
      // cone
      hCPt[j] = new TH1D("h"+label[j]+"CPt","",cut.numJEtBins,cut.hisJEtMin,cut.hisJEtMax);
@@ -122,6 +124,8 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
      hCPPtBg[j]->Sumw2();
      hCPPtBgSub[j] = new TH1D("h"+label[j]+"CPPtBgSub","",numPPtBins,pptBins);
      hCPPtBgSub[j]->Sumw2();
+     // trk corr
+     hTrkEffJet[j] = new TH2D("h"+label[j]+"TrkEffJet","",50,0,100,50,-0.2,1.2);
    }
 }
 
@@ -180,6 +184,7 @@ void JetFragAna::Init(TTree *tree)
    fChain->SetBranchAddress("npart", &npart, &b_npart);
    fChain->SetBranchAddress("ncoll", &ncoll, &b_ncoll);
    fChain->SetBranchAddress("cent", &cent, &b_cent);
+   fChain->SetBranchAddress("cbin", &centBin, &b_centBin);
    //if (cut.Name.Contains("PF")) {
    //  fChain->SetBranchAddress("pfid", pfid, &b_pfid);
    //}
@@ -339,8 +344,8 @@ Int_t JetFragAna::GetJetEntry(TChain * t, AnaJet & jet, Long64_t entry)
 	//cout << "entry: " << entry << " old eta: " << etain << "  new eta: " << etaout << " " << anaJets_[i] << endl;
       }
     }
-    Float_t deltaPhi = reco::deltaPhi(anaJets_[0].phi(),anaJets_[1].phi());
-    anaJetDPhi_ = fabs(deltaPhi);
+    Float_t dphi = deltaPhi(anaJets_[0].phi(),anaJets_[1].phi());
+    anaJetDPhi_ = fabs(dphi);
     //
     // Random phi
     //
@@ -436,10 +441,10 @@ void JetFragAna::Loop()
   //=======================================================================================================================
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
-      if (jentry%500==0) cout << "jentry: " << jentry << " " << jentry/float(nentries) << endl;
       if (ientry < 0) break;
       nb = GetEntry(jentry);   nbytes += nb;
       GetJetEntry(jetTree_[jetTreeMode_],vj_[jetTreeMode_],(jentry+mixOffset_)%jetTreeNEntries[jetTreeMode_]);
+      if (jentry%500==0) cout << "jentry: " << jentry << " " << jentry/float(nentries) << ". cbin: " << centBin << "(" << cent << "%)" << " Jet1: " << anaJets_[0] << endl;
       ++numTotEvt;
 
       // =====================================================
@@ -530,13 +535,6 @@ void JetFragAna::Loop()
 	  //if (cut.Name.Contains("PFChHad") && pfid[i]!=1) continue;
 	  //if (cut.Name.Contains("PFPhoton") && pfid[i]!=4) continue;
 	  if (p_[i].pt()<cut.TrkPtMin||fabs(p_[i].eta())>=2.4) continue;
-	  // ------------------------
-	  // Track Efficiency/Fake Correction
-	  // ------------------------
-          double trackWeight=1;
-          if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(p_[i].pt(),p_[i].eta(),cent);
-	  // Dead forward pixel xcheck
-	  //if (peta[i]>2&&pphi[i]>-0.1&&pphi[i]<0.8) trackWeight=0;
 
 	  // ------------------------
 	  // calculate particle jet correlations
@@ -546,18 +544,40 @@ void JetFragAna::Loop()
 	  Double_t pdrbg[2]={ 9999,9999 };
 	  for (Int_t j=0; j<2; ++j) {
 	    // signal
-	    pdphi[j] = reco::deltaPhi(p_[i].phi(),anaJets_[j].phi());
-	    pdr[j] = reco::deltaR(p_[i].eta(),p_[i].phi(),anaJets_[j].eta(),anaJets_[j].phi());
+	    pdphi[j] = deltaPhi(p_[i].phi(),anaJets_[j].phi());
+	    pdr[j] = deltaR(p_[i].eta(),p_[i].phi(),anaJets_[j].eta(),anaJets_[j].phi());
 	    // bcksub
 	    // * If don't do event selection, make eta reflection the default bkg axis
 	    if (cut.BkgSubType.Contains("EtaRefl"||!doEvtSel_)) {
-	      pdrbg[j] = reco::deltaR(p_[i].eta(),p_[i].phi(),-1*anaJets_[j].eta(),anaJets_[j].phi());
+	      pdrbg[j] = deltaR(p_[i].eta(),p_[i].phi(),-1*anaJets_[j].eta(),anaJets_[j].phi());
 	    }
-	    // monitor histograms
-	    hPJDPhi[j]->Fill(pdphi[j],trackWeight);
 	  }
 
 	  Float_t trkEnergy=p_[i].pt();
+	  // ------------------------
+	  // Track Efficiency/Fake Correction
+	  // ------------------------
+          double trackWeight=1;
+          //if (doTrackingEffFakeCorr_) trackWeight = getEffFakeCorrection(p_[i].pt(),p_[i].eta(),cent);
+          if (doTrackingEffFakeCorr_) {
+	    Double_t corr[4];
+	    Bool_t inJet=false;
+	    for (Int_t j=0; j<2; ++j) {
+	      if (pdr[j]<0.8) {
+		trackWeight = vtrkCorr_[j]->GetCorr(trkEnergy,p_[i].eta(),anaJets_[j].pt(),centBin,corr,anaJets_[0].pt());
+		hTrkEffJet[j]->Fill(trkEnergy,corr[0]);
+		inJet=true;
+	      }
+	      // monitor histograms
+	      hPJDPhi[j]->Fill(pdphi[j],trackWeight);
+	    }
+	    if (!inJet) {
+	      trackWeight = trkCorr_->GetCorr(trkEnergy,p_[i].eta(),0,centBin,corr,1000.);
+	      hTrkEffNoJet->Fill(trkEnergy,corr[0]);
+	    }
+	    //if (jentry%500==0) cout << "track. eff (in" << inJet << "): " << corr[0] << " wt: " << trackWeight << endl;
+	  }
+
 	  // ------------------------
 	  // met calculation
 	  // ------------------------
@@ -603,12 +623,12 @@ void JetFragAna::Loop()
 		// Signal Cone
 		if (pdr[j]<cut.ConeSize) {
 		  jc_.cpt[j][b]+=trkEnergy*trackWeight;
-		  jc_.cptpara[j][b]+=cos(reco::deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
+		  jc_.cptpara[j][b]+=cos(deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
 		}
 		// Bkg Cone
 		if (pdrbg[j]<cut.ConeSize) {
 		  jc_.cptbg[j][b]+=trkEnergy*trackWeight;
-		  jc_.cptparabg[j][b]+=cos(reco::deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
+		  jc_.cptparabg[j][b]+=cos(deltaPhi(p_[i].phi(),anaJets_[0].phi()))*trkEnergy*trackWeight;
 		}
 		break;
 	      }
