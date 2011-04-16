@@ -89,8 +89,9 @@ struct AnaParticles
 // =====================================================
 struct JetFrag
 {
-  Int_t cbin;
   Float_t cent;
+  Int_t cbin;
+  Float_t vz;
   Float_t jtpt[2];
   Float_t rawpt[2];
   Float_t jteta[2];
@@ -102,6 +103,7 @@ struct JetFrag
   void SetBranches(TTree * t) {
     t->Branch("cent",&(this->cent),"cent/F");
     t->Branch("cbin",&(this->cbin),"cbin/I");
+    t->Branch("vz",&(this->vz),"vz/F");
     t->Branch("jtpt",this->jtpt,"jtpt[2]/F");
     t->Branch("rawpt",this->rawpt,"rawpt[2]/F");
     t->Branch("jteta",this->jteta,"jteta[2]/F");

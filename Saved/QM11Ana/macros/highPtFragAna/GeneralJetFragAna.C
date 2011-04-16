@@ -13,7 +13,7 @@ void GeneralJetFragAna::Init(Int_t pType)
   cout << "============================" << endl;
   cout << "GeneralJetFragAna: " << name_ << " doJEC: " << doJEC_ << endl;
   cout << "leadJetPtMin: " << leadJetPtMin_ << " pptMin: " << pptMin_ << endl;
-  cout << "treeFormat: " << treeFormat_ << "particleType: " << pType << endl;
+  cout << "treeFormat: " << treeFormat_ << " particleType: " << pType << endl;
   cout << "============================" << endl;
   // Inputs
   anaEvt_.LoadBranches(evtTree_,treeFormat_);
@@ -23,6 +23,7 @@ void GeneralJetFragAna::Init(Int_t pType)
   // Outputs
   jfTree_ = new TTree("tjf","jet frag tree");
   jf_.SetBranches(jfTree_);
+  jfTree_->SetAlias("Aj","(jtpt[0]-jtpt[1])/(jtpt[0]+jtpt[1])");
 }
 
 void GeneralJetFragAna::Loop()
@@ -64,6 +65,7 @@ void GeneralJetFragAna::Loop()
     // Event level vars
     jf_.cent = anaEvt_.cbin * 2.5;
     jf_.cbin = anaEvt_.cbin;
+    jf_.vz = anaEvt_.vz;
 
     // Jet level vars
     Int_t leadJetInd  = GetLeadingJet(anaJets_,anaJetv_);
