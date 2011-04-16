@@ -24,20 +24,21 @@ samples  = {
     #"Data_MinBias_DijetUnquenched50_d20101127":"ana"
     #"Data_MinBias_DijetUnquenched50_d20101211":"ana"
     # Tracking 50k per pt_hat in 393
-    #"HydjetBass_DJUQ30_GSR_v2":"ana",
+    "HydjetBass_DJUQ30_GSR_v2":"ana",
     #"HydjetBass_DJUQ50_GSR_v2":"ana",
     #"HydjetBass_DJUQ80_GSR_v2":"ana",
     #"HydjetBass_DJUQ110_GSR_v2":"ana",
     #"HydjetBass_DJUQ170_GSR_v2":"ana",
     # Tracking high_pt high stat
-    #"HydjetBass_DJUQ80_GSR_393_300k":"ana",
-    "HydjetBass_DJUQ110_GSR_393_300k":"ana"
-    #"HydjetBass_DJUQ170_GSR_393_300k":"ana"
+    "HydjetBass_DJUQ50_GSR_393_300k":"ana",
+    "HydjetBass_DJUQ80_GSR_393_300k":"ana",
+    #"HydjetBass_DJUQ110_GSR_393_300k":"ana"
+    "HydjetBass_DJUQ170_GSR_393_300k":"ana"
     }
 
 for sample,PD in samples.items():
   inputList="~/inputs_mc/"+sample+".txt"
   outputDir=scratch+"/"+PD+"/"+sample+"_"+jobTag
-  cmd="./submitMergedJob.sh custom_HiJetTrk_mc_2760_PFTowers_noMuons_cfg.py "+inputList+" "+outputDir+ " 10"
+  cmd="./submitMergedJob.sh custom_HiJetTrk_mc_2760_PFTowers_noMuons_cfg.py "+inputList+" "+outputDir+ " 20"
   print cmd
   os.system(cmd)
