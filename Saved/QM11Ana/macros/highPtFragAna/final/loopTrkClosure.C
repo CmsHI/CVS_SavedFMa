@@ -71,12 +71,12 @@ void loopTrkClosure(Int_t inputSample=1,
   //trkCorr.Init(0);
   //TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
   //trkCorr.Init(1,"TrkCorr2DB0.root");
-  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_jtv2_2_"+trkcorrVersion,"B2InConeJ1");
+  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ1");
   //Corrector3D trkCorrJ1("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_slead","hitrkEffAnalyzer");
   trkCorrJ1.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrJ1.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
   trkCorrJ1.Init();
-  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_jtv2_2_"+trkcorrVersion,"B2InConeJ2");
+  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ2");
   //Corrector3D trkCorrJ2("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_lead","hitrkEffAnalyzer");
   trkCorrJ2.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrJ2.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
