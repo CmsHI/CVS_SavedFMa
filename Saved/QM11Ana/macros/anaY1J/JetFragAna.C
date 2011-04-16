@@ -31,7 +31,7 @@ JetFragAna::JetFragAna(TTree *tree,TString tag,Int_t doMC) :
    Init(tree);
 
    // event cut for centrality reweighting:
-   evtCut = "nljet>120&&abs(nljeta)<2&&aljet>50&&abs(aljeta)<2&&jdphi>2./3*TMath::Pi()";
+   evtCut = "jtpt[0]>100&&abs(jteta[0])<2&&jtpt[1]>40&&abs(jteta[0])<2&&jdphi>2./3*TMath::Pi()&&abs(vz)<20";
 
    // ===================================================
    // ntuples
@@ -271,12 +271,12 @@ Int_t JetFragAna::Cut(Long64_t entry)
       return -1;
 
   if (cut.BaseCutType=="S1")
-    if (//vz<=cut.VzMin || vz>= cut.VzMax ||
+    if (vz<=cut.VzMin || vz>= cut.VzMax ||
        cent<cut.CentMin || cent>=cut.CentMax)
       return -1;
 
   if (cut.BaseCutType=="S2")
-    if (//vz<=cut.VzMin || vz>= cut.VzMax ||
+    if (vz<=cut.VzMin || vz>= cut.VzMax ||
 	cent<cut.CentMin || cent>=cut.CentMax ||
 	!hlt->at(2))
       return -1;

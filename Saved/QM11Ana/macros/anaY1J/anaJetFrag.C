@@ -27,14 +27,14 @@ void anaJetFrag(
     //TString SrcName = "PyquenUQ80" 
     TString SrcName = "HAZS_J35U",
     TString AnaVersion = "testtree",
-    TString modName = "djcalo",
+    TString modName = "akpu3pf",
     Double_t CentMin = 0,
     Double_t CentMax = 30,
     Double_t AjMin = 0,
-    Double_t AjMax = .11,
-    Double_t NrJEtMin = 120,
+    Double_t AjMax = 1,
+    Double_t NrJEtMin = 100,
     Double_t NrJEtMax = 500,
-    Double_t AwJEtMin = 50,
+    Double_t AwJEtMin = 40,
     Double_t AwJEtMax = 500,
     Double_t TrkPtMin = 0.5, // 0.5 for paper
     TString evtBase="S1",
@@ -70,17 +70,6 @@ void anaJetFrag(
   //=======================================================================================================================
   // tracking efficiency correction
   //=======================================================================================================================
-  TFile *fTrackingEffCorr = new TFile("trkCorrJet_bass10k.root");
-  TH2D *hTrackingEff[10];
-  TH2D *hTrackingFake[10];
-  for (int i=0;i<5;i++)
-  {
-     hTrackingEff[i]=(TH2D*)fTrackingEffCorr->FindObjectAny(Form("rEff_cbin%d",i));
-     hTrackingFake[i]=(TH2D*)fTrackingEffCorr->FindObjectAny(Form("rFak_cbin%d",i));
-  }
-  // ===================================
-  // hiGood Correction
-  // ===================================
   TString trkcorrVersion="cv6";
   Corrector3D trkCorr("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2");
   trkCorr.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
@@ -104,7 +93,7 @@ void anaJetFrag(
   //=======================================================================================================================
   // Output
   //=======================================================================================================================
-  TString outName(Form("final/jfh%s_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",AnaVersion.Data(),SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()));
+  TString outName(Form("qm11final/jfh%s_%s_%s_Cent%.0fto%.0f_Aj%.0fto%.0f_Sub%s.root",AnaVersion.Data(),SrcName.Data(),modName.Data(),CentMin,CentMax,AjMin*100,AjMax*100,BkgSubType.Data()));
   if (!doEvtSel) {
     outName=TString("nt_")+inFile0Name;
     outName.ReplaceAll("dj_","");
@@ -116,7 +105,7 @@ void anaJetFrag(
   JetFragAna jana(djTree,SrcName,doMC);
   jana.doEvtSel_ = doEvtSel;
   jana.doEtaCorr_ = doEtaCorr;
-  jana.doTrackingEffFakeCorr_ = true;
+  jana.doTrackingEffFakeCorr_ = false;
   jana.doCentralityReweighting_ = doReWeight;
   jana.doJetOnly_ = false;
   jana.cut.NrJEtaMax = 1.6; // 2, 1.6
@@ -130,14 +119,9 @@ void anaJetFrag(
   jana.cut.DJCutType = DJCutType;
   jana.cut.TrkPtMin = TrkPtMin;
   jana.cut.ConeSize = 0.8;
-  if (modName=="djcalo_genp"||modName=="djgen"
-      || inFile0Name.Contains("djcalo_genp")||inFile0Name.Contains("djgen")) {
-    jana.anaGenpType_=1;
-    jana.doTrackingEffFakeCorr_ = false;
-  }
-  if (SrcName.Contains("Sig")) jana.anaGenpType_=10;
-  if (SrcName.Contains("PFPhoton")) {
-    jana.doTrackingEffFakeCorr_ = false;
+  if (inFile0Name.Contains("_t2")||
+      inFile0Name.Contains("data")) {
+    jana.doTrackingEffFakeCorr_ = true;
   }
   jana.cut.BkgSubType = BkgSubType;
   jana.cut.SetCut();
@@ -145,9 +129,6 @@ void anaJetFrag(
   jana.cut.Print(1);
   jana.jetaCorr_ = jetaCorr;
   jana.hCentralityData_ = hCentralityData;  // centrality distribution from data
-
-  jana.trackingEtaBin_ = (TH1D*)hTrackingEff[0]->ProjectionX();
-  jana.trackingPtBin_ = (TH1D*)hTrackingEff[0]->ProjectionY();
 
   jana.mixOffset_ = mixOffset;
 
@@ -160,7 +141,7 @@ void anaJetFrag(
   // ====================================================================
   //jana.SetJetTree(0,inFile0Name,"djTree");
   jana.SetJetTree(0,inFile0Name,"tjf");
-  jana.SetJetTree(1,"dj_data50v2_djcalo_100_50_c0to30.root","djTree");
+  jana.SetJetTree(1,"dj_data50v2_djcalo_100_50_c0to30.root","djTree"); //for mixed sample
   jana.jetTreeMode_=0; // 0 for final analysis, 1 for inputsample_trk+data50_jet mix
 
   // Some Print out
@@ -171,12 +152,6 @@ void anaJetFrag(
     << " doEtaCorr: " << jana.doEtaCorr_ << " doTrkEffCorr: " << jana.doTrackingEffFakeCorr_
     << " anaGenpType: " << jana.anaGenpType_ << endl;
   cout << "  mixOffset: " << jana.mixOffset_ << endl;
-
-  for (int i=0;i<5;i++) {
-     jana.trackingEffCorr_[i] = hTrackingEff[i];
-     jana.trackingFakeCorr_[i] = hTrackingFake[i];
-
-  }
 
   // -- analysis selections --
   cout << endl << "====== DJ Selection: " << jana.cut.DJCutType << " ======" << endl;
