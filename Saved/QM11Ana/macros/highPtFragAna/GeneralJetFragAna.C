@@ -24,6 +24,7 @@ void GeneralJetFragAna::Init(Int_t pType)
   jfTree_ = new TTree("tjf","jet frag tree");
   jf_.SetBranches(jfTree_);
   jfTree_->SetAlias("Aj","(jtpt[0]-jtpt[1])/(jtpt[0]+jtpt[1])");
+  jfTree_->SetAlias("jdphi","acos(cos(jtphi[0]-jtphi[1]))");
 }
 
 void GeneralJetFragAna::Loop()
