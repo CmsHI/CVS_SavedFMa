@@ -43,7 +43,7 @@ class Corrector3D
 
     Corrector3D(TString name="trkCorrHisAna_djuqv1",TString app="",TString mod="hitrkEffAnalyzer");
     void Init(Int_t inputMethod=0, TString corrFileName="");
-    Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr, Float_t jet1);
+    Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
     void Write();
     TH1 * InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin, Int_t jetEndBin,Int_t mode=0,Int_t begbin=0, Int_t endbin=-1);
@@ -92,9 +92,9 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
 {
   cout << "==============================================" << endl;
   cout << " Setup: " << corrSetName_+corrSetNameApp_ << "/" << trkCorrModule_ << endl;
-  cout << "==============================================" << endl;
   cout << "inputMethod: " << inputMethod << ", ptRebinFactor: " << ptRebinFactor_ << endl;
   cout << "Retrieval setup - sampleMode: " << sampleMode_ << " smoothLevel: " << smoothLevel_ << endl;
+  cout << "==============================================" << endl;
   // =============================
   // Setup Inputs
   // =============================
@@ -163,7 +163,7 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
   }
 }
 
-Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr, Float_t jet1)
+Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr)
 {
   Int_t bin = -1;
   Int_t isample=-1;
@@ -200,19 +200,31 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
   vector<vector<Double_t> > mat(numLevels_,vector<Double_t>(2));
   for (Int_t lv=0; lv<numLevels_; ++lv) {
     for (Int_t m=0; m<2; ++m) {
+      //if (m==0) cout << "Num: ";
+      //if (m==1) cout << "Den: ";
       for (Int_t s=0; s<sample_.size(); ++s) {
 	if (sampleMode_==0 && s!=isample) continue;
 	if (jet<ptHatMin_[s]) continue;
-	for (Int_t j=jetBin; j<=jetBin+2; ++j) {
+	for (Int_t j=jetBin-1; j<=jetBin+1; ++j) { // jet pt smoothing
 	  if (smoothLevel_<1&&j!=jetBin) continue;
-	  for (Int_t e=etaBin-1; e<etaBin+1; ++e) {
-	    if (smoothLevel_<2&&e!=etaBin) continue;
-	    if (e<1||e>numEtaBins_) continue;
-	    mat[lv][m] += correction_[lv][s][bin][m]->GetBinContent(etaBin,ptBin,j);
+	  for (Int_t p=ptBin-1; p<ptBin+1; ++p) { // trk pt smoothing
+	    if (smoothLevel_<2&&p!=ptBin) continue;
+	    if (p!=ptBin&&(p<13||p>numPtBins_)) continue;
+	    for (Int_t c=bin-1; c<bin+1; ++c) { // centrality smoothing
+	      if (smoothLevel_<3&&c!=bin) continue;
+	      if (c!=bin && (c<0||c>4)) continue;
+	      for (Int_t e=etaBin-1; e<etaBin+1; ++e) { // trk eta smoothing
+		if (smoothLevel_<4&&e!=etaBin) continue;
+		if (e<1||e>numEtaBins_) continue;
+		mat[lv][m] += correction_[lv][s][bin][m]->GetBinContent(etaBin,ptBin,j);
+		//cout << mat[lv][m] << " ";
+	      }
+	    }
 	  }
 	}
       }
     }
+    //cout << endl;
     if (mat[lv][1]>0) corr[lv] = mat[lv][0]/mat[lv][1];
     else {
       corr[lv]=1; // no correction
@@ -221,7 +233,7 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
   }
 
   // Done
-  if (corr[0]>(1-1e-3)||corr[0]<1e-3) corr[0] = 0.5; // if 0 or 1 take average trk eff
+  if (corr[0]>(1-1e-3)||corr[0]<1e-3) corr[0] = 0.48; // if 0 or 1 take average trk eff
   Double_t eff = corr[0];
   Double_t fake = corr[1];
   Double_t mul = corr[2];

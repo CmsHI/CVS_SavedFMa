@@ -30,14 +30,17 @@ void loopTrkClosure(Int_t inputSample=1,
   }
 
   if (inputSample==1) {
-    infrec=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t2.root",ptHatMin,algo.Data());
-    infgen=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t0.root",ptHatMin,algo.Data());
+    //infrec=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t2.root",ptHatMin,algo.Data());
+    //infgen=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t0.root",ptHatMin,algo.Data());
+    infrec=Form("../ntout/tranav7_hydjuq%.0fv5_%s_t2.root",ptHatMin,algo.Data());
+    infgen=Form("../ntout/tranav7_hydjuq%.0fv5_%s_t0.root",ptHatMin,algo.Data());
     //infrec=Form("../ntout/tranav7_hydjuq%.0fmattpfgmv1_%s_t2.root",ptHatMin,algo.Data());
     //infgen=Form("../ntout/tranav7_hydjuq%.0fmattpfgmv1_%s_t0.root",ptHatMin,algo.Data());
     tgen->Add(infgen);
     if (tgen->GetEntries()>0) cout << infgen << ": " << tgen->GetEntries() << endl;
     else { cout << infgen << " has 0 entries" << endl; exit(1); }
-    tag = Form("tv6mc%.0fmattpfgmv1_%s%s",ptHatMin,algo.Data(),trkcorrVersion.Data());
+    //tag = Form("tv6mc%.0fmattpfgmv1_%s%s",ptHatMin,algo.Data(),trkcorrVersion.Data());
+    tag = Form("tv5_2%.0fjtv7_%s%s_a0419",ptHatMin,algo.Data(),trkcorrVersion.Data());
   }
 
   trec->Add(infrec);
@@ -58,14 +61,14 @@ void loopTrkClosure(Int_t inputSample=1,
   cut.JEtMax[0] = 300;
   cut.JEtMin[1] = 40;
   cut.JEtMax[1] = 300;
-  cut.JEtaMax[0] = 2;
-  cut.JEtaMax[1] = 2;
+  cut.JEtaMax[0] = 1.9;
+  cut.JEtaMax[1] = 1.9;
   cut.JDPhiMin = TMath::Pi()*2./3.;
   cut.AjMin = 0.;
-  cut.AjMax = 1;
-  cut.TrkPtMin = 3.;
+  cut.AjMax = 0.7;
+  cut.TrkPtMin = 4.;
   //cut.TrkEtaMax = 1;
-  cut.ConeSize = 0.5;
+  cut.ConeSize = 0.3;
   if (!cut.doSel) outFileName = Form("histntff_%s.root",tag.Data());
 
   // ===================================
@@ -82,13 +85,13 @@ void loopTrkClosure(Int_t inputSample=1,
   Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev5","hitrkEffAnalyzer_akpu3pf_j1");
   //Corrector3D trkCorrJ1("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_slead","hitrkEffAnalyzer");
   trkCorrJ1.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
-  trkCorrJ1.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
+  trkCorrJ1.smoothLevel_ = 4; // 0: no smooth, 1: smooth jet, 2: smooth jet,pt 3: smooth jet,pt,cbin
   trkCorrJ1.Init();
   //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ2");
   //Corrector3D trkCorrJ2("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_lead","hitrkEffAnalyzer");
   Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev5","hitrkEffAnalyzer_akpu3pf_j2");
   trkCorrJ2.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
-  trkCorrJ2.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
+  trkCorrJ2.smoothLevel_ = 4; // 0: no smooth, 1: smooth jet, 2: smooth jet,pt 3: smooth jet,pt,cbin
   trkCorrJ2.Init();
 
   // ===================================

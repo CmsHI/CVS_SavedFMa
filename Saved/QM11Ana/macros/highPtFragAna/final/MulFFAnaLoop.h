@@ -127,10 +127,10 @@ class FragAnaLoop
 	  && fabs(jfr.jdphi)>cut_->JDPhiMin);
       /*
       if (j==0
-	  && jfr.jtpt[j]>=cut_->JEtMin[j] && jfr.jtpt[j]<cut_->JEtMax[j] && fabs(jfr.jteta[j])<cut_->JEtaMax[j] && fabs(jfr.jdphi)>cut_->JDPhiMin
+	  && jfr.jtpt[j]>=cut_->JEtMin[j] && jfr.jtpt[j]<cut_->JEtMax[j] && fabs(jfr.jteta[j])<cut_->JEtaMax[j]
 	 ) return true;
       else if (j==1
-	  && jfr.jtpt[0]>=cut_->JEtMin[0] && jfr.jtpt[0]<cut_->JEtMax[0] && fabs(jfr.jteta[0])<cut_->JEtaMax[0] && fabs(jfr.jdphi)>cut_->JDPhiMin
+	  && jfr.jtpt[0]>=cut_->JEtMin[0] && jfr.jtpt[0]<cut_->JEtMax[0] && fabs(jfr.jteta[0])<cut_->JEtaMax[0]
 	  && jfr.jtpt[j]>=cut_->JEtMin[j] && jfr.jtpt[j]<cut_->JEtMax[j] && fabs(jfr.jteta[j])<cut_->JEtaMax[j]
 	 ) return true;
       return false;
@@ -164,6 +164,11 @@ void FragAnaLoop::Init()
   jfr_.LoadBranches(t_);
 
   // Book Histograms
+  const Int_t numEffBins = 50;
+  Double_t effBins[numEffBins+1];
+  for (Int_t i=0;i<numEffBins+1;++i) {
+    effBins[i] = -0.2+i*1.4/numEffBins;
+  }
   for (Int_t j=0; j<2; ++j) {
     vhJetAj_.push_back(new TH1D(Form("h%sJetAj_j%d",name_.Data(),j),";A_{J};",20,0,1));
     for (Int_t lv=0; lv<5; ++lv) {
@@ -173,7 +178,7 @@ void FragAnaLoop::Init()
       vhPPtRat_[j].push_back(new TH1D(Form("h%sPPtRat%d_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0]));
       vhPPtRat_[j][lv]->Sumw2();
 
-      vhTrkCorrPPt_[j].push_back(new TH2D(Form("h%sTrkCorr%dPPt_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",50,0,100,50,-0.2,1.2));
+      vhTrkCorrPPt_[j].push_back(new TH2D(Form("h%sTrkCorr%dPPt_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0],numEffBins,effBins));
       vhTrkCorrJEt_[j].push_back(new TH2D(Form("h%sTrkCorr%dJEt_j%d",name_.Data(),lv,j),";Jet p_{T} (GeV/c);",100,0,400,50,-0.2,1.2));
       vhTrkCorrCent_[j].push_back(new TH2D(Form("h%sTrkCorr%dCent_j%d",name_.Data(),lv,j),";Centrality (%);",10,0,40,50,-0.2,1.2));
     }
@@ -232,6 +237,10 @@ void FragAnaLoop::Loop()
     for (Int_t ip=0; ip<jfr_.np; ++ip) {
       Float_t trkEnergy = jfr_.ppt[ip];
       Float_t trkEta = jfr_.peta[ip];
+      // basic trk kinematic cuts
+      if (trkEnergy<cut_->TrkPtMin) continue;
+      if (fabs(trkEta)>2.4) continue;
+
       // Correction for this trk
       Double_t corr[4];
       Double_t eff=1,fak=1,mul=1,sec=1,trkwt=1;
@@ -248,7 +257,7 @@ void FragAnaLoop::Loop()
 	// Get Corrections
 	// =======================
 	if (anaTrkType_>=2&&jfr_.pjdr[j][ip]<cut_->ConeSize) {
-	  trkwt = vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cbin,corr,jfr_.jtpt[0]);
+	  trkwt = vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cbin,corr);
 	  eff = corr[0];
 	  fak = corr[1];
 	  mul = corr[2];
