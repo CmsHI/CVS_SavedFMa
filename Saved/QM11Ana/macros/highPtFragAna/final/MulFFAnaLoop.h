@@ -60,6 +60,7 @@ struct JetFragRel
   void LoadBranches(TTree * t) {
     t->SetBranchAddress("cbin",&(this->cbin));
     t->SetBranchAddress("jtpt",this->jtpt);
+    //t->SetBranchAddress("refpt",this->jtpt);
     t->SetBranchAddress("jteta",this->jteta);
     t->SetBranchAddress("jtphi",this->jtphi);
     t->SetBranchAddress("np",&(this->np));
@@ -97,6 +98,7 @@ class FragAnaLoop
 
     // analysis histograms
     vector<Double_t> ptBin_;
+    vector<TH1D*> vhJetAj_;
     vector<vector<TH1D*> > vhPPtCorr_;
     vector<vector<TH1D*> > vhPPtRat_;
 
@@ -111,17 +113,28 @@ class FragAnaLoop
     void Loop();
 
     Bool_t SelEvt(const JetFragRel & jfr) {
-      return (jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax);
+      //return (jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax);
+      return (
+	  jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax
+	  && jfr.jtpt[0]>50
+	  && (jfr.jtpt[0]-jfr.jtpt[1])/(jfr.jtpt[0]+jfr.jtpt[1]) >= cut_->AjMin
+	  && (jfr.jtpt[0]-jfr.jtpt[1])/(jfr.jtpt[0]+jfr.jtpt[1]) < cut_->AjMax
+	  );
     }
     Bool_t SelJet(const JetFragRel & jfr, Int_t j) {
+      return (jfr.jtpt[0]>=cut_->JEtMin[0] && jfr.jtpt[0]<cut_->JEtMax[0] && fabs(jfr.jteta[0])<cut_->JEtaMax[0]
+	  &&  jfr.jtpt[1]>=cut_->JEtMin[1] && jfr.jtpt[1]<cut_->JEtMax[1] && fabs(jfr.jteta[1])<cut_->JEtaMax[1]
+	  && fabs(jfr.jdphi)>cut_->JDPhiMin);
+      /*
       if (j==0
-	  && jfr.jtpt[j]>=cut_->JEtMin[j] && jfr.jtpt[j]<cut_->JEtMax[j] && fabs(jfr.jteta[j])<cut_->JEtaMax[j]
+	  && jfr.jtpt[j]>=cut_->JEtMin[j] && jfr.jtpt[j]<cut_->JEtMax[j] && fabs(jfr.jteta[j])<cut_->JEtaMax[j] && fabs(jfr.jdphi)>cut_->JDPhiMin
 	 ) return true;
       else if (j==1
-	  && jfr.jtpt[0]>=cut_->JEtMin[0] && jfr.jtpt[0]<cut_->JEtMax[0] && fabs(jfr.jteta[0])<cut_->JEtaMax[0]
+	  && jfr.jtpt[0]>=cut_->JEtMin[0] && jfr.jtpt[0]<cut_->JEtMax[0] && fabs(jfr.jteta[0])<cut_->JEtaMax[0] && fabs(jfr.jdphi)>cut_->JDPhiMin
 	  && jfr.jtpt[j]>=cut_->JEtMin[j] && jfr.jtpt[j]<cut_->JEtMax[j] && fabs(jfr.jteta[j])<cut_->JEtaMax[j]
 	 ) return true;
       return false;
+	*/
     }
     Bool_t SelFrag(const JetFragRel & jfr, Int_t ip, Int_t j) {
 	return ( jfr.ppt[ip]>cut_->TrkPtMin && jfr.pjdr[j][ip]<cut_->ConeSize);
@@ -152,6 +165,7 @@ void FragAnaLoop::Init()
 
   // Book Histograms
   for (Int_t j=0; j<2; ++j) {
+    vhJetAj_.push_back(new TH1D(Form("h%sJetAj_j%d",name_.Data(),j),";A_{J};",20,0,1));
     for (Int_t lv=0; lv<5; ++lv) {
       if (anaTrkType_==0 && lv>0) continue;
       vhPPtCorr_[j].push_back(new TH1D(Form("h%sPPtCorr%d_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0]));
@@ -203,7 +217,7 @@ void FragAnaLoop::Loop()
     // ===========================
     // Basic Event preselection
     // ===========================
-    if (jfr_.jtpt[0]<50) continue;
+    if (!SelEvt(jfr_)) continue;
 
     // ===========================
     // jet count
@@ -211,6 +225,7 @@ void FragAnaLoop::Loop()
     for (Int_t j=0; j<2; ++j) {
       if (SelEvt(jfr_)&&SelJet(jfr_,j)) {
 	++numJet_[j];
+	vhJetAj_[j]->Fill((jfr_.jtpt[0]-jfr_.jtpt[1])/(jfr_.jtpt[0]+jfr_.jtpt[1]));
       }
     }
 
@@ -227,12 +242,12 @@ void FragAnaLoop::Loop()
 	// =======================
 	jfr_.pjdr[j][ip] = deltaR(jfr_.peta[ip],jfr_.pphi[ip],jfr_.jteta[j],jfr_.jtphi[j]);
 	//cout << "jet " << j << " dr: " << jfr_.pjdr[j][ip] << endl;
-	jfr_.pjdrbg[j][ip] = deltaR(jfr_.peta[ip],jfr_.pphi[ip],jfr_.jteta[j],jfr_.jtphi[j]+TMath::PiOver2());
+	jfr_.pjdrbg[j][ip] = deltaR(jfr_.peta[ip],jfr_.pphi[ip],-1*jfr_.jteta[j],jfr_.jtphi[j]);
 	//cout << (*jfr_.pdr)[j][ip] << endl;
 	// =======================
 	// Get Corrections
 	// =======================
-	if (anaTrkType_>=2&&jfr_.pjdr[j][ip]<0.8) {
+	if (anaTrkType_>=2&&jfr_.pjdr[j][ip]<cut_->ConeSize) {
 	  trkwt = vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cbin,corr,jfr_.jtpt[0]);
 	  eff = corr[0];
 	  fak = corr[1];
@@ -262,6 +277,13 @@ void FragAnaLoop::Loop()
 	// Histogram Ana
 	// =======================
 	if (SelEvt(jfr_)&&SelJet(jfr_,j)&&SelFrag(jfr_,ip,j)) {
+	  if (j==1) {
+	    if (trkEnergy>20) {
+	      //cout << jfr_.pjdr[j][ip];
+	      //cout << " jet pt|eta|phi: " << jfr_.jtpt[j] << "|" << jfr_.jteta[j] << "|" << jfr_.jtphi[j];
+	      //cout << " p pt|eta|phi: " << jfr_.ppt[ip] << "|" << jfr_.peta[ip] << "|" << jfr_.pphi[ip] << endl;
+	    }
+	  }
 	  vhPPtCorr_[j][0]->Fill(trkEnergy);
 	  if (anaTrkType_==0) continue;
 	  vhPPtCorr_[j][1]->Fill(trkEnergy,1./eff);
@@ -277,7 +299,7 @@ void FragAnaLoop::Loop()
 	}
       }
     }
-    if (!cut_->doSel||(SelEvt(jfr_))) {
+    if (!cut_->doSel||(SelEvt(jfr_)&&SelJet(jfr_,1))) {
       tout_->Fill();
     }
   } // end of main loop

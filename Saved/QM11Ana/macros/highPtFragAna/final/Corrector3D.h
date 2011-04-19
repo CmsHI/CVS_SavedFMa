@@ -202,8 +202,8 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
     for (Int_t m=0; m<2; ++m) {
       for (Int_t s=0; s<sample_.size(); ++s) {
 	if (sampleMode_==0 && s!=isample) continue;
-	if (jet1<ptHatMin_[s]) continue;
-	for (Int_t j=jetBin; j<=jetBin+1; ++j) {
+	if (jet<ptHatMin_[s]) continue;
+	for (Int_t j=jetBin; j<=jetBin+2; ++j) {
 	  if (smoothLevel_<1&&j!=jetBin) continue;
 	  for (Int_t e=etaBin-1; e<etaBin+1; ++e) {
 	    if (smoothLevel_<2&&e!=etaBin) continue;

@@ -17,7 +17,7 @@ void anaGeneralJF(
 {
   gSystem->Load("libMathCore");
   gSystem->Load("libPhysics");
-  TString version("v6");
+  TString version("v7");
 
   Int_t treeFormat=-1,doJEC=-1;
   TString fdataname,tag,algo;
@@ -107,10 +107,10 @@ void runData()
 
 void runMc()
 {
-  anaGeneralJF(true,2,50);
-  anaGeneralJF(true,0,50);
-  //anaGeneralJF(true,2,80);
-  //anaGeneralJF(true,0,80);
+  //anaGeneralJF(true,2,50);
+  //anaGeneralJF(true,0,50);
+  anaGeneralJF(true,2,80);
+  anaGeneralJF(true,0,80);
   //anaGeneralJF(2,110);
   //anaGeneralJF(0,110);
   //anaGeneralJF(2,170);

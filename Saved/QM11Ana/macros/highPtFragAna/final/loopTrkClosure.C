@@ -4,10 +4,12 @@
 #include "TLine.h"
 #include "TLegend.h"
 #include "TProfile.h"
+#include "TMath.h"
 #include "MulFFAnaLoop.h"
 
 void loopTrkClosure(Int_t inputSample=1,
-    Bool_t doSel=1)
+    Bool_t doSel=1,
+    Bool_t doTrkCorr=true)
 {
   // ===================================
   // Inputs
@@ -19,7 +21,7 @@ void loopTrkClosure(Int_t inputSample=1,
   TChain * tgen = new TChain("tjf");
   //TString algo="akpu3pf";
   TString algo="akpu3pf";
-  TString trkcorrVersion="cv6";
+  TString trkcorrVersion="";
   cout << "=============== MulFF Ana ======================" << endl;
   cout << "  jet: " << algo << " trkCorr: " << trkcorrVersion << endl;
   if (inputSample==0) {
@@ -28,12 +30,14 @@ void loopTrkClosure(Int_t inputSample=1,
   }
 
   if (inputSample==1) {
-    infrec=Form("../ntout/tranav2_hydjuq%.0f_mc_%s_t2.root",ptHatMin,algo.Data());
-    infgen=Form("../ntout/tranav2_hydjuq%.0f_mc_%s_t0.root",ptHatMin,algo.Data());
+    infrec=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t2.root",ptHatMin,algo.Data());
+    infgen=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t0.root",ptHatMin,algo.Data());
+    //infrec=Form("../ntout/tranav7_hydjuq%.0fmattpfgmv1_%s_t2.root",ptHatMin,algo.Data());
+    //infgen=Form("../ntout/tranav7_hydjuq%.0fmattpfgmv1_%s_t0.root",ptHatMin,algo.Data());
     tgen->Add(infgen);
     if (tgen->GetEntries()>0) cout << infgen << ": " << tgen->GetEntries() << endl;
     else { cout << infgen << " has 0 entries" << endl; exit(1); }
-    tag = Form("tv2mc%.0f_%s_%s",ptHatMin,algo.Data(),trkcorrVersion.Data());
+    tag = Form("tv6mc%.0fmattpfgmv1_%s%s",ptHatMin,algo.Data(),trkcorrVersion.Data());
   }
 
   trec->Add(infrec);
@@ -49,15 +53,18 @@ void loopTrkClosure(Int_t inputSample=1,
   selectionCut cut;
   cut.doSel = doSel;
   cut.CentMin=0;
-  cut.CentMax=8;
-  cut.JEtMin[0] = ptHatMin+10;
-  cut.JEtMax[0] = 250;
-  cut.JEtMin[1] = 50;
-  cut.JEtMax[1] = 250;
-  cut.JEtaMax[0] = 1.6;
-  cut.JEtaMax[1] = 1.6;
+  cut.CentMax=12;
+  cut.JEtMin[0] = 100;
+  cut.JEtMax[0] = 300;
+  cut.JEtMin[1] = 40;
+  cut.JEtMax[1] = 300;
+  cut.JEtaMax[0] = 2;
+  cut.JEtaMax[1] = 2;
+  cut.JDPhiMin = TMath::Pi()*2./3.;
+  cut.AjMin = 0.;
+  cut.AjMax = 1;
   cut.TrkPtMin = 3.;
-  cut.TrkEtaMax = 1;
+  //cut.TrkEtaMax = 1;
   cut.ConeSize = 0.5;
   if (!cut.doSel) outFileName = Form("histntff_%s.root",tag.Data());
 
@@ -71,13 +78,15 @@ void loopTrkClosure(Int_t inputSample=1,
   //trkCorr.Init(0);
   //TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
   //trkCorr.Init(1,"TrkCorr2DB0.root");
-  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ1");
+  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev5","hitrkEffAnalyzer_akpu3pf_j1");
   //Corrector3D trkCorrJ1("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_slead","hitrkEffAnalyzer");
   trkCorrJ1.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrJ1.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
   trkCorrJ1.Init();
-  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ2");
   //Corrector3D trkCorrJ2("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_lead","hitrkEffAnalyzer");
+  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev5","hitrkEffAnalyzer_akpu3pf_j2");
   trkCorrJ2.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrJ2.smoothLevel_ = 1; // 0: no smooth, 1: smooth jet, 2: smooth jet,eta
   trkCorrJ2.Init();
@@ -111,6 +120,7 @@ void loopTrkClosure(Int_t inputSample=1,
   FragAnaLoop recfana("Rec");
   recfana.ptHatMin_ = ptHatMin;
   recfana.anaTrkType_=2;
+  if (!doTrkCorr) recfana.anaTrkType_=0;
   recfana.t_ = trec;
   recfana.cut_ = &cut;
   //recfana.vtrkCorr_[0] = &trkCorr;
@@ -135,6 +145,7 @@ void loopTrkClosure(Int_t inputSample=1,
     // get ratio
     for (Int_t j=0; j<2; ++j) {
       for (Int_t lv=0; lv<=4; ++lv) {
+	if (!doTrkCorr && lv>0) continue;
 	recfana.vhPPtRat_[j][lv]->Divide(recfana.vhPPtCorr_[j][lv],genfana.vhPPtCorr_[j][0]);
       }
     }
@@ -147,12 +158,13 @@ void loopTrkClosure(Int_t inputSample=1,
   for (Int_t j=0; j<2; ++j) {
     TString append(Form("_j%d_%s",j,tag.Data()));
     // prepare histogram frame
-    genfana.vhPPtCorr_[j][0]->SetAxisRange(4,100,"X");
-    genfana.vhPPtCorr_[j][0]->SetAxisRange(1e-3,5e1,"Y");
+    genfana.vhPPtCorr_[j][0]->SetAxisRange(4,80,"X");
+    genfana.vhPPtCorr_[j][0]->SetAxisRange(1e-4,5e1,"Y");
     genfana.vhPPtCorr_[j][0]->SetLineColor(kRed);
     genfana.vhPPtCorr_[j][0]->SetMarkerColor(kRed);
     genfana.vhPPtCorr_[j][0]->SetMarkerStyle(kOpenCircle);
     for (Int_t lv=0; lv<=3; ++lv) {
+      if (!doTrkCorr && lv>0) continue;
       recfana.vhPPtCorr_[j][lv]->SetMarkerStyle(kOpenSquare);
       recfana.vhPPtCorr_[j][lv]->SetMarkerColor(colors[lv]);
       recfana.vhPPtCorr_[j][lv]->SetLineColor(colors[lv]);
@@ -170,15 +182,17 @@ void loopTrkClosure(Int_t inputSample=1,
     genfana.vhPPtCorr_[j][0]->Draw("hist");
     recfana.vhPPtCorr_[j][0]->Draw("sameE");
     for (Int_t lv=1; lv<=4; ++lv) {
+      if (!doTrkCorr && lv>0) continue;
       recfana.vhPPtCorr_[j][lv]->Draw("sameE");
     }
     // draw ratio
     c2->cd(2);
     c2->GetPad(2)->SetLogx();
     recfana.vhPPtRat_[j][0]->Draw("E");
-    recfana.vhPPtRat_[j][0]->SetAxisRange(4,100,"X");
+    recfana.vhPPtRat_[j][0]->SetAxisRange(4,80,"X");
     recfana.vhPPtRat_[j][0]->SetAxisRange(0,1.5,"Y");
     for (Int_t lv=1; lv<=4; ++lv) {
+      if (!doTrkCorr && lv>0) continue;
       recfana.vhPPtRat_[j][lv]->Draw("sameE");
     }
 
@@ -196,12 +210,20 @@ void loopTrkClosure(Int_t inputSample=1,
     //leg->AddEntry(genfana.vhPPtCorr_[0][0],"#DeltaR(jet,trk)<0.5","");
     leg->AddEntry(genfana.vhPPtCorr_[0][0],"Gen. Particle","pl");
     for (Int_t lv=0; lv<=4; ++lv) {
+      if (!doTrkCorr && lv>0) continue;
       leg->AddEntry(recfana.vhPPtCorr_[j][lv],"Trk Corr. "+corrLevelName[lv],"pl");
     }
     leg->Draw();
 
     c2->Print(Form("ClosureTrkPt%s.gif",append.Data()));
 
+    TCanvas * chkaj = new TCanvas("chkaj"+append,"aj"+append,500,500);
+    genfana.vhJetAj_[j]->Draw("hist");
+    recfana.vhJetAj_[j]->Draw("sameE");
+
+    if (!doTrkCorr) continue;
+    // ====================
+    // Trk Corr Monitors
     // ====================
     TCanvas * chk0 = new TCanvas("chk0"+append,"eff_vs_pt"+append,500,500);
     chk0->SetLogz();
@@ -239,11 +261,13 @@ void loopTrkClosure(Int_t inputSample=1,
   // ===================================
   // All Done, Write output if choose
   // ===================================
+  /*
   if (cut.doSel) {
     outf->Delete(recfana.tout_->GetName());
     if (inputSample==1) {
       outf->Delete(genfana.tout_->GetName());
     }
   }
+  */
   outf->Write();
 }

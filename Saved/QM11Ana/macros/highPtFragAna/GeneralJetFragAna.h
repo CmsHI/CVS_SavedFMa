@@ -42,6 +42,7 @@ struct AnaJets
     if (treeFormat==0) {
       t->SetBranchAddress("nref",&(this->njets));
       t->SetBranchAddress("jtpt",this->jtpt);
+      t->SetBranchAddress("refpt",this->refpt);
       t->SetBranchAddress("rawpt",this->rawpt);
       t->SetBranchAddress("jteta",this->jteta);
       t->SetBranchAddress("jtphi",this->jtphi);
@@ -50,6 +51,7 @@ struct AnaJets
       //t->SetBranchAddress("corrpt_"+name,this->jtpt);
       t->SetBranchAddress("jtpt_"+name,this->jtpt);
       t->SetBranchAddress("refpt_"+name,this->refpt);
+      t->SetBranchAddress("rawpt_"+name,this->rawpt);
       t->SetBranchAddress("jteta_"+name,this->jteta);
       t->SetBranchAddress("jtphi_"+name,this->jtphi);
     }

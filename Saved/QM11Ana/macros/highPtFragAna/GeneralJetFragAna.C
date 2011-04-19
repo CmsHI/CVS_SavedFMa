@@ -72,11 +72,15 @@ void GeneralJetFragAna::Loop()
     Int_t leadJetInd  = GetLeadingJet(anaJets_,anaJetv_);
     if (anaJets_.jtpt[leadJetInd]<leadJetPtMin_) continue; // leading jet selection
     Int_t jet2Ind     = GetJet2(anaJets_,anaJetv_,leadJetInd);
+    Int_t anaJInd[2] = { leadJetInd, jet2Ind };
     for (Int_t j=0;j<anaJetv_.size();++j) {
       //cout << "best pt: " << anaJetv_[j].pt() << endl;
-      jf_.jtpt[j]=anaJetv_[j].pt();
-      jf_.jteta[j]=anaJetv_[j].eta();
-      jf_.jtphi[j]=anaJetv_[j].phi();
+      if (anaJInd[j]<0) continue;
+      jf_.jtpt[j]=anaJets_.jtpt[anaJInd[j]];
+      jf_.refpt[j]=anaJets_.refpt[anaJInd[j]];
+      jf_.rawpt[j]=anaJets_.rawpt[anaJInd[j]];
+      jf_.jteta[j]=anaJets_.jteta[anaJInd[j]];
+      jf_.jtphi[j]=anaJets_.jtphi[anaJInd[j]];
     }
 
     // Particle level vars
