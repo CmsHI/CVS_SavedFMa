@@ -101,6 +101,8 @@ class FragAnaLoop
     vector<TH1D*> vhJetAj_;
     vector<vector<TH1D*> > vhPPtCorr_;
     vector<vector<TH1D*> > vhPPtRat_;
+    vector<vector<TH1D*> > vhXiCorr_;
+    vector<vector<TH1D*> > vhXiRat_;
 
     // monitor histograms
     vector<vector<TH2D*> > vhTrkCorrPPt_;
@@ -148,6 +150,8 @@ FragAnaLoop::FragAnaLoop(TString name) :
   numJet_(2),
   vhPPtCorr_(2),
   vhPPtRat_(2),
+  vhXiCorr_(2),
+  vhXiRat_(2),
   vhTrkCorrPPt_(2),
   vhTrkCorrJEt_(2),
   vhTrkCorrCent_(2)
@@ -177,6 +181,11 @@ void FragAnaLoop::Init()
       vhPPtCorr_[j][lv]->Sumw2();
       vhPPtRat_[j].push_back(new TH1D(Form("h%sPPtRat%d_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0]));
       vhPPtRat_[j][lv]->Sumw2();
+
+      vhXiCorr_[j].push_back(new TH1D(Form("h%sXiCorr%d_j%d",name_.Data(),lv,j),"",10,0,5));
+      vhXiCorr_[j][lv]->Sumw2();
+      vhXiRat_[j].push_back(new TH1D(Form("h%sXiRat%d_j%d",name_.Data(),lv,j),"",10,0,5));
+      vhXiRat_[j][lv]->Sumw2();
 
       vhTrkCorrPPt_[j].push_back(new TH2D(Form("h%sTrkCorr%dPPt_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0],numEffBins,effBins));
       vhTrkCorrJEt_[j].push_back(new TH2D(Form("h%sTrkCorr%dJEt_j%d",name_.Data(),lv,j),";Jet p_{T} (GeV/c);",100,0,400,50,-0.2,1.2));
@@ -294,11 +303,19 @@ void FragAnaLoop::Loop()
 	    }
 	  }
 	  vhPPtCorr_[j][0]->Fill(trkEnergy);
+	  vhXiCorr_[j][0]->Fill(log(jfr_.jtpt[j]/trkEnergy));
+
 	  if (anaTrkType_==0) continue;
 	  vhPPtCorr_[j][1]->Fill(trkEnergy,1./eff);
 	  vhPPtCorr_[j][2]->Fill(trkEnergy,(1-fak)/eff);
 	  vhPPtCorr_[j][3]->Fill(trkEnergy,(1-fak)/(eff*(1+mul)));
 	  vhPPtCorr_[j][4]->Fill(trkEnergy,trkwt);
+
+	  vhXiCorr_[j][1]->Fill(log(jfr_.jtpt[j]/trkEnergy),1./eff);
+	  vhXiCorr_[j][2]->Fill(log(jfr_.jtpt[j]/trkEnergy),(1-fak)/eff);
+	  vhXiCorr_[j][3]->Fill(log(jfr_.jtpt[j]/trkEnergy),(1-fak)/(eff*(1+mul)));
+	  vhXiCorr_[j][4]->Fill(log(jfr_.jtpt[j]/trkEnergy),trkwt);
+
 	  // study correction
 	  for (Int_t lv=1; lv<=4; ++lv) {
 	    vhTrkCorrPPt_[j][lv]->Fill(trkEnergy,corr[lv-1]);
@@ -319,6 +336,7 @@ void FragAnaLoop::Loop()
     for (Int_t lv=0; lv<5; ++lv) {
       if (anaTrkType_==0 && lv>0) continue;
       normHist(vhPPtCorr_[j][lv],0,true,1./numJet_[j]);
+      normHist(vhXiCorr_[j][lv],0,true,1./numJet_[j]);
     }
   }
 }
