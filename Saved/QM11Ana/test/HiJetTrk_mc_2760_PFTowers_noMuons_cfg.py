@@ -4,6 +4,10 @@ process = cms.Process('HIJETS')
 
 #process.Timing = cms.Service("Timing")
 
+process.SimpleMemoryCheck=cms.Service("SimpleMemoryCheck",
+                                      ignoreTotal=cms.untracked.int32(1),
+                                      oncePerEventMode=cms.untracked.bool(True))
+
 # Input source
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(
@@ -46,7 +50,7 @@ process.load("Saved.QM11Ana.Analyzers_cff")
 # =============== customization ==================
 from Saved.QM11Ana.customise_cfi import *
 # custom extra reco
-usehiGoodMergedTracks(process)
+#usehiGoodMergedTracks(process)
 
 # =============== Final Paths =====================
 #process.extraHiReco = cms.Path( process.makeCentralityTableTFile )
@@ -54,7 +58,7 @@ process.extraTrkReco = cms.Path( process.hiTrackReReco * process.hiextraTrackRec
 process.extraPfReco = cms.Path( process.HiParticleFlowRecoNoJets )
 process.extraJetReco = cms.Path( process.hiGen * process.runAllJets )
 #process.ana_step = cms.Path( process.trkcorr_seq * process.trkana_seq * process.jetana_seq )
-#process.ana_step = cms.Path( process.trkcorr_seq * process.jetana_seq )
-process.ana_step = cms.Path( process.trkcorr_seq * process.inclusiveJetAnalyzer * process.akPu3PFJetAnalyzer)
+process.ana_step = cms.Path( process.trkana_seq * process.inclusiveJetAnalyzer * process.akPu3PFJetAnalyzer)
+#process.ana_step = cms.Path( process.trkcorr_seq * process.akPu3PFJetAnalyzer)
 
 process.schedule = cms.Schedule(process.extraTrkReco,process.extraPfReco,process.extraJetReco,process.ana_step)

@@ -49,7 +49,7 @@ trkAnalyzer = cms.EDAnalyzer("TrackAnalyzer",
 
 genpAnalyzer = cms.EDAnalyzer('HiGenAnalyzer',
     useHepMCProduct = cms.untracked.bool(False),
-    ptMin = cms.untracked.double(-1),
+    ptMin = cms.untracked.double(0.9),
     chargedOnly = cms.untracked.bool(True),
     src = cms.untracked.InputTag("hiSignal"),
     genpSrc = cms.untracked.InputTag("hiGenParticles"),
@@ -113,6 +113,6 @@ makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
 trkcorr_seq = cms.Sequence( (hitrkEffAna_akpu3pf) )
 trkana_seq = cms.Sequence( trkAnalyzer * genpAnalyzer )
 trkana_seq_data = cms.Sequence( trkAnalyzer )
-jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djicpu5 * djakpu3pf_pfcand * djgenic5 * djgenak3)
-jetana_seq_data = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djicpu5 * djakpu3pf_pfcand )
+jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djakpu3pf_pfcand * djgenic5 * djgenak3)
+jetana_seq_data = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djakpu3pf_pfcand )
 

@@ -13,7 +13,7 @@ hiGenParticles.srcVector = cms.vstring('hiSignal')
 
 hiGen = cms.Sequence(
   heavyIon * # GenHIEventProducer
-  hiGenParticles *
+  #hiGenParticles *
   hiGenParticlesForJets *
   hiRecoGenJets *
   genPartons *
