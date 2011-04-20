@@ -46,7 +46,7 @@ class Corrector3D
     Float_t GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent, Double_t * corr);
     TH2D * ProjectPtEta(TH3F * h3, Int_t zbinbeg, Int_t zbinend);
     void Write();
-    TH1 * InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin, Int_t jetEndBin,Int_t mode=0,Int_t begbin=0, Int_t endbin=-1);
+    TH1 * InspectCorr(Int_t lv, Int_t isample, Int_t centBeg, Int_t centEnd, Int_t jetBegBin, Int_t jetEndBin,Int_t mode=0,Int_t begbin=0, Int_t endbin=-1);
 };
 
 Corrector3D::Corrector3D(TString name, TString append, TString mod) :
@@ -261,25 +261,27 @@ void Corrector3D::Write()
   }
 }
 
-TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin, Int_t jetEndBin, Int_t mode, Int_t begbin, Int_t endbin)
+TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t centBeg, Int_t centEnd, Int_t jetBegBin, Int_t jetEndBin, Int_t mode, Int_t begbin, Int_t endbin)
 {
   TH3F *hNum=0, *hDen=0;
   TH2D *hNum2D=0, *hDen2D=0, *hCorr2D=0;
   TH1D *hNum1D=0, *hDen1D=0, *hCorr1D=0;
-  TString inspName(Form("%s_%s_Lv%d_%d_%d_j%d_%d_%d",(corrSetName_+corrSetNameApp_).Data(),trkCorrModule_.Data(),lv,isample,c,jetBegBin,jetEndBin,mode));
+  TString inspName(Form("%s_%s_Lv%d_%d_c%d_%d_j%d_%d_%d",(corrSetName_+corrSetNameApp_).Data(),trkCorrModule_.Data(),lv,isample,centBeg,centEnd,jetBegBin,jetEndBin,mode));
   if (mode>0) inspName+=Form("bin_%d_%d",begbin,endbin);
   cout << inspName << endl;
 
-  hNum = (TH3F*)correction_[lv][0][c][0]->Clone(inspName+"hNum");
+  hNum = (TH3F*)correction_[lv][0][0][0]->Clone(inspName+"hNum");
   hNum->Reset();
   hNum->Sumw2();
-  hDen = (TH3F*)correction_[lv][0][c][1]->Clone(inspName+"hDen");
+  hDen = (TH3F*)correction_[lv][0][0][1]->Clone(inspName+"hDen");
   hDen->Reset();
   hDen->Sumw2();
   for (Int_t s=0; s<sample_.size(); ++s) {
     if (sampleMode_==0&&s!=isample) continue;
-    hNum->Add(correction_[lv][s][c][0]);
-    hDen->Add(correction_[lv][s][c][1]);
+    for (Int_t c=centBeg; c<=centEnd; ++c) {
+      hNum->Add(correction_[lv][s][c][0]);
+      hDen->Add(correction_[lv][s][c][1]);
+    }
   }
 
   hNum->GetZaxis()->SetRange(jetBegBin,jetEndBin);
@@ -293,7 +295,6 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin
   if (mode==0) {
     hCorr2D = (TH2D*)hNum2D->Clone(inspName+"Corr2D");
     hCorr2D->Divide(hNum2D,hDen2D);
-    hCorr2D->SetAxisRange(0,25.2+3*6*4,"Y");
     return hCorr2D;
   }
 
@@ -313,11 +314,6 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t c, Int_t jetBegBin
   // ===============================================
   hCorr1D = (TH1D*)hNum1D->Clone(inspName+"Corr1D");
   hCorr1D->Divide(hNum1D,hDen1D);
-  if (mode==2) hCorr1D->SetAxisRange(0,25.2+3*6*4,"X");
-  hCorr1D->SetAxisRange(0,1.5,"Y");
-  TLine * l = new TLine(0,1,120,1);
-  l->SetLineStyle(2);
-  l->Draw();
 
   return hCorr1D;
 }
