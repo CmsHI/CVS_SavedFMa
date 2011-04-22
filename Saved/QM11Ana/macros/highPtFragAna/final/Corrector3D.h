@@ -205,8 +205,11 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
       for (Int_t s=0; s<sample_.size(); ++s) {
 	if (sampleMode_==0 && s!=isample) continue;
 	if (jet<ptHatMin_[s]) continue;
-	for (Int_t j=jetBin-1; j<=jetBin+1; ++j) { // jet pt smoothing
+	Int_t djet = 1;
+	//if (pt>20) djet = 1+pt/20;
+	for (Int_t j=jetBin-djet; j<=jetBin+djet; ++j) { // jet pt smoothing
 	  if (smoothLevel_<1&&j!=jetBin) continue;
+	  if (j!=jetBin&&(j<1||j>numJEtBins_)) continue;
 	  for (Int_t p=ptBin-1; p<ptBin+1; ++p) { // trk pt smoothing
 	    if (smoothLevel_<2&&p!=ptBin) continue;
 	    if (p!=ptBin&&(p<13||p>numPtBins_)) continue;
@@ -284,37 +287,52 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t centBeg, Int_t cen
     }
   }
 
-  hNum->GetZaxis()->SetRange(jetBegBin,jetEndBin);
-  hDen->GetZaxis()->SetRange(jetBegBin,jetEndBin);
-  hNum2D = (TH2D*)hNum->Project3D("yx");
-  hDen2D = (TH2D*)hDen->Project3D("yx");
+  if (mode<=2) {
+    hNum->GetZaxis()->SetRange(jetBegBin,jetEndBin);
+    hDen->GetZaxis()->SetRange(jetBegBin,jetEndBin);
+    hNum2D = (TH2D*)hNum->Project3D("yx");
+    hDen2D = (TH2D*)hDen->Project3D("yx");
 
+    // ===============================================
+    // 2D Inspection
+    // ===============================================
+    if (mode==0) {
+      hCorr2D = (TH2D*)hNum2D->Clone(inspName+"Corr2D");
+      hCorr2D->Divide(hNum2D,hDen2D);
+      return hCorr2D;
+    }
+
+    // ===============================================
+    // 1D Pt
+    // ===============================================
+    if (mode==1) {
+      hNum1D = hNum2D->ProjectionX(inspName+"Num_px",begbin,endbin);
+      hDen1D = hDen2D->ProjectionX(inspName+"Den_px",begbin,endbin);
+    } else if (mode==2) {
+      hNum1D = hNum2D->ProjectionY(inspName+"Num_py",begbin,endbin);
+      hDen1D = hDen2D->ProjectionY(inspName+"Den_py",begbin,endbin);
+    }
+
+    // ===============================================
+    // 1D Eta
+    // ===============================================
+    hCorr1D = (TH1D*)hNum1D->Clone(inspName+"Corr1D");
+    hCorr1D->Divide(hNum1D,hDen1D);
+  } else if (mode==3) {
   // ===============================================
-  // 2D Inspection
+  // 1D Jet
   // ===============================================
-  if (mode==0) {
-    hCorr2D = (TH2D*)hNum2D->Clone(inspName+"Corr2D");
-    hCorr2D->Divide(hNum2D,hDen2D);
-    return hCorr2D;
+    cout << "xaxis: " << begbin << "," << endbin << endl;
+    cout << "yaxis: " << jetBegBin << "," << jetEndBin << endl;
+    hNum->GetYaxis()->SetRange(jetBegBin,jetEndBin); // set pt range
+    hDen->GetYaxis()->SetRange(jetBegBin,jetEndBin); // set pt range
+    hNum->GetXaxis()->SetRange(begbin,endbin); // set eta range
+    hDen->GetXaxis()->SetRange(begbin,endbin); // set eta range
+    hNum1D = (TH1D*)hNum->Project3D("z");
+    hDen1D = (TH1D*)hDen->Project3D("z");
+    hCorr1D = (TH1D*)hNum1D->Clone(inspName+"Corr1Dz");
+    hCorr1D->Divide(hNum1D,hDen1D);
   }
-
-  // ===============================================
-  // 1D Projection
-  // ===============================================
-  if (mode==1) {
-    hNum1D = hNum2D->ProjectionX(inspName+"Num_px",begbin,endbin);
-    hDen1D = hDen2D->ProjectionX(inspName+"Den_px",begbin,endbin);
-  } else if (mode==2) {
-    hNum1D = hNum2D->ProjectionY(inspName+"Num_py",begbin,endbin);
-    hDen1D = hDen2D->ProjectionY(inspName+"Den_py",begbin,endbin);
-  }
-
-  // ===============================================
-  // 1D Inspection
-  // ===============================================
-  hCorr1D = (TH1D*)hNum1D->Clone(inspName+"Corr1D");
-  hCorr1D->Divide(hNum1D,hDen1D);
-
   return hCorr1D;
 }
 #endif // Corrector3D_h
