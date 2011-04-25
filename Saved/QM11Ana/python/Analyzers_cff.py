@@ -85,6 +85,21 @@ hitrkEffAnalyzer_akpu3pf_j2 = hitrkEffAnalyzer_akpu3pf.clone(
     )
 hitrkEffAna_akpu3pf = cms.Sequence(cutsTPForFak*cutsTPForEff*hitrkEffAnalyzer_akpu3pf*hitrkEffAnalyzer_akpu3pf_j1*hitrkEffAnalyzer_akpu3pf_j2)
 
+# hiHighPt
+hiHighPtTrkEffAnalyzer_akpu3pf = hitrkEffAnalyzer_akpu3pf.clone(
+    tracks = "hiHighPtTracks"
+    )
+hiHighPtTrkEffAnalyzer_akpu3pf_j1 = hiHighPtTrkEffAnalyzer_akpu3pf.clone(
+    useJetEtMode = 1,
+    jetTrkOnly = True
+    )
+hiHighPtTrkEffAnalyzer_akpu3pf_j2 = hiHighPtTrkEffAnalyzer_akpu3pf.clone(
+    useJetEtMode = 1,
+    jetTrkOnly = True,
+    useSubLeadingJet = True
+    )
+hiHighPtTrkEffAna_akpu3pf = cms.Sequence(cutsTPForFak*cutsTPForEff*hiHighPtTrkEffAnalyzer_akpu3pf*hiHighPtTrkEffAnalyzer_akpu3pf_j1*hiHighPtTrkEffAnalyzer_akpu3pf_j2)
+# merged tracks
 hipixtrkEffAnalyzer_akpu3pf = hitrkEffAnalyzer_akpu3pf.clone(
     tracks = "hiGoodMergedTracks",
     label_tp_effic = "cutsTPForEffPxl",
@@ -110,7 +125,7 @@ makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
 
 
 # final sequences
-trkcorr_seq = cms.Sequence( (hitrkEffAna_akpu3pf) )
+trkcorr_seq = cms.Sequence( (hitrkEffAna_akpu3pf+hiHighPtTrkEffAna_akpu3pf) )
 trkana_seq = cms.Sequence( trkAnalyzer * genpAnalyzer )
 trkana_seq_data = cms.Sequence( trkAnalyzer )
 jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djakpu3pf_pfcand * djgenic5 * djgenak3)

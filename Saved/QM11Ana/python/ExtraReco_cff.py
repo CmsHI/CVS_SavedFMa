@@ -26,8 +26,24 @@ from edwenger.HiTrkEffAnalyzer.TrackSelections_cff import *
 from Appeltel.PixelTracksRun2010.HiLowPtPixelTracksFromReco_cff import *
 from Appeltel.PixelTracksRun2010.HiMultipleMergedTracks_cff import *
 
+# hiHighPtTracks
+hiTightGlobalPrimTracks = cms.EDFilter("TrackSelector",
+    src = cms.InputTag("hiGlobalPrimTracks"),
+    cut = cms.string('(ptError/pt)<0.06&&numberOfValidHits>12')
+    )
+
+from RecoHI.HiTracking.HISelectedTracks_cfi import hiSelectedTracks
+hiHighPtTracks = hiSelectedTracks.clone(
+    src="hiTightGlobalPrimTracks",
+    copyTrajectories = False,
+    d0_par2 = [9999,1],
+    dz_par2 = [9999,1]
+    )
+
 hiextraTrackReco = cms.Sequence(
-    hiGoodTracksSelection
+    hiTightGlobalPrimTracks
+    * hiHighPtTracks
+    * hiGoodTracksSelection
     )
 
 # particle flow
