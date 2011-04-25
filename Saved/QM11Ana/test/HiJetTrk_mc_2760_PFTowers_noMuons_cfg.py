@@ -51,14 +51,22 @@ process.load("Saved.QM11Ana.Analyzers_cff")
 from Saved.QM11Ana.customise_cfi import *
 # custom extra reco
 #usehiGoodMergedTracks(process)
+usehiHighPtTracks(process)
 
 # =============== Final Paths =====================
 #process.extraHiReco = cms.Path( process.makeCentralityTableTFile )
 process.extraTrkReco = cms.Path( process.hiTrackReReco * process.hiextraTrackReco )
 process.extraPfReco = cms.Path( process.HiParticleFlowRecoNoJets )
 process.extraJetReco = cms.Path( process.hiGen * process.runAllJets )
-#process.ana_step = cms.Path( process.trkcorr_seq * process.trkana_seq * process.jetana_seq )
-process.ana_step = cms.Path( process.trkana_seq * process.inclusiveJetAnalyzer * process.akPu3PFJetAnalyzer)
-#process.ana_step = cms.Path( process.trkcorr_seq * process.akPu3PFJetAnalyzer)
+#process.ana_step = cms.Path( process.trkcorr_seq * process.trkval_seq * process.trkana_seq * process.jetana_seq )
+process.ana_step = cms.Path( process.trkcorr_seq * process.trkval_seq * process.akPu3PFJetAnalyzer)
 
 process.schedule = cms.Schedule(process.extraTrkReco,process.extraPfReco,process.extraJetReco,process.ana_step)
+
+# =============== Output ================================
+#process.output = cms.OutputModule("PoolOutputModule",
+#    #process.analysisSkimContent,
+#    fileName = cms.untracked.string('jetAnaSkim.root')
+#    )
+#process.output_step = cms.EndPath(process.output)
+#process.schedule.extend([process.output_step])

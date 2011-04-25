@@ -28,7 +28,7 @@ djakpu3pf_pfcand = djicpu5.clone(
   nearJetPtMin = 70,
   anaTrkType = cms.int32(4),
   trksrc = cms.InputTag("particleFlow",""),
-  trkPtMin = 0.5
+  trkPtMin = 0.9
   )
 djgenic5 = djgen.clone(
   refjetsrc = "icPu5patJets",
@@ -55,7 +55,7 @@ trkAnalyzerHighptNoTraj = trkAnalyzer.clone(
 
 genpAnalyzer = cms.EDAnalyzer('HiGenAnalyzer',
     useHepMCProduct = cms.untracked.bool(False),
-    ptMin = cms.untracked.double(0.9),
+    ptMin = cms.untracked.double(0.5),
     chargedOnly = cms.untracked.bool(True),
     src = cms.untracked.InputTag("hiSignal"),
     genpSrc = cms.untracked.InputTag("hiGenParticles"),
@@ -126,9 +126,28 @@ hipixtrkEffAna_akpu3pf = cms.Sequence(cutsTPForFakPxl * cutsTPForEffPxl* hipixtr
 from edwenger.HiTrkEffAnalyzer.hipfCandAnalyzer_cfi import *
 hitrkpfcandAnalyzer = pfCandidateAnalyzer.clone(
     Tracks = "hiGoodTracks",
+    ptMin = 2,
     hasSimInfo = True,
     isData = False
     )
+
+# trk val
+from PbPbTrackingTools.HiTrackValidator.hitrackvalidator_cfi import *
+from edwenger.HiTrkEffAnalyzer.HiTPCuts_cff import *
+hihightrkval = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiHighPtTracks"))
+hihightrkval_fake = hihightrkval.clone(simtrklabel = cms.untracked.InputTag("cutsTPForFak"),
+                                     hasSimInfo=cms.untracked.bool(True),
+                                     selectFake=cms.untracked.bool(True))
+higoodtrkval = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiGoodTracks"))
+higoodtrkval_fake = higoodtrkval.clone(simtrklabel = cms.untracked.InputTag("cutsTPForFak"),
+                                       hasSimInfo=cms.untracked.bool(True),
+                                       selectFake=cms.untracked.bool(True))
+
+hihightrkval_fakeOnly = cms.Sequence(cutsTPForFak*
+                                     hihightrkval_fake)
+higoodtrkval_fakeOnly = cms.Sequence(cutsTPForFak*
+                                     higoodtrkval_fake)
+
 
 # centrality
 makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
@@ -140,9 +159,11 @@ makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
 
 # final sequences
 trkcorr_seq = cms.Sequence( (hitrkEffAna_akpu3pf+hiHighPtTrkEffAna_akpu3pf) )
-trkana_seq = cms.Sequence( trkAnalyzer * hpttrkAnalyzer * genpAnalyzer * hitrkpfcandAnalyzer )
+trkval_seq = cms.Sequence( hihightrkval + higoodtrkval + hitrkpfcandAnalyzer)
+#trkana_seq = cms.Sequence( trkAnalyzer * hpttrkAnalyzer * genpAnalyzer * djakpu3pf_pfcand)
+trkana_seq = cms.Sequence( trkAnalyzer * hpttrkAnalyzer * genpAnalyzer)
 trkana_seq_data = cms.Sequence( trkAnalyzer )
-#jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djakpu3pf_pfcand * djgenic5 * djgenak3)
+#jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djgenic5 * djgenak3)
 #jetana_seq_data = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djakpu3pf_pfcand )
 jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer)
 jetana_seq_data = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer)

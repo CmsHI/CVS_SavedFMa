@@ -2,7 +2,7 @@ import os
 os.system("./create_custom_python_cfg.sh")
 
 scratch="/net/hidsk0001/d00/scratch/frankma"
-jobTag="TrkEffv5"
+jobTag="TrkEffv7hpt"
 
 # ================== 362 ===============
 samples  = {
@@ -32,7 +32,7 @@ samples  = {
     # Tracking high_pt high stat
     "HydjetBass_DJUQ50_GSR_393_300k":"ana",
     "HydjetBass_DJUQ80_GSR_393_300k":"ana",
-    #"HydjetBass_DJUQ110_GSR_393_300k":"ana"
+    "HydjetBass_DJUQ110_GSR_393_300k":"ana",
     "HydjetBass_DJUQ170_GSR_393_300k":"ana"
     }
 
