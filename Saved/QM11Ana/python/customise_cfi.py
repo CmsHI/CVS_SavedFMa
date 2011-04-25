@@ -19,6 +19,12 @@ def usehiGoodMergedTracks(process):
   process.trkAnalyzer.trackPtMin = 0.5
   process.genpAnalyzer.ptMin = 0.5
 
+def usehiHighPtTracks(process):
+  print "hiHighPtTracks is used for pf rereco"
+  process.trackerDrivenElectronSeeds.TkColList =  ["hiHighPtTracks"]
+  print "change trk-calo analyzer to use hiHighPtTracks"
+  process.hitrkpfcandAnalyzer.Tracks = "hiHighPtTracks"
+
 def enableData(process):
   # jet
   removePatMCMatch(process.icPu5patJets)

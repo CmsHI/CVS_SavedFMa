@@ -46,6 +46,12 @@ trkAnalyzer = cms.EDAnalyzer("TrackAnalyzer",
     trackPtMin = cms.untracked.double(0.9),
     fiducialCut = cms.untracked.bool(True)
     )
+hpttrkAnalyzer = trkAnalyzer.clone(
+    trackSrc = "hiHighPtTracks"
+    )
+trkAnalyzerHighptNoTraj = trkAnalyzer.clone(
+    trackSrc = "hiHighPtTracksNoTraj"
+    )
 
 genpAnalyzer = cms.EDAnalyzer('HiGenAnalyzer',
     useHepMCProduct = cms.untracked.bool(False),
@@ -116,6 +122,14 @@ hipixtrkEffAnalyzer_akpu3pf_j2 = hipixtrkEffAnalyzer_akpu3pf.clone(
     )
 hipixtrkEffAna_akpu3pf = cms.Sequence(cutsTPForFakPxl * cutsTPForEffPxl* hipixtrkEffAnalyzer_akpu3pf * hipixtrkEffAnalyzer_akpu3pf_j1 * hipixtrkEffAnalyzer_akpu3pf_j2)
 
+# calo-trk matching
+from edwenger.HiTrkEffAnalyzer.hipfCandAnalyzer_cfi import *
+hitrkpfcandAnalyzer = pfCandidateAnalyzer.clone(
+    Tracks = "hiGoodTracks",
+    hasSimInfo = True,
+    isData = False
+    )
+
 # centrality
 makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
     isMC = cms.untracked.bool(True),
@@ -126,8 +140,10 @@ makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
 
 # final sequences
 trkcorr_seq = cms.Sequence( (hitrkEffAna_akpu3pf+hiHighPtTrkEffAna_akpu3pf) )
-trkana_seq = cms.Sequence( trkAnalyzer * genpAnalyzer )
+trkana_seq = cms.Sequence( trkAnalyzer * hpttrkAnalyzer * genpAnalyzer * hitrkpfcandAnalyzer )
 trkana_seq_data = cms.Sequence( trkAnalyzer )
-jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djakpu3pf_pfcand * djgenic5 * djgenak3)
-jetana_seq_data = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djakpu3pf_pfcand )
+#jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djakpu3pf_pfcand * djgenic5 * djgenak3)
+#jetana_seq_data = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer * djakpu3pf_pfcand )
+jetana_seq = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer)
+jetana_seq_data = cms.Sequence( inclusiveJetAnalyzer * akPu5PFJetAnalyzer * akPu3PFJetAnalyzer)
 
