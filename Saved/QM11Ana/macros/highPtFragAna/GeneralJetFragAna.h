@@ -34,26 +34,36 @@ struct AnaJets
 {
   Int_t njets;
   Float_t jtpt[MAXNJETS];
-  Float_t refpt[MAXNJETS];
-  Float_t rawpt[MAXNJETS];
   Float_t jteta[MAXNJETS];
   Float_t jtphi[MAXNJETS];
-  void LoadBranches(TChain * t, Int_t treeFormat, TString name="") {
+  Float_t refpt[MAXNJETS];
+  Float_t rawpt[MAXNJETS];
+  void LoadBranches(TChain * t, Int_t treeFormat, TString name="",Int_t jType=2,Bool_t doMC=false) {
     if (treeFormat==0) {
       t->SetBranchAddress("nref",&(this->njets));
-      t->SetBranchAddress("jtpt",this->jtpt);
-      t->SetBranchAddress("refpt",this->refpt);
+      if (jType==2) {
+	t->SetBranchAddress("jtpt",this->jtpt);
+	t->SetBranchAddress("jteta",this->jteta);
+	t->SetBranchAddress("jtphi",this->jtphi);
+      } else if (jType==1) {
+	t->SetBranchAddress("genpt",this->jtpt);
+	t->SetBranchAddress("geneta",this->jteta);
+	t->SetBranchAddress("genphi",this->jtphi);
+      }
+      if (doMC) {
+	t->SetBranchAddress("refpt",this->refpt);
+      }
       t->SetBranchAddress("rawpt",this->rawpt);
-      t->SetBranchAddress("jteta",this->jteta);
-      t->SetBranchAddress("jtphi",this->jtphi);
     } else if (treeFormat==1) {
       t->SetBranchAddress("n"+name,&(this->njets));
       //t->SetBranchAddress("corrpt_"+name,this->jtpt);
       t->SetBranchAddress("jtpt_"+name,this->jtpt);
-      t->SetBranchAddress("refpt_"+name,this->refpt);
-      t->SetBranchAddress("rawpt_"+name,this->rawpt);
       t->SetBranchAddress("jteta_"+name,this->jteta);
       t->SetBranchAddress("jtphi_"+name,this->jtphi);
+      if (doMC) {
+	t->SetBranchAddress("refpt_"+name,this->refpt);
+      }
+      t->SetBranchAddress("rawpt_"+name,this->rawpt);
     }
   }
 };
@@ -99,10 +109,10 @@ struct JetFrag
   Int_t cbin;
   Float_t vz;
   Float_t jtpt[2];
-  Float_t refpt[2];
-  Float_t rawpt[2];
   Float_t jteta[2];
   Float_t jtphi[2];
+  Float_t refpt[2];
+  Float_t rawpt[2];
   Int_t np;
   Float_t ppt[MAXNP];
   Float_t peta[MAXNP];
@@ -112,10 +122,10 @@ struct JetFrag
     t->Branch("cbin",&(this->cbin),"cbin/I");
     t->Branch("vz",&(this->vz),"vz/F");
     t->Branch("jtpt",this->jtpt,"jtpt[2]/F");
-    t->Branch("refpt",this->refpt,"refpt[2]/F");
-    t->Branch("rawpt",this->rawpt,"rawpt[2]/F");
     t->Branch("jteta",this->jteta,"jteta[2]/F");
     t->Branch("jtphi",this->jtphi,"jtphi[2]/F");
+    t->Branch("refpt",this->refpt,"refpt[2]/F");
+    t->Branch("rawpt",this->rawpt,"rawpt[2]/F");
     t->Branch("np",&(this->np),"np/I");
     t->Branch("ppt",this->ppt,"ppt[np]/F");
     t->Branch("peta",this->peta,"peta[np]/F");
@@ -142,7 +152,9 @@ class GeneralJetFragAna
     TChain * jetTree_;
     TChain * pTree_;
 
+    Bool_t doMC_;
     Int_t doJEC_;
+    Bool_t doJetOnly_;
     AnaJEC * anajec_;
 
     AnaEvt anaEvt_;
@@ -161,7 +173,7 @@ class GeneralJetFragAna
 
     // methods
     GeneralJetFragAna(TString name);
-    void Init(Int_t pType);
+    void Init(Int_t jType, Int_t pType);
     void Loop();
     Int_t GetLeadingJet(AnaJets & jets,std::vector<PtEtaPhiMLorentzVectorD> & jv);
     Int_t GetJet2(AnaJets & jets,std::vector<PtEtaPhiMLorentzVectorD> & jv, Int_t leadJetInd);

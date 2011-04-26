@@ -3,22 +3,24 @@ using namespace std;
 
 GeneralJetFragAna::GeneralJetFragAna(TString name) :
   name_(name),
+  doMC_(false),
+  doJetOnly_(false),
   anaJetv_(2),
   treeFormat_(0)
 {
 }
 
-void GeneralJetFragAna::Init(Int_t pType)
+void GeneralJetFragAna::Init(Int_t jType, Int_t pType)
 {
   cout << "============================" << endl;
   cout << "GeneralJetFragAna: " << name_ << " doJEC: " << doJEC_ << endl;
   cout << "leadJetPtMin: " << leadJetPtMin_ << " pptMin: " << pptMin_ << endl;
-  cout << "treeFormat: " << treeFormat_ << " particleType: " << pType << endl;
+  cout << "treeFormat: " << treeFormat_ << " jetType: " << jType << " particleType: " << pType << endl;
   cout << "============================" << endl;
   // Inputs
   anaEvt_.LoadBranches(evtTree_,treeFormat_);
-  anaJets_.LoadBranches(jetTree_,treeFormat_,name_);
-  anaPs_.LoadBranches(pTree_,treeFormat_,pType);
+  anaJets_.LoadBranches(jetTree_,treeFormat_,name_,jType);
+  if (!doJetOnly_) anaPs_.LoadBranches(pTree_,treeFormat_,pType);
 
   // Outputs
   jfTree_ = new TTree("tjf","jet frag tree");
@@ -31,19 +33,22 @@ void GeneralJetFragAna::Loop()
 {
   Int_t numEvtEnt = evtTree_->GetEntries();
   Int_t numJetEnt = jetTree_->GetEntries();
-  Int_t numPEnt	  = pTree_->GetEntries();
+  Int_t numPEnt = 0;
+  if (!doJetOnly_) numPEnt = pTree_->GetEntries();
   cout << "evtTree: " << numEvtEnt << endl;
   cout << "jetTree: " << numJetEnt << endl;
-  cout << "pTree: " << numPEnt << endl;
-  if (numEvtEnt!=numJetEnt||numJetEnt!=numPEnt) {
-    cout << "Inconsistent trees" << endl;
-    return;
+  if (!doJetOnly_) {
+    cout << "pTree: " << numPEnt << endl;
+    if (numEvtEnt!=numJetEnt||numJetEnt!=numPEnt) {
+      cout << "Inconsistent trees" << endl;
+      return;
+    }
   }
 
   for (Int_t ievt=0; ievt<numEvtEnt; ++ievt) {
     evtTree_->GetEntry(ievt);
     jetTree_->GetEntry(ievt);
-    pTree_->GetEntry(ievt);
+    if (!doJetOnly_) pTree_->GetEntry(ievt);
     if (ievt%5000==0) {
       cout << "Entry " << ievt << " (" << (Float_t)ievt/numEvtEnt*100 << "%)" << endl;
       //cout << "run/lumi/evt: " << anaEvt_.run << "/" << anaEvt_.lumi << "/" << anaEvt_.evt << endl;
@@ -70,7 +75,7 @@ void GeneralJetFragAna::Loop()
 
     // Jet level vars
     Int_t leadJetInd  = GetLeadingJet(anaJets_,anaJetv_);
-    if (anaJets_.jtpt[leadJetInd]<leadJetPtMin_) continue; // leading jet selection
+    if (leadJetPtMin_>0 && anaJets_.jtpt[leadJetInd]<leadJetPtMin_) continue; // leading jet selection
     Int_t jet2Ind     = GetJet2(anaJets_,anaJetv_,leadJetInd);
     Int_t anaJInd[2] = { leadJetInd, jet2Ind };
     for (Int_t j=0;j<anaJetv_.size();++j) {
@@ -84,13 +89,15 @@ void GeneralJetFragAna::Loop()
     }
 
     // Particle level vars
-    for (Int_t ip=0; ip<anaPs_.np; ++ip) {
-      if (anaPs_.ppt[ip]<pptMin_) continue;
-      if (fabs(anaPs_.peta[ip])>2.4) continue; // tracker acceptance
-      jf_.ppt[jf_.np] = anaPs_.ppt[ip];
-      jf_.peta[jf_.np] = anaPs_.peta[ip];
-      jf_.pphi[jf_.np] = anaPs_.pphi[ip];
-      ++jf_.np;
+    if (!doJetOnly_) {
+      for (Int_t ip=0; ip<anaPs_.np; ++ip) {
+	if (anaPs_.ppt[ip]<pptMin_) continue;
+	if (fabs(anaPs_.peta[ip])>2.4) continue; // tracker acceptance
+	jf_.ppt[jf_.np] = anaPs_.ppt[ip];
+	jf_.peta[jf_.np] = anaPs_.peta[ip];
+	jf_.pphi[jf_.np] = anaPs_.pphi[ip];
+	++jf_.np;
+      }
     }
 
     // All vars calculated
