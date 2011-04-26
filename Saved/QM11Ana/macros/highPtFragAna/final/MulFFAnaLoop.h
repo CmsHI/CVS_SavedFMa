@@ -19,6 +19,7 @@ struct JetFragRel
   Float_t jtpt[2];
   Float_t jteta[2];
   Float_t jtphi[2];
+  Float_t refpt[2];
   Int_t np;
   Float_t ppt[MAXNP];
   Float_t peta[MAXNP];
@@ -41,6 +42,7 @@ struct JetFragRel
     t->Branch("jtpt",this->jtpt,"jtpt[2]/F");
     t->Branch("jteta",this->jteta,"jteta[2]/F");
     t->Branch("jtphi",this->jtphi,"jtphi[2]/F");
+    t->Branch("refpt",this->refpt,"refpt[2]/F");
     t->Branch("np",&(this->np),"np/I");
     t->Branch("ppt",this->ppt,"ppt[np]/F");
     t->Branch("peta",this->peta,"peta[np]/F");
@@ -63,6 +65,7 @@ struct JetFragRel
     //t->SetBranchAddress("refpt",this->jtpt);
     t->SetBranchAddress("jteta",this->jteta);
     t->SetBranchAddress("jtphi",this->jtphi);
+    t->SetBranchAddress("refpt",this->refpt);
     t->SetBranchAddress("np",&(this->np));
     t->SetBranchAddress("ppt",this->ppt);
     t->SetBranchAddress("peta",this->peta);
@@ -116,12 +119,13 @@ class FragAnaLoop
 
     Bool_t SelEvt(const JetFragRel & jfr) {
       //return (jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax);
-      return (
+      Bool_t result = (
 	  jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax
-	  && jfr.jtpt[0]>50
+	  && jfr.jtpt[0]>cut_->JEtMin[0]
 	  && (jfr.jtpt[0]-jfr.jtpt[1])/(jfr.jtpt[0]+jfr.jtpt[1]) >= cut_->AjMin
 	  && (jfr.jtpt[0]-jfr.jtpt[1])/(jfr.jtpt[0]+jfr.jtpt[1]) < cut_->AjMax
 	  );
+      return result;
     }
     Bool_t SelJet(const JetFragRel & jfr, Int_t j) {
       return (jfr.jtpt[0]>=cut_->JEtMin[0] && jfr.jtpt[0]<cut_->JEtMax[0] && fabs(jfr.jteta[0])<cut_->JEtaMax[0]
@@ -132,7 +136,7 @@ class FragAnaLoop
 	  && jfr.jtpt[j]>=cut_->JEtMin[j] && jfr.jtpt[j]<cut_->JEtMax[j] && fabs(jfr.jteta[j])<cut_->JEtaMax[j]
 	 ) return true;
       else if (j==1
-	  && jfr.jtpt[0]>=cut_->JEtMin[0] && jfr.jtpt[0]<cut_->JEtMax[0] && fabs(jfr.jteta[0])<cut_->JEtaMax[0]
+	  //&& jfr.jtpt[0]>=cut_->JEtMin[0] && jfr.jtpt[0]<cut_->JEtMax[0] && fabs(jfr.jteta[0])<cut_->JEtaMax[0]
 	  && jfr.jtpt[j]>=cut_->JEtMin[j] && jfr.jtpt[j]<cut_->JEtMax[j] && fabs(jfr.jteta[j])<cut_->JEtaMax[j]
 	 ) return true;
       return false;
@@ -182,9 +186,9 @@ void FragAnaLoop::Init()
       vhPPtRat_[j].push_back(new TH1D(Form("h%sPPtRat%d_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0]));
       vhPPtRat_[j][lv]->Sumw2();
 
-      vhXiCorr_[j].push_back(new TH1D(Form("h%sXiCorr%d_j%d",name_.Data(),lv,j),"",10,0,5));
+      vhXiCorr_[j].push_back(new TH1D(Form("h%sXiCorr%d_j%d",name_.Data(),lv,j),"",12,-1,5));
       vhXiCorr_[j][lv]->Sumw2();
-      vhXiRat_[j].push_back(new TH1D(Form("h%sXiRat%d_j%d",name_.Data(),lv,j),"",10,0,5));
+      vhXiRat_[j].push_back(new TH1D(Form("h%sXiRat%d_j%d",name_.Data(),lv,j),"",12,-1,5));
       vhXiRat_[j][lv]->Sumw2();
 
       vhTrkCorrPPt_[j].push_back(new TH2D(Form("h%sTrkCorr%dPPt_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0],numEffBins,effBins));
@@ -214,7 +218,8 @@ void FragAnaLoop::Loop()
   // ===========================
   for (Int_t i=0; i<numEntries; ++i) {
     t_->GetEntry(i);
-    if (i%5000==0) cout << "Entry " << i << " (" << (Float_t)i/numEntries*100 << "%) cbin: " << jfr_.cbin << " jet0: " << jfr_.jtpt[0] << " " << jfr_.jteta[0] << " " << jfr_.jtphi[0] << endl;
+    if (jfr_.cbin<0) jfr_.cbin = 35;
+    if (i%5000==0) cout << "Entry " << i << " (" << (Float_t)i/numEntries*100 << "%) cbin: " << jfr_.cbin << " jet0: " << jfr_.jtpt[0] << " " << jfr_.jteta[0] << " " << jfr_.jtphi[0] << " ref0pt: " << jfr_.refpt[0] << endl;
     // Calc Dijet properties
     jfr_.jdphi = deltaPhi(jfr_.jtphi[0],jfr_.jtphi[1]);
     // ===========================
@@ -231,6 +236,7 @@ void FragAnaLoop::Loop()
     // ===========================
     // Basic Event preselection
     // ===========================
+    //cout << "EvtSel: " << jfr_.jtpt[0] << " pass? " << SelEvt(jfr_) << endl;
     if (!SelEvt(jfr_)) continue;
 
     // ===========================
@@ -303,7 +309,7 @@ void FragAnaLoop::Loop()
 	    }
 	  }
 	  vhPPtCorr_[j][0]->Fill(trkEnergy);
-	  vhXiCorr_[j][0]->Fill(log(jfr_.jtpt[j]/trkEnergy));
+	  vhXiCorr_[j][0]->Fill(fabs(log(jfr_.jtpt[j]/trkEnergy)));
 
 	  if (anaTrkType_==0) continue;
 	  vhPPtCorr_[j][1]->Fill(trkEnergy,1./eff);
@@ -311,10 +317,10 @@ void FragAnaLoop::Loop()
 	  vhPPtCorr_[j][3]->Fill(trkEnergy,(1-fak)/(eff*(1+mul)));
 	  vhPPtCorr_[j][4]->Fill(trkEnergy,trkwt);
 
-	  vhXiCorr_[j][1]->Fill(log(jfr_.jtpt[j]/trkEnergy),1./eff);
-	  vhXiCorr_[j][2]->Fill(log(jfr_.jtpt[j]/trkEnergy),(1-fak)/eff);
-	  vhXiCorr_[j][3]->Fill(log(jfr_.jtpt[j]/trkEnergy),(1-fak)/(eff*(1+mul)));
-	  vhXiCorr_[j][4]->Fill(log(jfr_.jtpt[j]/trkEnergy),trkwt);
+	  vhXiCorr_[j][1]->Fill(fabs(log(jfr_.jtpt[j]/trkEnergy)),1./eff);
+	  vhXiCorr_[j][2]->Fill(fabs(log(jfr_.jtpt[j]/trkEnergy)),(1-fak)/eff);
+	  vhXiCorr_[j][3]->Fill(fabs(log(jfr_.jtpt[j]/trkEnergy)),(1-fak)/(eff*(1+mul)));
+	  vhXiCorr_[j][4]->Fill(fabs(log(jfr_.jtpt[j]/trkEnergy)),trkwt);
 
 	  // study correction
 	  for (Int_t lv=1; lv<=4; ++lv) {
