@@ -18,7 +18,7 @@ void anaGeneralJF(
 {
   gSystem->Load("libMathCore");
   gSystem->Load("libPhysics");
-  TString version("v7");
+  TString version("v8");
 
   Int_t treeFormat=-1,doJEC=-1;
   TString fdataname,tag,algo;
@@ -26,20 +26,20 @@ void anaGeneralJF(
   // Inputs/Output
   if (doMC) {
     // mc
-    treeFormat = 0; // 0 for jra, 1 for pfana
-    doJEC = 1;
+    treeFormat = 1; // 0 for jra, 1 for pfana
+    doJEC = 0;
     if (jetType<2) doJEC=0;
-    algo = "akPu3PFJetAnalyzer";
-    //algo = "j4";
+    //algo = "akPu3PFJetAnalyzer";
+    algo = "j4";
     //algo = "inclusiveJetAnalyzer";
     //fdataname = Form("trees/tr_hydjuq%d_jtv2_2_50k.root",ptHatMin);
     //tag = Form("trana%s_hydjuq%d_mc_akpu3pf_t%d_50k",version.Data(),ptHatMin,jetType,particleType);
-    fdataname = Form("~frankma/scratch01/ana/HydjetBass_DJUQ%d_GSR_393_300k_JetTrkv6/tr*.root",ptHatMin);
-    tag = Form("trana%s_hydjuq%dv6_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
+    //fdataname = Form("~frankma/scratch01/ana/HydjetBass_DJUQ%d_GSR_393_300k_JetTrkv6/tr*.root",ptHatMin);
+    //tag = Form("trana%s_hydjuq%dv6_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
     //fdataname = Form("~frankma/scratch01/ana/HydjetBass_DJUQ%d_GSR_393_300k_JetTrkv5GenPSig/tr*.root",ptHatMin);
     //tag = Form("trana%s_hydjuq%dv5_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
-    //fdataname = Form("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_v1.root",ptHatMin);
-    //tag = Form("trana%s_hydjuq%dmattpfgmv1_akpu3pf_t%d",version.Data(),ptHatMin,jetType,particleType);
+    fdataname = Form("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_v1.root",ptHatMin);
+    tag = Form("trana%s_hydjuq%dmattpfgmv1_akpu3pf_t%d",version.Data(),ptHatMin,jetType,particleType);
   }
   else {
     // data
@@ -75,7 +75,8 @@ void anaGeneralJF(
     if (treeFormat==0) tp = new TChain("trkAnalyzer/trackTree");
     else if (treeFormat==1) tp = new TChain("PFJetAnalyzer/t");
   } else if (particleType==0) {
-    tp = new TChain("genpAnalyzer/hi");
+    if (treeFormat==0) tp = new TChain("genpAnalyzer/hi");
+    else if (treeFormat==1) tp = new TChain("PFJetAnalyzer/t");
   }
   tp->Add(fdataname);
 
@@ -96,7 +97,7 @@ void anaGeneralJF(
   jfana.anajec_ = &anajec;
   jfana.pTree_ = tp;
   jfana.leadJetPtMin_=90;
-  jfana.pptMin_=2;
+  jfana.pptMin_=4;
   jfana.treeFormat_=treeFormat; // 0 for jra, 1 for pftree
   jfana.Init(jetType,particleType);
   jfana.Loop();

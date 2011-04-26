@@ -13,13 +13,13 @@ GeneralJetFragAna::GeneralJetFragAna(TString name) :
 void GeneralJetFragAna::Init(Int_t jType, Int_t pType)
 {
   cout << "============================" << endl;
-  cout << "GeneralJetFragAna: " << name_ << " doJEC: " << doJEC_ << endl;
+  cout << "GeneralJetFragAna: " << name_ << " doMC: " << doMC_ << " doJEC: " << doJEC_ << endl;
   cout << "leadJetPtMin: " << leadJetPtMin_ << " pptMin: " << pptMin_ << endl;
   cout << "treeFormat: " << treeFormat_ << " jetType: " << jType << " particleType: " << pType << endl;
   cout << "============================" << endl;
   // Inputs
   anaEvt_.LoadBranches(evtTree_,treeFormat_);
-  anaJets_.LoadBranches(jetTree_,treeFormat_,name_,jType);
+  anaJets_.LoadBranches(jetTree_,treeFormat_,name_,jType,doMC_);
   if (!doJetOnly_) anaPs_.LoadBranches(pTree_,treeFormat_,pType);
 
   // Outputs
@@ -53,7 +53,7 @@ void GeneralJetFragAna::Loop()
       cout << "Entry " << ievt << " (" << (Float_t)ievt/numEvtEnt*100 << "%)" << endl;
       //cout << "run/lumi/evt: " << anaEvt_.run << "/" << anaEvt_.lumi << "/" << anaEvt_.evt << endl;
       cout << "bin|vz: " << anaEvt_.cbin << "|" << anaEvt_.vz
-	<< " njet: " << anaJets_.njets << " jtpt0: " << anaJets_.jtpt[0] << endl;
+	<< " njet: " << anaJets_.njets << " jtpt0: " << anaJets_.jtpt[0] << " refjet: " << anaJets_.refpt[0] << endl;
     }
 
     // JEC
@@ -79,7 +79,6 @@ void GeneralJetFragAna::Loop()
     Int_t jet2Ind     = GetJet2(anaJets_,anaJetv_,leadJetInd);
     Int_t anaJInd[2] = { leadJetInd, jet2Ind };
     for (Int_t j=0;j<anaJetv_.size();++j) {
-      //cout << "best pt: " << anaJetv_[j].pt() << endl;
       if (anaJInd[j]<0) continue;
       jf_.jtpt[j]=anaJets_.jtpt[anaJInd[j]];
       jf_.refpt[j]=anaJets_.refpt[anaJInd[j]];
@@ -87,12 +86,20 @@ void GeneralJetFragAna::Loop()
       jf_.jteta[j]=anaJets_.jteta[anaJInd[j]];
       jf_.jtphi[j]=anaJets_.jtphi[anaJInd[j]];
     }
+    //cout << "best pt: " << anaJets_.jtpt[leadJetInd] << " ref: " << anaJets_.refpt[leadJetInd] << endl;
 
     // Particle level vars
     if (!doJetOnly_) {
       for (Int_t ip=0; ip<anaPs_.np; ++ip) {
 	if (anaPs_.ppt[ip]<pptMin_) continue;
 	if (fabs(anaPs_.peta[ip])>2.4) continue; // tracker acceptance
+	if (treeFormat_==1 &&
+	    !(abs(anaPs_.ppid[ip])==211
+	      || abs(anaPs_.ppid[ip])==321
+	      || abs(anaPs_.ppid[ip])==2212
+	      || abs(anaPs_.ppid[ip])==13
+	      )
+	   ) continue;
 	jf_.ppt[jf_.np] = anaPs_.ppt[ip];
 	jf_.peta[jf_.np] = anaPs_.peta[ip];
 	jf_.pphi[jf_.np] = anaPs_.pphi[ip];
@@ -110,7 +117,7 @@ Int_t GeneralJetFragAna::GetLeadingJet(AnaJets & jets, std::vector<PtEtaPhiMLore
   Float_t maxpt=-99;
   Int_t bestInd=-99;
   for (Int_t j=0; j<jets.njets; ++j) {
-    if (fabs(jets.jteta[j])>3) continue; // eta limit for leading jet
+    if (fabs(jets.jteta[j])>2) continue; // eta limit for leading jet
     if (jets.jtpt[j]>maxpt) {
       maxpt=jets.jtpt[j];
       bestInd=j;
@@ -134,7 +141,7 @@ Int_t GeneralJetFragAna::GetJet2(AnaJets & jets, std::vector<PtEtaPhiMLorentzVec
   Int_t bestInd=-99;
   for (Int_t j=0; j<jets.njets; ++j) {
     if (j==leadJetInd) continue; // not leading jet
-    if (fabs(jets.jteta[j])>3) continue; // eta limit for away jet
+    if (fabs(jets.jteta[j])>2) continue; // eta limit for away jet
     if (jets.jtpt[j]>maxpt) {
       maxpt=jets.jtpt[j];
       bestInd=j;
