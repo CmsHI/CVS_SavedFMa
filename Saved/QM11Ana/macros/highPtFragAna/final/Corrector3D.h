@@ -26,6 +26,7 @@ class Corrector3D
     Int_t ptRebinFactor_;
     Int_t sampleMode_; // 0 choose individually, 1 merge samples
     Int_t smoothLevel_;
+    Bool_t isLeadingJet_;
 
     vector<TString> levelName_;
     vector<vector<TString> > levelInput_;
@@ -55,7 +56,8 @@ Corrector3D::Corrector3D(TString name, TString append, TString mod) :
   trkCorrModule_(mod),
   ptRebinFactor_(1),
   sampleMode_(0),
-  smoothLevel_(0)
+  smoothLevel_(0),
+  isLeadingJet_(true)
 {
   centBin_.push_back("0to1");
   centBin_.push_back("2to3");
@@ -92,7 +94,7 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
 {
   cout << "==============================================" << endl;
   cout << " Setup: " << corrSetName_+corrSetNameApp_ << "/" << trkCorrModule_ << endl;
-  cout << "inputMethod: " << inputMethod << ", ptRebinFactor: " << ptRebinFactor_ << endl;
+  cout << " isLeadingJet: " << isLeadingJet_ << " inputMethod: " << inputMethod << ", ptRebinFactor: " << ptRebinFactor_ << endl;
   cout << "Retrieval setup - sampleMode: " << sampleMode_ << " smoothLevel: " << smoothLevel_ << endl;
   cout << "==============================================" << endl;
   // =============================
@@ -182,8 +184,10 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
   }
 
   // Get the corresponding pt_hat min sample
+  Float_t ptHatMargin=30;
+  if (!isLeadingJet_) ptHatMargin=5;
   for (Int_t s=ptHatMin_.size()-1; s>=0; --s) {
-    if (jet>=ptHatMin_[s]) {
+    if (jet>=ptHatMin_[s]+ptHatMargin) {
       isample=s;
       break;
     }
@@ -193,34 +197,33 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
   Int_t ptBin = ptBin_->FindBin(pt);
   Int_t etaBin = etaBin_->FindBin(eta);
   Int_t jetBin = jetBin_->FindBin(jet);
-  if (jetBin<1) jetBin = 1; // make sure don't exceed vector bound
-  if (jetBin>=numJEtBins_-1) jetBin = numJEtBins_-1; // make sure don't exceed vector bound
-  //cout << "bins: " << isample << " " << bin << " " << ptBin << " " << etaBin << " " << jetBin << endl;
+  //isample=2;
+  //if (jetBin<1) jetBin = 1; // make sure don't exceed vector bound
+  //if (jetBin>=numJEtBins_-1) jetBin = numJEtBins_-1; // make sure don't exceed vector bound
+  //if (ptBin>=numPtBins_) ptBin=numPtBins_;
+  //cout << "pt,eta,jet,cbin: " << pt << " " << eta << " " << jet << " " << cent << endl;
+  //cout << "bins(s,c,p,e,j): " << isample << " " << bin << " " << ptBin << " " << etaBin << " " << jetBin << endl;
 
   vector<vector<Double_t> > mat(numLevels_,vector<Double_t>(2));
+  Int_t djet = 1, dpt=1, dcbin=1, deta=1;
   for (Int_t lv=0; lv<numLevels_; ++lv) {
     for (Int_t m=0; m<2; ++m) {
-      //if (m==0) cout << "Num: ";
-      //if (m==1) cout << "Den: ";
       for (Int_t s=0; s<sample_.size(); ++s) {
 	if (sampleMode_==0 && s!=isample) continue;
-	if (jet<ptHatMin_[s]) continue;
-	Int_t djet = 1;
-	//if (pt>20) djet = 1+pt/20;
-	for (Int_t j=jetBin-djet; j<=jetBin+djet; ++j) { // jet pt smoothing
+	if (jet<ptHatMin_[s]+ptHatMargin) continue;
+	for (Int_t j=jetBin; j<=jetBin+djet; ++j) { // jet pt smoothing
 	  if (smoothLevel_<1&&j!=jetBin) continue;
 	  if (j!=jetBin&&(j<1||j>numJEtBins_)) continue;
-	  for (Int_t p=ptBin-1; p<ptBin+1; ++p) { // trk pt smoothing
+	  for (Int_t p=ptBin-dpt; p<=ptBin+dpt; ++p) { // trk pt smoothing
 	    if (smoothLevel_<2&&p!=ptBin) continue;
-	    if (p!=ptBin&&(p<13||p>numPtBins_)) continue;
-	    for (Int_t c=bin-1; c<bin+1; ++c) { // centrality smoothing
+	    if (p!=ptBin&&(p<1||p>numPtBins_)) continue;
+	    for (Int_t c=bin-dcbin; c<=bin+dcbin; ++c) { // centrality smoothing
 	      if (smoothLevel_<3&&c!=bin) continue;
 	      if (c!=bin && (c<0||c>4)) continue;
-	      for (Int_t e=etaBin-1; e<etaBin+1; ++e) { // trk eta smoothing
+	      for (Int_t e=etaBin-deta; e<=etaBin+deta; ++e) { // trk eta smoothing
 		if (smoothLevel_<4&&e!=etaBin) continue;
 		if (e<1||e>numEtaBins_) continue;
-		mat[lv][m] += correction_[lv][s][bin][m]->GetBinContent(etaBin,ptBin,j);
-		//cout << mat[lv][m] << " ";
+		mat[lv][m] += correction_[lv][s][c][m]->GetBinContent(e,p,j);
 	      }
 	    }
 	  }
