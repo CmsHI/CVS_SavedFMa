@@ -21,7 +21,7 @@ void loopMulFF(Int_t inputSample=1,
   TChain * trec = new TChain("tjf");
   TChain * tgen = new TChain("tjf");
   //TString algo="akpu3pf";
-  TString algo="akpu3pf";
+  TString algo="ak3pf";
   TString trkcorrVersion="";
   cout << "=============== MulFF Ana ======================" << endl;
   cout << "  jet: " << algo << " trkCorr: " << trkcorrVersion << endl;
@@ -31,17 +31,20 @@ void loopMulFF(Int_t inputSample=1,
   }
 
   if (inputSample==1) {
-    //infrec=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t2.root",ptHatMin,algo.Data());
-    //infgen=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t0.root",ptHatMin,algo.Data());
-    infrec=Form("../ntout/tranav7_hydjuq%.0fv5_%s_t2.root",ptHatMin,algo.Data());
-    infgen=Form("../ntout/tranav7_hydjuq%.0fv5_%s_t0.root",ptHatMin,algo.Data());
-    //infrec=Form("../ntout/tranav7_hydjuq%.0fmattpfgmv1_%s_t2.root",ptHatMin,algo.Data());
-    //infgen=Form("../ntout/tranav7_hydjuq%.0fmattpfgmv1_%s_t0.root",ptHatMin,algo.Data());
+    //infrec=Form("../ntout/tranav7_hydjuq%.0fv5_%s_t2.root",ptHatMin,algo.Data());
+    //infgen=Form("../ntout/tranav7_hydjuq%.0fv5_%s_t0.root",ptHatMin,algo.Data());
+    // pp
+    //infrec=Form("../ntout/tranav8_dj%.0fmattpfgmv1_%s_j2t2.root",ptHatMin,algo.Data());
+    //infgen=Form("../ntout/tranav8_dj%.0fmattpfgmv1_%s_j2t0.root",ptHatMin,algo.Data());
+    //tag = Form("tv8%.0fppgmv1_%s%s_an0427",ptHatMin,algo.Data(),trkcorrVersion.Data());
+    infrec=Form("../ntout/tranav8_dj%.0fmatthptv1_%s_j2t2.root",ptHatMin,algo.Data());
+    infgen=Form("../ntout/tranav8_dj%.0fmatthptv1_%s_j2t0.root",ptHatMin,algo.Data());
+    tag = Form("tv8%.0fpphptv1_%s%s_an0427",ptHatMin,algo.Data(),trkcorrVersion.Data());
     tgen->Add(infgen);
     if (tgen->GetEntries()>0) cout << infgen << ": " << tgen->GetEntries() << endl;
     else { cout << infgen << " has 0 entries" << endl; exit(1); }
     //tag = Form("tv6mc%.0fmattpfgmv1_%s%s",ptHatMin,algo.Data(),trkcorrVersion.Data());
-    tag = Form("tv5_2%.0fjtv7_%s%s_an0420_JEta2",ptHatMin,algo.Data(),trkcorrVersion.Data());
+    //tag = Form("tv6_%.0fjtv7_%s%s_an0421_JEta2",ptHatMin,algo.Data(),trkcorrVersion.Data());
   }
 
   trec->Add(infrec);
@@ -56,8 +59,10 @@ void loopMulFF(Int_t inputSample=1,
   // ===================================
   selectionCut cut;
   cut.doSel = doSel;
-  cut.CentMin=0;
-  cut.CentMax=12;
+  //cut.CentMin=0;
+  //cut.CentMax=12;
+  cut.CentMin=-1;
+  cut.CentMax=40;
   cut.JEtMin[0] = 100;
   cut.JEtMax[0] = 300;
   cut.JEtMin[1] = 40;
@@ -66,7 +71,7 @@ void loopMulFF(Int_t inputSample=1,
   cut.JEtaMax[1] = 2.;
   cut.JDPhiMin = TMath::Pi()*2./3.;
   cut.AjMin = 0.;
-  cut.AjMax = 0.7;
+  cut.AjMax = 1;
   cut.TrkPtMin = 4.;
   //cut.TrkEtaMax = 1;
   cut.ConeSize = 0.3;
@@ -83,14 +88,22 @@ void loopMulFF(Int_t inputSample=1,
   //TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
   //trkCorr.Init(1,"TrkCorr2DB0.root");
   //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ1");
-  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev5","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_ppv1","hitrkEffAnalyzer_akpu3pf_j1");
+  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_pphptv1","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev5","hitrkEffAnalyzer_akpu3pf");
   //Corrector3D trkCorrJ1("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_slead","hitrkEffAnalyzer");
+  trkCorrJ1.isLeadingJet_ = true;
   trkCorrJ1.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrJ1.smoothLevel_ = 4; // 0: no smooth, 1: smooth jet, 2: smooth jet,pt 3: smooth jet,pt,cbin
   trkCorrJ1.Init();
   //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ2");
   //Corrector3D trkCorrJ2("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_lead","hitrkEffAnalyzer");
-  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev5","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_ppv1","hitrkEffAnalyzer_akpu3pf_j2");
+  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_pphptv1","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev5","hitrkEffAnalyzer_akpu3pf");
+  trkCorrJ2.isLeadingJet_ = false;
   trkCorrJ2.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrJ2.smoothLevel_ = 4; // 0: no smooth, 1: smooth jet, 2: smooth jet,pt 3: smooth jet,pt,cbin
   trkCorrJ2.Init();
@@ -162,7 +175,7 @@ void loopMulFF(Int_t inputSample=1,
   for (Int_t j=0; j<2; ++j) {
     TString append(Form("_j%d_%s",j,tag.Data()));
     // prepare histogram frame
-    genfana.vhXiCorr_[j][0]->SetAxisRange(0,5,"X");
+    genfana.vhXiCorr_[j][0]->SetAxisRange(-1,5,"X");
     genfana.vhXiCorr_[j][0]->SetAxisRange(1e-3,5e2,"Y");
     genfana.vhXiCorr_[j][0]->SetLineColor(kRed);
     genfana.vhXiCorr_[j][0]->SetMarkerColor(kRed);
@@ -192,7 +205,7 @@ void loopMulFF(Int_t inputSample=1,
     // draw ratio
     c2->cd(2);
     recfana.vhXiRat_[j][0]->Draw("E");
-    recfana.vhXiRat_[j][0]->SetAxisRange(0,5,"X");
+    recfana.vhXiRat_[j][0]->SetAxisRange(-1,5,"X");
     recfana.vhXiRat_[j][0]->SetAxisRange(0,1.5,"Y");
     for (Int_t lv=1; lv<=4; ++lv) {
       if (!doTrkCorr && lv>0) continue;

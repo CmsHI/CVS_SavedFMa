@@ -20,7 +20,7 @@ void loopTrkClosure(Int_t inputSample=1,
   TChain * trec = new TChain("tjf");
   TChain * tgen = new TChain("tjf");
   //TString algo="akpu3pf";
-  TString algo="akpu3pf";
+  TString algo="ak3pf";
   TString trkcorrVersion="";
   cout << "=============== MulFF Ana ======================" << endl;
   cout << "  jet: " << algo << " trkCorr: " << trkcorrVersion << endl;
@@ -32,18 +32,22 @@ void loopTrkClosure(Int_t inputSample=1,
   if (inputSample==1) {
     //infrec=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t2.root",ptHatMin,algo.Data());
     //infgen=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t0.root",ptHatMin,algo.Data());
-    //infrec=Form("../ntout/tranav8_hydjuq%.0fv6_%s_j2t2.root",ptHatMin,algo.Data());
-    //infgen=Form("../ntout/tranav8_hydjuq%.0fv6_%s_j2t0.root",ptHatMin,algo.Data());
-    infrec=Form("../ntout/tranav8_dj%.0fmattpfgmv1_%s_j2t2.root",ptHatMin,algo.Data());
-    infgen=Form("../ntout/tranav8_dj%.0fmattpfgmv1_%s_j2t0.root",ptHatMin,algo.Data());
     //infrec=Form("../ntout/tranav7_hydjuq%.0fmattpfgmv1_%s_t2.root",ptHatMin,algo.Data());
     //infgen=Form("../ntout/tranav7_hydjuq%.0fmattpfgmv1_%s_t0.root",ptHatMin,algo.Data());
+    //tag = Form("tv6mc%.0fmattpfgmv1_%s%s",ptHatMin,algo.Data(),trkcorrVersion.Data());
+    //infrec=Form("../ntout/tranav8_hydjuq%.0fv6_%s_j2t2.root",ptHatMin,algo.Data());
+    //infgen=Form("../ntout/tranav8_hydjuq%.0fv6_%s_j2t0.root",ptHatMin,algo.Data());
+    //tag = Form("tv6%.0fjtv8_%s%s_an0427",ptHatMin,algo.Data(),trkcorrVersion.Data());
+    // pp
+    //infrec=Form("../ntout/tranav8_dj%.0fmattpfgmv1_%s_j2t2.root",ptHatMin,algo.Data());
+    //infgen=Form("../ntout/tranav8_dj%.0fmattpfgmv1_%s_j2t0.root",ptHatMin,algo.Data());
+    //tag = Form("tv8%.0fppgmv1_%s%s_an0427",ptHatMin,algo.Data(),trkcorrVersion.Data());
+    infrec=Form("../ntout/tranav8_dj%.0fmatthptv1_%s_j2t2.root",ptHatMin,algo.Data());
+    infgen=Form("../ntout/tranav8_dj%.0fmatthptv1_%s_j2t0.root",ptHatMin,algo.Data());
+    tag = Form("tv8%.0fpphptv1_%s%s_an0427",ptHatMin,algo.Data(),trkcorrVersion.Data());
     tgen->Add(infgen);
     if (tgen->GetEntries()>0) cout << infgen << ": " << tgen->GetEntries() << endl;
     else { cout << infgen << " has 0 entries" << endl; exit(1); }
-    //tag = Form("tv6mc%.0fmattpfgmv1_%s%s",ptHatMin,algo.Data(),trkcorrVersion.Data());
-    //tag = Form("tv5_2%.0fjtv7_%s%s_an0421_JEta2",ptHatMin,algo.Data(),trkcorrVersion.Data());
-    tag = Form("tppv1%.0fjtv8_%s%s_an0426",ptHatMin,algo.Data(),trkcorrVersion.Data());
   }
 
   trec->Add(infrec);
@@ -88,19 +92,21 @@ void loopTrkClosure(Int_t inputSample=1,
   //trkCorr.Init(1,"TrkCorr2DB0.root");
   //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ1");
   //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j1");
-  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_ppv1","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_ppv1","hitrkEffAnalyzer_akpu3pf_j1");
+  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_pphptv1","hitrkEffAnalyzer_akpu3pf_j1");
   //Corrector3D trkCorrJ1("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_slead","hitrkEffAnalyzer");
   trkCorrJ1.isLeadingJet_ = true;
   trkCorrJ1.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
-  trkCorrJ1.smoothLevel_ = 3; // 0: no smooth, 1: smooth jet, 2: smooth jet,pt 3: smooth jet,pt,cbin
+  trkCorrJ1.smoothLevel_ = 4; // 0: no smooth, 1: smooth jet, 2: smooth jet,pt 3: smooth jet,pt,cbin
   trkCorrJ1.Init();
   //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_jtv5_"+trkcorrVersion,"B2InConeJ2");
   //Corrector3D trkCorrJ2("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_lead","hitrkEffAnalyzer");
   //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j2");
-  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_ppv1","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_ppv1","hitrkEffAnalyzer_akpu3pf_j2");
+  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_pphptv1","hitrkEffAnalyzer_akpu3pf_j2");
   trkCorrJ2.isLeadingJet_ = false;
   trkCorrJ2.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
-  trkCorrJ2.smoothLevel_ = 3; // 0: no smooth, 1: smooth jet, 2: smooth jet,pt 3: smooth jet,pt,cbin
+  trkCorrJ2.smoothLevel_ = 4; // 0: no smooth, 1: smooth jet, 2: smooth jet,pt 3: smooth jet,pt,cbin
   trkCorrJ2.Init();
 
   // ===================================

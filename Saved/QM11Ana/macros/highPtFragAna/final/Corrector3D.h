@@ -185,7 +185,7 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
 
   // Get the corresponding pt_hat min sample
   Float_t ptHatMargin=30;
-  if (!isLeadingJet_) ptHatMargin=5;
+  if (!isLeadingJet_) ptHatMargin=-20; // for 40GeV jet min pthat sample is 30GeV
   for (Int_t s=ptHatMin_.size()-1; s>=0; --s) {
     if (jet>=ptHatMin_[s]+ptHatMargin) {
       isample=s;
@@ -197,21 +197,19 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
   Int_t ptBin = ptBin_->FindBin(pt);
   Int_t etaBin = etaBin_->FindBin(eta);
   Int_t jetBin = jetBin_->FindBin(jet);
-  //isample=2;
-  //if (jetBin<1) jetBin = 1; // make sure don't exceed vector bound
-  //if (jetBin>=numJEtBins_-1) jetBin = numJEtBins_-1; // make sure don't exceed vector bound
-  //if (ptBin>=numPtBins_) ptBin=numPtBins_;
   //cout << "pt,eta,jet,cbin: " << pt << " " << eta << " " << jet << " " << cent << endl;
   //cout << "bins(s,c,p,e,j): " << isample << " " << bin << " " << ptBin << " " << etaBin << " " << jetBin << endl;
 
   vector<vector<Double_t> > mat(numLevels_,vector<Double_t>(2));
-  Int_t djet = 1, dpt=1, dcbin=1, deta=1;
+  Int_t djet = 2, dpt=0, dcbin=1, deta=1;
   for (Int_t lv=0; lv<numLevels_; ++lv) {
     for (Int_t m=0; m<2; ++m) {
       for (Int_t s=0; s<sample_.size(); ++s) {
 	if (sampleMode_==0 && s!=isample) continue;
 	if (jet<ptHatMin_[s]+ptHatMargin) continue;
-	for (Int_t j=jetBin; j<=jetBin+djet; ++j) { // jet pt smoothing
+	Int_t jetBinBeg = jetBin;
+	//if (!isLeadingJet_) jetBinBeg = jetBin-djet;
+	for (Int_t j=jetBinBeg; j<=jetBin+djet; ++j) { // jet pt smoothing
 	  if (smoothLevel_<1&&j!=jetBin) continue;
 	  if (j!=jetBin&&(j<1||j>numJEtBins_)) continue;
 	  for (Int_t p=ptBin-dpt; p<=ptBin+dpt; ++p) { // trk pt smoothing
