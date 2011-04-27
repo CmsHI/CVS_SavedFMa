@@ -53,6 +53,11 @@ cp /net/hidsk0001/d00/scratch/mnguyen/CMSSW_3_9_9_patch1/src/modifiedFiles/PileU
 cp /net/hidsk0001/d00/scratch/mnguyen/CMSSW_3_9_9_patch1/src/modifiedFiles/PileUpSubtractor.h RecoJets/JetProducers/interface/
 cp /net/hidsk0001/d00/scratch/mnguyen/CMSSW_3_9_9_patch1/src/modifiedFiles/PFCandidate.cc DataFormats/ParticleFlowCandidate/src/
 
+# tracking tools
+cvs co -d PbPbTrackingTools/VertexConstraintProducer UserCode/ASYoon/PbPbTrackingTools/VertexConstraintProducer
+cvs co -d PbPbTrackingTools/CaloCompatibleTrackSelector UserCode/ASYoon/PbPbTrackingTools/CaloCompatibleTrackSelector
+cvs co -d PbPbTrackingTools/HiTrackValidator UserCode/ASYoon/PbPbTrackingTools/HiTrackValidator
+
 # analyzers
 cvs co -d     Saved/QM11Ana UserCode/SavedFMa/Saved/QM11Ana
 cvs co -d     MitHig/PixelTrackletAnalyzer UserCode/MitHig/PixelTrackletAnalyzer
