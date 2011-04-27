@@ -134,19 +134,19 @@ hitrkpfcandAnalyzer = pfCandidateAnalyzer.clone(
 # trk val
 from PbPbTrackingTools.HiTrackValidator.hitrackvalidator_cfi import *
 from edwenger.HiTrkEffAnalyzer.HiTPCuts_cff import *
-hihightrkval = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiHighPtTracks"))
-hihightrkval_fake = hihightrkval.clone(simtrklabel = cms.untracked.InputTag("cutsTPForFak"),
+hihighTrkVal = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiHighPtTracks"))
+hihighTrkVal_fake = hihighTrkVal.clone(simtrklabel = cms.untracked.InputTag("cutsTPForFak"),
                                      hasSimInfo=cms.untracked.bool(True),
                                      selectFake=cms.untracked.bool(True))
-higoodtrkval = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiGoodTracks"))
-higoodtrkval_fake = higoodtrkval.clone(simtrklabel = cms.untracked.InputTag("cutsTPForFak"),
+higoodTrkVal = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiGoodTracks"))
+higoodTrkVal_fake = higoodTrkVal.clone(simtrklabel = cms.untracked.InputTag("cutsTPForFak"),
                                        hasSimInfo=cms.untracked.bool(True),
                                        selectFake=cms.untracked.bool(True))
 
-hihightrkval_fakeOnly = cms.Sequence(cutsTPForFak*
-                                     hihightrkval_fake)
-higoodtrkval_fakeOnly = cms.Sequence(cutsTPForFak*
-                                     higoodtrkval_fake)
+hihighTrkVal_fakeOnly = cms.Sequence(cutsTPForFak*
+                                     hihighTrkVal_fake)
+higoodTrkVal_fakeOnly = cms.Sequence(cutsTPForFak*
+                                     higoodTrkVal_fake)
 
 
 # centrality
@@ -159,7 +159,7 @@ makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
 
 # final sequences
 trkcorr_seq = cms.Sequence( (hitrkEffAna_akpu3pf+hiHighPtTrkEffAna_akpu3pf) )
-trkval_seq = cms.Sequence( hihightrkval + higoodtrkval + hitrkpfcandAnalyzer)
+trkval_seq = cms.Sequence( hihighTrkVal + higoodTrkVal + hitrkpfcandAnalyzer)
 #trkana_seq = cms.Sequence( trkAnalyzer * hpttrkAnalyzer * genpAnalyzer * djakpu3pf_pfcand)
 trkana_seq = cms.Sequence( trkAnalyzer * hpttrkAnalyzer * genpAnalyzer)
 trkana_seq_data = cms.Sequence( trkAnalyzer )
