@@ -36,10 +36,10 @@ void loopMulFF(Int_t inputSample=1,
     // pp
     //infrec=Form("../ntout/tranav8_dj%.0fmattpfgmv1_%s_j2t2.root",ptHatMin,algo.Data());
     //infgen=Form("../ntout/tranav8_dj%.0fmattpfgmv1_%s_j2t0.root",ptHatMin,algo.Data());
-    //tag = Form("tv8%.0fppgmv1_%s%s_an0427",ptHatMin,algo.Data(),trkcorrVersion.Data());
+    //tag = Form("tv8_%.0f_ppgmv1_%s%s_an0427",ptHatMin,algo.Data(),trkcorrVersion.Data());
     infrec=Form("../ntout/tranav8_dj%.0fmatthptv1_%s_j2t2.root",ptHatMin,algo.Data());
     infgen=Form("../ntout/tranav8_dj%.0fmatthptv1_%s_j2t0.root",ptHatMin,algo.Data());
-    tag = Form("tv8%.0fpphptv1_%s%s_an0427",ptHatMin,algo.Data(),trkcorrVersion.Data());
+    tag = Form("tv8_%.0f_pphptv1_%s%s_an0427",ptHatMin,algo.Data(),trkcorrVersion.Data());
     tgen->Add(infgen);
     if (tgen->GetEntries()>0) cout << infgen << ": " << tgen->GetEntries() << endl;
     else { cout << infgen << " has 0 entries" << endl; exit(1); }
