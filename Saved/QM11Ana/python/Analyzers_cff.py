@@ -124,7 +124,7 @@ hipixtrkEffAna_akpu3pf = cms.Sequence(cutsTPForFakPxl * cutsTPForEffPxl* hipixtr
 
 # calo-trk matching
 from edwenger.HiTrkEffAnalyzer.hipfCandAnalyzer_cfi import *
-hitrkpfcandAnalyzer = pfCandidateAnalyzer.clone(
+hitrkPfCandAnalyzer = pfCandidateAnalyzer.clone(
     Tracks = "hiGoodTracks",
     ptMin = 2,
     hasSimInfo = True,
@@ -159,7 +159,7 @@ makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
 
 # final sequences
 trkcorr_seq = cms.Sequence( (hitrkEffAna_akpu3pf+hiHighPtTrkEffAna_akpu3pf) )
-trkval_seq = cms.Sequence( hihighTrkVal + higoodTrkVal + hitrkpfcandAnalyzer)
+trkval_seq = cms.Sequence( hihighTrkVal + higoodTrkVal + hitrkPfCandAnalyzer)
 #trkana_seq = cms.Sequence( trkAnalyzer * hpttrkAnalyzer * genpAnalyzer * djakpu3pf_pfcand)
 trkana_seq = cms.Sequence( trkAnalyzer * hpttrkAnalyzer * genpAnalyzer)
 trkana_seq_data = cms.Sequence( trkAnalyzer )

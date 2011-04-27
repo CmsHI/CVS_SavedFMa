@@ -23,7 +23,7 @@ def usehiHighPtTracks(process):
   print "hiHighPtTracks is used for pf rereco"
   process.trackerDrivenElectronSeeds.TkColList =  ["hiHighPtTracks"]
   print "change trk-calo analyzer to use hiHighPtTracks"
-  process.hitrkpfcandAnalyzer.Tracks = "hiHighPtTracks"
+  process.hitrkPfCandAnalyzer.Tracks = "hiHighPtTracks"
 
 def enableData(process):
   # jet
