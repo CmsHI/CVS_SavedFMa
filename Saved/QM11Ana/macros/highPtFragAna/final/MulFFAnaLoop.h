@@ -106,6 +106,12 @@ class FragAnaLoop
     vector<vector<TH1D*> > vhPPtRat_;
     vector<vector<TH1D*> > vhXiCorr_;
     vector<vector<TH1D*> > vhXiRat_;
+    // differential in Aj
+    vector<Double_t> AjBins_;
+    vector<vector<Double_t> > numJetvAj_;
+    vector<vector<TH1D*> > vhJetAjvAj_;
+    vector<vector<vector<TH1D*> > > vhXiCorrvAj_;
+    vector<vector<vector<TH1D*> > > vhXiRatvAj_;
 
     // monitor histograms
     vector<vector<TH2D*> > vhTrkCorrPPt_;
@@ -156,10 +162,20 @@ FragAnaLoop::FragAnaLoop(TString name) :
   vhPPtRat_(2),
   vhXiCorr_(2),
   vhXiRat_(2),
+  // vs aj
+  numJetvAj_(4, vector<Double_t>(2)),
+  vhJetAjvAj_(4),
+  vhXiCorrvAj_(4, vector<vector<TH1D*> >(2)),
+  vhXiRatvAj_(4,vector<vector<TH1D*> >(2)),
+  // monitor
   vhTrkCorrPPt_(2),
   vhTrkCorrJEt_(2),
   vhTrkCorrCent_(2)
 {
+  const Int_t numAjBins=4;
+  Float_t AjBins[numAjBins+1] = {0,0.13,0.24,0.35,0.7};
+  vector<Double_t> vAjBins(AjBins,AjBins+numAjBins+1);
+  AjBins_ = vAjBins;
 }
 
 void FragAnaLoop::Init()
@@ -186,14 +202,30 @@ void FragAnaLoop::Init()
       vhPPtRat_[j].push_back(new TH1D(Form("h%sPPtRat%d_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0]));
       vhPPtRat_[j][lv]->Sumw2();
 
+      vhTrkCorrPPt_[j].push_back(new TH2D(Form("h%sTrkCorr%dPPt_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0],numEffBins,effBins));
+      vhTrkCorrJEt_[j].push_back(new TH2D(Form("h%sTrkCorr%dJEt_j%d",name_.Data(),lv,j),";Jet p_{T} (GeV/c);",100,0,400,50,-0.2,1.2));
+      vhTrkCorrCent_[j].push_back(new TH2D(Form("h%sTrkCorr%dCent_j%d",name_.Data(),lv,j),";Centrality (%);",10,0,40,50,-0.2,1.2));
+
+      // analysis plots no need to check all trk corr levels
+      if (lv>2) continue;
+      // 0: no corr, 1: eff, 2: full
       vhXiCorr_[j].push_back(new TH1D(Form("h%sXiCorr%d_j%d",name_.Data(),lv,j),"",12,-1,5));
       vhXiCorr_[j][lv]->Sumw2();
       vhXiRat_[j].push_back(new TH1D(Form("h%sXiRat%d_j%d",name_.Data(),lv,j),"",12,-1,5));
       vhXiRat_[j][lv]->Sumw2();
-
-      vhTrkCorrPPt_[j].push_back(new TH2D(Form("h%sTrkCorr%dPPt_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0],numEffBins,effBins));
-      vhTrkCorrJEt_[j].push_back(new TH2D(Form("h%sTrkCorr%dJEt_j%d",name_.Data(),lv,j),";Jet p_{T} (GeV/c);",100,0,400,50,-0.2,1.2));
-      vhTrkCorrCent_[j].push_back(new TH2D(Form("h%sTrkCorr%dCent_j%d",name_.Data(),lv,j),";Centrality (%);",10,0,40,50,-0.2,1.2));
+    }
+  }
+  // differential in Aj
+  for (Int_t a=0; a<4; ++a) {
+    for (Int_t j=0; j<2; ++j) {
+      vhJetAjvAj_[a].push_back(new TH1D(Form("h%sJetAj_a%dj%d",name_.Data(),a,j),";A_{J};",20,0,1));
+      for (Int_t lv=0; lv<3; ++lv) {
+	if (anaTrkType_==0 && lv>0) continue;
+	vhXiCorrvAj_[a][j].push_back(new TH1D(Form("h%sXiCorr%d_a%dj%d",name_.Data(),lv,a,j),"",12,-1,5));
+	vhXiCorrvAj_[a][j][lv]->Sumw2();
+	vhXiRatvAj_[a][j].push_back(new TH1D(Form("h%sXiRat%d_a%dj%d",name_.Data(),lv,a,j),"",12,-1,5));
+	vhXiRatvAj_[a][j][lv]->Sumw2();
+      }
     }
   }
 
@@ -318,9 +350,7 @@ void FragAnaLoop::Loop()
 	  vhPPtCorr_[j][4]->Fill(trkEnergy,trkwt);
 
 	  vhXiCorr_[j][1]->Fill(fabs(log(jfr_.jtpt[j]/trkEnergy)),1./eff);
-	  vhXiCorr_[j][2]->Fill(fabs(log(jfr_.jtpt[j]/trkEnergy)),(1-fak)/eff);
-	  vhXiCorr_[j][3]->Fill(fabs(log(jfr_.jtpt[j]/trkEnergy)),(1-fak)/(eff*(1+mul)));
-	  vhXiCorr_[j][4]->Fill(fabs(log(jfr_.jtpt[j]/trkEnergy)),trkwt);
+	  vhXiCorr_[j][2]->Fill(fabs(log(jfr_.jtpt[j]/trkEnergy)),trkwt);
 
 	  // study correction
 	  for (Int_t lv=1; lv<=4; ++lv) {
@@ -342,6 +372,7 @@ void FragAnaLoop::Loop()
     for (Int_t lv=0; lv<5; ++lv) {
       if (anaTrkType_==0 && lv>0) continue;
       normHist(vhPPtCorr_[j][lv],0,true,1./numJet_[j]);
+      if (lv>2) continue;
       normHist(vhXiCorr_[j][lv],0,true,1./numJet_[j]);
     }
   }

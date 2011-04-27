@@ -161,7 +161,7 @@ void loopMulFF(Int_t inputSample=1,
     genfana.Loop();
     // normalize and get ratio
     for (Int_t j=0; j<2; ++j) {
-      for (Int_t lv=0; lv<=4; ++lv) {
+      for (Int_t lv=0; lv<=2; ++lv) {
 	if (!doTrkCorr && lv>0) continue;
 	recfana.vhXiRat_[j][lv]->Divide(recfana.vhXiCorr_[j][lv],genfana.vhXiCorr_[j][0]);
       }
@@ -180,7 +180,7 @@ void loopMulFF(Int_t inputSample=1,
     genfana.vhXiCorr_[j][0]->SetLineColor(kRed);
     genfana.vhXiCorr_[j][0]->SetMarkerColor(kRed);
     genfana.vhXiCorr_[j][0]->SetMarkerStyle(kOpenCircle);
-    for (Int_t lv=0; lv<=3; ++lv) {
+    for (Int_t lv=0; lv<=1; ++lv) {
       if (!doTrkCorr && lv>0) continue;
       recfana.vhXiCorr_[j][lv]->SetMarkerStyle(kOpenSquare);
       recfana.vhXiCorr_[j][lv]->SetMarkerColor(colors[lv]);
@@ -197,9 +197,9 @@ void loopMulFF(Int_t inputSample=1,
     c2->GetPad(1)->SetLogy();
     genfana.vhXiCorr_[j][0]->Draw("hist");
     recfana.vhXiCorr_[j][0]->Draw("sameE");
-    for (Int_t lv=1; lv<=4; ++lv) {
+    for (Int_t lv=1; lv<=2; ++lv) {
       if (!doTrkCorr && lv>0) continue;
-      if (lv<4) continue;
+      if (lv<2) continue;
       recfana.vhXiCorr_[j][lv]->Draw("sameE");
     }
     // draw ratio
@@ -207,9 +207,9 @@ void loopMulFF(Int_t inputSample=1,
     recfana.vhXiRat_[j][0]->Draw("E");
     recfana.vhXiRat_[j][0]->SetAxisRange(-1,5,"X");
     recfana.vhXiRat_[j][0]->SetAxisRange(0,1.5,"Y");
-    for (Int_t lv=1; lv<=4; ++lv) {
+    for (Int_t lv=1; lv<=2; ++lv) {
       if (!doTrkCorr && lv>0) continue;
-      if (lv<4) continue;
+      if (lv<2) continue;
       recfana.vhXiRat_[j][lv]->Draw("sameE");
     }
 
@@ -226,9 +226,9 @@ void loopMulFF(Int_t inputSample=1,
     leg->SetTextSize(0.035);
     leg->AddEntry(genfana.vhXiCorr_[0][0],Form("0-30%, |#eta^{Jet}|<%.1f",cut.JEtaMax[0]),"");
     leg->AddEntry(genfana.vhXiCorr_[0][0],"Gen. Particle","pl");
-    for (Int_t lv=0; lv<=4; ++lv) {
+    for (Int_t lv=0; lv<=2; ++lv) {
       if (!doTrkCorr && lv>0) continue;
-      if (lv<4) continue;
+      if (lv<2) continue;
       leg->AddEntry(recfana.vhXiCorr_[j][lv],"Trk Corr. "+corrLevelName[lv],"pl");
     }
     leg->Draw();
