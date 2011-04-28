@@ -62,7 +62,6 @@ struct JetFragRel
   void LoadBranches(TTree * t) {
     t->SetBranchAddress("cbin",&(this->cbin));
     t->SetBranchAddress("jtpt",this->jtpt);
-    //t->SetBranchAddress("refpt",this->jtpt);
     t->SetBranchAddress("jteta",this->jteta);
     t->SetBranchAddress("jtphi",this->jtphi);
     t->SetBranchAddress("refpt",this->refpt);
@@ -101,6 +100,8 @@ class FragAnaLoop
 
     // analysis histograms
     vector<Double_t> ptBin_;
+    vector<TH1D*> vhJetPt_;
+    vector<TH1D*> vhRefJetPt_;
     vector<TH1D*> vhJetAj_;
     vector<vector<TH1D*> > vhPPtCorr_;
     vector<vector<TH1D*> > vhPPtRat_;
@@ -109,6 +110,8 @@ class FragAnaLoop
     // differential in Aj
     vector<Double_t> AjBins_;
     vector<vector<Double_t> > numJetvAj_;
+    vector<vector<TH1D*> > vhJetPtvAj_;
+    vector<vector<TH1D*> > vhRefJetPtvAj_;
     vector<vector<TH1D*> > vhJetAjvAj_;
     vector<vector<vector<TH1D*> > > vhPPtCorrvAj_;
     vector<vector<vector<TH1D*> > > vhXiCorrvAj_;
@@ -164,6 +167,8 @@ FragAnaLoop::FragAnaLoop(TString name) :
   vhXiRat_(2),
   // vs aj
   numJetvAj_(4, vector<Double_t>(2)),
+  vhJetPtvAj_(4),
+  vhRefJetPtvAj_(4),
   vhJetAjvAj_(4),
   vhPPtCorrvAj_(4,vector<vector<TH1D*> >(2)),
   vhXiCorrvAj_(4, vector<vector<TH1D*> >(2)),
@@ -194,7 +199,9 @@ void FragAnaLoop::Init()
     effBins[i] = -0.2+i*1.4/numEffBins;
   }
   for (Int_t j=0; j<2; ++j) {
-    vhJetAj_.push_back(new TH1D(Form("h%sJetAj_j%d",name_.Data(),j),";A_{J};",20,0,1));
+    vhJetPt_.push_back(new TH1D(Form("h%sJetPt_j%d",name_.Data(),j),"",50,0,300));
+    vhRefJetPt_.push_back(new TH1D(Form("h%sRefJetPt_j%d",name_.Data(),j),"",50,0,300));
+    vhJetAj_.push_back(new TH1D(Form("h%sJetAj_j%d",name_.Data(),j),"",20,0,1));
     for (Int_t lv=0; lv<5; ++lv) {
       if (anaTrkType_==0 && lv>0) continue;
       vhPPtCorr_[j].push_back(new TH1D(Form("h%sPPtCorr%d_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0]));
@@ -218,6 +225,8 @@ void FragAnaLoop::Init()
   // differential in Aj
   for (Int_t a=0; a<4; ++a) {
     for (Int_t j=0; j<2; ++j) {
+      vhJetPtvAj_[a].push_back(new TH1D(Form("h%sJetPt_a%dj%d",name_.Data(),a,j),"",50,0,300));
+      vhRefJetPtvAj_[a].push_back(new TH1D(Form("h%sRefJetPt_a%dj%d",name_.Data(),a,j),"",50,0,300));
       vhJetAjvAj_[a].push_back(new TH1D(Form("h%sJetAj_a%dj%d",name_.Data(),a,j),";A_{J};",20,0,1));
       for (Int_t lv=0; lv<3; ++lv) {
 	if (anaTrkType_==0 && lv>0) continue;
@@ -278,11 +287,15 @@ void FragAnaLoop::Loop()
     for (Int_t j=0; j<2; ++j) {
       if (SelEvt(jfr_)&&SelJet(jfr_,j)) {
 	++numJet_[j];
+	vhJetPt_[j]->Fill(jfr_.jtpt[j]);
+	vhRefJetPt_[j]->Fill(jfr_.refpt[j]);
 	vhJetAj_[j]->Fill(Aj);
 	// differential in aj
 	for (Int_t a=0; a<4; ++a) {
 	  if (Aj>=AjBins_[a]&&Aj<AjBins_[a+1]) {
 	    ++numJetvAj_[a][j];
+	    vhJetPtvAj_[a][j]->Fill(jfr_.jtpt[j]);
+	    vhRefJetPtvAj_[a][j]->Fill(jfr_.refpt[j]);
 	    vhJetAjvAj_[a][j]->Fill(Aj);
 	  }
 	}

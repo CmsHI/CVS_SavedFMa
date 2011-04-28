@@ -2,13 +2,16 @@
 #include "../../commonUtility.h"
 
 void drawXiClosurevAj(
-    TString infname = "histff_tv8_80_pphptv1_ak3pf_an0427.root"
+    TString infname = "histff_tv8_80_pphptv1_ak3pf_an0428.root"
+    //TString infname = "histff_tv8_80_pphptv1_ak3pf_an0428Jet2Pt60to90.root"
+    //TString infname = "histff_tv8_80_pphptv1_ak3pfrefjet_an0427.root"
     //TString infname = "histff_tv8_80_ppgmv1_ak3pf_an0427.root"
     )
 {
   TFile * inf = new TFile(infname);
 
   TH1D * hXi_ref[4][2], *hXi_raw[4][2], *hXi_corr[4][2], *hXi_rawrat[4][2], *hXi_corrrat[4][2];
+  TH1D * hJetPt[4][2], *hRefJetPt[4][2];
   TString var = "Xi";
   TString title = ";#xi;";
   //TString var = "PPt";
@@ -18,6 +21,8 @@ void drawXiClosurevAj(
       hXi_ref[a][j] = (TH1D*)inf->FindObjectAny(Form("hGen%sCorr0_a%dj%d",var.Data(),a,j));
       hXi_raw[a][j] = (TH1D*)inf->FindObjectAny(Form("hRec%sCorr0_a%dj%d",var.Data(),a,j));
       hXi_corr[a][j] = (TH1D*)inf->FindObjectAny(Form("hRec%sCorr2_a%dj%d",var.Data(),a,j));
+      hJetPt[a][j] = (TH1D*)inf->FindObjectAny(Form("hRecJetPt_a%dj%d",a,j));
+      hRefJetPt[a][j] = (TH1D*)inf->FindObjectAny(Form("hRecRefJetPt_a%dj%d",a,j));
       // style
       hXi_ref[a][j]->SetLineColor(kRed);
       hXi_raw[a][j]->SetMarkerStyle(kOpenSquare);
@@ -33,8 +38,8 @@ void drawXiClosurevAj(
 
   for (Int_t j=0; j<2; ++j) {
     TString app = Form("Xi_j%d",j);
-    TCanvas * c2 = new TCanvas(app,app,1600,700);
-    c2->Divide(4,2);
+    TCanvas * c2 = new TCanvas(app,app,1600,900);
+    c2->Divide(4,3);
     for (Int_t a=0; a<4; ++a) {
       c2->cd(a+1);
       gPad->SetLogy();
@@ -49,6 +54,14 @@ void drawXiClosurevAj(
       hXi_rawrat[a][j]->SetTitle(title);
       hXi_rawrat[a][j]->Draw("E");
       hXi_corrrat[a][j]->Draw("sameE");
+      c2->cd(a+9);
+      gPad->SetLogy();
+      handsomeTH1(hJetPt[a][j]);
+      //hJetPt[a][j]->SetAxisRange(0,1.5,"Y");
+      hJetPt[a][j]->SetTitle(Form(";Jet%d p_{T} (GeV/c);",j));
+      hJetPt[a][j]->Draw("E");
+      hRefJetPt[a][j]->SetLineColor(2);
+      hRefJetPt[a][j]->Draw("same hist");
     }
   }
 }
