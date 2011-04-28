@@ -6,12 +6,16 @@ GeneralJetFragAna::GeneralJetFragAna(TString name) :
   doMC_(false),
   doJetOnly_(false),
   anaJetv_(2),
-  treeFormat_(0)
+  treeFormat_(0),
+  jetType_(2),
+  pType_(2)
 {
 }
 
 void GeneralJetFragAna::Init(Int_t jType, Int_t pType)
 {
+  jetType_=jType;
+  pType_=pType;
   cout << "============================" << endl;
   cout << "GeneralJetFragAna: " << name_ << " doMC: " << doMC_ << " doJEC: " << doJEC_ << endl;
   cout << "leadJetPtMin: " << leadJetPtMin_ << " pptMin: " << pptMin_ << endl;
@@ -93,7 +97,7 @@ void GeneralJetFragAna::Loop()
       for (Int_t ip=0; ip<anaPs_.np; ++ip) {
 	if (anaPs_.ppt[ip]<pptMin_) continue;
 	if (fabs(anaPs_.peta[ip])>2.4) continue; // tracker acceptance
-	if (treeFormat_==1 &&
+	if (treeFormat_==1 && pType_==0 &&
 	    !(abs(anaPs_.ppid[ip])==211
 	      || abs(anaPs_.ppid[ip])==321
 	      || abs(anaPs_.ppid[ip])==2212

@@ -57,8 +57,8 @@ struct AnaJets
       }
     } else if (treeFormat==1) {
       t->SetBranchAddress("n"+name,&(this->njets));
-      //t->SetBranchAddress("corrpt_"+name,this->jtpt);
-      t->SetBranchAddress("jtpt_"+name,this->jtpt);
+      t->SetBranchAddress("corrpt_"+name,this->jtpt);
+      //t->SetBranchAddress("jtpt_"+name,this->jtpt);
       t->SetBranchAddress("jteta_"+name,this->jteta);
       t->SetBranchAddress("jtphi_"+name,this->jtphi);
       t->SetBranchAddress("rawpt_"+name,this->rawpt);
@@ -174,6 +174,8 @@ class GeneralJetFragAna
     Float_t leadJetPtMin_;
     Float_t pptMin_;
     Int_t treeFormat_;
+    Int_t jetType_;
+    Int_t pType_;
 
     // ana members
     TTree * jfTree_;
