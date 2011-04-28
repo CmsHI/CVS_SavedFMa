@@ -22,7 +22,7 @@ void loopMulFF(Int_t inputSample=1,
   TChain * tgen = new TChain("tjf");
   //TString algo="akpu3pf";
   TString algo="ak3pf";
-  TString anV="an0428";
+  TString anV="an0428MatRefAj005";
   cout << "=============== MulFF Ana ======================" << endl;
   cout << "  jet: " << algo << " ana: " << anV << endl;
   if (inputSample==0) {

@@ -103,6 +103,7 @@ class FragAnaLoop
     vector<TH1D*> vhJetPt_;
     vector<TH1D*> vhRefJetPt_;
     vector<TH1D*> vhJetAj_;
+    vector<TH1D*> vhRefJetAj_;
     vector<vector<TH1D*> > vhPPtCorr_;
     vector<vector<TH1D*> > vhPPtRat_;
     vector<vector<TH1D*> > vhXiCorr_;
@@ -113,6 +114,7 @@ class FragAnaLoop
     vector<vector<TH1D*> > vhJetPtvAj_;
     vector<vector<TH1D*> > vhRefJetPtvAj_;
     vector<vector<TH1D*> > vhJetAjvAj_;
+    vector<vector<TH1D*> > vhRefJetAjvAj_;
     vector<vector<vector<TH1D*> > > vhPPtCorrvAj_;
     vector<vector<vector<TH1D*> > > vhXiCorrvAj_;
 
@@ -128,11 +130,14 @@ class FragAnaLoop
 
     Bool_t SelEvt(const JetFragRel & jfr) {
       //return (jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax);
+      Double_t Aj = (jfr.jtpt[0]-jfr.jtpt[1])/(jfr.jtpt[0]+jfr.jtpt[1]);
+      Double_t RefAj = (jfr.refpt[0]-jfr.refpt[1])/(jfr.refpt[0]+jfr.refpt[1]);
       Bool_t result = (
 	  jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax
 	  && jfr.jtpt[0]>cut_->JEtMin[0]
-	  && (jfr.jtpt[0]-jfr.jtpt[1])/(jfr.jtpt[0]+jfr.jtpt[1]) >= cut_->AjMin
-	  && (jfr.jtpt[0]-jfr.jtpt[1])/(jfr.jtpt[0]+jfr.jtpt[1]) < cut_->AjMax
+	  && Aj >= cut_->AjMin
+	  && Aj < cut_->AjMax
+	  && (Aj-RefAj)<0.05 //((Aj-RefAj)>-0.04&&(Aj-RefAj)<0.12)
 	  );
       return result;
     }
@@ -170,6 +175,7 @@ FragAnaLoop::FragAnaLoop(TString name) :
   vhJetPtvAj_(4),
   vhRefJetPtvAj_(4),
   vhJetAjvAj_(4),
+  vhRefJetAjvAj_(4),
   vhPPtCorrvAj_(4,vector<vector<TH1D*> >(2)),
   vhXiCorrvAj_(4, vector<vector<TH1D*> >(2)),
   // monitor
@@ -202,6 +208,7 @@ void FragAnaLoop::Init()
     vhJetPt_.push_back(new TH1D(Form("h%sJetPt_j%d",name_.Data(),j),"",50,0,300));
     vhRefJetPt_.push_back(new TH1D(Form("h%sRefJetPt_j%d",name_.Data(),j),"",50,0,300));
     vhJetAj_.push_back(new TH1D(Form("h%sJetAj_j%d",name_.Data(),j),"",20,0,1));
+    vhRefJetAj_.push_back(new TH1D(Form("h%sRefJetAj_j%d",name_.Data(),j),"",20,0,1));
     for (Int_t lv=0; lv<5; ++lv) {
       if (anaTrkType_==0 && lv>0) continue;
       vhPPtCorr_[j].push_back(new TH1D(Form("h%sPPtCorr%d_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0]));
@@ -228,6 +235,7 @@ void FragAnaLoop::Init()
       vhJetPtvAj_[a].push_back(new TH1D(Form("h%sJetPt_a%dj%d",name_.Data(),a,j),"",50,0,300));
       vhRefJetPtvAj_[a].push_back(new TH1D(Form("h%sRefJetPt_a%dj%d",name_.Data(),a,j),"",50,0,300));
       vhJetAjvAj_[a].push_back(new TH1D(Form("h%sJetAj_a%dj%d",name_.Data(),a,j),";A_{J};",20,0,1));
+      vhRefJetAjvAj_[a].push_back(new TH1D(Form("h%sRefJetAj_a%dj%d",name_.Data(),a,j),";A_{J};",20,0,1));
       for (Int_t lv=0; lv<3; ++lv) {
 	if (anaTrkType_==0 && lv>0) continue;
 	vhPPtCorrvAj_[a][j].push_back(new TH1D(Form("h%sPPtCorr%d_a%dj%d",name_.Data(),lv,a,j),"",ptBin_.size()-1,&ptBin_[0]));
@@ -284,12 +292,14 @@ void FragAnaLoop::Loop()
     // jet count
     // ===========================
     Double_t Aj = (jfr_.jtpt[0]-jfr_.jtpt[1])/(jfr_.jtpt[0]+jfr_.jtpt[1]);
+    Double_t RefAj = (jfr_.refpt[0]-jfr_.refpt[1])/(jfr_.refpt[0]+jfr_.refpt[1]);
     for (Int_t j=0; j<2; ++j) {
       if (SelEvt(jfr_)&&SelJet(jfr_,j)) {
 	++numJet_[j];
 	vhJetPt_[j]->Fill(jfr_.jtpt[j]);
 	vhRefJetPt_[j]->Fill(jfr_.refpt[j]);
 	vhJetAj_[j]->Fill(Aj);
+	vhRefJetAj_[j]->Fill(RefAj);
 	// differential in aj
 	for (Int_t a=0; a<4; ++a) {
 	  if (Aj>=AjBins_[a]&&Aj<AjBins_[a+1]) {
@@ -297,6 +307,7 @@ void FragAnaLoop::Loop()
 	    vhJetPtvAj_[a][j]->Fill(jfr_.jtpt[j]);
 	    vhRefJetPtvAj_[a][j]->Fill(jfr_.refpt[j]);
 	    vhJetAjvAj_[a][j]->Fill(Aj);
+	    vhRefJetAjvAj_[a][j]->Fill(RefAj);
 	  }
 	}
       }
