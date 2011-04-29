@@ -23,6 +23,8 @@ void anaGeneralJF(
   Int_t treeFormat=-1,doJEC=-1;
   TString fdataname,tag,algo;
 
+  TChain * tevt = 0, * tjet = 0, * tp=0;
+
   // Inputs/Output
   if (doMC) {
     // mc
@@ -63,8 +65,15 @@ void anaGeneralJF(
     //fdataname = Form("matttrees/Corrected_JetTrackPFCandTuple_HIJet35U_PFTowers_hiGoodTracks_v2.root");
     //fdataname = "/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/MinBiasHfOrBSC-PromptReco-Runs_151077-151211_PAT-v2/merged_inclusiveJetAnalyzer_v1.root";
     //tag = Form("trana%s_datamattmbv2_akpu3pf_hiGood",version.Data());
-    fdataname = "/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_all.root";
-    tag = Form("trana%s_dataj35mattpfgmv2_akpu3pf",version.Data());
+    TChain * chain = new TChain("t","");
+    chain->Add("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_0.root/t");
+    chain->Add("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_1.root/t");
+    chain->Add("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_2.root/t");
+    cout << chain->GetFile()->GetName() << endl;
+    tag = Form("trana%s_dataj35mattpfgmv2_akpu3pf_j%dt%d",version.Data(),jetType,particleType);
+    tevt = chain;
+    tjet = chain;
+    tp = chain;
   }
 
   cout << fdataname << " output: " << tag << endl;
@@ -73,29 +82,24 @@ void anaGeneralJF(
   cout << "Output: " << tag << endl;
 
   // Load Trees
-  TChain * tevt = 0;
+  /*
   if (treeFormat==0) tevt = new TChain(algo+"/t");
-  //else if (treeFormat==1) tevt = new TChain("PFJetAnalyzer/t");
-  else if (treeFormat==1) tevt = new TChain("t");
+  else if (treeFormat==1) tevt = new TChain("PFJetAnalyzer/t");
   tevt->Add(fdataname);
 
-  TChain * tjet = 0;
   if (treeFormat==0) tjet = new TChain(algo+"/t");
-  //else if (treeFormat==1) tjet = new TChain("PFJetAnalyzer/t");
-  else if (treeFormat==1) tjet = new TChain("t");
+  else if (treeFormat==1) tjet = new TChain("PFJetAnalyzer/t");
   tjet->Add(fdataname);
 
-  TChain * tp=0;
   if (particleType==2) {
     if (treeFormat==0) tp = new TChain("trkAnalyzer/trackTree");
-    //else if (treeFormat==1) tp = new TChain("PFJetAnalyzer/t");
-    else if (treeFormat==1) tp = new TChain("t");
+    else if (treeFormat==1) tp = new TChain("PFJetAnalyzer/t");
   } else if (particleType==0) {
     if (treeFormat==0) tp = new TChain("genpAnalyzer/hi");
-    //else if (treeFormat==1) tp = new TChain("PFJetAnalyzer/t");
-    else if (treeFormat==1) tp = new TChain("t");
+    else if (treeFormat==1) tp = new TChain("PFJetAnalyzer/t");
   }
   tp->Add(fdataname);
+  */
 
   // JEC
   AnaJEC anajec;

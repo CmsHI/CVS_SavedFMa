@@ -49,6 +49,7 @@ void GeneralJetFragAna::Loop()
     }
   }
 
+  //numEvtEnt=100;
   for (Int_t ievt=0; ievt<numEvtEnt; ++ievt) {
     evtTree_->GetEntry(ievt);
     jetTree_->GetEntry(ievt);
@@ -107,6 +108,7 @@ void GeneralJetFragAna::Loop()
 	jf_.ppt[jf_.np] = anaPs_.ppt[ip];
 	jf_.peta[jf_.np] = anaPs_.peta[ip];
 	jf_.pphi[jf_.np] = anaPs_.pphi[ip];
+	jf_.pfid[jf_.np] = anaPs_.pfid[ip];
 	++jf_.np;
       }
     }

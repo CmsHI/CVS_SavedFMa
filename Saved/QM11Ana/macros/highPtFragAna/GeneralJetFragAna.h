@@ -73,12 +73,13 @@ struct AnaParticles
 {
   Int_t np;
   Int_t ppid[MAXNP];
+  Int_t pfid[MAXNP];
   Float_t ppt[MAXNP];
   Float_t peta[MAXNP];
   Float_t pphi[MAXNP];
   Int_t trkQual[MAXNP];
   void LoadBranches(TChain * t, Int_t treeFormat, Int_t pType) {
-    if (pType==2) {
+    if (pType==2) { // tracks
       if (treeFormat==0) {
 	// trkAna
 	t->SetBranchAddress("nTrk",&(this->np));
@@ -92,9 +93,16 @@ struct AnaParticles
 	t->SetBranchAddress("tracketa",this->peta);
 	t->SetBranchAddress("trackphi",this->pphi);
       }
-    } else if (pType==0) {
+    } else if (pType==3) { // pf cand
+      if (treeFormat==1) {
+	t->SetBranchAddress("nPFcand",&(this->np));
+	t->SetBranchAddress("candId",this->pfid);
+	t->SetBranchAddress("candpt",this->ppt);
+	t->SetBranchAddress("candeta",this->peta);
+	t->SetBranchAddress("candphi",this->pphi);
+      }
+    } else if (pType==0) { // genp
       if (treeFormat==0) {
-	// genpAna
 	t->SetBranchAddress("mult",&(this->np));
 	t->SetBranchAddress("pt",this->ppt);
 	t->SetBranchAddress("eta",this->peta);
@@ -127,6 +135,7 @@ struct JetFrag
   Float_t ppt[MAXNP];
   Float_t peta[MAXNP];
   Float_t pphi[MAXNP];
+  Int_t pfid[MAXNP];
   void SetBranches(TTree * t) {
     t->Branch("cent",&(this->cent),"cent/F");
     t->Branch("cbin",&(this->cbin),"cbin/I");
@@ -140,6 +149,7 @@ struct JetFrag
     t->Branch("ppt",this->ppt,"ppt[np]/F");
     t->Branch("peta",this->peta,"peta[np]/F");
     t->Branch("pphi",this->pphi,"pphi[np]/F");
+    t->Branch("pfid",this->pfid,"pfid[np]/I");
   }
   void clear()
   {
