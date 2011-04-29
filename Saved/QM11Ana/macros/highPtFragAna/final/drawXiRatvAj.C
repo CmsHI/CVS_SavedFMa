@@ -23,10 +23,33 @@ void drawXiRatvAj(
 
   TFile * outf = new TFile(outdir+"/final"+outname+".root","RECREATE");
 
-  TF1 * fxi = new TF1("fxi","[0]*exp(-(1+[1])*x)*(1-exp(-x))^[2]",0,5);
-  fxi->SetParameters(10,-0.5,5);
-
+  // fit functions
   TF1 * fxirefaj[4][2], * fxiaj[4][2];
+  for (Int_t a=0; a<4; ++a) {
+    for (Int_t j=0; j<2; ++j) {
+      fxiaj[a][j] = new TF1("fxi","[0]*exp(-(1+[1])*x)*(1-exp(-x))^[2]",0,3);
+      fxiaj->SetParameters(10,-0.5,5);
+      /*
+      fxiaj[a][j] = new TF1(Form("fxicut_a%dj%d",a,j),"[0]*exp(-(1+[1])*x)*(1-exp(-x))^[2]*1/(1+exp((x-[3])/[4]))",0,5);
+      if (j==0) {
+	fxiaj[a][j]->SetParameters(10,-0.5,5,3.2,0.15);
+	fxiaj[a][j]->SetParLimits(1,-2.5,0);
+	fxiaj[a][j]->SetParLimits(2,0,10);
+	fxiaj[a][j]->SetParLimits(3,3.18,3.5);
+	fxiaj[a][j]->SetParLimits(4,0.1,0.2);
+      }
+      if (j==1) {
+	fxiaj[a][j]->SetParameters(10,-0.5,5,2.5,0.15);
+	fxiaj[a][j]->SetParLimits(1,-2.5,0);
+	fxiaj[a][j]->SetParLimits(2,0,10);
+	fxiaj[a][j]->SetParLimits(3,2.27,3.2);
+	fxiaj[a][j]->SetParLimits(4,0.1,0.2);
+      }
+      */
+      fxirefaj[a][j] = (TF1*)fxiaj[a][j]->Clone(Form("fxirefcut_a%dj%d",a,j));
+    }
+  }
+
   TH1D * hXiIncl_ref[2], *hXiIncl_corr[2], *hXiIncl_corrrat[2];
   TH1D * hXi_ref[4][2], *hXi_raw[4][2], *hXi_corr[4][2], *hXi_rawrat[4][2], *hXi_corrrat[4][2];
   TH1D * hJetPt[4][2], *hRefJetPt[4][2], *hJetAj[4], *hRefJetAj[4];
@@ -107,31 +130,18 @@ void drawXiRatvAj(
       hXi_ref[a][j]->SetAxisRange(1e-3,1e2,"Y");
       hXi_raw[a][j]->Draw("sameE");
       // fit
-      //Float_t xmin=0,xmax=2.3; // z=0.1 for j=40, p=4
-      //if (j==0) xmax=3; // z ~ 0.05 for j=100, p=5
-      //fxiaj[a][j] = (TF1*)fxi->Clone(Form("fxi_a%dj%d",a,j));
-      fxiaj[a][j] = new TF1(Form("fxicut_a%dj%d",a,j),"[0]*exp(-(1+[1])*x)*(1-exp(-x))^[2]*1/(1+exp((x-[3])/[4]))",0,5);
       if (j==0) {
-	fxiaj[a][j]->SetParameters(10,-0.5,5,3.2,0.15);
-	fxiaj[a][j]->SetParLimits(1,-2.5,0);
-	fxiaj[a][j]->SetParLimits(2,0,10);
-	fxiaj[a][j]->SetParLimits(3,3.18,3.5);
-	fxiaj[a][j]->SetParLimits(4,0.1,0.2);
-	hXi_raw[a][j]->Fit(fxiaj[a][j],"0","",0.1,4.2);
-	fxirefaj[a][j] = (TF1*)fxiaj[a][j]->Clone(Form("fxirefcut_a%dj%d",a,j));
-	hXi_ref[a][j]->Fit(fxirefaj[a][j],"0","",0.1,4.2);
-      }
-      if (j==1) {
-	fxiaj[a][j]->SetParameters(10,-0.5,5,2.5,0.15);
-	fxiaj[a][j]->SetParLimits(1,-2.5,0);
-	fxiaj[a][j]->SetParLimits(2,0,10);
-	fxiaj[a][j]->SetParLimits(3,2.27,3.2);
-	fxiaj[a][j]->SetParLimits(4,0.1,0.2);
+	//hXi_raw[a][j]->Fit(fxiaj[a][j],"0","",0.1,4.2);
+	//hXi_ref[a][j]->Fit(fxirefaj[a][j],"0","",0.1,4.2);
 	hXi_raw[a][j]->Fit(fxiaj[a][j],"0","",0.1,3.2);
-	fxirefaj[a][j] = (TF1*)fxiaj[a][j]->Clone(Form("fxirefcut_a%dj%d",a,j));
 	hXi_ref[a][j]->Fit(fxirefaj[a][j],"0","",0.1,3.2);
       }
-      //fxiaj[a][j]->SetRange(xmin,xmax);
+      if (j==1) {
+	//hXi_raw[a][j]->Fit(fxiaj[a][j],"0","",0.1,3.2);
+	//hXi_ref[a][j]->Fit(fxirefaj[a][j],"0","",0.1,3.2);
+	hXi_raw[a][j]->Fit(fxiaj[a][j],"0","",0.1,2.3);
+	hXi_ref[a][j]->Fit(fxirefaj[a][j],"0","",0.1,2.3);
+      }
       fxiaj[a][j]->Draw("same");
       fxirefaj[a][j]->Draw("same");
       if (hasCorr) hXi_corr[a][j]->Draw("sameE");
