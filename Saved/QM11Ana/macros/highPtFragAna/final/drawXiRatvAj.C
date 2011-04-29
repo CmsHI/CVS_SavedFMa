@@ -6,9 +6,9 @@ void drawXiRatvAj(
     //TString infname = "histff_tv8_80hydjuqv6_akpu3pf_an0428hydj.root"
     //TString infname = "histff_tv8_80hydjuqv6_akpu3pf_an0428hydjFixJ2.root"
     TString infname = "histff_tv8dataj35u_akpu3pf_an0429.root",
-    //TString infname = "histff_tv8dataj35u_akpu3pf_t3pf1_an0429.root"
-    //TString infname = "histff_tv8dataj35u_akpu3pf_t3pf4_an0429.root",
-    TString inrefname = "histff_tv8dataj35u_akpu3pf_t3pf0_an0429.root"
+    //TString infname = "histff_tv8dataj35u_akpu3pf_t3pf1_an0429.root",
+    TString inrefname = "histff_tv8dataj35u_akpu3pf_t3pf4_an0429.root",
+    //TString inrefname = "histff_tv8dataj35u_akpu3pf_t3pf0_an0429.root"
     )
 {
   cout << infname << endl;
@@ -27,8 +27,9 @@ void drawXiRatvAj(
   TF1 * fxirefaj[4][2], * fxiaj[4][2];
   for (Int_t a=0; a<4; ++a) {
     for (Int_t j=0; j<2; ++j) {
-      fxiaj[a][j] = new TF1("fxi","[0]*exp(-(1+[1])*x)*(1-exp(-x))^[2]",0,3);
-      fxiaj->SetParameters(10,-0.5,5);
+      if (j==0) fxiaj[a][j] = new TF1("fxi","[0]*exp(-(1+[1])*x)*(1-exp(-x))^[2]",0,3);
+      if (j==1) fxiaj[a][j] = new TF1("fxi","[0]*exp(-(1+[1])*x)*(1-exp(-x))^[2]",0,2.5);
+      fxiaj[a][j]->SetParameters(10,-1,2.5);
       /*
       fxiaj[a][j] = new TF1(Form("fxicut_a%dj%d",a,j),"[0]*exp(-(1+[1])*x)*(1-exp(-x))^[2]*1/(1+exp((x-[3])/[4]))",0,5);
       if (j==0) {
@@ -42,7 +43,7 @@ void drawXiRatvAj(
 	fxiaj[a][j]->SetParameters(10,-0.5,5,2.5,0.15);
 	fxiaj[a][j]->SetParLimits(1,-2.5,0);
 	fxiaj[a][j]->SetParLimits(2,0,10);
-	fxiaj[a][j]->SetParLimits(3,2.27,3.2);
+	fxiaj[a][j]->SetParLimits(3,2.27,3.5);
 	fxiaj[a][j]->SetParLimits(4,0.1,0.2);
       }
       */
@@ -102,7 +103,7 @@ void drawXiRatvAj(
     c4->Divide(2,1);
     for (Int_t j=0; j<2; ++j) {
       c4->cd(j+1);
-      hXiIncl_corrrat[j]->SetAxisRange(0,1.5,"Y");
+      hXiIncl_corrrat[j]->SetAxisRange(0,2,"Y");
       hXiIncl_corrrat[j]->Draw();
     }
   }
@@ -147,7 +148,7 @@ void drawXiRatvAj(
       if (hasCorr) hXi_corr[a][j]->Draw("sameE");
       c2->cd(a+5);
       handsomeTH1(hXi_rawrat[a][j]);
-      hXi_rawrat[a][j]->SetAxisRange(0,1.5,"Y");
+      hXi_rawrat[a][j]->SetAxisRange(0,2,"Y");
       hXi_rawrat[a][j]->SetTitle(title);
       hXi_rawrat[a][j]->Draw("E");
       if (hasCorr) hXi_corrrat[a][j]->Draw("sameE");
