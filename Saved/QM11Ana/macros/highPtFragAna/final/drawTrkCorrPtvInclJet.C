@@ -4,7 +4,7 @@
 #include "TLegend.h"
 #include "../../commonUtility.h"
 
-void drawTrkCorrPt(Int_t corrLevel=0,
+void drawTrkCorrPtvInclJet(Int_t corrLevel=0,
     //TString mod="hitrkEffAnalyzer",
     //TString modref="hitrkEffAnalyzer",
     TString mod="hitrkEffAnalyzer_akpu3pf_j2",
@@ -14,13 +14,10 @@ void drawTrkCorrPt(Int_t corrLevel=0,
     //TString mod="B2InConeJ2",
     //TString modref="B2InConeJ1",
     //TString app="_mattgmv1",
-    //TString appref="_tev6",
-    //TString app="_tev6",
-    TString appref="_matthptv1",
-    TString app="_matthptv1",
-    //TString appref="_tev7hpt",
-    //TString app="_tev7genjet",
-    //TString appref="_tev7genjet",
+    TString appref="_tev6",
+    TString app="_tev6",
+    TString modincl="hitrkEffAnalyzer_akpu3pf",
+    TString appincl="_tev6",
     //TString app="_ppv1",
     //TString appref="_ppv1",
     //TString app="_pphptv1",
@@ -38,10 +35,7 @@ void drawTrkCorrPt(Int_t corrLevel=0,
   //Int_t centBeg=0, centEnd=4; // pp: all cent
 
   Corrector3D trkCorr("trkCorrHisAna_djuq",app,mod);
-  //Corrector3D trkCorr("trkhist_apr262011_hydjetBass_dijet",app,mod);
   trkCorr.ptHatMin_.clear();
-  //trkCorr.ptHatMin_.push_back(30);
-  trkCorr.ptHatMin_.push_back(50);
   trkCorr.ptHatMin_.push_back(80);
   trkCorr.ptHatMin_.push_back(110);
   //trkCorr.ptHatMin_.push_back(170);
@@ -49,15 +43,20 @@ void drawTrkCorrPt(Int_t corrLevel=0,
   trkCorr.Init();
 
   Corrector3D trkCorrRef("trkCorrHisAna_djuq",appref,modref);
-  //Corrector3D trkCorrRef("trkhist_apr262011_hydjetBass_dijet",appref,modref);
   trkCorrRef.ptHatMin_.clear();
-  //trkCorrRef.ptHatMin_.push_back(30);
-  trkCorrRef.ptHatMin_.push_back(50);
   trkCorrRef.ptHatMin_.push_back(80);
   trkCorrRef.ptHatMin_.push_back(110);
   //trkCorrRef.ptHatMin_.push_back(170);
   trkCorrRef.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrRef.Init();
+
+  Corrector3D trkCorrInclJet("trkCorrHisAna_djuq",appincl,modincl);
+  trkCorrInclJet.ptHatMin_.clear();
+  trkCorrInclJet.ptHatMin_.push_back(80);
+  trkCorrInclJet.ptHatMin_.push_back(110);
+  //trkCorrInclJet.ptHatMin_.push_back(170);
+  trkCorrInclJet.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
+  trkCorrInclJet.Init();
 
   cout << endl << "========= plot =========" << endl;
   Float_t jet1PtMin=100;
@@ -81,6 +80,11 @@ void drawTrkCorrPt(Int_t corrLevel=0,
   hCorrPtRefJet100->Draw("E");
   TH1D * hCorrPtJet40 = (TH1D*) trkCorr.InspectCorr(0,isample,centBeg,centEnd,jet2BegBin,jetEndBin,2,7-etaPM,7+etaPM);
   hCorrPtJet40->Draw("same E");
+  // genjet
+  TH1D * hCorrPtInclJet40 = (TH1D*) trkCorrInclJet.InspectCorr(0,isample,centBeg,centEnd,jet2BegBin,jetEndBin,2,7-etaPM,7+etaPM);
+  hCorrPtInclJet40->SetMarkerColor(kBlue);
+  hCorrPtInclJet40->SetMarkerStyle(kOpenCircle);
+  hCorrPtInclJet40->Draw("same E");
 
   // fake
   TH1D * hCorr1PtRefJet100 = (TH1D*) trkCorrRef.InspectCorr(1,isample,centBeg,centEnd,jet1BegBin,jetEndBin,2,7-etaPM,7+etaPM);
@@ -89,20 +93,16 @@ void drawTrkCorrPt(Int_t corrLevel=0,
   TH1D * hCorr1PtJet40 = (TH1D*) trkCorr.InspectCorr(1,isample,centBeg,centEnd,jet2BegBin,jetEndBin,2,7-etaPM,7+etaPM);
   hCorr1PtJet40->Draw("sameE");
 
-  TLegend *leg = new TLegend(0.21,0.25,0.51,0.55);
+  TLegend *leg = new TLegend(0.21,0.29,0.51,0.51);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
   leg->SetTextSize(0.035);
-  leg->AddEntry(hCorrPtRefJet100,"PYTHIA+HYDJET 0-30%","");
-  //leg->AddEntry(hCorrPtRefJet100,"#hat{p}_{T} 30,50,80,110,170 GeV/c","");
-  leg->AddEntry(hCorrPtRefJet100,"#hat{p}_{T} 80 GeV/c","");
-  leg->AddEntry(hCorrPtRefJet100,"|#eta^{Trk}|<1","");
-  //leg->AddEntry(hCorrPtRefJet100,Form("Leading RecJet, p_{T} > %.0f GeV/c",jet1PtMin),"p");
-  //leg->AddEntry(hCorrPtJet40,Form("Subleading RecJet, p_{T} > %.0f GeV/c",jet2PtMin),"p");
-  leg->AddEntry(hCorrPtRefJet100,Form("Leading GenJet, p_{T} > %.0f GeV/c",jet1PtMin),"p");
-  leg->AddEntry(hCorrPtJet40,Form("Subleading GenJet, p_{T} > %.0f GeV/c",jet2PtMin),"p");
+  leg->AddEntry(hCorrPtRefJet100,"0-30%, |#eta^{Trk}|<1","");
+  leg->AddEntry(hCorrPtRefJet100,Form("Leading Jet, p_{T} > %.0f GeV/c",jet1PtMin),"p");
+  leg->AddEntry(hCorrPtJet40,Form("Subleading Jet, p_{T} > %.0f GeV/c",jet2PtMin),"p");
+  leg->AddEntry(hCorrPtInclJet40,Form("Incl. Jet, p_{T} > %.0f GeV/c",jet2PtMin),"p");
   leg->Draw();
 
-  cEff->Print("TrkCorr_vs_Pt_Central"+app+".gif");
-  cEff->Print("TrkCorr_vs_Pt_Central"+app+".pdf");
+  cEff->Print("TrkCorr_vs_Pt_Central"+app+"_vsInclJet.gif");
+  cEff->Print("TrkCorr_vs_Pt_Central"+app+"_vsInclJet.pdf");
 }
