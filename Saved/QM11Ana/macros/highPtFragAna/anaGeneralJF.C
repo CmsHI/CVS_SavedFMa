@@ -18,7 +18,7 @@ void anaGeneralJF(
 {
   gSystem->Load("libMathCore");
   gSystem->Load("libPhysics");
-  TString version("v8");
+  TString version("v9");
 
   Int_t treeFormat=-1,doJEC=-1;
   TString fdataname,tag,algo;
@@ -128,19 +128,26 @@ void anaGeneralJF(
 
 void runData()
 {
-  // anaGeneralJF(false,2,3); // pfcands
-  anaGeneralJF(false,2,2);
+  anaGeneralJF(false,2,3); // pfcands
+  //anaGeneralJF(false,2,2);
 }
 
 void runMcRecJet(Int_t pthat=80)
 {
-  // anaGeneralJF(true,2,3,pthat); // pfcands
-  anaGeneralJF(true,2,2,pthat);
-  anaGeneralJF(true,2,0,pthat);
+  anaGeneralJF(true,2,3,pthat); // pfcands
+  //anaGeneralJF(true,2,2,pthat);
+  //anaGeneralJF(true,2,0,pthat);
 }
 
 void runMcGenJet(Int_t pthat=80)
 {
   anaGeneralJF(true,1,2,pthat);
   anaGeneralJF(true,1,0,pthat);
+}
+
+void runAll()
+{
+  runData();
+  runMcRecJet(80);
+  runMcGenJet(80);
 }
