@@ -24,6 +24,7 @@ struct JetFragRel
   Float_t ppt[MAXNP];
   Float_t peta[MAXNP];
   Float_t pphi[MAXNP];
+  Int_t pfid[MAXNP];
   // relations
   Float_t jdphi;
   Float_t clppt[2];
@@ -47,6 +48,7 @@ struct JetFragRel
     t->Branch("ppt",this->ppt,"ppt[np]/F");
     t->Branch("peta",this->peta,"peta[np]/F");
     t->Branch("pphi",this->pphi,"pphi[np]/F");
+    t->Branch("pfid",this->pfid,"pfid[np]/I");
     t->Branch("jdphi",&(this->jdphi),"jdphi/F");
     t->Branch("clppt",this->clppt,"clppt[2]/F");
     t->Branch("clpind",this->clpind,"clpind[2]/I");
@@ -69,6 +71,7 @@ struct JetFragRel
     t->SetBranchAddress("ppt",this->ppt);
     t->SetBranchAddress("peta",this->peta);
     t->SetBranchAddress("pphi",this->pphi);
+    t->SetBranchAddress("pfid",this->pfid);
   }
   void clear()
   {
@@ -95,6 +98,7 @@ class FragAnaLoop
     TString name_;
     Double_t ptHatMin_;
     Int_t anaTrkType_;
+    Int_t pfCandType_;
 
     vector<Double_t> numJet_;
 
@@ -137,7 +141,12 @@ class FragAnaLoop
 	  && jfr.jtpt[0]>cut_->JEtMin[0]
 	  && Aj >= cut_->AjMin
 	  && Aj < cut_->AjMax
-	  && (Aj-RefAj)<0.05 //((Aj-RefAj)>-0.04&&(Aj-RefAj)<0.12)
+	  //&& fabs(Aj-RefAj)<0.05 //((Aj-RefAj)>-0.04&&(Aj-RefAj)<0.12)
+	  //&& Aj-RefAj>0.08 //((Aj-RefAj)>-0.04&&(Aj-RefAj)<0.12)
+	  //&& fabs(jfr.jtpt[0]-jfr.refpt[0])<5
+	  //&& jfr.jtpt[0]-jfr.refpt[0]>10
+	  //&& fabs(jfr.jtpt[1]-jfr.refpt[1])<5
+	  //&& jfr.jtpt[1]-jfr.refpt[1]<-10
 	  );
       return result;
     }
@@ -165,6 +174,7 @@ FragAnaLoop::FragAnaLoop(TString name) :
   name_(name),
   vtrkCorr_(2),
   anaTrkType_(2),
+  pfCandType_(1),
   numJet_(2),
   vhPPtCorr_(2),
   vhPPtRat_(2),
@@ -210,7 +220,7 @@ void FragAnaLoop::Init()
     vhJetAj_.push_back(new TH1D(Form("h%sJetAj_j%d",name_.Data(),j),"",20,0,1));
     vhRefJetAj_.push_back(new TH1D(Form("h%sRefJetAj_j%d",name_.Data(),j),"",20,0,1));
     for (Int_t lv=0; lv<5; ++lv) {
-      if (anaTrkType_==0 && lv>0) continue;
+      if (anaTrkType_!=2 && lv>0) continue;
       vhPPtCorr_[j].push_back(new TH1D(Form("h%sPPtCorr%d_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0]));
       vhPPtCorr_[j][lv]->Sumw2();
       vhPPtRat_[j].push_back(new TH1D(Form("h%sPPtRat%d_j%d",name_.Data(),lv,j),";p_{T} (GeV/c);",ptBin_.size()-1,&ptBin_[0]));
@@ -237,7 +247,7 @@ void FragAnaLoop::Init()
       vhJetAjvAj_[a].push_back(new TH1D(Form("h%sJetAj_a%dj%d",name_.Data(),a,j),";A_{J};",20,0,1));
       vhRefJetAjvAj_[a].push_back(new TH1D(Form("h%sRefJetAj_a%dj%d",name_.Data(),a,j),";A_{J};",20,0,1));
       for (Int_t lv=0; lv<3; ++lv) {
-	if (anaTrkType_==0 && lv>0) continue;
+	if (anaTrkType_!=2 && lv>0) continue;
 	vhPPtCorrvAj_[a][j].push_back(new TH1D(Form("h%sPPtCorr%d_a%dj%d",name_.Data(),lv,a,j),"",ptBin_.size()-1,&ptBin_[0]));
 	vhPPtCorrvAj_[a][j][lv]->Sumw2();
 	vhXiCorrvAj_[a][j].push_back(new TH1D(Form("h%sXiCorr%d_a%dj%d",name_.Data(),lv,a,j),"",12,-1,5));
@@ -319,6 +329,7 @@ void FragAnaLoop::Loop()
       // basic trk kinematic cuts
       if (trkEnergy<cut_->TrkPtMin) continue;
       if (fabs(trkEta)>2.4) continue;
+      if (anaTrkType_==3&&pfCandType_>0&&jfr_.pfid[ip]!=pfCandType_) continue;
 
       // Correction for this trk
       Double_t corr[4];
@@ -335,7 +346,7 @@ void FragAnaLoop::Loop()
 	// =======================
 	// Get Corrections
 	// =======================
-	if (anaTrkType_>=2&&jfr_.pjdr[j][ip]<cut_->ConeSize) {
+	if (anaTrkType_==2&&jfr_.pjdr[j][ip]<cut_->ConeSize) {
 	  trkwt = vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cbin,corr);
 	  eff = corr[0];
 	  fak = corr[1];
@@ -375,7 +386,7 @@ void FragAnaLoop::Loop()
 	    }
 	  }
 
-	  if (anaTrkType_==0) continue;
+	  if (anaTrkType_!=2) continue;
 	  vhPPtCorr_[j][1]->Fill(trkEnergy,1./eff);
 	  vhPPtCorr_[j][2]->Fill(trkEnergy,(1-fak)/eff);
 	  vhPPtCorr_[j][3]->Fill(trkEnergy,(1-fak)/(eff*(1+mul)));
@@ -412,7 +423,7 @@ void FragAnaLoop::Loop()
   for (Int_t j=0; j<2; ++j) {
     cout << "jet " << j << " count: " << numJet_[j] << endl;
     for (Int_t lv=0; lv<5; ++lv) {
-      if (anaTrkType_==0 && lv>0) continue;
+      if (anaTrkType_!=2 && lv>0) continue;
       normHist(vhPPtCorr_[j][lv],0,true,1./numJet_[j]);
       if (lv>2) continue;
       normHist(vhXiCorr_[j][lv],0,true,1./numJet_[j]);
@@ -421,10 +432,11 @@ void FragAnaLoop::Loop()
     for (Int_t a=0; a<4; ++a) {
       cout << "Aj bin " << a << " count: " << numJetvAj_[a][j] << endl;
       for (Int_t lv=0; lv<3; ++lv) {
-	if (anaTrkType_==0 && lv>0) continue;
+	if (anaTrkType_!=2 && lv>0) continue;
 	normHist(vhPPtCorrvAj_[a][j][lv],0,true,1./numJetvAj_[a][j]);
 	normHist(vhXiCorrvAj_[a][j][lv],0,true,1./numJetvAj_[a][j]);
       }
     }
   }
+  cout << "Smile. Loop done!" << endl;
 }
