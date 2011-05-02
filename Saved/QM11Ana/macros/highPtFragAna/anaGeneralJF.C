@@ -53,6 +53,24 @@ void anaGeneralJF(
     //tag = Form("trana%s_dj%dmattpfgmv1_ak3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
     //fdataname = Form("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_START39V7HI_GEN_SIM_RAW_RECO_393_v1/DefaultCorrJetTuples_PFTowers_hiHighPtTracks/merged_JetAnalysisTTrees_hiHighPtTracks_v1.root",ptHatMin);
     //tag = Form("trana%s_dj%dmatthptv1_ak3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
+    // Load Trees
+    if (treeFormat==0) {
+      tevt = new TChain(algo+"/t");
+      tjet = new TChain(algo+"/t");
+      if (particleType==2) tp = new TChain("trkAnalyzer/trackTree");
+      else if (particleType==0) tp = new TChain("genpAnalyzer/hi");
+    }
+    else if (treeFormat==1) {
+      //tevt = new TChain("PFJetAnalyzer/t");
+      //tjet = new TChain("PFJetAnalyzer/t");
+      //tp = new TChain("PFJetAnalyzer/t");
+      tevt = new TChain("t");
+      tjet = new TChain("t");
+      tp = new TChain("t");
+    }
+    tevt->Add(fdataname);
+    tjet->Add(fdataname);
+    tp->Add(fdataname);
   }
   else {
     // data
@@ -80,26 +98,6 @@ void anaGeneralJF(
   cout << "Input: " << fdataname << endl;
   cout << " Jet: " << algo << endl;
   cout << "Output: " << tag << endl;
-
-  // Load Trees
-  /*
-  if (treeFormat==0) tevt = new TChain(algo+"/t");
-  else if (treeFormat==1) tevt = new TChain("PFJetAnalyzer/t");
-  tevt->Add(fdataname);
-
-  if (treeFormat==0) tjet = new TChain(algo+"/t");
-  else if (treeFormat==1) tjet = new TChain("PFJetAnalyzer/t");
-  tjet->Add(fdataname);
-
-  if (particleType==2) {
-    if (treeFormat==0) tp = new TChain("trkAnalyzer/trackTree");
-    else if (treeFormat==1) tp = new TChain("PFJetAnalyzer/t");
-  } else if (particleType==0) {
-    if (treeFormat==0) tp = new TChain("genpAnalyzer/hi");
-    else if (treeFormat==1) tp = new TChain("PFJetAnalyzer/t");
-  }
-  tp->Add(fdataname);
-  */
 
   // JEC
   AnaJEC anajec;

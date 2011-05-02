@@ -77,6 +77,7 @@ struct AnaParticles
   Float_t ppt[MAXNP];
   Float_t peta[MAXNP];
   Float_t pphi[MAXNP];
+  Int_t trkNHits[MAXNP];
   Int_t trkQual[MAXNP];
   void LoadBranches(TChain * t, Int_t treeFormat, Int_t pType) {
     if (pType==2) { // tracks
@@ -86,12 +87,14 @@ struct AnaParticles
 	t->SetBranchAddress("trkPt",this->ppt);
 	t->SetBranchAddress("trkEta",this->peta);
 	t->SetBranchAddress("trkPhi",this->pphi);
+	t->SetBranchAddress("trkNHit",this->trkNHits);
       } else if (treeFormat==1) {
 	// pf ana
 	t->SetBranchAddress("ntrack",&(this->np));
 	t->SetBranchAddress("trackpt",this->ppt);
 	t->SetBranchAddress("tracketa",this->peta);
 	t->SetBranchAddress("trackphi",this->pphi);
+	t->SetBranchAddress("tracknhits",this->trkNHits);
       }
     } else if (pType==3) { // pf cand
       if (treeFormat==1) {

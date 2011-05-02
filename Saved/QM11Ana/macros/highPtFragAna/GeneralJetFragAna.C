@@ -58,7 +58,8 @@ void GeneralJetFragAna::Loop()
       cout << "Entry " << ievt << " (" << (Float_t)ievt/numEvtEnt*100 << "%)" << endl;
       //cout << "run/lumi/evt: " << anaEvt_.run << "/" << anaEvt_.lumi << "/" << anaEvt_.evt << endl;
       cout << "bin|vz: " << anaEvt_.cbin << "|" << anaEvt_.vz
-	<< " njet: " << anaJets_.njets << " jtpt0: " << anaJets_.jtpt[0] << " refjet: " << anaJets_.refpt[0] << endl;
+	<< " njet: " << anaJets_.njets << " jtpt0: " << anaJets_.jtpt[0] << " refjet: " << anaJets_.refpt[0]
+	<< " trk pid|pt|eta|phi|nhits: " << anaPs_.ppid[0] << "|" << anaPs_.ppt[0] << "|" << anaPs_.peta[0] << "|" << anaPs_.pphi[0] << "|" << anaPs_.trkNHits[0] << endl;
     }
 
     // JEC
@@ -98,11 +99,17 @@ void GeneralJetFragAna::Loop()
       for (Int_t ip=0; ip<anaPs_.np; ++ip) {
 	if (anaPs_.ppt[ip]<pptMin_) continue;
 	if (fabs(anaPs_.peta[ip])>2.4) continue; // tracker acceptance
+	if (anaPs_.trkNHits[ip]<5) continue; // full tracks only for the moment
 	if (treeFormat_==1 && pType_==0 &&
-	    !(abs(anaPs_.ppid[ip])==211
-	      || abs(anaPs_.ppid[ip])==321
-	      || abs(anaPs_.ppid[ip])==2212
-	      || abs(anaPs_.ppid[ip])==13
+	    !(abs(anaPs_.ppid[ip])==11 // e- 0.46%
+	      || abs(anaPs_.ppid[ip])==13 // mu- 0.12%
+	      || abs(anaPs_.ppid[ip])==211 // pi+ 77.46%
+	      || abs(anaPs_.ppid[ip])==321 // k+ 12.75%
+	      || abs(anaPs_.ppid[ip])==2112 // p+ 7.81%
+	      || abs(anaPs_.ppid[ip])==3112 // Sigma- 0.59%
+	      || abs(anaPs_.ppid[ip])==3222 // Sigma+ 0.59%
+	      || abs(anaPs_.ppid[ip])==3312 // Xi- 0.21%
+	      || abs(anaPs_.ppid[ip])==3334 // Omega- 0.005%
 	      )
 	   ) continue;
 	jf_.ppt[jf_.np] = anaPs_.ppt[ip];
