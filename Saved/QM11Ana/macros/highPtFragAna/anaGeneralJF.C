@@ -115,7 +115,7 @@ void anaGeneralJF(
   //jfana.doJetOnly_ = true;
   jfana.anajec_ = &anajec;
   jfana.pTree_ = tp;
-  jfana.leadJetPtMin_=90;
+  jfana.leadJetPtMin_=-1;
   jfana.pptMin_=4;
   jfana.treeFormat_=treeFormat; // 0 for jra, 1 for pftree
   jfana.Init(jetType,particleType);
@@ -128,11 +128,13 @@ void anaGeneralJF(
 
 void runData()
 {
-  anaGeneralJF();
+  // anaGeneralJF(false,2,3); // pfcands
+  anaGeneralJF(false,2,2);
 }
 
 void runMcRecJet(Int_t pthat=80)
 {
+  // anaGeneralJF(true,2,3,pthat); // pfcands
   anaGeneralJF(true,2,2,pthat);
   anaGeneralJF(true,2,0,pthat);
 }

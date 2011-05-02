@@ -59,7 +59,7 @@ void GeneralJetFragAna::Loop()
       //cout << "run/lumi/evt: " << anaEvt_.run << "/" << anaEvt_.lumi << "/" << anaEvt_.evt << endl;
       cout << "bin|vz: " << anaEvt_.cbin << "|" << anaEvt_.vz
 	<< " njet: " << anaJets_.njets << " jtpt0: " << anaJets_.jtpt[0] << " refjet: " << anaJets_.refpt[0]
-	<< " trk pid|pt|eta|phi|nhits: " << anaPs_.ppid[0] << "|" << anaPs_.ppt[0] << "|" << anaPs_.peta[0] << "|" << anaPs_.pphi[0] << "|" << anaPs_.trkNHits[0] << endl;
+	<< " trk pid|pt|eta|phi|nhits|pfid: " << anaPs_.ppid[0] << "|" << anaPs_.ppt[0] << "|" << anaPs_.peta[0] << "|" << anaPs_.pphi[0] << "|" << anaPs_.trkNHits[0] << "|" << anaPs_.pfid[0] << endl;
     }
 
     // JEC
