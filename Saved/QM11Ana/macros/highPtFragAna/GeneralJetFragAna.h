@@ -39,16 +39,18 @@ struct AnaJets
   Float_t refpt[MAXNJETS];
   Float_t rawpt[MAXNJETS];
   void LoadBranches(TChain * t, Int_t treeFormat, TString name="",Int_t jType=2,Bool_t doMC=false) {
+    TString jetPt = "jtpt_";
     if (treeFormat==0) {
       if (jType==2) {
 	t->SetBranchAddress("nref",&(this->njets));
-	t->SetBranchAddress("jtpt",this->jtpt);
+	t->SetBranchAddress(jetPt,this->jtpt);
 	t->SetBranchAddress("jteta",this->jteta);
 	t->SetBranchAddress("jtphi",this->jtphi);
 	t->SetBranchAddress("rawpt",this->rawpt);
       } else if (jType==1) {
+	jetPt = "genpt";
 	t->SetBranchAddress("ngen",&(this->njets));
-	t->SetBranchAddress("genpt",this->jtpt);
+	t->SetBranchAddress(jetPt,this->jtpt);
 	t->SetBranchAddress("geneta",this->jteta);
 	t->SetBranchAddress("genphi",this->jtphi);
       }
@@ -56,9 +58,9 @@ struct AnaJets
 	t->SetBranchAddress("refpt",this->refpt);
       }
     } else if (treeFormat==1) {
+      jetPt = "corrpt_";
       t->SetBranchAddress("n"+name,&(this->njets));
-      t->SetBranchAddress("corrpt_"+name,this->jtpt);
-      //t->SetBranchAddress("jtpt_"+name,this->jtpt);
+      t->SetBranchAddress(jetPt+name,this->jtpt);
       t->SetBranchAddress("jteta_"+name,this->jteta);
       t->SetBranchAddress("jtphi_"+name,this->jtphi);
       t->SetBranchAddress("rawpt_"+name,this->rawpt);
@@ -66,6 +68,7 @@ struct AnaJets
 	t->SetBranchAddress("refpt_"+name,this->refpt);
       }
     }
+    cout << "jetpt branch: " << jetPt << endl;
   }
 };
 

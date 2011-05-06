@@ -54,19 +54,25 @@ void GeneralJetFragAna::Loop()
     evtTree_->GetEntry(ievt);
     jetTree_->GetEntry(ievt);
     if (!doJetOnly_) pTree_->GetEntry(ievt);
+    // JEC
+    if (doJEC_==1) {
+      for (Int_t j=0; j<anaJets_.njets; ++j) {
+	anaJets_.jtpt[j]=anaJets_.rawpt[j]*anajec_->GetJEC(anaJets_.rawpt[j],anaJets_.jteta[j]);
+      }
+    }
+    // jet energy settings
+    if (treeFormat_==1 && jetType_==1) {
+      for (Int_t j=0; j<anaJets_.njets; ++j) {
+	anaJets_.jtpt[j]=anaJets_.refpt[j];
+      }
+    }
+
     if (ievt%5000==0) {
       cout << "Entry " << ievt << " (" << (Float_t)ievt/numEvtEnt*100 << "%)" << endl;
       //cout << "run/lumi/evt: " << anaEvt_.run << "/" << anaEvt_.lumi << "/" << anaEvt_.evt << endl;
       cout << "bin|vz: " << anaEvt_.cbin << "|" << anaEvt_.vz
 	<< " njet: " << anaJets_.njets << " jtpt0: " << anaJets_.jtpt[0] << " refjet: " << anaJets_.refpt[0]
 	<< " trk pid|pt|eta|phi|nhits|pfid: " << anaPs_.ppid[0] << "|" << anaPs_.ppt[0] << "|" << anaPs_.peta[0] << "|" << anaPs_.pphi[0] << "|" << anaPs_.trkNHits[0] << "|" << anaPs_.pfid[0] << endl;
-    }
-
-    // JEC
-    if (doJEC_==1) {
-      for (Int_t j=0; j<anaJets_.njets; ++j) {
-	anaJets_.jtpt[j]=anaJets_.rawpt[j]*anajec_->GetJEC(anaJets_.rawpt[j],anaJets_.jteta[j]);
-      }
     }
 
     // Initialize counters for each event
