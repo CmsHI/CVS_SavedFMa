@@ -91,9 +91,25 @@ hitrkEffAnalyzer_akpu3pf_j2 = hitrkEffAnalyzer_akpu3pf.clone(
     )
 hitrkEffAna_akpu3pf = cms.Sequence(cutsTPForFak*cutsTPForEff*hitrkEffAnalyzer_akpu3pf*hitrkEffAnalyzer_akpu3pf_j1*hitrkEffAnalyzer_akpu3pf_j2)
 
+# hiGoodTright
+hiGoodTightTrkEffAnalyzer_akpu3pf = hitrkEffAnalyzer_akpu3pf.clone(
+    tracks = "hiGoodTightTracks"
+    )
+hiGoodTightTrkEffAnalyzer_akpu3pf_j1 = hiGoodTightTrkEffAnalyzer_akpu3pf.clone(
+    useJetEtMode = 1,
+    jetTrkOnly = True
+    )
+hiGoodTightTrkEffAnalyzer_akpu3pf_j2 = hiGoodTightTrkEffAnalyzer_akpu3pf.clone(
+    useJetEtMode = 1,
+    jetTrkOnly = True,
+    useSubLeadingJet = True
+    )
+hiGoodTightTrkEffAna_akpu3pf = cms.Sequence(cutsTPForFak*cutsTPForEff*hiGoodTightTrkEffAnalyzer_akpu3pf*hiGoodTightTrkEffAnalyzer_akpu3pf_j1*hiGoodTightTrkEffAnalyzer_akpu3pf_j2)
+
 # hiHighPt
 hiHighPtTrkEffAnalyzer_akpu3pf = hitrkEffAnalyzer_akpu3pf.clone(
-    tracks = "hiHighPtTracks"
+    tracks = "hiHighPtTracks",
+    qualityBit = "tight"
     )
 hiHighPtTrkEffAnalyzer_akpu3pf_j1 = hiHighPtTrkEffAnalyzer_akpu3pf.clone(
     useJetEtMode = 1,
@@ -134,7 +150,9 @@ hitrkPfCandAnalyzer = pfCandidateAnalyzer.clone(
 # trk val
 from PbPbTrackingTools.HiTrackValidator.hitrackvalidator_cfi import *
 from edwenger.HiTrkEffAnalyzer.HiTPCuts_cff import *
-hihighTrkVal = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiHighPtTracks"))
+hihighTrkVal = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiHighPtTracks"),
+    qualityString = "tight")
+higoodtightTrkVal = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiGoodTightTracks"))
 hihighTrkVal_fake = hihighTrkVal.clone(simtrklabel = cms.untracked.InputTag("cutsTPForFak"),
                                      hasSimInfo=cms.untracked.bool(True),
                                      selectFake=cms.untracked.bool(True))
@@ -158,8 +176,8 @@ makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
 
 
 # final sequences
-trkcorr_seq = cms.Sequence( (hitrkEffAna_akpu3pf+hiHighPtTrkEffAna_akpu3pf) )
-trkval_seq = cms.Sequence( hihighTrkVal + higoodTrkVal + hitrkPfCandAnalyzer)
+trkcorr_seq = cms.Sequence( (hitrkEffAna_akpu3pf+hiHighPtTrkEffAna_akpu3pf+hiGoodTightEffAna_akpu3pf) )
+trkval_seq = cms.Sequence( hihighTrkVal + higoodtightTrkVal + higoodTrkVal + hitrkPfCandAnalyzer)
 #trkana_seq = cms.Sequence( trkAnalyzer * hpttrkAnalyzer * genpAnalyzer * djakpu3pf_pfcand)
 trkana_seq = cms.Sequence( trkAnalyzer * hpttrkAnalyzer * genpAnalyzer)
 trkana_seq_data = cms.Sequence( trkAnalyzer )
