@@ -67,10 +67,10 @@ void GeneralJetFragAna::Loop()
       }
     }
 
-    if (ievt%5000==0) {
+    if (ievt%(numEvtEnt/20)==0) {
       cout << "Entry " << ievt << " (" << (Float_t)ievt/numEvtEnt*100 << "%)" << endl;
       //cout << "run/lumi/evt: " << anaEvt_.run << "/" << anaEvt_.lumi << "/" << anaEvt_.evt << endl;
-      cout << "bin|vz: " << anaEvt_.cbin << "|" << anaEvt_.vz
+      cout << "bin|vz|nhlt: " << anaEvt_.cbin << "|" << anaEvt_.vz << "|" << anaEvt_.nHLTBit
 	<< " njet: " << anaJets_.njets << " jtpt0: " << anaJets_.jtpt[0] << " refjet: " << anaJets_.refpt[0]
 	<< " trk pid|pt|eta|phi|nhits|pfid: " << anaPs_.ppid[0] << "|" << anaPs_.ppt[0] << "|" << anaPs_.peta[0] << "|" << anaPs_.pphi[0] << "|" << anaPs_.trkNHits[0] << "|" << anaPs_.pfid[0] << endl;
     }
@@ -84,6 +84,10 @@ void GeneralJetFragAna::Loop()
     jf_.cent = anaEvt_.cbin * 2.5;
     jf_.cbin = anaEvt_.cbin;
     jf_.vz = anaEvt_.vz;
+    jf_.nHLTBit = anaEvt_.nHLTBit;
+    for (Int_t i=0; i<anaEvt_.nHLTBit; ++i) {
+      jf_.hltBit[i] = anaEvt_.hltBit[i];
+    }
 
     // Jet level vars
     Int_t leadJetInd  = GetLeadingJet(anaJets_,anaJetv_);

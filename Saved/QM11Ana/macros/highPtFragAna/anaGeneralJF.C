@@ -18,7 +18,7 @@ void anaGeneralJF(
 {
   gSystem->Load("libMathCore");
   gSystem->Load("libPhysics");
-  TString version("v9");
+  TString version("v11");
 
   Int_t treeFormat=-1,doJEC=-1;
   TString fdataname,tag,algo;
@@ -42,10 +42,12 @@ void anaGeneralJF(
     //tag = Form("trana%s_hydjuq%dv6_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
     //fdataname = Form("~frankma/scratch01/ana/HydjetBass_DJUQ%d_GSR_393_300k_JetTrkv5GenPSig/tr*.root",ptHatMin);
     //tag = Form("trana%s_hydjuq%dv5_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
-    fdataname = Form("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_v1_EscaleRePass_noCutoff.root",ptHatMin);
-    tag = Form("trana%s_hydjuq%dmattpfgmv2_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
-    //fdataname = Form("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_v1.root",ptHatMin);
-    //tag = Form("trana%s_hydjuq%dmattpfgmv1_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
+    //fdataname = Form("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_v1_EscaleRePass_noCutoff.root",ptHatMin);
+    //tag = Form("trana%s_hydjuq%dmattpfgmv2_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
+    // hihighpt
+    fdataname = Form("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiHighPtTracks/merged_JetAnalysisTTrees_hiHighPtTracks_v1.root",ptHatMin);
+    tag = Form("trana%s_hydjuq%dmattpfhptv1_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
+    // herwig
     //fdataname = Form("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Herwig_Pt%d_GEN-SIM-RECO_395/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_v1.root",ptHatMin);
     //tag = Form("trana%s_hydjhwg%dmattpfgmv1_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
     // === pp ===
@@ -61,12 +63,12 @@ void anaGeneralJF(
       else if (particleType==0) tp = new TChain("genpAnalyzer/hi");
     }
     else if (treeFormat==1) {
-      //tevt = new TChain("PFJetAnalyzer/t");
-      //tjet = new TChain("PFJetAnalyzer/t");
-      //tp = new TChain("PFJetAnalyzer/t");
-      tevt = new TChain("t");
-      tjet = new TChain("t");
-      tp = new TChain("t");
+      tevt = new TChain("PFJetAnalyzer/t");
+      tjet = new TChain("PFJetAnalyzer/t");
+      tp = new TChain("PFJetAnalyzer/t");
+      //tevt = new TChain("t");
+      //tjet = new TChain("t");
+      //tp = new TChain("t");
     }
     tevt->Add(fdataname);
     tjet->Add(fdataname);
@@ -77,18 +79,30 @@ void anaGeneralJF(
     treeFormat = 1; // 0 for jra, 1 for pfana
     doJEC = 0;
     algo = "j4";
+    // === HI ===
     //algo = "akPu3PFJetAnalyzer";
     //fdataname = Form("trees/merged_JetAnalysisTTrees_hiGoodTracks_condor_v2.root");
     //tag = Form("trana%s_datamattv2_akpu3pf_hiGood",version.Data());
     //fdataname = Form("matttrees/Corrected_JetTrackPFCandTuple_HIJet35U_PFTowers_hiGoodTracks_v2.root");
     //fdataname = "/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/MinBiasHfOrBSC-PromptReco-Runs_151077-151211_PAT-v2/merged_inclusiveJetAnalyzer_v1.root";
     //tag = Form("trana%s_datamattmbv2_akpu3pf_hiGood",version.Data());
-    TChain * chain = new TChain("t","");
-    chain->Add("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_0.root/t");
-    chain->Add("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_1.root/t");
-    chain->Add("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_2.root/t");
+    //TChain * chain = new TChain("t","");
+    TChain * chain = new TChain("PFJetAnalyzer/t","");
+    //chain->Add("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_0.root/t");
+    //chain->Add("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_1.root/t");
+    //chain->Add("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_2.root/t");
+    //tag = Form("trana%s_dataj35mattpfgmv2_akpu3pf_j%dt%d",version.Data(),jetType,particleType);
+    //TChain * chain = new TChain("PFJetAnalyzer/t","");
+    //chain->Add("~mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTracks/merged_JetAnalysisTTrees_hiGoodTracks_v2_EscaleRepass.root");
+    //tag = Form("trana%s_dataj35mattpfhgv2_akpu3pf_j%dt%d_pt4",version.Data(),jetType,particleType);
+    //chain->Add("~mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiHighPtTracks/merged_JetAnalysisTTrees_hiHighPtTracks_v1_partial.root");
+    //tag = Form("trana%s_dataj35mattpfhptv1_akpu3pf_j%dt%d",version.Data(),jetType,particleType);
+    // === pp ===
+    chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/413patch2/AllPhysics2760/HICorrJetTuples_pp2760_HIReco_Jet_SD/merged_JetAnalysisTTrees_hiGoodTracks_v1.root");
+    tag = Form("trana%s_ppdatajet_mattpfhgv1_akpu3pf_j%dt%d_pt4",version.Data(),jetType,particleType);
+    //chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/413patch2/AllPhysics2760/HICorrJetTuples_pp2760_HIReco_Jet_SD_hiHighPtTracks/merged_JetAnalysisTTrees_hiHighPtTracks_v1.root");
+    //tag = Form("trana%s_ppdatajet_mattpfhptv1_akpu3pf_j%dt%d_pt4",version.Data(),jetType,particleType);
     cout << chain->GetFile()->GetName() << endl;
-    tag = Form("trana%s_dataj35mattpfgmv2_akpu3pf_j%dt%d",version.Data(),jetType,particleType);
     tevt = chain;
     tjet = chain;
     tp = chain;

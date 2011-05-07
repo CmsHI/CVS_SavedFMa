@@ -11,6 +11,7 @@
 using namespace ROOT::Math;
 const Int_t MAXNJETS = 2000;
 const Int_t MAXNP = 100000;
+const Int_t MAXHLTBITS = 1000;
 
 typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMLorentzVectorD;
 
@@ -21,12 +22,18 @@ struct AnaEvt
 {
   Int_t run, evt, lumi, cbin;
   Float_t cent,vz;
+  Int_t nHLTBit;
+  Bool_t hltBit[MAXHLTBITS];
   void LoadBranches(TChain * t, Int_t treeFormat) {
+    TString tname = t->GetName();
+    cout << "load evt branches for " << tname << endl;
     t->SetBranchAddress("run",&(this->run));
     t->SetBranchAddress("evt",&(this->evt));
     t->SetBranchAddress("lumi",&(this->lumi));
     t->SetBranchAddress("bin",&(this->cbin));
     t->SetBranchAddress("vz",&(this->vz));
+    t->SetBranchAddress("nHLTBit",&(this->nHLTBit));
+    t->SetBranchAddress("hltBit",this->hltBit);
   }
 };
 
@@ -39,6 +46,8 @@ struct AnaJets
   Float_t refpt[MAXNJETS];
   Float_t rawpt[MAXNJETS];
   void LoadBranches(TChain * t, Int_t treeFormat, TString name="",Int_t jType=2,Bool_t doMC=false) {
+    TString tname = t->GetName();
+    cout << "load jet branches for " << tname << endl;
     TString jetPt = "jtpt_";
     if (treeFormat==0) {
       if (jType==2) {
@@ -58,7 +67,7 @@ struct AnaJets
 	t->SetBranchAddress("refpt",this->refpt);
       }
     } else if (treeFormat==1) {
-      jetPt = "corrpt_";
+      if (!tname.Contains("PFJetAnalyzer")) jetPt = "corrpt_";
       t->SetBranchAddress("n"+name,&(this->njets));
       t->SetBranchAddress(jetPt+name,this->jtpt);
       t->SetBranchAddress("jteta_"+name,this->jteta);
@@ -68,7 +77,7 @@ struct AnaJets
 	t->SetBranchAddress("refpt_"+name,this->refpt);
       }
     }
-    cout << "jetpt branch: " << jetPt << endl;
+    cout << " ***jetpt branch: " << jetPt << " *** " << endl;
   }
 };
 
@@ -83,6 +92,8 @@ struct AnaParticles
   Int_t trkNHits[MAXNP];
   Int_t trkQual[MAXNP];
   void LoadBranches(TChain * t, Int_t treeFormat, Int_t pType) {
+    TString tname = t->GetName();
+    cout << "load particle branches for " << tname << endl;
     if (pType==2) { // tracks
       if (treeFormat==0) {
 	// trkAna
@@ -132,6 +143,8 @@ struct JetFrag
   Float_t cent;
   Int_t cbin;
   Float_t vz;
+  Int_t nHLTBit;
+  Bool_t hltBit[MAXHLTBITS];
   Float_t jtpt[2];
   Float_t jteta[2];
   Float_t jtphi[2];
@@ -146,6 +159,8 @@ struct JetFrag
     t->Branch("cent",&(this->cent),"cent/F");
     t->Branch("cbin",&(this->cbin),"cbin/I");
     t->Branch("vz",&(this->vz),"vz/F");
+    t->Branch("nHLTBit",&(this->nHLTBit),"nHLTBit/I");
+    t->Branch("hltBit",this->hltBit,"hltBit[nHLTBit]/O");
     t->Branch("jtpt",this->jtpt,"jtpt[2]/F");
     t->Branch("jteta",this->jteta,"jteta[2]/F");
     t->Branch("jtphi",this->jtphi,"jtphi[2]/F");
