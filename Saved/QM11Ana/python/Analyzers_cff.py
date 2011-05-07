@@ -150,17 +150,18 @@ hitrkPfCandAnalyzer = pfCandidateAnalyzer.clone(
 # trk val
 from PbPbTrackingTools.HiTrackValidator.hitrackvalidator_cfi import *
 from edwenger.HiTrkEffAnalyzer.HiTPCuts_cff import *
-hitrkvalidator.neededCentBins = [0,1,3,11,19,35]
-hitrkvalidator.jetlabel = "akPu3PFpatJets"
-higoodtightTrkVal = hitrkvalidator.clone(
+higoodTrkVal = hitrkvalidator.clone(
+    trklabel = "hiGoodTracks",
+    neededCentBins = [0,1,3,11,19,35],
+    jetlabel = "akPu3PFpatJets")
+higoodtightTrkVal = higoodTrkVal.clone(
     trklabel=cms.untracked.InputTag("hiGoodTightTracks")
     )
-hihighTrkVal = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiHighPtTracks"),
+hihighTrkVal = higoodTrkVal.clone(trklabel=cms.untracked.InputTag("hiHighPtTracks"),
     qualityString = "tight")
 hihighTrkVal_fake = hihighTrkVal.clone(simtrklabel = cms.untracked.InputTag("cutsTPForFak"),
                                      hasSimInfo=cms.untracked.bool(True),
                                      selectFake=cms.untracked.bool(True))
-higoodTrkVal = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiGoodTracks"))
 higoodTrkVal_fake = higoodTrkVal.clone(simtrklabel = cms.untracked.InputTag("cutsTPForFak"),
                                        hasSimInfo=cms.untracked.bool(True),
                                        selectFake=cms.untracked.bool(True))
