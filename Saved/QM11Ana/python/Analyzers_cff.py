@@ -109,7 +109,7 @@ hiGoodTightTrkEffAna_akpu3pf = cms.Sequence(cutsTPForFak*cutsTPForEff*hiGoodTigh
 # hiHighPt
 hiHighPtTrkEffAnalyzer_akpu3pf = hitrkEffAnalyzer_akpu3pf.clone(
     tracks = "hiHighPtTracks",
-    qualityBit = "tight"
+    qualityString = "tight"
     )
 hiHighPtTrkEffAnalyzer_akpu3pf_j1 = hiHighPtTrkEffAnalyzer_akpu3pf.clone(
     useJetEtMode = 1,
@@ -150,9 +150,13 @@ hitrkPfCandAnalyzer = pfCandidateAnalyzer.clone(
 # trk val
 from PbPbTrackingTools.HiTrackValidator.hitrackvalidator_cfi import *
 from edwenger.HiTrkEffAnalyzer.HiTPCuts_cff import *
+hitrkvalidator.neededCentBins = [0,1,3,11,19,35]
+hitrkvalidator.jetlabel = "akPu3PFpatJets"
+higoodtightTrkVal = hitrkvalidator.clone(
+    trklabel=cms.untracked.InputTag("hiGoodTightTracks")
+    )
 hihighTrkVal = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiHighPtTracks"),
     qualityString = "tight")
-higoodtightTrkVal = hitrkvalidator.clone(trklabel=cms.untracked.InputTag("hiGoodTightTracks"))
 hihighTrkVal_fake = hihighTrkVal.clone(simtrklabel = cms.untracked.InputTag("cutsTPForFak"),
                                      hasSimInfo=cms.untracked.bool(True),
                                      selectFake=cms.untracked.bool(True))
@@ -176,7 +180,7 @@ makeCentralityTableTFile = cms.EDAnalyzer('CentralityTableProducer',
 
 
 # final sequences
-trkcorr_seq = cms.Sequence( (hitrkEffAna_akpu3pf+hiHighPtTrkEffAna_akpu3pf+hiGoodTightEffAna_akpu3pf) )
+trkcorr_seq = cms.Sequence( (hitrkEffAna_akpu3pf+hiHighPtTrkEffAna_akpu3pf+hiGoodTightTrkEffAna_akpu3pf) )
 trkval_seq = cms.Sequence( hihighTrkVal + higoodtightTrkVal + higoodTrkVal + hitrkPfCandAnalyzer)
 #trkana_seq = cms.Sequence( trkAnalyzer * hpttrkAnalyzer * genpAnalyzer * djakpu3pf_pfcand)
 trkana_seq = cms.Sequence( trkAnalyzer * hpttrkAnalyzer * genpAnalyzer)
