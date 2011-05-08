@@ -3,3 +3,5 @@
 *.root
 out
 *.gif
+*.eps
+*.pdf
