@@ -20,16 +20,23 @@ void loopMulFF(Int_t doMC=1,
   TString tag;
   TChain * trec = new TChain("tjf");
   TChain * tgen = new TChain("tjf");
-  TString algo="akpu3pf";
-  //TString algo="ak3pf";
-  TString anV="an0502";
+  //TString algo="akpu3pf";
+  TString algo="ak3pf";
+  TString anV="an0507";
+  Int_t jetType=1;
   Int_t particleType=2;
   Int_t pfCandType=0;
   cout << "=============== MulFF Ana ======================" << endl;
   cout << "  jet: " << algo << " ana: " << anV << endl;
   if (doMC==0) {
-    infrec=Form("../ntout/tranav8_dataj35mattpfgmv2_%s_j2t%d.root",algo.Data(),particleType);
-    tag = Form("tv8dataj35u_%s_t%dpf%d_%s",algo.Data(),particleType,pfCandType,anV.Data());
+    // === HI ===
+    //infrec=Form("../ntout/tranav11_dataj35mattpfhgv2repass_%s_j2t%d_pt4.root",algo.Data(),particleType);
+    //tag = Form("tv11dataj35u_%s_hg_t%dpf%d_%s",algo.Data(),particleType,pfCandType,anV.Data());
+    // === pp ===
+    //infrec=Form("../ntout/tranav11_ppdatajet_mattpfhgv1_%s_j2t%d_pt4.root",algo.Data(),particleType);
+    //tag = Form("tv11ppdatajet_%s_hg_t%dpf%d_%s",algo.Data(),particleType,pfCandType,anV.Data());
+    infrec=Form("../ntout/tranav11_ppdatajet_mattpfhptv1_%s_j2t%d_pt4.root",algo.Data(),particleType);
+    tag = Form("tv11ppdatajet_%s_hpt_t%dpf%d_%s",algo.Data(),particleType,pfCandType,anV.Data());
   }
 
   if (doMC==1) {
@@ -39,16 +46,19 @@ void loopMulFF(Int_t doMC=1,
     //infgen=Form("../ntout/tranav8_hydjuq%.0fv6_%s_j2t0.root",ptHatMin,algo.Data());
     //infrec=Form("../ntout/tranav8_hydjuq%.0fv6_%s_j2t2.root",ptHatMin,algo.Data());
     //tag = Form("tv8_%.0fhydjuqv6_%s_%s",ptHatMin,algo.Data(),anV.Data());
-    infgen=Form("../ntout/tranav8_hydjuq%.0fmattpfgmv2_%s_j2t0.root",ptHatMin,algo.Data());
-    infrec=Form("../ntout/tranav8_hydjuq%.0fmattpfgmv2_%s_j2t2.root",ptHatMin,algo.Data());
-    tag = Form("tv8_%.0fmattpfgmv2_%s_%s",ptHatMin,algo.Data(),anV.Data());
+    //infgen=Form("../ntout/tranav9_hydjuq%.0fmattpfgmv2_%s_j%dt0.root",ptHatMin,algo.Data(),jetType);
+    //infrec=Form("../ntout/tranav9_hydjuq%.0fmattpfgmv2_%s_j%dt%d.root",ptHatMin,algo.Data(),jetType,particleType);
+    //tag = Form("tv9_%.0fmattpfgmv2_%s_j%dt%d_%s",ptHatMin,algo.Data(),jetType,particleType,anV.Data());
+    //infgen=Form("../ntout/tranav9_hydjuq%.0fmattpfhptv1_%s_j%dt0.root",ptHatMin,algo.Data(),jetType);
+    //infrec=Form("../ntout/tranav9_hydjuq%.0fmattpfhptv1_%s_j%dt%d.root",ptHatMin,algo.Data(),jetType,particleType);
+    //tag = Form("tv9_%.0fmatthpfptv1_%s_j%dt%d_%s",ptHatMin,algo.Data(),jetType,particleType,anV.Data());
     // === pp ===
-    //infrec=Form("../ntout/tranav8_dj%.0fmattpfgmv1_%s_j2t2.root",ptHatMin,algo.Data());
-    //infgen=Form("../ntout/tranav8_dj%.0fmattpfgmv1_%s_j2t0.root",ptHatMin,algo.Data());
-    //tag = Form("tv8_%.0f_ppgmv1_%s_%s",ptHatMin,algo.Data(),anV.Data());
-    //infrec=Form("../ntout/tranav8_dj%.0fmatthptv1_%s_j2t2.root",ptHatMin,algo.Data());
-    //infgen=Form("../ntout/tranav8_dj%.0fmatthptv1_%s_j2t0.root",ptHatMin,algo.Data());
-    //tag = Form("tv8_%.0f_pphptv1_%s_%s",ptHatMin,algo.Data(),anV.Data());
+    //infrec=Form("../ntout/tranav11_dj%.0fmattpfgmv1_%s_j2t2.root",ptHatMin,algo.Data());
+    //infgen=Form("../ntout/tranav11_dj%.0fmattpfgmv1_%s_j2t0.root",ptHatMin,algo.Data());
+    //tag = Form("tv11_%.0f_ppgmv1_%s_%s",ptHatMin,algo.Data(),anV.Data());
+    infrec=Form("../ntout/tranav11_dj%.0fmatthptv1_%s_j2t2.root",ptHatMin,algo.Data());
+    infgen=Form("../ntout/tranav11_dj%.0fmatthptv1_%s_j2t0.root",ptHatMin,algo.Data());
+    tag = Form("tv11_%.0f_pphptv1_%s_%s",ptHatMin,algo.Data(),anV.Data());
     tgen->Add(infgen);
     if (tgen->GetEntries()>0) cout << infgen << ": " << tgen->GetEntries() << endl;
     else { cout << infgen << " has 0 entries" << endl; exit(1); }
@@ -68,10 +78,10 @@ void loopMulFF(Int_t doMC=1,
   // ===================================
   selectionCut cut;
   cut.doSel = doSel;
-  cut.CentMin=0;
-  cut.CentMax=12;
-  //cut.CentMin=-1;
-  //cut.CentMax=40;
+  //cut.CentMin=0;
+  //cut.CentMax=12;
+  cut.CentMin=-1;
+  cut.CentMax=40;
   cut.JEtMin[0] = 100;
   cut.JEtMax[0] = 300;
   cut.JEtMin[1] = 40; // 40, 60
@@ -96,20 +106,36 @@ void loopMulFF(Int_t doMC=1,
   //trkCorr.Init(0);
   //TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
   //trkCorr.Init(1,"TrkCorr2DB0.root");
-  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev7genjet","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_matthptv1","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev7genjet","hiHighPtTrkEffAnalyzer_akpu3pf_j1");
   //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_ppv1","hitrkEffAnalyzer_akpu3pf_j1");
-  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_pphptv1","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_ppv1","hitrkEffAnalyzer_akpu3pf");
+  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_pphptv1","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_pphptv1","hitrkEffAnalyzer_akpu3pf");
   //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev5","hitrkEffAnalyzer_akpu3pf");
   //Corrector3D trkCorrJ1("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_slead","hitrkEffAnalyzer");
+  //trkCorrJ1.ptHatMin_.clear();
+  //trkCorrJ1.ptHatMin_.push_back(80);
   trkCorrJ1.isLeadingJet_ = true;
   trkCorrJ1.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrJ1.smoothLevel_ = 4; // 0: no smooth, 1: smooth jet, 2: smooth jet,pt 3: smooth jet,pt,cbin
   trkCorrJ1.Init();
   //Corrector3D trkCorrJ2("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_lead","hitrkEffAnalyzer");
-  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev7genjet","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_matthptv1","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev7genjet","hiHighPtTrkEffAnalyzer_akpu3pf_j2");
   //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_ppv1","hitrkEffAnalyzer_akpu3pf_j2");
-  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_pphptv1","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_ppv1","hitrkEffAnalyzer_akpu3pf");
+  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_pphptv1","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_pphptv1","hitrkEffAnalyzer_akpu3pf");
   //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev5","hitrkEffAnalyzer_akpu3pf");
+  //trkCorrJ2.ptHatMin_.clear();
+  //trkCorrJ2.ptHatMin_.push_back(80);
   trkCorrJ2.isLeadingJet_ = false;
   trkCorrJ2.sampleMode_ = 1; // 0 for choosing individual sample, 1 for merge samples
   trkCorrJ2.smoothLevel_ = 4; // 0: no smooth, 1: smooth jet, 2: smooth jet,pt 3: smooth jet,pt,cbin
@@ -230,7 +256,8 @@ void loopMulFF(Int_t doMC=1,
       l->SetLineStyle(2);
       l->Draw();
 
-      TString corrLevelName[5] = { "Raw","Eff","Fake","Mul. Rec","Full" };
+      //TString corrLevelName[5] = { "Raw","Eff","Fake","Mul. Rec","Full" };
+      TString corrLevelName[3] = { "Raw","Eff","Full" };
       c2->cd(1);
       TLegend *leg = new TLegend(0.61,0.75,0.91,0.91);
       leg->SetFillStyle(0);
