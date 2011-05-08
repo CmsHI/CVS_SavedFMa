@@ -278,7 +278,7 @@ void FragAnaLoop::Loop()
   for (Int_t i=0; i<numEntries; ++i) {
     t_->GetEntry(i);
     if (jfr_.cbin<0) jfr_.cbin = 35;
-    if (i%5000==0) cout << "Entry " << i << " (" << (Float_t)i/numEntries*100 << "%) cbin: " << jfr_.cbin << " jet0: " << jfr_.jtpt[0] << " " << jfr_.jteta[0] << " " << jfr_.jtphi[0] << " ref0pt: " << jfr_.refpt[0] << endl;
+    if (i%(numEntries/10)==0) cout << "Entry " << i << " (" << (Float_t)i/numEntries*100 << "%) cbin: " << jfr_.cbin << " jet0: " << jfr_.jtpt[0] << " " << jfr_.jteta[0] << " " << jfr_.jtphi[0] << " ref0pt: " << jfr_.refpt[0] << endl;
     // Calc Dijet properties
     jfr_.jdphi = deltaPhi(jfr_.jtphi[0],jfr_.jtphi[1]);
     // ===========================
