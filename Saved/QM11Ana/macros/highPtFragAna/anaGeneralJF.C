@@ -45,16 +45,16 @@ void anaGeneralJF(
     //fdataname = Form("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_v1_EscaleRePass_noCutoff.root",ptHatMin);
     //tag = Form("trana%s_hydjuq%dmattpfgmv2_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
     // hihighpt
-    fdataname = Form("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiHighPtTracks/merged_JetAnalysisTTrees_hiHighPtTracks_v1.root",ptHatMin);
-    tag = Form("trana%s_hydjuq%dmattpfhptv1_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
+    //fdataname = Form("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiHighPtTracks/merged_JetAnalysisTTrees_hiHighPtTracks_v1.root",ptHatMin);
+    //tag = Form("trana%s_hydjuq%dmattpfhptv1_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
     // herwig
     //fdataname = Form("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Herwig_Pt%d_GEN-SIM-RECO_395/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_v1.root",ptHatMin);
     //tag = Form("trana%s_hydjhwg%dmattpfgmv1_akpu3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
     // === pp ===
     //fdataname = Form("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_START39V7HI_GEN_SIM_RAW_RECO_393_v1/HICorrJetTuples_PFTowers_hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_v1.root",ptHatMin); // pp
     //tag = Form("trana%s_dj%dmattpfgmv1_ak3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
-    //fdataname = Form("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_START39V7HI_GEN_SIM_RAW_RECO_393_v1/DefaultCorrJetTuples_PFTowers_hiHighPtTracks/merged_JetAnalysisTTrees_hiHighPtTracks_v1.root",ptHatMin);
-    //tag = Form("trana%s_dj%dmatthptv1_ak3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
+    fdataname = Form("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt%d_START39V7HI_GEN_SIM_RAW_RECO_393_v1/HICorrJetTuples_PFTowers_hiHighPtTracks/merged_JetAnalysisTTrees_hiHighPtTracks_v1.root",ptHatMin);
+    tag = Form("trana%s_dj%dmatthptv1_ak3pf_j%dt%d",version.Data(),ptHatMin,jetType,particleType);
     // Load Trees
     if (treeFormat==0) {
       tevt = new TChain(algo+"/t");
@@ -86,22 +86,22 @@ void anaGeneralJF(
     //fdataname = Form("matttrees/Corrected_JetTrackPFCandTuple_HIJet35U_PFTowers_hiGoodTracks_v2.root");
     //fdataname = "/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/MinBiasHfOrBSC-PromptReco-Runs_151077-151211_PAT-v2/merged_inclusiveJetAnalyzer_v1.root";
     //tag = Form("trana%s_datamattmbv2_akpu3pf_hiGood",version.Data());
-    //TChain * chain = new TChain("t","");
-    TChain * chain = new TChain("PFJetAnalyzer/t","");
+    TChain * chain = new TChain("t","");
+    //TChain * chain = new TChain("PFJetAnalyzer/t","");
     //chain->Add("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_0.root/t");
     //chain->Add("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_1.root/t");
     //chain->Add("/net/hidsk0001/d00/scratch/mnguyen/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodMergedTracks_seedGoodTracks/merged_JetAnalysisTTrees_hiGoodMergedTracks_seedGoodTracks_cleaned_EscaleRePass_2.root/t");
     //tag = Form("trana%s_dataj35mattpfgmv2_akpu3pf_j%dt%d",version.Data(),jetType,particleType);
     //TChain * chain = new TChain("PFJetAnalyzer/t","");
-    //chain->Add("~mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTracks/merged_JetAnalysisTTrees_hiGoodTracks_v2_EscaleRepass.root");
-    //tag = Form("trana%s_dataj35mattpfhgv2_akpu3pf_j%dt%d_pt4",version.Data(),jetType,particleType);
+    chain->Add("~mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTracks/merged_JetAnalysisTTrees_hiGoodTracks_v2_EscaleRepass.root");
+    tag = Form("trana%s_dataj35mattpfhgv2repass_akpu3pf_j%dt%d_pt4",version.Data(),jetType,particleType);
     //chain->Add("~mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiHighPtTracks/merged_JetAnalysisTTrees_hiHighPtTracks_v1_partial.root");
     //tag = Form("trana%s_dataj35mattpfhptv1_akpu3pf_j%dt%d",version.Data(),jetType,particleType);
     // === pp ===
-    chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/413patch2/AllPhysics2760/HICorrJetTuples_pp2760_HIReco_Jet_SD/merged_JetAnalysisTTrees_hiGoodTracks_v1.root");
-    tag = Form("trana%s_ppdatajet_mattpfhgv1_akpu3pf_j%dt%d_pt4",version.Data(),jetType,particleType);
+    //chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/413patch2/AllPhysics2760/HICorrJetTuples_pp2760_HIReco_Jet_SD/merged_JetAnalysisTTrees_hiGoodTracks_v1.root");
+    //tag = Form("trana%s_ppdatajet_mattpfhgv1_ak3pf_j%dt%d_pt4",version.Data(),jetType,particleType);
     //chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/413patch2/AllPhysics2760/HICorrJetTuples_pp2760_HIReco_Jet_SD_hiHighPtTracks/merged_JetAnalysisTTrees_hiHighPtTracks_v1.root");
-    //tag = Form("trana%s_ppdatajet_mattpfhptv1_akpu3pf_j%dt%d_pt4",version.Data(),jetType,particleType);
+    //tag = Form("trana%s_ppdatajet_mattpfhptv1_ak3pf_j%dt%d_pt4",version.Data(),jetType,particleType);
     cout << chain->GetFile()->GetName() << endl;
     tevt = chain;
     tjet = chain;
@@ -142,15 +142,15 @@ void anaGeneralJF(
 
 void runData()
 {
-  anaGeneralJF(false,2,3); // pfcands
-  //anaGeneralJF(false,2,2);
+  //anaGeneralJF(false,2,3); // pfcands
+  anaGeneralJF(false,2,2);
 }
 
 void runMcRecJet(Int_t pthat=80)
 {
-  anaGeneralJF(true,2,3,pthat); // pfcands
-  //anaGeneralJF(true,2,2,pthat);
-  //anaGeneralJF(true,2,0,pthat);
+  //anaGeneralJF(true,2,3,pthat); // pfcands
+  anaGeneralJF(true,2,2,pthat);
+  anaGeneralJF(true,2,0,pthat);
 }
 
 void runMcGenJet(Int_t pthat=80)
