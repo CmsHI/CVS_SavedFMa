@@ -17,3 +17,11 @@ Lessons Learned about jet-differential trk corrections
 - v6 genp sig
 - v7 refpt
 - v8 add genp from pfana
+- v9 add precise pid filter for genp, nhit cut for trk, no jet pt filter
+- v10 add jtpt branch print out, genjet case proxy
+- v11 add hlt bits
+
+=== track hists ===
+- pp
+  * data: /net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/413patch2/AllPhysics2760/trackValidator/merged_trackValidator_histos.root
+  * mc: /net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/413patch2/Pyquen_DiJet_Pt50_START39V7HI_GEN_SIM_RAW_RECO_393_v1/trackValidator/merged_trackValidator_histos.root
