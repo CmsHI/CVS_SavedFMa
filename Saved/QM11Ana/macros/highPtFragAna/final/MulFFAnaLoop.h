@@ -112,6 +112,7 @@ class FragAnaLoop
     vector<vector<TH1D*> > vhPPtRat_;
     vector<vector<TH1D*> > vhXiCorr_;
     vector<vector<TH1D*> > vhXiRat_;
+    vector<TH1D*> vhSpec_;
     // differential in Aj
     vector<Double_t> AjBins_;
     vector<vector<Double_t> > numJetvAj_;
@@ -139,8 +140,8 @@ class FragAnaLoop
       Bool_t result = (
 	  jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax
 	  && jfr.jtpt[0]>cut_->JEtMin[0]
-	  && Aj >= cut_->AjMin
-	  && Aj < cut_->AjMax
+	  //&& Aj >= cut_->AjMin
+	  //&& Aj < cut_->AjMax
 	  //&& fabs(Aj-RefAj)<0.05 //((Aj-RefAj)>-0.04&&(Aj-RefAj)<0.12)
 	  //&& Aj-RefAj>0.08 //((Aj-RefAj)>-0.04&&(Aj-RefAj)<0.12)
 	  //&& fabs(jfr.jtpt[0]-jfr.refpt[0])<5
@@ -166,7 +167,7 @@ class FragAnaLoop
 	*/
     }
     Bool_t SelFrag(const JetFragRel & jfr, Int_t ip, Int_t j) {
-	return ( jfr.ppt[ip]>cut_->TrkPtMin && jfr.pjdr[j][ip]<cut_->ConeSize);
+	return ( jfr.ppt[ip]>cut_->TrkPtMin && jfr.pjdr[j][ip]<cut_->ConeSize && fabs(jfr.peta[ip])<cut_->TrkEtaMax);
     }
 };
 
@@ -239,6 +240,12 @@ void FragAnaLoop::Init()
       vhXiRat_[j][lv]->Sumw2();
     }
   }
+
+  // inclusive spectra
+  for (Int_t lv=0; lv<3; ++lv) {
+    vhSpec_.push_back(new TH1D(Form("h%sSpecCorr%d",name_.Data(),lv),"",ptBin_.size()-1,&ptBin_[0]));
+  }
+
   // differential in Aj
   for (Int_t a=0; a<4; ++a) {
     for (Int_t j=0; j<2; ++j) {
