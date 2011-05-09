@@ -100,6 +100,7 @@ class FragAnaLoop
     Int_t anaTrkType_;
     Int_t pfCandType_;
 
+    Double_t numSelEvt_;
     vector<Double_t> numJet_;
 
     // analysis histograms
@@ -135,8 +136,8 @@ class FragAnaLoop
 
     Bool_t SelEvt(const JetFragRel & jfr) {
       //return (jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax);
-      Double_t Aj = (jfr.jtpt[0]-jfr.jtpt[1])/(jfr.jtpt[0]+jfr.jtpt[1]);
-      Double_t RefAj = (jfr.refpt[0]-jfr.refpt[1])/(jfr.refpt[0]+jfr.refpt[1]);
+      //Double_t Aj = (jfr.jtpt[0]-jfr.jtpt[1])/(jfr.jtpt[0]+jfr.jtpt[1]);
+      //Double_t RefAj = (jfr.refpt[0]-jfr.refpt[1])/(jfr.refpt[0]+jfr.refpt[1]);
       Bool_t result = (
 	  jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax
 	  && jfr.jtpt[0]>cut_->JEtMin[0]
@@ -168,6 +169,9 @@ class FragAnaLoop
     }
     Bool_t SelFrag(const JetFragRel & jfr, Int_t ip, Int_t j) {
 	return ( jfr.ppt[ip]>cut_->TrkPtMin && jfr.pjdr[j][ip]<cut_->ConeSize && fabs(jfr.peta[ip])<cut_->TrkEtaMax);
+    }
+    Bool_t SelSpec(const JetFragRel & jfr, Int_t ip) {
+	return ( jfr.ppt[ip]>cut_->TrkPtMin && fabs(jfr.peta[ip])<cut_->TrkEtaMax);
     }
 };
 
@@ -273,6 +277,7 @@ void FragAnaLoop::Init()
 void FragAnaLoop::Loop()
 {
   // Initialize event level counters
+  numSelEvt_=0;
   for (Int_t j=0; j<2; ++j) {
     numJet_[j]=0;
   }
@@ -304,6 +309,7 @@ void FragAnaLoop::Loop()
     // ===========================
     //cout << "EvtSel: " << jfr_.jtpt[0] << " pass? " << SelEvt(jfr_) << endl;
     if (!SelEvt(jfr_)) continue;
+    ++numSelEvt_;
 
     // ===========================
     // jet count
@@ -338,33 +344,56 @@ void FragAnaLoop::Loop()
       if (fabs(trkEta)>2.4) continue;
       if (anaTrkType_==3&&pfCandType_>0&&jfr_.pfid[ip]!=pfCandType_) continue;
 
-      // Correction for this trk
-      Double_t corr[4];
-      Double_t eff=1,fak=1,mul=1,sec=1,trkwt=1;
-      // Fill
+      // =======================
+      // Calc jet-particle relations
+      // =======================
       for (Int_t j=0; j<2; ++j) {
-	// =======================
-	// Calc jet-particle relations
-	// =======================
 	jfr_.pjdr[j][ip] = deltaR(jfr_.peta[ip],jfr_.pphi[ip],jfr_.jteta[j],jfr_.jtphi[j]);
 	//cout << "jet " << j << " dr: " << jfr_.pjdr[j][ip] << endl;
 	jfr_.pjdrbg[j][ip] = deltaR(jfr_.peta[ip],jfr_.pphi[ip],-1*jfr_.jteta[j],jfr_.jtphi[j]);
 	//cout << (*jfr_.pdr)[j][ip] << endl;
-	// =======================
-	// Get Corrections
-	// =======================
-	if (anaTrkType_==2&&jfr_.pjdr[j][ip]<cut_->ConeSize) {
-	  trkwt = vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cbin,corr);
-	  eff = corr[0];
-	  fak = corr[1];
-	  mul = corr[2];
-	  sec = corr[3];
-	  jfr_.trkeff[ip] = eff;
-	  jfr_.trkfak[ip] = fak;
-	  //if (eff<1e-5) { eff=1; }
-	  //trkwt = (1-fak)*(1-sec)/(eff*(1+mul));
-	  jfr_.trkwt[ip] = trkwt;
+      }
+
+      // Correction for this trk
+      Double_t corr[4];
+      Double_t eff=1,fak=1,mul=1,sec=1,trkwt=1;
+      // =======================
+      // If tracks, Get Corrections
+      // =======================
+      if (anaTrkType_==2) {
+	Bool_t isInCone=false;
+	for (Int_t j=0; j<2; ++j) {
+	  if (jfr_.jtpt[j]>20&&jfr_.pjdr[j][ip]<0.8) {
+	    trkwt = vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cbin,corr);
+	    isInCone=true;
+	    break;
+	  }
 	}
+	if (!isInCone) {
+	  trkwt = vtrkCorr_[0]->GetCorr(trkEnergy,trkEta,0,jfr_.cbin,corr);
+	}
+	eff = corr[0];
+	fak = corr[1];
+	mul = corr[2];
+	sec = corr[3];
+	jfr_.trkeff[ip] = eff;
+	jfr_.trkfak[ip] = fak;
+	jfr_.trkwt[ip] = trkwt;
+      }
+
+      // =======================
+      // Spec Ana
+      // =======================
+      if (SelEvt(jfr_)&&SelSpec(jfr_,ip)) {
+	vhSpec_[0]->Fill(trkEnergy);
+	vhSpec_[1]->Fill(trkEnergy,1./eff);
+	vhSpec_[2]->Fill(trkEnergy,trkwt);
+      }
+
+      // =======================
+      // Jet Frag Ana
+      // =======================
+      for (Int_t j=0; j<2; ++j) {
 	// Cone ana
 	if (jfr_.pjdr[j][ip]<cut_->ConeSize) {
 	  // leading particle in cone
@@ -379,9 +408,6 @@ void FragAnaLoop::Loop()
 	    jfr_.cnp[j]+=trkwt;
 	  }
 	}
-	// =======================
-	// Histogram Ana
-	// =======================
 	if (SelEvt(jfr_)&&SelJet(jfr_,j)&&SelFrag(jfr_,ip,j)) {
 	  vhPPtCorr_[j][0]->Fill(trkEnergy);
 	  vhXiCorr_[j][0]->Fill(fabs(log(jfr_.jtpt[j]/trkEnergy)));
@@ -427,6 +453,10 @@ void FragAnaLoop::Loop()
   } // end of main loop
 
   // Normalize
+  cout << "sel evt count: " << numSelEvt_ << endl;
+  for (Int_t lv=0; lv<3; ++lv) {
+    normHist(vhSpec_[lv],0,true,1./numSelEvt_);
+  }
   for (Int_t j=0; j<2; ++j) {
     cout << "jet " << j << " count: " << numJet_[j] << endl;
     for (Int_t lv=0; lv<5; ++lv) {
