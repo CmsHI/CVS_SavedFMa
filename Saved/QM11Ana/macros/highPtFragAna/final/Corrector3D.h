@@ -114,15 +114,15 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
   // =============================
   // Get x,y,z bins
   // =============================
-  TH3F* h3 = (TH3F*)sample_[0]->Get(trkCorrModule_+"/heff3D_cbin"+centBin_[0]);
-  if (!h3) {
+  TH3F* h3tmp = (TH3F*)sample_[0]->Get(trkCorrModule_+"/heff3D_cbin"+centBin_[0]);
+  if (!h3tmp) {
     cout << "bad input: " << sample_[0]->GetName() << endl;
     exit(1);
   }
 
-  etaBin_ = (TH1D*)h3->Project3D("x");
-  ptBin_  = (TH1D*)h3->Project3D("y");
-  jetBin_ = (TH1D*)h3->Project3D("z");
+  etaBin_ = (TH1D*)h3tmp->Project3D("x");
+  ptBin_  = (TH1D*)h3tmp->Project3D("y");
+  jetBin_ = (TH1D*)h3tmp->Project3D("z");
 
   numPtBins_ = ptBin_->GetNbinsX();
   numEtaBins_ = etaBin_->GetNbinsX();
@@ -184,15 +184,19 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
   }
 
   // Get the corresponding pt_hat min sample
-  Float_t ptHatMargin=30;
-  if (!isLeadingJet_) ptHatMargin=-20; // for 40GeV jet min pthat sample is 30GeV
-  //Float_t ptHatMargin=-60;
-  for (Int_t s=ptHatMin_.size()-1; s>=0; --s) {
-    if (jet>=ptHatMin_[s]+ptHatMargin) {
-      isample=s;
-      break;
+  Float_t ptHatMargin=10;
+  if (!isLeadingJet_) ptHatMargin=-10; // for 40GeV jet min pthat sample is 30GeV
+  isample=sample_.size()-1;
+  if (jet>40) {
+    for (Int_t s=ptHatMin_.size()-1; s>=0; --s) {
+      if (jet>=ptHatMin_[s]+ptHatMargin) {
+	isample=s;
+	break;
+      }
     }
   }
+  //ptHatMargin=-1000;
+  //isample=2;
 
   // Find Bin
   Int_t ptBin = ptBin_->FindBin(pt);
@@ -202,16 +206,15 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
   //cout << "isLeading: " << isLeadingJet_ << " bins(s,c,p,e,j): " << isample << " " << bin << " " << ptBin << " " << etaBin << " " << jetBin << endl;
 
   vector<vector<Double_t> > mat(numLevels_,vector<Double_t>(2));
-  Int_t djet = 2, dpt=0, dcbin=0, deta=1;
+  Int_t djet = 1, dpt=0, dcbin=0, deta=0;
+  if (jet<40) djet=0; // 0 is for non-jet events
+
   for (Int_t lv=0; lv<numLevels_; ++lv) {
     for (Int_t m=0; m<2; ++m) {
       for (Int_t s=0; s<sample_.size(); ++s) {
-	if (sampleMode_==0 && s!=isample) continue;
-	if (jet<ptHatMin_[s]+ptHatMargin) continue;
-	Int_t jetBinBeg = jetBin;
-	//if (pt/jet>0.5) { dpt=1; djet = 4; }
-	//if (!isLeadingJet_) jetBinBeg = jetBin-djet;
-	for (Int_t j=jetBinBeg; j<=jetBin+djet; ++j) { // jet pt smoothing
+	if (s>isample) continue; // if a jet case, only use samples with suitable pthatmin
+	//cout << "jet(lead" << isLeadingJet_ << "): " << jet << " sample " << s << endl;
+	for (Int_t j=jetBin; j<=jetBin+djet; ++j) { // jet pt smoothing
 	  if (smoothLevel_<1&&j!=jetBin) continue;
 	  if (j!=jetBin&&(j<1||j>numJEtBins_)) continue;
 	  for (Int_t p=ptBin-dpt; p<=ptBin+dpt; ++p) { // trk pt smoothing

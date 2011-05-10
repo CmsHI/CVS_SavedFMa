@@ -21,33 +21,37 @@ void loopTrkClosure(Int_t inputSample=1,
   TChain * tgen = new TChain("tjf");
   TString algo="akpu3pf";
   //TString algo="ak3pf";
-  TString anV="an0503trkclosure";
-  Int_t jetType=1;
+  TString anV="an0509trk5";
+  Int_t jetType=2;
   Int_t particleType=2;
   cout << "=============== MulFF Ana ======================" << endl;
   cout << "  jet: " << algo << " anaV: " << anV << endl;
   if (inputSample==0) {
-    infrec=Form("../ntout/tranav2_data_%s.root",algo.Data());
-    tag = Form("tv2data_%s_%s",algo.Data(),anV.Data());
+    infrec=Form("../ntout/tranav11_dataj35mattpfhgv2repass_%s_j2t2_pt4.root",algo.Data());
+    tag = Form("tv11data_%s_%s",algo.Data(),anV.Data());
   }
 
   if (inputSample==1) {
     //infrec=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t2.root",ptHatMin,algo.Data());
     //infgen=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t0.root",ptHatMin,algo.Data());
-    infrec=Form("../ntout/tranav8_hydjuq%.0fv6_%s_j2t2.root",ptHatMin,algo.Data());
-    infgen=Form("../ntout/tranav8_hydjuq%.0fv6_%s_j2t0.root",ptHatMin,algo.Data());
-    tag = Form("tv8_%.0fhydjuqv6_%s_%s",ptHatMin,algo.Data(),anV.Data());
+    //infrec=Form("../ntout/tranav8_hydjuq%.0fv6_%s_j2t2.root",ptHatMin,algo.Data());
+    //infgen=Form("../ntout/tranav8_hydjuq%.0fv6_%s_j2t0.root",ptHatMin,algo.Data());
+    //tag = Form("tv8_%.0fhydjuqv6_%s_%s",ptHatMin,algo.Data(),anV.Data());
     //infgen=Form("../ntout/tranav9_hydjuq%.0fmattpfgmv2_%s_j2t0.root",ptHatMin,algo.Data());
     //infrec=Form("../ntout/tranav9_hydjuq%.0fmattpfgmv2_%s_j2t2.root",ptHatMin,algo.Data());
     //tag = Form("tv9_%.0fmattpfgmv2_%s_%s",ptHatMin,algo.Data(),anV.Data());
     //infgen=Form("../ntout/tranav9_hydjuq%.0fmattpfgmv2_%s_j%dt0.root",ptHatMin,algo.Data(),jetType);
     //infrec=Form("../ntout/tranav9_hydjuq%.0fmattpfgmv2_%s_j%dt%d.root",ptHatMin,algo.Data(),jetType,particleType);
     //tag = Form("tv9_%.0fmattpfgmv2_%s_j%dt%d_%s",ptHatMin,algo.Data(),jetType,particleType,anV.Data());
+    infgen=Form("../ntout/tranav11_hydjuq%.0fmattpfgmv2repass_%s_j%dt0_pt4.root",ptHatMin,algo.Data(),jetType);
+    infrec=Form("../ntout/tranav11_hydjuq%.0fmattpfgmv2repass_%s_j%dt%d_pt4.root",ptHatMin,algo.Data(),jetType,particleType);
+    tag = Form("tv11_%.0fmattpfgmv2_%s_j%dt%d_%s",ptHatMin,algo.Data(),jetType,particleType,anV.Data());
     // pp
-    //infrec=Form("../ntout/tranav8_dj%.0fmattpfgmv1_%s_j2t2.root",ptHatMin,algo.Data());
-    //infgen=Form("../ntout/tranav8_dj%.0fmattpfgmv1_%s_j2t0.root",ptHatMin,algo.Data());
-    //infrec=Form("../ntout/tranav8_dj%.0fmatthptv1_%s_j2t2.root",ptHatMin,algo.Data());
-    //infgen=Form("../ntout/tranav8_dj%.0fmatthptv1_%s_j2t0.root",ptHatMin,algo.Data());
+    //infgen=Form("../ntout/tranav11_dj%.0fmatthptv1_%s_j2t0.root",ptHatMin,algo.Data());
+    //infrec=Form("../ntout/tranav11_dj%.0fmatthptv1_%s_j2t2.root",ptHatMin,algo.Data());
+    //tag = Form("tv11_%.0fmatthptv1_%s_%s",ptHatMin,algo.Data(),anV.Data());
+    //infrec=Form("../ntout/tranav11_dj%.0fmattpfgmv1_%s_j2t2.root",ptHatMin,algo.Data());
+    //infgen=Form("../ntout/tranav11_dj%.0fmattpfgmv1_%s_j2t0.root",ptHatMin,algo.Data());
     tgen->Add(infgen);
     if (tgen->GetEntries()>0) cout << infgen << ": " << tgen->GetEntries() << endl;
     else { cout << infgen << " has 0 entries" << endl; exit(1); }
@@ -66,12 +70,12 @@ void loopTrkClosure(Int_t inputSample=1,
   selectionCut cut;
   cut.doSel = doSel;
   cut.CentMin=0;
-  cut.CentMax=12;
+  cut.CentMax=2;
   //cut.CentMin=-1;
   //cut.CentMax=40;
-  cut.JEtMin[0] = 100;
+  cut.JEtMin[0] = 90;
   cut.JEtMax[0] = 300;
-  cut.JEtMin[1] = 40;
+  cut.JEtMin[1] = 20;
   cut.JEtMax[1] = 300;
   cut.JEtaMax[0] = 2;
   cut.JEtaMax[1] = 2;
@@ -79,7 +83,7 @@ void loopTrkClosure(Int_t inputSample=1,
   cut.AjMin = 0.;
   cut.AjMax = 1;
   cut.TrkPtMin = 4.;
-  //cut.TrkEtaMax = 1;
+  cut.TrkEtaMax = 1.;
   cut.ConeSize = 0.3;
   if (!cut.doSel) outFileName = Form("histntff_%s.root",tag.Data());
 
@@ -93,10 +97,11 @@ void loopTrkClosure(Int_t inputSample=1,
   //trkCorr.Init(0);
   //TH1D * hPtBinUnRebin = (TH1D*)trkCorr.ptBin_->Clone("hPtBinUnRebin");
   //trkCorr.Init(1,"TrkCorr2DB0.root");
-  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j1");
+  Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j1");
   //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_mattgmv1","hitrkEffAnalyzer_akpu3pf_j1");
-  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_matthptv1","hitrkEffAnalyzer_akpu3pf_j1");
-  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev7genjet","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_ppcorrjthptv1","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_ppcorrjthgmv1","hitrkEffAnalyzer_akpu3pf_j1");
   //trkCorrJ1.ptHatMin_.clear();
   //trkCorrJ1.ptHatMin_.push_back(30);
   //trkCorrJ1.ptHatMin_.push_back(50);
@@ -110,12 +115,11 @@ void loopTrkClosure(Int_t inputSample=1,
   trkCorrJ1.smoothLevel_ = 4; // 0: no smooth, 1: smooth jet, 2: smooth jet,pt 3: smooth jet,pt,cbin
   trkCorrJ1.Init();
   //Corrector3D trkCorrJ2("trkhist_mar292011_jet_v1_hydjetBass_dijet","_nq_jettrkonly_lead","hitrkEffAnalyzer");
-  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j2");
+  Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j2");
   //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_mattgmv1","hitrkEffAnalyzer_akpu3pf_j2");
-  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_matthptv1","hitrkEffAnalyzer_akpu3pf_j2");
-  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev7genjet","hitrkEffAnalyzer_akpu3pf_j2");
-  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_ppv1","hitrkEffAnalyzer_akpu3pf_j2");
-  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_pphptv1","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_ppcorrjthptv1","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_ppcorrjthgmv1","hitrkEffAnalyzer_akpu3pf_j2");
   //trkCorrJ2.ptHatMin_.clear();
   //trkCorrJ2.ptHatMin_.push_back(30);
   //trkCorrJ2.ptHatMin_.push_back(50);
@@ -130,9 +134,15 @@ void loopTrkClosure(Int_t inputSample=1,
   // Setup
   // ===================================
   // bins
-  const Int_t numPPtBins=18;
-  Float_t pptBins[numPPtBins+1] = {0.5,1,1.5,2,2.5,3,4,5,7.5,10,12,15,20,25,30,45,60,90,120};
-  vector<Double_t> ptBin(pptBins,pptBins+numPPtBins+1);
+  TFile * inf_ptbin = new TFile("../specRef/toFrank/CORRv1_hcpr_spectra_v4_J50U_all_finec_sub1_HCPR_apr042011_eta_0.0to1.0_jet_0.0to1000.0_hitrackAna_jetMode1_GEN0_reb2_cbin0to1.root");
+  TH1D * hxbin = (TH1D*)inf_ptbin->Get("corrTypeOne/hdndpt_full");
+  vector<Double_t> ptBin;
+  for (Int_t i=1; i<=hxbin->GetNbinsX()+1; ++i) {
+    ptBin.push_back(hxbin->GetBinLowEdge(i));
+  }
+  //const Int_t numPPtBins=18;
+  //Float_t pptBins[numPPtBins+1] = {0.5,1,1.5,2,2.5,3,4,5,7.5,10,12,15,20,25,30,45,60,90,120};
+  //vector<Double_t> ptBin(pptBins,pptBins+numPPtBins+1);
   //TH1D * hxbin = new TH1D("hxbin","",numPPtBins,pptBins);
   //TH1D * hxbin = (TH1D*)hPtBinUnRebin->Clone("hxbin");
   /*
@@ -191,6 +201,7 @@ void loopTrkClosure(Int_t inputSample=1,
   // ===================================
   Int_t colors[10] = {kGray+2,kViolet,kBlue+1,kGreen+2,kOrange+2,kMagenta,kRed};
   for (Int_t j=0; j<2; ++j) {
+    if (inputSample==0) continue;
     TString append(Form("_j%d_%s",j,tag.Data()));
     // prepare histogram frame
     genfana.vhPPtCorr_[j][0]->SetAxisRange(4,120,"X");

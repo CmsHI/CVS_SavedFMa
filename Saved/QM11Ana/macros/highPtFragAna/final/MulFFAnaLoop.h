@@ -247,6 +247,7 @@ void FragAnaLoop::Init()
 
   // inclusive spectra
   for (Int_t lv=0; lv<3; ++lv) {
+    if (anaTrkType_!=2 && lv>0) continue;
     vhSpec_.push_back(new TH1D(Form("h%sSpecCorr%d",name_.Data(),lv),"",ptBin_.size()-1,&ptBin_[0]));
   }
 
@@ -386,8 +387,10 @@ void FragAnaLoop::Loop()
       // =======================
       if (SelEvt(jfr_)&&SelSpec(jfr_,ip)) {
 	vhSpec_[0]->Fill(trkEnergy);
-	vhSpec_[1]->Fill(trkEnergy,1./eff);
-	vhSpec_[2]->Fill(trkEnergy,trkwt);
+	if (anaTrkType_==2) {
+	  vhSpec_[1]->Fill(trkEnergy,1./eff);
+	  vhSpec_[2]->Fill(trkEnergy,trkwt);
+	}
       }
 
       // =======================
@@ -455,6 +458,7 @@ void FragAnaLoop::Loop()
   // Normalize
   cout << "sel evt count: " << numSelEvt_ << endl;
   for (Int_t lv=0; lv<3; ++lv) {
+    if (anaTrkType_!=2 && lv>0) continue;
     normHist(vhSpec_[lv],0,true,1./numSelEvt_);
   }
   for (Int_t j=0; j<2; ++j) {
