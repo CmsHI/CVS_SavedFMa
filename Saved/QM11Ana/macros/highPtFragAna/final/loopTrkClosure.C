@@ -19,39 +19,37 @@ void loopTrkClosure(Int_t inputSample=1,
   TString tag;
   TChain * trec = new TChain("tjf");
   TChain * tgen = new TChain("tjf");
-  TString algo="akpu3pf";
+  TString algo="j4";
+  //TString algo="akpu3pf";
   //TString algo="ak3pf";
-  TString anV="an0509trk5";
+  TString anV="an0510";
   Int_t jetType=2;
   Int_t particleType=2;
   cout << "=============== MulFF Ana ======================" << endl;
   cout << "  jet: " << algo << " anaV: " << anV << endl;
   if (inputSample==0) {
-    infrec=Form("../ntout/tranav11_dataj35mattpfhgv2repass_%s_j2t2_pt4.root",algo.Data());
-    tag = Form("tv11data_%s_%s",algo.Data(),anV.Data());
+    // HI
+    //infrec=Form("../ntout/tranav11_dataj35mattpfhgv2repass_%s_j2t2_pt4.root",algo.Data());
+    //tag = Form("tv11data_%s_%s",algo.Data(),anV.Data());
+    infrec=Form("../ntout/tranav12_dataj35mattpfhgmv2repass_%s_j2t2_pt4.root",algo.Data());
+    tag = Form("tv12datahgm_%s_%s",algo.Data(),anV.Data());
+    // pp
+    //infrec=Form("../ntout/tranav11_ppdatajet_mattpfhgv1_%s_j2t2_pt4.root",algo.Data());
+    //tag = Form("tv11ppdatajet_%s_%s",algo.Data(),anV.Data());
   }
 
   if (inputSample==1) {
-    //infrec=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t2.root",ptHatMin,algo.Data());
-    //infgen=Form("../ntout/tranav5_2_hydjuq%.0fv5_%s_t0.root",ptHatMin,algo.Data());
-    //infrec=Form("../ntout/tranav8_hydjuq%.0fv6_%s_j2t2.root",ptHatMin,algo.Data());
-    //infgen=Form("../ntout/tranav8_hydjuq%.0fv6_%s_j2t0.root",ptHatMin,algo.Data());
-    //tag = Form("tv8_%.0fhydjuqv6_%s_%s",ptHatMin,algo.Data(),anV.Data());
-    //infgen=Form("../ntout/tranav9_hydjuq%.0fmattpfgmv2_%s_j2t0.root",ptHatMin,algo.Data());
-    //infrec=Form("../ntout/tranav9_hydjuq%.0fmattpfgmv2_%s_j2t2.root",ptHatMin,algo.Data());
-    //tag = Form("tv9_%.0fmattpfgmv2_%s_%s",ptHatMin,algo.Data(),anV.Data());
-    //infgen=Form("../ntout/tranav9_hydjuq%.0fmattpfgmv2_%s_j%dt0.root",ptHatMin,algo.Data(),jetType);
-    //infrec=Form("../ntout/tranav9_hydjuq%.0fmattpfgmv2_%s_j%dt%d.root",ptHatMin,algo.Data(),jetType,particleType);
-    //tag = Form("tv9_%.0fmattpfgmv2_%s_j%dt%d_%s",ptHatMin,algo.Data(),jetType,particleType,anV.Data());
-    infgen=Form("../ntout/tranav11_hydjuq%.0fmattpfgmv2repass_%s_j%dt0_pt4.root",ptHatMin,algo.Data(),jetType);
-    infrec=Form("../ntout/tranav11_hydjuq%.0fmattpfgmv2repass_%s_j%dt%d_pt4.root",ptHatMin,algo.Data(),jetType,particleType);
-    tag = Form("tv11_%.0fmattpfgmv2_%s_j%dt%d_%s",ptHatMin,algo.Data(),jetType,particleType,anV.Data());
+    // HI
+    //infgen=Form("../ntout/tranav11_hydjuq%.0fmattpfgmv2repass_%s_j%dt0_pt4.root",ptHatMin,algo.Data(),jetType);
+    //infrec=Form("../ntout/tranav11_hydjuq%.0fmattpfgmv2repass_%s_j%dt%d_pt4.root",ptHatMin,algo.Data(),jetType,particleType);
+    //tag = Form("tv11_hydj%.0fmattpfgmv2_%s_j%dt%d_%s",ptHatMin,algo.Data(),jetType,particleType,anV.Data());
     // pp
     //infgen=Form("../ntout/tranav11_dj%.0fmatthptv1_%s_j2t0.root",ptHatMin,algo.Data());
     //infrec=Form("../ntout/tranav11_dj%.0fmatthptv1_%s_j2t2.root",ptHatMin,algo.Data());
-    //tag = Form("tv11_%.0fmatthptv1_%s_%s",ptHatMin,algo.Data(),anV.Data());
-    //infrec=Form("../ntout/tranav11_dj%.0fmattpfgmv1_%s_j2t2.root",ptHatMin,algo.Data());
-    //infgen=Form("../ntout/tranav11_dj%.0fmattpfgmv1_%s_j2t0.root",ptHatMin,algo.Data());
+    //tag = Form("tv11_dj%.0fmatthptv1_%s_%s",ptHatMin,algo.Data(),anV.Data());
+    infrec=Form("../ntout/tranav11_dj%.0fmattpfgmv1_%s_j2t2.root",ptHatMin,algo.Data());
+    infgen=Form("../ntout/tranav11_dj%.0fmattpfgmv1_%s_j2t0.root",ptHatMin,algo.Data());
+    tag = Form("tv11_dj%.0fmattpfgmv1_%s_j2t2_%s",ptHatMin,algo.Data(),anV.Data());
     tgen->Add(infgen);
     if (tgen->GetEntries()>0) cout << infgen << ": " << tgen->GetEntries() << endl;
     else { cout << infgen << " has 0 entries" << endl; exit(1); }
@@ -75,7 +73,7 @@ void loopTrkClosure(Int_t inputSample=1,
   //cut.CentMax=40;
   cut.JEtMin[0] = 90;
   cut.JEtMax[0] = 300;
-  cut.JEtMin[1] = 20;
+  cut.JEtMin[1] = 40;
   cut.JEtMax[1] = 300;
   cut.JEtaMax[0] = 2;
   cut.JEtaMax[1] = 2;
@@ -101,7 +99,7 @@ void loopTrkClosure(Int_t inputSample=1,
   //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j1");
   //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_mattgmv1","hitrkEffAnalyzer_akpu3pf_j1");
   //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_ppcorrjthptv1","hitrkEffAnalyzer_akpu3pf_j1");
-  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_ppcorrjthgmv1","hitrkEffAnalyzer_akpu3pf_j1");
+  //Corrector3D trkCorrJ1("trkCorrHisAna_djuq","_ppcorrjthgmv1","hitrkEffAnalyzer_akpu3pf");
   //trkCorrJ1.ptHatMin_.clear();
   //trkCorrJ1.ptHatMin_.push_back(30);
   //trkCorrJ1.ptHatMin_.push_back(50);
@@ -119,7 +117,7 @@ void loopTrkClosure(Int_t inputSample=1,
   //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_tev6","hitrkEffAnalyzer_akpu3pf_j2");
   //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_mattgmv1","hitrkEffAnalyzer_akpu3pf_j2");
   //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_ppcorrjthptv1","hitrkEffAnalyzer_akpu3pf_j2");
-  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_ppcorrjthgmv1","hitrkEffAnalyzer_akpu3pf_j2");
+  //Corrector3D trkCorrJ2("trkCorrHisAna_djuq","_ppcorrjthgmv1","hitrkEffAnalyzer_akpu3pf");
   //trkCorrJ2.ptHatMin_.clear();
   //trkCorrJ2.ptHatMin_.push_back(30);
   //trkCorrJ2.ptHatMin_.push_back(50);
