@@ -2,7 +2,8 @@
 #include "../../commonUtility.h"
 
 void drawSpecRat(
-    TString infname="histff_tv11data_akpu3pf_an0509trk5.root",
+    //TString infname="histff_tv11data_akpu3pf_an0509trk5.root",
+    TString infname="histff_tv12datahgm_j4_an0510.root",
     TString mcfname="histff_tv11_80mattpfgmv2_akpu3pf_j2t2_an0509trk5.root",
     TString inrefname = "../specRef/toFrank/CORRv1_hcpr_spectra_v4_J50U_all_finec_sub1_HCPR_apr042011_eta_0.0to1.0_jet_0.0to1000.0_hitrackAna_jetMode1_GEN0_reb2_cbin0to1.root"
     )
@@ -13,8 +14,8 @@ void drawSpecRat(
   TFile * inf = new TFile(infname);
   TFile * mcf = new TFile(mcfname);
   TFile * inref = new TFile(inrefname);
-  TString outdir = "out/20110509";
-  TString outname = infname+"_vs_apr042011";
+  TString outdir = "out/20110510";
+  TString outname = infname+"_vs_apr042011_raw";
   outname.ReplaceAll(".root","");
 
   Bool_t doRebin=true;
@@ -23,8 +24,10 @@ void drawSpecRat(
   // Histograms
   TH1D * hSpec_gen = (TH1D*)mcf->FindObjectAny(Form("hGenSpecCorr0"));
   //TH1D * hSpec_ref = (TH1D*)inf->FindObjectAny("hGenSpecCorr0");
-  TH1D * hSpec_ref = (TH1D*)inref->Get("corrTypeOne/hdndpt_full");
-  TH1D * hSpec_ana = (TH1D*)inf->FindObjectAny(Form("hRecSpecCorr2"));
+  //TH1D * hSpec_ref = (TH1D*)inref->Get("corrTypeOne/hdndpt_full");
+  TH1D * hSpec_ref = (TH1D*)inref->Get("corrTypeOne/hdndpt_raw");
+  //TH1D * hSpec_ana = (TH1D*)inf->FindObjectAny(Form("hRecSpecCorr2"));
+  TH1D * hSpec_ana = (TH1D*)inf->FindObjectAny(Form("hRecSpecCorr0"));
 
   // normalization
   Int_t begbin_ref, endbin_ref, begbin_ana, endbin_ana;
@@ -37,8 +40,7 @@ void drawSpecRat(
   Float_t area_ana = integrateHistArea(hSpec_ana,begbin_ana,endbin_ana);
   Float_t area_rat = area_ana/area_ref;
   cout << "Ref area: " << area_ref << " Ana area: " << area_ana << " ratio ana/ref: " << area_rat << endl;
-  Float_t scale_ana = 1.479e-03;
-  //Float_t scale_ana = 2.363e-03;
+  Float_t scale_ana = 1.2e-03;
   //Float_t scale_ref = area_rat;
   Float_t scale_ref = 1658.15;
   //scale_ref = 1658.15*137438./198;
@@ -84,24 +86,25 @@ void drawSpecRat(
   gPad->SetLogy();
   hSpec_ref->SetMarkerStyle(kOpenSquare);
   hSpec_ana->SetAxisRange(0,100,"X");
+  hSpec_ana->SetAxisRange(1e-8,1e-1,"Y");
   hSpec_ana->SetTitle(";Trk p_{T} (GeV/c); #frac{1}{N_{MB}} #frac{dN}{dp_{T}}");
   handsomeTH1(hSpec_ana);
   hSpec_gen->SetLineColor(kRed);
   hSpec_ana->Draw("E");
-  hSpec_gen->Draw("samehist");
+  //hSpec_gen->Draw("samehist");
   hSpec_ref->Draw("Esame");
   //fitF3->Draw("same");
   c2->cd(2);
-  TF1 * fp0 = new TF1("fp0","pol0",20,120);
-  hSpec_anagenrat->SetAxisRange(0,100,"X");
-  hSpec_anagenrat->SetAxisRange(0,3,"Y");
-  hSpec_anagenrat->SetTitle(";Trk p_{T} (GeV/c); Data/Reference");
-  handsomeTH1(hSpec_anagenrat);
+  TF1 * fp0 = new TF1("fp0","pol0",15,120);
+  hSpec_anarat->SetAxisRange(0,100,"X");
+  hSpec_anarat->SetAxisRange(0,3,"Y");
+  hSpec_anarat->SetTitle(";Trk p_{T} (GeV/c); Data/Reference");
+  handsomeTH1(hSpec_anarat);
   hSpec_anagenrat->SetMarkerColor(kRed);
   hSpec_anagenrat->SetLineColor(kRed);
-  hSpec_anagenrat->Draw("E");
-  hSpec_anarat->Draw("sameE");
-  hSpec_anarat->Fit("fp0","0","",20,120);
+  //hSpec_anagenrat->Draw("E");
+  hSpec_anarat->Draw("E");
+  hSpec_anarat->Fit("fp0","0","",15,120);
   fp0->Draw("same");
 
   TLine * l = new TLine(0,1,100,1);
@@ -115,7 +118,7 @@ void drawSpecRat(
   leg->SetTextSize(0.035);
   leg->AddEntry(hSpec_ref,"PbPb data 0-5%","");
   leg->AddEntry(hSpec_ref,"Trk |#eta|<1","");
-  leg->AddEntry(hSpec_gen,"Pythia Gen. Charged","l");
+  //leg->AddEntry(hSpec_gen,"Pythia Gen. Charged","l");
   leg->AddEntry(hSpec_ref,"Charged Spectra","p");
   leg->AddEntry(hSpec_ana,"Jet Analysis","p");
   leg->Draw();
@@ -126,7 +129,7 @@ void drawSpecRat(
   leg->SetBorderSize(0);
   leg->SetTextSize(0.035);
   leg->AddEntry(hSpec_anarat,"Jet Analysis/Charged Spectra","p");
-  leg->AddEntry(hSpec_anagenrat,"Jet Analysis/MC Gen. Ch.","p");
+  //leg->AddEntry(hSpec_anagenrat,"Jet Analysis/MC Gen. Ch.","p");
   leg->Draw();
 
   c2->Print(outdir+"/Spectra_comp_"+outname+".gif");
