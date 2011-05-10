@@ -56,11 +56,12 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
   float ymin_r = 0.42;
   float ymax_r = 1.58;
 
-  TString dir1 = "../inputs/data/proc_all_apr192011";
+  TString dir1 = "inputs/data";
   //dir1 = "../root_files/mc";
 
   //TString dir2 = "../inputs/mc/trkhist_apr182011";
-  TString dir2 = "../inputs/data/proc_apr192011";
+  //TString dir2 = "../inputs/data/proc_apr192011";
+  TString dir2 = "inputs/mc";
 
   if(modeDM) dir2 = "../root_files/data_mix_mc";
 
@@ -76,8 +77,7 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
 
   if(whichvar==0){
     xaxis = "N_{hits}";
-    xmin = 10, xmax = 32, ymin = 0.0, ymax = 0.29;
-    if(!centmode) ymax = 0.4;
+    xmin = 10, xmax = 32, ymin = 0.0, ymax = 0.5;
   }else if(whichvar==1){
     xaxis = "Normalized #chi^{2}";
     xmin = -0.1, xmax = 5.01, ymin = 1E-4, ymax = 0.59;
@@ -108,7 +108,8 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
     //xmin = -3.5, xmax = 3.5, ymin = 1E-3, ymax = 5.1;
     //xmin = -10.5, xmax = 10.5, ymin = 1E-6, ymax = 5.1;
     //xmin = -3.5, xmax = 3.5, ymin = 1E-5, ymax = 0.18; 
-    xmin = -10.5, xmax = 10.5, ymin = 1E-5, ymax = 0.18;      
+    //xmin = -10.5, xmax = 10.5, ymin = 1E-5, ymax = 0.18;      
+    xmin = -5.5, xmax = 5.5, ymin = 1E-5, ymax = 0.16;      
     logy = false;
   }else if(whichvar==7){
     xaxis = "#eta";
@@ -143,8 +144,16 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
   //TCanvas *c1 = new TCanvas("c1","",1250,400);
   //makeMultiPanelCanvas(c1,5,1,0.0,0.0,0.2,0.15,0.02,0.24);
 
-  TCanvas *c1 = new TCanvas("c1","",1250,1200);
-  makeMultiPanelCanvas(c1,5,5,0.0,0.0,0.22,0.22,0.02,0.24);
+  TCanvas *c1;
+  if (centmode) {
+    c1 = new TCanvas("c1","",1250,1200);
+    makeMultiPanelCanvas(c1,5,5,0.0,0.0,0.22,0.22,0.02,0.24);
+  } else {
+    //c1 = new TCanvas("c1","",1250,300);
+    //makeMultiPanelCanvas(c1,5,1,0.0,0.0,0.22,0.22,0.02,0.);
+    c1 = new TCanvas("c1","",1250,1200);
+    makeMultiPanelCanvas(c1,5,5,0.0,0.0,0.22,0.22,0.02,0.24);
+  }
 
   int offset = 5;
   
@@ -156,8 +165,6 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
   line->SetLineStyle(2), line->SetLineWidth(2);
 
 
-  if(logy) gPad->SetLogy();
-
   // 1 = data, 2 = mc
   TString f1_1, f1_2;
 
@@ -165,7 +172,9 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
   //f1_1 = "hcpr_spectra_v4_mb_all_sub1_HCPR_apr042011";
   //f1_1 = "hcpr_spectra_v4_J35U_all_sub0_HCPR_apr042011";
   //f1_1 = "hcpr_spectra_v4_J50U_all_sub0_HCPR_apr042011";
-  f1_1 = "hazsv2-spectra-v1-Jet35U-c0_sub1_HAZS_all_hist_apr192011";
+  //f1_1 = "hazsv2-spectra-v1-Jet35U-c0_sub1_HAZS_all_hist_apr192011";
+  f1_1 = "HIDataJ35U_hiHighPtTracks_v2";
+  //f1_1 = "pp_2760_jet20_40_60";
   //f1_2 = "trkhist_apr032011_hydjetBass_off393";
   //f1_2 = "trkhist_apr032011_hydjetBass_dijet170";
   //f1_1 = "trkhist_apr262011_hydjetBass_dijet80_LargeSet1_1k";
@@ -173,11 +182,14 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
   //f1_2 = "trkhist_apr262011_hydjetBass_dijet80_LargeSet1_1k";
   //f1_2 = "trkhist_apr262011_hydjetBass_dijet80_LargeSet1_1k_rereco";
   //f1_2 = "trkhist_v1_apr182011_hydjetBass_dijet50";
-  f1_2 = "hcpr_spectra_v4_J35U_all_sub1_HCPR_apr182011";
+  //f1_2 = "hcpr_spectra_v4_J35U_all_sub1_HCPR_apr182011";
+  f1_2 = "HyDJUQ50_hiHighPtTracks_v1";
+  //f1_2 = "DJUQ50";
 
   // drawing
   TString ltitle;
-  cbini = 20, cbinf = 35;
+  //cbini = 20, cbinf = 35;
+  cbini = 20, cbinf = 39;
   
   for(int i=0;i<5;i++){
     c1->cd(i+1);
@@ -186,9 +198,12 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
     ptf = 200.0;
 
     ltitle = "";
-    if(i==0) drawText("50~90%",0.3,0.8);
+    if(centmode && i==0) drawText("50~90%",0.3,0.8);
     
     drawText(Form("p_{T}> %1.1f",pti),0.7,0.8);
+
+    if(logy) gPad->SetLogy();
+
     plotTrkQualityVarProject(c1,Form("%s/%s.root",dir1.Data(),f1_1.Data()),Form("%s/%s.root",dir2.Data(),f1_2.Data()),
 			     i+1,whichvar,pti,ptf,cbini,cbinf,ltitle.Data());
   }
@@ -204,7 +219,7 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
     if(i==0) drawText("30~50%",0.3,0.8);
     
     drawText(Form("p_{T}> %1.1f",pti),0.7,0.8);
-    plotTrkQualityVarProject(c1,Form("%s/%s.root",dir1.Data(),f1_1.Data()),Form("%s/%s.root",dir2.Data(),f1_2.Data()),
+    if (centmode) plotTrkQualityVarProject(c1,Form("%s/%s.root",dir1.Data(),f1_1.Data()),Form("%s/%s.root",dir2.Data(),f1_2.Data()),
                              i+1+offset,whichvar,pti,ptf,cbini,cbinf,ltitle.Data());
   }  
 
@@ -221,7 +236,7 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
 
     drawText(Form("p_{T}> %1.1f",pti),0.7,0.8);
 
-    plotTrkQualityVarProject(c1,Form("%s/%s.root",dir1.Data(),f1_1.Data()),Form("%s/%s.root",dir2.Data(),f1_2.Data()),
+    if (centmode) plotTrkQualityVarProject(c1,Form("%s/%s.root",dir1.Data(),f1_1.Data()),Form("%s/%s.root",dir2.Data(),f1_2.Data()),
                              i+1+offset+offset,whichvar,pti,ptf,cbini,cbinf,ltitle.Data());
   }
 
@@ -238,7 +253,7 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
 
     drawText(Form("p_{T}> %1.1f",pti),0.7,0.8);
 
-    plotTrkQualityVarProject(c1,Form("%s/%s.root",dir1.Data(),f1_1.Data()),Form("%s/%s.root",dir2.Data(),f1_2.Data()),
+    if (centmode) plotTrkQualityVarProject(c1,Form("%s/%s.root",dir1.Data(),f1_1.Data()),Form("%s/%s.root",dir2.Data(),f1_2.Data()),
                              i+1+offset+offset+offset,whichvar,pti,ptf,cbini,cbinf,ltitle.Data());
   }
 
@@ -256,7 +271,7 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
 
     drawText(Form("p_{T}> %1.1f",pti),0.7,0.8);
 
-    plotTrkQualityVarProject(c1,Form("%s/%s.root",dir1.Data(),f1_1.Data()),Form("%s/%s.root",dir2.Data(),f1_2.Data()),
+    if (centmode) plotTrkQualityVarProject(c1,Form("%s/%s.root",dir1.Data(),f1_1.Data()),Form("%s/%s.root",dir2.Data(),f1_2.Data()),
                              i+1+offset+offset+offset+offset,whichvar,pti,ptf,cbini,cbinf,ltitle.Data());
   }
 
@@ -273,8 +288,8 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
 
 
 void plotTrkQualityVar(TCanvas *can, TString ifile1, TString ifile2, int whichcan, int whichvar, int ci, int cf, TString legend){
-
   can->cd(whichcan);
+  cout << ifile1 << " " << ifile2 << endl;
 
   TFile *efile1 = new TFile(ifile1.Data());
   if(efile1->IsOpen()==false) {
@@ -312,11 +327,16 @@ void plotTrkQualityVar(TCanvas *can, TString ifile1, TString ifile2, int whichca
     histtype.Append(Form("_cbin%dto%d",ci,cf));
   }
 
+  TH1D *hTrkQV_1 = 0;
+  TH1D *hTrkQV_2 = 0;
   //TH1D *hTrkQV_1 = (TH1D*) efile1->Get(Form("higoodtrkval/%s",histtype.Data()));
   //TH1D *hTrkQV_2 = (TH1D*) efile2->Get(Form("higoodtrkval/%s",histtype.Data()));
   
-  TH1D *hTrkQV_1 = (TH1D*) efile1->Get(Form("hihightrkval/%s",histtype.Data()));
-  TH1D *hTrkQV_2 = (TH1D*) efile2->Get(Form("hihightrkval/%s",histtype.Data()));
+  //TH1D *hTrkQV_1 = (TH1D*) efile1->Get(Form("hitrkvalidator_hiHighPt/%s",histtype.Data()));
+  //TH1D *hTrkQV_2 = (TH1D*) efile2->Get(Form("hitrkvalidator_hiHighPt/%s",histtype.Data()));
+
+  //TH1D *hTrkQV_1 = (TH1D*) efile1->Get(Form("hitrkvalidator_hiGood/%s",histtype.Data()));
+  //TH1D *hTrkQV_2 = (TH1D*) efile2->Get(Form("hitrkvalidator_hiGood/%s",histtype.Data()));
 
 
   hTrkQV_1->Scale(1./hTrkQV_1->Integral(1,hTrkQV_1->GetNbinsX()));
@@ -418,8 +438,18 @@ void plotTrkQualityVarProject(TCanvas *can, TString ifile1, TString ifile2, int 
   //TH2D *hTrkQVdPt_1 = (TH2D*) efile1->Get(Form("higoodtrkval/%s",histtype.Data()));
   //TH2D *hTrkQVdPt_2 = (TH2D*) efile2->Get(Form("higoodtrkval/%s",histtype.Data()));
 
-  TH2D *hTrkQVdPt_1 = (TH2D*) efile1->Get(Form("hihightrkval/%s",histtype.Data()));
-  TH2D *hTrkQVdPt_2 = (TH2D*) efile2->Get(Form("hihightrkval/%s",histtype.Data()));
+  //TH2D *hTrkQVdPt_1 = (TH2D*) efile1->Get(Form("hihightrkval/%s",histtype.Data()));
+  //TH2D *hTrkQVdPt_2 = (TH2D*) efile2->Get(Form("hihightrkval/%s",histtype.Data()));
+
+  TH2D *hTrkQVdPt_1 = (TH2D*) efile1->Get(Form("hitrkvalidator/%s",histtype.Data()));
+  TH2D *hTrkQVdPt_2 = (TH2D*) efile2->Get(Form("hitrkvalidator/%s",histtype.Data()));
+
+  //TH2D *hTrkQVdPt_1 = (TH2D*) efile1->Get(Form("hitrkvalidator_hiHighPt/%s",histtype.Data()));
+  //TH2D *hTrkQVdPt_2 = (TH2D*) efile2->Get(Form("hitrkvalidator_hiHighPt/%s",histtype.Data()));
+
+  //TH2D *hTrkQVdPt_1 = (TH2D*) efile1->Get(Form("hitrkvalidator_hiGood/%s",histtype.Data()));
+  //TH2D *hTrkQVdPt_2 = (TH2D*) efile2->Get(Form("hitrkvalidator_hiGood/%s",histtype.Data()));
+
 
   cout<<"check the histograms = "<<hTrkQVdPt_1<<" and = "<<hTrkQVdPt_2<<endl;
   
