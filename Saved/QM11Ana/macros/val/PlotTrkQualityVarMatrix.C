@@ -68,7 +68,7 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
   TString lgd = "PbPb #rightarrow h+X, 2.76 TeV, Pt80, |#eta|<1.0";
   TString outf;
 
-  outf.Append(Form("trk_quality_var%d_matrix",whichvar));
+  outf.Append(Form("trk_quality_var%d_matrix_preapproval",whichvar));
   if(highpt) outf.Append("_highpt");
 
   TString xaxis;
@@ -173,11 +173,13 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
   //f1_1 = "hcpr_spectra_v4_J35U_all_sub0_HCPR_apr042011";
   //f1_1 = "hcpr_spectra_v4_J50U_all_sub0_HCPR_apr042011";
   //f1_1 = "hazsv2-spectra-v1-Jet35U-c0_sub1_HAZS_all_hist_apr192011";
-  f1_1 = "HIDataJ35U_hiHighPtTracks_v2";
-  //f1_1 = "pp_2760_jet20_40_60";
   //f1_2 = "trkhist_apr032011_hydjetBass_off393";
   //f1_2 = "trkhist_apr032011_hydjetBass_dijet170";
   //f1_1 = "trkhist_apr262011_hydjetBass_dijet80_LargeSet1_1k";
+  f1_1 = "HIDataJ35U_hiHighPtTracks_v2";
+  //f1_1 = "HIDataJ35U_hiGoodTightTracks_v1";
+  //f1_1 = "pp_2760_jet20_40_60";
+  //f1_1 = "pp_2760_jet20_40_60_hiGoodTightTracks_v1";
 
   //f1_2 = "trkhist_apr262011_hydjetBass_dijet80_LargeSet1_1k";
   //f1_2 = "trkhist_apr262011_hydjetBass_dijet80_LargeSet1_1k_rereco";
@@ -185,6 +187,8 @@ void PlotTrkQualityVarMatrix(bool save=false, int whichvar=0, bool centmode=true
   //f1_2 = "hcpr_spectra_v4_J35U_all_sub1_HCPR_apr182011";
   f1_2 = "HyDJUQ50_hiHighPtTracks_v1";
   //f1_2 = "DJUQ50";
+  //f1_2 = "trkhist_apr262011_hydjetBass_dijet170_LargeSet1_1k_rereco"; // andre
+  //f1_2 = "trkCorrHisAna_djuq80_ppz2gtv1"; // andre
 
   // drawing
   TString ltitle;
@@ -450,6 +454,10 @@ void plotTrkQualityVarProject(TCanvas *can, TString ifile1, TString ifile2, int 
   //TH2D *hTrkQVdPt_1 = (TH2D*) efile1->Get(Form("hitrkvalidator_hiGood/%s",histtype.Data()));
   //TH2D *hTrkQVdPt_2 = (TH2D*) efile2->Get(Form("hitrkvalidator_hiGood/%s",histtype.Data()));
 
+  //TH2D *hTrkQVdPt_1 = (TH2D*) efile1->Get(Form("higoodtightTrkVal/%s",histtype.Data()));
+
+  //TH2D *hTrkQVdPt_1 = (TH2D*) efile1->Get(Form("hihighTrkVal/%s",histtype.Data()));
+  //TH2D *hTrkQVdPt_2 = (TH2D*) efile2->Get(Form("hihighTrkVal/%s",histtype.Data()));
 
   cout<<"check the histograms = "<<hTrkQVdPt_1<<" and = "<<hTrkQVdPt_2<<endl;
   
