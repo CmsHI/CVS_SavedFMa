@@ -104,7 +104,20 @@ hiGoodTightTrkEffAnalyzer_akpu3pf_j2 = hiGoodTightTrkEffAnalyzer_akpu3pf.clone(
     jetTrkOnly = True,
     useSubLeadingJet = True
     )
-hiGoodTightTrkEffAna_akpu3pf = cms.Sequence(cutsTPForFak*cutsTPForEff*hiGoodTightTrkEffAnalyzer_akpu3pf*hiGoodTightTrkEffAnalyzer_akpu3pf_j1*hiGoodTightTrkEffAnalyzer_akpu3pf_j2)
+hiGoodTightTrkEffAnalyzer_icpu5calo = hitrkEffAnalyzer_akpu3pf.clone(
+    jets = 'icPu5patJets',
+    tracks = "hiGoodTightTracks"
+    )
+hiGoodTightTrkEffAnalyzer_icpu5calo_j1 = hiGoodTightTrkEffAnalyzer_icpu5calo.clone(
+    useJetEtMode = 1,
+    jetTrkOnly = True
+    )
+hiGoodTightTrkEffAnalyzer_icpu5calo_j2 = hiGoodTightTrkEffAnalyzer_icpu5calo.clone(
+    useJetEtMode = 1,
+    jetTrkOnly = True,
+    useSubLeadingJet = True
+    )
+hiGoodTightTrkEffAna_akpu3pf = cms.Sequence(cutsTPForFak*cutsTPForEff*hiGoodTightTrkEffAnalyzer_akpu3pf*hiGoodTightTrkEffAnalyzer_akpu3pf_j1*hiGoodTightTrkEffAnalyzer_akpu3pf_j2*hiGoodTightTrkEffAnalyzer_icpu5calo*hiGoodTightTrkEffAnalyzer_icpu5calo_j1*hiGoodTightTrkEffAnalyzer_icpu5calo_j2)
 
 # hiHighPt
 hiHighPtTrkEffAnalyzer_akpu3pf = hitrkEffAnalyzer_akpu3pf.clone(
