@@ -58,7 +58,7 @@ void drawQual(TFile * inf, TCanvas * c, Int_t ic, Float_t ymin, Float_t ymax, In
 }
 
 void drawTrkQuality(
-    TString infname="trkqualhists_dataj35_mc80.root"
+    TString infname="trkqualhists_dataj35_mc80_v1.root"
     )
 {
   TFile * inf = new TFile(infname);
@@ -67,14 +67,20 @@ void drawTrkQuality(
   drawQual(inf,c1,1,0,0.3,0);
 
   TCanvas * c2 = new TCanvas("c2","c2",1200,400);
-  drawQual(inf,c2,2,0,0.3,0);
+  drawQual(inf,c2,2,0,0.5,0);
 
   TCanvas * c3 = new TCanvas("c3","c3",1200,400);
   drawQual(inf,c3,3,1e-3,1,1);
 
   TCanvas * c4 = new TCanvas("c4","c4",1200,400);
-  drawQual(inf,c4,4,1e-4,1,1);
+  drawQual(inf,c4,4,1e-4,5e-1,1);
 
   TCanvas * c5 = new TCanvas("c5","c5",1200,400);
-  drawQual(inf,c5,5,0,0.3,0);
+  drawQual(inf,c5,5,1e-4,5e-1,1);
+
+  TCanvas * c6 = new TCanvas("c6","c6",1200,400);
+  drawQual(inf,c6,6,1e-4,1,1);
+
+  TCanvas * c7 = new TCanvas("c7","c7",1200,400);
+  drawQual(inf,c7,7,0,0.3,0);
 }

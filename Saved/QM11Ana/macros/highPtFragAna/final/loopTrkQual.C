@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cmath>
+#include <algorithm>
 #include "TChain.h"
 #include "TString.h"
 #include "TFile.h"
@@ -79,6 +81,7 @@ struct AnaJetEvt
 void Loop(TChain * t, TString name, bool isMC=true)
 {
   AnaJetEvt jevt;
+  Bool_t seedHiSel = true;
 
   // Book Histograms
   const Int_t numPPtBins=18;
@@ -92,16 +95,28 @@ void Loop(TChain * t, TString name, bool isMC=true)
   }
   vector<TH1D*> vhTrkQualPreCut;
   vector<TH1D*> vhTrkQualPostCut;
+  // hiSeletectedTracks
+  // 0,1
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual1PreCut_%s",name.Data()),";N Layers;",20,0,20));
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual1PostCut_%s",name.Data()),";N Layers;",20,0,20));
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual2PreCut_%s",name.Data()),";N Layers3D;",20,0,20));
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual2PostCut_%s",name.Data()),";N Layers3D;",20,0,20));
-  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual3PreCut_%s",name.Data()),";trk #chi^{2}/nhits;",50,0,1));
-  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual3PostCut_%s",name.Data()),";trk #chi^{2}/nhits;",50,0,1));
-  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual4PreCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5));
-  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual4PostCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5));
-  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual5PreCut_%s",name.Data()),";nhits;",30,0,30));
-  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual5PostCut_%s",name.Data()),";nhits;",30,0,30));
+
+  // 2
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual3PreCut_%s",name.Data()),";trk #chi^{2}/nlayers;",50,0,1));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual3PostCut_%s",name.Data()),";trk #chi^{2}/layers;",50,0,1));
+
+  // 3,4
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual4PreCut_%s",name.Data()),";dz^{Trk}/dzCut^{Trk};",50,0,5));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual4PostCut_%s",name.Data()),";dz^{Trk}/dzCut^{Trk};",50,0,5));
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual5PreCut_%s",name.Data()),";d0^{Trk}/d0Cut^{Trk};",50,0,5));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual5PostCut_%s",name.Data()),";d0^{Trk}/d0Cut^{Trk};",50,0,5));
+
+  // hackedAnaSel
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual6PreCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual6PostCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5));
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual7PreCut_%s",name.Data()),";nhits;",30,0,30));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual7PostCut_%s",name.Data()),";nhits;",30,0,30));
 
   // Loop Trees
   Int_t numEnt=t->GetEntries();
@@ -136,6 +151,7 @@ void Loop(TChain * t, TString name, bool isMC=true)
     // tracks
     for (Int_t ip=0; ip<jevt.np; ++ip) {
       Float_t trkEnergy = jevt.ppt[ip];
+      Float_t trkEta = jevt.peta[ip];
       if (trkEnergy<8) continue;
 
       // base
@@ -143,7 +159,7 @@ void Loop(TChain * t, TString name, bool isMC=true)
 
       // cut1
       vhTrkQualPreCut[0]->Fill(jevt.trackNlayer[ip]);
-      if (jevt.trackNlayer[ip]<3) continue;
+      if (jevt.trackNlayer[ip]<7) continue;
       vhTrkQualPostCut[0]->Fill(jevt.trackNlayer[ip]);
       vhPPt[1]->Fill(trkEnergy);
 
@@ -154,22 +170,42 @@ void Loop(TChain * t, TString name, bool isMC=true)
       vhPPt[2]->Fill(trkEnergy);
 
       // cut3
-      vhTrkQualPreCut[2]->Fill(jevt.trackchi2[ip]/jevt.tracknhits[ip]);
-      if (jevt.trackchi2[ip]/jevt.tracknhits[ip]>0.15) continue;
-      vhTrkQualPostCut[2]->Fill(jevt.trackchi2[ip]/jevt.tracknhits[ip]);
+      vhTrkQualPreCut[2]->Fill(jevt.trackchi2hit1D[ip]/jevt.trackNlayer[ip]);
+      if (jevt.trackchi2hit1D[ip]/jevt.trackNlayer[ip]>0.4) continue;
+      vhTrkQualPostCut[2]->Fill(jevt.trackchi2hit1D[ip]/jevt.trackNlayer[ip]);
       vhPPt[3]->Fill(trkEnergy);
 
+      // calc vtx compat
+      Double_t nomd0E = sqrt(pow(0.003,2)+pow(0.001/trkEnergy,2));
+      Double_t nomdzE = nomd0E*(cosh(trkEta));
+      Double_t dzCut = min(9999*jevt.trackNlayer[ip]*nomdzE,
+			   pow(30*jevt.trackNlayer[ip],0.3)*jevt.trackdzErrTrk[ip]);
+      Double_t d0Cut = min(9999*jevt.trackNlayer[ip]*nomd0E,
+			   pow(5*jevt.trackNlayer[ip],0.3)*jevt.trackd0ErrTrk[ip]);
+
       // cut4
-      vhTrkQualPreCut[3]->Fill(jevt.trackptErr[ip]/jevt.ppt[ip]);
-      if (jevt.trackptErr[ip]/jevt.ppt[ip]>0.05) continue;
-      vhTrkQualPostCut[3]->Fill(jevt.trackptErr[ip]/jevt.ppt[ip]);
+      vhTrkQualPreCut[3]->Fill(jevt.trackdz[ip]/dzCut);
+      if (jevt.trackdz[ip]/dzCut>=1) continue;
+      vhTrkQualPostCut[3]->Fill(jevt.trackdz[ip]/dzCut);
       vhPPt[4]->Fill(trkEnergy);
 
       // cut5
-      vhTrkQualPreCut[4]->Fill(jevt.tracknhits[ip]);
-      if (jevt.tracknhits[ip]<13) continue;
-      vhTrkQualPostCut[4]->Fill(jevt.tracknhits[ip]);
+      vhTrkQualPreCut[4]->Fill(jevt.trackd0[ip]/d0Cut);
+      if (jevt.trackd0[ip]/d0Cut>=1) continue;
+      vhTrkQualPostCut[4]->Fill(jevt.trackd0[ip]/d0Cut);
       vhPPt[5]->Fill(trkEnergy);
+
+      // cut6
+      vhTrkQualPreCut[5]->Fill(jevt.trackptErr[ip]/trkEnergy);
+      if (jevt.trackptErr[ip]/trkEnergy>0.05) continue;
+      vhTrkQualPostCut[5]->Fill(jevt.trackptErr[ip]/trkEnergy);
+      vhPPt[6]->Fill(trkEnergy);
+
+      // cut7
+      vhTrkQualPreCut[6]->Fill(jevt.tracknhits[ip]);
+      if (jevt.tracknhits[ip]<13) continue;
+      vhTrkQualPostCut[6]->Fill(jevt.tracknhits[ip]);
+      vhPPt[7]->Fill(trkEnergy);
     }
   }
 
@@ -189,7 +225,7 @@ void loopTrkQual()
   TChain * tdata = new TChain("PFJetAnalyzer/t");
   tdata->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks_extraTrackInfo/set1/merged_JetAnalysisTTrees_hiGoodTightTracks_v1_partial.root");
 
-  TFile * outf = new TFile("trkqualhists_dataj35_mc80.root","RECREATE");
+  TFile * outf = new TFile("trkqualhists_dataj35_mc80_v1.root","RECREATE");
   Loop(tmc,"mc80",1);
   Loop(tdata,"dataj35",0);
   outf->Write();
