@@ -88,8 +88,20 @@ void Loop(TChain * t, TString name, bool isMC=true)
   vector<TH1D*> vhPPt;
   const Int_t ncuts=10;
   for (Int_t icut=0; icut<ncuts; ++icut) {
-    vhPPt.push_back(new TH1D(Form("hPPt_cut%d_%s",icut,name.Data()),"",ptBin.size()-1,&ptBin[0]));
+    vhPPt.push_back(new TH1D(Form("hPPt_cut%d_%s",icut,name.Data()),";p_{T} (GeV/c)",ptBin.size()-1,&ptBin[0]));
   }
+  vector<TH1D*> vhTrkQualPreCut;
+  vector<TH1D*> vhTrkQualPostCut;
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual1PreCut_%s",name.Data()),";N Layers;",20,0,20));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual1PostCut_%s",name.Data()),";N Layers;",20,0,20));
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual2PreCut_%s",name.Data()),";N Layers3D;",20,0,20));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual2PostCut_%s",name.Data()),";N Layers3D;",20,0,20));
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual3PreCut_%s",name.Data()),";trk #chi^{2}/nhits;",50,0,1));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual3PostCut_%s",name.Data()),";trk #chi^{2}/nhits;",50,0,1));
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual4PreCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual4PostCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5));
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual5PreCut_%s",name.Data()),";nhits;",30,0,30));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual5PostCut_%s",name.Data()),";nhits;",30,0,30));
 
   // Loop Trees
   Int_t numEnt=t->GetEntries();
@@ -125,7 +137,39 @@ void Loop(TChain * t, TString name, bool isMC=true)
     for (Int_t ip=0; ip<jevt.np; ++ip) {
       Float_t trkEnergy = jevt.ppt[ip];
       if (trkEnergy<8) continue;
+
+      // base
       vhPPt[0]->Fill(trkEnergy);
+
+      // cut1
+      vhTrkQualPreCut[0]->Fill(jevt.trackNlayer[ip]);
+      if (jevt.trackNlayer[ip]<3) continue;
+      vhTrkQualPostCut[0]->Fill(jevt.trackNlayer[ip]);
+      vhPPt[1]->Fill(trkEnergy);
+
+      // cut2
+      vhTrkQualPreCut[1]->Fill(jevt.trackNlayer3D[ip]);
+      if (jevt.trackNlayer3D[ip]<3) continue;
+      vhTrkQualPostCut[1]->Fill(jevt.trackNlayer3D[ip]);
+      vhPPt[2]->Fill(trkEnergy);
+
+      // cut3
+      vhTrkQualPreCut[2]->Fill(jevt.trackchi2[ip]/jevt.tracknhits[ip]);
+      if (jevt.trackchi2[ip]/jevt.tracknhits[ip]>0.15) continue;
+      vhTrkQualPostCut[2]->Fill(jevt.trackchi2[ip]/jevt.tracknhits[ip]);
+      vhPPt[3]->Fill(trkEnergy);
+
+      // cut4
+      vhTrkQualPreCut[3]->Fill(jevt.trackptErr[ip]/jevt.ppt[ip]);
+      if (jevt.trackptErr[ip]/jevt.ppt[ip]>0.05) continue;
+      vhTrkQualPostCut[3]->Fill(jevt.trackptErr[ip]/jevt.ppt[ip]);
+      vhPPt[4]->Fill(trkEnergy);
+
+      // cut5
+      vhTrkQualPreCut[4]->Fill(jevt.tracknhits[ip]);
+      if (jevt.tracknhits[ip]<13) continue;
+      vhTrkQualPostCut[4]->Fill(jevt.tracknhits[ip]);
+      vhPPt[5]->Fill(trkEnergy);
     }
   }
 
@@ -138,12 +182,15 @@ void Loop(TChain * t, TString name, bool isMC=true)
 
 void loopTrkQual()
 {
+  TH1::SetDefaultSumw2();
   cout << "Begin" << endl;
   TChain * tmc = new TChain("PFJetAnalyzer/t");
   tmc->Add("/net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/HICorrJetTuples_hiGoodTightTracks_Pyquen_UnquenchedDiJet-v1/Pt80/all_set1.root");
   TChain * tdata = new TChain("PFJetAnalyzer/t");
   tdata->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks_extraTrackInfo/set1/merged_JetAnalysisTTrees_hiGoodTightTracks_v1_partial.root");
 
+  TFile * outf = new TFile("trkqualhists_dataj35_mc80.root","RECREATE");
   Loop(tmc,"mc80",1);
   Loop(tdata,"dataj35",0);
+  outf->Write();
 }
