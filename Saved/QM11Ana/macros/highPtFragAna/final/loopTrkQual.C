@@ -81,7 +81,8 @@ struct AnaJetEvt
 void Loop(TChain * t, TString name, bool isMC=true)
 {
   AnaJetEvt jevt;
-  Bool_t seedHiSel = true;
+  Bool_t useHiGood = true;
+  Bool_t useHiGoodTight = false;
 
   // Book Histograms
   const Int_t numPPtBins=18;
@@ -168,21 +169,26 @@ void Loop(TChain * t, TString name, bool isMC=true)
       vhPPt[0]->Fill(trkEnergy);
       if (jevt.trackqual[ip]==1) hPPt_HP->Fill(trkEnergy);
 
+      // AnalyticalTrkSel
       // cut1
+      Int_t minNLayer=0;
+      if (useHiGood) minNLayer = 7;
       vhTrkQualPreCut[0]->Fill(jevt.trackNlayer[ip]);
-      if (jevt.trackNlayer[ip]<7) continue;
+      if (jevt.trackNlayer[ip]<minNLayer) continue;
       vhTrkQualPostCut[0]->Fill(jevt.trackNlayer[ip]);
       vhPPt[1]->Fill(trkEnergy);
 
       // cut2
+      Int_t minNLayer3D=0;
+      if (useHiGood) minNLayer3D = 3;
       vhTrkQualPreCut[1]->Fill(jevt.trackNlayer3D[ip]);
-      if (jevt.trackNlayer3D[ip]<3) continue;
+      if (jevt.trackNlayer3D[ip]<minNLayer3D) continue;
       vhTrkQualPostCut[1]->Fill(jevt.trackNlayer3D[ip]);
       vhPPt[2]->Fill(trkEnergy);
 
       // cut3
       vhTrkQualPreCut[2]->Fill(jevt.trackchi2hit1D[ip]/jevt.trackNlayer[ip]);
-      if (jevt.trackchi2hit1D[ip]/jevt.trackNlayer[ip]>0.4) continue;
+      if (useHiGood && jevt.trackchi2hit1D[ip]/jevt.trackNlayer[ip]>0.4) continue;
       vhTrkQualPostCut[2]->Fill(jevt.trackchi2hit1D[ip]/jevt.trackNlayer[ip]);
       vhPPt[3]->Fill(trkEnergy);
 
@@ -196,17 +202,17 @@ void Loop(TChain * t, TString name, bool isMC=true)
 
       // cut4
       vhTrkQualPreCut[3]->Fill(jevt.trackdz[ip]/dzCut);
-      if (fabs(jevt.trackdz[ip])/dzCut>=1) continue;
+      if (useHiGood && fabs(jevt.trackdz[ip])/dzCut>=1) continue;
       vhTrkQualPostCut[3]->Fill(jevt.trackdz[ip]/dzCut);
       vhPPt[4]->Fill(trkEnergy);
 
       // cut5
       vhTrkQualPreCut[4]->Fill(jevt.trackd0[ip]/d0Cut);
-      if (fabs(jevt.trackd0[ip])/d0Cut>=1) continue;
+      if (useHiGood && fabs(jevt.trackd0[ip])/d0Cut>=1) continue;
       vhTrkQualPostCut[4]->Fill(jevt.trackd0[ip]/d0Cut);
       vhPPt[5]->Fill(trkEnergy);
 
-      // hiGood
+      // HackedAnaSel
       // cut6
       vhTrkQualPreCut[5]->Fill(jevt.trackptErr[ip]/trkEnergy);
       if (jevt.trackptErr[ip]/trkEnergy>0.05) continue;
@@ -214,14 +220,19 @@ void Loop(TChain * t, TString name, bool isMC=true)
       vhPPt[6]->Fill(trkEnergy);
 
       // cut7
+      Int_t min_nhits;
+      if (useHiGood) min_nhits = 12;
+      else if (useHiGoodTight)min_nhits = 13;
       vhTrkQualPreCut[6]->Fill(jevt.tracknhits[ip]);
-      if (jevt.tracknhits[ip]<12) continue;
+      if (jevt.tracknhits[ip]<min_nhits) continue;
       vhTrkQualPostCut[6]->Fill(jevt.tracknhits[ip]);
       vhPPt[7]->Fill(trkEnergy);
 
       // cut8
+      Float_t chi2n_par = 9999;
+      if (useHiGoodTight) chi2n_par=0.15;
       vhTrkQualPreCut[7]->Fill(jevt.trackchi2[ip]/jevt.trackNlayer[ip]);
-      if (jevt.trackchi2[ip]/jevt.trackNlayer[ip]>99999) continue;
+      if (jevt.trackchi2[ip]/jevt.trackNlayer[ip]>chi2n_par) continue;
       vhTrkQualPostCut[7]->Fill(jevt.trackchi2[ip]/jevt.trackNlayer[ip]);
       vhPPt[8]->Fill(trkEnergy);
 
@@ -252,11 +263,11 @@ void loopTrkQual()
   TH1::SetDefaultSumw2();
   cout << "Begin" << endl;
   TChain * tmc = new TChain("PFJetAnalyzer/t");
-  tmc->Add("/net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/HICorrJetTuples_hiGoodTightTracks_Pyquen_UnquenchedDiJet-v1/Pt80/all_set1.root");
+  tmc->Add("/net/hisrv0001/home/frankma/scratch01/mc/Hydjet_Bass_MinBias_2760GeV/HICorrJetTuples_hiGoodTightTracks_Pyquen_UnquenchedDiJet-v1/Pt80/all_set1.root");
   TChain * tdata = new TChain("PFJetAnalyzer/t");
   tdata->Add("../trees/HIData_Jet35U_hiGoodTightTracks_extraTrackInfo.root");
 
-  TFile * outf = new TFile("trkqualhists_dataj35_mc80_v4.root","RECREATE");
+  TFile * outf = new TFile("trkqualhists_dataj35_mc80_v5_hiGood.root","RECREATE");
   Loop(tmc,"mc80",1);
   Loop(tdata,"dataj35",0);
   outf->Write();
