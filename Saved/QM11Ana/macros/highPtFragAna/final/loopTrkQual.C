@@ -89,7 +89,8 @@ void Loop(TChain * t, TString name, bool isMC=true)
   vector<Double_t> ptBin(pptBins,pptBins+numPPtBins+1);
 
   vector<TH1D*> vhPPt;
-  const Int_t ncuts=10;
+  TH1D * hPPt_HP = new TH1D(Form("hPPt_HP_%s",name.Data()),";p_{T} (GeV/c)",ptBin.size()-1,&ptBin[0]);
+  const Int_t ncuts=20;
   for (Int_t icut=0; icut<ncuts; ++icut) {
     vhPPt.push_back(new TH1D(Form("hPPt_cut%d_%s",icut,name.Data()),";p_{T} (GeV/c)",ptBin.size()-1,&ptBin[0]));
   }
@@ -103,20 +104,28 @@ void Loop(TChain * t, TString name, bool isMC=true)
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual2PostCut_%s",name.Data()),";N Layers3D;",20,0,20));
 
   // 2
-  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual3PreCut_%s",name.Data()),";trk #chi^{2}/nlayers;",50,0,1));
-  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual3PostCut_%s",name.Data()),";trk #chi^{2}/layers;",50,0,1));
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual3PreCut_%s",name.Data()),";trk #chi_{1d,2d}^{2}/nlayers;",50,0,2));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual3PostCut_%s",name.Data()),";trk #chi_{1d,2d}^{2}/nlayers;",50,0,2));
 
   // 3,4
-  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual4PreCut_%s",name.Data()),";dz^{Trk}/dzCut^{Trk};",50,0,5));
-  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual4PostCut_%s",name.Data()),";dz^{Trk}/dzCut^{Trk};",50,0,5));
-  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual5PreCut_%s",name.Data()),";d0^{Trk}/d0Cut^{Trk};",50,0,5));
-  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual5PostCut_%s",name.Data()),";d0^{Trk}/d0Cut^{Trk};",50,0,5));
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual4PreCut_%s",name.Data()),";Trk dz(vtx)/dzErrCut^{Trk};",100,-8,8));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual4PostCut_%s",name.Data()),";Trk dz(vtx)/dzErrCut^{Trk};",100,-8,8));
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual5PreCut_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",100,-8,8));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual5PostCut_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",100,-8,8));
 
   // hackedAnaSel
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual6PreCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5));
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual6PostCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5));
-  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual7PreCut_%s",name.Data()),";nhits;",30,0,30));
-  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual7PostCut_%s",name.Data()),";nhits;",30,0,30));
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual7PreCut_%s",name.Data()),";# valid hits;",30,0,30));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual7PostCut_%s",name.Data()),";# valid hits;",30,0,30));
+
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual8PreCut_%s",name.Data()),";trk #chi^{2}/nlayers;",50,0,2));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual8PostCut_%s",name.Data()),";trk #chi^{2}/nlayers;",50,0,2));
+
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual9PreCut_%s",name.Data()),";Trk dz(vtx)/#sigma(dz)^{vtx,trk};",100,-8,8));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual9PostCut_%s",name.Data()),";Trk dz(vtx)/#sigma(dz)^{vtx,trk};",100,-8,8));
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual10PreCut_%s",name.Data()),";Trk d0(vtx)/#sigma(d0)^{vtx,trk};",100,-8,8));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual10PostCut_%s",name.Data()),";Trk d0(vtx)/#sigma(d0)^{vtx,trk};",100,-8,8));
 
   // Loop Trees
   Int_t numEnt=t->GetEntries();
@@ -142,11 +151,12 @@ void Loop(TChain * t, TString name, bool isMC=true)
 
     // leading jet selection
     if (maxj0pt<100) continue;
-
     ++numSelEvt;
+
     Int_t printnevt = 500;
     if (!isMC) printnevt = 100;
-    if (numSelEvt%printnevt==0) cout << "Entry: " << ient << "("<< ient/(Float_t)numEnt << "%) cbin: " << jevt.cbin << " sorted jet0 pt|eta: " << jevt.jtpt[imax] << "|" << jevt.jteta[imax] << endl;
+    if (numSelEvt%printnevt==0) cout << "Entry: " << ient << "("<< ient/(Float_t)numEnt << "%) cbin: " << jevt.cbin << " sorted jet0 pt|eta: " << jevt.jtpt[imax] << "|" << jevt.jteta[imax] 
+      << "  trk pt|eta|qual: " << jevt.ppt[0] << "|" << jevt.peta[0] << "|" << jevt.trackqual[0] << endl;
 
     // tracks
     for (Int_t ip=0; ip<jevt.np; ++ip) {
@@ -156,6 +166,7 @@ void Loop(TChain * t, TString name, bool isMC=true)
 
       // base
       vhPPt[0]->Fill(trkEnergy);
+      if (jevt.trackqual[ip]==1) hPPt_HP->Fill(trkEnergy);
 
       // cut1
       vhTrkQualPreCut[0]->Fill(jevt.trackNlayer[ip]);
@@ -185,16 +196,17 @@ void Loop(TChain * t, TString name, bool isMC=true)
 
       // cut4
       vhTrkQualPreCut[3]->Fill(jevt.trackdz[ip]/dzCut);
-      if (jevt.trackdz[ip]/dzCut>=1) continue;
+      if (fabs(jevt.trackdz[ip])/dzCut>=1) continue;
       vhTrkQualPostCut[3]->Fill(jevt.trackdz[ip]/dzCut);
       vhPPt[4]->Fill(trkEnergy);
 
       // cut5
       vhTrkQualPreCut[4]->Fill(jevt.trackd0[ip]/d0Cut);
-      if (jevt.trackd0[ip]/d0Cut>=1) continue;
+      if (fabs(jevt.trackd0[ip])/d0Cut>=1) continue;
       vhTrkQualPostCut[4]->Fill(jevt.trackd0[ip]/d0Cut);
       vhPPt[5]->Fill(trkEnergy);
 
+      // hiGood
       // cut6
       vhTrkQualPreCut[5]->Fill(jevt.trackptErr[ip]/trkEnergy);
       if (jevt.trackptErr[ip]/trkEnergy>0.05) continue;
@@ -203,14 +215,33 @@ void Loop(TChain * t, TString name, bool isMC=true)
 
       // cut7
       vhTrkQualPreCut[6]->Fill(jevt.tracknhits[ip]);
-      if (jevt.tracknhits[ip]<13) continue;
+      if (jevt.tracknhits[ip]<12) continue;
       vhTrkQualPostCut[6]->Fill(jevt.tracknhits[ip]);
       vhPPt[7]->Fill(trkEnergy);
+
+      // cut8
+      vhTrkQualPreCut[7]->Fill(jevt.trackchi2[ip]/jevt.trackNlayer[ip]);
+      if (jevt.trackchi2[ip]/jevt.trackNlayer[ip]>99999) continue;
+      vhTrkQualPostCut[7]->Fill(jevt.trackchi2[ip]/jevt.trackNlayer[ip]);
+      vhPPt[8]->Fill(trkEnergy);
+
+      // cut9
+      vhTrkQualPreCut[8]->Fill(jevt.trackdz[ip]/jevt.trackdzErr[ip]);
+      if (fabs(jevt.trackdz[ip])/jevt.trackdzErr[ip]>=3) continue;
+      vhTrkQualPostCut[8]->Fill(jevt.trackdz[ip]/jevt.trackdzErr[ip]);
+      vhPPt[9]->Fill(trkEnergy);
+
+      // cut10
+      vhTrkQualPreCut[9]->Fill(jevt.trackd0[ip]/jevt.trackd0Err[ip]);
+      if (fabs(jevt.trackd0[ip])/jevt.trackd0Err[ip]>=3) continue;
+      vhTrkQualPostCut[9]->Fill(jevt.trackd0[ip]/jevt.trackd0Err[ip]);
+      vhPPt[10]->Fill(trkEnergy);
     }
   }
 
   // normalize
   cout << "Sel Evt: " << numSelEvt << endl;
+  normHist(hPPt_HP,0,true,1./numSelEvt);
   for (Int_t icut=0; icut<ncuts; ++icut) {
     normHist(vhPPt[icut],0,true,1./numSelEvt);
   }
@@ -223,9 +254,9 @@ void loopTrkQual()
   TChain * tmc = new TChain("PFJetAnalyzer/t");
   tmc->Add("/net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/HICorrJetTuples_hiGoodTightTracks_Pyquen_UnquenchedDiJet-v1/Pt80/all_set1.root");
   TChain * tdata = new TChain("PFJetAnalyzer/t");
-  tdata->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks_extraTrackInfo/set1/merged_JetAnalysisTTrees_hiGoodTightTracks_v1_partial.root");
+  tdata->Add("../trees/HIData_Jet35U_hiGoodTightTracks_extraTrackInfo.root");
 
-  TFile * outf = new TFile("trkqualhists_dataj35_mc80_v1.root","RECREATE");
+  TFile * outf = new TFile("trkqualhists_dataj35_mc80_v4.root","RECREATE");
   Loop(tmc,"mc80",1);
   Loop(tdata,"dataj35",0);
   outf->Write();
