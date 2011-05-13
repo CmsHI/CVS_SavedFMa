@@ -126,10 +126,16 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
 
   numPtBins_ = ptBin_->GetNbinsX();
   numEtaBins_ = etaBin_->GetNbinsX();
-  //numJEtBins_ = jetBin_->GetNbinsX();
-  numJEtBins_ = jetBin_->FindBin(399);
+  numJEtBins_ = jetBin_->GetNbinsX();
+  //numJEtBins_ = jetBin_->FindBin(399);
 
-  cout << "nbins pt,eta,jet: " << numPtBins_ << " " << numEtaBins_ << " " << numJEtBins_ << endl;
+	cout << endl << "Pt " << numPtBins_ << " bins:";
+	for (Int_t i=1; i<=numPtBins_+1; ++i) cout << ptBin_->GetBinLowEdge(i) << " ";
+	cout << endl << "Eta " << numEtaBins_ << " bins:";
+	for (Int_t i=1; i<=numEtaBins_+1; ++i) cout << etaBin_->GetBinLowEdge(i) << " ";
+	cout << endl << "JEt " << numJEtBins_ << " bins:";
+	for (Int_t i=1; i<=numJEtBins_+1; ++i) cout << jetBin_->GetBinLowEdge(i) << " ";
+	cout << endl;
 
   // =============================
   // allocate memory for correction table
@@ -272,6 +278,7 @@ void Corrector3D::Write()
 
 TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t centBeg, Int_t centEnd, Int_t jetBegBin, Int_t jetEndBin, Int_t mode, Int_t begbin, Int_t endbin)
 {
+  Int_t rebinFactor=1;
   TH3F *hNum=0, *hDen=0;
   TH2D *hNum2D=0, *hDen2D=0, *hCorr2D=0;
   TH1D *hNum1D=0, *hDen1D=0, *hCorr1D=0;
@@ -322,6 +329,8 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t centBeg, Int_t cen
     // ===============================================
     // 1D Eta
     // ===============================================
+    hNum1D->Rebin(rebinFactor);
+    hDen1D->Rebin(rebinFactor);
     hCorr1D = (TH1D*)hNum1D->Clone(inspName+"Corr1D");
     hCorr1D->Divide(hNum1D,hDen1D);
   } else if (mode==3) {
@@ -336,6 +345,8 @@ TH1 * Corrector3D::InspectCorr(Int_t lv, Int_t isample, Int_t centBeg, Int_t cen
     hDen->GetXaxis()->SetRange(begbin,endbin); // set eta range
     hNum1D = (TH1D*)hNum->Project3D("z");
     hDen1D = (TH1D*)hDen->Project3D("z");
+    hNum1D->Rebin(rebinFactor);
+    hDen1D->Rebin(rebinFactor);
     hCorr1D = (TH1D*)hNum1D->Clone(inspName+"Corr1Dz");
     hCorr1D->Divide(hNum1D,hDen1D);
   }
