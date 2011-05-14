@@ -127,7 +127,6 @@ void Corrector3D::Init(Int_t inputMethod, TString corrFileName)
   numPtBins_ = ptBin_->GetNbinsX();
   numEtaBins_ = etaBin_->GetNbinsX();
   numJEtBins_ = jetBin_->GetNbinsX();
-  //numJEtBins_ = jetBin_->FindBin(399);
 
 	cout << endl << "Pt " << numPtBins_ << " bins:";
 	for (Int_t i=1; i<=numPtBins_+1; ++i) cout << ptBin_->GetBinLowEdge(i) << " ";
@@ -248,7 +247,8 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
   }
 
   // Done
-  if (corr[0]>(1-1e-3)||corr[0]<1e-3) corr[0] = 0.48; // if 0 or 1 take average trk eff
+  //if (corr[0]>(1-1e-3)||corr[0]<1e-3) corr[0] = 0.48; // if 0 or 1 take average trk eff hiGood
+  if (corr[0]>(1-1e-3)||corr[0]<1e-3) corr[0] = 0.715; // if 0 or 1 take average trk eff hiGoodTight
   Double_t eff = corr[0];
   Double_t fake = corr[1];
   Double_t mul = corr[2];
