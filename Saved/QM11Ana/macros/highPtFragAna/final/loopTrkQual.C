@@ -2,9 +2,12 @@
 #include <cmath>
 #include <algorithm>
 #include "TChain.h"
+#include "TNtuple.h"
 #include "TString.h"
 #include "TFile.h"
 #include "TH1.h"
+#include "TH2.h"
+#include "TH3.h"
 #include "../../HisMath.C"
 const Int_t MAXNJETS = 2000;
 const Int_t MAXNP = 100000;
@@ -78,25 +81,46 @@ struct AnaJetEvt
   }
 };
 
-void Loop(TChain * t, TString name, bool isMC=true)
+void Loop(TChain * t, TString name, bool isMC=true,
+  Int_t cbinBeg=0,
+  Int_t cbinEnd=1)
 {
   AnaJetEvt jevt;
   Bool_t useHiGood = true;
   Bool_t useHiGoodTight = false;
+  Bool_t startBaseCut = false;
+  Int_t jetPtMin=90;
+  Int_t etaMax=1;
 
   // Book Histograms
   const Int_t numPPtBins=18;
   Float_t pptBins[numPPtBins+1] = {0.5,1,1.5,2,2.5,3,4,5,7.5,10,12,15,20,25,30,45,60,90,120};
-  vector<Double_t> ptBin(pptBins,pptBins+numPPtBins+1);
+  vector<Float_t> ptBin(pptBins,pptBins+numPPtBins+1);
+  const Int_t numCentBins=6;
+  Float_t centBinEdges[numCentBins+1] = {0,2,4,12,20,28,36};
+  vector<Float_t> centBin(centBinEdges,centBinEdges+numCentBins+1);
+  const Int_t numPtRanges=3;
+  Float_t ptRangeEdges[numPtRanges+1] = {0,30,60,120};
+  vector<Float_t> ptRange(ptRangeEdges,ptRangeEdges+numPtRanges+1);
+  const Int_t numEtaBins=6;
+  Float_t etaBinEdges[numEtaBins+1] = {-2.4,-1.6,-1,0,1,1.6,2.4};
 
+  // jet
+  TNtuple * ntjevt = new TNtuple("ntjevt","nt jet evt","cent:jtpt0:jteta0:jtphi0");
+
+  // trk
   vector<TH1D*> vhPPt;
+  vector<TH3F*> vhPPt3D;
   TH1D * hPPt_HP = new TH1D(Form("hPPt_HP_%s",name.Data()),";p_{T} (GeV/c)",ptBin.size()-1,&ptBin[0]);
   const Int_t ncuts=20;
   for (Int_t icut=0; icut<ncuts; ++icut) {
     vhPPt.push_back(new TH1D(Form("hPPt_cut%d_%s",icut,name.Data()),";p_{T} (GeV/c)",ptBin.size()-1,&ptBin[0]));
+    vhPPt3D.push_back(new TH3F(Form("hPPt3D_cut%d_%s",icut,name.Data()),";p_{T};#eta;bin",ptBin.size()-1,&ptBin[0],numEtaBins,etaBinEdges,numCentBins,centBinEdges));
   }
   vector<TH1D*> vhTrkQualPreCut;
   vector<TH1D*> vhTrkQualPostCut;
+  vector<TH3F*> vhTrkQualPreCut3D(20);
+  vector<TH3F*> vhTrkQualPostCut3D(20);
   // hiSeletectedTracks
   // 0,1
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual1PreCut_%s",name.Data()),";N Layers;",20,0,20));
@@ -115,14 +139,21 @@ void Loop(TChain * t, TString name, bool isMC=true)
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual5PostCut_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",100,-8,8));
 
   // hackedAnaSel
+  // 5,6
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual6PreCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5));
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual6PostCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5));
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual7PreCut_%s",name.Data()),";# valid hits;",30,0,30));
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual7PostCut_%s",name.Data()),";# valid hits;",30,0,30));
 
+  // 7,8
+  Float_t chi2perlayerBins[51];
+  for (Int_t i=0;i<=50;++i) chi2perlayerBins[i]=i*0.04; // 50,0,2
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual8PreCut_%s",name.Data()),";trk #chi^{2}/nlayers;",50,0,2));
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual8PostCut_%s",name.Data()),";trk #chi^{2}/nlayers;",50,0,2));
+  vhTrkQualPreCut3D[7] = new TH3F(Form("hTrkQual8PreCut3D_%s",name.Data()),";trk #chi^{2}/nlayers;p_{T};bin",50,chi2perlayerBins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPostCut3D[7] = new TH3F(Form("hTrkQual8PostCut3D_%s",name.Data()),";trk #chi^{2}/nlayers;p_{T};bin",50,chi2perlayerBins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
 
+  // 9,10
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual9PreCut_%s",name.Data()),";Trk dz(vtx)/#sigma(dz)^{vtx,trk};",100,-8,8));
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual9PostCut_%s",name.Data()),";Trk dz(vtx)/#sigma(dz)^{vtx,trk};",100,-8,8));
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual10PreCut_%s",name.Data()),";Trk d0(vtx)/#sigma(d0)^{vtx,trk};",100,-8,8));
@@ -137,7 +168,8 @@ void Loop(TChain * t, TString name, bool isMC=true)
   for (Int_t ient=0; ient<numEnt; ++ient) {
     t->GetEntry(ient);
     // presel
-    if (!(jevt.cbin>=0&&jevt.cbin<12)) continue;
+    //if (!(jevt.cbin>=0&&jevt.cbin<12)) continue;
+    if (!(jevt.cbin>=cbinBeg&&jevt.cbin<cbinEnd)) continue;
 
     // leading jet
     Float_t maxj0pt=0;
@@ -151,7 +183,8 @@ void Loop(TChain * t, TString name, bool isMC=true)
     }
 
     // leading jet selection
-    if (maxj0pt<100) continue;
+    if (maxj0pt<jetPtMin) continue;
+    ntjevt->Fill(jevt.cbin,jevt.jtpt[imax],jevt.jteta[imax],jevt.jtphi[imax]);
     ++numSelEvt;
 
     Int_t printnevt = 500;
@@ -163,20 +196,24 @@ void Loop(TChain * t, TString name, bool isMC=true)
     for (Int_t ip=0; ip<jevt.np; ++ip) {
       Float_t trkEnergy = jevt.ppt[ip];
       Float_t trkEta = jevt.peta[ip];
-      if (trkEnergy<8) continue;
+      if (trkEnergy<8||fabs(trkEta)>etaMax) continue;
 
-      // base
       vhPPt[0]->Fill(trkEnergy);
-      if (jevt.trackqual[ip]==1) hPPt_HP->Fill(trkEnergy);
+      vhPPt3D[0]->Fill(trkEnergy,trkEta,jevt.cbin);
+      if (jevt.trackqual[ip]==1) {
+	hPPt_HP->Fill(trkEnergy);
+      }
 
       // AnalyticalTrkSel
+      // use base: hiGlobalPrimTracks with nlayer cut
       // cut1
       Int_t minNLayer=0;
-      if (useHiGood) minNLayer = 7;
+      if (useHiGood||startBaseCut) minNLayer = 7;
       vhTrkQualPreCut[0]->Fill(jevt.trackNlayer[ip]);
       if (jevt.trackNlayer[ip]<minNLayer) continue;
       vhTrkQualPostCut[0]->Fill(jevt.trackNlayer[ip]);
       vhPPt[1]->Fill(trkEnergy);
+      vhPPt3D[1]->Fill(trkEnergy,trkEta,jevt.cbin);
 
       // cut2
       Int_t minNLayer3D=0;
@@ -185,12 +222,14 @@ void Loop(TChain * t, TString name, bool isMC=true)
       if (jevt.trackNlayer3D[ip]<minNLayer3D) continue;
       vhTrkQualPostCut[1]->Fill(jevt.trackNlayer3D[ip]);
       vhPPt[2]->Fill(trkEnergy);
+      vhPPt3D[2]->Fill(trkEnergy,trkEta,jevt.cbin);
 
       // cut3
       vhTrkQualPreCut[2]->Fill(jevt.trackchi2hit1D[ip]/jevt.trackNlayer[ip]);
       if (useHiGood && jevt.trackchi2hit1D[ip]/jevt.trackNlayer[ip]>0.4) continue;
       vhTrkQualPostCut[2]->Fill(jevt.trackchi2hit1D[ip]/jevt.trackNlayer[ip]);
       vhPPt[3]->Fill(trkEnergy);
+      vhPPt3D[3]->Fill(trkEnergy,trkEta,jevt.cbin);
 
       // calc vtx compat
       Double_t nomd0E = sqrt(pow(0.003,2)+pow(0.001/trkEnergy,2));
@@ -205,12 +244,14 @@ void Loop(TChain * t, TString name, bool isMC=true)
       if (useHiGood && fabs(jevt.trackdz[ip])/dzCut>=1) continue;
       vhTrkQualPostCut[3]->Fill(jevt.trackdz[ip]/dzCut);
       vhPPt[4]->Fill(trkEnergy);
+      vhPPt3D[4]->Fill(trkEnergy,trkEta,jevt.cbin);
 
       // cut5
       vhTrkQualPreCut[4]->Fill(jevt.trackd0[ip]/d0Cut);
       if (useHiGood && fabs(jevt.trackd0[ip])/d0Cut>=1) continue;
       vhTrkQualPostCut[4]->Fill(jevt.trackd0[ip]/d0Cut);
       vhPPt[5]->Fill(trkEnergy);
+      vhPPt3D[5]->Fill(trkEnergy,trkEta,jevt.cbin);
 
       // HackedAnaSel
       // cut6
@@ -218,6 +259,7 @@ void Loop(TChain * t, TString name, bool isMC=true)
       if (jevt.trackptErr[ip]/trkEnergy>0.05) continue;
       vhTrkQualPostCut[5]->Fill(jevt.trackptErr[ip]/trkEnergy);
       vhPPt[6]->Fill(trkEnergy);
+      vhPPt3D[6]->Fill(trkEnergy,trkEta,jevt.cbin);
 
       // cut7
       Int_t min_nhits;
@@ -227,26 +269,32 @@ void Loop(TChain * t, TString name, bool isMC=true)
       if (jevt.tracknhits[ip]<min_nhits) continue;
       vhTrkQualPostCut[6]->Fill(jevt.tracknhits[ip]);
       vhPPt[7]->Fill(trkEnergy);
+      vhPPt3D[7]->Fill(trkEnergy,trkEta,jevt.cbin);
 
       // cut8
       Float_t chi2n_par = 9999;
       if (useHiGoodTight) chi2n_par=0.15;
       vhTrkQualPreCut[7]->Fill(jevt.trackchi2[ip]/jevt.trackNlayer[ip]);
+      vhTrkQualPreCut3D[7]->Fill(jevt.trackchi2[ip]/jevt.trackNlayer[ip],jevt.ppt[ip],jevt.cbin);
       if (jevt.trackchi2[ip]/jevt.trackNlayer[ip]>chi2n_par) continue;
       vhTrkQualPostCut[7]->Fill(jevt.trackchi2[ip]/jevt.trackNlayer[ip]);
+      vhTrkQualPostCut3D[7]->Fill(jevt.trackchi2[ip]/jevt.trackNlayer[ip],jevt.ppt[ip],jevt.cbin);
       vhPPt[8]->Fill(trkEnergy);
+      vhPPt3D[8]->Fill(trkEnergy,trkEta,jevt.cbin);
 
       // cut9
       vhTrkQualPreCut[8]->Fill(jevt.trackdz[ip]/jevt.trackdzErr[ip]);
       if (fabs(jevt.trackdz[ip])/jevt.trackdzErr[ip]>=3) continue;
       vhTrkQualPostCut[8]->Fill(jevt.trackdz[ip]/jevt.trackdzErr[ip]);
       vhPPt[9]->Fill(trkEnergy);
+      vhPPt3D[9]->Fill(trkEnergy,trkEta,jevt.cbin);
 
       // cut10
       vhTrkQualPreCut[9]->Fill(jevt.trackd0[ip]/jevt.trackd0Err[ip]);
       if (fabs(jevt.trackd0[ip])/jevt.trackd0Err[ip]>=3) continue;
       vhTrkQualPostCut[9]->Fill(jevt.trackd0[ip]/jevt.trackd0Err[ip]);
       vhPPt[10]->Fill(trkEnergy);
+      vhPPt3D[10]->Fill(trkEnergy,trkEta,jevt.cbin);
     }
   }
 
@@ -255,6 +303,7 @@ void Loop(TChain * t, TString name, bool isMC=true)
   normHist(hPPt_HP,0,true,1./numSelEvt);
   for (Int_t icut=0; icut<ncuts; ++icut) {
     normHist(vhPPt[icut],0,true,1./numSelEvt);
+    vhPPt3D[icut]->Scale(1./numSelEvt);
   }
 }
 
@@ -263,12 +312,13 @@ void loopTrkQual()
   TH1::SetDefaultSumw2();
   cout << "Begin" << endl;
   TChain * tmc = new TChain("PFJetAnalyzer/t");
-  tmc->Add("/net/hisrv0001/home/frankma/scratch01/mc/Hydjet_Bass_MinBias_2760GeV/HICorrJetTuples_hiGoodTightTracks_Pyquen_UnquenchedDiJet-v1/Pt80/all_set1.root");
+  tmc->Add("/net/hisrv0001/home/frankma/scratch01/mc/Hydjet_Bass_MinBias_2760GeV/HICorrJetTuples_hiGoodTightTracks_Pyquen_UnquenchedDiJet-v1/Pt80/all_set1set2.root");
   TChain * tdata = new TChain("PFJetAnalyzer/t");
-  tdata->Add("../trees/HIData_Jet35U_hiGoodTightTracks_extraTrackInfo.root");
+  tdata->Add("../trees/HIData_Jet35U_hiGoodTightTracks_extraTrackInfo_full.root");
 
-  TFile * outf = new TFile("trkqualhists_dataj35_mc80_v5_hiGood.root","RECREATE");
-  Loop(tmc,"mc80",1);
-  Loop(tdata,"dataj35",0);
+  Int_t cbinBeg=0,cbinEnd=1;
+  TFile * outf = new TFile(Form("trkqualhists_dataj35_mc80_v7_hiGood_c%dto%d.root",cbinBeg,cbinEnd),"RECREATE");
+  Loop(tmc,"mc80",1,cbinBeg,cbinEnd);
+  Loop(tdata,"dataj35",0,cbinBeg,cbinEnd);
   outf->Write();
 }
