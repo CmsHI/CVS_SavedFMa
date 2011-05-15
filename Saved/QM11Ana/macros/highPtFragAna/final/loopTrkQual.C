@@ -88,8 +88,11 @@ void Loop(TChain * t, TString name, bool isMC=true,
   AnaJetEvt jevt;
   Bool_t useHiGood = true;
   Bool_t useHiGoodTight = false;
-  Bool_t startBaseCut = false;
+  // higher studies
+  Bool_t startBaseCut = true;
+  Bool_t noNHitCut = false;
   Int_t jetPtMin=90;
+  Float_t ptMin=30;
   Int_t etaMax=1;
 
   // Book Histograms
@@ -106,7 +109,7 @@ void Loop(TChain * t, TString name, bool isMC=true,
   Float_t etaBinEdges[numEtaBins+1] = {-2.4,-1.6,-1,0,1,1.6,2.4};
 
   // jet
-  TNtuple * ntjevt = new TNtuple("ntjevt","nt jet evt","cent:jtpt0:jteta0:jtphi0");
+  TNtuple * ntjevt = new TNtuple("ntjevt","nt jet evt","cbin:jtpt0:jteta0:jtphi0");
 
   // trk
   vector<TH1D*> vhPPt;
@@ -138,6 +141,13 @@ void Loop(TChain * t, TString name, bool isMC=true,
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual5PreCut_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",100,-8,8));
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual5PostCut_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",100,-8,8));
 
+  Float_t d0d0errbins[101];
+  for (Int_t i=0;i<=100;++i) d0d0errbins[i]=-8+i*0.16; // 100,-8,8
+  vhTrkQualPreCut3D[3] = new TH3F(Form("hTrkQual4PreCut3D_%s",name.Data()),";Trk dz(vtx)/dzErrCut^{Trk};",100,d0d0errbins,ptBin.size()-1,&ptBin[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPostCut3D[3] = new TH3F(Form("hTrkQual4PostCut3D_%s",name.Data()),";Trk dz(vtx)/dzErrCut^{Trk};",100,d0d0errbins,ptBin.size()-1,&ptBin[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPreCut3D[4] = new TH3F(Form("hTrkQual5PreCut3D_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",100,d0d0errbins,ptBin.size()-1,&ptBin[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPostCut3D[4] = new TH3F(Form("hTrkQual5PostCut3D_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",100,d0d0errbins,ptBin.size()-1,&ptBin[0],centBin.size()-1,&centBin[0]);
+
   // hackedAnaSel
   // 5,6
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual6PreCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5));
@@ -145,19 +155,23 @@ void Loop(TChain * t, TString name, bool isMC=true,
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual7PreCut_%s",name.Data()),";# valid hits;",30,0,30));
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual7PostCut_%s",name.Data()),";# valid hits;",30,0,30));
 
-  // 7,8
+  // 7
   Float_t chi2perlayerBins[51];
   for (Int_t i=0;i<=50;++i) chi2perlayerBins[i]=i*0.04; // 50,0,2
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual8PreCut_%s",name.Data()),";trk #chi^{2}/nlayers;",50,0,2));
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual8PostCut_%s",name.Data()),";trk #chi^{2}/nlayers;",50,0,2));
-  vhTrkQualPreCut3D[7] = new TH3F(Form("hTrkQual8PreCut3D_%s",name.Data()),";trk #chi^{2}/nlayers;p_{T};bin",50,chi2perlayerBins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
-  vhTrkQualPostCut3D[7] = new TH3F(Form("hTrkQual8PostCut3D_%s",name.Data()),";trk #chi^{2}/nlayers;p_{T};bin",50,chi2perlayerBins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPreCut3D[7] = new TH3F(Form("hTrkQual8PreCut3D_%s",name.Data()),";trk #chi^{2}/nlayers;p_{T};bin",50,chi2perlayerBins,ptBin.size()-1,&ptBin[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPostCut3D[7] = new TH3F(Form("hTrkQual8PostCut3D_%s",name.Data()),";trk #chi^{2}/nlayers;p_{T};bin",50,chi2perlayerBins,ptBin.size()-1,&ptBin[0],centBin.size()-1,&centBin[0]);
 
-  // 9,10
+  // 8,9
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual9PreCut_%s",name.Data()),";Trk dz(vtx)/#sigma(dz)^{vtx,trk};",100,-8,8));
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual9PostCut_%s",name.Data()),";Trk dz(vtx)/#sigma(dz)^{vtx,trk};",100,-8,8));
   vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual10PreCut_%s",name.Data()),";Trk d0(vtx)/#sigma(d0)^{vtx,trk};",100,-8,8));
   vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual10PostCut_%s",name.Data()),";Trk d0(vtx)/#sigma(d0)^{vtx,trk};",100,-8,8));
+
+  // 10 after all cuts study
+  vhTrkQualPreCut.push_back(new TH1D(Form("hTrkQual11PreCut_%s",name.Data()),";# valid hits;",30,0,30));
+  vhTrkQualPostCut.push_back(new TH1D(Form("hTrkQual11PostCut_%s",name.Data()),";# valid hits;",30,0,30));
 
   // Loop Trees
   Int_t numEnt=t->GetEntries();
@@ -196,7 +210,10 @@ void Loop(TChain * t, TString name, bool isMC=true,
     for (Int_t ip=0; ip<jevt.np; ++ip) {
       Float_t trkEnergy = jevt.ppt[ip];
       Float_t trkEta = jevt.peta[ip];
-      if (trkEnergy<8||fabs(trkEta)>etaMax) continue;
+      if (trkEnergy<ptMin||fabs(trkEta)>etaMax) continue;
+
+      // use base: hiGlobalPrimTracks with nhit cut
+      if (startBaseCut&&jevt.tracknhits[ip]<13) continue;
 
       vhPPt[0]->Fill(trkEnergy);
       vhPPt3D[0]->Fill(trkEnergy,trkEta,jevt.cbin);
@@ -205,10 +222,9 @@ void Loop(TChain * t, TString name, bool isMC=true,
       }
 
       // AnalyticalTrkSel
-      // use base: hiGlobalPrimTracks with nlayer cut
       // cut1
       Int_t minNLayer=0;
-      if (useHiGood||startBaseCut) minNLayer = 7;
+      if (useHiGood) minNLayer = 7;
       vhTrkQualPreCut[0]->Fill(jevt.trackNlayer[ip]);
       if (jevt.trackNlayer[ip]<minNLayer) continue;
       vhTrkQualPostCut[0]->Fill(jevt.trackNlayer[ip]);
@@ -264,7 +280,8 @@ void Loop(TChain * t, TString name, bool isMC=true,
       // cut7
       Int_t min_nhits;
       if (useHiGood) min_nhits = 12;
-      else if (useHiGoodTight)min_nhits = 13;
+      if (useHiGoodTight)min_nhits = 13;
+      if (noNHitCut) min_nhits = 0;
       vhTrkQualPreCut[6]->Fill(jevt.tracknhits[ip]);
       if (jevt.tracknhits[ip]<min_nhits) continue;
       vhTrkQualPostCut[6]->Fill(jevt.tracknhits[ip]);
@@ -295,6 +312,13 @@ void Loop(TChain * t, TString name, bool isMC=true,
       vhTrkQualPostCut[9]->Fill(jevt.trackd0[ip]/jevt.trackd0Err[ip]);
       vhPPt[10]->Fill(trkEnergy);
       vhPPt3D[10]->Fill(trkEnergy,trkEta,jevt.cbin);
+
+      // cut11
+      vhTrkQualPreCut[10]->Fill(jevt.tracknhits[ip]);
+      if (jevt.tracknhits[ip]<13) continue;
+      vhTrkQualPostCut[10]->Fill(jevt.tracknhits[ip]);
+      vhPPt[11]->Fill(trkEnergy);
+      vhPPt3D[11]->Fill(trkEnergy,trkEta,jevt.cbin);
     }
   }
 
@@ -316,8 +340,8 @@ void loopTrkQual()
   TChain * tdata = new TChain("PFJetAnalyzer/t");
   tdata->Add("../trees/HIData_Jet35U_hiGoodTightTracks_extraTrackInfo_full.root");
 
-  Int_t cbinBeg=0,cbinEnd=1;
-  TFile * outf = new TFile(Form("trkqualhists_dataj35_mc80_v7_hiGood_c%dto%d.root",cbinBeg,cbinEnd),"RECREATE");
+  Int_t cbinBeg=0,cbinEnd=2;
+  TFile * outf = new TFile(Form("trkqualhists_dataj35_mc80_v8_hiGood_c%dto%d_StartNHitCut_pt30.root",cbinBeg,cbinEnd),"RECREATE");
   Loop(tmc,"mc80",1,cbinBeg,cbinEnd);
   Loop(tdata,"dataj35",0,cbinBeg,cbinEnd);
   outf->Write();
