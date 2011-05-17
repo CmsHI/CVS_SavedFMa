@@ -5,6 +5,7 @@ GeneralJetFragAna::GeneralJetFragAna(TString name) :
   name_(name),
   doMC_(false),
   doJetOnly_(false),
+  useTrkQual_(false),
   anaJetv_(2),
   treeFormat_(0),
   jetType_(2),
@@ -18,7 +19,7 @@ void GeneralJetFragAna::Init(Int_t jType, Int_t pType)
   pType_=pType;
   cout << "============================" << endl;
   cout << "GeneralJetFragAna: " << name_ << " doMC: " << doMC_ << " doJEC: " << doJEC_ << endl;
-  cout << "leadJetPtMin: " << leadJetPtMin_ << " pptMin: " << pptMin_ << endl;
+  cout << "leadJetPtMin: " << leadJetPtMin_ << " pptMin: " << pptMin_ << " useTrkQual: " << useTrkQual_ << endl;
   cout << "treeFormat: " << treeFormat_ << " jetType: " << jType << " particleType: " << pType << endl;
   cout << "============================" << endl;
   // Inputs
@@ -109,7 +110,10 @@ void GeneralJetFragAna::Loop()
       for (Int_t ip=0; ip<anaPs_.np; ++ip) {
 	if (anaPs_.ppt[ip]<pptMin_) continue;
 	if (fabs(anaPs_.peta[ip])>2.4) continue; // tracker acceptance
-	if (pType_==2 && (anaPs_.trkQual[ip]!=1 || anaPs_.trkNHits[ip]<5)) continue; // full tracks only for the moment
+	if (pType_==2) { // cuts only applied to trks
+	  if (useTrkQual_ && anaPs_.trkQual[ip]!=1) continue; // if filter on trk quality bit
+	  if (anaPs_.trkNHits[ip]<5) continue; // full tracks only for the moment
+	}
 	if (treeFormat_==1 && pType_==0 &&
 	    !(abs(anaPs_.ppid[ip])==11 // e- 0.46%
 	      || abs(anaPs_.ppid[ip])==13 // mu- 0.12%

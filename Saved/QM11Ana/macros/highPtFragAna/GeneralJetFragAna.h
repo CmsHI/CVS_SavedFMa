@@ -199,6 +199,7 @@ class GeneralJetFragAna
     Int_t doJEC_;
     Bool_t doJetOnly_;
     //AnaJEC * anajec_;
+    Bool_t useTrkQual_;
 
     AnaEvt anaEvt_;
     AnaJets anaJets_;

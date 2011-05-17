@@ -31,7 +31,9 @@ void anaGeneralJF_data(
   algo = "j4";
   // === HI ===
   //TChain * chain = new TChain("PFJetAnalyzer/t","");
+  //Bool_t useTrkQual=true;
   TChain * chain = new TChain("t","");
+  Bool_t useTrkQual=false;
   /*
   //chain->Add("trees/HIData_Jet35U_hiGoodTightTracks_extraTrackInfo_full.root");
   chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks_extraTrackInfo/set1/merged_JetAnalysisTTrees_hiGoodTightTracks_v1.root");
@@ -71,6 +73,7 @@ void anaGeneralJF_data(
   jfana.doJEC_ = doJEC;
   //jfana.doJetOnly_ = true;
   //jfana.anajec_ = &anajec;
+  jfana.useTrkQual_ = useTrkQual;
   jfana.pTree_ = tp;
   jfana.leadJetPtMin_=90;
   jfana.pptMin_=-1;
