@@ -7,7 +7,7 @@
 #include "Math/Vector3D.h"
 #include "Math/LorentzVector.h"
 #include "Math/PtEtaPhiM4D.h"
-#include "AnaJEC.h"
+//#include "AnaJEC.h"
 using namespace ROOT::Math;
 const Int_t MAXNJETS = 2000;
 const Int_t MAXNP = 100000;
@@ -102,12 +102,14 @@ struct AnaParticles
 	t->SetBranchAddress("trkEta",this->peta);
 	t->SetBranchAddress("trkPhi",this->pphi);
 	t->SetBranchAddress("trkNHit",this->trkNHits);
+	t->SetBranchAddress("trkNHit",this->trkNHits);
       } else if (treeFormat==1) {
 	// pf ana
 	t->SetBranchAddress("ntrack",&(this->np));
 	t->SetBranchAddress("trackpt",this->ppt);
 	t->SetBranchAddress("tracketa",this->peta);
 	t->SetBranchAddress("trackphi",this->pphi);
+	t->SetBranchAddress("trackqual",this->trkQual);
 	t->SetBranchAddress("tracknhits",this->trkNHits);
       }
     } else if (pType==3) { // pf cand
@@ -196,7 +198,7 @@ class GeneralJetFragAna
     Bool_t doMC_;
     Int_t doJEC_;
     Bool_t doJetOnly_;
-    AnaJEC * anajec_;
+    //AnaJEC * anajec_;
 
     AnaEvt anaEvt_;
     AnaJets anaJets_;

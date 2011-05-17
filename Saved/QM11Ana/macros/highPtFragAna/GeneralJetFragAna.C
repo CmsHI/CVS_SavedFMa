@@ -57,7 +57,7 @@ void GeneralJetFragAna::Loop()
     // JEC
     if (doJEC_==1) {
       for (Int_t j=0; j<anaJets_.njets; ++j) {
-	anaJets_.jtpt[j]=anaJets_.rawpt[j]*anajec_->GetJEC(anaJets_.rawpt[j],anaJets_.jteta[j]);
+	//anaJets_.jtpt[j]=anaJets_.rawpt[j]*anajec_->GetJEC(anaJets_.rawpt[j],anaJets_.jteta[j]);
       }
     }
     // jet energy settings
@@ -109,7 +109,7 @@ void GeneralJetFragAna::Loop()
       for (Int_t ip=0; ip<anaPs_.np; ++ip) {
 	if (anaPs_.ppt[ip]<pptMin_) continue;
 	if (fabs(anaPs_.peta[ip])>2.4) continue; // tracker acceptance
-	if (pType_==2 && anaPs_.trkNHits[ip]<5) continue; // full tracks only for the moment
+	if (pType_==2 && (anaPs_.trkQual[ip]!=1 || anaPs_.trkNHits[ip]<5)) continue; // full tracks only for the moment
 	if (treeFormat_==1 && pType_==0 &&
 	    !(abs(anaPs_.ppid[ip])==11 // e- 0.46%
 	      || abs(anaPs_.ppid[ip])==13 // mu- 0.12%
