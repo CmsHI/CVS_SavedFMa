@@ -35,18 +35,14 @@ void anaGeneralJF_data(
   TChain * chain = new TChain("t","");
   Bool_t useTrkQual=false;
   /*
-  //chain->Add("trees/HIData_Jet35U_hiGoodTightTracks_extraTrackInfo_full.root");
-  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks_extraTrackInfo/set1/merged_JetAnalysisTTrees_hiGoodTightTracks_v1.root");
-  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks_extraTrackInfo/set2/merged_JetAnalysisTTrees_hiGoodTightTracks_v1.root");
-  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks_extraTrackInfo/set3/merged_JetAnalysisTTrees_hiGoodTightTracks_v1.root");
-  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks_extraTrackInfo/set4/merged_JetAnalysisTTrees_hiGoodTightTracks_v1.root");
-  tag = Form("trana%s_dataj35pfhgtv1_%s_j%dt%d_j4unfilt_pt4",version.Data(),algo.Data(),jetType,particleType);
+  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks/set1/merged_JetAnalysisTTrees_hiGoodTightTracks_v1_EscaleRepass.root");
+  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks/set2/merged_JetAnalysisTTrees_hiGoodTightTracks_v1_EscaleRepass.root");
+  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks/set3/merged_JetAnalysisTTrees_hiGoodTightTracks_v1_EscaleRepass.root");
+  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks/set4/merged_JetAnalysisTTrees_hiGoodTightTracks_v1_EscaleRepass.root");
+  tag = Form("trana%s_dataj35pfhgtv1repass2_%s_j%dt%d_et90",version.Data(),algo.Data(),jetType,particleType);
   */
-  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks_extraTrackInfo/set1/merged_JetAnalysisTTrees_hiGoodTightTracks_v1_EscaleRepass.root");
-  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks_extraTrackInfo/set2/merged_JetAnalysisTTrees_hiGoodTightTracks_v1_EscaleRepass.root");
-  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks_extraTrackInfo/set3/merged_JetAnalysisTTrees_hiGoodTightTracks_v1_EscaleRepass.root");
-  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/HIData_Jet35U/hiGoodTightTracks_extraTrackInfo/set4/merged_JetAnalysisTTrees_hiGoodTightTracks_v1_EscaleRepass.root");
-  tag = Form("trana%s_dataj35pfhgtv1repass_%s_j%dt%d_et90",version.Data(),algo.Data(),jetType,particleType);
+  chain->Add("/net/hisrv0001/home/mnguyen/scratch/CorePhysics.root");
+  tag = Form("trana%s_dataj50corepfhgtv1repass2_%s_j%dt%d_et90",version.Data(),algo.Data(),jetType,particleType);
 
   cout << chain->GetFile()->GetName() << endl;
   tevt = chain;
@@ -76,6 +72,7 @@ void anaGeneralJF_data(
   jfana.useTrkQual_ = useTrkQual;
   jfana.pTree_ = tp;
   jfana.leadJetPtMin_=90;
+  jfana.jetEtaMax_ = 5;
   jfana.pptMin_=-1;
   jfana.treeFormat_=treeFormat; // 0 for jra, 1 for pftree
   jfana.Init(jetType,particleType);
