@@ -140,7 +140,7 @@ class FragAnaLoop
       //Double_t RefAj = (jfr.refpt[0]-jfr.refpt[1])/(jfr.refpt[0]+jfr.refpt[1]);
       Bool_t result = (
 	  jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax
-	  && jfr.jtpt[0]>cut_->JEtMin[0]
+	  && jfr.jtpt[0]>cut_->JEtMin[0] && fabs(jfr.jteta[0])<cut_->JEtaMax[0]
 	  //&& Aj >= cut_->AjMin
 	  //&& Aj < cut_->AjMax
 	  //&& fabs(Aj-RefAj)<0.05 //((Aj-RefAj)>-0.04&&(Aj-RefAj)<0.12)
@@ -364,7 +364,7 @@ void FragAnaLoop::Loop()
       if (anaTrkType_==2) {
 	Bool_t isInCone=false;
 	for (Int_t j=0; j<2; ++j) {
-	  if (jfr_.jtpt[j]>20&&jfr_.pjdr[j][ip]<0.8) {
+	  if (jfr_.jtpt[j]>40&&jfr_.pjdr[j][ip]<0.8) {
 	    trkwt = vtrkCorr_[j]->GetCorr(trkEnergy,trkEta,jfr_.jtpt[j],jfr_.cbin,corr);
 	    isInCone=true;
 	    break;
