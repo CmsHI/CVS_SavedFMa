@@ -19,7 +19,7 @@ void GeneralJetFragAna::Init(Int_t jType, Int_t pType)
   pType_=pType;
   cout << "============================" << endl;
   cout << "GeneralJetFragAna: " << name_ << " doMC: " << doMC_ << " doJEC: " << doJEC_ << endl;
-  cout << "leadJetPtMin: " << leadJetPtMin_ << " pptMin: " << pptMin_ << " useTrkQual: " << useTrkQual_ << endl;
+  cout << "leadJetPtMin: " << leadJetPtMin_ << "jetEtaMax: " << jetEtaMax_ << " pptMin: " << pptMin_ << " useTrkQual: " << useTrkQual_ << endl;
   cout << "treeFormat: " << treeFormat_ << " jetType: " << jType << " particleType: " << pType << endl;
   cout << "============================" << endl;
   // Inputs
@@ -144,7 +144,7 @@ Int_t GeneralJetFragAna::GetLeadingJet(AnaJets & jets, std::vector<PtEtaPhiMLore
   Float_t maxpt=-99;
   Int_t bestInd=-99;
   for (Int_t j=0; j<jets.njets; ++j) {
-    if (fabs(jets.jteta[j])>2) continue; // eta limit for leading jet
+    if (fabs(jets.jteta[j])>jetEtaMax_) continue; // eta limit for leading jet
     if (jets.jtpt[j]>maxpt) {
       maxpt=jets.jtpt[j];
       bestInd=j;
@@ -168,7 +168,7 @@ Int_t GeneralJetFragAna::GetJet2(AnaJets & jets, std::vector<PtEtaPhiMLorentzVec
   Int_t bestInd=-99;
   for (Int_t j=0; j<jets.njets; ++j) {
     if (j==leadJetInd) continue; // not leading jet
-    if (fabs(jets.jteta[j])>2) continue; // eta limit for away jet
+    if (fabs(jets.jteta[j])>jetEtaMax_) continue; // eta limit for away jet
     if (jets.jtpt[j]>maxpt) {
       maxpt=jets.jtpt[j];
       bestInd=j;

@@ -206,6 +206,7 @@ class GeneralJetFragAna
     AnaParticles anaPs_;
 
     Float_t leadJetPtMin_;
+    Float_t jetEtaMax_;
     Float_t pptMin_;
     Int_t treeFormat_;
     Int_t jetType_;
