@@ -143,15 +143,15 @@ void Loop(TChain * t, TString name, bool isMC=true,
   vhTrkQualPostCut[2] = new TH1D(Form("hTrkQual3PostCut_%s",name.Data()),";trk #chi_{1d,2d}^{2}/nlayers;",50,0,2);
 
   // 3,4
-  vhTrkQualPreCut[3] = new TH1D(Form("hTrkQual4PreCut_%s",name.Data()),";Trk dz(vtx)/dzErrCut^{Trk};",100,-8,8);
-  vhTrkQualPostCut[3] = new TH1D(Form("hTrkQual4PostCut_%s",name.Data()),";Trk dz(vtx)/dzErrCut^{Trk};",100,-8,8);
-  vhTrkQualPreCut[4] = new TH1D(Form("hTrkQual5PreCut_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",100,-8,8);
-  vhTrkQualPostCut[4] = new TH1D(Form("hTrkQual5PostCut_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",100,-8,8);
+  vhTrkQualPreCut[3] = new TH1D(Form("hTrkQual4PreCut_%s",name.Data()),";Trk dz(vtx)/dzErrCut^{Trk};",numd0d0errbins,d0d0errbins);
+  vhTrkQualPostCut[3] = new TH1D(Form("hTrkQual4PostCut_%s",name.Data()),";Trk dz(vtx)/dzErrCut^{Trk};",numd0d0errbins,d0d0errbins);
+  vhTrkQualPreCut[4] = new TH1D(Form("hTrkQual5PreCut_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",numd0d0errbins,d0d0errbins);
+  vhTrkQualPostCut[4] = new TH1D(Form("hTrkQual5PostCut_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",numd0d0errbins,d0d0errbins);
 
-  vhTrkQualPreCut3D[3] = new TH3F(Form("hTrkQual4PreCut3D_%s",name.Data()),";Trk dz(vtx)/dzErrCut^{Trk};",100,d0d0errbins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
-  vhTrkQualPostCut3D[3] = new TH3F(Form("hTrkQual4PostCut3D_%s",name.Data()),";Trk dz(vtx)/dzErrCut^{Trk};",100,d0d0errbins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
-  vhTrkQualPreCut3D[4] = new TH3F(Form("hTrkQual5PreCut3D_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",100,d0d0errbins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
-  vhTrkQualPostCut3D[4] = new TH3F(Form("hTrkQual5PostCut3D_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",100,d0d0errbins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPreCut3D[3] = new TH3F(Form("hTrkQual4PreCut3D_%s",name.Data()),";Trk dz(vtx)/dzErrCut^{Trk};",numd0d0errbins,d0d0errbins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPostCut3D[3] = new TH3F(Form("hTrkQual4PostCut3D_%s",name.Data()),";Trk dz(vtx)/dzErrCut^{Trk};",numd0d0errbins,d0d0errbins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPreCut3D[4] = new TH3F(Form("hTrkQual5PreCut3D_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",numd0d0errbins,d0d0errbins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPostCut3D[4] = new TH3F(Form("hTrkQual5PostCut3D_%s",name.Data()),";Trk d0(vtx)/d0ErrCut^{Trk};",numd0d0errbins,d0d0errbins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
 
   // hackedAnaSel
   // 5,6
