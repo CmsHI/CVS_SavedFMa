@@ -105,6 +105,8 @@ class FragAnaLoop
 
     // analysis histograms
     vector<Double_t> ptBin_;
+  	vector<Double_t> ptRangeBin_;
+	  vector<Double_t> dRBin_;
     vector<TH1D*> vhJetPt_;
     vector<TH1D*> vhRefJetPt_;
     vector<TH1D*> vhJetAj_;
@@ -123,6 +125,9 @@ class FragAnaLoop
     vector<vector<TH1D*> > vhRefJetAjvAj_;
     vector<vector<vector<TH1D*> > > vhPPtCorrvAj_;
     vector<vector<vector<TH1D*> > > vhXiCorrvAj_;
+  	// rocket
+	  TH2D * hPtPDR[2];
+	  TH2D * hPtPDRBg[2];
 
     // monitor histograms
     vector<vector<TH2D*> > vhTrkCorrPPt_;
@@ -136,13 +141,13 @@ class FragAnaLoop
 
     Bool_t SelEvt(const JetFragRel & jfr) {
       //return (jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax);
-      //Double_t Aj = (jfr.jtpt[0]-jfr.jtpt[1])/(jfr.jtpt[0]+jfr.jtpt[1]);
+      Double_t Aj = (jfr.jtpt[0]-jfr.jtpt[1])/(jfr.jtpt[0]+jfr.jtpt[1]);
       //Double_t RefAj = (jfr.refpt[0]-jfr.refpt[1])/(jfr.refpt[0]+jfr.refpt[1]);
       Bool_t result = (
 	  jfr.cbin>=cut_->CentMin && jfr.cbin<cut_->CentMax
 	  && jfr.jtpt[0]>cut_->JEtMin[0] && fabs(jfr.jteta[0])<cut_->JEtaMax[0]
-	  //&& Aj >= cut_->AjMin
-	  //&& Aj < cut_->AjMax
+	  && Aj >= cut_->AjMin
+	  && Aj < cut_->AjMax
 	  //&& fabs(Aj-RefAj)<0.05 //((Aj-RefAj)>-0.04&&(Aj-RefAj)<0.12)
 	  //&& Aj-RefAj>0.08 //((Aj-RefAj)>-0.04&&(Aj-RefAj)<0.12)
 	  //&& fabs(jfr.jtpt[0]-jfr.refpt[0])<5
@@ -166,12 +171,6 @@ class FragAnaLoop
 	 ) return true;
       return false;
 	*/
-    }
-    Bool_t SelFrag(const JetFragRel & jfr, Int_t ip, Int_t j) {
-	return ( jfr.ppt[ip]>cut_->TrkPtMin && jfr.pjdr[j][ip]<cut_->ConeSize && fabs(jfr.peta[ip])<cut_->TrkEtaMax);
-    }
-    Bool_t SelSpec(const JetFragRel & jfr, Int_t ip) {
-	return ( jfr.ppt[ip]>cut_->TrkPtMin && fabs(jfr.peta[ip])<cut_->TrkEtaMax);
     }
 };
 
@@ -267,6 +266,21 @@ void FragAnaLoop::Init()
       }
     }
   }
+	
+	// rocket
+	TString labelShort[2] = { "N","A" };
+	TString label[2] = { "Nr","Aw" };
+	const Int_t numDRBins = 20;
+	for (Int_t i=0;i<numDRBins+1;++i)   { dRBin_.push_back(1.6/((double)numDRBins)*i); }
+	const Int_t numPtRange = 6;
+	Double_t ptRange[numPtRange+1]={0.5,1.0,2,4,8,20,180};
+	for (Int_t i=0; i<numPtRange+1; ++i) { ptRangeBin_.push_back(ptRange[i]); }
+	for (Int_t j=0; j<2; ++j) {
+		hPtPDR[j] = new TH2D("hPtP"+labelShort[j]+"DR","",ptRangeBin_.size()-1,&ptRangeBin_[0],dRBin_.size()-1,&dRBin_[0]);
+		hPtPDR[j]->Sumw2();
+		hPtPDRBg[j] = new TH2D("hPtP"+labelShort[j]+"DRBg","",ptRangeBin_.size()-1,&ptRangeBin_[0],dRBin_.size()-1,&dRBin_[0]);
+		hPtPDRBg[j]->Sumw2();
+	}
 
   // Book ntuples
   tout_ = new TTree("tjfr"+name_,"jet-trk relations");
@@ -342,7 +356,7 @@ void FragAnaLoop::Loop()
       Float_t trkEta = jfr_.peta[ip];
       // basic trk kinematic cuts
       if (trkEnergy<cut_->TrkPtMin) continue;
-      if (fabs(trkEta)>2.4) continue;
+      if (fabs(trkEta)>cut_->TrkEtaMax) continue;
       if (anaTrkType_==3&&pfCandType_>0&&jfr_.pfid[ip]!=pfCandType_) continue;
 
       // =======================
@@ -385,7 +399,7 @@ void FragAnaLoop::Loop()
       // =======================
       // Spec Ana
       // =======================
-      if (SelEvt(jfr_)&&SelSpec(jfr_,ip)) {
+      if (SelEvt(jfr_)) {
 	vhSpec_[0]->Fill(trkEnergy);
 	if (anaTrkType_==2) {
 	  vhSpec_[1]->Fill(trkEnergy,1./eff);
@@ -411,7 +425,7 @@ void FragAnaLoop::Loop()
 	    jfr_.cnp[j]+=trkwt;
 	  }
 	}
-	if (SelEvt(jfr_)&&SelJet(jfr_,j)&&SelFrag(jfr_,ip,j)) {
+	if (SelEvt(jfr_)&&SelJet(jfr_,j)&&jfr_.pjdr[j][ip]<cut_->ConeSize) {
 	  vhPPtCorr_[j][0]->Fill(trkEnergy);
 	  vhXiCorr_[j][0]->Fill(fabs(log(jfr_.jtpt[j]/trkEnergy)));
 	  // differential in aj
@@ -441,6 +455,7 @@ void FragAnaLoop::Loop()
 	    }
 	  }
 
+
 	  // study correction
 	  for (Int_t lv=1; lv<=4; ++lv) {
 	    vhTrkCorrPPt_[j][lv]->Fill(trkEnergy,corr[lv-1]);
@@ -449,6 +464,23 @@ void FragAnaLoop::Loop()
 	  }
 	}
       }
+			
+			
+      // =======================
+      // Rocket
+      // =======================
+			for (Int_t j=0; j<2; ++j) {
+				if (SelEvt(jfr_)&&SelJet(jfr_,j)) {
+					// Signal Cone
+					if (jfr_.pjdr[j][ip]<cut_->ConeSize) {
+						hPtPDR[j]->Fill(trkEnergy,jfr_.pjdr[j][ip],trkEnergy*trkwt);
+					}
+					// Background Cone
+					if (jfr_.pjdrbg[j][ip]<cut_->ConeSize) {
+						hPtPDRBg[j]->Fill(trkEnergy,jfr_.pjdrbg[j][ip],trkEnergy*trkwt);
+					}
+				}
+			}
     }
     if (!cut_->doSel||(SelEvt(jfr_)&&SelJet(jfr_,1))) {
       tout_->Fill();
@@ -463,6 +495,8 @@ void FragAnaLoop::Loop()
   }
   for (Int_t j=0; j<2; ++j) {
     cout << "jet " << j << " count: " << numJet_[j] << endl;
+		hPtPDR[j]->Scale(1./numJet_[j]);
+		hPtPDRBg[j]->Scale(1./numJet_[j]);
     for (Int_t lv=0; lv<5; ++lv) {
       if (anaTrkType_!=2 && lv>0) continue;
       normHist(vhPPtCorr_[j][lv],0,true,1./numJet_[j]);
