@@ -200,7 +200,6 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
       }
     }
   }
-  //ptHatMargin=-1000;
   //isample=2;
 
   // Find Bin
@@ -247,8 +246,9 @@ Float_t Corrector3D::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float_t cent,
   }
 
   // Done
+  //if (corr[0]>(1-1e-3)||corr[0]<1e-3) corr[0] = 1; // default: no correction
   //if (corr[0]>(1-1e-3)||corr[0]<1e-3) corr[0] = 0.48; // if 0 or 1 take average trk eff hiGood
-  if (corr[0]>(1-1e-3)||corr[0]<1e-3) corr[0] = 0.715; // if 0 or 1 take average trk eff hiGoodTight
+  if (corr[0]>(1-1e-3)||corr[0]<1e-3) corr[0] = 0.62; // if 0 or 1 take average trk eff hiGoodTight
   Double_t eff = corr[0];
   Double_t fake = corr[1];
   Double_t mul = corr[2];
