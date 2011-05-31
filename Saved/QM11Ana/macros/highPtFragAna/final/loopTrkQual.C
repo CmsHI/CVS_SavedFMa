@@ -90,7 +90,7 @@ void Loop(TChain * t, TString name, bool isMC=true,
   Bool_t useHiGood = false;
   Bool_t useHiGoodTight = true;
   // higher studies
-  Bool_t startBaseCut = true;
+  Bool_t startBaseCut = false;
   Bool_t noNHitCut = false;
 	Bool_t noChi2Cut = false;
   Int_t jetPtMin=80;
@@ -131,6 +131,9 @@ void Loop(TChain * t, TString name, bool isMC=true,
 	const Int_t numd0bins = 8000; Float_t d0bins[numd0bins+1]; for (Int_t i=0;i<=numd0bins;++i) d0bins[i]=-5+i*10./numd0bins; // numd0bins,-5,5
 	const Int_t numd0errbins = 8000; Float_t d0errbins[numd0errbins+1]; for (Int_t i=0;i<=numd0errbins;++i) d0errbins[i]=i*0.5/numd0errbins; // numd0errbins,0,2
 	const Int_t numd0d0errbins = 200; Float_t d0d0errbins[numd0d0errbins+1]; for (Int_t i=0;i<=numd0d0errbins;++i) d0d0errbins[i]=-8+i*16./numd0d0errbins; // 100,-8,8
+	const Int_t numpterrbins = 100; Float_t pterrbins[numpterrbins+1]; for (Int_t i=0; i<=numpterrbins;++i) pterrbins[i]=i*0.5/numpterrbins; // 50, 0, 0.5
+	const Int_t numnhitbins = 30; Float_t nhitbins[numnhitbins+1]; for (Int_t i=0; i<=numnhitbins;++i) nhitbins[i]=i; // 30, 0, 30
+  const Int_t numchi2bins = 50; Float_t chi2perlayerBins[numchi2bins+1]; for (Int_t i=0;i<=numchi2bins;++i) chi2perlayerBins[i]=i*2./numchi2bins; // 50,0,2
   // hiSeletectedTracks
   // 0,1
   vhTrkQualPreCut[0] = new TH1D(Form("hTrkQual1PreCut_%s",name.Data()),";N Layers;",20,0,20);
@@ -155,17 +158,21 @@ void Loop(TChain * t, TString name, bool isMC=true,
 
   // hackedAnaSel
   // 5,6
-  vhTrkQualPreCut[5] = new TH1D(Form("hTrkQual6PreCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5);
-  vhTrkQualPostCut[5] = new TH1D(Form("hTrkQual6PostCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",50,0,0.5);
-  vhTrkQualPreCut[6] = new TH1D(Form("hTrkQual7PreCut_%s",name.Data()),";# valid hits;",30,0,30);
-  vhTrkQualPostCut[6] = new TH1D(Form("hTrkQual7PostCut_%s",name.Data()),";# valid hits;",30,0,30);
-
+  vhTrkQualPreCut[5] = new TH1D(Form("hTrkQual6PreCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",numpterrbins,pterrbins);
+  vhTrkQualPostCut[5] = new TH1D(Form("hTrkQual6PostCut_%s",name.Data()),";#sigma(p_{T})/p_{T};",numpterrbins,pterrbins);
+  vhTrkQualPreCut[6] = new TH1D(Form("hTrkQual7PreCut_%s",name.Data()),";# valid hits;",numnhitbins,nhitbins);
+  vhTrkQualPostCut[6] = new TH1D(Form("hTrkQual7PostCut_%s",name.Data()),";# valid hits;",numnhitbins,nhitbins);
+	
+  vhTrkQualPreCut3D[5] = new TH3F(Form("hTrkQual6PreCut3D_%s",name.Data()),";#sigma(p_{T})/p_{T};",numpterrbins,pterrbins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPostCut3D[5] = new TH3F(Form("hTrkQual6PostCut3D_%s",name.Data()),";#sigma(p_{T})/p_{T};",numpterrbins,pterrbins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPreCut3D[6] = new TH3F(Form("hTrkQual7PreCut3D_%s",name.Data()),";# valid hits;",numnhitbins,nhitbins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPostCut3D[6] = new TH3F(Form("hTrkQual7PostCut3D_%s",name.Data()),";# valid hits;",numnhitbins,nhitbins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
+	
   // 7
-  Float_t chi2perlayerBins[51]; for (Int_t i=0;i<=50;++i) chi2perlayerBins[i]=i*0.04; // 50,0,2
   vhTrkQualPreCut[7] = new TH1D(Form("hTrkQual8PreCut_%s",name.Data()),";trk #chi^{2}/nlayers;",50,0,2);
   vhTrkQualPostCut[7] = new TH1D(Form("hTrkQual8PostCut_%s",name.Data()),";trk #chi^{2}/nlayers;",50,0,2);
-  vhTrkQualPreCut3D[7] = new TH3F(Form("hTrkQual8PreCut3D_%s",name.Data()),";trk #chi^{2}/nlayers;p_{T};bin",50,chi2perlayerBins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
-  vhTrkQualPostCut3D[7] = new TH3F(Form("hTrkQual8PostCut3D_%s",name.Data()),";trk #chi^{2}/nlayers;p_{T};bin",50,chi2perlayerBins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPreCut3D[7] = new TH3F(Form("hTrkQual8PreCut3D_%s",name.Data()),";trk #chi^{2}/nlayers;p_{T};bin",numchi2bins,chi2perlayerBins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
+  vhTrkQualPostCut3D[7] = new TH3F(Form("hTrkQual8PostCut3D_%s",name.Data()),";trk #chi^{2}/nlayers;p_{T};bin",numchi2bins,chi2perlayerBins,ptRange.size()-1,&ptRange[0],centBin.size()-1,&centBin[0]);
 
   // 8,9
   vhTrkQualPreCut[8] = new TH1D(Form("hTrkQual9PreCut_%s",name.Data()),";Trk dz(vtx)/#sigma(dz)^{vtx,trk};",numd0d0errbins,d0d0errbins);
@@ -319,6 +326,7 @@ void Loop(TChain * t, TString name, bool isMC=true,
       // HackedAnaSel
       // cut6
       vhTrkQualPreCut[5]->Fill(jevt.trackptErr[ip]/trkEnergy);
+			vhTrkQualPreCut3D[5]->Fill(jevt.trackptErr[ip]/trkEnergy,trkEnergy,jevt.cbin);
       if (doCut && jevt.trackptErr[ip]/trkEnergy>0.05) continue;
       vhTrkQualPostCut[5]->Fill(jevt.trackptErr[ip]/trkEnergy);
       vhPPt[6]->Fill(trkEnergy);
@@ -330,6 +338,7 @@ void Loop(TChain * t, TString name, bool isMC=true,
       if (useHiGoodTight)min_nhits = 13;
       if (noNHitCut) min_nhits = 0;
       vhTrkQualPreCut[6]->Fill(jevt.tracknhits[ip]);
+      vhTrkQualPreCut3D[6]->Fill(jevt.tracknhits[ip],trkEnergy,jevt.cbin);
       if (doCut && jevt.tracknhits[ip]<min_nhits) continue;
       vhTrkQualPostCut[6]->Fill(jevt.tracknhits[ip]);
       vhPPt[7]->Fill(trkEnergy);
@@ -427,9 +436,8 @@ void loopTrkQual()
   tdata->Add("../trees/HIData_Jet35U_hiGoodTightTracks_extraTrackInfo_full.root");
 
   Int_t cbinBeg=0,cbinEnd=36;
-  //TFile * outf = new TFile(Form("trkqualhists_dataj35_mc80j1_80_v10_hiGlobPrim_allcent_uncut_pt30.root",cbinBeg,cbinEnd),"RECREATE");
-  //TFile * outf = new TFile(Form("trkqualhists_dataj35_mc80j1_80_v10_hiGoodTight_allcent_noChi2Cut_pt30.root",cbinBeg,cbinEnd),"RECREATE");
-  TFile * outf = new TFile(Form("trkqualhists_dataj35_mc80j1_80_v11_hiGlobPrim_allcent_startBaseCut_pt4.root",cbinBeg,cbinEnd),"RECREATE");
+  TFile * outf = new TFile(Form("trkqualhists_dataj35_mc80j1_80_v12_hiGlobPrim_allcent_unCut_pt4.root",cbinBeg,cbinEnd),"RECREATE");
+  //TFile * outf = new TFile(Form("trkqualhists_dataj35_mc80j1_80_v12_hiGlobPrim_allcent_startBaseCut_pt4.root",cbinBeg,cbinEnd),"RECREATE");
 	cout << "Output: " << outf->GetName() << endl;
   Loop(tmc,"mc80",1,cbinBeg,cbinEnd);
   Loop(tdata,"dataj35",0,cbinBeg,cbinEnd);
