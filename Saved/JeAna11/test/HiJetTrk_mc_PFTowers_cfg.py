@@ -29,7 +29,7 @@ from CmsHi.Analysis2010.CommonFunctions_cff import *
 overrideCentrality(process)
 process.HeavyIonGlobalParameters = cms.PSet(
 	centralityVariable = cms.string("HFhits"),
-	nonDefaultGlauberModel = cms.string(""),
+	nonDefaultGlauberModel = cms.string("Hydjet_Bass"),
 	centralitySrc = cms.InputTag("hiCentrality")
 	)
 
