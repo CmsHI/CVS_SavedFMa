@@ -36,7 +36,8 @@ def enableDataAnalyzers(process):
   process.akPu3PFJetAnalyzer.isMC = False
 
 def enableOpenHlt(process, seq):
-	process.load("HLTrigger.HLTanalyzers.HI_HLTAnalyser_cff")
+	from HLTrigger.HLTanalyzers.HI_HLTAnalyser_cff import hltanalysis
+	process.hltanalysis = hltanalysis
 	process.hltanalysis.RunParameters.Debug = False
 	process.hltanalysis.RunParameters.UseTFileService = True
 	process.hltanalysis.RunParameters.Monte = (False)
@@ -49,5 +50,6 @@ def enableOpenHlt(process, seq):
 	process.hltanalysis.EndcapPhoton = "correctedIslandEndcapSuperClusters"
 	process.hltanalysis.l1GtReadoutRecord = "gtDigis"
 	# add to seq
+	process.load("RecoHI.HiCentralityAlgos.CentralityBin_cfi")
 	seq*=process.centralityBin
 	seq*=process.hltanalysis
