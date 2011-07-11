@@ -67,7 +67,7 @@ struct AnaJets
 				t->SetBranchAddress("refpt",this->refpt);
       }
     } else if (treeFormat==1) {
-      if (!tname.Contains("PFJetAnalyzer")&&name=="j4") jetPt = "corrpt_";
+      if (!tname.Contains("PFJetAnalyzer")) jetPt = "corrpt_";
       t->SetBranchAddress("n"+name,&(this->njets));
       t->SetBranchAddress(jetPt+name,this->jtpt);
       t->SetBranchAddress("jteta_"+name,this->jteta);
