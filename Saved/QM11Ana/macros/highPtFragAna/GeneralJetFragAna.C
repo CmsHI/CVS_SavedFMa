@@ -72,7 +72,7 @@ void GeneralJetFragAna::Loop()
       cout << "Entry " << ievt << " (" << (Float_t)ievt/numEvtEnt*100 << "%)" << endl;
       //cout << "run/lumi/evt: " << anaEvt_.run << "/" << anaEvt_.lumi << "/" << anaEvt_.evt << endl;
       cout << "bin|vz|nhlt: " << anaEvt_.cbin << "|" << anaEvt_.vz << "|" << anaEvt_.nHLTBit
-			<< " njet: " << anaJets_.njets << " jt0pt|eta: " << anaJets_.jtpt[0] << "|" << anaJets_.jteta[0] << " refjet: " << anaJets_.refpt[0]
+			<< " njet: " << anaJets_.njets << " 0th jtpt|eta: " << anaJets_.jtpt[0] << "|" << anaJets_.jteta[0] << " refjet: " << anaJets_.refpt[0]
 			<< " trk pid|pt|eta|phi|nhits|pfid: " << anaPs_.ppid[0] << "|" << anaPs_.ppt[0] << "|" << anaPs_.peta[0] << "|" << anaPs_.pphi[0] << "|" << anaPs_.trkNHits[0] << "|" << anaPs_.pfid[0] << endl;
     }
 		
@@ -104,7 +104,6 @@ void GeneralJetFragAna::Loop()
       jf_.jteta[j]=anaJets_.jteta[anaJInd[j]];
       jf_.jtphi[j]=anaJets_.jtphi[anaJInd[j]];
     }
-    //cout << "best pt: " << anaJets_.jtpt[leadJetInd] << " ref: " << anaJets_.refpt[leadJetInd] << endl;
 		
     // Particle level vars
     if (!doJetOnly_) {

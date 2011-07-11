@@ -20,7 +20,7 @@ void anaGeneralJF_data(
   gSystem->Load("libPhysics");
   TString version("v12");
 
-  Int_t treeFormat=-1,doJEC=-1;
+  Int_t treeFormat=-1;
   TString fdataname,tag,algo;
   TChain * tevt = 0, * tjet = 0, * tp=0;
 
@@ -60,8 +60,6 @@ void anaGeneralJF_data(
   jfana.evtTree_ = tevt;
   jfana.jetTree_ = tjet;
   jfana.doMC_ = doMC;
-  jfana.doJEC_ = doJEC;
-  //jfana.doJetOnly_ = true;
   jfana.useTrkQual_ = useTrkQual;
   jfana.pTree_ = tp;
   jfana.leadJetPtMin_=90;

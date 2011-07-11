@@ -14,7 +14,6 @@ void anaGeneralJF_mc(
     )
 
 {
-  Bool_t doMC = true;
   cout << "start " << endl;
   gSystem->Load("libMathCore");
   gSystem->Load("libPhysics");
@@ -33,7 +32,6 @@ void anaGeneralJF_mc(
   //TChain * chain = new TChain("PFJetAnalyzer/t","");
   //Bool_t useTrkQual = true;
   TChain * chain = new TChain("t","");
-  Bool_t useTrkQual = false;
   chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt80_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodTightTracks/pthat80_HIEmbedded_EscaleRepass_set1.root");
   chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt80_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodTightTracks/pthat80_HIEmbedded_EscaleRepass_set2.root");
   chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt80_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodTightTracks/pthat80_HIEmbedded_EscaleRepass_set3.root");
@@ -57,10 +55,8 @@ void anaGeneralJF_mc(
   GeneralJetFragAna jfana(algo);
   jfana.evtTree_ = tevt;
   jfana.jetTree_ = tjet;
-  jfana.doMC_ = doMC;
-  jfana.doJEC_ = doJEC;
-  jfana.useTrkQual_ = useTrkQual;
-  //jfana.doJetOnly_ = true;
+  jfana.doMC_ = true;
+  jfana.useTrkQual_ = false;
   jfana.pTree_ = tp;
   jfana.leadJetPtMin_=90;
 	jfana.jetEtaMax_ = 2;
