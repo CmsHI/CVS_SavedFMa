@@ -28,12 +28,17 @@ void anaGeneralJF_mc(
   // Inputs/Output
   // data
   treeFormat = 1; // 0 for jra, 1 for pfana
-  doJEC = 0;
-  algo = "j4";
+  algo = "j1";
   // === HI ===
-  TChain * chain = new TChain("PFJetAnalyzer/t","");
-  chain->Add("/net/hisrv0001/home/frankma/scratch01/mc/Hydjet_Bass_MinBias_2760GeV/Pyquen_UnquenchedDiJet_393-v1/all_pt80*-v1.root");
-  tag = Form("trana%s_hydjuq80pfhgtv1_%s_j%dt%d_pt4",version.Data(),algo.Data(),jetType,particleType);
+  //TChain * chain = new TChain("PFJetAnalyzer/t","");
+  //Bool_t useTrkQual = true;
+  TChain * chain = new TChain("t","");
+  Bool_t useTrkQual = false;
+  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt80_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodTightTracks/pthat80_HIEmbedded_EscaleRepass_set1.root");
+  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt80_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodTightTracks/pthat80_HIEmbedded_EscaleRepass_set2.root");
+  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt80_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodTightTracks/pthat80_HIEmbedded_EscaleRepass_set3.root");
+  chain->Add("/net/hisrv0001/home/mnguyen/scratch/InclusiveJetAnalyzer/310X/Pyquen_UnquenchedDiJet_Pt80_GEN-SIM-RECO_393_setX/HICorrJetTuples_PFTowers_hiGoodTightTracks/pthat80_HIEmbedded_EscaleRepass_set4.root");
+  tag = Form("trana%s_hydjuq80pfhgtv1repass_%s_j%dt%d_et90",version.Data(),algo.Data(),jetType,particleType);
 
   cout << chain->GetFile()->GetName() << endl;
   tevt = chain;
@@ -41,13 +46,9 @@ void anaGeneralJF_mc(
   tp = chain;
 
   cout << fdataname << " output: " << tag << endl;
-  cout << "Input: " << fdataname << endl;
+  cout << "Input: " << chain->GetName() << endl;
   cout << " Jet: " << algo << endl;
   cout << "Output: " << tag << endl;
-
-  // JEC
-  AnaJEC anajec;
-  anajec.Init();
 
   // output
   TFile * outf = new TFile(Form("ntout/%s.root",tag.Data()),"RECREATE");
@@ -58,11 +59,12 @@ void anaGeneralJF_mc(
   jfana.jetTree_ = tjet;
   jfana.doMC_ = doMC;
   jfana.doJEC_ = doJEC;
+  jfana.useTrkQual_ = useTrkQual;
   //jfana.doJetOnly_ = true;
-  jfana.anajec_ = &anajec;
   jfana.pTree_ = tp;
-  jfana.leadJetPtMin_=-1;
-  jfana.pptMin_=4;
+  jfana.leadJetPtMin_=90;
+	jfana.jetEtaMax_ = 2;
+  jfana.pptMin_=-1;
   jfana.treeFormat_=treeFormat; // 0 for jra, 1 for pftree
   jfana.Init(jetType,particleType);
   jfana.Loop();
