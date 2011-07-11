@@ -51,30 +51,30 @@ struct AnaJets
     TString jetPt = "jtpt_";
     if (treeFormat==0) {
       if (jType==2) {
-	t->SetBranchAddress("nref",&(this->njets));
-	t->SetBranchAddress(jetPt,this->jtpt);
-	t->SetBranchAddress("jteta",this->jteta);
-	t->SetBranchAddress("jtphi",this->jtphi);
-	t->SetBranchAddress("rawpt",this->rawpt);
+				t->SetBranchAddress("nref",&(this->njets));
+				t->SetBranchAddress(jetPt,this->jtpt);
+				t->SetBranchAddress("jteta",this->jteta);
+				t->SetBranchAddress("jtphi",this->jtphi);
+				t->SetBranchAddress("rawpt",this->rawpt);
       } else if (jType==1) {
-	jetPt = "genpt";
-	t->SetBranchAddress("ngen",&(this->njets));
-	t->SetBranchAddress(jetPt,this->jtpt);
-	t->SetBranchAddress("geneta",this->jteta);
-	t->SetBranchAddress("genphi",this->jtphi);
+				jetPt = "genpt";
+				t->SetBranchAddress("ngen",&(this->njets));
+				t->SetBranchAddress(jetPt,this->jtpt);
+				t->SetBranchAddress("geneta",this->jteta);
+				t->SetBranchAddress("genphi",this->jtphi);
       }
       if (doMC) {
-	t->SetBranchAddress("refpt",this->refpt);
+				t->SetBranchAddress("refpt",this->refpt);
       }
     } else if (treeFormat==1) {
-      if (!tname.Contains("PFJetAnalyzer")) jetPt = "corrpt_";
+      if (!tname.Contains("PFJetAnalyzer")&&name=="j4") jetPt = "corrpt_";
       t->SetBranchAddress("n"+name,&(this->njets));
       t->SetBranchAddress(jetPt+name,this->jtpt);
       t->SetBranchAddress("jteta_"+name,this->jteta);
       t->SetBranchAddress("jtphi_"+name,this->jtphi);
       t->SetBranchAddress("rawpt_"+name,this->rawpt);
       if (doMC) {
-	t->SetBranchAddress("refpt_"+name,this->refpt);
+				t->SetBranchAddress("refpt_"+name,this->refpt);
       }
     }
     cout << " ***jetpt branch: " << jetPt << " *** " << endl;
@@ -96,42 +96,42 @@ struct AnaParticles
     cout << "load particle branches for " << tname << endl;
     if (pType==2) { // tracks
       if (treeFormat==0) {
-	// trkAna
-	t->SetBranchAddress("nTrk",&(this->np));
-	t->SetBranchAddress("trkPt",this->ppt);
-	t->SetBranchAddress("trkEta",this->peta);
-	t->SetBranchAddress("trkPhi",this->pphi);
-	t->SetBranchAddress("trkNHit",this->trkNHits);
-	t->SetBranchAddress("trkNHit",this->trkNHits);
+				// trkAna
+				t->SetBranchAddress("nTrk",&(this->np));
+				t->SetBranchAddress("trkPt",this->ppt);
+				t->SetBranchAddress("trkEta",this->peta);
+				t->SetBranchAddress("trkPhi",this->pphi);
+				t->SetBranchAddress("trkNHit",this->trkNHits);
+				t->SetBranchAddress("trkNHit",this->trkNHits);
       } else if (treeFormat==1) {
-	// pf ana
-	t->SetBranchAddress("ntrack",&(this->np));
-	t->SetBranchAddress("trackpt",this->ppt);
-	t->SetBranchAddress("tracketa",this->peta);
-	t->SetBranchAddress("trackphi",this->pphi);
-	t->SetBranchAddress("trackqual",this->trkQual);
-	t->SetBranchAddress("tracknhits",this->trkNHits);
+				// pf ana
+				t->SetBranchAddress("ntrack",&(this->np));
+				t->SetBranchAddress("trackpt",this->ppt);
+				t->SetBranchAddress("tracketa",this->peta);
+				t->SetBranchAddress("trackphi",this->pphi);
+				t->SetBranchAddress("trackqual",this->trkQual);
+				t->SetBranchAddress("tracknhits",this->trkNHits);
       }
     } else if (pType==3) { // pf cand
       if (treeFormat==1) {
-	t->SetBranchAddress("nPFcand",&(this->np));
-	t->SetBranchAddress("candId",this->pfid);
-	t->SetBranchAddress("candpt",this->ppt);
-	t->SetBranchAddress("candeta",this->peta);
-	t->SetBranchAddress("candphi",this->pphi);
+				t->SetBranchAddress("nPFcand",&(this->np));
+				t->SetBranchAddress("candId",this->pfid);
+				t->SetBranchAddress("candpt",this->ppt);
+				t->SetBranchAddress("candeta",this->peta);
+				t->SetBranchAddress("candphi",this->pphi);
       }
     } else if (pType==0) { // genp
       if (treeFormat==0) {
-	t->SetBranchAddress("mult",&(this->np));
-	t->SetBranchAddress("pt",this->ppt);
-	t->SetBranchAddress("eta",this->peta);
-	t->SetBranchAddress("phi",this->pphi);
+				t->SetBranchAddress("mult",&(this->np));
+				t->SetBranchAddress("pt",this->ppt);
+				t->SetBranchAddress("eta",this->peta);
+				t->SetBranchAddress("phi",this->pphi);
       } else if (treeFormat==1) {
-	t->SetBranchAddress("ngenp",&(this->np));
-	t->SetBranchAddress("genppdgId",this->ppid);
-	t->SetBranchAddress("genppt",this->ppt);
-	t->SetBranchAddress("genpeta",this->peta);
-	t->SetBranchAddress("genpphi",this->pphi);
+				t->SetBranchAddress("ngenp",&(this->np));
+				t->SetBranchAddress("genppdgId",this->ppid);
+				t->SetBranchAddress("genppt",this->ppt);
+				t->SetBranchAddress("genpeta",this->peta);
+				t->SetBranchAddress("genpphi",this->pphi);
       }
     }
   }
@@ -188,41 +188,41 @@ struct JetFrag
 // =====================================================
 class GeneralJetFragAna
 {
-  public:
-    // ana setup
-    TString name_;
-    TChain * evtTree_;
-    TChain * jetTree_;
-    TChain * pTree_;
-
-    Bool_t doMC_;
-    Int_t doJEC_;
-    Bool_t doJetOnly_;
-    //AnaJEC * anajec_;
-    Bool_t useTrkQual_;
-
-    AnaEvt anaEvt_;
-    AnaJets anaJets_;
-    AnaParticles anaPs_;
-
-    Float_t leadJetPtMin_;
-    Float_t jetEtaMax_;
-    Float_t pptMin_;
-    Int_t treeFormat_;
-    Int_t jetType_;
-    Int_t pType_;
-
-    // ana members
-    TTree * jfTree_;
-    JetFrag jf_;
-    std::vector<PtEtaPhiMLorentzVectorD> anaJetv_;
-    std::vector<PtEtaPhiMLorentzVectorD> pv_;
-
-    // methods
-    GeneralJetFragAna(TString name);
-    void Init(Int_t jType, Int_t pType);
-    void Loop();
-    Int_t GetLeadingJet(AnaJets & jets,std::vector<PtEtaPhiMLorentzVectorD> & jv);
-    Int_t GetJet2(AnaJets & jets,std::vector<PtEtaPhiMLorentzVectorD> & jv, Int_t leadJetInd);
+public:
+	// ana setup
+	TString name_;
+	TChain * evtTree_;
+	TChain * jetTree_;
+	TChain * pTree_;
+	
+	Bool_t doMC_;
+	Int_t doJEC_;
+	Bool_t doJetOnly_;
+	//AnaJEC * anajec_;
+	Bool_t useTrkQual_;
+	
+	AnaEvt anaEvt_;
+	AnaJets anaJets_;
+	AnaParticles anaPs_;
+	
+	Float_t leadJetPtMin_;
+	Float_t jetEtaMax_;
+	Float_t pptMin_;
+	Int_t treeFormat_;
+	Int_t jetType_;
+	Int_t pType_;
+	
+	// ana members
+	TTree * jfTree_;
+	JetFrag jf_;
+	std::vector<PtEtaPhiMLorentzVectorD> anaJetv_;
+	std::vector<PtEtaPhiMLorentzVectorD> pv_;
+	
+	// methods
+	GeneralJetFragAna(TString name);
+	void Init(Int_t jType, Int_t pType);
+	void Loop();
+	Int_t GetLeadingJet(AnaJets & jets,std::vector<PtEtaPhiMLorentzVectorD> & jv);
+	Int_t GetJet2(AnaJets & jets,std::vector<PtEtaPhiMLorentzVectorD> & jv, Int_t leadJetInd);
 };
 #endif // GeneralJetFragAna_h

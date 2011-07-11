@@ -2,14 +2,14 @@
 using namespace std;
 
 GeneralJetFragAna::GeneralJetFragAna(TString name) :
-  name_(name),
-  doMC_(false),
-  doJetOnly_(false),
-  useTrkQual_(false),
-  anaJetv_(2),
-  treeFormat_(0),
-  jetType_(2),
-  pType_(2)
+name_(name),
+doMC_(false),
+doJetOnly_(false),
+useTrkQual_(false),
+anaJetv_(2),
+treeFormat_(0),
+jetType_(2),
+pType_(2)
 {
 }
 
@@ -26,7 +26,7 @@ void GeneralJetFragAna::Init(Int_t jType, Int_t pType)
   anaEvt_.LoadBranches(evtTree_,treeFormat_);
   anaJets_.LoadBranches(jetTree_,treeFormat_,name_,jType,doMC_);
   if (!doJetOnly_) anaPs_.LoadBranches(pTree_,treeFormat_,pType);
-
+	
   // Outputs
   jfTree_ = new TTree("tjf","jet frag tree");
   jf_.SetBranches(jfTree_);
@@ -49,7 +49,7 @@ void GeneralJetFragAna::Loop()
       return;
     }
   }
-
+	
   //numEvtEnt=100;
   for (Int_t ievt=0; ievt<numEvtEnt; ++ievt) {
     evtTree_->GetEntry(ievt);
@@ -58,29 +58,29 @@ void GeneralJetFragAna::Loop()
     // JEC
     if (doJEC_==1) {
       for (Int_t j=0; j<anaJets_.njets; ++j) {
-	//anaJets_.jtpt[j]=anaJets_.rawpt[j]*anajec_->GetJEC(anaJets_.rawpt[j],anaJets_.jteta[j]);
+				//anaJets_.jtpt[j]=anaJets_.rawpt[j]*anajec_->GetJEC(anaJets_.rawpt[j],anaJets_.jteta[j]);
       }
     }
     // jet energy settings
     if (treeFormat_==1 && jetType_==1) {
       for (Int_t j=0; j<anaJets_.njets; ++j) {
-	anaJets_.jtpt[j]=anaJets_.refpt[j];
+				anaJets_.jtpt[j]=anaJets_.refpt[j];
       }
     }
-
+		
     if (ievt%(numEvtEnt/20)==0) {
       cout << "Entry " << ievt << " (" << (Float_t)ievt/numEvtEnt*100 << "%)" << endl;
       //cout << "run/lumi/evt: " << anaEvt_.run << "/" << anaEvt_.lumi << "/" << anaEvt_.evt << endl;
       cout << "bin|vz|nhlt: " << anaEvt_.cbin << "|" << anaEvt_.vz << "|" << anaEvt_.nHLTBit
-	<< " njet: " << anaJets_.njets << " jtpt0: " << anaJets_.jtpt[0] << " refjet: " << anaJets_.refpt[0]
-	<< " trk pid|pt|eta|phi|nhits|pfid: " << anaPs_.ppid[0] << "|" << anaPs_.ppt[0] << "|" << anaPs_.peta[0] << "|" << anaPs_.pphi[0] << "|" << anaPs_.trkNHits[0] << "|" << anaPs_.pfid[0] << endl;
+			<< " njet: " << anaJets_.njets << " jt0pt|eta: " << anaJets_.jtpt[0] << "|" << anaJets_.jteta[0] << " refjet: " << anaJets_.refpt[0]
+			<< " trk pid|pt|eta|phi|nhits|pfid: " << anaPs_.ppid[0] << "|" << anaPs_.ppt[0] << "|" << anaPs_.peta[0] << "|" << anaPs_.pphi[0] << "|" << anaPs_.trkNHits[0] << "|" << anaPs_.pfid[0] << endl;
     }
-
+		
     // Initialize counters for each event
     jf_.clear();
     anaJetv_.clear();
     pv_.clear();
-
+		
     // Event level vars
     jf_.cent = anaEvt_.cbin * 2.5;
     jf_.cbin = anaEvt_.cbin;
@@ -89,9 +89,10 @@ void GeneralJetFragAna::Loop()
     for (Int_t i=0; i<anaEvt_.nHLTBit; ++i) {
       jf_.hltBit[i] = anaEvt_.hltBit[i];
     }
-
+		
     // Jet level vars
     Int_t leadJetInd  = GetLeadingJet(anaJets_,anaJetv_);
+    //cout << "best jet ind: " << leadJetInd << " pt: " << anaJets_.jtpt[leadJetInd] << endl;
     if (leadJetPtMin_>0 && anaJets_.jtpt[leadJetInd]<leadJetPtMin_) continue; // leading jet selection
     Int_t jet2Ind     = GetJet2(anaJets_,anaJetv_,leadJetInd);
     Int_t anaJInd[2] = { leadJetInd, jet2Ind };
@@ -104,36 +105,36 @@ void GeneralJetFragAna::Loop()
       jf_.jtphi[j]=anaJets_.jtphi[anaJInd[j]];
     }
     //cout << "best pt: " << anaJets_.jtpt[leadJetInd] << " ref: " << anaJets_.refpt[leadJetInd] << endl;
-
+		
     // Particle level vars
     if (!doJetOnly_) {
       for (Int_t ip=0; ip<anaPs_.np; ++ip) {
-	if (anaPs_.ppt[ip]<pptMin_) continue;
-	if (fabs(anaPs_.peta[ip])>2.4) continue; // tracker acceptance
-	if (pType_==2) { // cuts only applied to trks
-	  if (useTrkQual_ && anaPs_.trkQual[ip]!=1) continue; // if filter on trk quality bit
-	  if (anaPs_.trkNHits[ip]<5) continue; // full tracks only for the moment
-	}
-	if (treeFormat_==1 && pType_==0 &&
-	    !(abs(anaPs_.ppid[ip])==11 // e- 0.46%
-	      || abs(anaPs_.ppid[ip])==13 // mu- 0.12%
-	      || abs(anaPs_.ppid[ip])==211 // pi+ 77.46%
-	      || abs(anaPs_.ppid[ip])==321 // k+ 12.75%
-	      || abs(anaPs_.ppid[ip])==2112 // p+ 7.81%
-	      || abs(anaPs_.ppid[ip])==3112 // Sigma- 0.59%
-	      || abs(anaPs_.ppid[ip])==3222 // Sigma+ 0.59%
-	      || abs(anaPs_.ppid[ip])==3312 // Xi- 0.21%
-	      || abs(anaPs_.ppid[ip])==3334 // Omega- 0.005%
-	      )
-	   ) continue;
-	jf_.ppt[jf_.np] = anaPs_.ppt[ip];
-	jf_.peta[jf_.np] = anaPs_.peta[ip];
-	jf_.pphi[jf_.np] = anaPs_.pphi[ip];
-	jf_.pfid[jf_.np] = anaPs_.pfid[ip];
-	++jf_.np;
+				if (anaPs_.ppt[ip]<pptMin_) continue;
+				if (fabs(anaPs_.peta[ip])>2.4) continue; // tracker acceptance
+				if (pType_==2) { // cuts only applied to trks
+					if (useTrkQual_ && anaPs_.trkQual[ip]!=1) continue; // if filter on trk quality bit
+					if (anaPs_.trkNHits[ip]<5) continue; // full tracks only for the moment
+				}
+				if (treeFormat_==1 && pType_==0 &&
+						!(abs(anaPs_.ppid[ip])==11 // e- 0.46%
+							|| abs(anaPs_.ppid[ip])==13 // mu- 0.12%
+							|| abs(anaPs_.ppid[ip])==211 // pi+ 77.46%
+							|| abs(anaPs_.ppid[ip])==321 // k+ 12.75%
+							|| abs(anaPs_.ppid[ip])==2112 // p+ 7.81%
+							|| abs(anaPs_.ppid[ip])==3112 // Sigma- 0.59%
+							|| abs(anaPs_.ppid[ip])==3222 // Sigma+ 0.59%
+							|| abs(anaPs_.ppid[ip])==3312 // Xi- 0.21%
+							|| abs(anaPs_.ppid[ip])==3334 // Omega- 0.005%
+							)
+						) continue;
+				jf_.ppt[jf_.np] = anaPs_.ppt[ip];
+				jf_.peta[jf_.np] = anaPs_.peta[ip];
+				jf_.pphi[jf_.np] = anaPs_.pphi[ip];
+				jf_.pfid[jf_.np] = anaPs_.pfid[ip];
+				++jf_.np;
       }
     }
-
+		
     // All vars calculated
     jfTree_->Fill();
   }
@@ -152,12 +153,12 @@ Int_t GeneralJetFragAna::GetLeadingJet(AnaJets & jets, std::vector<PtEtaPhiMLore
   }
   if (bestInd>=0) {
     jv.push_back(
-	PtEtaPhiMLorentzVectorD(
-	  jets.jtpt[bestInd],
-	  jets.jteta[bestInd],
-	  jets.jtphi[bestInd],
-	  0)
-	);
+								 PtEtaPhiMLorentzVectorD(
+																				 jets.jtpt[bestInd],
+																				 jets.jteta[bestInd],
+																				 jets.jtphi[bestInd],
+																				 0)
+								 );
   }
   return bestInd;
 }
@@ -176,12 +177,12 @@ Int_t GeneralJetFragAna::GetJet2(AnaJets & jets, std::vector<PtEtaPhiMLorentzVec
   }
   if (bestInd>=0) {
     jv.push_back(
-	PtEtaPhiMLorentzVectorD(
-	  jets.jtpt[bestInd],
-	  jets.jteta[bestInd],
-	  jets.jtphi[bestInd],
-	  0)
-	);
+								 PtEtaPhiMLorentzVectorD(
+																				 jets.jtpt[bestInd],
+																				 jets.jteta[bestInd],
+																				 jets.jtphi[bestInd],
+																				 0)
+								 );
   }
   return bestInd;
 }
