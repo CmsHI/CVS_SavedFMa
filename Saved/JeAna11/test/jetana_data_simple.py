@@ -13,7 +13,7 @@ process.source = cms.Source("PoolSource",
     ))
 
 process.maxEvents = cms.untracked.PSet(
-            input = cms.untracked.int32(100))
+            input = cms.untracked.int32(1000))
 
 #load some general stuff
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -35,7 +35,7 @@ process.HeavyIonGlobalParameters = cms.PSet(
 
 # tree output
 process.TFileService = cms.Service("TFileService",
-                                  fileName=cms.string("JetAnaTrees.root"))
+                                  fileName=cms.string("JetOHTrees.root"))
 
 # Define Jet Algo parameters
 process.load('RecoHI.HiJetAlgos.HiRecoJets_cff')
