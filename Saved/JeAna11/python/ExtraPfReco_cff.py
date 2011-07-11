@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 from RecoHI.Configuration.Reconstruction_hiPF_cff import *
 
-trackerDrivenElectronSeeds.TkColList = cms.VInputTag("hiGoodTightTracks")
+pfTrack.TkColList = cms.VInputTag("hiGoodTightTracks")
 
 # PF uisng a grid of pseudo-towers to emulate Russian style subtraction
 from RecoHI.HiJetAlgos.ParticleTowerProducer_cff import *
@@ -11,8 +11,11 @@ from RecoLocalCalo.Configuration.hcalLocalReco_cff import *
 PFTowers = particleTowerProducer.clone()
 
 HiParticleFlowRecoNoJets = cms.Sequence(
-    particleFlowCluster
-    * trackerDrivenElectronSeeds
-    * particleFlowReco
-		* PFTowers
-    )
+	particleFlowCluster
+	* pfTrack
+	* particleFlowReco
+	* PFTowers
+	)
+
+
+
