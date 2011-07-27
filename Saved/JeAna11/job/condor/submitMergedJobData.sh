@@ -12,12 +12,12 @@ output_dir=$3
 # initialize
 ct=0
 cmd=
-nPerMerge=5
+nPerMerge=2
 N=`cat $inputList | wc -l`
 startDir=`pwd`
 echo $inputList: $N files
 
-for job in `cat $inputList`; do
+for job in `cat $inputList | head -n 1000`; do
   subi=`expr $ct % $nPerMerge`
   #echo $job, subi: $subi
   # -- build subgroup --
