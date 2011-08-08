@@ -43,7 +43,7 @@ echo $cmd
 eval $cmd
 mv $logFile $logDir/
 fsize=`stat -c%s $outputFile`
-echo $fsize
+echo file size: $fsize
 if [ $fsize -lt 50 ]; then
   echo bad file: $outputFile
   exit 1
