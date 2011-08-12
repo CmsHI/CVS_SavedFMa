@@ -182,7 +182,7 @@ void TrkCaloClassification( TString myMethodList = "" , Float_t ptmin=20, Float_
   //factory->AddVariable( "myvar1 := var1+var2", 'F' );
   //factory->AddVariable( "myvar2 := var1-var2", "Expression 2", "", 'F' );
   //factory->AddVariable( "var3",                "Variable 3", "units", 'F' );
-  //factory->AddVariable( "normPtError := trkPtError/trkPt","#sigma(p_{T})/p_{T}","",'F');
+  factory->AddVariable( "normPtError := trkPtError/trkPt","#sigma(p_{T})/p_{T}","",'F');
   factory->AddVariable( "trkNHit",                "# hits", "", 'F' );
   factory->AddVariable( "normChi2 := (trkChi2/trkNdof)/trkNlayer", "norm. #chi^{2}/layer","",'F' );
   //factory->AddVariable( "vzComp := abs(trkDz1/trkDzError1)", "|dz(vtx)/#sigma(dz)^{vtx,trk}|","",'F');
@@ -267,8 +267,8 @@ void TrkCaloClassification( TString myMethodList = "" , Float_t ptmin=20, Float_
   factory->SetBackgroundWeightExpression( "1" );
   
   TCut trkPreSel = Form("cbin>=%.0f&&cbin<%.0f&&trkPt>%.1f&&trkPt<%.1f&&abs(trkEta)<2.4",cbinmin,cbinmax,ptmin,ptmax);
-	trkPreSel = trkPreSel && "trkNHit>=7";
-	trkPreSel = trkPreSel && "trkPtError/trkPt>=0 && trkPtError/trkPt<0.2";
+	//trkPreSel = trkPreSel && "trkNHit>=7";
+	trkPreSel = trkPreSel && "trkPtError/trkPt>=0 && trkPtError/trkPt<1";
 	trkPreSel = trkPreSel && "(trkChi2/trkNdof)/trkNlayer>=0 && (trkChi2/trkNdof)/trkNlayer<1";
 	trkPreSel = trkPreSel && "abs(trkDz1/trkDzError1)<10&&abs(trkDxy1/trkDxyError1)<10";
   
