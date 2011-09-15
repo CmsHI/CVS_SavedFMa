@@ -52,6 +52,12 @@ class CaloTowersCleaner : public edm::EDProducer {
       // ----------member data ---------------------------
 
   edm::InputTag regularTowerTag;
+	double excludeEtaMin_;
+	double excludeEtaMax_;
+	double excludePhiMin_;
+	double excludePhiMax_;
+	
+	
 };
 
 //
@@ -66,7 +72,11 @@ class CaloTowersCleaner : public edm::EDProducer {
 //
 // constructors and destructor
 //
-CaloTowersCleaner::CaloTowersCleaner(const edm::ParameterSet& iConfig)
+CaloTowersCleaner::CaloTowersCleaner(const edm::ParameterSet& iConfig) :
+excludeEtaMin_(iConfig.getParameter<double>("excludeEtaMin")),
+excludeEtaMax_(iConfig.getParameter<double>("excludeEtaMax")),
+excludePhiMin_(iConfig.getParameter<double>("excludePhiMin")),
+excludePhiMax_(iConfig.getParameter<double>("excludePhiMax"))
 {
   regularTowerTag=iConfig.getParameter<edm::InputTag>("regularTowerTag");
 
@@ -106,6 +116,14 @@ CaloTowersCleaner::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 	CaloTowerCollection::const_iterator rt_it = rt_begin;
 	
 	for (;rt_it!=rt_end;++rt_it){
+		// eta-phi region cuts
+		//std::cout << "eta|phi: " << rt_it->eta() << " " << rt_it->phi() << std::endl;
+		if (rt_it->eta()>excludeEtaMin_&&rt_it->eta()<excludeEtaMax_) { 
+			//std:: cout << "exclude eta: " << rt_it->eta() << std::endl;
+			continue; }
+		if (rt_it->phi()>excludePhiMin_&&rt_it->phi()<excludePhiMax_) { 
+			//std:: cout << "exclude phi: " << rt_it->phi() << std::endl;
+			continue; }
 		//just copy the regular tower over
 		output->push_back(*rt_it);
 	}
