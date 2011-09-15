@@ -13,7 +13,7 @@
 //
 // Original Author:  Jean-Roch Vlimant,40 3-A28,+41227671209,
 //         Created:  Thu Nov  4 16:36:30 CET 2010
-// $Id: CaloTowersCleaner.cc,v 1.2 2010/11/24 19:52:16 anastass Exp $
+// $Id: CaloTowersCleaner.cc,v 1.2 2011/09/15 11:40:25 frankma Exp $
 //
 //
 
@@ -118,12 +118,14 @@ CaloTowersCleaner::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 	for (;rt_it!=rt_end;++rt_it){
 		// eta-phi region cuts
 		//std::cout << "eta|phi: " << rt_it->eta() << " " << rt_it->phi() << std::endl;
-		if (rt_it->eta()>excludeEtaMin_&&rt_it->eta()<excludeEtaMax_) { 
+		if (rt_it->eta()>excludeEtaMin_ &&
+        rt_it->eta()<excludeEtaMax_ &&
+        rt_it->phi()>excludePhiMin_ &&
+        rt_it->phi()<excludePhiMax_) { 
 			//std:: cout << "exclude eta: " << rt_it->eta() << std::endl;
-			continue; }
-		if (rt_it->phi()>excludePhiMin_&&rt_it->phi()<excludePhiMax_) { 
 			//std:: cout << "exclude phi: " << rt_it->phi() << std::endl;
-			continue; }
+			continue;
+    }
 		//just copy the regular tower over
 		output->push_back(*rt_it);
 	}
