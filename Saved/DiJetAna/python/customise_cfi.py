@@ -22,10 +22,25 @@ def enableRECO(process,mode="MC",type="HI"):
   if type=="HI":
     # trk
     process.dj_reco_extra*=process.hiGoodTracksSelection
+
     # pat jet
     process.load('PhysicsTools.PatAlgos.patHeavyIonSequences_cff')
-    from PhysicsTools.PatAlgos.tools.heavyIonTools import configureHeavyIons
-    configureHeavyIons(process)
+    process.patJetCorrFactors.src = cms.InputTag("iterativeConePu5CaloJets")
+    process.patJetCorrFactors.levels = cms.vstring('L2Relative','L3Absolute')
+    process.patJetCorrFactors.payload = cms.string('IC5Calo')
+    process.patJets.jetSource  = cms.InputTag("iterativeConePu5CaloJets")
+    process.patJets.addBTagInfo         = False
+    process.patJets.addTagInfos         = False
+    process.patJets.addDiscriminators   = False
+    process.patJets.addAssociatedTracks = False
+    process.patJets.addJetCharge        = False
+    process.patJets.addJetID            = False
+    process.patJets.getJetMCFlavour     = False
+    process.patJets.addGenPartonMatch   = True
+    process.patJets.addGenJetMatch      = True
+    process.patJets.embedGenJetMatch    = True
+    process.patJets.embedGenPartonMatch = True
+    process.patJets.embedCaloTowers	    = False
     process.dj_reco_extra *= process.heavyIon*process.makeHeavyIonJets
     if mode=="Data":
       from Saved.Skim.customise_cfi import removePatMCMatch
@@ -46,7 +61,7 @@ def enableRECO(process,mode="MC",type="HI"):
   process.djgen]):
     if m!=process.djgen:
       m.jetsrc = "patJets"
-    m.refjetsrc = "patJets"
+      m.refjetsrc = "patJets"
   process.djcalo.trksrc = "hiGoodTracks"
 
 # If sample is pp disable HI event related variables
