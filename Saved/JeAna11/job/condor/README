@@ -4,3 +4,5 @@
 ./submitMergedJobData.sh custom_HiJetTrkEffIterTrk_mc_cfg.py ~/inputs_mc/HydjetBass_DJUQ170_GSR_393_300k.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hypyuq170-393-trkeff_itertrk-v1
 ./submitMergedJobData.sh custom_HiJetTrkEffIterTrk_mc_cfg.py ~/inputs_mc/HydjetBass_DJUQ170_GSR_393_300k.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hypyuq170-393-trkeff_itertrk-v2
 ./submitMergedJobData.sh custom_HiJetTrkEffIterTrk_mc_cfg.py ~/inputs_mc/HydjetBass_DJUQ170_GSR_393_300k.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hypyuq170-393-trkeff_itertrk-v3
+./submitMergedJobData.sh custom_HiJetTrkEffIterTrkCalo_mc_cfg.py ~/inputs_mc/HydjetBass_DJUQ170_GSR_393_300k.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hypyuq170-393-trkeff_itertrkcalo-v0
+./submitMergedJobData.sh custom_HiJetTrkEffIterTrkCalo_mc_cfg.py ~/inputs_mc/HydjetBass_DJUQ170_GSR_393_300k.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hypyuq170-393-trkeff_itertrkcalo-v1

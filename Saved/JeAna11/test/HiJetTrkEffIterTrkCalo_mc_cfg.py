@@ -119,8 +119,11 @@ process.anaTrack.doPFMatching = cms.untracked.bool(True)
 
 process.anaTrack_hgt = process.anaTrack.clone(trackSrc = 'hiGoodTightTracks')
 
-process.rechitanalyzer.doEcal = False
-process.rechitanalyzer.doHcal = False
+process.rechitanalyzer.HBHETreePtMin = cms.untracked.double(2)
+process.rechitanalyzer.HFTreePtMin = cms.untracked.double(2)
+process.rechitanalyzer.EBTreePtMin = cms.untracked.double(2)
+process.rechitanalyzer.EETreePtMin = cms.untracked.double(2)
+process.rechitanalyzer.TowerTreePtMin = cms.untracked.double(2)
 
 # fill tree
 process.hitrkEffAnalyzer_akpu3pf.fillNtuples = cms.bool(True)
