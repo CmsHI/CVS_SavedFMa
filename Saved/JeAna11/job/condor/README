@@ -4,5 +4,10 @@
 ./submitMergedJobData.sh custom_HiJetTrkEffIterTrk_mc_cfg.py ~/inputs_mc/HydjetBass_DJUQ170_GSR_393_300k.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hypyuq170-393-trkeff_itertrk-v1
 ./submitMergedJobData.sh custom_HiJetTrkEffIterTrk_mc_cfg.py ~/inputs_mc/HydjetBass_DJUQ170_GSR_393_300k.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hypyuq170-393-trkeff_itertrk-v2
 ./submitMergedJobData.sh custom_HiJetTrkEffIterTrk_mc_cfg.py ~/inputs_mc/HydjetBass_DJUQ170_GSR_393_300k.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hypyuq170-393-trkeff_itertrk-v3
-./submitMergedJobData.sh custom_HiJetTrkEffIterTrkCalo_mc_cfg.py ~/inputs_mc/HydjetBass_DJUQ170_GSR_393_300k.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hypyuq170-393-trkeff_itertrkcalo-v0
-./submitMergedJobData.sh custom_HiJetTrkEffIterTrkCalo_mc_cfg.py ~/inputs_mc/HydjetBass_DJUQ170_GSR_393_300k.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hypyuq170-393-trkeff_itertrkcalo-v1
+./submitMergedJobData.sh custom_HiJetTrkEffIterTrk_mc_cfg.py ~/inputs_mc/HydjetBass_DJUQ170_GSR_393_300k.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hypyuq170-393-trkeff_itertrk-v4
+  * tested hitrkeff ana
+./submitMergedJobData.sh custom_HiJetTrkEffIterTrk_mc_cfg.py ~/inputs_mc/HydjetBass_MinBias2760_393.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hymb-393-trkeff_itertrk-v5
+./submitMergedJobData.sh custom_HiJetTrkEffIterTrk_mc_cfg.py ~/inputs_mc/HydjetBass_DJUQ170_GSR_393_300k.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Bass_MinBias_2760GeV/hypyuq170-393-trkeff_itertrk-v5
+  * added centrality and conform mtrkVz,Vxy names
+./submitMergedJobData.sh custom_HiJetTrkEffIterTrkCalo_data_cfg.py ~/inputs_data/HCPR-CentralSkimDiJet.txt /net/hidsk0001/d00/scratch/frankma/data/HCPR/hccskimdj-trkeff_itertrkcalo-v2
+  * data centrality fix
