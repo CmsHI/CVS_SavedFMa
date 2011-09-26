@@ -9,7 +9,16 @@ process.options = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(
-    '/store/hidata/HIRun2010/HICorePhysics/RAW-RECO/v3/000/151/058/FA5609D8-F5F0-DF11-ADBB-001A64789E00.root'
+       '/store/hidata/HIRun2010/HICorePhysics/RAW-RECO/v3/000/151/236/42DF91BD-DEF1-DF11-B8B3-00E08178C11F.root',
+       '/store/hidata/HIRun2010/HICorePhysics/RAW-RECO/v3/000/151/353/46558173-EBF2-DF11-90FF-00E08178C169.root',
+       '/store/hidata/HIRun2010/HICorePhysics/RAW-RECO/v3/000/151/237/A23DAC27-BEF2-DF11-90CA-0025B3E06514.root',
+       '/store/hidata/HIRun2010/HICorePhysics/RAW-RECO/v3/000/151/353/92DDA1AA-ECF2-DF11-9B4F-0025B3E063F0.root',
+       '/store/hidata/HIRun2010/HICorePhysics/RAW-RECO/v3/000/151/350/141AE965-E5F2-DF11-87F4-003048635E3C.root',
+       '/store/hidata/HIRun2010/HICorePhysics/RAW-RECO/v3/000/151/353/72DB1A0E-ECF2-DF11-B9A2-00E08178C13B.root',
+       '/store/hidata/HIRun2010/HICorePhysics/RAW-RECO/v3/000/151/211/AA62AB4C-6DF2-DF11-A3D7-001A64789DB8.root',
+       '/store/hidata/HIRun2010/HICorePhysics/RAW-RECO/v3/000/151/426/86E5551A-AAF2-DF11-BA09-0025B3E0648A.root',
+       '/store/hidata/HIRun2010/HICorePhysics/RAW-RECO/v3/000/151/428/F42E8600-E6F2-DF11-822E-002481E154EC.root',
+       '/store/hidata/HIRun2010/HICorePhysics/RAW-RECO/v3/000/151/020/08F3D35C-ACF0-DF11-8131-001A64789E68.root'
     ))
 
 process.maxEvents = cms.untracked.PSet(
@@ -30,7 +39,7 @@ from CmsHi.Analysis2010.CommonFunctions_cff import *
 overrideCentrality(process)
 process.HeavyIonGlobalParameters = cms.PSet(
 	centralityVariable = cms.string("HFhits"),
-	nonDefaultGlauberModel = cms.string("Hydjet_Bass"),
+	nonDefaultGlauberModel = cms.string(""),
 	centralitySrc = cms.InputTag("hiCentrality")
 	)
 
