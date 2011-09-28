@@ -142,7 +142,7 @@ process.ana_step = cms.Path(process.hitrkEffAna_akpu3pf * process.icPu5JetAnalyz
 from CmsHi.JetAnalysis.customise_cfi import *
 #enableDataPat(process)
 #enableDataAnalyzers(process)
-#enableOpenHlt(process,process.ana_step)
+enableOpenHlt(process,process.ana_step)
 
 # =============== Final Schedule =====================
 process.schedule = cms.Schedule(process.reco_extra,process.reco_extra_jet,process.pat_step,process.ana_step)
