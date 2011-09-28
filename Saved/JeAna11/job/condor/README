@@ -11,3 +11,7 @@
   * added centrality and conform mtrkVz,Vxy names
 ./submitMergedJobData.sh custom_HiJetTrkEffIterTrkCalo_data_cfg.py ~/inputs_data/HCPR-CentralSkimDiJet.txt /net/hidsk0001/d00/scratch/frankma/data/HCPR/hccskimdj-trkeff_itertrkcalo-v2
   * data centrality fix
+./submitMergedJobData.sh custom_HiJetTrkEffIterTrkCalo_mc_cfg.py ~/inputs_mc/Hydjet1_8v1_MinBias2760_GSR.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Tunes_MinBias_2760GeV/hy1_8_v1_mb_hiforestv2
+./submitMergedJobData.sh custom_HiJetTrkEffIterTrkCalo_mc_cfg.py ~/inputs_mc/Hydjet1_8v2_MinBias2760_GSR.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Tunes_MinBias_2760GeV/hy1_8_v2_mb_hiforestv2
+./submitMergedJobData.sh custom_HiJetTrkEffIterTrkCalo_mc_cfg.py ~/inputs_mc/HydjetBass_MinBias2760_393.txt /net/hidsk0001/d00/scratch/frankma/mc/Hydjet_Tunes_MinBias_2760GeV/hybass_mb_hiforestv2
+  * added openhlt for the mul vars
