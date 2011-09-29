@@ -9,7 +9,7 @@ process.options = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(
-    '/store/user/davidlw/Hydjet_Bass_MinBias_2760GeV/Pyquen_UnquenchedDiJet_Pt170_GEN-SIM-RECO_393_set1/fae6fe9048513d9ac8f476dd10ba6ba7/hiReco_RAW2DIGI_RECO_99_1_Zza.root'
+    '/store/user/davidlw/Hydjet1_8v1_MinBias_2760GeV_GEN_SIM_RAW_399p1_v1/Hydjet1_8v1_MinBias_2760GeV_GEN_SIM_RECO_399p1_v1/3a59201d76ed5b3e8f0cfb7f019327cc/hiReco_RAW2DIGI_RECO_9_1_Bk0.root'
     ))
 
 process.maxEvents = cms.untracked.PSet(
@@ -24,6 +24,11 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 
 #process.MessageLogger.cerr.FwkReport.reportEvery = 100
 process.GlobalTag.globaltag = 'START39_V7::All'
+
+process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",
+ ignoreTotal=cms.untracked.int32(1),
+ oncePerEventMode=cms.untracked.bool(False)
+)
 
 # load centrality
 from CmsHi.Analysis2010.CommonFunctions_cff import *
@@ -143,6 +148,9 @@ from CmsHi.JetAnalysis.customise_cfi import *
 #enableDataPat(process)
 #enableDataAnalyzers(process)
 enableOpenHlt(process,process.ana_step)
+# to run on hydjet only
+process.hiGenParticles.srcVector = cms.vstring('generator')
+process.icPu5JetAnalyzer.eventInfoTag = cms.InputTag("generator")
 
 # =============== Final Schedule =====================
 process.schedule = cms.Schedule(process.reco_extra,process.reco_extra_jet,process.pat_step,process.ana_step)
