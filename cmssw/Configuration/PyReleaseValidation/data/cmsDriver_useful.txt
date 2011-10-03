@@ -15,7 +15,7 @@ cmsDriver.py hiReco -s RAW2DIGI,RECO --scenario HeavyIons --conditions auto:star
 # cf /Hydjet_Bass_MinBias_2760GeV/Summer11-STARTHI42_V8-v2/GEN-SIM-RECODEBUG
 
 # data reco
-cmsDriver.py hiReco -s RAW2DIGI,RECO --scenario HeavyIons --conditions auto:hltonline --datatier GEN-SIM-FEVTDEBUGHLT --eventcontent FEVTDEBUGHLT --geometry DB --filein=/d101/frankma/data/ZS/RECO_highptInNewNotOld_NewZS_noBS.root --data --no_exec
+cmsDriver.py hiReco -s RAW2DIGI,RECO --scenario HeavyIons --conditions auto:hltonline --datatier GEN-SIM-FEVTDEBUGHLT --eventcontent FEVTDEBUGHLT --geometry DB --filein=file:/d101/frankma/data/ZS/RECO_highptInNewNotOld_NewZS_noBS.root --data --no_exec
 
 # data hlt
 cmsDriver.py --step=HLT:HIon --conditions=auto:hltonline --filein=file:/d101/frankma/data/HIAllPhysics/raw/r150590.root --custom_conditions=L1GtTriggerMenu_L1Menu_CollisionsHeavyIons2010_v2_mc,L1GtTriggerMenuRcd,frontier://FrontierProd/CMS_COND_31X_L1T --fileout=RelVal_HLT2_HIon_MC.root --number=100 --data --no_exec --datatier RAW-HLT --eventcontent=FEVTDEBUGHLT --customise=HLTrigger/Configuration/CustomConfigs.L1THLT --python_filename=RelVal_HLT2_HIon_Data.py --processName=HLT2
