@@ -5,8 +5,24 @@
 # - cfg builder
 #   * http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/Configuration/PyReleaseValidation/python/cmsDriverOptions.py?view=markup
 #   * http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/Configuration/PyReleaseValidation/python/ConfigBuilder.py?view=markup
-#
 
+###################### 44X ###########################
+# mc gensim
+cmsDriver.py Configuration/GenProduction/Hydjet_Bass_MinBias_2760GeV_cfi.py -s GEN,SIM --conditions auto:starthi --datatier GEN-SIM --eventcontent RAWSIM --scenario HeavyIons --geometry DB --no_exec
+
+# mc reco
+cmsDriver.py hiReco -s RAW2DIGI,RECO --scenario HeavyIons --conditions auto:starthi --datatier GEN-SIM-FEVTDEBUGHLT --eventcontent FEVTDEBUGHLT --geometry DB --filein=Hydjet_Bass_MinBias_2760GeV_cfi_py_GEN_SIM_DIGI_L1_DIGI2RAW_HLT.root --no_exec
+# cf /Hydjet_Bass_MinBias_2760GeV/Summer11-STARTHI42_V8-v2/GEN-SIM-RECODEBUG
+
+# data reco
+cmsDriver.py hiReco -s RAW2DIGI,RECO --scenario HeavyIons --conditions auto:hltonline --datatier GEN-SIM-FEVTDEBUGHLT --eventcontent FEVTDEBUGHLT --geometry DB --filein=/d101/frankma/data/ZS/RECO_highptInNewNotOld_NewZS_noBS.root --data --no_exec
+
+# data hlt
+cmsDriver.py --step=HLT:HIon --conditions=auto:hltonline --filein=file:/d101/frankma/data/HIAllPhysics/raw/r150590.root --custom_conditions=L1GtTriggerMenu_L1Menu_CollisionsHeavyIons2010_v2_mc,L1GtTriggerMenuRcd,frontier://FrontierProd/CMS_COND_31X_L1T --fileout=RelVal_HLT2_HIon_MC.root --number=100 --data --no_exec --datatier RAW-HLT --eventcontent=FEVTDEBUGHLT --customise=HLTrigger/Configuration/CustomConfigs.L1THLT --python_filename=RelVal_HLT2_HIon_Data.py --processName=HLT2
+# mc hlt
+cmsDriver.py --step=HLT:HIon --conditions=MC39_V4HI::All --filein=file:RelVal_HLT_HIon_MC.root --custom_conditions=L1GtTriggerMenu_L1Menu_CollisionsHeavyIons2010_v2_mc,L1GtTriggerMenuRcd,frontier://FrontierProd/CMS_COND_31X_L1T --fileout=RelVal_HLT2_HIon_MC.root --number=100 --mc --no_exec --datatier RAW-HLT --eventcontent=FEVTDEBUGHLT --customise=HLTrigger/Configuration/CustomConfigs.L1THLT --python_filename=RelVal_HLT2_HIon_MC.py --processName=HLT2
+
+###################### 391 ###########################
 # For Hydjet Minbias Raw Production
 cmsDriver.py Hydjet_Quenched_MinBias_2760GeV_cfi.py -s GEN,SIM,DIGI,L1,DIGI2RAW -n 1 --geometry DB --conditions  auto:mc --datatier GEN-SIM-DIGI-RAW --eventcontent FEVTDEBUG --scenario HeavyIons --no_exec --customise HLTrigger.Configuration.customL1T_Options.py
 
