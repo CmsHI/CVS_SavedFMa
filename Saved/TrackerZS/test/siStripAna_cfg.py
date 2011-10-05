@@ -51,5 +51,4 @@ process.ssntBad = process.ssnt.clone(vr=cms.InputTag("siStripZeroSuppression","V
 
 process.ssntBadRRZS = process.ssnt.clone(vr=cms.InputTag("siStripZeroSuppression","VirginRaw","RECO1"))
 
-#process.p = cms.Path(process.sshis*process.ssnt*process.ssntRRZS*process.ssntBad*process.ssntBadRRZS)
-process.p = cms.Path(process.sshis*process.ssnt*process.ssntBad*process.ssntBadRRZS)
+process.p = cms.Path(process.sshis*process.ssnt*process.ssntRRZS*process.ssntBad*process.ssntBadRRZS)
