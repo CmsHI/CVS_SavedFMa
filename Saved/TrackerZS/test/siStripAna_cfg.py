@@ -13,14 +13,16 @@ process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use
     fileNames = cms.untracked.vstring(
         #'file:~davidlw/scratch1/HLTStudies/CMSSW_4_4_0_NewZS/src/RECO_highptInNewNotOld_NewZS_noBS.root'
-        'file:hiReco_RAW2DIGI_RECO.root'
-    )
+        #'file:hiReco_RAW2DIGI_RECO.root'
+        'file:hiReco_RAW2DIGI_RECO_ZSHEAD10_05_13pm_ALLVR.root'
+    ),
+    #eventsToProcess = cms.untracked.VEventRange('151088:107:646838-151088:107:646838')
 )
 
 process.GlobalTag.globaltag = 'GR_R_44_V5::All'
 
 process.TFileService = cms.Service("TFileService",
-                                  fileName=cms.string("hists.root"))
+                                  fileName=cms.string("ssnt_zshead10_05_13pm_allvr.root"))
                                   
 process.load("Saved.TrackerZS.trackrechitscanner_cfi")
 process.load("RecoLocalTracker.SiStripZeroSuppression.SiStripBaselineAnalyzer_cfi")
@@ -28,12 +30,26 @@ process.load("RecoLocalTracker.SiStripZeroSuppression.SiStripBaselineAnalyzer_cf
 process.trkRecHitScanner.trkSrc = "hiGlobalPrimTracks"
 process.trkRecHitScanner.trkPtMin = 20
 
-process.sistripana = process.SiStripBaselineAnalyzer.clone(
-  nModuletoDisplay = 100,
+process.sshis = process.SiStripBaselineAnalyzer.clone(
+  srcBaseline =  cms.InputTag('siStripZeroSuppression','BADAPVBASELINE','RECO1'),
+  srcAPVCM  =  cms.InputTag('siStripZeroSuppression','APVCM','RECO1'),
+  srcProcessedRawDigi =  cms.InputTag('siStripZeroSuppression','VirginRaw','RECO1'),
+  nModuletoDisplay = cms.uint32(100),
   plotClusters = cms.bool(True),
   plotBaseline = cms.bool(True),
   plotRawDigi	= cms.bool(True),
   plotAPVCM	= cms.bool(True)
   )
 
-process.p = cms.Path(process.sistripana)
+process.ssnt = cms.EDAnalyzer("StripAnalyzer",
+  vr = cms.InputTag("siStripDigis","VirginRaw")
+  )
+
+process.ssntRRZS = process.ssnt.clone(vr=cms.InputTag("siStripDigis","VirginRaw","RECO1"))
+
+process.ssntBad = process.ssnt.clone(vr=cms.InputTag("siStripZeroSuppression","VirginRaw"))
+
+process.ssntBadRRZS = process.ssnt.clone(vr=cms.InputTag("siStripZeroSuppression","VirginRaw","RECO1"))
+
+#process.p = cms.Path(process.sshis*process.ssnt*process.ssntRRZS*process.ssntBad*process.ssntBadRRZS)
+process.p = cms.Path(process.sshis*process.ssnt*process.ssntBad*process.ssntBadRRZS)

@@ -163,6 +163,8 @@ StripAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   evt_ = iEvent.id().event();
   edm::Handle< edm::DetSetVector<SiStripRawDigi> >   handVR;
   iEvent.getByLabel(vrtag_,handVR);
+  
+  analyzeRawDigi(handVR, vr_);
 }
 
 void
