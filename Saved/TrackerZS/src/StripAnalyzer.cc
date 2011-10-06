@@ -14,7 +14,7 @@
 // Original Author:  Yetkin Yilmaz
 // Modified: Frank Ma
 //         Created:  Wed Sep 28 16:27:01 EDT 2011
-// $Id: StripAnalyzer.cc,v 1.3 2011/10/06 09:58:44 frankma Exp $
+// $Id: StripAnalyzer.cc,v 1.5 2011/10/06 13:08:35 frankma Exp $
 //
 //
 
@@ -94,7 +94,7 @@ private:
   void analyzeDigi(edm::Handle< edm::DetSetVector<SiStripDigi> >& , StripEvent& t);
   void analyzeRawDigi(edm::Handle< edm::DetSetVector<SiStripRawDigi> >& , StripEvent& t);
   void analyzeProcessedRawDigi(edm::Handle< edm::DetSetVector<SiStripProcessedRawDigi> >& , StripEvent& t);
-  
+  void analyzeCluster(edm::Handle<edmNew::DetSetVector<SiStripCluster> >& hSSRD, StripEvent& t);
   void prepareTree(TTree * tree, StripEvent& s);
   
   // ----------member data ---------------------------
@@ -102,15 +102,18 @@ private:
   edm::InputTag vrtag_;  
   edm::InputTag zstag_;
   edm::InputTag prtag_;
+  edm::InputTag cltag_;
   
   
   TTree * tVR_;
   TTree * tZS_;
   TTree * tPR_;
+  TTree * tCL_;
   
   StripEvent vr_;
   StripEvent zs_;
   StripEvent pr_;
+  StripEvent cl_;
   
   int run_;
   int evt_;
@@ -118,6 +121,7 @@ private:
   bool doVR_;
   bool doZS_;
   bool doPR_;
+  bool doCL_;
 };
 
 //
@@ -136,9 +140,11 @@ StripAnalyzer::StripAnalyzer(const edm::ParameterSet& iConfig)
   vrtag_ = iConfig.getParameter<edm::InputTag>("vr");
   zstag_ = iConfig.getParameter<edm::InputTag>("zs");
   prtag_ = iConfig.getParameter<edm::InputTag>("pr");
+  cltag_ = iConfig.getParameter<edm::InputTag>("cl");
   doVR_ = iConfig.getParameter<bool>("doVR");
   doZS_ = iConfig.getParameter<bool>("doZS");
   doPR_ = iConfig.getParameter<bool>("doPR");
+  doCL_ = iConfig.getParameter<bool>("doCL");
   //now do what ever initialization is needed  
 }
 
@@ -179,6 +185,12 @@ StripAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     edm::Handle< edm::DetSetVector<SiStripProcessedRawDigi> >   handPR;
     iEvent.getByLabel(prtag_,handPR);
     analyzeProcessedRawDigi(handPR, pr_);
+  }
+  
+  if (doCL_) {
+    edm::Handle<edmNew::DetSetVector<SiStripCluster> > handCL;
+    iEvent.getByLabel(cltag_,handCL);
+    analyzeCluster(handCL, cl_);
   }
 }
 
@@ -253,6 +265,33 @@ StripAnalyzer::analyzeProcessedRawDigi(edm::Handle< edm::DetSetVector<SiStripPro
   }
 }
 
+void
+StripAnalyzer::analyzeCluster(edm::Handle<edmNew::DetSetVector<SiStripCluster> >& clusters, StripEvent& t)
+{
+  t.run = run_;
+  t.evt = evt_;
+  t.mod = 0;
+  edmNew::DetSetVector<SiStripCluster>::const_iterator itClusters = clusters->begin();
+  for (; itClusters != clusters->end(); ++itClusters ){
+    t.nstrip = 0;
+    t.id = itClusters->detId();
+    // iterate over clusters in the DetSet
+    for ( edmNew::DetSet<SiStripCluster>::const_iterator clus =	itClusters->begin(); clus != itClusters->end(); ++clus){
+      uint32_t clstrip = (uint32_t)clus->firstStrip();
+      // iterate over strips in cluster
+      for( std::vector<uint8_t>::const_iterator itAmpl = clus->amplitudes().begin(); itAmpl != clus->amplitudes().end(); ++itAmpl){
+        t.curs[t.nstrip] = t.nstrip;
+        t.strip[t.nstrip] = clstrip;
+        t.adc[t.nstrip] = *itAmpl;
+        ++clstrip;
+        ++t.nstrip;
+      }      
+    }
+    t.t->Fill();
+    ++t.mod;
+  }
+}
+
 // ------------ method called once each job just before starting event loop  ------------
 void 
 StripAnalyzer::beginJob()
@@ -268,6 +307,10 @@ StripAnalyzer::beginJob()
   if (doPR_) {
     tPR_ = fs->make<TTree>("pr","");  
     prepareTree(tPR_,pr_);
+  }
+  if (doCL_) {
+    tCL_ = fs->make<TTree>("cl","");  
+    prepareTree(tCL_,cl_);
   }
 }
 

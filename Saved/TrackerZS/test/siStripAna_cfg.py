@@ -23,7 +23,7 @@ process.source = cms.Source("PoolSource",
 process.GlobalTag.globaltag = 'GR_R_44_V5::All'
 
 process.TFileService = cms.Service("TFileService",
-                                  fileName=cms.string("sstr_zshead10_05_23pm_allvrzs.root"))
+                                  fileName=cms.string("sstr_zshead10_05_23pm_allvrzscl.root"))
                                   
 process.load("Saved.TrackerZS.trackrechitscanner_cfi")
 process.load("RecoLocalTracker.SiStripZeroSuppression.SiStripBaselineAnalyzer_cfi")
@@ -35,7 +35,7 @@ process.sshis = process.SiStripBaselineAnalyzer.clone(
   srcBaseline =  cms.InputTag('siStripZeroSuppression','BADAPVBASELINE','RECO1'),
   srcAPVCM  =  cms.InputTag('siStripZeroSuppression','APVCM','RECO1'),
   srcProcessedRawDigi =  cms.InputTag('siStripZeroSuppression','VirginRaw','RECO1'),
-  nModuletoDisplay = cms.uint32(100),
+  nModuletoDisplay = cms.uint32(500),
   plotClusters = cms.bool(True),
   plotBaseline = cms.bool(True),
   plotRawDigi	= cms.bool(True),
@@ -46,15 +46,18 @@ process.ssnt = cms.EDAnalyzer("StripAnalyzer",
   vr = cms.InputTag("siStripDigis","VirginRaw"),
   zs = cms.InputTag("siStripZeroSuppression","VirginRaw"),
   pr = cms.InputTag("siStripZeroSuppression","BADAPVBASELINE"),
+  cl = cms.InputTag("siStripClusters"),
   doVR = cms.bool(True),
   doZS = cms.bool(True),
-  doPR = cms.bool(True)
+  doPR = cms.bool(True),
+  doCL = cms.bool(True)
   )
 
 process.ssntRRZS = process.ssnt.clone(
   vr=cms.InputTag("siStripDigis","VirginRaw","RECO1"),
   zs = cms.InputTag("siStripZeroSuppression","VirginRaw","RECO1"),
   pr = cms.InputTag("siStripZeroSuppression","BADAPVBASELINE","RECO1"),
+  cl = cms.InputTag("siStripClusters","","RECO1"),
 )
 
 process.ssntBad = process.ssnt.clone(
