@@ -101,13 +101,16 @@ private:
   edm::Service<TFileService> fs;
   edm::InputTag vrtag_;  
   edm::InputTag zstag_;
+  edm::InputTag prtag_;
   
   
   TTree * tVR_;
   TTree * tZS_;
+  TTree * tPR_;
   
   StripEvent vr_;
   StripEvent zs_;
+  StripEvent pr_;
   
   int run_;
   int evt_;
@@ -132,6 +135,7 @@ StripAnalyzer::StripAnalyzer(const edm::ParameterSet& iConfig)
 {
   vrtag_ = iConfig.getParameter<edm::InputTag>("vr");
   zstag_ = iConfig.getParameter<edm::InputTag>("zs");
+  prtag_ = iConfig.getParameter<edm::InputTag>("pr");
   doVR_ = iConfig.getParameter<bool>("doVR");
   doZS_ = iConfig.getParameter<bool>("doZS");
   doPR_ = iConfig.getParameter<bool>("doPR");
@@ -172,6 +176,9 @@ StripAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
   
   if (doPR_) {
+    edm::Handle< edm::DetSetVector<SiStripProcessedRawDigi> >   handPR;
+    iEvent.getByLabel(prtag_,handPR);
+    analyzeProcessedRawDigi(handPR, pr_);
   }
 }
 
@@ -250,11 +257,18 @@ StripAnalyzer::analyzeProcessedRawDigi(edm::Handle< edm::DetSetVector<SiStripPro
 void 
 StripAnalyzer::beginJob()
 {
-  tVR_ = fs->make<TTree>("vr","");  
-  tZS_ = fs->make<TTree>("zs","");  
-  
-  prepareTree(tVR_,vr_);
-  prepareTree(tZS_,zs_);
+  if (doVR_) {
+    tVR_ = fs->make<TTree>("vr","");    
+    prepareTree(tVR_,vr_);
+  }
+  if (doZS_) {
+    tZS_ = fs->make<TTree>("zs","");  
+    prepareTree(tZS_,zs_);
+  }
+  if (doPR_) {
+    tPR_ = fs->make<TTree>("pr","");  
+    prepareTree(tPR_,pr_);
+  }
 }
 
 void StripAnalyzer::prepareTree(TTree * tree, StripEvent& s){
