@@ -55,28 +55,19 @@
 #include "TTree.h"
 
 using namespace std;
+const int MAXSTRIP = 1000;
 
 struct StripEvent{
   uint32_t run;
   uint32_t evt;
   uint32_t id;
   uint32_t mod;
-  uint32_t i;
-  uint32_t strip;
-  float adc;
+  uint32_t nstrip;
+  uint32_t curs[MAXSTRIP];
+  uint32_t strip[MAXSTRIP];
+  float adc[MAXSTRIP];
   
   TTree* t;
-  void Fill(uint32_t i0, uint32_t i1, uint32_t i2, uint32_t i3, uint32_t i4, uint32_t i5, float i6){
-    run = i0;
-    evt = i1;
-    id = i2;
-    mod=i3;
-    i=i4;
-    strip=i5;
-    adc=i6;
-    t->Fill();
-  }
-  
 };
 
 //
@@ -100,8 +91,9 @@ private:
   virtual void endRun(edm::Run const&, edm::EventSetup const&);
   virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
   virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
-  void analyzeRawDigi(edm::Handle< edm::DetSetVector<SiStripRawDigi> >& , StripEvent& t);
   void analyzeDigi(edm::Handle< edm::DetSetVector<SiStripDigi> >& , StripEvent& t);
+  void analyzeRawDigi(edm::Handle< edm::DetSetVector<SiStripRawDigi> >& , StripEvent& t);
+  void analyzeProcessedRawDigi(edm::Handle< edm::DetSetVector<SiStripProcessedRawDigi> >& , StripEvent& t);
   
   void prepareTree(TTree * tree, StripEvent& s);
   
@@ -171,22 +163,24 @@ void
 StripAnalyzer::analyzeDigi(edm::Handle< edm::DetSetVector<SiStripDigi> >& hSSRD, StripEvent& t)
 {
   edm::DetSetVector<SiStripDigi>::const_iterator rawDSViter=hSSRD->begin();
-  int currentmodule = 0;
+  t.run = run_;
+  t.evt = evt_;
+  t.mod = 0;
   for (; rawDSViter!=hSSRD->end();rawDSViter++){
-    int currentstrip=0;
-    uint32_t detid = rawDSViter->detId();
-    float fdetid = detid;
-    
-    cout<<"currentmodule : "<<currentmodule<<"   detid : "<<detid<<"    fdetid : "<<fdetid<<endl;
-    
+    t.nstrip = 0;
+    t.id = rawDSViter->detId();
+    //float fdetid = detid;
+    //cout<<"currentmodule : "<<currentmodule<<"   detid : "<<detid<<"    fdetid : "<<fdetid<<endl;
     edm::DetSet<SiStripDigi>::const_iterator iRawDigi = rawDSViter->begin();
     while( iRawDigi != rawDSViter->end() ) {
-      int ADCSum = iRawDigi->adc();
-      t.Fill(run_,evt_,detid,currentmodule,currentstrip,iRawDigi->strip(),ADCSum);
+      t.curs[t.nstrip] = t.nstrip;
+      t.strip[t.nstrip] = iRawDigi->strip();
+      t.adc[t.nstrip] = iRawDigi->adc();
       iRawDigi++;
-      currentstrip++;
+      t.nstrip++;
     }
-    currentmodule++;
+    t.t->Fill();
+    ++t.mod;
   }
 }
 
@@ -194,23 +188,47 @@ void
 StripAnalyzer::analyzeRawDigi(edm::Handle< edm::DetSetVector<SiStripRawDigi> >& hSSRD, StripEvent& t)
 {
   edm::DetSetVector<SiStripRawDigi>::const_iterator rawDSViter=hSSRD->begin();
-  int currentmodule = 0;
+  t.run = run_;
+  t.evt = evt_;
+  t.mod = 0;
   for (; rawDSViter!=hSSRD->end();rawDSViter++){
-    int currentstrip=0;
-    uint32_t detid = rawDSViter->detId();
-    
+    t.nstrip = 0;
+    t.id = rawDSViter->detId();
     edm::DetSet<SiStripRawDigi>::const_iterator iRawDigi = rawDSViter->begin();
     while( iRawDigi != rawDSViter->end() ) {
-      int ADCSum = iRawDigi->adc();
-      t.Fill(run_,evt_,detid,currentmodule,currentstrip,currentstrip,ADCSum);
+      t.curs[t.nstrip] = 0;
+      t.strip[t.nstrip] = t.nstrip;
+      t.adc[t.nstrip] = iRawDigi->adc();
       iRawDigi++;
-      currentstrip++;
+      t.nstrip++;
     }
-    currentmodule++;
+    t.t->Fill();
+    ++t.mod;
   }
 }
 
-
+void
+StripAnalyzer::analyzeProcessedRawDigi(edm::Handle< edm::DetSetVector<SiStripProcessedRawDigi> >& hSSRD, StripEvent& t)
+{
+  edm::DetSetVector<SiStripProcessedRawDigi>::const_iterator rawDSViter=hSSRD->begin();
+  t.run = run_;
+  t.evt = evt_;
+  t.mod = 0;
+  for (; rawDSViter!=hSSRD->end();rawDSViter++){
+    t.nstrip = 0;
+    t.id = rawDSViter->detId();
+    edm::DetSet<SiStripProcessedRawDigi>::const_iterator iRawDigi = rawDSViter->begin();
+    while( iRawDigi != rawDSViter->end() ) {
+      t.curs[t.nstrip] = 0;
+      t.strip[t.nstrip] = t.nstrip;
+      t.adc[t.nstrip] = iRawDigi->adc();
+      iRawDigi++;
+      t.nstrip++;
+    }
+    t.t->Fill();
+    ++t.mod;
+  }
+}
 
 // ------------ method called once each job just before starting event loop  ------------
 void 
@@ -223,14 +241,10 @@ StripAnalyzer::beginJob()
 
 void StripAnalyzer::prepareTree(TTree * tree, StripEvent& s){
   s.t = tree;
-  tree->Branch("run",&s.run,"run/i");
-  tree->Branch("evt",&s.evt,"evt/i");
-  tree->Branch("id",&s.id,"id/i");
-  tree->Branch("mod",&s.mod,"mod/i");
-  tree->Branch("i",&s.i,"i/i");
-  tree->Branch("strip",&s.strip,"strip/i");
-  tree->Branch("adc",&s.adc,"adc/F");
-  
+  tree->Branch("module",&s.run,"run/i:evt:id:mod:nstrip");
+  tree->Branch("curs",s.curs,"curs[nstrip]/i");
+  tree->Branch("strip",s.strip,"strip[nstrip]/i");
+  tree->Branch("adc",s.adc,"adc[nstrip]/F");
 }
 
 
