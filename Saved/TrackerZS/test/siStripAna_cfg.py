@@ -23,7 +23,7 @@ process.source = cms.Source("PoolSource",
 process.GlobalTag.globaltag = 'GR_R_44_V5::All'
 
 process.TFileService = cms.Service("TFileService",
-                                  fileName=cms.string("sstr_zshead10_05_23pm_allvr.root"))
+                                  fileName=cms.string("sstr_zshead10_05_23pm_allvr_test.root"))
                                   
 process.load("Saved.TrackerZS.trackrechitscanner_cfi")
 process.load("RecoLocalTracker.SiStripZeroSuppression.SiStripBaselineAnalyzer_cfi")
@@ -43,7 +43,11 @@ process.sshis = process.SiStripBaselineAnalyzer.clone(
   )
 
 process.ssnt = cms.EDAnalyzer("StripAnalyzer",
-  vr = cms.InputTag("siStripDigis","VirginRaw")
+  vr = cms.InputTag("siStripDigis","VirginRaw"),
+  zs = cms.InputTag("siStripZeroSuppression","VirginRaw"),
+  doVR = cms.bool(True),
+  doZS = cms.bool(True),
+  doPR = cms.bool(False)
   )
 
 process.ssntRRZS = process.ssnt.clone(vr=cms.InputTag("siStripDigis","VirginRaw","RECO1"))

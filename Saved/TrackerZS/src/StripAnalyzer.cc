@@ -14,7 +14,7 @@
 // Original Author:  Yetkin Yilmaz
 // Modified: Frank Ma
 //         Created:  Wed Sep 28 16:27:01 EDT 2011
-// $Id: StripAnalyzer.cc,v 1.1 2011/10/05 09:33:51 yilmaz Exp $
+// $Id: StripAnalyzer.cc,v 1.3 2011/10/06 09:58:44 frankma Exp $
 //
 //
 
@@ -99,21 +99,22 @@ private:
   
   // ----------member data ---------------------------
   edm::Service<TFileService> fs;
-  edm::InputTag tag_;
-  edm::InputTag mctag_;
-  edm::InputTag vrtag_;
-  
+  edm::InputTag vrtag_;  
   edm::InputTag zstag_;
-  edm::InputTag digitag_;
   
   
   TTree * tVR_;
+  TTree * tZS_;
   
   StripEvent vr_;
+  StripEvent zs_;
   
   int run_;
   int evt_;
   
+  bool doVR_;
+  bool doZS_;
+  bool doPR_;
 };
 
 //
@@ -130,6 +131,10 @@ private:
 StripAnalyzer::StripAnalyzer(const edm::ParameterSet& iConfig)
 {
   vrtag_ = iConfig.getParameter<edm::InputTag>("vr");
+  zstag_ = iConfig.getParameter<edm::InputTag>("zs");
+  doVR_ = iConfig.getParameter<bool>("doVR");
+  doZS_ = iConfig.getParameter<bool>("doZS");
+  doPR_ = iConfig.getParameter<bool>("doPR");
   //now do what ever initialization is needed  
 }
 
@@ -153,10 +158,21 @@ StripAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   run_ = iEvent.id().run();
   evt_ = iEvent.id().event();
-  edm::Handle< edm::DetSetVector<SiStripRawDigi> >   handVR;
-  iEvent.getByLabel(vrtag_,handVR);
   
-  analyzeRawDigi(handVR, vr_);
+  if (doVR_) {
+    edm::Handle< edm::DetSetVector<SiStripRawDigi> >   handVR;
+    iEvent.getByLabel(vrtag_,handVR);
+    analyzeRawDigi(handVR, vr_);
+  }
+
+  if (doZS_) {
+    edm::Handle< edm::DetSetVector<SiStripDigi> >   handZS;
+    iEvent.getByLabel(zstag_,handZS);
+    analyzeDigi(handZS, zs_);
+  }
+  
+  if (doPR_) {
+  }
 }
 
 void
@@ -235,8 +251,10 @@ void
 StripAnalyzer::beginJob()
 {
   tVR_ = fs->make<TTree>("vr","");  
+  tZS_ = fs->make<TTree>("zs","");  
   
   prepareTree(tVR_,vr_);
+  prepareTree(tZS_,zs_);
 }
 
 void StripAnalyzer::prepareTree(TTree * tree, StripEvent& s){
