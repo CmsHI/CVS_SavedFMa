@@ -14,7 +14,7 @@
 // Original Author:  Yetkin Yilmaz
 // Modified: Frank Ma
 //         Created:  Wed Sep 28 16:27:01 EDT 2011
-// $Id: StripAnalyzer.cc,v 1.5 2011/10/06 13:08:35 frankma Exp $
+// $Id: StripAnalyzer.cc,v 1.7 2011/10/07 09:41:44 frankma Exp $
 //
 //
 
@@ -332,7 +332,7 @@ void StripAnalyzer::prepareTree(TTree * tree, StripEvent& s){
   tree->Branch("strip",s.strip,"strip[nstrip]/i");
   tree->Branch("adc",s.adc,"adc[nstrip]/F");
   if (doVR_) {
-    tree->Branch("padc",s.adc,"padc[nstrip]/F");
+    tree->Branch("padc",s.padc,"padc[nstrip]/F");
   }
 }
 
