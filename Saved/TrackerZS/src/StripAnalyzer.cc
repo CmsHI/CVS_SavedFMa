@@ -66,6 +66,7 @@ struct StripEvent{
   uint32_t curs[MAXSTRIP];
   uint32_t strip[MAXSTRIP];
   float adc[MAXSTRIP];
+  float padc[MAXSTRIP];
   
   TTree* t;
 };
@@ -115,6 +116,8 @@ private:
   StripEvent pr_;
   StripEvent cl_;
   
+  std::auto_ptr<SiStripPedestalsSubtractor>   subtractorPed_;
+  
   int run_;
   int evt_;
   
@@ -145,7 +148,8 @@ StripAnalyzer::StripAnalyzer(const edm::ParameterSet& iConfig)
   doZS_ = iConfig.getParameter<bool>("doZS");
   doPR_ = iConfig.getParameter<bool>("doPR");
   doCL_ = iConfig.getParameter<bool>("doCL");
-  //now do what ever initialization is needed  
+  //now do what ever initialization is needed
+  subtractorPed_ = SiStripRawProcessingFactory::create_SubtractorPed(iConfig.getParameter<edm::ParameterSet>("Algorithms"));
 }
 
 
@@ -168,6 +172,8 @@ StripAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   run_ = iEvent.id().run();
   evt_ = iEvent.id().event();
+
+  subtractorPed_->init(iSetup);
   
   if (doVR_) {
     edm::Handle< edm::DetSetVector<SiStripRawDigi> >   handVR;
@@ -229,11 +235,16 @@ StripAnalyzer::analyzeRawDigi(edm::Handle< edm::DetSetVector<SiStripRawDigi> >& 
   for (; rawDSViter!=hSSRD->end();rawDSViter++){
     t.nstrip = 0;
     t.id = rawDSViter->detId();
+    
+    std::vector<int16_t> ProcessedRawDigis(rawDSViter->size());
+    subtractorPed_->subtract( *rawDSViter, ProcessedRawDigis);
+    
     edm::DetSet<SiStripRawDigi>::const_iterator iRawDigi = rawDSViter->begin();
     while( iRawDigi != rawDSViter->end() ) {
       t.curs[t.nstrip] = 0;
       t.strip[t.nstrip] = t.nstrip;
       t.adc[t.nstrip] = iRawDigi->adc();
+      t.padc[t.nstrip] = ProcessedRawDigis[t.nstrip];
       iRawDigi++;
       t.nstrip++;
     }
@@ -320,6 +331,9 @@ void StripAnalyzer::prepareTree(TTree * tree, StripEvent& s){
   tree->Branch("curs",s.curs,"curs[nstrip]/i");
   tree->Branch("strip",s.strip,"strip[nstrip]/i");
   tree->Branch("adc",s.adc,"adc[nstrip]/F");
+  if (doVR_) {
+    tree->Branch("padc",s.adc,"padc[nstrip]/F");
+  }
 }
 
 
