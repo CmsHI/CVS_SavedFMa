@@ -20,7 +20,7 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32(1)
 )
 
 # Input source
@@ -35,7 +35,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    version = cms.untracked.string('$Revision: 1.1 $'),
+    version = cms.untracked.string('$Revision: 1.2 $'),
     annotation = cms.untracked.string('hiReco nevts:1'),
     name = cms.untracked.string('PyReleaseValidation')
 )
@@ -46,7 +46,7 @@ process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
     splitLevel = cms.untracked.int32(0),
     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
     outputCommands = process.FEVTDEBUGHLTEventContent.outputCommands,
-    fileName = cms.untracked.string('hiReco_RAW2DIGI_RECO_ZSHEAD10_05_13pm_ALLVR.root'),
+    fileName = cms.untracked.string('hiReco_RAW2DIGI_RECO_ZSHEAD10_05_1150pm_ALLVR_DistrotionThresh0MeanCM128GTV4.root'),
     dataset = cms.untracked.PSet(
         filterName = cms.untracked.string(''),
         dataTier = cms.untracked.string('GEN-SIM-FEVTDEBUGHLT')
@@ -57,7 +57,12 @@ process.FEVTDEBUGHLToutput.outputCommands.append("keep *_*_VirginRaw_*")
 # Additional output definition
 
 # Other statements
-process.GlobalTag.globaltag = 'GR_R_44_V5::All'
+process.GlobalTag.globaltag = 'GR_R_44_V4::All'
+
+# ZS Settings
+process.siStripZeroSuppression.Algorithms.DeltaCMThreshold = cms.uint32(0)       # for BaselineFollower inspect
+process.siStripZeroSuppression.Algorithms.distortionThreshold = cms.uint32(0)
+process.siStripZeroSuppression.Algorithms.MeanCM = cms.int32(158)
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)
