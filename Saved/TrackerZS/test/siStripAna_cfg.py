@@ -37,7 +37,7 @@ proc = "RECOZSHEAD"
 tag="10_07_1148am"
 #proc = "RECO1"
 #tag=""
-#zscfg="_restoreThresh0MeanCM128GTV4_hi2010ped"
+#zscfg="restoreThresh0MeanCM128GTV4_hi2010ped"
 zscfg="GTV4_hi2010ped"
 process.TFileService = cms.Service("TFileService",
                                   fileName=cms.string("sstr_"+proc+tag+"_"+zscfg+".root"))
@@ -81,6 +81,7 @@ process.ssntBad = process.ssnt.clone(
   )
 
 process.ssntBadBLPts = process.ssnt.clone(
+  zs = cms.InputTag("siStripZeroSuppression","BADAPVBASELINEPOINTS",proc),
   pr = cms.InputTag("siStripZeroSuppression","BADAPVBASELINEPOINTS",proc),
   doVR = False,
   doPR = False,
