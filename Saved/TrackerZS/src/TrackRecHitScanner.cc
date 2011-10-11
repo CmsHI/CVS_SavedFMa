@@ -13,7 +13,7 @@
 //
 // Original Author:  Teng Ma
 //         Created:  Tue Sep 27 12:17:27 EDT 2011
-// $Id$
+// $Id: TrackRecHitScanner.cc,v 1.1 2011/09/28 22:18:36 frankma Exp $
 //
 //
 
@@ -43,6 +43,9 @@
 #include "DataFormats/TrackerRecHit2D/interface/SiStripRecHit1DCollection.h"
 #include "DataFormats/TrajectorySeed/interface/TrajectorySeedCollection.h"
 #include "DataFormats/TrackCandidate/interface/TrackCandidateCollection.h"
+
+#include "DataFormats/DetId/interface/DetId.h"
+#include "DataFormats/SiStripDetId/interface/SiStripDetId.h"
 
 #include "FWCore/Framework/interface/ESHandle.h"
 
@@ -141,12 +144,34 @@ TrackRecHitScanner::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     int ihit=0;
     for (trackingRecHit_iterator it = itB;  it != itE; ++it, ++ihit) { 
       cout << "hit " << ihit << ": ";
-      if ((*it)->isValid()){
-        int recHitDetId = (*it)->geographicalId();
+      const TrackingRecHit & hit = **it;
+      if (hit.isValid()){
+        //check it is an SiStrip hit
+        DetId detId(hit.geographicalId());
+        if (!( (detId.det() == DetId::Tracker) &&
+              ( (detId.subdetId() == SiStripDetId::TIB) ||
+               (detId.subdetId() == SiStripDetId::TID) ||
+               (detId.subdetId() == SiStripDetId::TOB) ||
+               (detId.subdetId() == SiStripDetId::TEC)
+               )
+              )) {
+          cout << endl;
+          continue;
+        }
+        int recHitDetId = hit.geographicalId();
+        //try to determine the type of the hit
+        const TrackingRecHit* pHit = &hit;
+        //const SiStripRecHit2D* pRecHit2D = dynamic_cast<const SiStripRecHit2D*>(pHit);
+        //const SiStripMatchedRecHit2D* pMatchedRecHit2D = dynamic_cast<const SiStripMatchedRecHit2D*>(pHit);
+        //const ProjectedSiStripRecHit2D* pProjctedRecHit2D = dynamic_cast<const ProjectedSiStripRecHit2D*>(pHit);
         cout << " DetId: " << recHitDetId;
-        //cout <<"\t\t\tRecHit on det " <<(*it)->geographicalId().rawId()<<std::endl;
-        //cout <<"\t\t\tRecHit in LP "  <<(*it)->localPosition()<<std::endl;
-        //cout <<"\t\t\tRecHit in GP "  <<theG->idToDet((*it)->geographicalId())->surface().toGlobal((*it)->localPosition()) <<std::endl;
+        const SiStripRecHit2D* pRecHit2D = (const SiStripRecHit2D*)pHit;
+        //if (pMatchedRecHit2D) cout << " Cluster_start: " << pMatchedRecHit2D->cluster()->firstStrip();
+        //if (pProjctedRecHit2D) cout << " Cluster_start: " << pProjctedRecHit2D->cluster()->firstStrip();
+        if (pRecHit2D) {
+          cout << " Cluster_start: " << pRecHit2D->cluster()->firstStrip()
+          << " Cluseter_size: " << pRecHit2D->cluster()->amplitudes().size(); 
+        }
       }
       cout << endl;
     }
