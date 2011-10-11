@@ -91,16 +91,11 @@ if proc=="RECO1":
   process.ssntBadBLPts.doPR=True
   process.ssntBadBLPts.doZS=False
 
-#process.ssntBadRRZS = process.ssntRRZS.clone(
-#  vr = cms.InputTag("siStripZeroSuppression","VirginRaw",proc)
-#  )
+process.ssntAPVCMN = process.ssnt.clone(
+  pr = cms.InputTag("siStripZeroSuppression","APVCM",proc),
+  doVR = False,
+  doZS = False,
+  doCL = False
+  )
 
-#process.ssntRRZS = process.ssnt.clone(
-#  vr=cms.InputTag("siStripDigis","VirginRaw",proc),
-#  zs = cms.InputTag("siStripZeroSuppression","VirginRaw",proc),
-#  pr = cms.InputTag("siStripZeroSuppression","BADAPVBASELINE",proc),
-#  cl = cms.InputTag("siStripClusters","",proc),
-#)
-
-#process.p = cms.Path(process.sshis*process.ssnt*process.ssntRRZS*process.ssntBad*process.ssntBadRRZS)
-process.p = cms.Path(process.sshis*process.ssnt*process.ssntBad*process.ssntBadBLPts)
+process.p = cms.Path(process.sshis*process.ssnt*process.ssntBad*process.ssntBadBLPts*process.ssntAPVCMN)
