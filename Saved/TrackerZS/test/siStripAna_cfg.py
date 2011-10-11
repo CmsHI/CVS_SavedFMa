@@ -17,7 +17,8 @@ process.source = cms.Source("PoolSource",
         #'file:hiReco_RAW2DIGI_RECO_ZSHEAD10_05_13pm_ALLVR.root'
         #'file:hiReco_RAW2DIGI_RECO_ZSHEAD10_05_1150pm_ALLVR.root'
         #'file:hiReco_RAW2DIGI_RECO_ZSHEAD10_05_1150pm_ALLVR_DistrotionThresh0.root'
-        'file:hiReco_RAW2DIGI_RECO_ZSHEAD10_07_1148am_ALLVR_DistrotionThresh0MeanCM158GTV4_hi2010Pedestal.root'
+        #'file:hiReco_RAW2DIGI_RECO_ZSHEAD10_07_1148am_ALLVR_DistrotionThresh0MeanCM158GTV4_hi2010Pedestal.root'
+        'file:hiReco_RAW2DIGI_RECO_ZSHEAD10_07_1148am_ALLVR_GTV4_hi2010Pedestal.root'
         # wei's jet 50u
         #Events in new ZS but not old ZS:
         #'file:/net/hisrv0001/home/davidlw/scratch1/HLTStudies/CMSSW_4_4_0_OldZS/src/RECO_highptInNewNotOld_OldZS_Jet50U.root'
@@ -32,12 +33,14 @@ process.source = cms.Source("PoolSource",
 
 process.GlobalTag.globaltag = 'GR_R_44_V5::All'
 
-#proc = "RECOZSHEAD"
-#tag="10_07_1148am"
-proc = "RECO1"
-tag=""
+proc = "RECOZSHEAD"
+tag="10_07_1148am"
+#proc = "RECO1"
+#tag=""
+#zscfg="_restoreThresh0MeanCM128GTV4_hi2010ped"
+zscfg="GTV4_hi2010ped"
 process.TFileService = cms.Service("TFileService",
-                                  fileName=cms.string("sstr_"+proc+tag+"_restoreThresh0MeanCM128GTV4_hi2010ped.root"))
+                                  fileName=cms.string("sstr_"+proc+tag+"_"+zscfg+".root"))
                                   
 process.load("Saved.TrackerZS.trackrechitscanner_cfi")
 process.load("RecoLocalTracker.SiStripZeroSuppression.SiStripBaselineAnalyzer_cfi")
@@ -80,9 +83,12 @@ process.ssntBad = process.ssnt.clone(
 process.ssntBadBLPts = process.ssnt.clone(
   pr = cms.InputTag("siStripZeroSuppression","BADAPVBASELINEPOINTS",proc),
   doVR = False,
-  doZS = False,
+  doPR = False,
   doCL = False
   )
+if proc=="RECO1":
+  process.ssntBadBLPts.doPR=True
+  process.ssntBadBLPts.doZS=False
 
 #process.ssntBadRRZS = process.ssntRRZS.clone(
 #  vr = cms.InputTag("siStripZeroSuppression","VirginRaw",proc)
