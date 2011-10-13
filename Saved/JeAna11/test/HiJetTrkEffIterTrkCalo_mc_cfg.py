@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process('JetAna')
+process = cms.Process('JetTrkAna')
 
 process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool(True)
@@ -9,7 +9,9 @@ process.options = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(
-    '/store/user/davidlw/Hydjet1_8v1_MinBias_2760GeV_GEN_SIM_RAW_399p1_v1/Hydjet1_8v1_MinBias_2760GeV_GEN_SIM_RECO_399p1_v1/3a59201d76ed5b3e8f0cfb7f019327cc/hiReco_RAW2DIGI_RECO_9_1_Bk0.root'
+    'dcache:/pnfs/cmsaf.mit.edu/t2bat/cms/store/user/davidlw/Hydjet_Bass_MinBias_2760GeV/Pyquen_UnquenchedDiJet_Pt80_GEN-SIM-RECO_393_set1/fae6fe9048513d9ac8f476dd10ba6ba7/hiReco_RAW2DIGI_RECO_9_1_QNo.root'
+    # mb
+    #'/store/user/davidlw/Hydjet1_8v1_MinBias_2760GeV_GEN_SIM_RAW_399p1_v1/Hydjet1_8v1_MinBias_2760GeV_GEN_SIM_RECO_399p1_v1/3a59201d76ed5b3e8f0cfb7f019327cc/hiReco_RAW2DIGI_RECO_9_1_Bk0.root'
     ))
 
 process.maxEvents = cms.untracked.PSet(
@@ -67,6 +69,7 @@ process.jec = cms.ESSource("PoolDBESSource",
 process.es_prefer_jec = cms.ESPrefer('PoolDBESSource','jec')
 
 # Define Analysis sequencues
+process.load('CmsHi.JetAnalysis.EventSelection_cff')
 process.load('CmsHi.JetAnalysis.ExtraGenReco_cff')
 process.load('CmsHi.JetAnalysis.ExtraTrackReco_cff')
 process.load('CmsHi.JetAnalysis.ExtraPfReco_cff')
@@ -77,6 +80,15 @@ process.load('CmsHi.JetAnalysis.TrkAnalyzers_cff')
 process.load('MitHig.PixelTrackletAnalyzer.trackAnalyzer_cff')
 process.load('CmsHi.JetAnalysis.rechitanalyzer_cfi')
 process.hiPixelAdaptiveVertex.useBeamConstraint = cms.bool(False) # better data vs mc comparison
+
+# Filtering
+process.jetEtFilter.etMin = 90
+print "Add cleaning to analysis"
+process.event_filter_seq = cms.Sequence(
+  process.iterativeConePu5CaloJets * process.icPu5CaloJetsL2L3 *
+  process.jetEtFilter *
+  process.collisionEventSelection
+  )
 
 # matt's iterative tracking
 process.load("MNguyen.iterTracking.TrackSelections_cff")
@@ -138,10 +150,10 @@ process.hitrkEffAnalyzer_akpu3pf.tracks = cms.untracked.InputTag("hiGeneralGloba
 process.hitrkEffAnalyzer_akpu3pf.jets = cms.untracked.InputTag("icPu5patJets")
 
 
-process.reco_extra = cms.Path( process.hiGen * process.iterTracking_seq * process.HiParticleFlowRecoNoJets)
-process.reco_extra_jet = cms.Path( process.iterativeConePu5CaloJets )
-process.pat_step = cms.Path(process.icPu5patSequence)
-process.ana_step = cms.Path(process.hitrkEffAna_akpu3pf * process.icPu5JetAnalyzer * process.anaTrack * process.anaTrack_hgt * process.rechitanalyzer)
+process.reco_extra = cms.Path( process.event_filter_seq * process.hiGen * process.iterTracking_seq * process.HiParticleFlowRecoNoJets)
+process.reco_extra_jet = cms.Path( process.event_filter_seq * process.iterativeConePu5CaloJets )
+process.pat_step = cms.Path(process.event_filter_seq * process.icPu5patSequence)
+process.ana_step = cms.Path(process.event_filter_seq * process.hitrkEffAna_akpu3pf * process.icPu5JetAnalyzer * process.anaTrack * process.anaTrack_hgt * process.rechitanalyzer)
 
 # Customization
 from CmsHi.JetAnalysis.customise_cfi import *
@@ -149,8 +161,8 @@ from CmsHi.JetAnalysis.customise_cfi import *
 #enableDataAnalyzers(process)
 enableOpenHlt(process,process.ana_step)
 # to run on hydjet only
-process.hiGenParticles.srcVector = cms.vstring('generator')
-process.icPu5JetAnalyzer.eventInfoTag = cms.InputTag("generator")
+#process.hiGenParticles.srcVector = cms.vstring('generator')
+#process.icPu5JetAnalyzer.eventInfoTag = cms.InputTag("generator")
 
 # =============== Final Schedule =====================
 process.schedule = cms.Schedule(process.reco_extra,process.reco_extra_jet,process.pat_step,process.ana_step)
