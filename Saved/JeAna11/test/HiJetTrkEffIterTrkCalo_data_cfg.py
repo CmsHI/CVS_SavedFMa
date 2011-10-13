@@ -81,7 +81,7 @@ process.hiPixelAdaptiveVertex.useBeamConstraint = cms.bool(False) # better data 
 
 # Filtering
 process.hltJetHI.HLTPaths = ['HLT_HIJet50U']
-process.jetEtFilter.etMin = 90
+process.jetEtFilter.etMin = 100
 print "Add cleaning to analysis"
 process.event_filter_seq = cms.Sequence(
   process.hltJetHI *
