@@ -25,6 +25,11 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 #process.MessageLogger.cerr.FwkReport.reportEvery = 100
 process.GlobalTag.globaltag = 'GR_R_39X_V6B::All'
 
+process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",
+ ignoreTotal=cms.untracked.int32(1),
+ oncePerEventMode=cms.untracked.bool(False)
+)
+
 # load centrality
 from CmsHi.Analysis2010.CommonFunctions_cff import *
 overrideCentrality(process)
