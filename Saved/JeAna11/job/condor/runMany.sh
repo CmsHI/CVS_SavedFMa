@@ -11,7 +11,7 @@ outputDir=$2
 outputFile=$3
 maxEvents=$4
 inputFiles=$5
-swenv=/net/hisrv0001/home/frankma/scratch01/work/jet/JeAna11_399p1_noMu/src/Saved/JeAna11/job/condor/env.sh
+swenv=/net/hisrv0001/home/frankma/scratch01/work/job/ana/JeAna11_399p1_hiforest/env.sh
 
 # check
 if [ ! -e $cfg ]; then
@@ -41,6 +41,7 @@ echo $cmd
 
 # run!
 eval $cmd
+ls -ltr
 mv $logFile $logDir/
 fsize=`stat -c%s $outputFile`
 echo file size: $fsize
@@ -51,5 +52,7 @@ fi
 
 grep 'Event  Summary' $logDir/$logFile
 if [ $? -eq 0 ]; then
-  mv $outputFile $outputDir/
+  ls -ltr $outputFile
+  ls -ltr $outputDir
+  mv -v $outputFile $outputDir/
 fi
