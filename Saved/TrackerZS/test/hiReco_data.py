@@ -35,7 +35,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    version = cms.untracked.string('$Revision: 1.4 $'),
+    version = cms.untracked.string('$Revision: 1.5 $'),
     annotation = cms.untracked.string('hiReco nevts:1'),
     name = cms.untracked.string('PyReleaseValidation')
 )
@@ -47,7 +47,8 @@ process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
     outputCommands = process.FEVTDEBUGHLTEventContent.outputCommands,
     #fileName = cms.untracked.string('hiReco_RAW2DIGI_RECO_ZSHEAD10_07_1148am_ALLVR_GTV4_hi2010Pedestal.root'),
-    fileName = cms.untracked.string('hiReco_RAW2DIGI_RECO_ZSHEAD10_07_1148am_ALLVR_DistrotionThresh0MeanCM158GTV4_hi2010Pedestal.root'),
+    #fileName = cms.untracked.string('hiReco_RAW2DIGI_RECO_ZSHEAD10_07_1148am_ALLVR_DistrotionThresh0MeanCM158GTV4_hi2010Pedestal.root'),
+    fileName = cms.untracked.string('hiReco_RAW2DIGI_RECO_ZSyueshi10195pm.root'),
     dataset = cms.untracked.PSet(
         filterName = cms.untracked.string(''),
         dataTier = cms.untracked.string('GEN-SIM-FEVTDEBUGHLT')
@@ -66,9 +67,9 @@ process.siStripZeroSuppression.produceRawDigis = cms.bool(True)
 process.siStripZeroSuppression.produceCalculatedBaseline = cms.bool(True)
 process.siStripZeroSuppression.produceBaselinePoints = cms.bool(True)
 process.siStripZeroSuppression.storeInZScollBadAPV = cms.bool(True)
-process.siStripZeroSuppression.Algorithms.DeltaCMThreshold = cms.uint32(0)       # for BaselineFollower inspect
-process.siStripZeroSuppression.Algorithms.distortionThreshold = cms.uint32(0)
-process.siStripZeroSuppression.Algorithms.MeanCM = cms.int32(158)
+#process.siStripZeroSuppression.Algorithms.DeltaCMThreshold = cms.uint32(0)       # for BaselineFollower inspect
+#process.siStripZeroSuppression.Algorithms.distortionThreshold = cms.uint32(0)
+#process.siStripZeroSuppression.Algorithms.MeanCM = cms.int32(0)
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)

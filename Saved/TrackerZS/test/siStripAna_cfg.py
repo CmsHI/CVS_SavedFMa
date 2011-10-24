@@ -28,27 +28,29 @@ process.source = cms.Source("PoolSource",
         #'file:/net/hisrv0001/home/davidlw/scratch1/HLTStudies/CMSSW_4_4_0_NewZS/src/RECO_highptInNewNotOld_NewZS_Jet50U.root'
         #Events in old ZS but not new ZS:
         #'file:/net/hisrv0001/home/davidlw/scratch1/HLTStudies/CMSSW_4_4_0_OldZS/src/RECO_highptInOldNotNew_OldZS_Jet50U.root'
-        'file:/net/hisrv0001/home/davidlw/scratch1/HLTStudies/CMSSW_4_4_0_NewZS/src/RECO_highptInOldNotNew_NewZS_Jet50U.root'
+        #'file:/net/hisrv0001/home/davidlw/scratch1/HLTStudies/CMSSW_4_4_0_NewZS/src/RECO_highptInOldNotNew_NewZS_Jet50U.root'
+        'file:hiReco_RAW2DIGI_RECO_ZSyueshi10195pm.root'
 
     ),
     #eventsToProcess = cms.untracked.VEventRange('151088:107:646838-151088:107:646838')
 )
 
-process.GlobalTag.globaltag = 'GR_R_44_V5::All'
+process.GlobalTag.globaltag = 'GR_R_44_V4::All'
 
-oldInterface = True # some how in wei's j50u, oldzs has new iterface, newzs has old interface
-#proc = "RECOZSHEAD"
+oldInterface = False # some how in wei's j50u, oldzs has new iterface, newzs has old interface
+proc = "RECOZSHEAD"
 #tag="10_07_1148am"
 #zscfg="DeltaCMThresh0GTV4_hi2010ped"
 #zscfg="DistortionThresh0GTV4_hi2010ped"
 #zscfg="DeltaCMThresh0DistortionThresh0GTV4_hi2010ped"
 #zscfg="DeltaCMThresh0DistortionThresh0MeanCM158GTV4_hi2010ped"
 #zscfg="GTV4_hi2010ped"
-proc = "RECO1"
+#proc = "RECO1"
 #tag="NewNotOld_OldZS_J50U"
 #tag="OldNotNew_OldZS_J50U"
 #tag="NewNotOld_NewZS_J50U"
-tag="OldNotNew_NewZS_J50U"
+#tag="OldNotNew_NewZS_J50U"
+tag="yueshi10195pm"
 zscfg=""
 process.TFileService = cms.Service("TFileService",
                                   fileName=cms.string("sstr_"+proc+tag+"_"+zscfg+".root"))
