@@ -25,6 +25,10 @@ cmsDriver.py --step=HLT:HIon --conditions=MC39_V4HI::All --filein=file:RelVal_HL
 # data, raw2digi, l1, hlt
 cmsDriver.py l1EmulatorFromRaw -s RAW2DIGI,L1,HLT:HIon -n 10 --conditions auto:hltonline --datatier DIGI-RECO --eventcontent FEVTDEBUGHLT --data --filein /store/hidata/HIRun2010/HICorePhysics/RAW-RECO/v3/000/151/019/745B4D47-F3EE-DF11-92F8-0025B3E06424.root --customise=L1Trigger/Configuration/customise_l1EmulatorFromRaw --custom_conditions=L1GtTriggerMenu_L1Menu_Collisions2011_v5_mc,L1GtTriggerMenuRcd,frontier://FrontierProd/CMS_COND_31X_L1T --processName=L1EmulRawHLT --no_exec
 
+# hlt direct cfg
+# cf hltGetConfiguration --help
+hltGetConfiguration --full --offline --data /users/frankma/devCMSSW_4_2_0/HIonV976 --type HIon --unprescale --process HLTHIon --globaltag START44_V6::Alll
+
 
 ###################### 391 ###########################
 # For Hydjet Minbias Raw Production
