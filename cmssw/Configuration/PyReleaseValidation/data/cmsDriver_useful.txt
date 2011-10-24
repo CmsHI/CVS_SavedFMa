@@ -27,7 +27,7 @@ cmsDriver.py l1EmulatorFromRaw -s RAW2DIGI,L1,HLT:HIon -n 10 --conditions auto:h
 
 # hlt direct cfg
 # cf hltGetConfiguration --help
-hltGetConfiguration --full --offline --data /users/frankma/devCMSSW_4_2_0/HIonV976 --type HIon --unprescale --process HLTHIon --globaltag START44_V6::Alll
+hltGetConfiguration --full --offline --data /users/frankma/devCMSSW_4_2_0/HIonV976 --type HIon --unprescale --process HLTHIon --globaltag START44_V6::All
 
 
 ###################### 391 ###########################
