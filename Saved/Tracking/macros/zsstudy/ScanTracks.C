@@ -5,12 +5,12 @@
 using namespace std;
 
 void ScanTracks(
-                int run=151088,
+                //int run=151088,
                 int evt=646838,
                 float ptmin=30)
 {
-  TFile * fold = new TFile("../trees/zs01-7.root");
-  TFile * fnew = new TFile("../trees/zs01-8.root");
+  TFile * fold = new TFile("/net/hidsk0001/d00/scratch/dav2105/openhlt_2011/merged/sorted_RERECO_440_Jet50USkim_OldZSv2_PRIM.root");
+  TFile * fnew = new TFile("/net/hidsk0001/d00/scratch/dav2105/openhlt_2011/merged/sorted_RERECO_440_Jet50USkim_NewZSv2_PRIM.root");
   
   TTree * told = (TTree*)fold->Get("anaTrack/trackTree");
   TTree * tnew = (TTree*)fnew->Get("anaTrack/trackTree");
@@ -29,7 +29,8 @@ void ScanTracks(
   TString evtvars = "nRun:nEv:cbin";
   TString trkvars = "trkPt:trkEta:trkPhi:isHGT:trkNHit:normPtError:normChi2:normDz:normD0";
   
-  TCut evtsel = Form("nRun==%d&&nEv==%d",run,evt);
+  //TCut evtsel = Form("nRun==%d&&nEv==%d",run,evt);
+  TCut evtsel = Form("nEv==%d",evt);
   TCut trksel = Form("trkPt>=%.1f",ptmin);
   
   cout << "Evt selection: " << evtsel << endl;
