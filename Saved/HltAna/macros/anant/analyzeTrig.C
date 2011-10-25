@@ -82,7 +82,8 @@ public:
 };
 
 void analyzeTrig(
-                 TString inname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv1/merge/all.root"
+                 //TString inname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv1/merge/all.root"
+                 TString inname="/net/hidsk0001/d00/scratch/frankma/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv2/merge/all.root"
                  )
 {
 	double cutEtaJet = 5;
@@ -95,12 +96,14 @@ void analyzeTrig(
   Particles l1taujets;
   Particles l1forjets;
 
-	TString outname = Form("results_alljettype_hil1mctag_eta%.0f.root",cutEtaJet*1000);
+	TString outname = Form("results_alljettype_hil1v2mctag_eta%.0f.root",cutEtaJet*1000);
 	
 	TFile* inf = new TFile(inname,"read");
 	
 	TTree* t = (TTree*)inf->Get("hltbitnew/HltTree");
 	TTree* tjet = (TTree*)inf->Get("icPu5JetAnalyzer/t");
+   cout << "hlt tree: " << t->GetEntries() << endl;
+   cout << "jet tree: " << tjet->GetEntries() << endl;
 	
 	t->SetBranchAddress("Run",&evt.run);
 	t->SetBranchAddress("Event",&evt.evt);

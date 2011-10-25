@@ -9,7 +9,10 @@
 #include "TLine.h"
 using namespace std;
 
-void L1EffvJEt(TString infname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv1/merge/all.root")
+void L1EffvJEt(
+               //TString infname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv1/merge/all.root"
+               TString infname="/net/hidsk0001/d00/scratch/frankma/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv2/merge/all.root"
+)
 {
   TH1::SetDefaultSumw2();
   TFile * inf = new TFile(infname);
@@ -17,7 +20,7 @@ void L1EffvJEt(TString infname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw
   TTree * t = (TTree*)inf->Get("hltbitnew/HltTree");
   t->AddFriend("l1NtupleProducer/L1Tree");
   t->AddFriend("icPu5JetAnalyzer/t");
-  t->AddFriend("tjt","../anant/results_alljettype_hil1mctag_eta5000.root");
+  t->AddFriend("tjt","../anant/results_alljettype_hil1v2mctag_eta5000.root");
   t->SetAlias("mul","RankETT*0.5");
   
   TCanvas * cchk = new TCanvas("cchk","cchk",500,500);
@@ -42,8 +45,8 @@ void L1EffvJEt(TString infname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw
   t->Draw("L1_SingleJet36_BptxAND:jtpt[0]>>h36",sel,"profgoff");
   t->Draw("L1_SingleJet52_BptxAND:jtpt[0]>>h52",sel,"profgoff");
   t->Draw("L1_SingleJet68_BptxAND:jtpt[0]>>h68",sel,"profgoff");
-  //t->Draw("L1_SingleJet92:jtpt[0]>>h92",sel,"profgoff");
-  //t->Draw("L1_SingleJet128:jtpt[0]>>h128",sel,"profgoff");
+  t->Draw("L1_SingleJet92_BptxAND:jtpt[0]>>h92",sel,"profgoff");
+  t->Draw("L1_SingleJet128_BptxAND:jtpt[0]>>h128",sel,"profgoff");
   //t->Draw("l1pt1>=160:jtpt[0]>>h160",sel,"profgoff");
   //t->Draw("l1pt1>=184:jtpt[0]>>h184",sel,"profgoff");
   
@@ -71,7 +74,7 @@ void L1EffvJEt(TString infname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw
   h36->Draw("sameE");
   h52->Draw("sameE");
   h68->Draw("sameE");
-  //h92->Draw("samep");
+  h92->Draw("samep");
   //h128->Draw("sameE");
   //h160->Draw("sameE");
   //h184->Draw("sameE");
@@ -89,7 +92,7 @@ void L1EffvJEt(TString infname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw
   leg->AddEntry(h36,"L1_SingleJet36","p");
   leg->AddEntry(h52,"L1_SingleJet52","p");
   leg->AddEntry(h68,"L1_SingleJet68","p");
-  //leg->AddEntry(h92,"L1_SingleJet92","p");
+  leg->AddEntry(h92,"L1_SingleJet92","p");
   //leg->AddEntry(h128,"L1_SingleJet128","p");
   //leg->AddEntry(h160,"L1_SingleJet160","p");
   //leg->AddEntry(h184,"L1_SingleJet184","p");

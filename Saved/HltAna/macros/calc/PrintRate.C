@@ -7,7 +7,8 @@ using namespace std;
 void PrintRate(
                //TString infname="../ntout/L1Tree_mb_mctag_l1hlt_masterv1.root"
                //TString infname="../ntout/L1Tree_mb_mctag_l1hlt_v3.root"
-               TString infname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv1/merge/all.root"
+               //TString infname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv1/merge/all.root"
+               TString infname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv2/merge/all.root"
                )
 {
   TFile * inf = new TFile(infname);
