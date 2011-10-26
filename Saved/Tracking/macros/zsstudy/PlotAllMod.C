@@ -10,8 +10,10 @@ struct StripEvent{
 
 
 void PlotAllMod(
-                TString infname="~/scratch01/work/HLT/hi2011zsyueshi_441/src/Saved/TrackerZS/test/sstr_RECOZSHEADyueshi10195pm_.root",
-                TString outdir="out/2011.10.20/zsyueshi_badall"
+                //TString infname="~/scratch01/work/HLT/hi2011zsyueshi_441/src/Saved/TrackerZS/test/sstr_RECOZSHEADyueshi10195pm_.root",
+                //TString outdir="out/2011.10.20/zsyueshi_badall"
+                TString infname="/home/frankma/work/HI/HLT/sw/hi2011zsyueshi_441/src/Saved/TrackerZS/test/sstr_RECOivan1025_.root",
+                TString outdir="out/2011.10.25/ivan_badall"
                 )
 {
   TFile * inf1 = new TFile(infname);
@@ -32,6 +34,6 @@ void PlotAllMod(
   for (Long64_t i=0; i<nentries&&i<maxPlot;++i) {
     nbytes += tbase1->GetEntry(i);
     cout << "run" << se.run << " evt: " << se.evt << " id: " << se.id << " nstrip: " << se.nstrip << endl;
-    ZSCluster(infname,se.evt,se.id,0,768,outdir,"zsyueshi");
+    ZSCluster(infname,se.evt,se.id,0,768,outdir,"zsivan2011.10.24");
   }
 }

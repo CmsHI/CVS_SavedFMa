@@ -29,7 +29,8 @@ process.source = cms.Source("PoolSource",
         #Events in old ZS but not new ZS:
         #'file:/net/hisrv0001/home/davidlw/scratch1/HLTStudies/CMSSW_4_4_0_OldZS/src/RECO_highptInOldNotNew_OldZS_Jet50U.root'
         #'file:/net/hisrv0001/home/davidlw/scratch1/HLTStudies/CMSSW_4_4_0_NewZS/src/RECO_highptInOldNotNew_NewZS_Jet50U.root'
-        'file:hiReco_RAW2DIGI_RECO_ZSyueshi10195pm.root'
+	#'file:hiReco_RAW2DIGI_RECO_ZSyueshi10195pm.root'
+	'file:/d00/icali/wa441/output_rereco_test_inREPACKRAW_1.root'
 
     ),
     #eventsToProcess = cms.untracked.VEventRange('151088:107:646838-151088:107:646838')
@@ -38,7 +39,7 @@ process.source = cms.Source("PoolSource",
 process.GlobalTag.globaltag = 'GR_R_44_V4::All'
 
 oldInterface = False # some how in wei's j50u, oldzs has new iterface, newzs has old interface
-proc = "RECOZSHEAD"
+#proc = "RECOZSHEAD"
 #tag="10_07_1148am"
 #zscfg="DeltaCMThresh0GTV4_hi2010ped"
 #zscfg="DistortionThresh0GTV4_hi2010ped"
@@ -50,7 +51,9 @@ proc = "RECOZSHEAD"
 #tag="OldNotNew_OldZS_J50U"
 #tag="NewNotOld_NewZS_J50U"
 #tag="OldNotNew_NewZS_J50U"
-tag="yueshi10195pm"
+#tag="yueshi10195pm"
+proc = "RECO"
+tag="ivan1025"
 zscfg=""
 process.TFileService = cms.Service("TFileService",
                                   fileName=cms.string("sstr_"+proc+tag+"_"+zscfg+".root"))
@@ -62,11 +65,11 @@ process.trkRecHitScanner.trkSrc = "hiGlobalPrimTracks"
 process.trkRecHitScanner.trkPtMin = 20
 
 process.sshis = process.SiStripBaselineAnalyzer.clone(
-  srcBaseline =  cms.InputTag('siStripZeroSuppression','BADAPVBASELINE'),
-  srcAPVCM  =  cms.InputTag('siStripZeroSuppression','APVCM'),
+  srcBaseline =  cms.InputTag('siStripZeroSuppression','BADAPVBASELINEVirginRaw'),
+  srcAPVCM  =  cms.InputTag('siStripZeroSuppression','APVCMVirginRaw'),
   srcProcessedRawDigi =  cms.InputTag('siStripZeroSuppression','VirginRaw'),
   nModuletoDisplay = cms.uint32(500),
-  plotClusters = cms.bool(True),
+  plotClusters = cms.bool(False),
   plotBaseline = cms.bool(True),
   plotRawDigi	= cms.bool(True),
   plotAPVCM	= cms.bool(True)
@@ -78,12 +81,12 @@ process.ssnt = cms.EDAnalyzer("StripAnalyzer",
   Algorithms = DefaultAlgorithms,
   vr = cms.InputTag("siStripDigis","VirginRaw",proc),
   zs = cms.InputTag("siStripZeroSuppression","VirginRaw",proc),
-  pr = cms.InputTag("siStripZeroSuppression","BADAPVBASELINE",proc),
+  pr = cms.InputTag("siStripZeroSuppression","BADAPVBASELINEVirginRaw",proc),
   cl = cms.InputTag("siStripClusters","",proc),
   doVR = cms.bool(True),
   doZS = cms.bool(True),
   doPR = cms.bool(True),
-  doCL = cms.bool(True)
+  doCL = cms.bool(False)
   )
 
 process.ssntBad = process.ssnt.clone(
@@ -94,8 +97,8 @@ process.ssntBad = process.ssnt.clone(
   )
 
 process.ssntBadBLPts = process.ssnt.clone(
-  zs = cms.InputTag("siStripZeroSuppression","BADAPVBASELINEPOINTS",proc),
-  pr = cms.InputTag("siStripZeroSuppression","BADAPVBASELINEPOINTS",proc),
+  zs = cms.InputTag("siStripZeroSuppression","BADAPVBASELINEPOINTSVirginRaw",proc),
+  pr = cms.InputTag("siStripZeroSuppression","BADAPVBASELINEPOINTSVirginRaw",proc),
   doVR = False,
   doPR = False,
   doCL = False
@@ -105,7 +108,7 @@ if oldInterface:
   process.ssntBadBLPts.doZS=False
 
 process.ssntAPVCMN = process.ssnt.clone(
-  pr = cms.InputTag("siStripZeroSuppression","APVCM",proc),
+  pr = cms.InputTag("siStripZeroSuppression","APVCMVirginRaw",proc),
   doVR = False,
   doZS = False,
   doCL = False

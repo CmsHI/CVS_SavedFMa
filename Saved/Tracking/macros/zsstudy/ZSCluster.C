@@ -20,13 +20,13 @@ void RemoveHistZeroPoints(TH1 * h)
 void ZSCluster(
                //TString infname="ntout/sstr_RECOZSHEAD10_07_1148am_GTV4_hi2010ped.root",
                //TString infname="ntout/sstr_RECOZSHEAD10_07_1148am_restoreThresh0MeanCM128GTV4_hi2010ped.root",
-               TString infname="~/scratch01/work/HLT/hi2011zsyueshi_441/src/Saved/TrackerZS/test/sstr_RECOZSHEADyueshi10195pm_.root",
-               int evt=646838,
-               int id=436294128,
+               TString infname="/home/frankma/work/HI/HLT/sw/hi2011zsyueshi_441/src/Saved/TrackerZS/test/sstr_RECOivan1025_.root",
+               int evt=4458190,
+               int id=369120518,
                int cluster_beg=0,
                int cluster_size=768,
                TString outdir="out/test",
-               TString title="PromptRecoZS",
+               TString title="ivan",
                bool useBLF=true,
                bool newInterface=true
                 )
@@ -59,7 +59,7 @@ void ZSCluster(
   tvr1->Project("hRef","strip",Form("adc*(%s)",sel.Data()));
   tvr1->Project("hPR1","strip",Form("padc*(%s)",sel.Data()));
   tzs1->Project("hZS1","strip",Form("adc*(%s)",sel.Data()));
-  tclus->Project("hClus","strip",Form("50*(%s)",selclus.Data()));
+  //tclus->Project("hClus","strip",Form("50*(%s)",selclus.Data()));
   tbase1->Project("hBase1","strip",Form("adc*(%s)",sel.Data()));
   if (useBLF) {
     if (newInterface) tblpts1->Project("hBlPts1","strip",Form("(adc-128)*(%s)",sel.Data()));
@@ -98,7 +98,7 @@ void ZSCluster(
   hBadVR1->SetMarkerSize(1.);
   hFrame->Draw("hist");
   if (useBLF) hBadVR1->Draw("same p");
-  hClus->Draw("same p");
+  //hClus->Draw("same p");
   hRef->Draw("same hist");
   hPR1->Draw("same hist");
   hBase1->Draw("same hist");
@@ -119,10 +119,13 @@ void ZSCluster(
   leg->AddEntry(hBase1,"Baseline","l");
   if (useBLF) leg->AddEntry(hBlPts1,"Flat Regions","p");
   leg->AddEntry(hZS1,"ZS Digi","l");
-  leg->AddEntry(hClus,"Hit Cluster","p");
+  //leg->AddEntry(hClus,"Hit Cluster","p");
   if (useBLF) leg->AddEntry(hBadVR1,"Bad Module (VR Saved)","p");
   leg->Draw();
   
   gSystem->mkdir(outdir,true);
   c2->Print(Form("%s/Det%d_%s.gif",outdir.Data(),id,title.Data()));
+   
+   inf1->Close();
+   delete inf1;
 }
