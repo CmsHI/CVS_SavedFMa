@@ -29,6 +29,7 @@ cmsDriver.py l1EmulatorFromRaw -s RAW2DIGI,L1,HLT:HIon -n 10 --conditions auto:h
 # cf hltGetConfiguration --help
 hltGetConfiguration --full --offline --data /users/frankma/devCMSSW_4_2_0/HIonV976 --type HIon --unprescale --process HLTHIon --globaltag START44_V6::All
 hltGetConfiguration --full --offline --data /dev/CMSSW_4_2_0/HIon/V341 --type HIon --unprescale --process HLTHIon --globaltag START44_V6::All --l1-emulator gmt,gct,gt --l1 L1GtTriggerMenu_L1Menu_CollisionsHeavyIons2011_v0_mc --input file:/mnt/hadoop/cms/store/results/heavy-ions/HICorePhysics/StoreResults-HICorePhysics_Skim_MinimumBias_RAW-a606dc809a29a92e17749e5652319ad0-SD_MBHI/HICorePhysics/USER/StoreResults-HICorePhysics_Skim_MinimumBias_RAW-a606dc809a29a92e17749e5652319ad0-SD_MBHI/0000/0EDFD1BD-C9AE-E011-963E-003048CB82AC.root
+# * take out the xml stuff that was hard coded in HIon menu
 
 
 ###################### 391 ###########################
