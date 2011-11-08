@@ -54,18 +54,24 @@ void CompareL1Data2010(
    
    tdata->Draw("L1CenJetEt>>hL1PtData",sel,"goff");
    tdata->Draw("L1TauEt>>+hL1PtData",sel,"goff");
+   tdata->Draw("L1ForJetEt>>+hL1PtData",sel,"goff");
    tmc->Draw("L1CenJetEt>>hL1PtMC",selmc,"goff");
    tmc->Draw("L1TauEt>>+hL1PtMC",selmc,"goff");
+   tmc->Draw("L1ForJetEt>>+hL1PtMC",selmc,"goff");
    
    tdata->Draw("L1CenJetEta>>hL1EtaData",sel,"goff");
    tdata->Draw("L1TauEta>>+hL1EtaData",sel,"goff");
+   tdata->Draw("L1ForJetEta>>+hL1EtaData",sel,"goff");
    tmc->Draw("L1CenJetEta>>hL1EtaMC",selmc,"goff");
    tmc->Draw("L1TauEta>>+hL1EtaMC",selmc,"goff");
+   tmc->Draw("L1ForJetEta>>+hL1EtaMC",selmc,"goff");
    
    tdata->Draw("L1CenJetPhi>>hL1PhiData",sel,"goff");
    tdata->Draw("L1TauPhi>>+hL1PhiData",sel,"goff");
+   tdata->Draw("L1ForJetPhi>>+hL1PhiData",sel,"goff");
    tmc->Draw("L1CenJetPhi>>hL1PhiMC",selmc,"goff");
    tmc->Draw("L1TauPhi>>+hL1PhiMC",selmc,"goff");
+   tmc->Draw("L1ForJetPhi>>+hL1PhiMC",selmc,"goff");
    
    hL1PtData->Scale(1./nevtdata);
    hL1PtMC->Scale(1./nevtmc);
