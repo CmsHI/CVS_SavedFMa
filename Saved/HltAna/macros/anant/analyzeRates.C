@@ -37,6 +37,10 @@ public:
          //cout << "nacc: " << nacc << " nacc mod pres: " << (nacc%prescale) << " naccPS: " << naccPS << endl;
       }
    }
+   void PrintSummary(float norm) {
+      cout << name << ". BeforePS: " << nacc << " (" << nacc/norm << ")";
+      cout << " AfterPS: " << naccPS << " (" << naccPS/norm << ")" << endl;
+   }
 };
 
 void LoadTrigBranch(TTree * t, Trigger & trig)
@@ -57,7 +61,7 @@ void analyzeRates(
    
    vtrig.push_back(Trigger("HLT_HIJet55_v1",10));
    vtrig.push_back(Trigger("HLT_HIJet65_v1",3));
-   vtrig.push_back(Trigger("HLT_HIJet85_v1",1));
+   vtrig.push_back(Trigger("HLT_HIJet80_v1",1));
    vtrig.push_back(Trigger("HLT_HIJet95_v1",1));
    vtrig.push_back(Trigger("HLT_HIDiJet55_v1",2));
    vtrig.push_back(Trigger("HLT_HIJet65_Jet55_v1",1));
@@ -67,7 +71,7 @@ void analyzeRates(
 	t->SetBranchAddress("Event",&evt.evt);
    
    for (unsigned i=0; i<vtrig.size(); ++i) {
-      //cout << vtrig[i].name << ": prescale = " << vtrig[i].prescale << endl;
+      cout << vtrig[i].name << ": prescale = " << vtrig[i].prescale << endl;
       LoadTrigBranch(t,vtrig[i]);
    }
    
@@ -87,8 +91,9 @@ void analyzeRates(
    
    // Finished Looping
    cout << "Final Results" << endl;
+   int nMB=Nevents;
    for (unsigned i=0; i<vtrig.size(); ++i) {
-      cout << vtrig[i].name << ". naccBeforePS: " << vtrig[i].nacc << " naccAfterPS: " << vtrig[i].naccPS << endl;
+      vtrig[i].PrintSummary(nMB);
    }   
 }
 
