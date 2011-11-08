@@ -75,26 +75,37 @@ void analyzeRates(
       LoadTrigBranch(t,vtrig[i]);
    }
    
+   int culmuNAcc=0;
+   int culmuNAccPS=0;
 	int Nevents = t->GetEntries();
    cout << "Total events in tree: " << Nevents << endl;
    // Loop Events
 	for(int iev = 0; iev < Nevents; ++iev){
 		t->GetEntry(iev);
 		if (iev%50000==0) { cout << iev << " (" << (float)iev/Nevents*100. << "%)" << " Run: " << evt.run << " evt: " << evt.evt << endl; }
+
+      bool accEvt=false;
+      bool accEvtPS=false;
       for (unsigned i=0; i<vtrig.size(); ++i) {
+         // 1. evaluate trigger results after trigger rules
          vtrig[i].EvalTrig();
-         if (vtrig[i].result>0) {
-            //cout << vtrig[i].name << ". beforePS: " << vtrig[i].result << " afterPS: " << vtrig[i].resultPS << endl;
-         }
+         if (vtrig[i].result>0) accEvt=true;
+         if (vtrig[i].resultPS) accEvtPS=true;
       }
+      // 2. calc cumulative rate after trigger rules
+      if (accEvt) ++culmuNAcc;
+      if (accEvtPS) ++culmuNAccPS;
    }
    
    // Finished Looping
    cout << "Final Results" << endl;
-   int nMB=Nevents;
+   float nMB=Nevents;
    for (unsigned i=0; i<vtrig.size(); ++i) {
       vtrig[i].PrintSummary(nMB);
    }   
+   cout << "Cumulative Rates" << endl;
+   cout << "noPS: " << culmuNAcc << " frac of MB: " << culmuNAcc/nMB << endl;
+   cout << "PS:" << culmuNAccPS << " frac of MB: " << culmuNAccPS/nMB << endl;
 }
 
 
