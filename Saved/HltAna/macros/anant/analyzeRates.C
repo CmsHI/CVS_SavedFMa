@@ -60,7 +60,16 @@ void analyzeRates(
 	TFile* inf = new TFile(inname,"read");
 	
 	TTree* t = (TTree*)inf->Get("hltbitnew/HltTree");
-   
+
+   /* L1 */
+   vtrig.push_back(Trigger("L1_HcalHfCoincPmORBscMinBiasThresh1_BptxAND",191));
+   vtrig.push_back(Trigger("L1_ETT100_BptxAND",1));
+   vtrig.push_back(Trigger("L1_SingleJet36_BptxAND",1));
+   vtrig.push_back(Trigger("L1_SingleEG5_BptxAND",1));
+   vtrig.push_back(Trigger("L1_DoubleMuOpen_BptxAND",1));
+   vtrig.push_back(Trigger("L1_SingleMu3_BptxAND",1));
+
+   /* HLT
    // mb
    vtrig.push_back(Trigger("HLT_HIMinBiasHfOrBSC_v1",191));
    vtrig.push_back(Trigger("HLT_HIMinBiasZDC_Calo_v1",3343));
@@ -99,6 +108,7 @@ void analyzeRates(
    vtrig.push_back(Trigger("HLT_HIL3DoubleMuOpen_Mgt2_OS_NoCowboy_v1",1));
    vtrig.push_back(Trigger("HLT_HIL3DoubleMuOpen_v1",7));
    vtrig.push_back(Trigger("HLT_HIL3Mu3_v1",5));
+    */
 
 	// Load Brances
 	t->SetBranchAddress("Run",&evt.run);
