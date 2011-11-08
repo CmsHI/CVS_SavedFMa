@@ -12,19 +12,20 @@
 using namespace std;
 
 void CompareL1Data2010(
-                       TString infdataname="../trees/openhlt_data_yenjiereco_r180892.root",
-                       TString infmcname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv2/merge/all.root"
+                       TString infdataname="/home/frankma/work/HI/HLT/sw/hi2011trigana_442p2/src/CmsHi/HiHLTAlgos/test/openhlt_data_raw_180892.root",
+                       TString infmcname="../trees/hcraw-rerunl1hlt-masterhil1mctagv2.root"
                        )
 {
    TH1::SetDefaultSumw2();
    
+   // inputs
    TFile * infdata = new TFile(infdataname);
    TFile * infmc = new TFile(infmcname);
    
    TTree * tdata = (TTree*)infdata->Get("hltana/HltTree");
-   
    TTree * tmc = (TTree*)infmc->Get("hltbitnew/HltTree");
    
+   // histogram bins
    const int netabins = 22;
    float etabins[netabins+1] = 
    {-5,-4.5,-4,-3.5,-3,-2.172,-1.74,-1.392,-1.044,-0.696,-0.348,0,
@@ -33,7 +34,7 @@ void CompareL1Data2010(
    float ptbins[nptbins+1];
    for (int i=0; i<=nptbins; ++i) { ptbins[i]=i*4; }
    
-   
+   // histograms
    TH1D * hL1PtData = new TH1D("hL1PtData","",70,0,280);
    TH1D * hL1PtMC = new TH1D("hL1PtMC","",70,0,280);
    TH1D * hL1EtaData = new TH1D("hL1EtaData","",netabins,etabins);
@@ -41,25 +42,30 @@ void CompareL1Data2010(
    TH1D * hL1PhiData = new TH1D("hL1PhiData","",17,-3.14,3.14);
    TH1D * hL1PhiMC = new TH1D("hL1PhiMC","",17,-3.14,3.14);
    
-   TH2D * hL1PtEtaData = new TH2D("hL1PtEtaData","",netabins,etabins,nptbins,ptbins);
-   
-   TString tag="";
+   TString tag="MinBias";
    TString src="Run180892";
-   TCut sel = "L1_HcalHfCoincPmORBscMinBiasThresh2_BptxAND";
+   TCut sel = "L1_HcalHfCoincPmORBscMinBiasThresh1_BptxAND"; // actual Th2, but actually what we want b/c Th1 is too noisy
    TCut selmc = "L1_HcalHfCoincPmORBscMinBiasThresh1_BptxAND";
-   float nevtdata = tdata->GetEntries();
-   float nevtmc = tmc->GetEntries();
+
+   float nevtdata = tdata->GetEntries(sel);
+   float nevtmc = tmc->GetEntries(selmc);
    cout << "data frac L1CenJetEt>80: " << (float)tdata->GetEntries("L1CenJetEt>80"&&sel) << " " << nevtdata << endl;
    cout << "data2010   frac L1CenJetEt>80: " << (float)tmc->GetEntries("L1CenJetEt>80"&&sel) << " " << nevtmc << endl;
    
    tdata->Draw("L1CenJetEt>>hL1PtData",sel,"goff");
+   tdata->Draw("L1TauEt>>+hL1PtData",sel,"goff");
    tmc->Draw("L1CenJetEt>>hL1PtMC",selmc,"goff");
+   tmc->Draw("L1TauEt>>+hL1PtMC",selmc,"goff");
    
-   tdata->Draw("L1CenJetEt>>hL1EtaData",sel,"goff");
-   tmc->Draw("L1CenJetEt>>hL1EtaMC",selmc,"goff");
+   tdata->Draw("L1CenJetEta>>hL1EtaData",sel,"goff");
+   tdata->Draw("L1TauEta>>+hL1EtaData",sel,"goff");
+   tmc->Draw("L1CenJetEta>>hL1EtaMC",selmc,"goff");
+   tmc->Draw("L1TauEta>>+hL1EtaMC",selmc,"goff");
    
-   tdata->Draw("L1CenJetEt>>hL1PhiData",sel,"goff");
-   tmc->Draw("L1CenJetEt>>hL1PhiMC",selmc,"goff");
+   tdata->Draw("L1CenJetPhi>>hL1PhiData",sel,"goff");
+   tdata->Draw("L1TauPhi>>+hL1PhiData",sel,"goff");
+   tmc->Draw("L1CenJetPhi>>hL1PhiMC",selmc,"goff");
+   tmc->Draw("L1TauPhi>>+hL1PhiMC",selmc,"goff");
    
    hL1PtData->Scale(1./nevtdata);
    hL1PtMC->Scale(1./nevtmc);
@@ -82,7 +88,7 @@ void CompareL1Data2010(
    leg->SetFillStyle(0);
    leg->SetBorderSize(0);
    leg->SetTextSize(0.035);
-   leg->AddEntry(hL1EtaData,"HICorePhysics, MB "+tag,"");
+   leg->AddEntry(hL1EtaData,tag,"");
    leg->AddEntry(hL1EtaData,"Data 2011 Run 180892","p");
    leg->AddEntry(hL1EtaMC,"HICorePhysics 2010","l");
    leg->Draw();
