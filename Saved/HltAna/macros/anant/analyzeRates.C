@@ -49,7 +49,9 @@ void LoadTrigBranch(TTree * t, Trigger & trig)
 }
 
 void analyzeRates(
-                  TString inname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv2/merge/all.root"
+                  //TString inname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv2/merge/all.root"
+                  // /net/hisrv0001/home/dav2105/run/CMSSW_4_4_2/src/HLTrigger/Configuration/python/HLT_HIon_mu_PRESCALE.py:
+                  TString inname="/net/hidsk0001/d00/scratch/dav2105/HIHLT_Validation_Test_GRIF_v10.root" // with unprescaled, b/c it's taking 1st prescale column! 
                   )
 {
 	// Tree variables
@@ -59,13 +61,45 @@ void analyzeRates(
 	
 	TTree* t = (TTree*)inf->Get("hltbitnew/HltTree");
    
+   // mb
+   vtrig.push_back(Trigger("HLT_HIMinBiasHfOrBSC_v1",191));
+   vtrig.push_back(Trigger("HLT_HIMinBiasZDC_Calo_v1",3343));
+   // jets
    vtrig.push_back(Trigger("HLT_HIJet55_v1",10));
    vtrig.push_back(Trigger("HLT_HIJet65_v1",3));
    vtrig.push_back(Trigger("HLT_HIJet80_v1",1));
    vtrig.push_back(Trigger("HLT_HIJet95_v1",1));
    vtrig.push_back(Trigger("HLT_HIDiJet55_v1",2));
    vtrig.push_back(Trigger("HLT_HIJet65_Jet55_v1",1));
-   
+   // photons
+   vtrig.push_back(Trigger("HLT_HISinglePhoton15_v1",6));
+   vtrig.push_back(Trigger("HLT_HISinglePhoton20_v1",1));
+   vtrig.push_back(Trigger("HLT_HISinglePhoton30_v1",1));
+   vtrig.push_back(Trigger("HLT_HISinglePhoton40_v1",1));
+   vtrig.push_back(Trigger("HLT_HIDoublePhoton10_v1",30));
+   vtrig.push_back(Trigger("HLT_HIDoublePhoton15_v1",1));
+   vtrig.push_back(Trigger("HLT_HIDoublePhoton20_v1",1));
+   vtrig.push_back(Trigger("HLT_HIPhoton10_Photon15_v1",1));
+   vtrig.push_back(Trigger("HLT_HIPhoton15_Photon20_v1",1));
+   // single track
+   vtrig.push_back(Trigger("HLT_HIFullTrack12_L1Central_v1",8));
+   vtrig.push_back(Trigger("HLT_HIFullTrack12_L1Peripheral_v1",8));
+   vtrig.push_back(Trigger("HLT_HIFullTrack14_L1Central_v1",2));
+   vtrig.push_back(Trigger("HLT_HIFullTrack14_L1Peripheral_v1",2));
+   vtrig.push_back(Trigger("HLT_HIFullTrack20_L1Central_v1",1));
+   vtrig.push_back(Trigger("HLT_HIFullTrack20_L1Peripheral_v1",1));
+   vtrig.push_back(Trigger("HLT_HIFullTrack25_L1Central_v1",1));
+   vtrig.push_back(Trigger("HLT_HIFullTrack25_L1Peripheral_v1",1));
+   // muons
+   vtrig.push_back(Trigger("HLT_HIL1DoubleMu0_HighQ_v1",1));
+   vtrig.push_back(Trigger("HLT_HIL2DoubleMu3_v1",1));
+   vtrig.push_back(Trigger("HLT_HIL2Mu15_v1",1));
+   vtrig.push_back(Trigger("HLT_HIL2Mu3_NHitQ_v1",10));
+   vtrig.push_back(Trigger("HLT_HIL2Mu7_v1",5));
+   vtrig.push_back(Trigger("HLT_HIL3DoubleMuOpen_Mgt2_OS_NoCowboy_v1",1));
+   vtrig.push_back(Trigger("HLT_HIL3DoubleMuOpen_v1",7));
+   vtrig.push_back(Trigger("HLT_HIL3Mu3_v1",5));
+
 	// Load Brances
 	t->SetBranchAddress("Run",&evt.run);
 	t->SetBranchAddress("Event",&evt.evt);
@@ -78,7 +112,9 @@ void analyzeRates(
    int culmuNAcc=0;
    int culmuNAccPS=0;
 	int Nevents = t->GetEntries();
+   float nMB=t->GetEntries("HLT_HIMinBiasHfOrBSC_v1");
    cout << "Total events in tree: " << Nevents << endl;
+   cout << "Total MB events in tree: " << nMB << endl;
    // Loop Events
 	for(int iev = 0; iev < Nevents; ++iev){
 		t->GetEntry(iev);
@@ -99,7 +135,6 @@ void analyzeRates(
    
    // Finished Looping
    cout << "Final Results" << endl;
-   float nMB=Nevents;
    for (unsigned i=0; i<vtrig.size(); ++i) {
       vtrig[i].PrintSummary(nMB);
    }   
