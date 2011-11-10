@@ -12,16 +12,19 @@ void PrintRate(
                //TString infname="/net/hisrv0001/home/davidlw/scratch1/HLTStudies/CMSSW_4_4_2_HIProd/src/openhlt_mc.root"
                //TString infname="/net/hidsk0001/d00/scratch/dav2105/HIHLT_Validation_Test_GRIF_v10.root"
                //TString infname="../trees/HIHLT_Validation_Test_GRIF_v10.root"
-               TString infname="/home/frankma/work/HI/HLT/sw/hi2011trigana_442p2/src/CmsHi/HiHLTAlgos/test/openhlt_data_raw_180892_full.root"
+               //TString infname="/home/frankma/work/HI/HLT/sw/hi2011trigana_442p2/src/CmsHi/HiHLTAlgos/test/openhlt_data_raw_180892_full.root"
+               // mc
+               TString infname="/net/hisrv0001/home/davidlw/scratch1/openhlt/merged_openhlt_mc_hydjet.root"
                )
 {
    TFile * inf = new TFile(infname);
    
-   //TTree * t = (TTree*)inf->Get("hltbitnew/HltTree");
-   TTree * t = (TTree*)inf->Get("hltana/HltTree");
+   TTree * t = (TTree*)inf->Get("hltbitnew/HltTree");
+   //TTree * t = (TTree*)inf->Get("hltana/HltTree");
    TString trigMB = "HLT_HIMinBiasHfOrBSC_v1";
    float nMB = t->GetEntries(trigMB);
    
+   cout << "Total events: " << t->GetEntries() << endl;
    cout << "Total " << trigMB << " events: " << nMB << endl;
 
    cout << "Fraction out of " << trigMB << " events: " << endl;
