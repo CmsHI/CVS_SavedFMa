@@ -26,7 +26,6 @@ void PrintRate(
    
    cout << "Total events: " << t->GetEntries() << endl;
    cout << "Total " << trigMB << " events: " << nMB << endl;
-
    cout << "Fraction out of " << trigMB << " events: " << endl;
    cout << "l1jet" << endl;
    cout << "L1_SingleJet36_BptxAND: " << t->GetEntries("L1_SingleJet36_BptxAND&&"+trigMB)/nMB << endl;
@@ -48,13 +47,11 @@ void PrintRate(
    cout << "l1 met" << endl;
    cout << "L1_ETM30_BptxAND: " << t->GetEntries("L1_ETM30_BptxAND&&"+trigMB)/nMB << endl;
    cout << "L1_ETM50_BptxAND: " << t->GetEntries("L1_ETM50_BptxAND&&"+trigMB)/nMB << endl;
-   
-   TString hltv="_v1";
-   cout << "hlt version " << hltv << endl;
-   cout << "HLT_HIJet55: " << t->GetEntries("HLT_HIJet55"+hltv+"&&"+trigMB)/nMB << endl;
-   cout << "HLT_HIJet65: " << t->GetEntries("HLT_HIJet65"+hltv+"&&"+trigMB)/nMB << endl;
-   cout << "HLT_HIJet80: " << t->GetEntries("HLT_HIJet80"+hltv+"&&"+trigMB)/nMB << endl;
-   cout << "HLT_HIJet95: " << t->GetEntries("HLT_HIJet95"+hltv+"&&"+trigMB)/nMB << endl;
-   cout << "HLT_HIDiJet55: " << t->GetEntries("HLT_HIDiJet55"+hltv+"&&"+trigMB)/nMB << endl;
-   cout << "HLT_HIJet65_Jet55: " << t->GetEntries("HLT_HIJet65_Jet55"+hltv+"&&"+trigMB)/nMB << endl;
+   cout << endl << "HLT" << endl;
+   cout << "HLT_HIJet55_v1: " << t->GetEntries("HLT_HIJet55_v1&&"+trigMB)/nMB << endl;
+   cout << "HLT_HIJet65_v1: " << t->GetEntries("HLT_HIJet65_v1&&"+trigMB)/nMB << endl;
+   cout << "HLT_HIJet80_v1: " << t->GetEntries("HLT_HIJet80_v1&&"+trigMB)/nMB << endl;
+   cout << "HLT_HIJet95_v1: " << t->GetEntries("HLT_HIJet95_v1&&"+trigMB)/nMB << endl;
+   cout << "HLT_HIDiJet55_v1: " << t->GetEntries("HLT_HIDiJet55_v1&&"+trigMB)/nMB << endl;
+   cout << "HLT_HIJet65_Jet55_v1: " << t->GetEntries("HLT_HIJet65_Jet55_v1&&"+trigMB)/nMB << endl;
 }
