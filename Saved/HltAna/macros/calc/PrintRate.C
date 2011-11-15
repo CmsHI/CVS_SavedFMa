@@ -13,15 +13,19 @@ void PrintRate(
                //TString infname="/net/hidsk0001/d00/scratch/dav2105/HIHLT_Validation_Test_GRIF_v10.root"
                //TString infname="../trees/HIHLT_Validation_Test_GRIF_v10.root"
                //TString infname="/home/frankma/work/HI/HLT/sw/hi2011trigana_442p2/src/CmsHi/HiHLTAlgos/test/openhlt_data_raw_180892_full.root"
+               //TString infname="/d101/kimy/macro/hlt2011/run181530/openhlt_run181531.root"
+               TString infname="/d100/velicanu/hiexp-hirun2011-r181611-reco-v1-collisionEvents_lowerSC_autohlt.root"
                // mc
-               TString infname="/net/hisrv0001/home/davidlw/scratch1/openhlt/merged_openhlt_mc_hydjet.root"
+               //TString infname="/net/hisrv0001/home/davidlw/scratch1/openhlt/merged_openhlt_mc_hydjet.root"
                )
 {
    TFile * inf = new TFile(infname);
    
-   TTree * t = (TTree*)inf->Get("hltbitnew/HltTree");
-   //TTree * t = (TTree*)inf->Get("hltana/HltTree");
+   //TTree * t = (TTree*)inf->Get("hltbitnew/HltTree");
+   TTree * t = (TTree*)inf->Get("hltanalysis/HltTree");
+   t->AddFriend("skim=skimanalysis/HltTree",infname);
    TString trigMB = "HLT_HIMinBiasHfOrBSC_v1";
+   //TString trigMB = "HLT_HIMinBiasHfOrBSC_v1&&skim.pcollisionEventSelection";
    float nMB = t->GetEntries(trigMB);
    
    cout << "Total events: " << t->GetEntries() << endl;
@@ -54,11 +58,11 @@ void PrintRate(
    cout << "HLT_HIJet95_v1: " << t->GetEntries("HLT_HIJet95_v1&&"+trigMB)/nMB << endl;
    cout << "HLT_HIJet65_Jet55_v1: " << t->GetEntries("HLT_HIJet65_Jet55_v1&&"+trigMB)/nMB << endl;
    cout << " HLT Photon" << endl;
-   cout << "HLT_HISinglePhoton15_v1: " << t->GetEntries("HLT_HISinglePhoton15_v1&&"+trigMB)/nMB << endl;
-   cout << "HLT_HISinglePhoton20_v1: " << t->GetEntries("HLT_HISinglePhoton20_v1&&"+trigMB)/nMB << endl;
-   cout << "HLT_HISinglePhoton30_v1: " << t->GetEntries("HLT_HISinglePhoton30_v1&&"+trigMB)/nMB << endl;
-   cout << "HLT_HISinglePhoton40_v1: " << t->GetEntries("HLT_HISinglePhoton40_v1&&"+trigMB)/nMB << endl;
-   cout << "HLT_HIDoublePhoton20_v1: " << t->GetEntries("HLT_HIDoublePhoton20_v1&&"+trigMB)/nMB << endl;
+   cout << "HLT_HISinglePhoton15_v2: " << t->GetEntries("HLT_HISinglePhoton15_v1&&"+trigMB)/nMB << endl;
+   cout << "HLT_HISinglePhoton20_v2: " << t->GetEntries("HLT_HISinglePhoton20_v2&&"+trigMB)/nMB << endl;
+   cout << "HLT_HISinglePhoton30_v2: " << t->GetEntries("HLT_HISinglePhoton30_v2&&"+trigMB)/nMB << endl;
+   cout << "HLT_HISinglePhoton40_v2: " << t->GetEntries("HLT_HISinglePhoton40_v2&&"+trigMB)/nMB << endl;
+   cout << "HLT_HIDoublePhoton20_v2: " << t->GetEntries("HLT_HIDoublePhoton20_v1&&"+trigMB)/nMB << endl;
    cout << " HLT Single Track" << endl;
    cout << "HLT_HIFullTrack12_L1Central_v1: " << t->GetEntries("HLT_HIFullTrack12_L1Central_v1&&"+trigMB)/nMB << endl;
    cout << "HLT_HIFullTrack12_L1Peripheral_v1: " << t->GetEntries("HLT_HIFullTrack12_L1Peripheral_v1&&"+trigMB)/nMB << endl;
