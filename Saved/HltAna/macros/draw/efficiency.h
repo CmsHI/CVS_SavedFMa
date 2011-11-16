@@ -28,6 +28,14 @@ public:
       hEff->GetXaxis()->CenterTitle();
       hEff->GetYaxis()->CenterTitle();      
    }
+   Efficiency(TTree * tree, TString n,TString v,TCut s, TCut c, int nbin,float * bins):
+   name(n),var(v),sel(s),cut(c){
+      t=tree;
+      hEff = new TProfile(name,"",nbin,bins);
+      hEff->GetXaxis()->SetNdivisions(505);
+      hEff->GetXaxis()->CenterTitle();
+      hEff->GetYaxis()->CenterTitle();      
+   }
    
    void Draw(int mkcolor=kBlack, int mkst=kFullCircle, TString opt="sameE") {
       TString draw=TString(cut)+":"+var+">>"+name;
