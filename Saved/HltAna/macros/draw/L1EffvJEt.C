@@ -10,7 +10,7 @@
 using namespace std;
 
 void L1EffvJEt(
-               TString infname="../../../trees/merged_Run181531_HIExpressPhysics_Part.root"
+               TString infname="/d100/velicanu/tmp/hiexp-hirun2011-r181611-reco-v1-collisionEvents_lowerSC_autohlt.root"
                )
 {
    TH1::SetDefaultSumw2();
@@ -61,7 +61,7 @@ void L1EffvJEt(
    h36->Draw("sameE");
    h52->Draw("sameE");
    h68->Draw("sameE");
-   h92->Draw("samep");
+   //h92->Draw("samep");
    //h128->Draw("sameE");
    
    TLine * l = new TLine(0,1,150,1);

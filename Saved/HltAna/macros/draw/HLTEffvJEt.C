@@ -10,7 +10,7 @@
 using namespace std;
 
 void HLTEffvJEt(
-               TString infname="../../../trees/merged_Run181531_HIExpressPhysics_Part.root"
+               TString infname="/d100/velicanu/tmp/hiexp-hirun2011-r181611-reco-v1-collisionEvents_lowerSC_autohlt.root"
                )
 {
    TH1::SetDefaultSumw2();
@@ -30,7 +30,7 @@ void HLTEffvJEt(
    TProfile * h65_55 = new TProfile("h65_55","",50,0,ptmax);
    
    TCut sel = "HLT_HIMinBiasHfOrBSC_v1&&skim.pcollisionEventSelection";
-   TString tag = "Run181531";
+   TString tag = "Run181611";
    
    TCanvas * cchk = new TCanvas("cchk","cchk",500,500);
    t->Draw("L1EtTot",sel,"");
@@ -39,8 +39,8 @@ void HLTEffvJEt(
    t->Draw("HLT_HIJet65_v1:jtpt[0]>>h65",sel,"profgoff");
    t->Draw("HLT_HIJet80_v1:jtpt[0]>>h80",sel,"profgoff");
    t->Draw("HLT_HIJet95_v1:jtpt[0]>>h95",sel,"profgoff");
-   t->Draw("HLT_HIDiJet55_v1:jtpt[0]>>h55_55",sel,"profgoff");
-   t->Draw("HLT_HIJet65_Jet55_v1:jtpt[0]>>h65_55",sel,"profgoff");
+   t->Draw("HLT_HIDiJet55_v1:jtpt[0]>>h55_55",sel&&"jtpt[1]>57","profgoff");
+   t->Draw("HLT_HIJet65_Jet55_v1:jtpt[0]>>h65_55",sel&&"jtpt[1]>57","profgoff");
    
    TCanvas * c2 = new TCanvas("c2","c2",500,500);
    TH1D * hFrame = (TH1D*)h55->Clone("hFrame");

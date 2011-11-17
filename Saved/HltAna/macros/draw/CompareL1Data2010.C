@@ -12,8 +12,10 @@
 using namespace std;
 
 void CompareL1Data2010(
-                       TString infdataname="/home/frankma/work/HI/HLT/sw/hi2011trigana_442p2/src/CmsHi/HiHLTAlgos/test/openhlt_data_raw_180892.root",
-                       TString infmcname="../trees/hcraw-rerunl1hlt-masterhil1mctagv2.root"
+                       TString infdataname="/d100/velicanu/hiexp-hirun2011-r181611-reco-v1-collisionEvents_lowerSC_autohlt.root",
+                       TString infmcname="../trees/HIHLT_Validation_Test_GRIF_v10.root",
+                       TString newtitile="New Data",
+                       TString oldtitle="Ref Data"
                        )
 {
    TH1::SetDefaultSumw2();
@@ -22,7 +24,7 @@ void CompareL1Data2010(
    TFile * infdata = new TFile(infdataname);
    TFile * infmc = new TFile(infmcname);
    
-   TTree * tdata = (TTree*)infdata->Get("hltana/HltTree");
+   TTree * tdata = (TTree*)infdata->Get("hltanalysis/HltTree");
    TTree * tmc = (TTree*)infmc->Get("hltbitnew/HltTree");
    
    // histogram bins
@@ -43,35 +45,35 @@ void CompareL1Data2010(
    TH1D * hL1PhiMC = new TH1D("hL1PhiMC","",17,-3.14,3.14);
    
    TString tag="MinBias";
-   TString src="Run180892";
-   TCut sel = "L1_HcalHfCoincPmORBscMinBiasThresh1_BptxAND"; // actual Th2, but actually what we want b/c Th1 is too noisy
-   TCut selmc = "L1_HcalHfCoincPmORBscMinBiasThresh1_BptxAND";
+   TString src="Run181531";
+   TCut sel = "HLT_HIMinBiasHfOrBSC_v1"; // actual Th2, but actually what we want b/c Th1 is too noisy
+   TCut selmc = "HLT_HIMinBiasHfOrBSC_v1";
 
    float nevtdata = tdata->GetEntries(sel);
    float nevtmc = tmc->GetEntries(selmc);
-   cout << "data frac L1CenJetEt>80: " << (float)tdata->GetEntries("L1CenJetEt>80"&&sel) << " " << nevtdata << endl;
-   cout << "data2010   frac L1CenJetEt>80: " << (float)tmc->GetEntries("L1CenJetEt>80"&&sel) << " " << nevtmc << endl;
+   cout << sel << " data frac : " << (float)tdata->GetEntries(sel) << " " << nevtdata << endl;
+   cout << selmc << " data2010   frac: " << (float)tmc->GetEntries(selmc) << " " << nevtmc << endl;
    
-   tdata->Draw("L1CenJetEt>>hL1PtData",sel,"goff");
-   tdata->Draw("L1TauEt>>+hL1PtData",sel,"goff");
-   tdata->Draw("L1ForJetEt>>+hL1PtData",sel,"goff");
-   tmc->Draw("L1CenJetEt>>hL1PtMC",selmc,"goff");
-   tmc->Draw("L1TauEt>>+hL1PtMC",selmc,"goff");
-   tmc->Draw("L1ForJetEt>>+hL1PtMC",selmc,"goff");
+   tdata->Draw("L1CenJetEt>>hL1PtData",sel&&"abs(L1CenJetEta)<3","goff");
+   tdata->Draw("L1TauEt>>+hL1PtData",sel&&"abs(L1TauEta)<3","goff");
+   //tdata->Draw("L1ForJetEt>>+hL1PtData",sel,"goff");
+   tmc->Draw("L1CenJetEt>>hL1PtMC",selmc&&"abs(L1CenJetEta)<3","goff");
+   tmc->Draw("L1TauEt>>+hL1PtMC",selmc&&"abs(L1TauEta)<3","goff");
+   //tmc->Draw("L1ForJetEt>>+hL1PtMC",selmc,"goff");
    
-   tdata->Draw("L1CenJetEta>>hL1EtaData",sel,"goff");
-   tdata->Draw("L1TauEta>>+hL1EtaData",sel,"goff");
-   tdata->Draw("L1ForJetEta>>+hL1EtaData",sel,"goff");
-   tmc->Draw("L1CenJetEta>>hL1EtaMC",selmc,"goff");
-   tmc->Draw("L1TauEta>>+hL1EtaMC",selmc,"goff");
-   tmc->Draw("L1ForJetEta>>+hL1EtaMC",selmc,"goff");
+   tdata->Draw("L1CenJetEta>>hL1EtaData",sel&&"abs(L1CenJetEta)<3","goff");
+   tdata->Draw("L1TauEta>>+hL1EtaData",sel&&"abs(L1TauEta)<3","goff");
+   //tdata->Draw("L1ForJetEta>>+hL1EtaData",sel,"goff");
+   tmc->Draw("L1CenJetEta>>hL1EtaMC",selmc&&"abs(L1CenJetEta)<3","goff");
+   tmc->Draw("L1TauEta>>+hL1EtaMC",selmc&&"abs(L1TauEta)<3","goff");
+   //tmc->Draw("L1ForJetEta>>+hL1EtaMC",selmc,"goff");
    
-   tdata->Draw("L1CenJetPhi>>hL1PhiData",sel,"goff");
-   tdata->Draw("L1TauPhi>>+hL1PhiData",sel,"goff");
-   tdata->Draw("L1ForJetPhi>>+hL1PhiData",sel,"goff");
-   tmc->Draw("L1CenJetPhi>>hL1PhiMC",selmc,"goff");
-   tmc->Draw("L1TauPhi>>+hL1PhiMC",selmc,"goff");
-   tmc->Draw("L1ForJetPhi>>+hL1PhiMC",selmc,"goff");
+   tdata->Draw("L1CenJetPhi>>hL1PhiData",sel&&"abs(L1CenJetEta)<3","goff");
+   tdata->Draw("L1TauPhi>>+hL1PhiData",sel&&"abs(L1TauEta)<3","goff");
+   //tdata->Draw("L1ForJetPhi>>+hL1PhiData",sel,"goff");
+   tmc->Draw("L1CenJetPhi>>hL1PhiMC",selmc&&"abs(L1CenJetEta)<3","goff");
+   tmc->Draw("L1TauPhi>>+hL1PhiMC",selmc&&"abs(L1TauEta)<3","goff");
+   //tmc->Draw("L1ForJetPhi>>+hL1PhiMC",selmc,"goff");
    
    hL1PtData->Scale(1./nevtdata);
    hL1PtMC->Scale(1./nevtmc);
@@ -80,9 +82,9 @@ void CompareL1Data2010(
    hL1PhiData->Scale(1./nevtdata);
    hL1PhiMC->Scale(1./nevtmc);
    
-   TCanvas * c2 = new TCanvas("c2","c2",500,500);
+   TCanvas * c2 = new TCanvas(tag+"c2","c2",500,500);
    c2->SetLogy();
-   hL1EtaData->SetTitle(";leading L1 Jet #eta;Event Fraction");
+   hL1EtaData->SetTitle(";L1 Jet #eta;Event Fraction");
    hL1EtaData->SetAxisRange(1e-5,1e2,"Y");
    hL1EtaMC->SetMarkerStyle(kOpenSquare);
    hL1EtaMC->SetMarkerColor(kBlue);
@@ -95,16 +97,16 @@ void CompareL1Data2010(
    leg->SetBorderSize(0);
    leg->SetTextSize(0.035);
    leg->AddEntry(hL1EtaData,tag,"");
-   leg->AddEntry(hL1EtaData,"Data 2011 Run 180892","p");
-   leg->AddEntry(hL1EtaMC,"HICorePhysics 2010","l");
+   leg->AddEntry(hL1EtaData,newtitile,"p");
+   leg->AddEntry(hL1EtaMC,oldtitle,"l");
    leg->Draw();
    
    //c2->Print(Form("out/L1EtaData_%s.gif",tag.Data()));
-   c2->Print(Form("out/L1Eta%s_%s.gif",src.Data(),tag.Data()));
+   c2->Print(Form("out/trigVal/L1Eta%s_%s.gif",src.Data(),tag.Data()));
    
-   TCanvas * c3 = new TCanvas("c3","c3",500,500);
+   TCanvas * c3 = new TCanvas(tag+"c3","c3",500,500);
    c3->SetLogy();
-   hL1PtData->SetTitle(";leading L1 Jet p_{T} (GeV/c);Event Fraction");
+   hL1PtData->SetTitle(";L1 Jet p_{T} (GeV/c);Event Fraction");
    //hL1PtData->SetAxisRange(0,150,"X");
    hL1PtData->SetAxisRange(1e-5,1e2,"Y");
    hL1PtMC->SetMarkerStyle(kOpenSquare);
@@ -116,11 +118,11 @@ void CompareL1Data2010(
    leg3->SetY1NDC(0.8); leg3->SetY2NDC(0.9);
    leg3->Draw();
    
-   c3->Print(Form("out/L1Pt%s_%s.gif",src.Data(),tag.Data()));
+   c3->Print(Form("out/trigVal/L1Pt%s_%s.gif",src.Data(),tag.Data()));
    
-   TCanvas * c4 = new TCanvas("c4","c4",500,500);
+   TCanvas * c4 = new TCanvas(tag+"c4","c4",500,500);
    c4->SetLogy();
-   hL1PhiData->SetTitle(";leading L1 Jet #phi;Event Fraction");
+   hL1PhiData->SetTitle(";L1 Jet #phi;Event Fraction");
    hL1PhiData->SetAxisRange(1e-5,1e2,"Y");
    hL1PhiMC->SetMarkerStyle(kOpenSquare);
    hL1PhiMC->SetMarkerColor(kBlue);
@@ -129,5 +131,5 @@ void CompareL1Data2010(
    hL1PhiMC->Draw("same hist");
    leg->Draw();
    
-   c4->Print(Form("out/L1Phi%s_%s.gif",src.Data(),tag.Data()));
+   c4->Print(Form("out/trigVal/L1Phi%s_%s.gif",src.Data(),tag.Data()));
 }
