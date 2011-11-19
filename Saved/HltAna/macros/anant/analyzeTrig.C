@@ -83,7 +83,11 @@ public:
 
 void analyzeTrig(
                  //TString inname="/net/hisrv0001/home/frankma/scratch01/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv1/merge/all.root"
-                 TString inname="/net/hidsk0001/d00/scratch/frankma/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv2/merge/all.root"
+                 //TString inname="/net/hidsk0001/d00/scratch/frankma/data/HCRaw/hcraw-rerunl1hlt-masterhil1mctagv2/merge/all.root"
+                 //TString inname = "/d101/kimy/macro/hlt2011/mb2011/openhlt_expressRecoRun181969Full-v2.root"
+                 TString inname = "/d01/velicanu/tmp/hiexp-hirun2011-r182052-reco-v1-allEvents_lowerSC_autohlt.root",
+		 int run = 182052,
+		 TString outdir="."
                  )
 {
 	double cutEtaJet = 5;
@@ -96,19 +100,19 @@ void analyzeTrig(
   Particles l1taujets;
   Particles l1forjets;
 
-	TString outname = Form("results_alljettype_hil1v2mctag_eta%.0f.root",cutEtaJet*1000);
+	TString outname = Form("%s/results_alljettype_%d_eta%.0f.root",outdir.Data(),run,cutEtaJet*1000);
 	
 	TFile* inf = new TFile(inname,"read");
 	
-	TTree* t = (TTree*)inf->Get("hltbitnew/HltTree");
+	TTree* t = (TTree*)inf->Get("hltanalysis/HltTree");
 	TTree* tjet = (TTree*)inf->Get("icPu5JetAnalyzer/t");
    cout << "hlt tree: " << t->GetEntries() << endl;
    cout << "jet tree: " << tjet->GetEntries() << endl;
 	
 	t->SetBranchAddress("Run",&evt.run);
 	t->SetBranchAddress("Event",&evt.evt);
-	t->SetBranchAddress("HLT_HIMinBiasHfOrBSC",&evt.mb);
-	t->SetBranchAddress("L1_SingleJet30_BptxAND",&evt.jetl1data);
+	t->SetBranchAddress("HLT_HIMinBiasHfOrBSC_v1",&evt.mb);
+	t->SetBranchAddress("L1_SingleJet16_Central_NotETT140_BptxAND",&evt.jetl1data);
 	t->SetBranchAddress("L1_SingleJet36_BptxAND",&evt.jetl1mc);
   t->SetBranchAddress("L1EtTot",&evt.l1ett);
 	
@@ -138,7 +142,7 @@ void analyzeTrig(
 	
   JetTrk dj;
   TTree * tjt = new TTree("tjt","jet and trk");
-  tjt->Branch("evt",&evt.run,"run/I:evt:cbin:mb:jetl1data:jetl1mc:njets:l1ett/F");
+  tjt->Branch("evt",&evt.run,"run/I:evt:cbin:mb:jetl1t1:jetl1t2:njets:l1ett/F");
   tjt->Branch("jet",&dj.pt1,"pt1/F:eta1:phi1:pt2:eta2:phi2:deta:dphi:l1pt1:l1eta1:l1phi1:isTau/O:isFwd");
   
 	int Nevents = t->GetEntries();

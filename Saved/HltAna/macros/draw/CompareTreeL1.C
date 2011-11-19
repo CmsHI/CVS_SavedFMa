@@ -18,7 +18,8 @@ void CompareTreeL1(
                    //TString infdataname="/d100/velicanu/tmp/hiexp-hirun2011-r181693-reco-v1-collisionEvents_lowerSC_autohlt.root",
                    TString infrefname="../trees/HIHLT_Validation_Test_GRIF_v10.root",
                    TString tag="",
-                   TCut mysel="skim.pcollisionEventSelection",
+                   TCut sel="HLT_HIMinBiasHfOrBSC_v1&&skim.pcollisionEventSelection",
+                   TCut selref="HLT_HIMinBiasHfOrBSC_v1&&skim.pcollisionEventSelection",
                    TString newtitle="New Data",
                    TString oldtitle="Ref Data"
                    )
@@ -33,9 +34,6 @@ void CompareTreeL1(
    tdata->AddFriend("skim=skimanalysis/HltTree");
    TTree * tref = (TTree*)infref->Get("hltanalysis/HltTree");
    tref->AddFriend("skim=skimanalysis/HltTree");
-   
-   TCut sel = "HLT_HIMinBiasHfOrBSC_v1"&&mysel;
-   TCut selref = "HLT_HIMinBiasHfOrBSC_v1"&&mysel;
    
    // histogram bins
    const int netabins = 22;

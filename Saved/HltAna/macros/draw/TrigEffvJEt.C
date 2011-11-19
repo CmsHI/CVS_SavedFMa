@@ -16,7 +16,8 @@ void TrigEffvJEt(
                  //TString infname="../../../trees/hiexp-hirun2011-b9b9-181611.root"
                  //TString infname="../../../trees/hiexp-hirun2011-b170b170_181683to181695.root"
                  TString infname="../../../trees/hiexp-hirun2011-b358b358.root",
-                 TString tag = "Bunch358x358_Hbhe"                 
+                 TString tag = "Bunch358x358_Hbhe",
+                 TCut sel = "HLT_HIMinBiasHfOrBSC_v1&&skim.pcollisionEventSelection"
                )
 {
    TH1::SetDefaultSumw2();
@@ -27,7 +28,6 @@ void TrigEffvJEt(
    t->AddFriend("skim=skimanalysis/HltTree");
    t->AddFriend("icPu5JetAnalyzer/t");
 
-   TCut sel = "HLT_HIMinBiasHfOrBSC_v1&&skim.pcollisionEventSelection";
    TString jetvar = "Max$(jtpt*(abs(jteta)<5))";
    const int nptbins = 13;
    float ptbins[nptbins+1] = {30,35,40,45,50,55,60,65,70,80,90,100,120,150};
