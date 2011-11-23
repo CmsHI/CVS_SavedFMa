@@ -31,6 +31,9 @@ hltGetConfiguration --full --offline --data /users/frankma/devCMSSW_4_2_0/HIonV9
 hltGetConfiguration --full --offline --data /dev/CMSSW_4_2_0/HIon/V341 --type HIon --unprescale --process HLTHIon --globaltag START44_V6::All --l1-emulator gmt,gct,gt --l1 L1GtTriggerMenu_L1Menu_CollisionsHeavyIons2011_v0_mc --input file:/mnt/hadoop/cms/store/results/heavy-ions/HICorePhysics/StoreResults-HICorePhysics_Skim_MinimumBias_RAW-a606dc809a29a92e17749e5652319ad0-SD_MBHI/HICorePhysics/USER/StoreResults-HICorePhysics_Skim_MinimumBias_RAW-a606dc809a29a92e17749e5652319ad0-SD_MBHI/0000/0EDFD1BD-C9AE-E011-963E-003048CB82AC.root
 # * take out the xml stuff that was hard coded in HIon menu
 
+# data 2011
+hltGetConfiguration --offline --data orcoff:/cdaq/physics/Run2011HI/v1.3/HIHLT/V5 --process HLTHIon --globaltag GR_H_V25::All --input file:/store/express/HIRun2011/HIExpressPhysics/FEVT/Express-v1/000/182/052/0038405B-4612-E111-841D-BCAEC5329714.root
+
 
 ###################### 391 ###########################
 # For Hydjet Minbias Raw Production
