@@ -32,6 +32,7 @@ public:
    static float minPt1,minPt2,sigDPhi;
    vector<SignalCorrector*> vana;
    static TString outfname;
+   int verbosity;
 
    // Methods
    AnaMpt(TString inf, TString nm, TString v, int src, int type) :
@@ -39,7 +40,8 @@ public:
    name(nm),
    var(v),
    dataSrcType(src),
-   dataType(type)
+   dataType(type),
+   verbosity(0)
    {}
 
    void GetHistograms(
@@ -52,36 +54,38 @@ public:
       // open the data file
       TFile *inf = TFile::Open(infname);
       TTree *nt =(TTree*)inf->FindObjectAny("tgj");
-      cout << endl << "# " << endl;
-      cout << "# " << infname << endl;
-      cout << "# " << name << ": useWeight: " << weight << " dataSrcType: " << dataSrcType << " pt1: " << minPt1 << " jet: " << minPt2 << " subJet|doMixBkg: " << subDPhiSide << "|" << doMixBkg << endl;
-      cout << "# " << endl;
+      if (verbosity>0) {
+         cout << endl << "# " << endl;
+         cout << "# " << infname << endl;
+         cout << "# " << name << ": useWeight: " << weight << " dataSrcType: " << dataSrcType << " pt1: " << minPt1 << " jet: " << minPt2 << " subJet|doMixBkg: " << subDPhiSide << "|" << doMixBkg << endl;
+         cout << "# " << endl;
+      }
       
       // mixing trees
       if (doMixBkg) nt->AddFriend("tmix=tgj",mixfname);
       
       // loop over analysis bins
       for (int ib=0; ib<vcutAnaBin.size(); ++ib) {
-         TString myname = name+Form("_dataSrc%d_reco%d_%d",dataSrcType,dataType,ib);
+         TString myname = name+Form("_%d",ib);
          // initialize ana
          vana.push_back(new SignalCorrector(myname));
-         mycut = mycut && vcutAnaBin[ib];
+         TCut mycutInBin = mycut && vcutAnaBin[ib];
          // setup regions
          vana[ib]->rSigAllLeading.var     = "pt1";
          vana[ib]->rSigAll.var            = var;
          vana[ib]->rBkgDPhi.var           = var;
 
-         vana[ib]->rSigAllLeading.cut     = mycut && leadingSel;
-         vana[ib]->rSigAll.cut            = mycut && leadingSel && awaySel && sigSel;
-         vana[ib]->rBkgDPhi.cut           = mycut && leadingSel && awaySel && "acos(cos(phi2-phi2))>0.7 && acos(cos(phi2-phi2))<3.14159/2.";
+         vana[ib]->rSigAllLeading.cut     = mycutInBin && leadingSel;
+         vana[ib]->rSigAll.cut            = mycutInBin && leadingSel && awaySel && sigSel;
+         vana[ib]->rBkgDPhi.cut           = mycutInBin && leadingSel && awaySel && "acos(cos(phi2-phi2))>0.7 && acos(cos(phi2-phi2))<3.14159/2.";
 
          if (doMixBkg) {
-            vana[ib]->rBkgDPhi.cut        = mycut && leadingSel && awayMixSel && sigMixSel;
+            vana[ib]->rBkgDPhi.cut        = mycutInBin && leadingSel && awayMixSel && sigMixSel;
             vana[ib]->rBkgDPhi.var        = bkgvar;
          }
          
          // analyze tree
-         if (ib==0) vana[ib]->SetVerbosity(1);
+         if (verbosity>0) vana[ib]->SetVerbosity(1);
          float nxbins=200, xmin=-400, xmax=400;
 //         vana[ib]->rSigAllLeading.Init(nt,250,0,500);
          vana[ib]->rSigAll.Init(nt,nxbins,xmin,xmax);
@@ -130,7 +134,10 @@ void anaMptSignal_AllCent4_wSummary(
    TCut mycut="cBin>=0&&cBin<12";
 
    vector<TCut> vcutAnaBin,vcutAnaBinPp;
-   for (int ib=0; ib<nBin; ++ib) vcutAnaBin.push_back(Form("Aj>=%f&&Aj<%f",m[ib],m[ib+1]));
+   for (int ib=0; ib<nBin; ++ib) {
+      vcutAnaBin.push_back(Form("Aj>=%f&&Aj<%f",m[ib],m[ib+1]));
+      cout << "anaBin cut: " << vcutAnaBin[ib] << endl;
+   }
    
    TCut leadingSel  = Form("abs(eta1)<1.6&&pt1>%.3f",minPt1);
    TCut awaySel     = Form("abs(eta2)<1.6&&pt2>%.3f",minPt2);
@@ -163,15 +170,20 @@ void anaMptSignal_AllCent4_wSummary(
                mpttag=Form("mptx%s%s",mptCand[c].Data(),mptType[m].Data());
             }
             vector<TString> xmptObs;
+            xmptObs.push_back("-1*("+mpttag+"_pt[0])");
+            xmptObs.push_back("-1*("+mpttag+"_pt[1])");
+            xmptObs.push_back("-1*("+mpttag+"_pt[2])");
+            xmptObs.push_back("-1*("+mpttag+"_pt[3])");
+            xmptObs.push_back("-1*("+mpttag+"_pt[4]+"+mpttag+"_pt[5])");
             xmptObs.push_back("-1*("+mpttag+")");
-            //	    xmptObs.push_back("-1*("+mpttag+"_pt[1])");
-            //	    xmptObs.push_back("-1*("+mpttag+"_pt[4]+"+mpttag+"_pt[5])");
             
             for (int k=0; k<xmptObs.size(); ++k) {
-               AnaMpt hypho(inputTree_mc,Form("hypho%s_ptmerge%d",mpttag.Data(),k), xmptObs[k],0,1);
+               AnaMpt hypho(inputTree_mc,Form("hypho_%s_merge%d",mpttag.Data(),k), xmptObs[k],0,1);
+               if (k<=1) hypho.verbosity=1;
                hypho.GetHistograms("offlSel"&&mycut,vcutAnaBin,leadingSel,awaySel,sigSel,mcweight);
                
-               AnaMpt hi(inputTree_data,Form("hi%s_ptmerge%d",mpttag.Data(),k), xmptObs[k],1,1);
+               AnaMpt hi(inputTree_data,Form("hi_%s_merge%d",mpttag.Data(),k), xmptObs[k],1,1);
+               if (k<=1) hi.verbosity=1;
                hi.GetHistograms("anaEvtSel"&&mycut,vcutAnaBin,leadingSel,awaySel,sigSel);
             }
          }
