@@ -78,9 +78,8 @@ void balanceMetVsAj(TString infname,
       pe[i]=new TH1D(Form("p%d",i),"",nBinAj,ajBins);
       for (int a=0; a<nBinAj; ++a) {
          TString hname = Form("%s_mptx%s_merge%d_%dSigAll",insrc.Data(),metType.Data(),i,a);
-         cout << hname << endl;
          TH1D * hMpt = (TH1D*)inf->Get(hname);
-         cout << hname << " Aj bin: " << a+1 << " mean: " << hMpt->GetMean() << endl;
+//         cout << hname << " Aj bin: " << a+1 << " mean: " << hMpt->GetMean() << endl;
          pe[i]->SetBinContent(a+1,hMpt->GetMean());
          pe[i]->SetBinError(a+1,hMpt->GetMeanError());
       }      
@@ -234,22 +233,23 @@ void balanceMetVsAj(TString infname,
 void MetPlotInConeOutConeDPhiCut()
 {
    TString inputFile="fig/04.14_dijetmpt_compare/HisOutput_DiJetv7_v1_icPu5_MptCone_120_50_2749_Norm0.root";
+   float coneSize = 0.4;
    
    TCanvas *c1 = new TCanvas("c1","",1000,1000);
    Float_t leftMargin=0.28,bottomMargin=0.18;
    makeMultiPanelCanvas(c1,2,2,0.0,0.0,leftMargin,bottomMargin,0.02);
    c1->cd(1);
-   balanceMetVsAj(inputFile,"hypho","trkCorrInCone8",false,false);
+   balanceMetVsAj(inputFile,"hypho",Form("trkCorrInCone%.0f",coneSize*10),false,false);
    drawText("PYTHIA+HYDJET 0-30%",0.33,0.82);
    drawText("In-Cone",0.85,0.9);
-   drawText("#DeltaR<0.8",0.85,0.9-0.06);
+   drawText(Form("#DeltaR<%.1f",coneSize),0.85,0.9-0.06);
    drawText("(a)",0.31,0.91);
    gPad->RedrawAxis();
    
    c1->cd(2);
-   balanceMetVsAj(inputFile,"hypho","trkCorrOutCone8",true,false);
+   balanceMetVsAj(inputFile,"hypho",Form("trkCorrOutCone%.0f",coneSize*10),true,false);
    drawText("Out-of-Cone",0.7,0.9);
-   drawText("#DeltaR#geq0.8",0.7,0.9-0.06);
+   drawText(Form("#DeltaR#geq%.1f",coneSize),0.7,0.9-0.06);
    drawText("(b)",0.04,0.91);
    float ptx(0.08),pty1(0.22);
    drawText("p_{T,1}  > 120GeV/c",ptx,pty1);
@@ -260,22 +260,22 @@ void MetPlotInConeOutConeDPhiCut()
    
    c1->cd(3);
    TCut phiSysCut;
-   balanceMetVsAj(inputFile,"hi","trkCorrInCone8",false);
+   balanceMetVsAj(inputFile,"hi",Form("trkCorrInCone%.0f",coneSize*10),false);
    drawText("CMS 0-30%",0.33,0.90);
    drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
    drawText("#intL dt = 6.7 #mub^{-1}",0.33,0.78);
    drawText("In-Cone",0.85,0.93);
-   drawText("#DeltaR<0.8",0.85,0.93-0.06);
+   drawText(Form("#DeltaR<%.1f",coneSize),0.85,0.93-0.06);
    drawText("(c)",0.31,0.95);
    gPad->RedrawAxis();
    
    c1->cd(4);
-   balanceMetVsAj(inputFile,"hi","trkCorrOutCone8",false);
+   balanceMetVsAj(inputFile,"hi",Form("trkCorrOutCone%.0f",coneSize*10),false);
    drawText("Out-of-Cone",0.7,0.93);
-   drawText("#DeltaR#geq0.8",0.7,0.93-0.06);
+   drawText(Form("#DeltaR#geq%.1f",coneSize),0.7,0.93-0.06);
    drawText("(d)",0.04,0.95);
    gPad->RedrawAxis();
    
-   c1->SaveAs("missingPtParallel-Corrected-data-InCone8OutConeDPhiCut.pdf");
-   c1->SaveAs("missingPtParallel-Corrected-data-InCone8OutConeDPhiCut.gif");
+   c1->SaveAs(Form("missingPtParallel-Corrected-data-InCone%.0fOutConeDPhiCut.pdf",coneSize*10));
+   c1->SaveAs(Form("missingPtParallel-Corrected-data-InCone%.0fOutConeDPhiCut.gif",coneSize*10));
 }
