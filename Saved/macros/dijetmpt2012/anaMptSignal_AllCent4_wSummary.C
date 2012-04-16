@@ -79,6 +79,10 @@ public:
          vana[ib]->rSigAll.cut            = mycutInBin && leadingSel && awaySel && sigSel;
          vana[ib]->rBkgDPhi.cut           = mycutInBin && leadingSel && awaySel && "acos(cos(phi2-phi2))>0.7 && acos(cos(phi2-phi2))<3.14159/2.";
 
+         vana[ib]->rSigAllLeading.weight     = weight;
+         vana[ib]->rSigAll.weight            = weight;
+         vana[ib]->rBkgDPhi.weight           = weight;
+
          if (doMixBkg) {
             vana[ib]->rBkgDPhi.cut        = mycutInBin && leadingSel && awayMixSel && sigMixSel;
             vana[ib]->rBkgDPhi.var        = bkgvar;
@@ -86,7 +90,7 @@ public:
          
          // analyze tree
          if (verbosity>0) vana[ib]->SetVerbosity(1);
-         float nxbins=200, xmin=-400, xmax=400;
+         float nxbins=800, xmin=-800, xmax=800;
 //         vana[ib]->rSigAllLeading.Init(nt,250,0,500);
          vana[ib]->rSigAll.Init(nt,nxbins,xmin,xmax);
 //         vana[ib]->rBkgDPhi.Init(nt,nxbins,xmin,xmax);
@@ -112,8 +116,8 @@ void anaMptSignal_AllCent4_wSummary(
                                     int subDPhiSide = 0,
                                     float minPt1=120,
                                     float minPt2=50,
-                                    float sigDPhi=3.1415926*7./8,
-                                    TString outdir = "./fig/04.14_dijetmpt_compare"
+                                    float sigDPhi=3.1415926*5./6,
+                                    TString outdir = "./fig/04.16_dijetmpt_mcweight"
                                     )
 {
    TH1::SetDefaultSumw2();
@@ -129,7 +133,7 @@ void anaMptSignal_AllCent4_wSummary(
    // Analysis
    ////////////////////////////////////////////////////////////////////////////////////////////////
    TString inputTree_data="../ntout/output-data-DiJet-v7-noDuplicate_v2_icPu5.root";
-   TString inputTree_mc="../ntout/norewt-output-hy18dj80_v2_xsec_icPu5.root";
+   TString inputTree_mc="../ntout/output-hy18djallpthat_v2_xsec_icPu5.root";
 
    TCut mycut="cBin>=0&&cBin<12";
 
@@ -142,7 +146,10 @@ void anaMptSignal_AllCent4_wSummary(
    TCut leadingSel  = Form("abs(eta1)<1.6&&pt1>%.3f",minPt1);
    TCut awaySel     = Form("abs(eta2)<1.6&&pt2>%.3f",minPt2);
    TCut sigSel      = Form("acos(cos(phi2-phi1))>%.3f",sigDPhi);
-
+   AnaMpt::minPt1 = minPt1;
+   AnaMpt::minPt2 = minPt2;
+   AnaMpt::sigDPhi = sigDPhi;
+   
    // MPT
    vector<TString> mptCand;
    vector<TString> mptType;
@@ -151,15 +158,14 @@ void anaMptSignal_AllCent4_wSummary(
    mptCand.push_back("trkCorr");
    cones.push_back(4);
    cones.push_back(8);
-//   cones.push_back(12);
+   cones.push_back(12);
 //   cones.push_back(14);
 
    mptType.push_back("AllAcc");
    mptType.push_back("InCone");
    mptType.push_back("OutCone");
 
-   TString mcweight = "((samplePtHat==30&&pthat<50)||(samplePtHat==50&&pthat<80)||(samplePtHat==80))*weight*sampleWeight";
-   mcweight = "(1==1)";
+   TString mcweight = "((samplePtHat==50&&pthat<80)||(samplePtHat==80&&pthat<120)||(samplePtHat==120&&pthat<170)||(samplePtHat==170))*weight*sampleWeight";
 
    for (int c=0; c<mptCand.size(); ++c) {
       for (int m=0; m<mptType.size(); ++m) {
@@ -179,11 +185,11 @@ void anaMptSignal_AllCent4_wSummary(
             
             for (int k=0; k<xmptObs.size(); ++k) {
                AnaMpt hypho(inputTree_mc,Form("hypho_%s_merge%d",mpttag.Data(),k), xmptObs[k],0,1);
-               if (k<=1) hypho.verbosity=1;
+               if (k<1) hypho.verbosity=1;
                hypho.GetHistograms("offlSel"&&mycut,vcutAnaBin,leadingSel,awaySel,sigSel,mcweight);
                
                AnaMpt hi(inputTree_data,Form("hi_%s_merge%d",mpttag.Data(),k), xmptObs[k],1,1);
-               if (k<=1) hi.verbosity=1;
+               if (k<1) hi.verbosity=1;
                hi.GetHistograms("anaEvtSel"&&mycut,vcutAnaBin,leadingSel,awaySel,sigSel);
             }
          }

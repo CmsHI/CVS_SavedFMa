@@ -232,8 +232,8 @@ void balanceMetVsAj(TString infname,
 
 void MetPlotInConeOutConeDPhiCut()
 {
-   TString inputFile="fig/04.14_dijetmpt_compare/HisOutput_DiJetv7_v1_icPu5_MptCone_120_50_2749_Norm0.root";
-   float coneSize = 0.4;
+   TString inputFile="fig/04.16_dijetmpt_mcweight/HisOutput_DiJetv7_v1_icPu5_MptCone_120_50_2618_Norm0.root";
+   float coneSize = 0.8;
    
    TCanvas *c1 = new TCanvas("c1","",1000,1000);
    Float_t leftMargin=0.28,bottomMargin=0.18;
