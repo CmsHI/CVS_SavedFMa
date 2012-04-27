@@ -9,11 +9,10 @@ ivars.register ('randomNumber',
                 "Random Seed")
 
 ivars.randomNumber = 1
-ivars.inputFiles = "file:/mnt/hadoop/cms/store/user/yinglu/MC_Production/allQCDPhoton/allQCDPhoton30/reco/set2_random20000_HydjetDrum_182.root"
+ivars.inputFiles = "file:/mnt/hadoop/cms/store/user/yetkin/MC_Production/Pythia200_HydjetDrum_mix01/RECO/set1_random10000_HydjetDrum_11.root"
 ivars.outputFile = 'output.root'
 
 ivars.parseArguments()
-
 
 import FWCore.ParameterSet.Config as cms
 
@@ -33,7 +32,7 @@ process.source = cms.Source("PoolSource",
 
 # Number of events we want to process, -1 = all events
 process.maxEvents = cms.untracked.PSet(
-            input = cms.untracked.int32(10))
+            input = cms.untracked.int32(20))
 
 
 #####################################################################################
@@ -54,16 +53,14 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('RecoLocalTracker.SiPixelRecHits.PixelCPEESProducers_cff')
 # Data Global Tag 44x 
 #process.GlobalTag.globaltag = 'GR_P_V27::All'
-
+# MC Global Tag 44x 
+process.GlobalTag.globaltag = 'STARTHI44_V7::All'
 
 process.SimpleMemoryCheck = cms.Service('SimpleMemoryCheck',
                                         ignoreTotal=cms.untracked.int32(0),
                                         oncePerEventMode =
                                         cms.untracked.bool(False)
-                                                                                )
-
-# MC Global Tag 44x 
-process.GlobalTag.globaltag = 'STARTHI44_V7::All'
+                                        )
 
 # load centrality
 from CmsHi.Analysis2010.CommonFunctions_cff import *
@@ -73,16 +70,10 @@ process.HeavyIonGlobalParameters = cms.PSet(
 	nonDefaultGlauberModel = cms.string("Hydjet_Drum"),
 	centralitySrc = cms.InputTag("hiCentrality")
 	)
-
 process.hiCentrality.pixelBarrelOnly = False
-process.load("CmsHi.JetAnalysis.RandomCones_cff")
 
+########### random number seed
 process.RandomNumberGeneratorService.generator.initialSeed = ivars.randomNumber 
-process.RandomNumberGeneratorService.akPu3PFConesAna = process.RandomNumberGeneratorService.generator.clone()
-process.RandomNumberGeneratorService.icPu5CaloConesAna = process.RandomNumberGeneratorService.generator.clone()
-process.RandomNumberGeneratorService.akPu5PFConesAna = process.RandomNumberGeneratorService.generator.clone()
-process.RandomNumberGeneratorService.akPu3CaloConesAna = process.RandomNumberGeneratorService.generator.clone()
-process.RandomNumberGeneratorService.akPu5CaloConesAna = process.RandomNumberGeneratorService.generator.clone()
 process.RandomNumberGeneratorService.multiPhotonAnalyzer = process.RandomNumberGeneratorService.generator.clone()
 
 # EcalSeverityLevel ES Producer
@@ -93,19 +84,13 @@ process.load("RecoEcal.EgammaCoreTools.EcalNextToDeadChannelESProducer_cff")
 #####################################################################################
 # Define tree output
 #####################################################################################
-
 process.TFileService = cms.Service("TFileService",
                                   fileName=cms.string(ivars.outputFile))
 
 #####################################################################################
 # Additional Reconstruction and Analysis
 #####################################################################################
-
-# MET: Calorimeter based MET
-process.load("RecoMET.METProducers.CaloMET_cfi") 
-
 process.load("CmsHi.JetAnalysis.hcalNoise_cff")
-
 # Define Analysis sequencues
 process.load('CmsHi.JetAnalysis.EventSelection_cff')
 process.load('CmsHi.JetAnalysis.ExtraGenReco_cff')
@@ -120,12 +105,11 @@ process.load('CmsHi.JetAnalysis.EGammaAnalyzers_cff')
 process.load("MitHig.PixelTrackletAnalyzer.trackAnalyzer_cff")
 process.anaTrack.trackPtMin = 0
 process.anaTrack.useQuality = True
-process.anaTrack.doSimTrack = False
-process.anaTrack.simTrackPtMin = 2
+process.anaTrack.doSimTrack = True
+process.anaTrack.simTrackPtMin = 0.4
 process.anaTrack.doPFMatching = False
 process.anaTrack.pfCandSrc = cms.InputTag("particleFlowTmp")
 process.anaTrack.qualityString = cms.untracked.string("highPuritySetWithPV")
-#process.anaTrack.trackSrc = cms.InputTag("hiSelectedTracks")
 process.anaTrack.trackSrc = cms.InputTag("hiGeneralCaloMatchedTracks")
 #pixel tracks
 process.anaPixTrack = process.anaTrack.clone(useQuality = False,
@@ -145,19 +129,16 @@ process.hitrkEffAnalyzer_GeneralCalo = process.hitrkEffAnalyzer.clone(
    )
 process.hitrkEffAnalyzer_PixTrk = process.hitrkEffAnalyzer_GeneralCalo.clone(
    tracks = "hiConformalPixelTracks",
+   label_tp_fake = "cutsTPForFakPxl",
+   label_tp_effic = "cutsTPForEffPxl",
    useQaulityStr = False,
    usePxlPair = False
    )
 ##########################
-
-
-process.load("MitHig.PixelTrackletAnalyzer.METAnalyzer_cff")
 process.load("CmsHi.JetAnalysis.pfcandAnalyzer_cfi")
 process.pfcandAnalyzer.skipCharged = False
-process.pfcandAnalyzer.pfPtMin = 0
+process.pfcandAnalyzer.pfPtMin = 0.5
 process.interestingTrackEcalDetIds.TrackCollection = cms.InputTag("hiSelectedTracks")
-
-#process.load("HiMuonAlgos.HLTMuTree.hltMuTree_cfi")
 
 process.genpana = cms.EDAnalyzer("GenParticleCounter",
                                  src = cms.untracked.string("hiGenParticles"),
@@ -165,15 +146,38 @@ process.genpana = cms.EDAnalyzer("GenParticleCounter",
                                  VertexProducer = cms.untracked.string("hiSelectedVertex")
                                  )
 
-# Muons 
-process.load("MuTrig.HLTMuTree.hltMuTree_cfi")
-process.muonTree = process.hltMuTree.clone()
-process.muonTree.doGen = cms.untracked.bool(False)
+##################### Tracking Related
+# for photon isolation
+# Are we really using the highPurity tracks?
+process.hiSelectedTrackHighPurity = cms.EDFilter("TrackSelector",
+   src = cms.InputTag("hiSelectedTracks"),
+   cut = cms.string(
+   'quality("highPurity")')
+)
+# Iterative Tracking
+# https://twiki.cern.ch/twiki/bin/view/CMS/HiTracking
+process.load("RecoHI.HiTracking.hiIterTracking_cff")
+# Calo Matched
+process.load("RecoHI.HiTracking.HICaloCompatibleTracks_cff")
+process.hiGeneralCaloMatchedTracks = process.hiCaloCompatibleTracks.clone(
+    srcTracks = 'hiGeneralTracks',
+    keepAllTracks = False
+    )
+# Conformal Pixel Tracks
+process.load('Appeltel.PixelTracksRun2010.HiLowPtPixelTracksFromReco_cff')
+process.load('Appeltel.PixelTracksRun2010.HiMultipleMergedTracks_cff')
 
-# Event tree
+##################### Particle Flow
+process.particleFlowTmp.postMuonCleaning = False
+process.particleFlowClusterPS.thresh_Pt_Seed_Endcap = cms.double(99999.)
+
+process.pfTrack.TrackQuality = cms.string('loose') # To recover tracks before calo matching
+process.pfTrack.TkColList = cms.VInputTag("hiGeneralTracks") # needed to run the calo matching on hiGeneralTracks
+
+
+##################### Event Tree Analyzers
 process.load("CmsHi/HiHLTAlgos.hievtanalyzer_cfi")
-# Not working for the moment..
-#process.hiEvtAnalyzer.doMC = cms.bool(True)
+#process.hiEvtAnalyzer.doMC = cms.bool(True) # Not working for the moment..
 process.hiEvtAnalyzer.doEvtPlane = cms.bool(True)
 
 process.hiGenParticles.srcVector = cms.vstring('hiSignal')
@@ -189,41 +193,10 @@ process.akPu3PFJetAnalyzer.hltTrgResults = cms.untracked.string('TriggerResults:
 process.icPu5JetAnalyzer.isMC   = cms.untracked.bool(True)
 process.akPu3PFJetAnalyzer.isMC = cms.untracked.bool(True)
 
-#Commented by Yen-Jie
-#process.hiPixelAdaptiveVertex.useBeamConstraint = False
-
-process.load("RecoHI.HiMuonAlgos.HiRecoMuon_cff")
-process.muons.JetExtractorPSet.JetCollectionLabel = cms.InputTag("iterativeConePu5CaloJets")
-
-process.hiSelectedTrackHighPurity = cms.EDFilter("TrackSelector",
-                                                 src = cms.InputTag("hiSelectedTracks"),
-                                                 cut = cms.string(
-    'quality("highPurity")')
-                                                 )
-
-process.particleFlowClusterPS.thresh_Pt_Seed_Endcap = cms.double(99999.)
-
-process.load("RecoHI.HiTracking.hiIterTracking_cff")
-process.load("RecoHI.HiTracking.HICaloCompatibleTracks_cff")
-process.hiGeneralCaloMatchedTracks = process.hiCaloCompatibleTracks.clone()
-process.hiGeneralCaloMatchedTracks = process.hiCaloCompatibleTracks.clone(srcTracks = 'hiGeneralTracks')
-
-
-# Conformal Pixel Tracks
-process.load('Appeltel.PixelTracksRun2010.HiLowPtPixelTracksFromReco_cff')
-process.load('Appeltel.PixelTracksRun2010.HiMultipleMergedTracks_cff')
-
-process.particleFlowTmp.postMuonCleaning = False
-process.particleFlowClusterPS.thresh_Pt_Seed_Endcap = cms.double(99999.)
-
-process.pfTrack.TrackQuality = cms.string('loose')
-process.pfTrack.TkColList = cms.VInputTag("hiGeneralTracks")
-
-
-
+##################### Final Paths
 process.reco_extra        = cms.Path( process.siPixelRecHits * process.siStripMatchedRecHits *
                                       process.heavyIonTracking *
-                                      process.hiSelectedTrackHighPurity  *
+                                      process.hiSelectedTrackHighPurity *
                                       process.hiIterTracking *
                                       process.electronGsfTrackingHi *
                                       process.hiElectronSequence *
@@ -256,15 +229,10 @@ process.ana_step          = cms.Path( process.genpana +
                                       process.hcalNoise +
                                       process.jetana_seq +                                      
                                       process.multiPhotonAnalyzer +
-                                      ( process.cutsTPForFak * process.cutsTPForEff * process.hitrkEffAnalyzer_GeneralCalo * process.hitrkEffAnalyzer_PixTrk) +
-                                      process.anaTrack +
-                                      process.anaPixTrack +
+                                      ( process.cutsTPForFak * process.cutsTPForEff * process.hitrkEffAnalyzer_GeneralCalo * process.anaTrack) +
+                                      ( process.cutsTPForFakPxl * process.cutsTPForEffPxl * process.hitrkEffAnalyzer_PixTrk * process.anaPixTrack ) +
                                       process.pfcandAnalyzer +
-                                      #process.met * process.anaMET +
-                                      #process.muonTree +
                                       process.hiEvtAnalyzer
-                                      #process.randomCones +
-                                      #process.hltMuTree 
                                       )
 
 
@@ -280,7 +248,6 @@ process.load('CmsHi.HiHLTAlgos.hltanalysis_cff')
 #process.hltanalysis.hltresults = cms.InputTag("TriggerResults","","RECO")
 #process.hltAna = cms.Path(process.hltanalysis)
 process.pAna = cms.EndPath(process.skimanalysis)
-########### random number seed
 
 #####################################################################################
 # Edm Output
