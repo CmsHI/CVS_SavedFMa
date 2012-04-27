@@ -32,7 +32,7 @@ process.source = cms.Source("PoolSource",
 
 # Number of events we want to process, -1 = all events
 process.maxEvents = cms.untracked.PSet(
-            input = cms.untracked.int32(20))
+            input = cms.untracked.int32(10))
 
 
 #####################################################################################
@@ -105,7 +105,7 @@ process.load('CmsHi.JetAnalysis.EGammaAnalyzers_cff')
 process.load("MitHig.PixelTrackletAnalyzer.trackAnalyzer_cff")
 process.anaTrack.trackPtMin = 0
 process.anaTrack.useQuality = True
-process.anaTrack.doSimTrack = True
+process.anaTrack.doSimTrack = False
 process.anaTrack.simTrackPtMin = 0.4
 process.anaTrack.doPFMatching = False
 process.anaTrack.pfCandSrc = cms.InputTag("particleFlowTmp")
@@ -193,6 +193,15 @@ process.akPu3PFJetAnalyzer.hltTrgResults = cms.untracked.string('TriggerResults:
 process.icPu5JetAnalyzer.isMC   = cms.untracked.bool(True)
 process.akPu3PFJetAnalyzer.isMC = cms.untracked.bool(True)
 
+process.HiGenParticleAna = cms.EDAnalyzer('HiGenAnalyzer',
+    useHepMCProduct = cms.untracked.bool(False),
+    ptMin = cms.untracked.double(0),
+    chargedOnly = cms.untracked.bool(True),
+    src = cms.untracked.InputTag("hiSignal"),
+    genpSrc = cms.untracked.InputTag("hiGenParticles"),
+    genHiSrc = cms.untracked.InputTag("heavyIon"),
+    )
+    
 ##################### Final Paths
 process.reco_extra        = cms.Path( process.siPixelRecHits * process.siStripMatchedRecHits *
                                       process.heavyIonTracking *
@@ -232,7 +241,8 @@ process.ana_step          = cms.Path( process.genpana +
                                       ( process.cutsTPForFak * process.cutsTPForEff * process.hitrkEffAnalyzer_GeneralCalo * process.anaTrack) +
                                       ( process.cutsTPForFakPxl * process.cutsTPForEffPxl * process.hitrkEffAnalyzer_PixTrk * process.anaPixTrack ) +
                                       process.pfcandAnalyzer +
-                                      process.hiEvtAnalyzer
+                                      process.hiEvtAnalyzer +
+                                      process.HiGenParticleAna
                                       )
 
 
