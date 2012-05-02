@@ -11,6 +11,7 @@ ivars.register ('randomNumber',
 ivars.randomNumber = 1
 ivars.inputFiles = "file:/mnt/hadoop/cms/store/user/yetkin/MC_Production/Pythia200_HydjetDrum_mix01/RECO/set1_random10000_HydjetDrum_11.root"
 ivars.outputFile = 'output.root'
+ivars.maxEvents = -1
 
 ivars.parseArguments()
 
@@ -22,6 +23,8 @@ process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool(True)
 )
 
+saveAllGenParticles = False
+
 #####################################################################################
 # Input source
 #####################################################################################
@@ -32,7 +35,7 @@ process.source = cms.Source("PoolSource",
 
 # Number of events we want to process, -1 = all events
 process.maxEvents = cms.untracked.PSet(
-            input = cms.untracked.int32(10))
+            input = cms.untracked.int32(ivars.maxEvents))
 
 
 #####################################################################################
@@ -116,6 +119,10 @@ process.anaPixTrack = process.anaTrack.clone(useQuality = False,
                                              doPFMatching = False,
                                              trackSrc = cms.InputTag("hiConformalPixelTracks")
                                              )
+#final merged tracks
+process.anaMergeTrack = process.anaTrack.clone(useQuality = False,
+                                             trackSrc = cms.InputTag("hiIterCaloPixelMergedTracks")
+                                             )
 
 ######## track efficiency calculator
 process.load("edwenger.HiTrkEffAnalyzer.hitrkEffAnalyzer_cfi")
@@ -133,6 +140,12 @@ process.hitrkEffAnalyzer_PixTrk = process.hitrkEffAnalyzer_GeneralCalo.clone(
    label_tp_effic = "cutsTPForEffPxl",
    useQaulityStr = False,
    usePxlPair = False
+   )
+process.hitrkEffAnalyzer_MergeTrk = process.hitrkEffAnalyzer_GeneralCalo.clone(
+   tracks = "hiIterCaloPixelMergedTracks",
+   label_tp_fake = "cutsTPForFakPxl",
+   label_tp_effic = "cutsTPForEffPxl",
+   useQaulityStr = False
    )
 ##########################
 process.load("CmsHi.JetAnalysis.pfcandAnalyzer_cfi")
@@ -166,6 +179,9 @@ process.hiGeneralCaloMatchedTracks = process.hiCaloCompatibleTracks.clone(
 # Conformal Pixel Tracks
 process.load('Appeltel.PixelTracksRun2010.HiLowPtPixelTracksFromReco_cff')
 process.load('Appeltel.PixelTracksRun2010.HiMultipleMergedTracks_cff')
+process.hiIterCaloPixelMergedTracks = process.hiGoodMergedTracks.clone(
+    TrackProducer1  = "hiGeneralCaloMatchedTracks",
+    TrackProducer2  = "hiConformalPixelTracks")
 
 ##################### Particle Flow
 process.particleFlowTmp.postMuonCleaning = False
@@ -195,12 +211,14 @@ process.akPu3PFJetAnalyzer.isMC = cms.untracked.bool(True)
 
 process.HiGenParticleAna = cms.EDAnalyzer('HiGenAnalyzer',
     useHepMCProduct = cms.untracked.bool(False),
-    ptMin = cms.untracked.double(0),
+    ptMin = cms.untracked.double(0.4),
     chargedOnly = cms.untracked.bool(True),
     src = cms.untracked.InputTag("hiSignal"),
-    genpSrc = cms.untracked.InputTag("hiGenParticles"),
+    genpSrc = cms.untracked.InputTag("hiGenParticles"), # save just the signal genp
     genHiSrc = cms.untracked.InputTag("heavyIon"),
     )
+if saveAllGenParticles:
+    process.HiGenParticleAna.genpSrc = cms.untracked.InputTag("hiGenParticles","","HISIGNAL")
     
 ##################### Final Paths
 process.reco_extra        = cms.Path( process.siPixelRecHits * process.siStripMatchedRecHits *
@@ -212,7 +230,7 @@ process.reco_extra        = cms.Path( process.siPixelRecHits * process.siStripMa
                                       process.HiParticleFlowReco *
                                       process.hiGeneralCaloMatchedTracks *
                                       process.PFTowers *
-                                      process.conformalPixelTrackReco
+                                      process.conformalPixelTrackReco * process.hiIterCaloPixelMergedTracks
                                       )
 process.reco_extra_jet    = cms.Path( process.iterativeConePu5CaloJets *
                                       process.akPu3PFJets * process.akPu5PFJets *
@@ -240,6 +258,7 @@ process.ana_step          = cms.Path( process.genpana +
                                       process.multiPhotonAnalyzer +
                                       ( process.cutsTPForFak * process.cutsTPForEff * process.hitrkEffAnalyzer_GeneralCalo * process.anaTrack) +
                                       ( process.cutsTPForFakPxl * process.cutsTPForEffPxl * process.hitrkEffAnalyzer_PixTrk * process.anaPixTrack ) +
+                                      ( process.cutsTPForFakPxl * process.cutsTPForEffPxl * process.hitrkEffAnalyzer_MergeTrk * process.anaMergeTrack ) +
                                       process.pfcandAnalyzer +
                                       process.hiEvtAnalyzer +
                                       process.HiGenParticleAna
