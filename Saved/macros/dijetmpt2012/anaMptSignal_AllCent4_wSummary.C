@@ -116,27 +116,33 @@ void anaMptSignal_AllCent4_wSummary(
                                     int subDPhiSide = 0,
                                     float minPt1=120,
                                     float minPt2=50,
-                                    float sigDPhi=3.1415926*5./6,
-                                    TString outdir = "./fig/04.16_dijetmpt_mcweight"
+                                    float sigDPhi=3.1415926*7./8,
+                                    TString outdir = "./fig/05.07_mptclosure2"
                                     )
 {
    TH1::SetDefaultSumw2();
    
-   AnaMpt::outfname=Form("%s/HisOutput_DiJetv7_v1_icPu5_MptCone_%.0f_%.0f_%.0f_Norm%d.root",outdir.Data(),minPt1,minPt2,sigDPhi*1000,normMode);
-   TFile* hout = new TFile(AnaMpt::outfname,"RECREATE");
-   hout->Close();
-
    const int nBin = 4;
    float m[nBin+1] = {0.0001,0.11,0.22,0.33,0.49999};
 
    ////////////////////////////////////////////////////////////////////////////////////////////////
    // Analysis
    ////////////////////////////////////////////////////////////////////////////////////////////////
-   TString inputTree_data="../ntout/output-data-DiJet-v7-noDuplicate_v2_icPu5.root";
-   TString inputTree_mc="../ntout/output-hy18djallpthat_v2_xsec_icPu5.root";
+   TString inputTree_data="../ntout/output-data-DiJetTrk_v0_v6_icPu5.root";
+   TString inputTree_mc="../ntout/output-hy18dj80_IterPixTrkv1_v6_xsec_icPu5.root";
 
-   TCut mycut="cBin>=0&&cBin<12";
+   int cBinMin=0, cBinMax=12;
+//    int cBinMin=12, cBinMax=40;
+//   int cBinMin=0, cBinMax=40;
+   TCut mycut=Form("cBin>=%d&&cBin<%d",cBinMin,cBinMax);
 
+   // Output
+   bool isMC=true;
+   if (isMC) AnaMpt::outfname=Form("%s/HisOutput_Hy18DJv1_v6_icPu5_Mpt_%.0f_%.0f_%.0f_Norm%d_c%d_%d.root",outdir.Data(),minPt1,minPt2,sigDPhi*1000,normMode,cBinMin,cBinMax);
+   else AnaMpt::outfname=Form("%s/HisOutput_DiJetv7_v6_icPu5_Mpt_%.0f_%.0f_%.0f_Norm%d_c%d_%d.root",outdir.Data(),minPt1,minPt2,sigDPhi*1000,normMode,cBinMin,cBinMax);
+   TFile* hout = new TFile(AnaMpt::outfname,"RECREATE");
+   hout->Close();
+   
    vector<TCut> vcutAnaBin,vcutAnaBinPp;
    for (int ib=0; ib<nBin; ++ib) {
       vcutAnaBin.push_back(Form("Aj>=%f&&Aj<%f",m[ib],m[ib+1]));
@@ -149,48 +155,69 @@ void anaMptSignal_AllCent4_wSummary(
    AnaMpt::minPt1 = minPt1;
    AnaMpt::minPt2 = minPt2;
    AnaMpt::sigDPhi = sigDPhi;
-   
+
    // MPT
    vector<TString> mptCand;
    vector<TString> mptType;
    vector<float> cones;
-//   mptCand.push_back("trk");
+   mptCand.push_back("trk");
    mptCand.push_back("trkCorr");
-   cones.push_back(4);
+   if (isMC) mptCand.push_back("genpAll");
+//    cones.push_back(4);
    cones.push_back(8);
-   cones.push_back(12);
+//    cones.push_back(12);
 //   cones.push_back(14);
 
    mptType.push_back("AllAcc");
    mptType.push_back("InCone");
    mptType.push_back("OutCone");
 
-   TString mcweight = "((samplePtHat==50&&pthat<80)||(samplePtHat==80&&pthat<120)||(samplePtHat==120&&pthat<170)||(samplePtHat==170))*weight*sampleWeight";
+   TString mcweight;
+//   TString mcweight = "((samplePtHat==50&&pthat<80)||(samplePtHat==80&&pthat<120)||(samplePtHat==120&&pthat<170)||(samplePtHat==170))*weight*sampleWeight";
+//    TString mcweight = "((samplePtHat==80&&pthat<120)||(samplePtHat==120&&pthat<170)||(samplePtHat==170))*weight*sampleWeight"; // not enough statistics for lower pt hat when we have a 120 pt1 cut
 
    for (int c=0; c<mptCand.size(); ++c) {
       for (int m=0; m<mptType.size(); ++m) {
          for (int ir=0; ir<cones.size(); ++ir) {
             TString mpttag=Form("mptx%s%s%.0f",mptCand[c].Data(),mptType[m].Data(),cones[ir]);
             if (mptType[m]=="AllAcc") {
-               if (ir>0) continue;
                mpttag=Form("mptx%s%s",mptCand[c].Data(),mptType[m].Data());
+               if (ir>0) continue;
             }
             vector<TString> xmptObs;
-            xmptObs.push_back("-1*("+mpttag+"_pt[0])");
-            xmptObs.push_back("-1*("+mpttag+"_pt[1])");
+            TString pixtrkmpttag = mpttag;
+            if (mptCand[c].Contains("trk")) {
+               pixtrkmpttag.ReplaceAll("trk","pixtrk");
+               xmptObs.push_back("-1*("+pixtrkmpttag+"_pt[0])");
+               xmptObs.push_back("-1*("+pixtrkmpttag+"_pt[1])");
+            } else {
+               xmptObs.push_back("-1*("+mpttag+"_pt[0])");
+               xmptObs.push_back("-1*("+mpttag+"_pt[1])");
+            }
+//             xmptObs.push_back("-1*("+mpttag+"_pt[1])");
             xmptObs.push_back("-1*("+mpttag+"_pt[2])");
             xmptObs.push_back("-1*("+mpttag+"_pt[3])");
             xmptObs.push_back("-1*("+mpttag+"_pt[4]+"+mpttag+"_pt[5])");
-            xmptObs.push_back("-1*("+mpttag+")");
+            
+            TString AllPtTag;
+            if (mptCand[c].Contains("trk")) {
+               AllPtTag+=(pixtrkmpttag+"_pt[0]+"+pixtrkmpttag+"_pt[1]+");
+            } else {
+               AllPtTag+=(mpttag+"_pt[0]+"+mpttag+"_pt[1]+");
+            }
+            AllPtTag+=(mpttag+"_pt[2]+"+mpttag+"_pt[3]+"+mpttag+"_pt[4]+"+mpttag+"_pt[5]");
+            xmptObs.push_back("-1*("+AllPtTag+")");
             
             for (int k=0; k<xmptObs.size(); ++k) {
-               AnaMpt hypho(inputTree_mc,Form("hypho_%s_merge%d",mpttag.Data(),k), xmptObs[k],0,1);
-               if (k<1) hypho.verbosity=1;
-               hypho.GetHistograms("offlSel"&&mycut,vcutAnaBin,leadingSel,awaySel,sigSel,mcweight);
-               
-               AnaMpt hi(inputTree_data,Form("hi_%s_merge%d",mpttag.Data(),k), xmptObs[k],1,1);
-               if (k<1) hi.verbosity=1;
-               hi.GetHistograms("anaEvtSel"&&mycut,vcutAnaBin,leadingSel,awaySel,sigSel);
+               if (isMC) {
+                 AnaMpt hypho(inputTree_mc,Form("hypho_%s_merge%d",mpttag.Data(),k), xmptObs[k],0,1);
+                  if (k==0||k==(xmptObs.size()-1)) hypho.verbosity=1;
+                 hypho.GetHistograms("offlSel"&&mycut,vcutAnaBin,leadingSel,awaySel,sigSel,mcweight);
+               } else {
+                  AnaMpt hi(inputTree_data,Form("hi_%s_merge%d",mpttag.Data(),k), xmptObs[k],1,1);
+                  if (k==0||k==(xmptObs.size()-1)) hi.verbosity=1;
+                  hi.GetHistograms("anaEvtSel"&&mycut,vcutAnaBin,leadingSel,awaySel,sigSel);
+               }
             }
          }
       }
