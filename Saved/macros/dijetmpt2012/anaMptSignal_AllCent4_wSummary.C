@@ -117,7 +117,7 @@ void anaMptSignal_AllCent4_wSummary(
                                     float minPt1=120,
                                     float minPt2=50,
                                     float sigDPhi=3.1415926*7./8,
-                                    TString outdir = "./fig/05.07_mptclosure2"
+                                    TString outdir = "./fig/05.10_chi2"
                                     )
 {
    TH1::SetDefaultSumw2();
@@ -128,7 +128,9 @@ void anaMptSignal_AllCent4_wSummary(
    ////////////////////////////////////////////////////////////////////////////////////////////////
    // Analysis
    ////////////////////////////////////////////////////////////////////////////////////////////////
-   TString inputTree_data="../ntout/output-data-DiJetTrk_v0_v6_icPu5.root";
+//    TString inputTree_data="../ntout/output-data-DiJetTrk_v0_v6_icPu5.root";
+//    TString inputTree_data="../ntout/output-data-DiJetTrk_v0_v7_trkAlgo45_icPu5.root";
+   TString inputTree_data="../ntout/output-data-DiJetTrk_v0_v9_hgt_icPu5.root";
    TString inputTree_mc="../ntout/output-hy18dj80_IterPixTrkv1_v6_xsec_icPu5.root";
 
    int cBinMin=0, cBinMax=12;
@@ -137,9 +139,9 @@ void anaMptSignal_AllCent4_wSummary(
    TCut mycut=Form("cBin>=%d&&cBin<%d",cBinMin,cBinMax);
 
    // Output
-   bool isMC=true;
+   bool isMC=false;
    if (isMC) AnaMpt::outfname=Form("%s/HisOutput_Hy18DJv1_v6_icPu5_Mpt_%.0f_%.0f_%.0f_Norm%d_c%d_%d.root",outdir.Data(),minPt1,minPt2,sigDPhi*1000,normMode,cBinMin,cBinMax);
-   else AnaMpt::outfname=Form("%s/HisOutput_DiJetv7_v6_icPu5_Mpt_%.0f_%.0f_%.0f_Norm%d_c%d_%d.root",outdir.Data(),minPt1,minPt2,sigDPhi*1000,normMode,cBinMin,cBinMax);
+   else AnaMpt::outfname=Form("%s/HisOutput_DiJetTrkv0_v7_icPu5_Mpt_%.0f_%.0f_%.0f_Norm%d_c%d_%d.root",outdir.Data(),minPt1,minPt2,sigDPhi*1000,normMode,cBinMin,cBinMax);
    TFile* hout = new TFile(AnaMpt::outfname,"RECREATE");
    hout->Close();
    
@@ -186,26 +188,12 @@ void anaMptSignal_AllCent4_wSummary(
             }
             vector<TString> xmptObs;
             TString pixtrkmpttag = mpttag;
-            if (mptCand[c].Contains("trk")) {
-               pixtrkmpttag.ReplaceAll("trk","pixtrk");
-               xmptObs.push_back("-1*("+pixtrkmpttag+"_pt[0])");
-               xmptObs.push_back("-1*("+pixtrkmpttag+"_pt[1])");
-            } else {
-               xmptObs.push_back("-1*("+mpttag+"_pt[0])");
-               xmptObs.push_back("-1*("+mpttag+"_pt[1])");
-            }
-//             xmptObs.push_back("-1*("+mpttag+"_pt[1])");
+            xmptObs.push_back("-1*("+mpttag+"_pt[0])");
+            xmptObs.push_back("-1*("+mpttag+"_pt[1])");
             xmptObs.push_back("-1*("+mpttag+"_pt[2])");
             xmptObs.push_back("-1*("+mpttag+"_pt[3])");
-            xmptObs.push_back("-1*("+mpttag+"_pt[4]+"+mpttag+"_pt[5])");
-            
-            TString AllPtTag;
-            if (mptCand[c].Contains("trk")) {
-               AllPtTag+=(pixtrkmpttag+"_pt[0]+"+pixtrkmpttag+"_pt[1]+");
-            } else {
-               AllPtTag+=(mpttag+"_pt[0]+"+mpttag+"_pt[1]+");
-            }
-            AllPtTag+=(mpttag+"_pt[2]+"+mpttag+"_pt[3]+"+mpttag+"_pt[4]+"+mpttag+"_pt[5]");
+            xmptObs.push_back("-1*("+mpttag+"_pt[4]+"+mpttag+"_pt[5])");            
+            TString AllPtTag = mpttag;
             xmptObs.push_back("-1*("+AllPtTag+")");
             
             for (int k=0; k<xmptObs.size(); ++k) {
