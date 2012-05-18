@@ -104,10 +104,6 @@ if not isData:
    process.hiCentrality.pixelBarrelOnly = False
    process.HeavyIonGlobalParameters.nonDefaultGlauberModel = cms.string("Hydjet_Drum")
 
-########### random number seed
-process.RandomNumberGeneratorService.generator.initialSeed = ivars.randomNumber 
-process.RandomNumberGeneratorService.multiPhotonAnalyzer = process.RandomNumberGeneratorService.generator.clone()
-
 #####################################################################################
 # Define tree output
 #####################################################################################
@@ -155,6 +151,11 @@ process.load("RecoHI.HiTracking.HICaloCompatibleTracks_cff")
 process.hiCaloCompatibleGeneralTracks = process.hiCaloCompatibleTracks.clone(srcTracks = 'hiGeneralTracks')
 process.hiCaloCompatibleGeneralTracksQuality = cms.EDFilter("TrackSelector",
    src = cms.InputTag("hiCaloCompatibleGeneralTracks"),
+   cut = cms.string(
+   'quality("highPuritySetWithPV")')
+)
+process.hiGeneralTracksQuality = cms.EDFilter("TrackSelector",
+   src = cms.InputTag("hiGeneralTracks"),
    cut = cms.string(
    'quality("highPurity")')
 )
@@ -205,8 +206,10 @@ process.anaTrack.doSimTrack = False
 process.anaTrack.simTrackPtMin = 0.4
 process.anaTrack.doPFMatching = False
 process.anaTrack.pfCandSrc = cms.InputTag("particleFlowTmp")
-process.anaTrack.qualityString = cms.untracked.string("highPuritySetWithPV")
-process.anaTrack.trackSrc = cms.InputTag("hiCaloCompatibleGeneralTracks")
+# process.anaTrack.qualityString = cms.untracked.string("highPuritySetWithPV")
+# process.anaTrack.trackSrc = cms.InputTag("hiCaloCompatibleGeneralTracks")
+process.anaTrack.qualityString = cms.untracked.string("hiGeneralTracks")
+process.anaTrack.trackSrc = cms.InputTag("highPurity")
 #pixel tracks
 process.anaPixTrack = process.anaTrack.clone(useQuality = False,
                                              doPFMatching = False,
@@ -220,7 +223,7 @@ process.anaMergeTrack = process.anaTrack.clone(useQuality = False,
 ######## track efficiency calculator
 process.load("edwenger.HiTrkEffAnalyzer.hitrkEffAnalyzer_cfi")
 process.hitrkEffAnalyzer_GeneralCalo = process.hitrkEffAnalyzer.clone(
-   tracks = cms.untracked.InputTag("hiCaloCompatibleGeneralTracksQuality"),
+   tracks = cms.untracked.InputTag("hiGeneralTracksQuality"),
    qualityString = process.anaTrack.qualityString,
    hasSimInfo = True,
    ptBinScheme = 3,
@@ -337,6 +340,8 @@ process.hltAna = cms.Path(process.hltanalysis)
 process.pAna = cms.EndPath(process.skimanalysis)
 
 ########### random number seed
+if (not isData):
+   process.RandomNumberGeneratorService.generator.initialSeed = ivars.randomNumber 
 process.RandomNumberGeneratorService.multiPhotonAnalyzer = process.RandomNumberGeneratorService.generator.clone()
 
 #####################################################################################
