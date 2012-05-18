@@ -9,7 +9,7 @@ process.options = cms.untracked.PSet(
 #####################################################################################
 # High Level Setup
 #####################################################################################
-isData=False
+isData=True
 saveAllGenParticles = True
 
 import FWCore.ParameterSet.VarParsing as VarParsing
