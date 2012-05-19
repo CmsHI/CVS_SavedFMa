@@ -82,7 +82,7 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('RecoLocalTracker.SiPixelRecHits.PixelCPEESProducers_cff')
 if isData:
    # Data Global Tag 44x 
-   process.GlobalTag.globaltag = 'GR_P_V27::All'
+   process.GlobalTag.globaltag = 'GR_P_V27A::All'
 else:
    # MC Global Tag 44x 
    process.GlobalTag.globaltag = 'STARTHI44_V7::All'
@@ -191,6 +191,11 @@ process.load("CmsHi/HiHLTAlgos.hievtanalyzer_cfi")
 process.hiEvtAnalyzer.doEvtPlane = cms.bool(True)
 
 ##################### Jet Tree Analyzers
+process.icPu5JetAnalyzer.isMC = cms.untracked.bool(False)
+process.akPu3PFJetAnalyzer.isMC = cms.untracked.bool(False)
+process.akPu5PFJetAnalyzer.isMC = cms.untracked.bool(False)
+process.akPu3CaloJetAnalyzer.isMC = cms.untracked.bool(False)
+process.akPu5CaloJetAnalyzer.isMC = cms.untracked.bool(False)
 
 ##################### Photon Tree Analyzers
 process.load('CmsHi.JetAnalysis.EGammaAnalyzers_cff')
@@ -208,8 +213,8 @@ process.anaTrack.doPFMatching = False
 process.anaTrack.pfCandSrc = cms.InputTag("particleFlowTmp")
 # process.anaTrack.qualityString = cms.untracked.string("highPuritySetWithPV")
 # process.anaTrack.trackSrc = cms.InputTag("hiCaloCompatibleGeneralTracks")
-process.anaTrack.qualityString = cms.untracked.string("hiGeneralTracks")
-process.anaTrack.trackSrc = cms.InputTag("highPurity")
+process.anaTrack.qualityString = cms.untracked.string("highPurity")
+process.anaTrack.trackSrc = cms.InputTag("hiGeneralTracks")
 #pixel tracks
 process.anaPixTrack = process.anaTrack.clone(useQuality = False,
                                              doPFMatching = False,
@@ -222,9 +227,25 @@ process.anaMergeTrack = process.anaTrack.clone(useQuality = False,
 
 ######## track efficiency calculator
 process.load("edwenger.HiTrkEffAnalyzer.hitrkEffAnalyzer_cfi")
-process.hitrkEffAnalyzer_GeneralCalo = process.hitrkEffAnalyzer.clone(
+process.hitrkEffAnalyzer_Selected = process.hitrkEffAnalyzer.clone(
+   tracks = cms.untracked.InputTag("hiSelectedTrackHighPurity"),
+   qualityString = "highPurity",
+   hasSimInfo = True,
+   ptBinScheme = 3,
+   fiducialCut = False,
+   usePxlPair = True
+   )
+process.hitrkEffAnalyzer_General = process.hitrkEffAnalyzer.clone(
    tracks = cms.untracked.InputTag("hiGeneralTracksQuality"),
    qualityString = process.anaTrack.qualityString,
+   hasSimInfo = True,
+   ptBinScheme = 3,
+   fiducialCut = False,
+   usePxlPair = True
+   )
+process.hitrkEffAnalyzer_GeneralCalo = process.hitrkEffAnalyzer.clone(
+   tracks = cms.untracked.InputTag("hiCaloCompatibleGeneralTracks"),
+   qualityString = "highPuritySetWithPV",
    hasSimInfo = True,
    ptBinScheme = 3,
    fiducialCut = False,
@@ -250,8 +271,11 @@ process.pfcandAnalyzer.pfPtMin = 0.5
 
 ############################################ MC Info
 if (not isData):
-   process.icPu5JetAnalyzer.isMC   = cms.untracked.bool(True)
+   process.icPu5JetAnalyzer.isMC = cms.untracked.bool(True)
    process.akPu3PFJetAnalyzer.isMC = cms.untracked.bool(True)
+   process.akPu5PFJetAnalyzer.isMC = cms.untracked.bool(True)
+   process.akPu3CaloJetAnalyzer.isMC = cms.untracked.bool(True)
+   process.akPu5CaloJetAnalyzer.isMC = cms.untracked.bool(True)
    process.icPu5JetAnalyzer.eventInfoTag = cms.InputTag("hiSignal")
    process.akPu3PFJetAnalyzer.eventInfoTag = cms.InputTag("hiSignal")
    process.akPu5PFJetAnalyzer.eventInfoTag = cms.InputTag("hiSignal")
@@ -283,7 +307,7 @@ if (not isData):
 process.reco_extra        = cms.Path( process.siPixelRecHits * process.siStripMatchedRecHits *
                                       process.heavyIonTracking *
                                       process.hiSelectedTrackHighPurity *
-                                      process.hiIterTracking *
+                                      process.hiIterTracking * process.hiGeneralTracksQuality *
                                       process.electronGsfTrackingHi *
                                       process.hiElectronSequence *
                                       process.HiParticleFlowReco *
@@ -295,10 +319,16 @@ process.reco_extra_jet    = cms.Path( process.iterativeConePu5CaloJets *
                                       process.akPu3PFJets * process.akPu5PFJets *
                                       process.akPu3CaloJets * process.akPu5CaloJets *
                                       process.photon_extra_reco)
-process.pat_step          = cms.Path(process.icPu5patSequence +
-                                     process.akPu3PFpatSequence + process.akPu5PFpatSequence +
-                                     process.akPu3patSequence + process.akPu5patSequence +
-                                     process.makeHeavyIonPhotons)
+if (isData):
+   process.pat_step          = cms.Path(process.icPu5patSequence_data +
+                                        process.akPu3PFpatSequence_data + process.akPu5PFpatSequence_data +
+                                        process.akPu3patSequence_data + process.akPu5patSequence_data +
+                                        process.makeHeavyIonPhotons)
+else:
+   process.pat_step          = cms.Path(process.icPu5patSequence +
+                                        process.akPu3PFpatSequence + process.akPu5PFpatSequence +
+                                        process.akPu3patSequence + process.akPu5patSequence +
+                                        process.makeHeavyIonPhotons)
 process.extrapatstep = cms.Path(process.selectedPatPhotons)
 process.ana_step          = cms.Path(
                                       process.hcalNoise +
@@ -319,7 +349,7 @@ if (isData):
    enableDataAnalyzers(process)
    process.pat_step.remove(process.photonMatch)
 else:
-   process.ana_step.replace(process.anaTrack, (process.cutsTPForFak * process.cutsTPForEff * process.hitrkEffAnalyzer_GeneralCalo * process.anaTrack))
+   process.ana_step.replace(process.anaTrack, (process.cutsTPForFak * process.cutsTPForEff * process.hitrkEffAnalyzer_Selected *  process.hitrkEffAnalyzer_General * process.hitrkEffAnalyzer_GeneralCalo * process.anaTrack))
    process.ana_step.replace(process.anaPixTrack, (process.cutsTPForFakPxl * process.cutsTPForEffPxl * process.hitrkEffAnalyzer_PixTrk * process.anaPixTrack))
 #    process.ana_step.Replace(process.anaMergeTrack, (process.cutsTPForFakPxl * process.cutsTPForEffPxl * process.hitrkEffAnalyzer_MergeTrk * process.anaMergeTrack))
    process.ana_step+=(process.genpana + process.HiGenParticleAna)
@@ -333,10 +363,10 @@ if (isData):
 
 process.load('CmsHi.HiHLTAlgos.hltanalysis_cff')
 if (not isData):
-   process.hltanalysis.HLTProcessName = cms.string('HLT')
+   process.hltanalysis.HLTProcessName = cms.string('RECO')
    process.hltanalysis.hltresults = cms.InputTag("TriggerResults","","RECO")
+   #process.hltAna = cms.Path(process.hltanalysis)
 process.skimanalysis.hltresults = cms.InputTag("TriggerResults","",process.name_())
-process.hltAna = cms.Path(process.hltanalysis)
 process.pAna = cms.EndPath(process.skimanalysis)
 
 ########### random number seed
