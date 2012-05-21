@@ -365,7 +365,8 @@ process.load('CmsHi.HiHLTAlgos.hltanalysis_cff')
 if (not isData):
    process.hltanalysis.HLTProcessName = cms.string('RECO')
    process.hltanalysis.hltresults = cms.InputTag("TriggerResults","","RECO")
-   #process.hltAna = cms.Path(process.hltanalysis)
+ else:
+   process.hltAna = cms.Path(process.hltanalysis)
 process.skimanalysis.hltresults = cms.InputTag("TriggerResults","",process.name_())
 process.pAna = cms.EndPath(process.skimanalysis)
 
