@@ -214,7 +214,7 @@ process.anaTrack.pfCandSrc = cms.InputTag("particleFlowTmp")
 # process.anaTrack.qualityString = cms.untracked.string("highPuritySetWithPV")
 # process.anaTrack.trackSrc = cms.InputTag("hiCaloCompatibleGeneralTracks")
 process.anaTrack.qualityString = cms.untracked.string("highPurity")
-process.anaTrack.trackSrc = cms.InputTag("hiGeneralTracks")
+process.anaTrack.trackSrc = cms.InputTag("hiSelectedTrackHighPurity")
 #pixel tracks
 process.anaPixTrack = process.anaTrack.clone(useQuality = False,
                                              doPFMatching = False,
@@ -244,7 +244,8 @@ process.hitrkEffAnalyzer_General = process.hitrkEffAnalyzer.clone(
    usePxlPair = True
    )
 process.hitrkEffAnalyzer_GeneralCalo = process.hitrkEffAnalyzer.clone(
-   tracks = cms.untracked.InputTag("hiCaloCompatibleGeneralTracks"),
+   tracks = cms.untracked.InputTag("hiCaloCompatibleGeneralTracksQuality"),
+   useQaulityStr = True,
    qualityString = "highPuritySetWithPV",
    hasSimInfo = True,
    ptBinScheme = 3,
@@ -365,7 +366,7 @@ process.load('CmsHi.HiHLTAlgos.hltanalysis_cff')
 if (not isData):
    process.hltanalysis.HLTProcessName = cms.string('RECO')
    process.hltanalysis.hltresults = cms.InputTag("TriggerResults","","RECO")
- else:
+else:
    process.hltAna = cms.Path(process.hltanalysis)
 process.skimanalysis.hltresults = cms.InputTag("TriggerResults","",process.name_())
 process.pAna = cms.EndPath(process.skimanalysis)
