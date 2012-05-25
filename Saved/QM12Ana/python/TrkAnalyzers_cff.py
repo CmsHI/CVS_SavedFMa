@@ -7,7 +7,7 @@ anaTrack.doSimTrack = False
 anaTrack.simTrackPtMin = 0.4
 anaTrack.doPFMatching = False
 anaTrack.pfCandSrc = cms.InputTag("particleFlowTmp")
-anaTrack.qualityString = cms.untracked.string("highPuritySetWithPV")
+# anaTrack.qualityString = cms.untracked.string("highPuritySetWithPV")
 anaTrack.trackSrc = cms.InputTag("hiMergedTracksGeneralCalo")
 
 anaPixTrack = anaTrack.clone(
