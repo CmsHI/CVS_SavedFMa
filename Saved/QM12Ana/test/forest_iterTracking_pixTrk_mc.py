@@ -214,7 +214,7 @@ process.anaTrack.pfCandSrc = cms.InputTag("particleFlowTmp")
 # process.anaTrack.qualityString = cms.untracked.string("highPuritySetWithPV")
 # process.anaTrack.trackSrc = cms.InputTag("hiCaloCompatibleGeneralTracks")
 process.anaTrack.qualityString = cms.untracked.string("highPurity")
-process.anaTrack.trackSrc = cms.InputTag("hiSelectedTrackHighPurity")
+process.anaTrack.trackSrc = cms.InputTag("hiGeneralTracks")
 #pixel tracks
 process.anaPixTrack = process.anaTrack.clone(useQuality = False,
                                              doPFMatching = False,
