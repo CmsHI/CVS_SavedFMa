@@ -40,11 +40,14 @@ public:
    float trkPhi[MAXTRK];   
    float trkJetDr[MAXTRK];
    float trkWt[MAXTRK];
+   float trkWt2[MAXTRK];
+   float trkWt3[MAXTRK];
    float trkEff[MAXTRK];
    float trkFak[MAXTRK];
    float trkChi2Norm[MAXTRK];
    bool trkHP[MAXTRK];
    int trkAlgo[MAXTRK];
+   int trkQual[MAXTRK];
    int nJet;
    float inclJetPt[MAXTRK];
    float inclJetEta[MAXTRK];
@@ -81,6 +84,9 @@ public:
    void clearParticles() {
       nTrk=0; nPf=0; nGenp=0;
    }
+   void clearTracks() {
+      nTrk=0; nPf=0;
+   }
 };
 
 void BookGJBranches(TTree * tgj, EvtSel & evt, DiJet & gj) {
@@ -92,11 +98,14 @@ void BookGJBranches(TTree * tgj, EvtSel & evt, DiJet & gj) {
    tgj->Branch("trkPhi",gj.trkPhi,"trkPhi[nTrk]/F");
 //    tgj->Branch("trkJetDr",gj.trkJetDr,"trkJetDr[nTrk]/F");
    tgj->Branch("trkWt",gj.trkWt,"trkWt[nTrk]/F");
+   tgj->Branch("trkWt2",gj.trkWt2,"trkWt2[nTrk]/F");
+   tgj->Branch("trkWt3",gj.trkWt3,"trkWt3[nTrk]/F");
    tgj->Branch("trkEff",gj.trkEff,"trkEff[nTrk]/F");
    tgj->Branch("trkFak",gj.trkFak,"trkFak[nTrk]/F");
    tgj->Branch("trkChi2Norm",gj.trkChi2Norm,"trkChi2Norm[nTrk]/F");
    tgj->Branch("trkHP",gj.trkHP,"trkHP[nTrk]/O");
    tgj->Branch("trkAlgo",gj.trkAlgo,"trkAlgo[nTrk]/I");
+   tgj->Branch("trkQual",gj.trkQual,"trkQual[nTrk]/I");
    tgj->Branch("nJet",&gj.nJet,"nJet/I");
    tgj->Branch("inclJetPt",gj.inclJetPt,"inclJetPt[nJet]/F");
    tgj->Branch("inclJetEta",gj.inclJetEta,"inclJetEta[nJet]/F");

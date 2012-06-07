@@ -64,7 +64,7 @@ void analyzeDiJetMPT(
    bool checkDup=false;
    bool doMPT=true, saveAllCands=false;
    bool onlyTrkAlgo4=true, onlyTrkHP=true;
-   bool saveParticles=false;
+   bool saveParticles=true;
    outname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
    mcfname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
    datafname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
@@ -104,11 +104,14 @@ void analyzeDiJetMPT(
       cw.Init(); //cw.hCentData->Draw(); cw.hCentMc->Draw("same");
    }
    
+   TH1D * hTrkPt = new TH1D("hTrkPt",";p_{T} (GeV/c)",nptrange,ptranges);
+   TH1D * hTrkCorrPt = new TH1D("hTrkCorrPt",";p_{T} (GeV/c)",nptrange,ptranges);
+   TH1D * hGenpPt = new TH1D("hGenpPt",";p_{T} (GeV/c)",nptrange,ptranges);
+
    EvtSel evt;
    DiJet gj;
    TTree * tgj = new TTree("tgj","dijet jet tree");
    BookGJBranches(tgj,evt,gj);
-   
 //   AnaMPT pfmpt("pf",0);
 //   AnaMPT pf4mpt("pf4",0,4);
    AnaMPT trkmpt("trk",0);
@@ -186,6 +189,7 @@ void analyzeDiJetMPT(
    // Main loop
    ///////////////////////////////////////////////////
    for (int i=0;i<c->GetEntries();i++)
+//    for (int i=0;i<1000;i++)
    {
       c->GetEntry(i);
       if (pfTree) pfTree->GetEntry(i);
@@ -261,8 +265,8 @@ void analyzeDiJetMPT(
       if (makeMixing==1&&!evt.offlSel) continue;
       if (doSkim) {
          if (dataSrcType==1&&!evt.anaEvtSel) continue;
-         if (dataSrcType==0&&!evt.offlSel) continue;
-         if (gj.pt1<120) continue;
+//          if (dataSrcType==0&&!evt.offlSel) continue;
+         if (gj.pt1<100) continue;
       }
       
       // Found a leading jet which passed basic quality cut!
@@ -410,10 +414,14 @@ void analyzeDiJetMPT(
       ///////////////////////////////////////////////////////
       double trkcorr[4];
       gj.nTrk=0;
-      Tracks * anaTrks[2] = {&(c->track),&(c->pixtrack)};
-      float maxPixTrkPt =2.;
+//       const nTrkSet=2;
+//       Tracks * anaTrks[nTrkSet] = {&(c->track),&(c->pixtrack)};
+//       float maxPixTrkPt =2.;
+      const int nTrkSet=1;
+      Tracks * anaTrks[nTrkSet] = {&(c->track)};
+      float maxPixTrkPt =0;
       // Full Tracks, Pixel Tracks
-      for (int iset=0; iset<2; ++iset) {
+      for (int iset=0; iset<nTrkSet; ++iset) {
          for (int it=0; it<anaTrks[iset]->nTrk; ++it) {
             // Kinematic Selection
             if (anaTrks[iset]->trkPt[it] < cutPtTrk) continue;
@@ -456,6 +464,9 @@ void analyzeDiJetMPT(
                gj.trkWt[gj.nTrk] = c->trackCorrections[iset]->GetCorr(trkPt,trkEta,0,c->evt.hiBin,trkcorr);
 //                cout << "trk pt,eta,jet,cBin: " << trkPt << "," << trkEta << "," << 0 << "," << c->evt.hiBin << " eff: " << trkcorr[0] << endl;
             }
+            // Fill
+            hTrkPt->Fill(trkPt);
+            hTrkCorrPt->Fill(trkPt,gj.trkWt[gj.nTrk]);
             gj.trkEff[gj.nTrk] = trkcorr[0];
             gj.trkFak[gj.nTrk] = trkcorr[1];
             gj.trkChi2Norm[gj.nTrk] = trkChi2Norm;
@@ -487,6 +498,9 @@ void analyzeDiJetMPT(
          if (c->genparticle.pt[ip] < cutPtTrk) continue;
          if (fabs(c->genparticle.eta[ip]) > cutEtaTrk) continue;
          if (abs(int(c->genparticle.chg[ip])) ==0 ) continue;
+         if (abs(int(c->genparticle.sube[ip])) !=0 ) continue;
+         // Fill
+         hGenpPt->Fill(c->genparticle.pt[ip]);
          gj.genpPt[gj.nGenp] = c->genparticle.pt[ip];
          gj.genpEta[gj.nGenp] = c->genparticle.eta[ip];
          gj.genpPhi[gj.nGenp] = c->genparticle.phi[ip];
@@ -513,7 +527,8 @@ void analyzeDiJetMPT(
         }
       
       // All done
-      if (!saveParticles) gj.clearParticles();
+//       if (!saveParticles) gj.clearParticles();
+      if (!saveParticles) gj.clearTracks();
       tgj->Fill();
       if (makeMixing==1) {
          // mixing classes
