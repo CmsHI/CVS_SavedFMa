@@ -16,13 +16,13 @@ using namespace std;
 void CompareTrk_DataData()
 {
    TH1::SetDefaultSumw2();
-   TString tag = "compForest2";
+   TString tag = "compForest2_myitercalo";
    // inputs
 //    TString infdataname="~/hadoopfranklocal/forest/HiForest_promptskim-hihighpt-jet115-v0_part2.root";
 //    TString infrefname="~/hadoopfranklocal/forest/Hydjet18/DiJet80_MergeTrk_v1_SimTrack_part2.root";
 //    if (isData) infrefname = "~/hadoopfranklocal/forest/HiForest_promptskim-hihighpt-jet115-v0_part2.root";
-   TString infdataname="~/hadoopfranklocal/forest/promptskim-hihighpt-hltjet80-pt90-v1_part.root";
-   TString infrefname = "~/hadoopfranklocal/forest/Hi2011ForestDiJet_v7_noDuplicate.root";
+   TString infdataname="/mnt/hadoop/cms/store/user/frankmalocal/forest/HiForest-promptskim-hihighpt-hltjet80-pt90-v2_v3_part.root";
+   TString infrefname = "/mnt/hadoop/cms/store/user/frankmalocal/forest/HiForest_promptskim-hihighpt-jet115-v2MgTrk.root";
 //    TString infrefname = "/mnt/hadoop/cms/store/user/velicanu/forest/HiForestDijet_v7.root";
 
    TFile * infdata = new TFile(infdataname);
@@ -38,7 +38,7 @@ void CompareTrk_DataData()
    cout << infref->GetName() << endl;
    
 //    TCut sel = "hiBin<4&&trkQual&&trkPt>2&&trkAlgo>=0";
-   TCut sel = "hiBin<4&&jtpt[0]>90&&trkAlgo==4";
+   TCut sel = "hiBin<4&&jtpt[0]>120&&trkAlgo==4";
       
    // histograms
    TCut mysel[2] = {"trkPt>2&&abs(trkEta)<1.6","trkPt>2&&abs(trkEta)>1.6"};
@@ -156,4 +156,25 @@ void CompareTrk_DataData()
       cmp.leg->Draw();
    }
    ceta->Print(Form("fig/%s_eta.gif",tag.Data()));//    for (int i=0; i<2; ++i) {
+
+   TCut mysel3[1] = {"abs(jteta[0])<2"};
+   TString mytitle3[1] = {"jet |#eta|<2"};
+   TCanvas * cjpt = new TCanvas("cjpt","cjpt",400,400);
+   for (int i=0; i<1; ++i) {
+      gPad->SetLogy();
+      Compare cmp(Form("cmpJPt_%d",i),sel,1);
+      cmp.vt.push_back(tdata);
+      cmp.vsel.push_back(mysel2[i]);
+      cmp.vt.push_back(tref);
+      cmp.vsel.push_back(mysel2[i]);
+      cmp.Init(100,90,290);
+      cmp.Project("jtpt[0]>>");
+      cmp.Draw(";jet p_{T} (GeV/c);# jets",1e-4,1);
+      cmp.Legend(0.45,0.67,0.94,0.92);
+      cmp.leg->AddEntry(cmp.vh[0],"PbPb Data 0-10\%","");
+      cmp.leg->AddEntry(cmp.vh[0],mytitle3[i],"");
+      cmp.leg->AddEntry(cmp.vh[0],"Forest2","p");
+      cmp.leg->AddEntry(cmp.vh[1],"Forest1","p");
+      cmp.leg->Draw();
+   }
 }
