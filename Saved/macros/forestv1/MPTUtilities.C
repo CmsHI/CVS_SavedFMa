@@ -3,8 +3,11 @@
 #include "commonSetup.h"
 
 // MPT Ranges
-const int nptrange = 6;
-float ptranges[nptrange+1]={0.5,1.0,2,4,8,20,180};
+// const int nptrange = 6;
+// float ptranges[nptrange+1]={0.5,1.0,2,4,8,20,180};
+const int nptrange = 12;
+//                           1   2   3  4 5 6 7 8  9 10 11 12
+float ptranges[nptrange+1]={0.5,1.0,1.5,2,3,4,6,8,14,20,50,100,200};
 
 class MPT {
 public:
@@ -28,6 +31,8 @@ public:
    float mptx2_pt[nptrange];
    float mpty2_pt[nptrange];
    
+   int mul_pt[nptrange];
+   
    MPT(TString s, int t=0, float dr=0.8, int c=0) :
    name(s), selType(t), dRCone(dr), corrType(c) {
       if (dRCone>0) name+=Form("%.0f",dRCone*10);
@@ -41,6 +46,7 @@ public:
          mptx_pt[i] =0; mpty_pt[i] = 0;
          mptx1_pt[i] =0; mpty1_pt[i] = 0;
          mptx2_pt[i] =0; mpty2_pt[i] = 0;
+         mul_pt[i]=0;
       }      
    }
 };
@@ -88,18 +94,17 @@ public:
    selPFId(pfid),
    anaDiJet(true)
    {
+//       for (int i=0; i<3; ++i) { drbins.push_back((i+1)*0.4); }
+      drbins.push_back(0.8);
+
+      for (int i=0; i<3; ++i) { dphibins.push_back((i+1)*TMath::PiOver2()/4.); }
+
       cout << "dr bins: ";
-      for (int i=0; i<3; ++i) {
-         drbins.push_back((i+1)*0.4);
-         cout << drbins[i] << " ";
-      }
+      for (int i=0; i<drbins.size(); ++i) { cout << drbins[i] << " ";}
       cout << endl;
 
       cout << "dphi bins: ";
-      for (int i=0; i<3; ++i) {
-         dphibins.push_back((i+1)*TMath::PiOver2()/4.);
-         cout << dphibins[i] << " ";
-      }
+      for (int i=0; i<3; ++i) { cout << dphibins[i] << " ";}
       cout << endl;
       
       trackingCorrectionTypes.push_back(-1); trackingCorrectionNames.push_back("");
@@ -209,6 +214,7 @@ public:
                   else m.mptx2_pt[k] += -ptx;
                   if (pty>=0) m.mpty1_pt[k] += ptx;
                   else m.mpty2_pt[k] += -pty;
+                  ++m.mul_pt[k];
                }
             }
          }
@@ -246,6 +252,8 @@ public:
       t->Branch("mpty2"+m.name,&m.mpty2,"mpty2"+m.name+"/F");
       t->Branch("mptx2"+m.name+"_pt",m.mptx2_pt,sbrxpt);
       t->Branch("mpty2"+m.name+"_pt",m.mpty2_pt,sbrypt);
+
+      t->Branch("mul"+m.name+"_pt",m.mul_pt,Form("mul%s[%d]_pt/I",m.name.Data(),nptrange));
    }
 };
 #endif
