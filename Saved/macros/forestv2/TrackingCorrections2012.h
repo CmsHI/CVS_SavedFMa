@@ -66,6 +66,10 @@ isLeadingJet_(true)
    centBin_.push_back("4to11");
    centBin_.push_back("12to19");
    if (name=="QM2011") centBin_.push_back("20to35");
+   else if (name=="RAA2012") {
+      centBin_.push_back("20to27");
+      centBin_.push_back("28to35");
+   }
    else centBin_.push_back("20to39");
    numCentBins_ = centBin_.size();
    
@@ -151,7 +155,10 @@ void TrackingCorrections::Init()
             for (Int_t m=0; m<2; ++m) {
                TString hname(Form("%s/%s_cbin%s",trkCorrModule_.Data(),levelInput_[lv][m].Data(),centBin_[c].Data()));
                TH3F * h3 = (TH3F*)sample_[s]->Get(hname);
-               if (!h3) cout << hname << " not found in correction file" << endl;
+               if (!h3) {
+                  cout << hname << " not found in correction file" << endl;
+                  exit(1);
+               }
                TH3F * hsave = (TH3F*)h3->Clone(Form("h%s_f%.0f_c%d_%d",(corrSetName_+levelName_[lv]).Data(),ptHatMin_[s],c,m));
                inputHists_[lv][s][c][m] = hsave;
                //cout << inputHists_[lv][s][c][m]->GetName() << ": " << inputHists_[lv][s][c][m] << endl;
@@ -301,8 +308,8 @@ TH1 * TrackingCorrections::InspectCorr(Int_t lv, Int_t centBeg, Int_t centEnd, I
    TH3F *hNum=0, *hDen=0;
    TH2D *hNum2D=0, *hDen2D=0, *hCorr2D=0;
    TH1D *hNum1D=0, *hDen1D=0, *hCorr1D=0;
-   TString inspName(Form("%s_%s_Lv%d_%d_c%d_%d_j%d_%d_%d",(corrSetName_).Data(),trkCorrModule_.Data(),lv,centBeg,centEnd,jetBegBin,jetEndBin,mode));
-   if (mode>0) inspName+=Form("bin_%d_%d",begbin,endbin);
+   TString inspName(Form("%s_%s_Lv%d_c%d_%d_j%d_%d_%d",(corrSetName_).Data(),trkCorrModule_.Data(),lv,centBeg,centEnd,jetBegBin,jetEndBin,mode));
+   if (mode>0) inspName+=Form("_bin_%d_%d",begbin,endbin);
    cout << inspName << endl;
    
    hNum = (TH3F*)combInputHists_[lv][centBeg][0]->Clone(inspName+"hNum");
