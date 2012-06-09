@@ -268,7 +268,8 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
   skimTree     = (TTree*) inf->Get("skimanalysis/HltTree");
   photonTree   = (TTree*) inf->Get("multiPhotonAnalyzer/photon");
   if (photonTree==0)  photonTree   = (TTree*) inf->Get("NTuples/Analysis");
-  trackTree    = (TTree*) inf->Get("anaTrack/trackTree");
+//   trackTree    = (TTree*) inf->Get("anaTrack/trackTree");
+  trackTree    = (TTree*) inf->Get("mergedTrack/trackTree");
   //pixtrackTree = (TTree*) inf->Get("pixelTrack/trackTree");
   pixtrackTree = (TTree*) inf->Get("anaPixTrack/trackTree");
   towerTree    = (TTree*) inf->Get("rechitanalyzer/tower");
@@ -449,42 +450,23 @@ void HiForest::InitTree()
    // Setup Track Corrections 	 
    if(doTrackCorrections){
 //       trackCorrections.push_back(new TrackingCorrections("QM2011","hitrkEffAnalyzer_akpu3pf")); 	 
-//       trackCorrections.push_back(new TrackingCorrections("QM2012IterTrk","hitrkEffAnalyzer_GeneralCalo")); 	 
-      trackCorrections.push_back(new TrackingCorrections("QM2012IterTrk","hitrkEffAnalyzer_Selected")); 	 
-      trackCorrections.push_back(new TrackingCorrections("QM2012PixTrk","hitrkEffAnalyzer_PixTrk")); 	 
+      trackCorrections.push_back(new TrackingCorrections("Forest2_v19","hitrkEffAnalyzer_MergedGeneral")); 	 
+      trackCorrections.push_back(new TrackingCorrections("Forest2_v19","hitrkEffAnalyzer_MergedSelected")); 	 
+      trackCorrections.push_back(new TrackingCorrections("Forest2_v19","hitrkEffAnalyzer_MergedGeneralCalo"));
 
       for(int i = 0; i < trackCorrections.size(); ++i){
          if (pp) {
-            trackCorrections[i]->AddSample("trkcorr/trkCorrHisAna_djuq30_ppcorrpthgtv4.root",30);
-            trackCorrections[i]->AddSample("trkcorr/trkCorrHisAna_djuq50_ppcorrpthgtv4.root",50);
-            trackCorrections[i]->AddSample("trkcorr/trkCorrHisAna_djuq80_ppcorrpthgtv4.root",80);
-            trackCorrections[i]->AddSample("trkcorr/trkCorrHisAna_djuq110_ppcorrpthgtv4.root",110);
-            trackCorrections[i]->AddSample("trkcorr/trkCorrHisAna_djuq170_ppcorrpthgtv4.root",170);
+              trackCorrections[i]->AddSample("trkcorr/Forest2_v19/trkcorr_sigdj30_Forest2_v19.root",30);
+              trackCorrections[i]->AddSample("trkcorr/Forest2_v19/trkcorr_sigdj50_Forest2_v19.root",50);
+              trackCorrections[i]->AddSample("trkcorr/Forest2_v19/trkcorr_sigdj80_Forest2_v19.root",80);
+              trackCorrections[i]->AddSample("trkcorr/Forest2_v19/trkcorr_sigdj120_Forest2_v19.root",120);
+              trackCorrections[i]->AddSample("trkcorr/Forest2_v19/trkcorr_sigdj170_Forest2_v19.root",170);
          } else {
-//             if (i==0) {
-//               trackCorrections[i]->AddSample("trkcorr/trkCorrHisAna_djuq30_tev9hgtv4_3.root",30);
-//               trackCorrections[i]->AddSample("trkcorr/trkCorrHisAna_djuq50_tev9hgtv4_3.root",50);
-//               trackCorrections[i]->AddSample("trkcorr/trkCorrHisAna_djuq80_tev9hgtv4_3.root",80);
-//               trackCorrections[i]->AddSample("trkcorr/trkCorrHisAna_djuq110_tev9hgtv4_3.root",110);
-//               trackCorrections[i]->AddSample("trkcorr/trkCorrHisAna_djuq170_tev9hgtv4_3.root",170);
-
-//               trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk/trkcorr_hy18dj30_v1.root",30);
-//               trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk/trkcorr_hy18dj50_v1.root",50);
-//               trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk/trkcorr_hy18dj80_v1.root",80);
-//               trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk/trkcorr_hy18dj120_v1.root",120);
-//               trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk/trkcorr_hy18dj200_v1.root",200);
-
-              trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk_hgt/trkcorr_hy18dj50_iterTrkPixTrk_v1_full.root",50);
-              trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk_hgt/trkcorr_hy18dj120_iterTrkPixTrk_v1_full.root",120);
-              trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk_hgt/trkcorr_hy18dj170_iterTrkPixTrk_v1_full.root",170);
-              trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk_hgt/trkcorr_hy18dj200_iterTrkPixTrk_v1_full.root",200);
-//             } else if (i==1) {
-//               trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk/trkcorr_hy18dj30_v1.root",30);
-//               trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk/trkcorr_hy18dj50_v1.root",50);
-//               trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk/trkcorr_hy18dj80_v1.root",80);
-//               trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk/trkcorr_hy18dj120_v1.root",120);
-//               trackCorrections[i]->AddSample("trkcorr/itertrkpixtrk/trkcorr_hy18dj200_v1.root",200);
-//             }
+              trackCorrections[i]->AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj30_Forest2_v19.root",30);
+              trackCorrections[i]->AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj50_Forest2_v19.root",50);
+              trackCorrections[i]->AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj80_Forest2_v19.root",80);
+              trackCorrections[i]->AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj120_Forest2_v19.root",120);
+              trackCorrections[i]->AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj170_Forest2_v19.root",170);
          }
          trackCorrections[i]->smoothLevel_ = 1; 	 
          trackCorrections[i]->Init(); 	 

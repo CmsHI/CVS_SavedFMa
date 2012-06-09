@@ -72,9 +72,8 @@ void analyzeDiJetMPT(
    double cutjetPt = 30;
    double cutjetEta = 2;
    double cutPtTrk=0.5;
-   double cutEtaTrk = 2.2; // 2.4
+   double cutEtaTrk = 2.4;
    double cutPtPfCand=4;
-   if (saveAllCands) cutPtPfCand=1;
    // Centrality reweiting
    CentralityReWeight cw(datafname,mcfname,"offlSel&&pt1>120&&pt2>0&&acos(cos(phi2-phi1))>2./3*3.14159");
 
@@ -414,19 +413,14 @@ void analyzeDiJetMPT(
       ///////////////////////////////////////////////////////
       double trkcorr[4];
       gj.nTrk=0;
-//       const nTrkSet=2;
-//       Tracks * anaTrks[nTrkSet] = {&(c->track),&(c->pixtrack)};
-//       float maxPixTrkPt =2.;
       const int nTrkSet=1;
       Tracks * anaTrks[nTrkSet] = {&(c->track)};
-      float maxPixTrkPt =0;
       // Full Tracks, Pixel Tracks
       for (int iset=0; iset<nTrkSet; ++iset) {
          for (int it=0; it<anaTrks[iset]->nTrk; ++it) {
             // Kinematic Selection
             if (anaTrks[iset]->trkPt[it] < cutPtTrk) continue;
             if (fabs(anaTrks[iset]->trkEta[it]) > cutEtaTrk) continue;
-            // Full Track Selection
             float trkPt = anaTrks[iset]->trkPt[it];
             float trkEta = anaTrks[iset]->trkEta[it];
             float trkPhi = anaTrks[iset]->trkPhi[it];
@@ -435,16 +429,8 @@ void analyzeDiJetMPT(
             float trkChi2Norm = anaTrks[iset]->trkChi2[it]/anaTrks[iset]->trkNlayer[it]/anaTrks[iset]->trkNdof[it];
             float trkDzNorm = anaTrks[iset]->trkDz1[it]/anaTrks[iset]->trkDzError1[it];
             float trkDxyNorm = anaTrks[iset]->trkDxy1[it]/anaTrks[iset]->trkDxyError1[it];
-            int trkAlgo = (trkPt>=maxPixTrkPt ? anaTrks[iset]->trkAlgo[it] : 4);
-            bool trkHP  = (trkPt>=maxPixTrkPt ? (trkPtErrorNorm<0.06&&trkNHit>=13&&trkChi2Norm<0.15&&trkDzNorm<3&&trkDxyNorm<3) : true);
-            if (iset==0) {
-               if (anaTrks[iset]->trkPt[it] < maxPixTrkPt) continue;
-               if (!anaTrks[iset]->trkQual[it]) continue;
-               if (onlyTrkAlgo4&&trkAlgo!=4) continue;
-//                if (onlyTrkHP&&!trkHP) continue;
-            }
-            // Pixel Track Selection
-            if (iset==1 && anaTrks[iset]->trkPt[it] >= maxPixTrkPt) continue;
+            int trkAlgo = anaTrks[iset]->trkAlgo[it];
+            bool trkHP  = (trkPtErrorNorm<0.06&&trkNHit>=13&&trkChi2Norm<0.15&&trkDzNorm<3&&trkDxyNorm<3);
             gj.trkPt[gj.nTrk] = trkPt;
             gj.trkEta[gj.nTrk] = trkEta;
             gj.trkPhi[gj.nTrk] = trkPhi;
@@ -454,37 +440,50 @@ void analyzeDiJetMPT(
             ////////////////////////////////////
             // Track efficiency/fake correction
             ////////////////////////////////////
-            if (gj.pt1>40&&dr1<0.8) {
-               gj.trkWt[gj.nTrk] = c->trackCorrections[iset]->GetCorr(trkPt,trkEta,gj.pt1,c->evt.hiBin,trkcorr);
-//                cout << "trk pt,eta,jet,cBin: " << trkPt << "," << trkEta << "," << gj.pt1 << "," << c->evt.hiBin << " eff: " << trkcorr[0] << endl;
-            } else if (gj.pt2>40&&dr2<0.8) {
-               gj.trkWt[gj.nTrk] = c->trackCorrections[iset]->GetCorr(trkPt,trkEta,gj.pt2,c->evt.hiBin,trkcorr);
-//                cout << "trk pt,eta,jet,cBin: " << trkPt << "," << trkEta << "," << gj.pt2 << "," << c->evt.hiBin << " eff: " << trkcorr[0] << endl;
-            } else {
-               gj.trkWt[gj.nTrk] = c->trackCorrections[iset]->GetCorr(trkPt,trkEta,0,c->evt.hiBin,trkcorr);
-//                cout << "trk pt,eta,jet,cBin: " << trkPt << "," << trkEta << "," << 0 << "," << c->evt.hiBin << " eff: " << trkcorr[0] << endl;
+            for (int icorr=0; icorr<3; ++icorr) {
+               if (gj.pt1>40&&dr1<0.8) {
+                  gj.vtrkWt[gj.nTrk][icorr] = c->trackCorrections[icorr]->GetCorr(trkPt,trkEta,gj.pt1,c->evt.hiBin,trkcorr);
+   //                cout << "trk pt,eta,jet,cBin: " << trkPt << "," << trkEta << "," << gj.pt1 << "," << c->evt.hiBin << " eff: " << trkcorr[0] << endl;
+               } else if (gj.pt2>40&&dr2<0.8) {
+                  gj.vtrkWt[gj.nTrk][icorr] = c->trackCorrections[icorr]->GetCorr(trkPt,trkEta,gj.pt2,c->evt.hiBin,trkcorr);
+   //                cout << "trk pt,eta,jet,cBin: " << trkPt << "," << trkEta << "," << gj.pt2 << "," << c->evt.hiBin << " eff: " << trkcorr[0] << endl;
+               } else {
+                  gj.vtrkWt[gj.nTrk][icorr] = c->trackCorrections[icorr]->GetCorr(trkPt,trkEta,0,c->evt.hiBin,trkcorr);
+   //                cout << "trk pt,eta,jet,cBin: " << trkPt << "," << trkEta << "," << 0 << "," << c->evt.hiBin << " eff: " << trkcorr[0] << endl;
+               }
+               if (icorr==0) {
+                  gj.trkWt[gj.nTrk] = gj.vtrkWt[gj.nTrk][icorr];
+                  gj.trkEff[gj.nTrk] = trkcorr[0];
+                  gj.trkFak[gj.nTrk] = trkcorr[1];
+               }
             }
             // Fill
-            hTrkPt->Fill(trkPt);
-            hTrkCorrPt->Fill(trkPt,gj.trkWt[gj.nTrk]);
-            gj.trkEff[gj.nTrk] = trkcorr[0];
-            gj.trkFak[gj.nTrk] = trkcorr[1];
+            gj.trkNHit[gj.nTrk] = trkNHit;
             gj.trkChi2Norm[gj.nTrk] = trkChi2Norm;
             gj.trkAlgo[gj.nTrk] = trkAlgo;
             gj.trkHP[gj.nTrk] = trkHP;
-            // find leading track
-            if (trkPt>gj.ltrkPt) {
-               gj.ltrkPt = trkPt;
-               gj.ltrkEta = trkEta;
-               gj.ltrkPhi = trkPhi;
-               gj.ltrkJetDr = dr2;
-            }
-            // find leading track in jet
-            if (dr2<0.3 && trkPt>gj.jltrkPt) {
-               gj.jltrkPt = trkPt;
-               gj.jltrkEta = trkEta;
-               gj.jltrkPhi = trkPhi;
-               gj.jltrkJetDr = dr2;
+            gj.vtrkQual[gj.nTrk][0] = anaTrks[iset]->highPurity[it];
+            gj.vtrkQual[gj.nTrk][1] = anaTrks[iset]->highPuritySetWithPV[it];
+            // mpt trk selection
+            gj.trkSel[gj.nTrk] = false;
+            if (gj.vtrkQual[gj.nTrk][0]) {
+               gj.trkSel[gj.nTrk] = true;
+               hTrkPt->Fill(trkPt);
+               hTrkCorrPt->Fill(trkPt,gj.trkWt[gj.nTrk]);
+               // find leading track
+               if (trkPt>gj.ltrkPt) {
+                  gj.ltrkPt = trkPt;
+                  gj.ltrkEta = trkEta;
+                  gj.ltrkPhi = trkPhi;
+                  gj.ltrkJetDr = dr2;
+               }
+               // find leading track in jet
+               if (dr2<0.3 && trkPt>gj.jltrkPt) {
+                  gj.jltrkPt = trkPt;
+                  gj.jltrkEta = trkEta;
+                  gj.jltrkPhi = trkPhi;
+                  gj.jltrkJetDr = dr2;
+               }
             }
             ++gj.nTrk;
          }
@@ -498,7 +497,6 @@ void analyzeDiJetMPT(
          if (c->genparticle.pt[ip] < cutPtTrk) continue;
          if (fabs(c->genparticle.eta[ip]) > cutEtaTrk) continue;
          if (abs(int(c->genparticle.chg[ip])) ==0 ) continue;
-         if (abs(int(c->genparticle.sube[ip])) !=0 ) continue;
          // Fill
          hGenpPt->Fill(c->genparticle.pt[ip]);
          gj.genpPt[gj.nGenp] = c->genparticle.pt[ip];
@@ -506,29 +504,23 @@ void analyzeDiJetMPT(
          gj.genpPhi[gj.nGenp] = c->genparticle.phi[ip];
          gj.genpCh[gj.nGenp] = c->genparticle.chg[ip];
          gj.genpSube[gj.nGenp] = c->genparticle.sube[ip];
+         gj.genpSel[gj.nGenp] = (int(c->genparticle.sube[ip]) ==0);
          ++gj.nGenp;
       }
 
       // MPT
       if (doMPT) {
-//          pfmpt.InputEvent(pfs.nPFpart,pfs.pfPt,pfs.pfEta,pfs.pfPhi);
-//          pfmpt.AnalyzeEvent(gj.pt1,gj.eta1,gj.phi1,gj.pt2,gj.eta2,gj.phi2);
-         
-         //pf4mpt.InputEvent(pfs.nPFpart,pfs.pfPt,pfs.pfEta,pfs.pfPhi,0,pfs.pfId);
-         //pf4mpt.AnalyzeEvent(gj.pt1,gj.eta1,gj.phi1,gj.pt2,gj.eta2,gj.phi2);
-
-         trkmpt.InputEvent(gj.nTrk,gj.trkPt,gj.trkEta,gj.trkPhi,gj.trkWt);
+         trkmpt.InputEvent(gj.nTrk,gj.trkPt,gj.trkEta,gj.trkPhi,gj.trkWt,gj.trkSel);
          trkmpt.AnalyzeEvent(gj.pt1,gj.eta1,gj.phi1,gj.pt2,gj.eta2,gj.phi2);
          
-         genpSigmpt.InputEvent(gj.nGenp,gj.genpPt,gj.genpEta,gj.genpPhi,0,0, gj.genpSube);
+         genpSigmpt.InputEvent(gj.nGenp,gj.genpPt,gj.genpEta,gj.genpPhi,0,gj.genpSel);
          genpSigmpt.AnalyzeEvent(gj.pt1,gj.eta1,gj.phi1,gj.pt2,gj.eta2,gj.phi2);
          genpAllmpt.InputEvent(gj.nGenp,gj.genpPt,gj.genpEta,gj.genpPhi);
          genpAllmpt.AnalyzeEvent(gj.pt1,gj.eta1,gj.phi1,gj.pt2,gj.eta2,gj.phi2);
         }
       
       // All done
-//       if (!saveParticles) gj.clearParticles();
-      if (!saveParticles) gj.clearTracks();
+      if (!saveParticles) gj.clearParticles();
       tgj->Fill();
       if (makeMixing==1) {
          // mixing classes
