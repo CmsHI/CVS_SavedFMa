@@ -269,9 +269,9 @@ Float_t TrackingCorrections::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float
    Double_t corr[4]={1,1,1,1};
    for (Int_t lv=0; lv<numLevels_; ++lv) {
       corr[lv] = correctionHists_[lv][bin]->GetBinContent(etaBin,ptBin,jetBin);
-      if (lv==0&&corr[lv]<0.001) { // if eff==0, give some average default value
-         if (pt>2) corr[lv] = (fabs(eta)<1 ? 0.65 : 0.46);
-         else corr[lv] = 1;      }
+      if (lv==0&&corr[lv]<0.001) { // if eff==0, no correction, b/c too few statistics
+         corr[lv] = 1;
+      }
       if (outCorr) outCorr[lv] = corr[lv];
    }
    
