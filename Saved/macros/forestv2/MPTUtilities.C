@@ -134,18 +134,18 @@ public:
       }      
    }
    
-   void InputEvent(int n, float * pt, float * eta, float * phi, float * wt=0, int * pfid=0, int * psube=0) {
+   void InputEvent(int n, float * pt, float * eta, float * phi, float * wt=0, bool * sel=0, int * pfid=0) {
 //      cout << "mpt input size: " << n << endl;
       cands.n = 0;
       for (int i=0; i<n; ++i) {
          // candidate selection
          if (pt[i]<ptmin) continue;
+         if (sel) {
+            if (!sel[i]) continue;
+         }
          if (fabs(eta[i])>etamax) continue;
          if (selPFId&&pfid) {
             if (pfid[i]!=selPFId) continue;
-         }
-         if (psube) {
-            if (psube[i]!=0) continue;
          }
          // now write selected cands
          if (wt) cands.Set(cands.n,pt[i],eta[i],phi[i],wt[i]);
