@@ -36,5 +36,5 @@ for k in `seq 1 $ngroups`; do
 done
 
 echo $listfinal
-hadd $outfile $listfinal
+hadd -f $outfile $listfinal
 if [ $? -eq 0 ]; then rm $listfinal; fi
