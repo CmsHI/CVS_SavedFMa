@@ -34,7 +34,9 @@ public :
    Int_t           trkNlayer3D[maxEntryTrack];   //[nTrk]
    Float_t         trkEta[maxEntryTrack];   //[nTrk]
    Float_t         trkPhi[maxEntryTrack];   //[nTrk]
-   Int_t           trkQual[maxEntryTrack];   //[nTrk]
+   Float_t         dedx[maxEntryTrack];   //[nTrk]
+   Bool_t          highPurity[maxEntryTrack];   //[nTrk]
+   Bool_t          highPuritySetWithPV[maxEntryTrack];   //[nTrk]
    Float_t         trkChi2[maxEntryTrack];   //[nTrk]
    Float_t         trkChi2hit1D[maxEntryTrack];   //[nTrk]
    Float_t         trkNdof[maxEntryTrack];   //[nTrk]
@@ -79,7 +81,9 @@ public :
    TBranch        *b_trkNlayer3D;   //!
    TBranch        *b_trkEta;   //!
    TBranch        *b_trkPhi;   //!
-   TBranch        *b_trkQual;   //!
+   TBranch        *b_dedx;   //!
+   TBranch        *b_highPurity;   //!
+   TBranch        *b_highPuritySetWithPV;   //!
    TBranch        *b_trkChi2;   //!
    TBranch        *b_trkChi2hit1D;   //!
    TBranch        *b_trkNdof;   //!
@@ -129,7 +133,9 @@ void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck = 0)
    t->SetBranchAddress("trkNlayer3D", tTracks.trkNlayer3D, &tTracks.b_trkNlayer3D);
    t->SetBranchAddress("trkEta", tTracks.trkEta, &tTracks.b_trkEta);
    t->SetBranchAddress("trkPhi", tTracks.trkPhi, &tTracks.b_trkPhi);
-   t->SetBranchAddress("trkQual", tTracks.trkQual, &tTracks.b_trkQual);
+   t->SetBranchAddress("dedx", tTracks.dedx, &tTracks.b_dedx);
+   t->SetBranchAddress("highPurity", tTracks.highPurity, &tTracks.b_highPurity);
+   t->SetBranchAddress("highPuritySetWithPV", tTracks.highPuritySetWithPV, &tTracks.b_highPuritySetWithPV);
    t->SetBranchAddress("trkChi2", tTracks.trkChi2, &tTracks.b_trkChi2);
    t->SetBranchAddress("trkChi2hit1D", tTracks.trkChi2hit1D, &tTracks.b_trkChi2hit1D);
    t->SetBranchAddress("trkNdof", tTracks.trkNdof, &tTracks.b_trkNdof);
