@@ -466,7 +466,7 @@ void analyzeDiJetMPT(
             gj.vtrkQual[gj.nTrk][1] = anaTrks[iset]->highPuritySetWithPV[it];
             // mpt trk selection
             gj.trkSel[gj.nTrk] = false;
-            if (gj.vtrkQual[gj.nTrk][0]) {
+            if (gj.trkNHit<=7||gj.vtrkQual[gj.nTrk][0]) {
                gj.trkSel[gj.nTrk] = true;
                hTrkPt->Fill(trkPt);
                hTrkCorrPt->Fill(trkPt,gj.trkWt[gj.nTrk]);
