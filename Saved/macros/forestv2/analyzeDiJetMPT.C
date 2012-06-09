@@ -265,7 +265,7 @@ void analyzeDiJetMPT(
       if (doSkim) {
          if (dataSrcType==1&&!evt.anaEvtSel) continue;
 //          if (dataSrcType==0&&!evt.offlSel) continue;
-         if (gj.pt1<100) continue;
+         if (gj.pt1<120) continue;
       }
       
       // Found a leading jet which passed basic quality cut!
@@ -466,7 +466,7 @@ void analyzeDiJetMPT(
             gj.vtrkQual[gj.nTrk][1] = anaTrks[iset]->highPuritySetWithPV[it];
             // mpt trk selection
             gj.trkSel[gj.nTrk] = false;
-            if (gj.trkNHit<=7||gj.vtrkQual[gj.nTrk][0]) {
+            if (trkNHit<=7||gj.vtrkQual[gj.nTrk][0]) {
                gj.trkSel[gj.nTrk] = true;
                hTrkPt->Fill(trkPt);
                hTrkCorrPt->Fill(trkPt,gj.trkWt[gj.nTrk]);
