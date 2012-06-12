@@ -65,8 +65,12 @@ isLeadingJet_(true)
    centBin_.push_back("2to3");
    centBin_.push_back("4to11");
    centBin_.push_back("12to19");
-//    centBin_.push_back("20to35");
-   centBin_.push_back("20to39");
+   if (name=="QM2011") centBin_.push_back("20to35");
+   else if (name=="RAA2012") {
+      centBin_.push_back("20to27");
+      centBin_.push_back("28to35");
+   }
+   else centBin_.push_back("20to39");
    numCentBins_ = centBin_.size();
    
    levelName_.push_back("Eff");
@@ -151,7 +155,10 @@ void TrackingCorrections::Init()
             for (Int_t m=0; m<2; ++m) {
                TString hname(Form("%s/%s_cbin%s",trkCorrModule_.Data(),levelInput_[lv][m].Data(),centBin_[c].Data()));
                TH3F * h3 = (TH3F*)sample_[s]->Get(hname);
-               if (!h3) cout << hname << " not found in correction file" << endl;
+               if (!h3) {
+                  cout << hname << " not found in correction file" << endl;
+                  exit(1);
+               }
                TH3F * hsave = (TH3F*)h3->Clone(Form("h%s_f%.0f_c%d_%d",(corrSetName_+levelName_[lv]).Data(),ptHatMin_[s],c,m));
                inputHists_[lv][s][c][m] = hsave;
                //cout << inputHists_[lv][s][c][m]->GetName() << ": " << inputHists_[lv][s][c][m] << endl;
@@ -171,7 +178,7 @@ void TrackingCorrections::Init()
                                       );
    combInputHists_ = vci;
 
-   Float_t ptHatMargin=10;
+   Float_t ptHatMargin=-0.1; // 10
    for (Int_t lv=0; lv<numLevels_; ++lv) {
       for (Int_t m=0; m<2; ++m) {
          for (Int_t c=0; c<numCentBins_; ++c) {
@@ -184,30 +191,34 @@ void TrackingCorrections::Init()
                      Double_t content[2] = {0,0};
                      Double_t error[2] = {0,0};
                      // for each correction bin: merge, and smooth
-                     for (Int_t ipt_neighbor=ipt; ipt_neighbor>=1; --ipt_neighbor) { // merge neighbor pt bins
+                     for (Int_t ipt_neighbor=ipt; ipt_neighbor>=1||ipt_neighbor<=numPtBins_; ++ipt_neighbor) { // merge neighbor pt bins
                         if (ipt_neighbor!=ipt) {
                            if (smoothLevel_==0) break;
-                           else if (ptBin_->GetBinLowEdge(ipt_neighbor)<10 || abs(ipt_neighbor-ipt)>=2) break;
+                           else if (ptBin_->GetBinLowEdge(ipt_neighbor)<2 || abs(ipt_neighbor-ipt)>1) break;
                         }
                         Int_t eta_direction = (ieta>numEtaBins_/2 ? -1 : 1);
                         for (Int_t ieta_neighbor=ieta; ieta_neighbor>=1&&ieta_neighbor<=numEtaBins_; ieta_neighbor+=eta_direction) { // merge neighbor eta bins
                            if (ieta_neighbor!=ieta) {
-                              if (smoothLevel_>=0) break;
-                              else if ((ieta_neighbor>=1&&ieta_neighbor<=4) || (ieta_neighbor>=10&&ieta_neighbor<=13)) {
-                                 if (abs(ieta_neighbor-ieta)>=1) break;
+                              if (smoothLevel_==0) break;
+//                               else if ((ieta_neighbor>=1&&ieta_neighbor<=4) || (ieta_neighbor>=10&&ieta_neighbor<=13)) {
+//                                  if (abs(ieta_neighbor-ieta)>=1) break;
+//                               }
+                              else {
+                                 if (ieta_neighbor!=(numEtaBins_+1-ieta)) continue;
                               }
                            }
                            for (Int_t ijet_neighbor=ijet; ijet_neighbor>=1&&ijet_neighbor<=numJEtBins_; ++ijet_neighbor) { // merge neighbor jet bins
                               if (ijet_neighbor!=ijet) {
                                  if (smoothLevel_==0||jetBin_->GetBinLowEdge(ijet_neighbor)<40) break;
-                                 else if (abs(ijet_neighbor-ijet)>=3) break;
+                                 else if (jetBin_->GetBinLowEdge(ijet_neighbor)<200 && abs(ijet_neighbor-ijet)>=2) break;
+                                 else if (abs(ijet_neighbor-ijet)>=4) break;
                               }
                               for (Int_t s=0; s<ptHatMin_.size(); ++s) { // merge pt hat samples
                                  // only merge pt hat samples that has less pt hat than this jet bin
                                  if (jetBin_->GetBinLowEdge(ijet_neighbor)>=40 && (ptHatMin_[s]+ptHatMargin > jetBin_->GetBinLowEdge(ijet_neighbor))) continue;
                                  content[m]+=inputHists_[lv][s][c][m]->GetBinContent(ieta_neighbor,ipt_neighbor,ijet_neighbor);
                                  error[m] = sqrt(pow(error[m],2)+pow(inputHists_[lv][s][c][m]->GetBinError(ieta_neighbor,ipt_neighbor,ijet_neighbor),2));
-                              }
+                              } // end of for pt hat loop
                            }
                         }
                      }
@@ -259,8 +270,8 @@ Float_t TrackingCorrections::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float
    for (Int_t lv=0; lv<numLevels_; ++lv) {
       corr[lv] = correctionHists_[lv][bin]->GetBinContent(etaBin,ptBin,jetBin);
       if (lv==0&&corr[lv]<0.001) { // if eff==0, give some average default value
-         corr[lv] = (fabs(eta)<2 ? 0.78 : 0.69);
-      }
+         if (pt>2) corr[lv] = (fabs(eta)<1 ? 0.65 : 0.46);
+         else corr[lv] = 1;      }
       if (outCorr) outCorr[lv] = corr[lv];
    }
    
@@ -297,8 +308,8 @@ TH1 * TrackingCorrections::InspectCorr(Int_t lv, Int_t centBeg, Int_t centEnd, I
    TH3F *hNum=0, *hDen=0;
    TH2D *hNum2D=0, *hDen2D=0, *hCorr2D=0;
    TH1D *hNum1D=0, *hDen1D=0, *hCorr1D=0;
-   TString inspName(Form("%s_%s_Lv%d_%d_c%d_%d_j%d_%d_%d",(corrSetName_).Data(),trkCorrModule_.Data(),lv,centBeg,centEnd,jetBegBin,jetEndBin,mode));
-   if (mode>0) inspName+=Form("bin_%d_%d",begbin,endbin);
+   TString inspName(Form("%s_%s_Lv%d_c%d_%d_j%d_%d_%d",(corrSetName_).Data(),trkCorrModule_.Data(),lv,centBeg,centEnd,jetBegBin,jetEndBin,mode));
+   if (mode>0) inspName+=Form("_bin_%d_%d",begbin,endbin);
    cout << inspName << endl;
    
    hNum = (TH3F*)combInputHists_[lv][centBeg][0]->Clone(inspName+"hNum");

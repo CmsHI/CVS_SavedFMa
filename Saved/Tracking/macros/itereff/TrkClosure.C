@@ -15,16 +15,17 @@ void TrkClosure()
 {
    int anaMode=0; // 0=pt, 1=eta
    bool doCorr=true;
-   float maxEta=2.4;
-   float ptmin=20,ptmax=200;
+   float maxEta=2;
+   float ptmin=10,ptmax=200;
    TH1::SetDefaultSumw2();
-   TString mod="hitrkEffAnalyzer_MergedGeneral";
+   TString mod="hitrkEffAnalyzer_GeneralCalo";
+//    TString mod="hitrkEffAnalyzer_PixTrk";
    TrackingCorrections trkCorr("itertrkpixtrk",mod);
-   trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj30_Forest2_v19.root",30);
-   trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj50_Forest2_v19.root",50);
-   trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj80_Forest2_v19.root",80);
-   trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj120_Forest2_v19.root",120);
-   trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj170_Forest2_v19.root",170);
+   trkCorr.AddSample("../trkcorr/itertrkpixtrk/trkcorr_hy18dj30_v1.root",30);
+   trkCorr.AddSample("../trkcorr/itertrkpixtrk/trkcorr_hy18dj50_v1.root",50);
+   trkCorr.AddSample("../trkcorr/itertrkpixtrk/trkcorr_hy18dj80_v1.root",80);
+   trkCorr.AddSample("../trkcorr/itertrkpixtrk/trkcorr_hy18dj120_v1.root",120);
+   trkCorr.AddSample("../trkcorr/itertrkpixtrk/trkcorr_hy18dj200_v1.root",200);
    trkCorr.smoothLevel_ = 1; 	 
    trkCorr.Init();
    
@@ -32,10 +33,9 @@ void TrkClosure()
 //    TFile * inf = new TFile("/Users/frankma/Dropbox/work/jet_ana_notes/macros/ntout/output-hy18dj80_IterPixTrkv1_v8_xsec_icPu5.root");
 //    TFile * inf = new TFile("/Users/frankma/Dropbox/work/jet_ana_notes/macros/ntout/output-hy18dj80_IterPixTrkv1_v9hgtOnly_hgtcorr_xsec_icPu5.root");
 //    TFile * inf = new TFile("/Users/frankma/Dropbox/work/jet_ana_notes/macros/ntout/output-dj50_highptv0_xsec_icPu5.root");
-//    TFile * inf = new TFile("~/scratch01/work/jet/macros/ntout//output-hy18dj200_iterTrkv1_v9hgtOnly_hgtcorr_xsec_icPu5.root");
-   TFile * inf = new TFile("~/scratch01/work/jet/macros/ntout/output-hy18dj80_forest2_v0_xsec_icPu5.root");
+//    TFile * inf = new TFile("/Users/frankma/Dropbox/work/jet_ana_notes/macros/ntout/output-hy18dj200_iterTrkv1_v9hgtOnly_hgtcorr_xsec_icPu5.root");
+   TFile * inf = new TFile("/Users/frankma/Dropbox/work/jet_ana_notes/macros/ntout/output-hy18dj80_forest2_v0_xsec_icPu5.root");
    TTree * t = (TTree*)inf->Get("tgj");
-   TString tag="HP";
    
    Compare cmp("pt","");
    TH1D * hGenp, *hTrk, *hTrkCorr;
@@ -53,23 +53,22 @@ void TrkClosure()
       hTrkCorr = (TH1D*)hEtaBin->Clone("hTrkCorr");
    }
 
-   TCut sel = "cBin<12&&pt1>120&&pt2>50";
-   TCut genpSel = "genpCh!=0&&abs(genpEta)<2.4";
-   TCut trkSel = "abs(trkEta)<2.4&&(trkNHit<7||(vtrkQual[][0]))";
-//    TCut trkSel = "abs(trkEta)<2.4&&(trkNHit<7||(vtrkQual[][0]&&trkAlgo==4))";
-//    TCut trkSel = "abs(trkEta)<2.4&&(trkPt<2||trkAlgo==4&&trkHP)";
-//    TCut trkSel = "abs(trkEta)<2.4&&(abs(trkEta)<1.6||trkChi2Norm<0.12)";
-   cout << "sel: " << sel << endl;
-   if (anaMode==0) {
-      t->Draw("genpPt>>hGenp",sel&&genpSel&&Form("abs(genpEta)<%f",maxEta));
-      t->Draw("trkPt>>hTrk",sel&&trkSel&&Form("abs(trkEta)<%f",maxEta));
-      if (doCorr) t->Draw("trkPt>>hTrkCorr",(sel&&trkSel)*"vtrkWt[][0]");
-//       if (doCorr) t->Draw("trkPt>>hTrkCorr",(sel&&trkSel)*"vtrkWt[][1]");
-   } else if (anaMode==1) {
-      t->Draw("genpEta>>hGenp",sel&&genpSel&&Form("genpPt>=%.f&&genpPt<%.f",ptmin,ptmax));
-      t->Draw("trkEta>>hTrk",(sel&&trkSel&&Form("trkPt>=%.f&&trkPt<%.f",ptmin,ptmax)));
-      if (doCorr) t->Draw("trkEta>>hTrkCorr",(sel&&trkSel&&Form("trkPt>=%.f&&trkPt<%.f",ptmin,ptmax))*"vtrkWt[][0]");
+//    TCut sel = "pt1>210";
+   TCut sel = "cBin<12&&pt2>120&&pt1>50&&abs(dphi)>2.1";
+   TCut genpSel = "genpCh!=0";
+//    TCut trkSel = "vtrkQual[][0]";
+   TCut trkSel = "";
+   TCut finalGenSel = sel&&genpSel&&Form("abs(genpEta)<%f",maxEta);
+   TCut finalTrkSel = sel&&trkSel&&Form("abs(trkEta)<%f",maxEta);
+   if (anaMode==1) {
+      TCut finalGenSel = sel&&genpSel&&Form("genpPt>=%.f&&genpPt<%.f",ptmin,ptmax);
+      TCut finalTrkSel = sel&&trkSel&&Form("trkPt>=%.f&&trkPt<%.f",ptmin,ptmax);
    }
+   cout << "Genp: " << finalGenSel << endl;
+   cout << "Trks: " << finalTrkSel << endl;
+   t->Draw("genpPt>>hGenp",finalGenSel,"goff");
+   t->Draw("trkPt>>hTrk",finalTrkSel,"goff");
+   if (doCorr) t->Draw("trkPt>>hTrkCorr",(finalTrkSel)*"vtrkWt[][2]");
    
    TCanvas * c2 = new TCanvas("c2","c2",800,400);
    c2->Divide(2,1);
@@ -117,8 +116,8 @@ void TrkClosure()
    hTrkRat->SetAxisRange(0.,1.4,"Y");
    hTrkRat->Draw("E");
    if (doCorr) hTrkCorrRat->Draw("sameE");
-   c2->Print(Form("%sClosure_%d_pt%.0f_eta%.0f.gif",tag.Data(),anaMode,ptmin,maxEta*10));
-   
+//    c2->Print(Form("trkClosure_%d_pt%.0f_eta%.0f.gif",anaMode,ptmin,maxEta*10));
+//    
 //    TCanvas * c3 = new TCanvas("c3","c3",800,400);
 //    TH2D * hTrkWtvPt = new TH2D("hTrkWtvPt","",80,0,80,50,0,3);
 //    TH2D * hTrkWtvEta = new TH2D("hTrkWtvEta","",13,-2.6,2.6,50,0,3);
