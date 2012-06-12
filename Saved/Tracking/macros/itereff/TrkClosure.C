@@ -47,7 +47,7 @@ void TrkClosure()
    TH1D * hGenp, *hTrk, *hTrkCorr;
    float xmin=0.5, xmax=179.9;
    bool doLogx=true, doLogy=true;
-   TString tag;
+   TString genVar, trkVar, tag;
    TCut finalGenSel,finalTrkSel;
    if (anaMode==0) {
       hGenp = (TH1D*)trkCorr.ptBin_->Clone("hGenp");
@@ -56,6 +56,7 @@ void TrkClosure()
       cmp.Legend(0.24,0.23,0.7,0.4);
       cmp.leg->AddEntry(hTrk,Form("|#eta| < %.1f",maxEta),"");
       tag = Form("%d_eta%.0f",anaMode,maxEta*10);
+      genVar="genpPt"; trkVar="trkPt";
       finalGenSel = sel&&genpSel&&Form("abs(genpEta)<%.2f",maxEta);
       finalTrkSel = sel&&trkSel&&Form("abs(trkEta)<%.2f",maxEta);
    } else if (anaMode==1) {
@@ -67,6 +68,19 @@ void TrkClosure()
       cmp.Legend(0.19,0.76,0.65,0.93);
       cmp.leg->AddEntry(hTrk,Form("%.1f < p_{T} < %.1f GeV/c",ptmin,ptmax),"");
       tag = Form("%d_pt%.0f.gif",anaMode,ptmin);
+      genVar="genpEta"; trkVar="trkEta";
+      finalGenSel = sel&&genpSel&&Form("genpPt>=%.2f&&genpPt<%.2f",ptmin,ptmax);
+      finalTrkSel = sel&&trkSel&&Form("trkPt>=%.2f&&trkPt<%.2f",ptmin,ptmax);
+   } else if (anaMode==2) {
+      TH1D * hBin = new TH1D("hBin","",50,0,3.14159);
+      hGenp = (TH1D*)hBin->Clone("hGenp");
+      hTrk = (TH1D*)hBin->Clone("hTrk");
+      hTrkCorr = (TH1D*)hBin->Clone("hTrkCorr");
+      doLogx=false; doLogy=false;
+      cmp.Legend(0.19,0.76,0.65,0.93);
+      cmp.leg->AddEntry(hTrk,Form("%.1f < p_{T} < %.1f GeV/c",ptmin,ptmax),"");
+      tag = Form("%d_pt%.0f.gif",anaMode,ptmin);
+      genVar="acos(cos(genpPhi-phi1))"; trkVar="acos(cos(trkPhi-phi1))";
       finalGenSel = sel&&genpSel&&Form("genpPt>=%.2f&&genpPt<%.2f",ptmin,ptmax);
       finalTrkSel = sel&&trkSel&&Form("trkPt>=%.2f&&trkPt<%.2f",ptmin,ptmax);
    }
@@ -74,12 +88,12 @@ void TrkClosure()
    //////////////////////////////////////////
    // Run Analysis
    //////////////////////////////////////////
-   cout << "Genp: " << finalGenSel << endl;
-   cout << "Trks: " << finalTrkSel << endl;
+   cout << genVar << ": " << finalGenSel << endl;
+   cout << trkVar << ": " << finalTrkSel << endl;
    if (doCorr) cout << "Corr: " << (finalTrkSel)*trkWt << endl;
-   t->Draw("genpPt>>hGenp",finalGenSel,"goff");
-   t->Draw("trkPt>>hTrk",finalTrkSel,"goff");
-   if (doCorr) t->Draw("trkPt>>hTrkCorr",(finalTrkSel)*trkWt);
+   t->Draw(genVar+">>hGenp",finalGenSel,"goff");
+   t->Draw(trkVar+">>hTrk",finalTrkSel,"goff");
+   if (doCorr) t->Draw(trkVar+">>hTrkCorr",(finalTrkSel)*trkWt);
    
    //////////////////////////////////////////
    // Draw
