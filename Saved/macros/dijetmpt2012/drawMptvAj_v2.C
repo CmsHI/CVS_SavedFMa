@@ -208,7 +208,14 @@ void drawMptvAj_v2(
    else if (nPtBin==6) c2->Divide(3,2);
    for (int i=0; i<nPtBin; ++i) {
       c2->cd(i+1);
-      if (!doZoom) vmptxRec[i]->SetAxisRange(-60,60,"Y");
+      float ymin=-60,ymax=60;
+      if (doZoom) {
+         ymin=vmptxRec[i]->GetMinimum();
+         ymax=vmptxRec[i]->GetMaximum();
+         if (ymin>-10) ymin=-10;
+         if (ymax<10) ymax=10;
+      }
+      vmptxRec[i]->SetAxisRange(ymin,ymax,"Y");
       vmptxRec[i]->SetTitle(";Aj;");
       vmptxRec[i]->Draw("E");
       vmptxRaw[i]->Draw("sameE");
