@@ -14,7 +14,7 @@
 
 // MPT Ranges
 const int nptrange = 6;
-float ptranges[nptrange+1]={0.5,1.0,2,4,8,20,180};
+float ptranges[nptrange+1]={0.5,1.0,2,4,8,20,200};
 // const int nptrange = 12;
 // //                           1   2   3  4 5 6 7 8  9 10 11 12
 // float ptranges[nptrange+1]={0.5,1.0,1.5,2,3,4,6,8,14,20,50,100,200};
@@ -26,6 +26,9 @@ TString ClosureMptTrk(
    TString outdir = "06.09MptClos"
 )
 {
+   TH1::SetDefaultSumw2();
+   gSystem->mkdir(outdir,kTRUE);
+
    bool doCorr=true;
    float maxEta=2.4;
    float ptmin=8,ptmax=200;
@@ -33,7 +36,6 @@ TString ClosureMptTrk(
       ptmin=ptranges[idraw];
       ptmax=ptranges[idraw+1];
    }
-   TH1::SetDefaultSumw2();
    TString mod="hitrkEffAnalyzer_MergedGeneral";
    TrackingCorrections trkCorr("Forest2_v19",mod);
    trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj30_Forest2_v19.root",30);
@@ -51,7 +53,6 @@ TString ClosureMptTrk(
    // Analysis Setup
    //////////////////////////////////////////
    TString tag=Form("trkClos%d_Aj3_Coarse",anaMode);
-   gSystem->mkdir(outdir,kTRUE);
 
    TCut sel = "cBin<12&&pt1>120&&pt2>50&&abs(dphi)>2.1&&Aj>0.33";
    TCut genpSel = "genpCh!=0";
@@ -209,6 +210,6 @@ void ClosureAll()
    }
    
    for (int k=0; k<2; ++k) {
-      call[k]->Print(Form("%s/summary%s.gif",outdir.Data(),tag.Data()));
+      call[k]->Print(Form("%s/summary%d_%s.gif",outdir.Data(),k,tag.Data()));
    }
 }
