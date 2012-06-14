@@ -149,20 +149,20 @@ void anaMptSignal_AllCent4_wSummary_ReSum(
       cout << "anaBin cut: " << vcutAnaBin[ib] << endl;
    }
    
-   TCut leadingSel  = Form("abs(eta1)<1.6&&pt1>%.3f",minPt1);
-   TCut awaySel     = Form("abs(eta2)<1.6&&pt2>%.3f",minPt2);
+   TCut leadingSel  = Form("pt1>%.3f&&abs(eta1)<1.6",minPt1);
+   TCut awaySel     = Form("pt2>%.3f&&abs(eta2)<1.6",minPt2);
    TCut sigSel      = Form("acos(cos(phi2-phi1))>%.3f",sigDPhi);
    AnaMpt::minPt1 = minPt1;
    AnaMpt::minPt2 = minPt2;
    AnaMpt::sigDPhi = sigDPhi;
    float etamax=2.4;
 
-   bool isMC=true;
-   TString tag = Form("%s/HisOutput_f2_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f",outdir.Data(),minPt1,minPt2,sigDPhi*1000,etamax);
-   if (isMC) tag =Form("%s/HisOutput_v2_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f",outdir.Data(),minPt1,minPt2,sigDPhi*1000,etamax);
+   bool isMC=false;
+   TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f",outdir.Data(),minPt1,minPt2,sigDPhi*1000,etamax);
+   if (isMC) tag.ReplaceAll("HisData","HisMc");
 
    TString recMptVar = "-trkPt*cos(trkPhi-phi1)";
-   TString trkSel = Form("abs(trkEta)<%.1f&&(trkNHit<8||vtrkQual[][0])",etamax);
+   TString trkSel = Form("(abs(trkEta)<%.1f&&(trkNHit<8||vtrkQual[][0]))",etamax);
    TString trkWt = "vtrkWt[][0]";
 
    // MPT
