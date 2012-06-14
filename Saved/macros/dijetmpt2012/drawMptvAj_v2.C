@@ -62,14 +62,14 @@ void drawMptvAj_v2(
    //////////////////////////////////////////
    bool doResum=true;
    bool doZoom=true;
-   float etamax=2.4;
+   float etamax=1; //2.4
    int cMin=0, cMax=30;
-   TString tag=Form("sublead_HP_Resum_eta%.0f_c%dto%d",etamax*10,cMin,cMax);
+   TString tag=Form("HP_Resum_eta%.0f_c%dto%d",etamax*10,cMin,cMax);
    
    TString genMptVar = "-genpPt*cos(genpPhi-phi1)";
    TString recMptVar = "-trkPt*cos(trkPhi-phi1)";
-   TCut genpSel = Form("abs(genpEta)<%.1f&&genpCh!=0&&cos(genpPhi-phi1)<0",etamax);
-   TCut trkSel = Form("abs(trkEta)<%.1f&&(trkNHit<8||vtrkQual[][0])&&cos(trkPhi-phi1)<0",etamax);
+   TString genpSel = Form("abs(genpEta)<%.1f&&genpCh!=0",etamax);
+   TString trkSel = Form("abs(trkEta)<%.1f&&(trkNHit<8||vtrkQual[][0])",etamax);
    TString trkWt = "vtrkWt[][0]";
 //    TCut trkSel = Form("abs(trkEta)<%.1f && (trkNHit<8||(vtrkQual[][0]&&trkAlgo==4))",etamax);
 //    TString trkWt = "vtrkWt[][1]";
@@ -146,8 +146,8 @@ void drawMptvAj_v2(
             drawcmd=Form("%s:Aj>>%s_%d",vars[d].Data(),hists[d].Data(),i);
          }
          if (doResum) {
-            TString mpt= Form("%s*(genpPt>=%.2f&&genpPt<%.2f&&%s)",genMptVar.Data(),ptmin,ptmax,TString(genpSel).Data());
-            if (d>0) mpt=Form("%s*(trkPt>=%.2f&&trkPt<%.2f&&%s)",recMptVar.Data(),ptmin,ptmax,TString(trkSel).Data());
+            TString mpt= Form("%s*(genpPt>=%.2f&&genpPt<%.2f&&%s)",genMptVar.Data(),ptmin,ptmax,genpSel.Data());
+            if (d>0) mpt=Form("%s*(trkPt>=%.2f&&trkPt<%.2f&&%s)",recMptVar.Data(),ptmin,ptmax,trkSel.Data());
             if (d==1) mpt+=("*"+trkWt);
             drawcmd=Form("Sum$(%s):Aj>>%s_%d",mpt.Data(),hists[d].Data(),i);
          }
@@ -210,8 +210,8 @@ void drawMptvAj_v2(
    for (int i=0; i<nPtBin+1; ++i) {
       ymin[i]=-60; ymax[i]=60;
       if (doZoom) {
-         ymin[i]=vmptxRec[i]->GetMinimum();
-         ymax[i]=vmptxRec[i]->GetMaximum();
+         ymin[i]=(vmptxRec[i]->GetMinimum()<vmptxGen[i]->GetMinimum() ? vmptxRec[i]->GetMinimum() : vmptxGen[i]->GetMinimum());
+         ymax[i]=(vmptxRec[i]->GetMaximum()>vmptxGen[i]->GetMaximum() ? vmptxRec[i]->GetMaximum() : vmptxGen[i]->GetMaximum());
          float diff=ymax[i]-ymin[i];
          ymin[i]-=diff*0.4;
          ymax[i]+=diff*0.4;
