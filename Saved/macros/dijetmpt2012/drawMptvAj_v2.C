@@ -44,7 +44,7 @@ void SetAliases(TTree* tgj) {
 }
 //---------------------------------------------------------------------
 void drawMptvAj_v2(
-                  TString outdir = "06.09MptClos"
+                  TString outdir = "fig/06.13MptClos"
                   )
 {
    TH1::SetDefaultSumw2();
@@ -63,18 +63,20 @@ void drawMptvAj_v2(
    bool doResum=true;
    bool doZoom=true;
    float etamax=2.4;
-   TString tag=Form("HP_Resum_eta%.0f",etamax*10);
+   int cMin=0, cMax=30;
+   TString tag=Form("sublead_HP_Resum_eta%.0f_c%dto%d",etamax*10,cMin,cMax);
    
-   TCut genpSel = "genpCh!=0";
-   TCut trkSel = "trkNHit<8||vtrkQual[][0]";
+   TString genMptVar = "-genpPt*cos(genpPhi-phi1)";
+   TString recMptVar = "-trkPt*cos(trkPhi-phi1)";
+   TCut genpSel = Form("abs(genpEta)<%.1f&&genpCh!=0&&cos(genpPhi-phi1)<0",etamax);
+   TCut trkSel = Form("abs(trkEta)<%.1f&&(trkNHit<8||vtrkQual[][0])&&cos(trkPhi-phi1)<0",etamax);
    TString trkWt = "vtrkWt[][0]";
-//    TCut trkSel = "trkNHit<8||(vtrkQual[][0]&&trkAlgo==4)";
+//    TCut trkSel = Form("abs(trkEta)<%.1f && (trkNHit<8||(vtrkQual[][0]&&trkAlgo==4))",etamax);
 //    TString trkWt = "vtrkWt[][1]";
-//    TCut trkSel = "";
+//    TCut trkSel = Form("abs(trkEta)<%.1f",etamax);
 //    TString trkWt = "vtrkWt[][2]";
    
-   TCut mycut="cBin>=0&&cBin<12";
-//    TCut mycut="cBin>=12&&cBin<40";
+   TCut mycut=Form("cBin>=%d&&cBin<%d",cMin,cMax);
 
    float minPt1=120,minPt2=50,sigDPhi=2./3*3.14159;
    TCut leadingSel  = Form("pt1>%.3f&&abs(eta1)<1.6",minPt1);
@@ -99,7 +101,7 @@ void drawMptvAj_v2(
    for (int i=0; i<nPtBin+1; ++i) {
       vcmp.push_back(Compare(Form("cmp%d",i),""));
       if (i==0) vcmp[i].Legend(0.16,0.65,0.76,0.94);
-      else if (i==nPtBin) vcmp[i].Legend(0.19,0.77,0.79,0.93);
+      else if (i==nPtBin) vcmp[i].Legend(0.36,0.78,0.79,0.94);
       else vcmp[i].Legend(0.16,0.84,0.76,0.94);
    }
    for (int i=0; i<nPtBin+1; ++i) {
@@ -144,8 +146,8 @@ void drawMptvAj_v2(
             drawcmd=Form("%s:Aj>>%s_%d",vars[d].Data(),hists[d].Data(),i);
          }
          if (doResum) {
-            TString mpt= Form("-genpPt*cos(genpPhi-phi1)*(genpPt>=%.2f&&genpPt<%.2f&&abs(genpEta)<%.1f&&(%s))",ptmin,ptmax,etamax,TString(genpSel).Data());
-            if (d>0) mpt=Form("-trkPt*cos(trkPhi-phi1)*(trkPt>=%.2f&&trkPt<%.2f&&abs(trkEta)<%.1f&&(%s))",ptmin,ptmax,etamax,TString(trkSel).Data());
+            TString mpt= Form("%s*(genpPt>=%.2f&&genpPt<%.2f&&%s)",genMptVar.Data(),ptmin,ptmax,TString(genpSel).Data());
+            if (d>0) mpt=Form("%s*(trkPt>=%.2f&&trkPt<%.2f&&%s)",recMptVar.Data(),ptmin,ptmax,TString(trkSel).Data());
             if (d==1) mpt+=("*"+trkWt);
             drawcmd=Form("Sum$(%s):Aj>>%s_%d",mpt.Data(),hists[d].Data(),i);
          }
@@ -154,7 +156,9 @@ void drawMptvAj_v2(
       }
    }
 
-   // Get Ave weight
+   //////////////////////////////////////////
+   // Additional Overall Corrections
+   //////////////////////////////////////////
    if (0) {
 //       for (int i=0; i<nPtBin+1; ++i) {
 //          TString drawcmd;
@@ -201,6 +205,25 @@ void drawMptvAj_v2(
    //////////////////////////////////////////
    // Draw
    //////////////////////////////////////////
+   // Axis Range
+   float ymin[nPtBin+1],ymax[nPtBin+1];
+   for (int i=0; i<nPtBin+1; ++i) {
+      ymin[i]=-60; ymax[i]=60;
+      if (doZoom) {
+         ymin[i]=vmptxRec[i]->GetMinimum();
+         ymax[i]=vmptxRec[i]->GetMaximum();
+         float diff=ymax[i]-ymin[i];
+         ymin[i]-=diff*0.4;
+         ymax[i]+=diff*0.4;
+//          if (ymin[i]>-12) ymin[i]=-12;
+//          else if (ymin[i]>-35) ymin[i]=-35;
+//          if (ymax[i]<12) ymax[i]=12;
+//          else if (ymax[i]<35) ymax[i]=35;
+      }
+   }
+   
+   TLine * l0 = new TLine(AjBins[0],0,AjBins[nBin],0);
+   // Individual Pt Ranges
    float canx=1500,cany=500;
    if (nPtBin==6) { canx=750; cany=500; }
    TCanvas * c2 = new TCanvas("c2","c2",canx,cany);
@@ -208,28 +231,24 @@ void drawMptvAj_v2(
    else if (nPtBin==6) c2->Divide(3,2);
    for (int i=0; i<nPtBin; ++i) {
       c2->cd(i+1);
-      float ymin=-60,ymax=60;
-      if (doZoom) {
-         ymin=vmptxRec[i]->GetMinimum();
-         ymax=vmptxRec[i]->GetMaximum();
-         if (ymin>-10) ymin=-10;
-         if (ymax<10) ymax=10;
-      }
-      vmptxRec[i]->SetAxisRange(ymin,ymax,"Y");
+      vmptxRec[i]->SetAxisRange(ymin[i],ymax[i],"Y");
       vmptxRec[i]->SetTitle(";Aj;");
       vmptxRec[i]->Draw("E");
       vmptxRaw[i]->Draw("sameE");
       vmptxGen[i]->Draw("same hist");
       vcmp[i].leg->Draw();
+      l0->Draw();
    }
    c2->Print(Form("%s/mptpt_vs_aj_mc_%s.gif",outdir.Data(),tag.Data()));
 
+   // All Pt Ranges
    TCanvas * c3 = new TCanvas("c3","c3",500,500);
-   vmptxRec[nPtBin]->SetAxisRange(-60,60,"Y");
+   vmptxRec[nPtBin]->SetAxisRange(ymin[nPtBin],ymax[nPtBin],"Y");
    vmptxRec[nPtBin]->SetTitle(";Aj;");
    vmptxRec[nPtBin]->Draw("E");
    vmptxRaw[nPtBin]->Draw("sameE");
    vmptxGen[nPtBin]->Draw("same hist");
    vcmp[nPtBin].leg->Draw();
+   l0->Draw();
    c3->Print(Form("%s/mptall_vs_aj_mc_%s.gif",outdir.Data(),tag.Data()));
 }
