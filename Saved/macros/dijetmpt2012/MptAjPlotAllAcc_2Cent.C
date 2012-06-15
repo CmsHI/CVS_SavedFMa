@@ -23,7 +23,7 @@ float bins[nBin+1]={0.5,1.0,2,4,8,20,200};
 const int nBinAj = 4;
 double ajBins[nBinAj+1] = {0.0001,0.11,0.22,0.33,0.49999};
 
-bool doResCorr=false;
+bool doResCorr=true;
 
 void balanceMetVsAj(TString infname,
                     TString insrc, TString metType = "",bool drawLegend = false,
@@ -172,7 +172,7 @@ void balanceMetVsAj(TString infname,
 }
 
 void MptAjPlotAllAcc_2Cent(
-                           TString outdir = "./fig/06.13MptClos"
+                           TString outdir = "./fig/06.14an"
 )
 {
    TH1::SetDefaultSumw2();
@@ -218,7 +218,8 @@ void MptAjPlotAllAcc_2Cent(
    float ptx(0.08),pty1(0.22);
    drawText("p_{T,1}  > 120GeV/c",ptx,pty1);
    drawText("p_{T,2}  > 50GeV/c",ptx,pty1-0.07);
-   drawText("#Delta#phi_{1,2}>  #frac{5}{6}#pi",ptx,pty1-0.14);
+   drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty1-0.14);
+//    drawText("#Delta#phi_{1,2}>  #frac{5}{6}#pi",ptx,pty1-0.14);
    drawText("|#eta_{1,2}| < 1.6",ptx+0.20,pty1-0.14);
    gPad->RedrawAxis();
    
