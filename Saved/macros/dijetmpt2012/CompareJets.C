@@ -15,7 +15,7 @@
 using namespace std;
 
 void CompareJets(
-   TString outdir="06.14an",
+   TString outdir="fig/06.14an",
    TString tag = "compJets_DataMc"
 )
 {
