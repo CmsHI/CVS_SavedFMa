@@ -52,7 +52,7 @@ public:
    int trkAlgo[MAXTRK];
    bool vtrkQual[MAXTRK][NTRKQUAL];
    bool trkSel[MAXTRK];
-   bool trkIsFak[MAXTRK];
+   bool trkIsFake[MAXTRK];
    int nJet;
    float inclJetPt[MAXTRK];
    float inclJetEta[MAXTRK];
@@ -115,7 +115,7 @@ void BookGJBranches(TTree * tgj, EvtSel & evt, DiJet & gj) {
    tgj->Branch("trkHP",gj.trkHP,"trkHP[nTrk]/O");
    tgj->Branch("trkAlgo",gj.trkAlgo,"trkAlgo[nTrk]/I");
    tgj->Branch("vtrkQual",gj.vtrkQual,Form("vtrkQual[nTrk][%d]/O",NTRKQUAL));
-   tgj->Branch("trkIsFak",gj.trkIsFak,"trkIsFak[nTrk]/O");
+   tgj->Branch("trkIsFake",gj.trkIsFake,"trkIsFake[nTrk]/O");
    tgj->Branch("nJet",&gj.nJet,"nJet/I");
    tgj->Branch("inclJetPt",gj.inclJetPt,"inclJetPt[nJet]/F");
    tgj->Branch("inclJetEta",gj.inclJetEta,"inclJetEta[nJet]/F");

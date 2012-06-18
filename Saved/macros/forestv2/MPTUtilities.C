@@ -97,14 +97,14 @@ public:
 //       for (int i=0; i<3; ++i) { drbins.push_back((i+1)*0.4); }
       drbins.push_back(0.8);
 
-      for (int i=0; i<3; ++i) { dphibins.push_back((i+1)*TMath::PiOver2()/4.); }
+//       for (int i=0; i<3; ++i) { dphibins.push_back((i+1)*TMath::PiOver2()/4.); }
 
       cout << "dr bins: ";
       for (int i=0; i<drbins.size(); ++i) { cout << drbins[i] << " ";}
       cout << endl;
 
       cout << "dphi bins: ";
-      for (int i=0; i<3; ++i) { cout << dphibins[i] << " ";}
+      for (int i=0; i<dphibins.size(); ++i) { cout << dphibins[i] << " ";}
       cout << endl;
       
       trackingCorrectionTypes.push_back(-1); trackingCorrectionNames.push_back("");

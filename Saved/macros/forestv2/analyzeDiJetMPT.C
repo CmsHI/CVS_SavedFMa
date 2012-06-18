@@ -466,6 +466,7 @@ void analyzeDiJetMPT(
             gj.vtrkQual[gj.nTrk][0] = anaTrks[iset]->highPurity[it];
             gj.vtrkQual[gj.nTrk][1] = anaTrks[iset]->highPurity[it]&&trkAlgo==4;
             gj.vtrkQual[gj.nTrk][2] = anaTrks[iset]->highPuritySetWithPV[it];
+            gj.trkIsFake[gj.nTrk] = anaTrks[iset]->trkFake[it];
             // mpt trk selection
             gj.trkSel[gj.nTrk] = false;
             if (trkNHit<=7||gj.vtrkQual[gj.nTrk][0]) {
@@ -508,6 +509,18 @@ void analyzeDiJetMPT(
             gj.genpCh[gj.nGenp] = c->genparticle.chg[ip];
             gj.genpSube[gj.nGenp] = c->genparticle.sube[ip];
             gj.genpSel[gj.nGenp] = (int(c->genparticle.sube[ip]) ==0);
+            ++gj.nGenp;
+         }
+      } else {
+         for (int ip=0; ip<anaTrks[0]->nParticle; ++ip) {
+            if (anaTrks[0]->pPt[ip] < cutPtTrk) continue;
+            if (fabs(anaTrks[0]->pEta[ip]) > cutEtaTrk) continue;
+            // Fill
+            hGenpPt->Fill(anaTrks[0]->pPt[ip]);
+            gj.genpPt[gj.nGenp] = anaTrks[0]->pPt[ip];
+            gj.genpEta[gj.nGenp] = anaTrks[0]->pEta[ip];
+            gj.genpPhi[gj.nGenp] = anaTrks[0]->pPhi[ip];
+            gj.genpHasRec[gj.nGenp] = (anaTrks[0]->pNRec[ip]==1&&(anaTrks[0]->mtrkNHit[ip]<8||anaTrks[0]->mtrkQual[ip]>0));
             ++gj.nGenp;
          }
       }

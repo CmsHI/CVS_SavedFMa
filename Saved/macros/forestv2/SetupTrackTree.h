@@ -63,6 +63,32 @@ public :
    Float_t         pfCandPt[maxEntryTrack];   //[nTrk]
    Float_t         pfSumEcal[maxEntryTrack];   //[nTrk]
    Float_t         pfSumHcal[maxEntryTrack];   //[nTrk]
+   Int_t           nParticle;
+   Float_t         pStatus[maxEntryTrack];   //[nParticle]
+   Float_t         pPId[maxEntryTrack];   //[nParticle]
+   Float_t         pEta[maxEntryTrack];   //[nParticle]
+   Float_t         pPhi[maxEntryTrack];   //[nParticle]
+   Float_t         pPt[maxEntryTrack];   //[nParticle]
+   Float_t         pAcc[maxEntryTrack];   //[nParticle]
+   Float_t         pNRec[maxEntryTrack];   //[nParticle]
+   Int_t           pNHit[maxEntryTrack];   //[nParticle]
+   Float_t         mtrkPt[maxEntryTrack];   //[nParticle]
+   Float_t         mtrkPtError[maxEntryTrack];   //[nParticle]
+   Int_t           mtrkNHit[maxEntryTrack];   //[nParticle]
+   Int_t           mtrkNlayer[maxEntryTrack];   //[nParticle]
+   Int_t           mtrkNlayer3D[maxEntryTrack];   //[nParticle]
+   Int_t           mtrkQual[maxEntryTrack];   //[nParticle]
+   Float_t         mtrkChi2[maxEntryTrack];   //[nParticle]
+   Float_t         mtrkNdof[maxEntryTrack];   //[nParticle]
+   Float_t         mtrkDz1[maxEntryTrack];   //[nParticle]
+   Float_t         mtrkDzError1[maxEntryTrack];   //[nParticle]
+   Float_t         mtrkDxy1[maxEntryTrack];   //[nParticle]
+   Float_t         mtrkDxyError1[maxEntryTrack];   //[nParticle]
+   Float_t         mtrkAlgo[maxEntryTrack];   //[nParticle]
+   Int_t           mtrkPfType[maxEntryTrack];   //[nParticle]
+   Float_t         mtrkPfCandPt[maxEntryTrack];   //[nParticle]
+   Float_t         mtrkPfSumEcal[maxEntryTrack];   //[nParticle]
+   Float_t         mtrkPfSumHcal[maxEntryTrack];   //[nParticle]
 
    // List of branches
    TBranch        *b_nEv;   //!
@@ -110,6 +136,33 @@ public :
    TBranch        *b_pfCandPt;   //!
    TBranch        *b_pfSumEcal;   //!
    TBranch        *b_pfSumHcal;   //!
+
+   TBranch        *b_nParticle;   //!
+   TBranch        *b_pStatus;   //!
+   TBranch        *b_pPId;   //!
+   TBranch        *b_pEta;   //!
+   TBranch        *b_pPhi;   //!
+   TBranch        *b_pPt;   //!
+   TBranch        *b_pAcc;   //!
+   TBranch        *b_pNRec;   //!
+   TBranch        *b_pNHit;   //!
+   TBranch        *b_mtrkPt;   //!
+   TBranch        *b_mtrkPtError;   //!
+   TBranch        *b_mtrkNHit;   //!
+   TBranch        *b_mtrkNlayer;   //!
+   TBranch        *b_mtrkNlayer3D;   //!
+   TBranch        *b_mtrkQual;   //!
+   TBranch        *b_mtrkChi2;   //!
+   TBranch        *b_mtrkNdof;   //!
+   TBranch        *b_mtrkDz1;   //!
+   TBranch        *b_mtrkDzError1;   //!
+   TBranch        *b_mtrkDxy1;   //!
+   TBranch        *b_mtrkDxyError1;   //!
+   TBranch        *b_mtrkAlgo;   //!
+   TBranch        *b_mtrkPfType;   //!
+   TBranch        *b_mtrkPfCandPt;   //!
+   TBranch        *b_mtrkPfSumEcal;   //!
+   TBranch        *b_mtrkPfSumHcal;   //!
 
 };
 
@@ -162,6 +215,33 @@ void setupTrackTree(TTree *t,Tracks &tTracks,bool doCheck = 0)
    t->SetBranchAddress("pfCandPt", tTracks.pfCandPt, &tTracks.b_pfCandPt);
    t->SetBranchAddress("pfSumEcal", tTracks.pfSumEcal, &tTracks.b_pfSumEcal);
    t->SetBranchAddress("pfSumHcal", tTracks.pfSumHcal, &tTracks.b_pfSumHcal);
+   // Genp
+   t->SetBranchAddress("nParticle", &tTracks.nParticle, &tTracks.b_nParticle);
+   t->SetBranchAddress("pStatus", tTracks.pStatus, &tTracks.b_pStatus);
+   t->SetBranchAddress("pPId", tTracks.pPId, &tTracks.b_pPId);
+   t->SetBranchAddress("pEta", tTracks.pEta, &tTracks.b_pEta);
+   t->SetBranchAddress("pPhi", tTracks.pPhi, &tTracks.b_pPhi);
+   t->SetBranchAddress("pPt", tTracks.pPt, &tTracks.b_pPt);
+   t->SetBranchAddress("pAcc", tTracks.pAcc, &tTracks.b_pAcc);
+   t->SetBranchAddress("pNRec", tTracks.pNRec, &tTracks.b_pNRec);
+   t->SetBranchAddress("pNHit", tTracks.pNHit, &tTracks.b_pNHit);
+   t->SetBranchAddress("mtrkPt", tTracks.mtrkPt, &tTracks.b_mtrkPt);
+   t->SetBranchAddress("mtrkPtError", tTracks.mtrkPtError, &tTracks.b_mtrkPtError);
+   t->SetBranchAddress("mtrkNHit", tTracks.mtrkNHit, &tTracks.b_mtrkNHit);
+   t->SetBranchAddress("mtrkNlayer", tTracks.mtrkNlayer, &tTracks.b_mtrkNlayer);
+   t->SetBranchAddress("mtrkNlayer3D", tTracks.mtrkNlayer3D, &tTracks.b_mtrkNlayer3D);
+   t->SetBranchAddress("mtrkQual", tTracks.mtrkQual, &tTracks.b_mtrkQual);
+   t->SetBranchAddress("mtrkChi2", tTracks.mtrkChi2, &tTracks.b_mtrkChi2);
+   t->SetBranchAddress("mtrkNdof", tTracks.mtrkNdof, &tTracks.b_mtrkNdof);
+   t->SetBranchAddress("mtrkDz1", tTracks.mtrkDz1, &tTracks.b_mtrkDz1);
+   t->SetBranchAddress("mtrkDzError1", tTracks.mtrkDzError1, &tTracks.b_mtrkDzError1);
+   t->SetBranchAddress("mtrkDxy1", tTracks.mtrkDxy1, &tTracks.b_mtrkDxy1);
+   t->SetBranchAddress("mtrkDxyError1", tTracks.mtrkDxyError1, &tTracks.b_mtrkDxyError1);
+   t->SetBranchAddress("mtrkAlgo", tTracks.mtrkAlgo, &tTracks.b_mtrkAlgo);
+   t->SetBranchAddress("mtrkPfType", tTracks.mtrkPfType, &tTracks.b_mtrkPfType);
+   t->SetBranchAddress("mtrkPfCandPt", tTracks.mtrkPfCandPt, &tTracks.b_mtrkPfCandPt);
+   t->SetBranchAddress("mtrkPfSumEcal", tTracks.mtrkPfSumEcal, &tTracks.b_mtrkPfSumEcal);
+   t->SetBranchAddress("mtrkPfSumHcal", tTracks.mtrkPfSumHcal, &tTracks.b_mtrkPfSumHcal);
    if (doCheck) {
       if (t->GetMaximum("nv")>4) cout <<"FATAL ERROR: Arrary size of nv too small!!!  "<<t->GetMaximum("nv")<<endl;
       if (t->GetMaximum("nTrk")>maxEntryTrack) cout <<"FATAL ERROR: Arrary size of nTrk too small!!!  "<<t->GetMaximum("nTrk")<<endl;
