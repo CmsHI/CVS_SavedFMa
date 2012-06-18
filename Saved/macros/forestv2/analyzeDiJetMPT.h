@@ -15,6 +15,7 @@ public:
 };
 
 static const int MAXTRK = 30000;
+static const int NTRKQUAL = 3;
 
 class DiJet{
 public:
@@ -40,15 +41,18 @@ public:
    float trkPhi[MAXTRK];   
    float trkJetDr[MAXTRK];
    float trkWt[MAXTRK];
-   float vtrkWt[MAXTRK][3];
+   float vtrkWt[MAXTRK][NTRKQUAL];
+   float vtrkEff[MAXTRK][NTRKQUAL];
+   float vtrkFak[MAXTRK][NTRKQUAL];
    float trkEff[MAXTRK];
    float trkFak[MAXTRK];
    float trkNHit[MAXTRK];
    float trkChi2Norm[MAXTRK];
    bool trkHP[MAXTRK];
    int trkAlgo[MAXTRK];
-   bool vtrkQual[MAXTRK][2];
+   bool vtrkQual[MAXTRK][NTRKQUAL];
    bool trkSel[MAXTRK];
+   bool trkIsFak[MAXTRK];
    int nJet;
    float inclJetPt[MAXTRK];
    float inclJetEta[MAXTRK];
@@ -73,6 +77,7 @@ public:
    int genpCh[MAXTRK];
    int genpSube[MAXTRK];
    bool genpSel[MAXTRK];
+   bool genpHasRec[MAXTRK];
    TString leaves;
    void clear() {
       pt1=-99; pt1raw=-99; eta1=-99; phi1=-99; pt2=-99; pt2raw=-99; eta2=-99; phi2=-99; deta=-99; dphi=-99; Aj=-99;
@@ -100,14 +105,17 @@ void BookGJBranches(TTree * tgj, EvtSel & evt, DiJet & gj) {
    tgj->Branch("trkPhi",gj.trkPhi,"trkPhi[nTrk]/F");
 //    tgj->Branch("trkJetDr",gj.trkJetDr,"trkJetDr[nTrk]/F");
    tgj->Branch("trkWt",gj.trkWt,"trkWt[nTrk]/F");
-   tgj->Branch("vtrkWt",gj.vtrkWt,"vtrkWt[nTrk][3]/F");
+//    tgj->Branch("vtrkWt",gj.vtrkWt,Form("vtrkWt[nTrk][%d]/F",NTRKQUAL));
+//    tgj->Branch("vtrkEff",gj.vtrkEff,Form("vtrkEff[nTrk][%d]/F",NTRKQUAL));
+//    tgj->Branch("vtrkFak",gj.vtrkFak,Form("vtrkFak[nTrk][%d]/F",NTRKQUAL));
    tgj->Branch("trkEff",gj.trkEff,"trkEff[nTrk]/F");
    tgj->Branch("trkFak",gj.trkFak,"trkFak[nTrk]/F");
    tgj->Branch("trkNHit",gj.trkNHit,"trkNHit[nTrk]/F");
    tgj->Branch("trkChi2Norm",gj.trkChi2Norm,"trkChi2Norm[nTrk]/F");
    tgj->Branch("trkHP",gj.trkHP,"trkHP[nTrk]/O");
    tgj->Branch("trkAlgo",gj.trkAlgo,"trkAlgo[nTrk]/I");
-   tgj->Branch("vtrkQual",gj.vtrkQual,"vtrkQual[nTrk][2]/O");
+   tgj->Branch("vtrkQual",gj.vtrkQual,Form("vtrkQual[nTrk][%d]/O",NTRKQUAL));
+   tgj->Branch("trkIsFak",gj.trkIsFak,"trkIsFak[nTrk]/O");
    tgj->Branch("nJet",&gj.nJet,"nJet/I");
    tgj->Branch("inclJetPt",gj.inclJetPt,"inclJetPt[nJet]/F");
    tgj->Branch("inclJetEta",gj.inclJetEta,"inclJetEta[nJet]/F");
@@ -129,8 +137,9 @@ void BookGJBranches(TTree * tgj, EvtSel & evt, DiJet & gj) {
    tgj->Branch("genpPt",gj.genpPt,"genpPt[nGenp]/F");
    tgj->Branch("genpEta",gj.genpEta,"genpEta[nGenp]/F");
    tgj->Branch("genpPhi",gj.genpPhi,"genpPhi[nGenp]/F");
-   tgj->Branch("genpCh",gj.genpCh,"genpCh[nGenp]/I");
+//    tgj->Branch("genpCh",gj.genpCh,"genpCh[nGenp]/I");
    tgj->Branch("genpSube",gj.genpSube,"genpSube[nGenp]/I");
+   tgj->Branch("genpHasRec",gj.genpHasRec,"genpHasRec[nGenp]/O");
 }
 
 class CentralityReWeight {

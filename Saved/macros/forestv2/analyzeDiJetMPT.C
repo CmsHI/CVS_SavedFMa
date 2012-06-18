@@ -65,6 +65,7 @@ void analyzeDiJetMPT(
    bool doMPT=true, saveAllCands=false;
    bool onlyTrkAlgo4=true, onlyTrkHP=true;
    bool saveParticles=true;
+   bool doSimTrk=true;
    outname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
    mcfname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
    datafname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
@@ -123,8 +124,8 @@ void analyzeDiJetMPT(
       trkmpt.trackingCorrectionTypes.push_back(0); trkmpt.trackingCorrectionNames.push_back("Corr");
       trkmpt.Init(tgj);
       
-      genpSigmpt.Init(tgj);
-      genpAllmpt.Init(tgj);
+//       genpSigmpt.Init(tgj);
+//       genpAllmpt.Init(tgj);
    }
    
    // mixing classes
@@ -187,8 +188,8 @@ void analyzeDiJetMPT(
    ///////////////////////////////////////////////////
    // Main loop
    ///////////////////////////////////////////////////
-   for (int i=0;i<c->GetEntries();i++)
-//    for (int i=0;i<1000;i++)
+//    for (int i=0;i<c->GetEntries();i++)
+   for (int i=0;i<1000;i++)
    {
       c->GetEntry(i);
       if (pfTree) pfTree->GetEntry(i);
@@ -451,19 +452,20 @@ void analyzeDiJetMPT(
                   gj.vtrkWt[gj.nTrk][icorr] = c->trackCorrections[icorr]->GetCorr(trkPt,trkEta,0,c->evt.hiBin,trkcorr);
    //                cout << "trk pt,eta,jet,cBin: " << trkPt << "," << trkEta << "," << 0 << "," << c->evt.hiBin << " eff: " << trkcorr[0] << endl;
                }
-               if (icorr==0) {
-                  gj.trkWt[gj.nTrk] = gj.vtrkWt[gj.nTrk][icorr];
-                  gj.trkEff[gj.nTrk] = trkcorr[0];
-                  gj.trkFak[gj.nTrk] = trkcorr[1];
-               }
+               gj.vtrkEff[gj.nTrk][icorr] = trkcorr[0];
+               gj.vtrkFak[gj.nTrk][icorr] = trkcorr[1];
             }
             // Fill
+            gj.trkWt[gj.nTrk] = gj.vtrkWt[gj.nTrk][0];
+            gj.trkEff[gj.nTrk] = gj.vtrkEff[gj.nTrk][0];
+            gj.trkFak[gj.nTrk] = gj.vtrkFak[gj.nTrk][0];
             gj.trkNHit[gj.nTrk] = trkNHit;
             gj.trkChi2Norm[gj.nTrk] = trkChi2Norm;
             gj.trkAlgo[gj.nTrk] = trkAlgo;
             gj.trkHP[gj.nTrk] = trkHP;
             gj.vtrkQual[gj.nTrk][0] = anaTrks[iset]->highPurity[it];
-            gj.vtrkQual[gj.nTrk][1] = anaTrks[iset]->highPuritySetWithPV[it];
+            gj.vtrkQual[gj.nTrk][1] = anaTrks[iset]->highPurity[it]&&trkAlgo==4;
+            gj.vtrkQual[gj.nTrk][2] = anaTrks[iset]->highPuritySetWithPV[it];
             // mpt trk selection
             gj.trkSel[gj.nTrk] = false;
             if (trkNHit<=7||gj.vtrkQual[gj.nTrk][0]) {
@@ -491,21 +493,23 @@ void analyzeDiJetMPT(
 
       ////////////////////////      
       // Gen Particles
-      ////////////////////////      
+      ////////////////////////
       gj.nGenp =0;
-      for (int ip=0; ip<c->genparticle.mult; ++ip) {
-         if (c->genparticle.pt[ip] < cutPtTrk) continue;
-         if (fabs(c->genparticle.eta[ip]) > cutEtaTrk) continue;
-         if (abs(int(c->genparticle.chg[ip])) ==0 ) continue;
-         // Fill
-         hGenpPt->Fill(c->genparticle.pt[ip]);
-         gj.genpPt[gj.nGenp] = c->genparticle.pt[ip];
-         gj.genpEta[gj.nGenp] = c->genparticle.eta[ip];
-         gj.genpPhi[gj.nGenp] = c->genparticle.phi[ip];
-         gj.genpCh[gj.nGenp] = c->genparticle.chg[ip];
-         gj.genpSube[gj.nGenp] = c->genparticle.sube[ip];
-         gj.genpSel[gj.nGenp] = (int(c->genparticle.sube[ip]) ==0);
-         ++gj.nGenp;
+      if (!doSimTrk) {  
+         for (int ip=0; ip<c->genparticle.mult; ++ip) {
+            if (c->genparticle.pt[ip] < cutPtTrk) continue;
+            if (fabs(c->genparticle.eta[ip]) > cutEtaTrk) continue;
+            if (abs(int(c->genparticle.chg[ip])) ==0 ) continue;
+            // Fill
+            hGenpPt->Fill(c->genparticle.pt[ip]);
+            gj.genpPt[gj.nGenp] = c->genparticle.pt[ip];
+            gj.genpEta[gj.nGenp] = c->genparticle.eta[ip];
+            gj.genpPhi[gj.nGenp] = c->genparticle.phi[ip];
+            gj.genpCh[gj.nGenp] = c->genparticle.chg[ip];
+            gj.genpSube[gj.nGenp] = c->genparticle.sube[ip];
+            gj.genpSel[gj.nGenp] = (int(c->genparticle.sube[ip]) ==0);
+            ++gj.nGenp;
+         }
       }
 
       // MPT
@@ -513,10 +517,10 @@ void analyzeDiJetMPT(
          trkmpt.InputEvent(gj.nTrk,gj.trkPt,gj.trkEta,gj.trkPhi,gj.trkWt,gj.trkSel);
          trkmpt.AnalyzeEvent(gj.pt1,gj.eta1,gj.phi1,gj.pt2,gj.eta2,gj.phi2);
          
-         genpSigmpt.InputEvent(gj.nGenp,gj.genpPt,gj.genpEta,gj.genpPhi,0,gj.genpSel);
-         genpSigmpt.AnalyzeEvent(gj.pt1,gj.eta1,gj.phi1,gj.pt2,gj.eta2,gj.phi2);
-         genpAllmpt.InputEvent(gj.nGenp,gj.genpPt,gj.genpEta,gj.genpPhi);
-         genpAllmpt.AnalyzeEvent(gj.pt1,gj.eta1,gj.phi1,gj.pt2,gj.eta2,gj.phi2);
+//          genpSigmpt.InputEvent(gj.nGenp,gj.genpPt,gj.genpEta,gj.genpPhi,0,gj.genpSel);
+//          genpSigmpt.AnalyzeEvent(gj.pt1,gj.eta1,gj.phi1,gj.pt2,gj.eta2,gj.phi2);
+//          genpAllmpt.InputEvent(gj.nGenp,gj.genpPt,gj.genpEta,gj.genpPhi);
+//          genpAllmpt.AnalyzeEvent(gj.pt1,gj.eta1,gj.phi1,gj.pt2,gj.eta2,gj.phi2);
         }
       
       // All done
