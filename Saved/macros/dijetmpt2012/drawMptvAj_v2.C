@@ -44,44 +44,35 @@ void SetAliases(TTree* tgj) {
 }
 //---------------------------------------------------------------------
 void drawMptvAj_v2(
-                  TString outdir = "fig/06.13MptClos"
+                  TString outdir = "fig/06.20SimTrk"
                   )
 {
    TH1::SetDefaultSumw2();
    gSystem->mkdir(outdir,kTRUE);
 
-   TString infname="../ntout/output-hy18dj80_forest2_v0_xsec_icPu5.root";
+//    TString infname="../ntout/output-hy18dj80_forest2_v0_xsec_icPu5.root";
+   TString infname="../ntout/output-hy18dj80_Forest2v21_v1_allTrks_simtrk_jpt95_xsec_icPu5.root";
+
    TFile * inf = new TFile(infname);
    cout << "input: " << inf->GetName() << endl;
    TTree * tgj = (TTree*)inf->Get("tgj");
    SetAliases(tgj);
    TH1D * hTrkPt = (TH1D*)inf->Get("hTrkPt");
 
-   //////////////////////////////////////////
-   // Analysis Setup
-   //////////////////////////////////////////
    bool doResum=true;
    bool doZoom=true;
-   float etamax=1; //2.4
-   int cMin=0, cMax=30;
-   TString tag=Form("HP_Resum_eta%.0f_c%dto%d",etamax*10,cMin,cMax);
    
-   TString genMptVar = "-genpPt*cos(genpPhi-phi1)";
-   TString recMptVar = "-trkPt*cos(trkPhi-phi1)";
-   TString genpSel = Form("abs(genpEta)<%.1f&&genpCh!=0",etamax);
-   TString trkSel = Form("abs(trkEta)<%.1f&&(trkNHit<8||vtrkQual[][0])",etamax);
-   TString trkWt = "vtrkWt[][0]";
-//    TCut trkSel = Form("abs(trkEta)<%.1f && (trkNHit<8||(vtrkQual[][0]&&trkAlgo==4))",etamax);
-//    TString trkWt = "vtrkWt[][1]";
-//    TCut trkSel = Form("abs(trkEta)<%.1f",etamax);
-//    TString trkWt = "vtrkWt[][2]";
-   
-   TCut mycut=Form("cBin>=%d&&cBin<%d",cMin,cMax);
-
-   float minPt1=120,minPt2=50,sigDPhi=2./3*3.14159;
+   //////////////////////////////////////////////////////////
+   // Cuts
+   float minPt1=100,minPt2=50,sigDPhi=2./3*3.14159;
    TCut leadingSel  = Form("pt1>%.3f&&abs(eta1)<1.6",minPt1);
    TCut awaySel     = Form("pt2>%.3f&&abs(eta2)<1.6",minPt2);
    TCut sigSel      = Form("acos(cos(phi2-phi1))>%.3f",sigDPhi);
+   float etamax=2.4; //2.4
+   int cMin=0, cMax=30;
+   TCut mycut=Form("cBin>=%d&&cBin<%d",cMin,cMax);
+   TString tag=Form("HP_Resum_j1_%.0f_eta%.0f_c%dto%d",minPt1,etamax*10,cMin,cMax);
+   //////////////////////////////////////////////////////////
 
 //    TString mcweight = "(((samplePtHat==50&&pthat<120)||(samplePtHat==120&&pthat<170)||(samplePtHat==170&&pthat<200)||(samplePtHat==200))*weight*sampleWeight)";
    
@@ -89,6 +80,20 @@ void drawMptvAj_v2(
 //    finalCut*=mcweight;
    float nEvt = tgj->GetEntries(finalCut);
    cout << finalCut << ": " << nEvt << endl;
+
+   //////////////////////////////////////////
+   // Analysis Setup
+   //////////////////////////////////////////   
+   TString genMptVar = "-genpPt*cos(genpPhi-phi1)";
+   TString recMptVar = "-trkPt*cos(trkPhi-phi1)";
+   TString genpSel = Form("abs(genpEta)<%.1f",etamax);
+   TString trkSel = Form("abs(trkEta)<%.1f&&(trkAlgo<4||vtrkQual[][0])",etamax);
+   TString trkWt = "trkWt";
+//    TString trkWt = "vtrkWt[][0]";
+//    TCut trkSel = Form("abs(trkEta)<%.1f && (trkNHit<8||(vtrkQual[][0]&&trkAlgo==4))",etamax);
+//    TString trkWt = "vtrkWt[][1]";
+//    TCut trkSel = Form("abs(trkEta)<%.1f",etamax);
+//    TString trkWt = "vtrkWt[][2]";
 
    //////////////////////////////////////////
    // Book Histograms
@@ -151,44 +156,10 @@ void drawMptvAj_v2(
             if (d==1) mpt+=("*"+trkWt);
             drawcmd=Form("Sum$(%s):Aj>>%s_%d",mpt.Data(),hists[d].Data(),i);
          }
+         float npass = tgj->Draw(drawcmd,finalCut,"goff");
          cout << drawcmd << endl;
-         tgj->Draw(drawcmd,finalCut,"goff");
+         cout << finalCut << ": " << npass << endl;
       }
-   }
-
-   //////////////////////////////////////////
-   // Additional Overall Corrections
-   //////////////////////////////////////////
-   if (0) {
-//       for (int i=0; i<nPtBin+1; ++i) {
-//          TString drawcmd;
-//          float ptmin=hTrkPt->GetBinLowEdge(i+1);
-//          float ptmax=hTrkPt->GetBinLowEdge(i+2);
-//          if (i==nPtBin) {
-//             ptmin=hTrkPt->GetBinLowEdge(1);
-//             ptmax=1000;
-//          }
-//          TCut trkSel=Form("(trkPt>=%.2f&&trkPt<%.2f&&abs(trkEta)<2.4&&(trkNHit<7||(vtrkQual[][0])))",ptmin,ptmax);
-//          drawcmd=Form("vtrkWt[][0]:Aj>>%s",vtrkWt[i]->GetName());
-//          cout << drawcmd << " " << TString(finalCut&&trkSel) << endl;
-//          tgj->Draw(drawcmd,finalCut&&trkSel,"goff prof",5000);
-//       }
-//       TCanvas * c0 = new TCanvas("c0","c0",1500,500);
-//       c0->Divide(6,2);
-//       for (int i=0; i<nPtBin; ++i) {
-//          c0->cd(i+1);
-//          vtrkWt[i]->SetAxisRange(1,2,"Y");
-//          vtrkWt[i]->Draw("E");
-//          // Legend
-//          TLegend *leg = new TLegend(0.10,0.68,0.70,0.96);
-//          leg->SetFillStyle(0);
-//          leg->SetBorderSize(0);
-//          leg->SetTextFont(63);
-//          leg->SetTextSize(16);
-//          leg->AddEntry(vmptxRec[i],Form("%.1f - %.1f GeV/c",hTrkPt->GetBinLowEdge(i+1),hTrkPt->GetBinLowEdge(i+2)),"");
-//          leg->Draw();
-//       }
-//       c0->Print(Form("trkwt_vs_aj_closure_v2_%s.gif",tag.Data()));
    }
 
       
@@ -223,6 +194,7 @@ void drawMptvAj_v2(
    }
    
    TLine * l0 = new TLine(AjBins[0],0,AjBins[nBin],0);
+   l0->SetLineStyle(2);
    // Individual Pt Ranges
    float canx=1500,cany=500;
    if (nPtBin==6) { canx=750; cany=500; }
