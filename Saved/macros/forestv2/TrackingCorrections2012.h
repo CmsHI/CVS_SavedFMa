@@ -193,7 +193,7 @@ void TrackingCorrections::Init()
                      // for each correction bin: merge, and smooth
                      for (Int_t ipt_neighbor=ipt; ipt_neighbor>=1||ipt_neighbor<=numPtBins_; ++ipt_neighbor) { // merge neighbor pt bins
                         if (ipt_neighbor!=ipt) {
-                           if (smoothLevel_==0) break;
+                           if (smoothLevel_>=0) break;
                            else if (ptBin_->GetBinLowEdge(ipt_neighbor)<2 || abs(ipt_neighbor-ipt)>1) break;
                         }
                         Int_t eta_direction = (ieta>numEtaBins_/2 ? -1 : 1);
@@ -209,9 +209,9 @@ void TrackingCorrections::Init()
                            }
                            for (Int_t ijet_neighbor=ijet; ijet_neighbor>=1&&ijet_neighbor<=numJEtBins_; ++ijet_neighbor) { // merge neighbor jet bins
                               if (ijet_neighbor!=ijet) {
-                                 if (smoothLevel_==0||jetBin_->GetBinLowEdge(ijet_neighbor)<40) break;
-                                 else if (jetBin_->GetBinLowEdge(ijet_neighbor)<200 && abs(ijet_neighbor-ijet)>=2) break;
-                                 else if (abs(ijet_neighbor-ijet)>=4) break;
+                                 break;
+//                                  if (smoothLevel_==0||jetBin_->GetBinLowEdge(ijet_neighbor)<40) break;
+//                                  else if (abs(ijet_neighbor-ijet)>=2) break;
                               }
                               for (Int_t s=0; s<ptHatMin_.size(); ++s) { // merge pt hat samples
                                  // only merge pt hat samples that has less pt hat than this jet bin
@@ -270,7 +270,7 @@ Float_t TrackingCorrections::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float
    for (Int_t lv=0; lv<numLevels_; ++lv) {
       corr[lv] = correctionHists_[lv][bin]->GetBinContent(etaBin,ptBin,jetBin);
       if (lv==0&&corr[lv]<0.001) { // if eff==0, no correction, b/c too few statistics
-         corr[lv] = 1;
+       corr[lv] = 1;
       }
       if (outCorr) outCorr[lv] = corr[lv];
    }
