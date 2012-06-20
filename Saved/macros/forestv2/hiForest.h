@@ -468,7 +468,7 @@ void HiForest::InitTree()
               trackCorrections[i]->AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj120_Forest2_v19.root",120);
               trackCorrections[i]->AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj170_Forest2_v19.root",170);
          }
-         trackCorrections[i]->smoothLevel_ = 1; 	 
+         trackCorrections[i]->smoothLevel_ = 0;
          trackCorrections[i]->Init(); 	 
       }
    }
