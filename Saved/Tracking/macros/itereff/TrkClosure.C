@@ -7,18 +7,22 @@
 #include "TLine.h"
 #include "Corrector3D.h"
 #include "TLegend.h"
+#include "TSystem.h"
 #include "commonUtility.h"
 #include "HisMath.C"
 #include "compare.h"
 
 void TrkClosure(
-   int anaMode=0 // 0=pt, 1=eta, 2=dphi
+   int anaMode=1, // 0=pt, 1=eta, 2=dphi
+   TString outdir="fig/06.20_trk_disc"
 )
 {
+   TH1::SetDefaultSumw2();
+   gSystem->mkdir(outdir,kTRUE);
+
    bool doCorr=true;
    float maxEta=2.4;
-   float ptmin=8,ptmax=200;
-   TH1::SetDefaultSumw2();
+   float ptmin=0.5,ptmax=200;
    TString mod="hitrkEffAnalyzer_MergedGeneral";
    TrackingCorrections trkCorr("Forest2_v19",mod);
    trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj30_Forest2_v19.root",30);
@@ -29,18 +33,20 @@ void TrkClosure(
    trkCorr.smoothLevel_ = 1; 	 
    trkCorr.Init();
    
-   TFile * inf = new TFile("~/scratch01/work/jet/macros/ntout/output-hy18dj80_forest2_v0_xsec_icPu5.root");
+   TFile * inf = new TFile("~/scratch01/work/jet/macros/ntout/output-hy18dj80_Forest2v21_v1_allTrks_simtrk_xsec_icPu5.root");
    TTree * t = (TTree*)inf->Get("tgj");
    
    //////////////////////////////////////////
    // Analysis Setup
    //////////////////////////////////////////
-   TString tag=Form("trkClos%d_Aj3",anaMode);
-   TCut sel = "cBin<12&&pt1>120&&pt2>50&&abs(dphi)>2.1&&Aj>0.33";
-   TCut genpSel = "genpCh!=0";
-   TCut trkSel = "trkNHit<8||vtrkQual[][0]";
-   TString trkWt = "vtrkWt[][0]";
-//    TCut trkSel = "trkNHit<8||(vtrkQual[][0]&&trkAlgo==4)";
+   TString tag=Form("trkClos%d",anaMode);
+   TCut sel = "cBin<12&&pt1>120&&pt2>50&&abs(dphi)>2.1";
+   TCut genpSel = "";
+   TCut trkSel = "trkAlgo<4||vtrkQual[][0]";
+   TString trkWt = "trkWt";
+//    TCut trkSel = "trkAlgo<4||vtrkQual[][0]";
+//    TString trkWt = "vtrkWt[][0]";
+//    TCut trkSel = "trkAlgo<4||(vtrkQual[][1])";
 //    TString trkWt = "vtrkWt[][1]";
 //    TCut trkSel = "";
 //    TString trkWt = "vtrkWt[][2]";
@@ -50,7 +56,7 @@ void TrkClosure(
    
    Compare cmp("cmp","");
    TH1D * hGenp, *hTrk, *hTrkCorr;
-//    float xmin=0.5, xmax=179.9;
+   float xmin=0.5, xmax=179.9;
    bool doLogx=true, doLogy=true;
    TString genVar, trkVar;
    TCut finalGenSel,finalTrkSel;
@@ -124,7 +130,8 @@ void TrkClosure(
    normHist(hTrkCorr,-1,true);
    if (doLogx) gPad->SetLogx();
    if (doLogy) gPad->SetLogy();
-//    hGenp->SetAxisRange(xmin,xmax,"X");
+   else hGenp->SetAxisRange(0,hGenp->GetMaximum()*1.4,"Y");
+   if (anaMode==0) hGenp->SetAxisRange(xmin,xmax,"X");
    hGenp->Draw("hist");
    hTrk->Draw("sameE");
    if (doCorr) hTrkCorr->Draw("sameE");
@@ -136,12 +143,15 @@ void TrkClosure(
    TH1D * hTrkCorrRat = (TH1D*)hTrkCorr->Clone("hTrkCorrRat");
    if (doCorr) hTrkCorrRat->Divide(hGenp);
    if (doLogx) gPad->SetLogx();
-//    hTrkRat->SetAxisRange(xmin,xmax,"X");
+   if (anaMode==0) hTrkRat->SetAxisRange(xmin,xmax,"X");
    hTrkRat->SetAxisRange(0.,2,"Y");
+   TLine * l1 = new TLine(hTrkRat->GetXaxis()->GetXmin(),1,hTrkRat->GetXaxis()->GetXmax(),1);
+   l1->SetLineStyle(2);
    hTrkRat->Draw("E");
+   l1->Draw();
    if (doCorr) hTrkCorrRat->Draw("sameE");
 
-   c2->Print(Form("%s.gif",tag.Data()));
+   c2->Print(Form("%s/%s.gif",outdir.Data(),tag.Data()));
    
 //    TCanvas * c3 = new TCanvas("c3","c3",800,400);
 //    TH2D * hTrkWtvPt = new TH2D("hTrkWtvPt","",80,0,80,50,0,3);
