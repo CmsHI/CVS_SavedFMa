@@ -14,7 +14,7 @@ for il in `seq 1 ${numUniq}`; do
    name=`echo $line | awk '{print $1}'`
    fsize=`echo $line | awk '{print $2}'`
    echo $name $fsize
-   ls -ltr /mnt/hadoop/cms/store/user/frankmalocal/forest/promptskim-hihighpt-hltjet80-pt90-v3/*.root | grep $name | grep $fsize | tail -n 1 | awk '{print $NF}' >> ${basename}_final.txt
+   ls -ltr $indir/*.root | grep $name | grep $fsize | tail -n 1 | awk '{print $NF}' >> ${basename}_final.txt
 done
 
 for i in `ls $indir | grep root`; do
