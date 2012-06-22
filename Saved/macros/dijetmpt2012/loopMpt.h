@@ -109,6 +109,11 @@ public:
    TH2D * hJetPt2D;
    TH1D * hJDPhi;
    TH1D * hAj;
+   // Tracks
+   TH1D * hTrkPtNoQual;
+   TH1D * hTrkPtQual3;
+   TH1D * hTrkPt;
+   TH1D * hTrkEta;
    // mpt
    TH3D * hMpt;
    TH3D * hMptDr;
@@ -137,13 +142,19 @@ public:
       hJDPhi = new TH1D("hJDPhi"+name,";#Delta#phi(j1,j2);",40,0,3.14159);
       hAj = new TH1D("hAj"+name,";A_{J};",40,0,0.8);
 
+      hTrkPtNoQual = new TH1D("hTrkPtNoQual"+name,"; p_{T};",100,0,200);
+      hTrkPtQual3 = new TH1D("hTrkPtQual3"+name,"; p_{T};",100,0,200);
+      hTrkPt = new TH1D("hTrkPt"+name,"; p_{T};",100,0,200);
+      hTrkEta = new TH1D("hTrkEta"+name,"; #eta;",48,-2.4,2.4);
+
       hMpt = new TH3D(Form("hMpt%s",name.Data()),"",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
       hMptDr = new TH3D(Form("hMptDr%s",name.Data()),"",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
       hMptDPhi = new TH3D(Form("hMptDPhi%s",name.Data()),"",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
    }
    
-   void Loop() {
+   void Loop(int maxEntry=-1) {
       int numEvt = t->GetEntries();
+      if (maxEntry>0) numEvt = maxEntry;
       for (int iEvt=0; iEvt<numEvt; ++iEvt) {
          t->GetEntry(iEvt);
          
@@ -162,6 +173,17 @@ public:
          hJetPt2D->Fill(dj.pt1,dj.pt2);
          hJDPhi->Fill(jdphi);
          hAj->Fill(Aj);
+         
+         // Track loop
+         for (int ip=0; ip<dj.nTrk; ++ip) {
+            if (dj.trkPt[ip]<minPt) continue;
+            if (fabs(dj.trkEta[ip])>maxEta) continue;
+            hTrkPtNoQual->Fill(dj.trkPt[ip]);
+            if (dj.trkAlgo[ip]<4||dj.vtrkQual[ip][1]) hTrkPtQual3->Fill(dj.trkPt[ip]);
+            if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
+            hTrkPt->Fill(dj.trkPt[ip]);
+            hTrkEta->Fill(dj.trkEta[ip]);
+         }
       } // End of event loop
    }
 };

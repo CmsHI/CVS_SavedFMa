@@ -2,7 +2,8 @@
 #define JetTrkEvent_h
 
 static const int MAXTRK = 30000;
-static const int NTRKQUAL = 3;
+static const int NTRKQUAL = 2;
+// static const int NTRKQUAL = 3;
 
 // Convinient Output Classes
 class EvtSel {
@@ -103,43 +104,43 @@ void JTSetBranchAddress(TTree * tgj, EvtSel & evt, DiJet & gj) {
    tgj->SetBranchAddress("trkPt",gj.trkPt);
    tgj->SetBranchAddress("trkEta",gj.trkEta);
    tgj->SetBranchAddress("trkPhi",gj.trkPhi);
-// 
-// //    tgj->SetBranchAddress("trkJetDr",gj.trkJetDr,"trkJetDr[nTrk]/F");
-//    tgj->SetBranchAddress("trkWt",gj.trkWt,"trkWt[nTrk]/F");
-// //    tgj->SetBranchAddress("vtrkWt",gj.vtrkWt,Form("vtrkWt[nTrk][%d]/F",NTRKQUAL));
-// //    tgj->SetBranchAddress("vtrkEff",gj.vtrkEff,Form("vtrkEff[nTrk][%d]/F",NTRKQUAL));
-// //    tgj->SetBranchAddress("vtrkFak",gj.vtrkFak,Form("vtrkFak[nTrk][%d]/F",NTRKQUAL));
-//    tgj->SetBranchAddress("trkEff",gj.trkEff,"trkEff[nTrk]/F");
-//    tgj->SetBranchAddress("trkFak",gj.trkFak,"trkFak[nTrk]/F");
-//    tgj->SetBranchAddress("trkNHit",gj.trkNHit,"trkNHit[nTrk]/F");
-//    tgj->SetBranchAddress("trkChi2Norm",gj.trkChi2Norm,"trkChi2Norm[nTrk]/F");
-//    tgj->SetBranchAddress("trkHP",gj.trkHP,"trkHP[nTrk]/O");
-//    tgj->SetBranchAddress("trkAlgo",gj.trkAlgo,"trkAlgo[nTrk]/I");
-//    tgj->SetBranchAddress("vtrkQual",gj.vtrkQual,Form("vtrkQual[nTrk][%d]/O",NTRKQUAL));
-//    tgj->SetBranchAddress("trkIsFake",gj.trkIsFake,"trkIsFake[nTrk]/O");
-//    tgj->SetBranchAddress("nJet",&gj.nJet,"nJet/I");
-//    tgj->SetBranchAddress("inclJetPt",gj.inclJetPt,"inclJetPt[nJet]/F");
-//    tgj->SetBranchAddress("inclJetEta",gj.inclJetEta,"inclJetEta[nJet]/F");
-//    tgj->SetBranchAddress("inclJetPhi",gj.inclJetPhi,"inclJetPhi[nJet]/F");
-//    tgj->SetBranchAddress("inclJetRefPt",gj.inclJetRefPt,"inclJetRefPt[nJet]/F");
-//    tgj->SetBranchAddress("inclJetRefPartonPt",gj.inclJetRefPartonPt,"inclJetRefPartonPt[nJet]/F");
-//    tgj->SetBranchAddress("inclJetRefResp",gj.inclJetRefResp,"inclJetRefResp[nJet]/F");
-//    tgj->SetBranchAddress("nGenJet",&gj.nGenJet,"nGenJet/I");
-//    tgj->SetBranchAddress("inclGenJetPt",gj.inclGenJetPt,"inclGenJetPt[nGenJet]/F");
-//    tgj->SetBranchAddress("inclGenJetEta",gj.inclGenJetEta,"inclGenJetEta[nGenJet]/F");
-//    tgj->SetBranchAddress("inclGenJetPhi",gj.inclGenJetPhi,"inclGenJetPhi[nGenJet]/F");
-//    tgj->SetBranchAddress("inclGenJetResp",gj.inclGenJetResp,"inclGenJetResp[nGenJet]/F");
-//    tgj->SetBranchAddress("nPf",&gj.nPf,"nPf/I");
-//    tgj->SetBranchAddress("pfPt",gj.pfPt,"pfPt[nPf]/F");
-//    tgj->SetBranchAddress("pfEta",gj.pfEta,"pfEta[nPf]/F");
-//    tgj->SetBranchAddress("pfPhi",gj.pfPhi,"pfPhi[nPf]/F");
-//    tgj->SetBranchAddress("pfId",gj.pfId,"pfId[nPf]/I");
-//    tgj->SetBranchAddress("nGenp",&gj.nGenp,"nGenp/I");
-//    tgj->SetBranchAddress("genpPt",gj.genpPt,"genpPt[nGenp]/F");
-//    tgj->SetBranchAddress("genpEta",gj.genpEta,"genpEta[nGenp]/F");
-//    tgj->SetBranchAddress("genpPhi",gj.genpPhi,"genpPhi[nGenp]/F");
-// //    tgj->SetBranchAddress("genpCh",gj.genpCh,"genpCh[nGenp]/I");
-//    tgj->SetBranchAddress("genpSube",gj.genpSube,"genpSube[nGenp]/I");
-//    tgj->SetBranchAddress("genpHasRec",gj.genpHasRec,"genpHasRec[nGenp]/O");
+
+//    tgj->SetBranchAddress("trkJetDr",gj.trkJetDr,"trkJetDr[nTrk]/F");
+   tgj->SetBranchAddress("trkWt",gj.trkWt);
+   tgj->SetBranchAddress("vtrkWt",gj.vtrkWt);
+   tgj->SetBranchAddress("vtrkEff",gj.vtrkEff);
+   tgj->SetBranchAddress("vtrkFak",gj.vtrkFak);
+   tgj->SetBranchAddress("trkEff",gj.trkEff);
+   tgj->SetBranchAddress("trkFak",gj.trkFak);
+   tgj->SetBranchAddress("trkNHit",gj.trkNHit);
+   tgj->SetBranchAddress("trkChi2Norm",gj.trkChi2Norm);
+   tgj->SetBranchAddress("trkHP",gj.trkHP);
+   tgj->SetBranchAddress("trkAlgo",gj.trkAlgo);
+   tgj->SetBranchAddress("vtrkQual",gj.vtrkQual);
+   tgj->SetBranchAddress("trkIsFake",gj.trkIsFake);
+   tgj->SetBranchAddress("nJet",&gj.nJet);
+   tgj->SetBranchAddress("inclJetPt",gj.inclJetPt);
+   tgj->SetBranchAddress("inclJetEta",gj.inclJetEta);
+   tgj->SetBranchAddress("inclJetPhi",gj.inclJetPhi);
+   tgj->SetBranchAddress("inclJetRefPt",gj.inclJetRefPt);
+   tgj->SetBranchAddress("inclJetRefPartonPt",gj.inclJetRefPartonPt);
+   tgj->SetBranchAddress("inclJetRefResp",gj.inclJetRefResp);
+   tgj->SetBranchAddress("nGenJet",&gj.nGenJet);
+   tgj->SetBranchAddress("inclGenJetPt",gj.inclGenJetPt);
+   tgj->SetBranchAddress("inclGenJetEta",gj.inclGenJetEta);
+   tgj->SetBranchAddress("inclGenJetPhi",gj.inclGenJetPhi);
+   tgj->SetBranchAddress("inclGenJetResp",gj.inclGenJetResp);
+   tgj->SetBranchAddress("nPf",&gj.nPf);
+   tgj->SetBranchAddress("pfPt",gj.pfPt);
+   tgj->SetBranchAddress("pfEta",gj.pfEta);
+   tgj->SetBranchAddress("pfPhi",gj.pfPhi);
+   tgj->SetBranchAddress("pfId",gj.pfId);
+   tgj->SetBranchAddress("nGenp",&gj.nGenp);
+   tgj->SetBranchAddress("genpPt",gj.genpPt);
+   tgj->SetBranchAddress("genpEta",gj.genpEta);
+   tgj->SetBranchAddress("genpPhi",gj.genpPhi);
+//    tgj->SetBranchAddress("genpCh",gj.genpCh);
+   tgj->SetBranchAddress("genpSube",gj.genpSube);
+   tgj->SetBranchAddress("genpHasRec",gj.genpHasRec);
 }
 #endif

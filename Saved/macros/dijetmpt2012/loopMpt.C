@@ -55,9 +55,12 @@ void loopMpt(
       ana.minJetPt2 = minJetPt2;
       ana.maxJetEta = 1.6;
       ana.sigDPhi = sigDPhi;
+      ana.minPt = 0.5;
       ana.maxEta = etamax;
       ana.Init(nt);
-      ana.Loop();
+      ana.Loop(5000);
    }
+   
+   hout->Write();
 }
 
