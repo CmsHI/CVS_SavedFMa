@@ -64,7 +64,7 @@ public:
          float dr1 = deltaR(candEta,candPhi,eta1,phi1);
          float dphi1 = fabs(deltaPhi(candPhi,phi1));
 
-         float ptx = candPt * cos(candPhi-phi1) * candWt;
+         float ptx = -candPt * cos(candPhi-phi1) * candWt;
          
          x += ptx;
          
@@ -121,9 +121,12 @@ public:
    TH1D * hTrkCorrEta;
    // mpt
    TH2D * hMpt;
-   TH3D * hMptPt;
-   TH3D * hMptPtDr;
-   TH3D * hMptPtDPhi;
+//    TH3D * hMptPt;
+//    TH3D * hMptPtDr;
+//    TH3D * hMptPtDPhi;
+   TH2D * vhMptPt[nptrange];
+   TH2D * vhMptPtDr[nptrange][ndrbin];
+   TH2D * vhMptPtDPhi[nptrange][ndphibin];
 
    AnaMPT(TString myname) :
    name(myname),
@@ -158,9 +161,19 @@ public:
       hTrkCorrEta = new TH1D("hTrkCorrEta"+name,"; #eta;",48,-2.4,2.4);
 
       hMpt = new TH2D(Form("hMpt%s",name.Data()),";Aj;mpt;",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
-      hMptPt = new TH3D(Form("hMptPt%s",name.Data()),";Aj;mpt;pt",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
-      hMptPtDr = new TH3D(Form("hMptPtDr%s",name.Data()),";Aj;mpt;pt",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
-      hMptPtDPhi = new TH3D(Form("hMptPtDPhi%s",name.Data()),";Aj;mpt;pt",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
+//       hMptPt = new TH3D(Form("hMptPt%s",name.Data()),";Aj;mpt;pt",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
+//       hMptPtDr = new TH3D(Form("hMptPtDr%s",name.Data()),";Aj;mpt;pt",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
+//       hMptPtDPhi = new TH3D(Form("hMptPtDPhi%s",name.Data()),";Aj;mpt;pt",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
+      for (int i=0; i<nptrange; ++i) {
+         vhMptPt[i] = new TH2D(Form("hMpt%s_pt%d",name.Data(),i),";Aj;mpt",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
+         for (int j=0; j<ndrbin; ++j) {
+            vhMptPtDr[i][j] = new TH2D(Form("hMpt%s_pt%d_dr%d",name.Data(),i,j),";Aj;mpt",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
+         }
+
+         for (int k=0; k<ndphibin; ++k) {
+            vhMptPtDPhi[i][k] = new TH2D(Form("hMpt%s_pt%d_dphi%d",name.Data(),i,k),";Aj;mpt",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
+         }                  
+      }
    }
    
    void Loop(int maxEntry=-1) {
@@ -211,6 +224,15 @@ public:
          me.eta1 = dj.eta1;
          me.Calc();
          hMpt->Fill(Aj,me.x);
+         for (int i=0; i<nptrange; ++i) {
+            vhMptPt[i]->Fill(Aj,me.x_pt[i]);
+            for (int j=0; j<ndrbin; ++j) {
+               vhMptPtDr[i][j]->Fill(Aj,me.x_pt[i]);
+            }
+            for (int k=0; k<ndphibin; ++k) {
+               vhMptPtDPhi[i][k]->Fill(Aj,me.x_pt[i]);
+            }
+         }
          
          // Genp loop
          for (int ip=0; ip<dj.nGenp; ++ip) {
