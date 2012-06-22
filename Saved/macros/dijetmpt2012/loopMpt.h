@@ -110,10 +110,14 @@ public:
    TH1D * hJDPhi;
    TH1D * hAj;
    // Tracks
+   TH1D * hGenpPt;
+   TH1D * hGenpEta;
    TH1D * hTrkPtNoQual;
    TH1D * hTrkPtQual3;
    TH1D * hTrkPt;
    TH1D * hTrkEta;
+   TH1D * hTrkCorrPt;
+   TH1D * hTrkCorrEta;
    // mpt
    TH3D * hMpt;
    TH3D * hMptDr;
@@ -142,10 +146,14 @@ public:
       hJDPhi = new TH1D("hJDPhi"+name,";#Delta#phi(j1,j2);",40,0,3.14159);
       hAj = new TH1D("hAj"+name,";A_{J};",40,0,0.8);
 
+      hGenpPt = new TH1D("hGenpPt"+name,"; p_{T};",100,0,200);
+      hGenpEta = new TH1D("hGenpEta"+name,"; #eta;",48,-2.4,2.4);
       hTrkPtNoQual = new TH1D("hTrkPtNoQual"+name,"; p_{T};",100,0,200);
       hTrkPtQual3 = new TH1D("hTrkPtQual3"+name,"; p_{T};",100,0,200);
       hTrkPt = new TH1D("hTrkPt"+name,"; p_{T};",100,0,200);
       hTrkEta = new TH1D("hTrkEta"+name,"; #eta;",48,-2.4,2.4);
+      hTrkCorrPt = new TH1D("hTrkCorrPt"+name,"; p_{T};",100,0,200);
+      hTrkCorrEta = new TH1D("hTrkCorrEta"+name,"; #eta;",48,-2.4,2.4);
 
       hMpt = new TH3D(Form("hMpt%s",name.Data()),"",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
       hMptDr = new TH3D(Form("hMptDr%s",name.Data()),"",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
@@ -183,6 +191,15 @@ public:
             if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
             hTrkPt->Fill(dj.trkPt[ip]);
             hTrkEta->Fill(dj.trkEta[ip]);
+            hTrkCorrPt->Fill(dj.trkPt[ip],dj.vtrkWt[ip][0]);
+            hTrkCorrEta->Fill(dj.trkEta[ip],dj.vtrkWt[ip][0]);
+         }
+         // Genp loop
+         for (int ip=0; ip<dj.nGenp; ++ip) {
+            if (dj.genpPt[ip]<minPt) continue;
+            if (fabs(dj.genpEta[ip])>maxEta) continue;
+            hGenpPt->Fill(dj.genpPt[ip]);
+            hGenpEta->Fill(dj.genpEta[ip]);
          }
       } // End of event loop
    }
