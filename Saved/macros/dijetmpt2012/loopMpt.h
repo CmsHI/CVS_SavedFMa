@@ -41,7 +41,6 @@ public:
    {}
 
    void clear() {
-      n=0;
       x=0;
       for (int i=0; i<nptrange; ++i) {
          x_pt[i]=0;
@@ -56,6 +55,7 @@ public:
    
    void Calc() {
       clear();
+//       cout << "n: " << n << endl;
       for (int it=0; it<n; ++it) {
          float candPt  = pt[it];
          float candEta = eta[it];
@@ -84,6 +84,7 @@ public:
                }                  
             }
          }
+//          cout << "x: " << x << endl;
       } // end of for cand
    }
 };
@@ -119,9 +120,10 @@ public:
    TH1D * hTrkCorrPt;
    TH1D * hTrkCorrEta;
    // mpt
-   TH3D * hMpt;
-   TH3D * hMptDr;
-   TH3D * hMptDPhi;
+   TH2D * hMpt;
+   TH3D * hMptPt;
+   TH3D * hMptPtDr;
+   TH3D * hMptPtDPhi;
 
    AnaMPT(TString myname) :
    name(myname),
@@ -155,9 +157,10 @@ public:
       hTrkCorrPt = new TH1D("hTrkCorrPt"+name,"; p_{T};",100,0,200);
       hTrkCorrEta = new TH1D("hTrkCorrEta"+name,"; #eta;",48,-2.4,2.4);
 
-      hMpt = new TH3D(Form("hMpt%s",name.Data()),"",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
-      hMptDr = new TH3D(Form("hMptDr%s",name.Data()),"",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
-      hMptDPhi = new TH3D(Form("hMptDPhi%s",name.Data()),"",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
+      hMpt = new TH2D(Form("hMpt%s",name.Data()),";Aj;mpt;",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
+      hMptPt = new TH3D(Form("hMptPt%s",name.Data()),";Aj;mpt;pt",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
+      hMptPtDr = new TH3D(Form("hMptPtDr%s",name.Data()),";Aj;mpt;pt",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
+      hMptPtDPhi = new TH3D(Form("hMptPtDPhi%s",name.Data()),";Aj;mpt;pt",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
    }
    
    void Loop(int maxEntry=-1) {
@@ -183,6 +186,7 @@ public:
          hAj->Fill(Aj);
          
          // Track loop
+         me.n=0;
          for (int ip=0; ip<dj.nTrk; ++ip) {
             if (dj.trkPt[ip]<minPt) continue;
             if (fabs(dj.trkEta[ip])>maxEta) continue;
@@ -191,9 +195,23 @@ public:
             if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
             hTrkPt->Fill(dj.trkPt[ip]);
             hTrkEta->Fill(dj.trkEta[ip]);
-            hTrkCorrPt->Fill(dj.trkPt[ip],dj.vtrkWt[ip][0]);
-            hTrkCorrEta->Fill(dj.trkEta[ip],dj.vtrkWt[ip][0]);
+            // trk correction
+            float trkWt = dj.vtrkWt[ip][0];
+            hTrkCorrPt->Fill(dj.trkPt[ip],trkWt);
+            hTrkCorrEta->Fill(dj.trkEta[ip],trkWt);
+            // set mpt input
+            me.pt[me.n] = dj.trkPt[ip];
+            me.eta[me.n] = dj.trkEta[ip];
+            me.phi[me.n] = dj.trkPhi[ip];
+            me.weight[me.n] = trkWt;
+            ++me.n;
          }
+         me.pt1 = dj.pt1;
+         me.phi1 = dj.phi1;
+         me.eta1 = dj.eta1;
+         me.Calc();
+         hMpt->Fill(Aj,me.x);
+         
          // Genp loop
          for (int ip=0; ip<dj.nGenp; ++ip) {
             if (dj.genpPt[ip]<minPt) continue;

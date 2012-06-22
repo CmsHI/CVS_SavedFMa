@@ -58,7 +58,7 @@ void loopMpt(
       ana.minPt = 0.5;
       ana.maxEta = etamax;
       ana.Init(nt);
-      ana.Loop(5000);
+      ana.Loop(100);
    }
    
    hout->Write();
