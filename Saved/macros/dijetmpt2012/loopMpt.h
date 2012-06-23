@@ -10,9 +10,18 @@
 using namespace TMath;
 
 // MPT Ranges
+// MPT Ranges
+// const int nptrange = 6;
+// float ptranges[nptrange+1]={0.5,1.0,2,4,8,20,200};
+// const int nptrange = 8;
+// float ptranges[nptrange+1]={0.5,1.0,2,4,8,20,50,100,200};
+// const int nptrange = 8;
+// float ptranges[nptrange+1]={0.5,1.0,2,4,8,20,35,50,200};
 const int nptrange = 8;
 float ptranges[nptrange+1]={0.5,1.0,2,4,8,20,30,50,200};
 
+// const int nAjBin = 4;
+// float AjBins[nAjBin+1] = {0.0001,0.11,0.22,0.33,0.49999};
 const int nAjBin = 9;
 float AjBins[nAjBin+1] = {0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.55};
 
