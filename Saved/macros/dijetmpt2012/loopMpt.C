@@ -23,7 +23,7 @@ void loopMpt(
    TString infdataname="../ntout/output-data-Forest2v2v3_saveTrks_v0_icPu5.root";
    TString infmcname = "../ntout/output-hy18dj80_forest2_v0_xsec_icPu5.root";
    
-   bool isMC=true;
+   bool isMC=false;
    
    TString infname=infdataname;
    if (isMC) infname=infmcname;
@@ -32,7 +32,7 @@ void loopMpt(
    float minJetPt2=50;
    float sigDPhi=3.1415926*2./3;
    float etamax=2.4;
-   TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax);
+   TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10);
    if (isMC) tag.ReplaceAll("HisData","HisMc");
 
    TFile *inf = TFile::Open(infname);
@@ -58,7 +58,8 @@ void loopMpt(
       ana.minPt = 0.5;
       ana.maxEta = etamax;
       ana.Init(nt);
-      ana.Loop(5000);
+      ana.Loop();
+//       ana.Loop(5000);
    }
    
    hout->Write();
