@@ -1,6 +1,7 @@
 #ifndef SignalCorrector_h
 #define SignalCorrector_h
 #include "TF1.h"
+#include "TF2.h"
 
 //---------------------------------------------------------------------
 class Region
@@ -11,37 +12,37 @@ public:
    n(0),nExtrap(0),normBinWidth(false),verbosity(0)
    {}
    
-   void Init(TTree * t, int nbins, float xmin, float xmax) {
-      float * bins = new float[nbins+1];
-      float dx = (xmax-xmin)/nbins;
-      for (int i=0; i<nbins+1; ++i) bins[i] = xmin+i*dx;
-      Init(t,nbins,bins);
-   }
+//    void Init(TTree * t, int nbins, float xmin, float xmax) {
+//       float * bins = new float[nbins+1];
+//       float dx = (xmax-xmin)/nbins;
+//       for (int i=0; i<nbins+1; ++i) bins[i] = xmin+i*dx;
+//       Init(t,nbins,bins);
+//    }
    
-   void Init(TTree * t, int nbins, float *bins) {
+   void Init(TTree * t, int nbins, float *bins, int nybins, float *ybins) {
       cut*=weight;
-      h = new TH1D(name,"",nbins,bins);
+      h = new TH2D(name,"",nbins,bins,nybins,ybins);
       if (var!="") {
-         n = t->Project(h->GetName(),var,cut);
+         n = t->Project(h->GetName(),var,cut,"");
          if (verbosity>=1) cout << "  " << h->GetName() << "  draw: " << var << " cut: " << TString(cut) << ": " << n << endl;
       }
    }
    
    void Extrapolate() {
-      hExtrap = (TH1D*)h->Clone(Form("%sExtrap",h->GetName()));
+      hExtrap = (TH2D*)h->Clone(Form("%sExtrap",h->GetName()));
       hExtrap->Scale(purity);
       nExtrap = n*purity;
    }
    
    void Normalize(float norm) {
-      hExtrapNorm = (TH1D*)hExtrap->Clone(Form("%sNorm",hExtrap->GetName()));
+      hExtrapNorm = (TH2D*)hExtrap->Clone(Form("%sNorm",hExtrap->GetName()));
       hExtrapNorm->Scale(norm);
       if (normBinWidth) hExtrapNorm->Scale(1./hExtrapNorm->GetBinWidth(1));
    }
    
-   TH1D * h;
-   TH1D * hExtrap;
-   TH1D * hExtrapNorm;
+   TH2D * h;
+   TH2D * hExtrap;
+   TH2D * hExtrapNorm;
    TString name;
    TString var;
    TCut cut;
