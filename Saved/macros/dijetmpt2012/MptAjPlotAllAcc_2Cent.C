@@ -45,14 +45,13 @@ void balanceMetVsAj(TString infname,
    {
       pe[i]=new TH1D(Form("p%d",i),"",nAjBin,AjBins);
       for (int a=0; a<nAjBin; ++a) {
+//          hname = Form("%s_merge%d_%s",insrc.Data(),i,metType.Data());
          TString hname = insrc;
-         hname = Form("%s_merge%d_%s",insrc.Data(),i,metType.Data());
-//          float xtot = 0;
-//          if (i<nptrange) {
-//             hname+=Form("_pt%d",i);
-//          }
+         if (i<nptrange) {
+            hname+=Form("_pt%d",i);
+         }
          TH2D * hMptAj = (TH2D*)inf->Get(hname);
-         cout << hname << " " << hMptAj << endl;
+//          cout << hname << " " << hMptAj << endl;
          TH1D * hMpt = hMptAj->ProjectionY(hname+Form("_a%d",a),a+1,a+1);
          float mpt = hMpt->GetMean();
          if (doResCorr) {
@@ -177,15 +176,17 @@ void balanceMetVsAj(TString infname,
 }
 
 void MptAjPlotAllAcc_2Cent(
-                           TString outdir = "./fig/06.23Mpt2DAna"
+                           TString outdir = "./fig/06.21HIN_loop"
+//                            TString outdir = "./fig/06.23Mpt2DAna"
 )
 {
    TH1::SetDefaultSumw2();
    gSystem->mkdir(outdir,kTRUE);
 
-//    TString inputFile_mc="fig/06.21HIN_loop/HisMc_icPu5_trkHPCorr_120_50_2094_eta24.root";
-   TString inputFile_mc="fig/06.23Mpt2DAna/HisMc_icPu5_trkHPCorr_120_50_2094_eta24.root";
+   TString inputFile_mc="fig/06.21HIN_loop/HisMc_icPu5_trkHPCorr_120_50_2094_eta24.root";
    TString inputFile_data="fig/06.21HIN_loop/HisData_icPu5_trkHPCorr_120_50_2094_eta24.root";
+//    TString inputFile_mc="fig/06.23Mpt2DAna/HisMc_icPu5_trkHPCorr_120_50_2094_eta24.root";
+//    TString inputFile_data="fig/06.23Mpt2DAna/HisData_icPu5_trkHPCorr_120_50_2094_eta24.root";
    
    Float_t leftMargin=0.28,bottomMargin=0.18;
    TCanvas *c1 = new TCanvas("c1","",1000,1000);
@@ -194,8 +195,8 @@ void MptAjPlotAllAcc_2Cent(
 //    makeMultiPanelCanvas(c1,2,1,0.0,0.0,leftMargin,bottomMargin,0.02);
 
    c1->cd(1);
-   balanceMetVsAj(inputFile_mc,"hypho_mptxtrkCorrAllAcc","1SigAll",false,false);
-//    balanceMetVsAj(inputFile_mc,"hMpt12to40","",false,false);
+//    balanceMetVsAj(inputFile_mc,"hypho_mptxtrkCorrAllAcc","1SigAll",false,false);
+   balanceMetVsAj(inputFile_mc,"hMpt12to40","",false,false);
    drawText("PYTHIA+HYDJET",0.33,0.82);
    drawText("30-100%",0.85,0.9);
 //    drawText("PYTHIA Signal",0.33,0.82);
@@ -203,8 +204,8 @@ void MptAjPlotAllAcc_2Cent(
    gPad->RedrawAxis();
    
    c1->cd(2);
-   balanceMetVsAj(inputFile_mc,"hypho_mptxtrkCorrAllAcc","0SigAll",true,false);
-//    balanceMetVsAj(inputFile_mc,"hMpt0to12","",true,false);
+//    balanceMetVsAj(inputFile_mc,"hypho_mptxtrkCorrAllAcc","0SigAll",true,false);
+   balanceMetVsAj(inputFile_mc,"hMpt0to12","",true,false);
    drawText("0-30%",0.7,0.9);
    drawText("(b)",0.04,0.91);
    float ptx(0.08),pty1(0.22);
@@ -214,26 +215,28 @@ void MptAjPlotAllAcc_2Cent(
 //    drawText("#Delta#phi_{1,2}>  #frac{5}{6}#pi",ptx,pty1-0.14);
    drawText("|#eta_{1,2}| < 1.6",ptx+0.20,pty1-0.14);
    gPad->RedrawAxis();
-//    
-//    c1->cd(3);
-//    balanceMetVsAj(inputFile_data,"hMpt12to40","",false,false);
-//    drawText("CMS",0.33,0.90);
-// //    float ptx(0.33),pty1(0.35);
-// //    drawText("p_{T,1}  > 120GeV/c",ptx,pty1);
-// //    drawText("p_{T,2}  > 50GeV/c",ptx,pty1-0.07);
-// //    drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty1-0.14);
-//    drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
-//    drawText("#intL dt = 100 #mub^{-1}",0.33,0.78);
-//    drawText(" 30-100%",0.85,0.93);
-// //    drawText("(c)",0.31,0.95);
-//    gPad->RedrawAxis();
-//    
-//    c1->cd(4);
-//    balanceMetVsAj(inputFile_data,"hMpt12to40","",false,false);
-//    drawText("0-30%",0.7,0.93);
-// //    drawText("(d)",0.04,0.95);
-//    gPad->RedrawAxis();
-//    
-//    c1->SaveAs(Form("%s/missingPtParallel-TrkHP-CorrRes%d-data-mcRec-AllAcc.pdf",outdir.Data(),doResCorr));
-//    c1->SaveAs(Form("%s/missingPtParallel-TrkHP-CorrRes%d-data-mcRec-AllAcc.gif",outdir.Data(),doResCorr));
+   
+   c1->cd(3);
+//    balanceMetVsAj(inputFile_data,"hi_mptxtrkCorrAllAcc","1SigAll",false,false);
+   balanceMetVsAj(inputFile_data,"hMpt12to40","",false,false);
+   drawText("CMS",0.33,0.90);
+//    float ptx(0.33),pty1(0.35);
+//    drawText("p_{T,1}  > 120GeV/c",ptx,pty1);
+//    drawText("p_{T,2}  > 50GeV/c",ptx,pty1-0.07);
+//    drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty1-0.14);
+   drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
+   drawText("#intL dt = 100 #mub^{-1}",0.33,0.78);
+   drawText(" 30-100%",0.85,0.93);
+//    drawText("(c)",0.31,0.95);
+   gPad->RedrawAxis();
+   
+   c1->cd(4);
+//    balanceMetVsAj(inputFile_data,"hi_mptxtrkCorrAllAcc","0SigAll",false,false);
+   balanceMetVsAj(inputFile_data,"hMpt0to12","",false,false);
+   drawText("0-30%",0.7,0.93);
+//    drawText("(d)",0.04,0.95);
+   gPad->RedrawAxis();
+   
+   c1->SaveAs(Form("%s/missingPtParallel-TrkHP-CorrRes%d-data-mcRec-AllAcc.pdf",outdir.Data(),doResCorr));
+   c1->SaveAs(Form("%s/missingPtParallel-TrkHP-CorrRes%d-data-mcRec-AllAcc.gif",outdir.Data(),doResCorr));
 }
