@@ -25,15 +25,16 @@ float ptranges[nptrange+1]={0.5,1.0,2,4,8,20,30,50,200};
 const int nAjBin = 9;
 float AjBins[nAjBin+1] = {0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.55};
 
-const int ndrbin=8;
-float drbins[ndrbin+1]={0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,100};
+const int ndrbin=7;
+float drbins[ndrbin+1]={0,0.2,0.4,0.6,0.8,1.0,1.2,100};
 
 const int ndphibin=6;
-float dphibins[ndphibin+1]={0,Pi()/6.,2*Pi()/6.,3*Pi()/6.,4*Pi()/6,5*Pi()/6,Pi()};
+float dphibins[ndphibin+1]={0,Pi()/12.,2*Pi()/12.,3*Pi()/12.,4*Pi()/12,5*Pi()/12,PiOver2()};
 
 class MPTEvent {
 public:
    float pt1,phi1,eta1;
+   float pt2,phi2,eta2;
    int n;
    float pt[MAXTRK];
    float eta[MAXTRK];
@@ -72,6 +73,8 @@ public:
          float candWt = weight[it];         
          float dr1 = deltaR(candEta,candPhi,eta1,phi1);
          float dphi1 = fabs(deltaPhi(candPhi,phi1));
+         float dr2 = deltaR(candEta,candPhi,eta2,phi2);
+         float dphi2 = fabs(deltaPhi(candPhi,phi1+Pi()));
 
          float ptx = -candPt * cos(candPhi-phi1) * candWt;
          
@@ -81,13 +84,17 @@ public:
             if (candPt>=ptranges[i] && candPt<ptranges[i+1]) {
                x_pt[i]+= ptx;
                for (int j=0; j<ndrbin; ++j) {
-                  if (dr1 >=drbins[j] && dr1<drbins[j+1]) {
+                  if ( (dr1 >=drbins[j] && dr1<drbins[j+1]) ||
+                       (dr2 >=drbins[j] && dr2<drbins[j+1])
+                  ) {
                      x_pt_dr[i][j] += ptx;
                   }
                }
 
                for (int k=0; k<ndphibin; ++k) {
-                  if (dphi1 >=dphibins[k] && dphi1<dphibins[k+1]) {
+                  if ( (dphi1 >=dphibins[k] && dphi1<dphibins[k+1]) ||
+                       (dphi2 >=dphibins[k] && dphi2<dphibins[k+1])
+                  ) {
                      x_pt_dphi[i][k] += ptx;
                   }
                }                  
@@ -213,12 +220,13 @@ public:
             if (dj.trkPt[ip]<minPt) continue;
             if (fabs(dj.trkEta[ip])>maxEta) continue;
             hTrkPtNoQual->Fill(dj.trkPt[ip]);
-            if (dj.trkAlgo[ip]<4||dj.vtrkQual[ip][1]) hTrkPtQual3->Fill(dj.trkPt[ip]);
+//             if (dj.trkAlgo[ip]<4||dj.vtrkQual[ip][1]) hTrkPtQual3->Fill(dj.trkPt[ip]);
             if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
             hTrkPt->Fill(dj.trkPt[ip]);
             hTrkEta->Fill(dj.trkEta[ip]);
             // trk correction
-            float trkWt = dj.vtrkWt[ip][0];
+//             float trkWt = dj.vtrkWt[ip][0];
+            float trkWt = dj.trkWt[ip];
             hTrkCorrPt->Fill(dj.trkPt[ip],trkWt);
             hTrkCorrEta->Fill(dj.trkEta[ip],trkWt);
             // set mpt input
@@ -231,15 +239,18 @@ public:
          me.pt1 = dj.pt1;
          me.phi1 = dj.phi1;
          me.eta1 = dj.eta1;
+         me.pt2 = dj.pt2;
+         me.phi2 = dj.phi2;
+         me.eta2 = dj.eta2;
          me.Calc();
          hMpt->Fill(Aj,me.x);
          for (int i=0; i<nptrange; ++i) {
             vhMptPt[i]->Fill(Aj,me.x_pt[i]);
             for (int j=0; j<ndrbin; ++j) {
-               vhMptPtDr[i][j]->Fill(Aj,me.x_pt[i]);
+               vhMptPtDr[i][j]->Fill(Aj,me.x_pt_dr[i][j]);
             }
             for (int k=0; k<ndphibin; ++k) {
-               vhMptPtDPhi[i][k]->Fill(Aj,me.x_pt[i]);
+               vhMptPtDPhi[i][k]->Fill(Aj,me.x_pt_dphi[i][k]);
             }
          }
          
