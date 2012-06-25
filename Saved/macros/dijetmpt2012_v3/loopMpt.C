@@ -11,7 +11,7 @@
 using namespace std;
 
 void loopMpt(
-            TString outdir = "./fig/06.21HIN_loop"
+            TString outdir = "./fig/06.25_simtrkloop"
              )
 {
    TH1::SetDefaultSumw2();
@@ -20,10 +20,10 @@ void loopMpt(
    const int nCentBin = 2;
    int centBins[3] = {0,12,40};
 
-   TString infdataname="../ntout/output-data-Forest2v2v3_saveTrks_v0_icPu5.root";
-   TString infmcname = "../ntout/output-hy18dj80_forest2_v0_xsec_icPu5.root";
+   TString infdataname = "../ntout/output-data-Forest2v3_v2_saveTrks_jpt120_icPu5.root";
+   TString infmcname="../ntout/output-hy18dj80_Forest2v21_v2_allTrks_simtrk_jpt100_xsec_icPu5.root";
    
-   bool isMC=false;
+   bool isMC=true;
    
    TString infname=infdataname;
    if (isMC) infname=infmcname;
@@ -58,8 +58,8 @@ void loopMpt(
       ana.minPt = 0.5;
       ana.maxEta = etamax;
       ana.Init(nt);
-      ana.Loop();
-//       ana.Loop(5000);
+//       ana.Loop();
+      ana.Loop(5000);
    }
    
    hout->Write();

@@ -2,8 +2,8 @@
 #define JetTrkEvent_h
 
 static const int MAXTRK = 30000;
-static const int NTRKQUAL = 2;
-// static const int NTRKQUAL = 3;
+// static const int NTRKQUAL = 2;
+static const int NTRKQUAL = 3;
 
 // Convinient Output Classes
 class EvtSel {
