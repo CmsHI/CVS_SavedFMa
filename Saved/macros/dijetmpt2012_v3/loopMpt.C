@@ -11,7 +11,7 @@
 using namespace std;
 
 void loopMpt(
-            TString outdir = "./fig/06.25_simtrkloop"
+            TString outdir = "./fig/06.26_genploop"
              )
 {
    TH1::SetDefaultSumw2();
@@ -20,10 +20,16 @@ void loopMpt(
    const int nCentBin = 2;
    int centBins[3] = {0,12,40};
 
-   TString infdataname = "../ntout/output-data-Forest2v3_v2_saveTrks_jpt120_icPu5.root";
-   TString infmcname="../ntout/output-hy18dj80_Forest2v21_v2_allTrks_simtrk_jpt100_xsec_icPu5.root";
+//    TString infdataname="../ntout/output-data-Forest2v2v3_saveTrks_v0_icPu5.root";
+//    TString infmcname = "../ntout/output-hy18dj80_forest2_v0_xsec_icPu5.root";
+//    TString infdataname = "../ntout/output-data-Forest2v3_v2_saveTrks_jpt120_icPu5.root";
+//    TString infmcname="../ntout/output-hy18dj80_Forest2v21_v1_allTrks_simtrk_jpt95_xsec_icPu5.root";
+//    TString infmcname="../ntout/output-hy18dj80_Forest2v21_v2_allTrks_simtrk_jpt100_xsec_icPu5.root";
+   TString infdataname="../ntout/output-data-Forest2v3_v3_saveTrks_jpt120_icPu5.root";
+   TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_simtrk_jpt120_xsec_icPu5.root";
    
    bool isMC=true;
+   int particleRecLevel =0; // 0 gen, 1 sim, 2 sim mat, 3 rec mat 4 rec
    
    TString infname=infdataname;
    if (isMC) infname=infmcname;
@@ -32,7 +38,7 @@ void loopMpt(
    float minJetPt2=50;
    float sigDPhi=3.1415926*2./3;
    float etamax=2.4;
-   TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10);
+   TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel);
    if (isMC) tag.ReplaceAll("HisData","HisMc");
 
    TFile *inf = TFile::Open(infname);
@@ -49,6 +55,7 @@ void loopMpt(
       TString name = Form("%dto%d",centBins[c],centBins[c+1]);
       AnaMPT ana(name);
       ana.isMC = isMC;
+      ana.particleRecLevel = particleRecLevel;
       ana.cMin=centBins[c];
       ana.cMax=centBins[c+1];
       ana.minJetPt1 = minJetPt1;
@@ -58,8 +65,8 @@ void loopMpt(
       ana.minPt = 0.5;
       ana.maxEta = etamax;
       ana.Init(nt);
-//       ana.Loop();
-      ana.Loop(5000);
+      ana.Loop();
+//       ana.Loop(5000);
    }
    
    hout->Write();

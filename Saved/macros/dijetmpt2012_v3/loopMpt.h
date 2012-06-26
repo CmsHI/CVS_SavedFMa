@@ -113,6 +113,7 @@ public:
    int cMin, cMax;
    float minJetPt1,minJetPt2,maxJetEta,sigDPhi;
    float minPt, maxEta;
+   int particleRecLevel; // 0 gen, 1 sim, 2 sim mat, 3 rec mat 4 rec
    TTree * t;
 
    EvtSel evt;
@@ -199,7 +200,7 @@ public:
          t->GetEntry(iEvt);
          
          // selection
-      if (iEvt%1000==0) cout <<iEvt<<" / "<<numEvt << " run: " << evt.run << " evt: " << evt.evt << " bin: " << evt.cBin << " nT: " << evt.nT << " trig: " <<  evt.trig << " anaEvtSel: " << evt.anaEvtSel <<endl;
+      if (cMax<=12&&iEvt%1000==0) cout <<iEvt<<" / "<<numEvt << " run: " << evt.run << " evt: " << evt.evt << " bin: " << evt.cBin << " nT: " << evt.nT << " trig: " <<  evt.trig << " anaEvtSel: " << evt.anaEvtSel <<endl;
          if (!isMC&&!evt.anaEvtSel) continue;
 
          if (evt.cBin<cMin||evt.cBin>=cMax) continue;
@@ -214,34 +215,67 @@ public:
          hJDPhi->Fill(jdphi);
          hAj->Fill(Aj);
          
-         // Track loop
-         me.n=0;
-         for (int ip=0; ip<dj.nTrk; ++ip) {
-            if (dj.trkPt[ip]<minPt) continue;
-            if (fabs(dj.trkEta[ip])>maxEta) continue;
-            hTrkPtNoQual->Fill(dj.trkPt[ip]);
-//             if (dj.trkAlgo[ip]<4||dj.vtrkQual[ip][1]) hTrkPtQual3->Fill(dj.trkPt[ip]);
-            if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
-            hTrkPt->Fill(dj.trkPt[ip]);
-            hTrkEta->Fill(dj.trkEta[ip]);
-            // trk correction
-//             float trkWt = dj.vtrkWt[ip][0];
-            float trkWt = dj.trkWt[ip];
-            hTrkCorrPt->Fill(dj.trkPt[ip],trkWt);
-            hTrkCorrEta->Fill(dj.trkEta[ip],trkWt);
-            // set mpt input
-            me.pt[me.n] = dj.trkPt[ip];
-            me.eta[me.n] = dj.trkEta[ip];
-            me.phi[me.n] = dj.trkPhi[ip];
-            me.weight[me.n] = trkWt;
-            ++me.n;
-         }
          me.pt1 = dj.pt1;
          me.phi1 = dj.phi1;
          me.eta1 = dj.eta1;
          me.pt2 = dj.pt2;
          me.phi2 = dj.phi2;
          me.eta2 = dj.eta2;
+
+         // Track loop
+         if (particleRecLevel>=3) {
+            me.n=0;
+            for (int ip=0; ip<dj.nTrk; ++ip) {
+               if (dj.trkPt[ip]<minPt) continue;
+               if (fabs(dj.trkEta[ip])>maxEta) continue;
+               hTrkPtNoQual->Fill(dj.trkPt[ip]);
+   //             if (dj.trkAlgo[ip]<4||dj.vtrkQual[ip][1]) hTrkPtQual3->Fill(dj.trkPt[ip]);
+               if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
+               hTrkPt->Fill(dj.trkPt[ip]);
+               hTrkEta->Fill(dj.trkEta[ip]);
+               // trk correction
+   //             float trkWt = dj.vtrkWt[ip][0];
+               float trkWt = dj.trkWt[ip];
+               hTrkCorrPt->Fill(dj.trkPt[ip],trkWt);
+               hTrkCorrEta->Fill(dj.trkEta[ip],trkWt);
+               // set mpt input
+               me.pt[me.n] = dj.trkPt[ip];
+               me.eta[me.n] = dj.trkEta[ip];
+               me.phi[me.n] = dj.trkPhi[ip];
+               me.weight[me.n] = trkWt;
+               ++me.n;
+            }
+         } else if (particleRecLevel>=1) {
+            me.n=0;
+            // Sim loop
+            for (int ip=0; ip<dj.nSim; ++ip) {
+               if (dj.simPt[ip]<minPt) continue;
+               if (fabs(dj.simEta[ip])>maxEta) continue;
+               hGenpPt->Fill(dj.simPt[ip]);
+               hGenpEta->Fill(dj.simEta[ip]);
+               // set mpt input
+               me.pt[me.n] = dj.simPt[ip];
+               me.eta[me.n] = dj.simEta[ip];
+               me.phi[me.n] = dj.simPhi[ip];
+               me.weight[me.n] = 1;
+               ++me.n;
+            }
+         }else {
+            me.n=0;
+            // Genp loop
+            for (int ip=0; ip<dj.nGenp; ++ip) {
+               if (dj.genpPt[ip]<minPt) continue;
+               if (fabs(dj.genpEta[ip])>maxEta) continue;
+               hGenpPt->Fill(dj.genpPt[ip]);
+               hGenpEta->Fill(dj.genpEta[ip]);
+               // set mpt input
+               me.pt[me.n] = dj.genpPt[ip];
+               me.eta[me.n] = dj.genpEta[ip];
+               me.phi[me.n] = dj.genpPhi[ip];
+               me.weight[me.n] = 1;
+               ++me.n;
+            }
+         } // End of if rec level
          me.Calc();
          hMpt->Fill(Aj,me.x);
          for (int i=0; i<nptrange; ++i) {
@@ -252,14 +286,6 @@ public:
             for (int k=0; k<ndphibin; ++k) {
                vhMptPtDPhi[i][k]->Fill(Aj,me.x_pt_dphi[i][k]);
             }
-         }
-         
-         // Genp loop
-         for (int ip=0; ip<dj.nGenp; ++ip) {
-            if (dj.genpPt[ip]<minPt) continue;
-            if (fabs(dj.genpEta[ip])>maxEta) continue;
-            hGenpPt->Fill(dj.genpPt[ip]);
-            hGenpEta->Fill(dj.genpEta[ip]);
          }
       } // End of event loop
    }

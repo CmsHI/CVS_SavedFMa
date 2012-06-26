@@ -78,7 +78,11 @@ public:
    int genpCh[MAXTRK];
    int genpSube[MAXTRK];
    bool genpSel[MAXTRK];
-   bool genpHasRec[MAXTRK];
+   int nSim;
+   float simPt[MAXTRK];
+   float simEta[MAXTRK];
+   float simPhi[MAXTRK];
+   bool simHasRec[MAXTRK];
    TString leaves;
    void clear() {
       pt1=-99; pt1raw=-99; eta1=-99; phi1=-99; pt2=-99; pt2raw=-99; eta2=-99; phi2=-99; deta=-99; dphi=-99; Aj=-99;
@@ -141,6 +145,10 @@ void JTSetBranchAddress(TTree * tgj, EvtSel & evt, DiJet & gj) {
    tgj->SetBranchAddress("genpPhi",gj.genpPhi);
 //    tgj->SetBranchAddress("genpCh",gj.genpCh);
    tgj->SetBranchAddress("genpSube",gj.genpSube);
-   tgj->SetBranchAddress("genpHasRec",gj.genpHasRec);
+   tgj->SetBranchAddress("nSim",&gj.nSim);
+   tgj->SetBranchAddress("simPt",gj.simPt);
+   tgj->SetBranchAddress("simEta",gj.simEta);
+   tgj->SetBranchAddress("simPhi",gj.simPhi);
+   tgj->SetBranchAddress("simHasRec",gj.simHasRec);
 }
 #endif
