@@ -7,6 +7,7 @@
 #include "TTree.h"
 #include "commonTool.h"
 #include "JetTrkEvent.h"
+#include "Corrector3D.h"
 using namespace TMath;
 
 // MPT Ranges
@@ -119,8 +120,12 @@ public:
    EvtSel evt;
    DiJet dj;
    MPTEvent me;
+
+   TrackingCorrections trkCorr;
    
    std::vector<float> xbins;
+   
+   TFile * outf;
    
    // basics
    TH1D * hCentrality;
@@ -147,7 +152,8 @@ public:
 
    AnaMPT(TString myname) :
    name(myname),
-   isMC(false)
+   isMC(false),
+   trkCorr("Forest2_v19","hitrkEffAnalyzer_MergedGeneral")
    {
       cout << "Analyze MPT: " << name << endl;
       t=0;
@@ -159,22 +165,37 @@ public:
       for (int i=0; i<=nxbins; ++i) xbins.push_back(xmin+dx*i);
    }
    
-   void Init(TTree * tgj) {
+   void Init(TTree * tgj) {   
+      trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj30_Forest2_v19.root",30);
+      trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj50_Forest2_v19.root",50);
+      trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj80_Forest2_v19.root",80);
+      trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj120_Forest2_v19.root",120);
+      trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj170_Forest2_v19.root",170);
+      trkCorr.smoothLevel_ = 1; 	 
+      trkCorr.Init();
+   
       t=tgj;
       JTSetBranchAddress(tgj,evt,dj);
       
+      if (outf) outf->cd();
       hCentrality = new TH1D("hCentrality"+name,";Centrality Bin;",40,0,40);
       hJetPt2D = new TH2D("hJetPt2D"+name,";p_{T,1} (GeV/c);p_{T,2} (GeV/c)",60,0,300,60,0,300);
       hJDPhi = new TH1D("hJDPhi"+name,";#Delta#phi(j1,j2);",40,0,3.14159);
       hAj = new TH1D("hAj"+name,";A_{J};",40,0,0.8);
 
-      hGenpPt = new TH1D("hGenpPt"+name,"; p_{T};",100,0,200);
+//       hGenpPt = new TH1D("hGenpPt"+name,"; p_{T};",100,0,200);
+//       hTrkPtNoQual = new TH1D("hTrkPtNoQual"+name,"; p_{T};",100,0,200);
+//       hTrkPtQual3 = new TH1D("hTrkPtQual3"+name,"; p_{T};",100,0,200);
+//       hTrkPt = new TH1D("hTrkPt"+name,"; p_{T};",100,0,200);
+//       hTrkCorrPt = new TH1D("hTrkCorrPt"+name,"; p_{T};",100,0,200);
+      hGenpPt = (TH1D*)trkCorr.ptBin_->Clone("hGenpPt"+name);
+      hTrkPtNoQual = (TH1D*)trkCorr.ptBin_->Clone("hTrkPtNoQual"+name);
+      hTrkPtQual3 = (TH1D*)trkCorr.ptBin_->Clone("hTrkPtQual3"+name);
+      hTrkPt = (TH1D*)trkCorr.ptBin_->Clone("hTrkPt"+name);
+      hTrkCorrPt = (TH1D*)trkCorr.ptBin_->Clone("hTrkCorrPt"+name);
+
       hGenpEta = new TH1D("hGenpEta"+name,"; #eta;",48,-2.4,2.4);
-      hTrkPtNoQual = new TH1D("hTrkPtNoQual"+name,"; p_{T};",100,0,200);
-      hTrkPtQual3 = new TH1D("hTrkPtQual3"+name,"; p_{T};",100,0,200);
-      hTrkPt = new TH1D("hTrkPt"+name,"; p_{T};",100,0,200);
       hTrkEta = new TH1D("hTrkEta"+name,"; #eta;",48,-2.4,2.4);
-      hTrkCorrPt = new TH1D("hTrkCorrPt"+name,"; p_{T};",100,0,200);
       hTrkCorrEta = new TH1D("hTrkCorrEta"+name,"; #eta;",48,-2.4,2.4);
 
       hMpt = new TH2D(Form("hMpt%s",name.Data()),";Aj;mpt;",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
@@ -223,29 +244,31 @@ public:
          me.eta2 = dj.eta2;
 
          // Track loop
-         if (particleRecLevel>=3) {
-            me.n=0;
-            for (int ip=0; ip<dj.nTrk; ++ip) {
-               if (dj.trkPt[ip]<minPt) continue;
-               if (fabs(dj.trkEta[ip])>maxEta) continue;
-               hTrkPtNoQual->Fill(dj.trkPt[ip]);
-   //             if (dj.trkAlgo[ip]<4||dj.vtrkQual[ip][1]) hTrkPtQual3->Fill(dj.trkPt[ip]);
-               if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
-               hTrkPt->Fill(dj.trkPt[ip]);
-               hTrkEta->Fill(dj.trkEta[ip]);
-               // trk correction
-   //             float trkWt = dj.vtrkWt[ip][0];
-               float trkWt = dj.trkWt[ip];
-               hTrkCorrPt->Fill(dj.trkPt[ip],trkWt);
-               hTrkCorrEta->Fill(dj.trkEta[ip],trkWt);
-               // set mpt input
-               me.pt[me.n] = dj.trkPt[ip];
-               me.eta[me.n] = dj.trkEta[ip];
-               me.phi[me.n] = dj.trkPhi[ip];
-               me.weight[me.n] = trkWt;
-               ++me.n;
+         me.n=0;
+         for (int ip=0; ip<dj.nTrk; ++ip) {
+            if (dj.trkPt[ip]<minPt) continue;
+            if (fabs(dj.trkEta[ip])>maxEta) continue;
+            hTrkPtNoQual->Fill(dj.trkPt[ip]);
+//             if (dj.trkAlgo[ip]<4||dj.vtrkQual[ip][1]) hTrkPtQual3->Fill(dj.trkPt[ip]);
+            if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
+            hTrkPt->Fill(dj.trkPt[ip]);
+            hTrkEta->Fill(dj.trkEta[ip]);
+            // trk correction
+//             float trkWt = dj.vtrkWt[ip][0];
+            float trkWt = dj.trkWt[ip];
+            hTrkCorrPt->Fill(dj.trkPt[ip],trkWt);
+            hTrkCorrEta->Fill(dj.trkEta[ip],trkWt);
+            // set mpt input
+            if (particleRecLevel>=3) {
+                  me.pt[me.n] = dj.trkPt[ip];
+                  me.eta[me.n] = dj.trkEta[ip];
+                  me.phi[me.n] = dj.trkPhi[ip];
+                  me.weight[me.n] = trkWt;
+                  ++me.n;
             }
-         } else if (particleRecLevel>=1) {
+         }
+
+         if (particleRecLevel>=1&&particleRecLevel<3) {
             me.n=0;
             // Sim loop
             for (int ip=0; ip<dj.nSim; ++ip) {
@@ -260,7 +283,7 @@ public:
                me.weight[me.n] = 1;
                ++me.n;
             }
-         }else {
+         }else if (particleRecLevel==0){
             me.n=0;
             // Genp loop
             for (int ip=0; ip<dj.nGenp; ++ip) {

@@ -16,7 +16,7 @@ void loopMpt(
 {
    TH1::SetDefaultSumw2();
    gSystem->mkdir(outdir,kTRUE);
-   
+
    const int nCentBin = 2;
    int centBins[3] = {0,12,40};
 
@@ -29,7 +29,7 @@ void loopMpt(
    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_simtrk_jpt120_xsec_icPu5.root";
    
    bool isMC=true;
-   int particleRecLevel =0; // 0 gen, 1 sim, 2 sim mat, 3 rec mat 4 rec
+   int particleRecLevel = 0; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
    
    TString infname=infdataname;
    if (isMC) infname=infmcname;
@@ -64,6 +64,7 @@ void loopMpt(
       ana.sigDPhi = sigDPhi;
       ana.minPt = 0.5;
       ana.maxEta = etamax;
+      ana.outf = hout;
       ana.Init(nt);
       ana.Loop();
 //       ana.Loop(5000);
