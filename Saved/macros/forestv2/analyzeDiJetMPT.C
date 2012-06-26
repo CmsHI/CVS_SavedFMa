@@ -188,8 +188,8 @@ void analyzeDiJetMPT(
    ///////////////////////////////////////////////////
    // Main loop
    ///////////////////////////////////////////////////
-//    for (int i=0;i<c->GetEntries();i++)
-   for (int i=0;i<1000;i++)
+   for (int i=0;i<c->GetEntries();i++)
+//    for (int i=0;i<1000;i++)
    {
       c->GetEntry(i);
       if (pfTree) pfTree->GetEntry(i);
@@ -496,32 +496,32 @@ void analyzeDiJetMPT(
       // Gen Particles
       ////////////////////////
       gj.nGenp =0;
-      if (!doSimTrk) {  
-         for (int ip=0; ip<c->genparticle.mult; ++ip) {
-            if (c->genparticle.pt[ip] < cutPtTrk) continue;
-            if (fabs(c->genparticle.eta[ip]) > cutEtaTrk) continue;
-            if (abs(int(c->genparticle.chg[ip])) ==0 ) continue;
-            // Fill
-            hGenpPt->Fill(c->genparticle.pt[ip]);
-            gj.genpPt[gj.nGenp] = c->genparticle.pt[ip];
-            gj.genpEta[gj.nGenp] = c->genparticle.eta[ip];
-            gj.genpPhi[gj.nGenp] = c->genparticle.phi[ip];
-            gj.genpCh[gj.nGenp] = c->genparticle.chg[ip];
-            gj.genpSube[gj.nGenp] = c->genparticle.sube[ip];
-            gj.genpSel[gj.nGenp] = (int(c->genparticle.sube[ip]) ==0);
-            ++gj.nGenp;
-         }
-      } else {
+      for (int ip=0; ip<c->genparticle.mult; ++ip) {
+         if (c->genparticle.pt[ip] < cutPtTrk) continue;
+         if (fabs(c->genparticle.eta[ip]) > cutEtaTrk) continue;
+         if (abs(int(c->genparticle.chg[ip])) ==0 ) continue;
+         // Fill
+         hGenpPt->Fill(c->genparticle.pt[ip]);
+         gj.genpPt[gj.nGenp] = c->genparticle.pt[ip];
+         gj.genpEta[gj.nGenp] = c->genparticle.eta[ip];
+         gj.genpPhi[gj.nGenp] = c->genparticle.phi[ip];
+         gj.genpCh[gj.nGenp] = c->genparticle.chg[ip];
+         gj.genpSube[gj.nGenp] = c->genparticle.sube[ip];
+         gj.genpSel[gj.nGenp] = (int(c->genparticle.sube[ip]) ==0);
+         ++gj.nGenp;
+      }
+      
+      if (doSimTrk) {
+         gj.nSim=0;
          for (int ip=0; ip<anaTrks[0]->nParticle; ++ip) {
             if (anaTrks[0]->pPt[ip] < cutPtTrk) continue;
             if (fabs(anaTrks[0]->pEta[ip]) > cutEtaTrk) continue;
             // Fill
-            hGenpPt->Fill(anaTrks[0]->pPt[ip]);
-            gj.genpPt[gj.nGenp] = anaTrks[0]->pPt[ip];
-            gj.genpEta[gj.nGenp] = anaTrks[0]->pEta[ip];
-            gj.genpPhi[gj.nGenp] = anaTrks[0]->pPhi[ip];
-            gj.genpHasRec[gj.nGenp] = (anaTrks[0]->pNRec[ip]==1&&(anaTrks[0]->mtrkNHit[ip]<8||anaTrks[0]->mtrkQual[ip]>0));
-            ++gj.nGenp;
+            gj.simPt[gj.nSim] = anaTrks[0]->pPt[ip];
+            gj.simEta[gj.nSim] = anaTrks[0]->pEta[ip];
+            gj.simPhi[gj.nSim] = anaTrks[0]->pPhi[ip];
+            gj.simHasRec[gj.nSim] = (anaTrks[0]->pNRec[ip]==1&&(anaTrks[0]->mtrkAlgo[ip]<4||anaTrks[0]->mtrkQual[ip]>0));
+            ++gj.nSim;
          }
       }
 

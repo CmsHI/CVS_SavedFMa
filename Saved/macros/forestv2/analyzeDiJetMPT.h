@@ -77,7 +77,11 @@ public:
    int genpCh[MAXTRK];
    int genpSube[MAXTRK];
    bool genpSel[MAXTRK];
-   bool genpHasRec[MAXTRK];
+   int nSim;
+   float simPt[MAXTRK];
+   float simEta[MAXTRK];
+   float simPhi[MAXTRK];
+   bool simHasRec[MAXTRK];
    TString leaves;
    void clear() {
       pt1=-99; pt1raw=-99; eta1=-99; phi1=-99; pt2=-99; pt2raw=-99; eta2=-99; phi2=-99; deta=-99; dphi=-99; Aj=-99;
@@ -86,10 +90,10 @@ public:
       jlpfPt=-99; jlpfEta=-99; jlpfPhi=-99; jlpfJetDr=-99; jlpfId=-99; pfPhoPt=0;
       ref1pt=-99; ref1eta=-99; ref1phi=-99; ref1partonpt=-99; ref1partonflavor=-99; ref2pt=-99; ref2eta=-99; ref2phi=-99; ref2partonpt=-99; ref2partonflavor;
       genjetpt1=-99; genjeteta1=-99; genjetphi1=-99; genjetpt2=-99; genjeteta2=-99; genjetphi2;
-      nTrk=0; nJet=0; nGenJet=0; nPf=0; nGenp=0;
+      nTrk=0; nJet=0; nGenJet=0; nPf=0; nGenp=0; nSim=0;
    }
    void clearParticles() {
-      nTrk=0; nPf=0; nGenp=0;
+      nTrk=0; nPf=0; nGenp=0; nSim=0;
    }
    void clearTracks() {
       nTrk=0; nPf=0;
@@ -105,7 +109,7 @@ void BookGJBranches(TTree * tgj, EvtSel & evt, DiJet & gj) {
    tgj->Branch("trkPhi",gj.trkPhi,"trkPhi[nTrk]/F");
 //    tgj->Branch("trkJetDr",gj.trkJetDr,"trkJetDr[nTrk]/F");
    tgj->Branch("trkWt",gj.trkWt,"trkWt[nTrk]/F");
-//    tgj->Branch("vtrkWt",gj.vtrkWt,Form("vtrkWt[nTrk][%d]/F",NTRKQUAL));
+   tgj->Branch("vtrkWt",gj.vtrkWt,Form("vtrkWt[nTrk][%d]/F",NTRKQUAL));
 //    tgj->Branch("vtrkEff",gj.vtrkEff,Form("vtrkEff[nTrk][%d]/F",NTRKQUAL));
 //    tgj->Branch("vtrkFak",gj.vtrkFak,Form("vtrkFak[nTrk][%d]/F",NTRKQUAL));
    tgj->Branch("trkEff",gj.trkEff,"trkEff[nTrk]/F");
@@ -139,7 +143,11 @@ void BookGJBranches(TTree * tgj, EvtSel & evt, DiJet & gj) {
    tgj->Branch("genpPhi",gj.genpPhi,"genpPhi[nGenp]/F");
 //    tgj->Branch("genpCh",gj.genpCh,"genpCh[nGenp]/I");
    tgj->Branch("genpSube",gj.genpSube,"genpSube[nGenp]/I");
-   tgj->Branch("genpHasRec",gj.genpHasRec,"genpHasRec[nGenp]/O");
+   tgj->Branch("nSim",&gj.nSim,"nSim/I");
+   tgj->Branch("simPt",gj.simPt,"simPt[nSim]/F");
+   tgj->Branch("simEta",gj.simEta,"simEta[nSim]/F");
+   tgj->Branch("simPhi",gj.simPhi,"simPhi[nSim]/F");
+   tgj->Branch("simHasRec",gj.simHasRec,"simHasRec[nSim]/O");
 }
 
 class CentralityReWeight {
