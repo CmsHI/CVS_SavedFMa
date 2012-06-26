@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <TH1D.h>
 #include <TTree.h>
 #include <TH2D.h>
@@ -16,7 +17,7 @@
 #include "loopMpt.h"
 
 
-bool doResCorr=true;
+bool doResCorr=false;
 
 void balanceMetVsAj(TString infname,
                     TString insrc, TString metType = "",bool drawLegend = false,
@@ -176,18 +177,27 @@ void balanceMetVsAj(TString infname,
 }
 
 void MptAjPlotAllAcc_2Cent(
-                           TString outdir = "./fig/06.21HIN_loop"
 //                            TString outdir = "./fig/06.23Mpt2DAna"
 )
 {
    TH1::SetDefaultSumw2();
+
+//    TString inputFile_mc="fig/06.21HIN_loop/HisMc_icPu5_trkHPCorr_120_50_2094_eta24.root";
+//    TString inputFile_data="fig/06.21HIN_loop/HisData_icPu5_trkHPCorr_120_50_2094_eta24.root";
+//    TString inputFile_mc="fig/06.25_simtrkloop_olderforest/HisMc_icPu5_trkHPCorr_120_50_2094_eta24_prec1.root";
+//    TString inputFile_data="fig/06.25_simtrkloop_olderforest/HisData_icPu5_trkHPCorr_120_50_2094_eta24_prec1.root";
+//    TString inputFile_mc="fig/06.25HIN_loop/HisMc_icPu5_trkHPCorr_120_50_2094_eta24.root";
+//    TString inputFile_data="fig/06.25HIN_loop/HisData_icPu5_trkHPCorr_120_50_2094_eta24.root";
+   TString inputFile_mc="fig/06.26_genploop/HisMc_icPu5_trkHPCorr_120_50_2094_eta24_prec4.root";
+   TString inputFile_data="fig/06.26_genploop/HisData_icPu5_trkHPCorr_120_50_2094_eta24_prec4.root";
+
+   string path=inputFile_data.Data();
+   TString outdir = path.substr(0, path.find_last_of('/'));
+   cout << "Output: " << outdir << endl;
    gSystem->mkdir(outdir,kTRUE);
 
-   TString inputFile_mc="fig/06.21HIN_loop/HisMc_icPu5_trkHPCorr_120_50_2094_eta24.root";
-   TString inputFile_data="fig/06.21HIN_loop/HisData_icPu5_trkHPCorr_120_50_2094_eta24.root";
-//    TString inputFile_mc="fig/06.23Mpt2DAna/HisMc_icPu5_trkHPCorr_120_50_2094_eta24.root";
-//    TString inputFile_data="fig/06.23Mpt2DAna/HisData_icPu5_trkHPCorr_120_50_2094_eta24.root";
-   
+   TString tag = Form("CorrRes%d-data-mcRec",doResCorr);
+
    Float_t leftMargin=0.28,bottomMargin=0.18;
    TCanvas *c1 = new TCanvas("c1","",1000,1000);
    makeMultiPanelCanvas(c1,2,2,0.0,0.0,leftMargin,bottomMargin,0.02);
@@ -237,6 +247,6 @@ void MptAjPlotAllAcc_2Cent(
 //    drawText("(d)",0.04,0.95);
    gPad->RedrawAxis();
    
-   c1->SaveAs(Form("%s/missingPtParallel-TrkHP-CorrRes%d-data-mcRec-AllAcc.pdf",outdir.Data(),doResCorr));
-   c1->SaveAs(Form("%s/missingPtParallel-TrkHP-CorrRes%d-data-mcRec-AllAcc.gif",outdir.Data(),doResCorr));
+   c1->SaveAs(Form("%s/Mpt_%s_AllAcc.pdf",outdir.Data(),tag.Data()));
+   c1->SaveAs(Form("%s/Mpt_%s_AllAcc.gif",outdir.Data(),tag.Data()));
 }
