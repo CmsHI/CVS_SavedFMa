@@ -65,6 +65,7 @@ void balanceMetVsAj(TString infname,
                mpt*=0.8;
             }
          }
+         cout << hMpt->GetName() << ", mean: " << mpt << endl;
          pe[i]->SetBinContent(a+1,mpt);
          pe[i]->SetBinError(a+1,hMpt->GetRMS()/sqrt(hMpt->GetEntries()));
       }      
@@ -177,7 +178,6 @@ void balanceMetVsAj(TString infname,
 }
 
 void MptAjPlotAllAcc_2Cent(
-//                            TString outdir = "./fig/06.23Mpt2DAna"
 )
 {
    TH1::SetDefaultSumw2();
@@ -188,8 +188,10 @@ void MptAjPlotAllAcc_2Cent(
 //    TString inputFile_data="fig/06.25_simtrkloop_olderforest/HisData_icPu5_trkHPCorr_120_50_2094_eta24_prec1.root";
 //    TString inputFile_mc="fig/06.25HIN_loop/HisMc_icPu5_trkHPCorr_120_50_2094_eta24.root";
 //    TString inputFile_data="fig/06.25HIN_loop/HisData_icPu5_trkHPCorr_120_50_2094_eta24.root";
-   TString inputFile_mc="fig/06.26_genploop/HisMc_icPu5_trkHPCorr_120_50_2094_eta24_prec4.root";
-   TString inputFile_data="fig/06.26_genploop/HisData_icPu5_trkHPCorr_120_50_2094_eta24_prec4.root";
+//    TString inputFile_mc="fig/06.26_genploop/HisMc_icPu5_trkHPCorr_120_50_2094_eta24_prec0.root";
+//    TString inputFile_data="fig/06.26_genploop/HisData_icPu5_trkHPCorr_120_50_2094_eta24_prec4.root";
+   TString inputFile_mc="fig/06.26_genploop/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0.root";
+   TString inputFile_data="fig/06.26_genploop/HisData_icPu5_trkHPCorr_120_50_2749_eta24_prec4.root";
 
    string path=inputFile_data.Data();
    TString outdir = path.substr(0, path.find_last_of('/'));
@@ -226,27 +228,27 @@ void MptAjPlotAllAcc_2Cent(
    drawText("|#eta_{1,2}| < 1.6",ptx+0.20,pty1-0.14);
    gPad->RedrawAxis();
    
-   c1->cd(3);
-//    balanceMetVsAj(inputFile_data,"hi_mptxtrkCorrAllAcc","1SigAll",false,false);
-   balanceMetVsAj(inputFile_data,"hMpt12to40","",false,false);
-   drawText("CMS",0.33,0.90);
-//    float ptx(0.33),pty1(0.35);
-//    drawText("p_{T,1}  > 120GeV/c",ptx,pty1);
-//    drawText("p_{T,2}  > 50GeV/c",ptx,pty1-0.07);
-//    drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty1-0.14);
-   drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
-   drawText("#intL dt = 100 #mub^{-1}",0.33,0.78);
-   drawText(" 30-100%",0.85,0.93);
-//    drawText("(c)",0.31,0.95);
-   gPad->RedrawAxis();
-   
-   c1->cd(4);
-//    balanceMetVsAj(inputFile_data,"hi_mptxtrkCorrAllAcc","0SigAll",false,false);
-   balanceMetVsAj(inputFile_data,"hMpt0to12","",false,false);
-   drawText("0-30%",0.7,0.93);
-//    drawText("(d)",0.04,0.95);
-   gPad->RedrawAxis();
-   
-   c1->SaveAs(Form("%s/Mpt_%s_AllAcc.pdf",outdir.Data(),tag.Data()));
-   c1->SaveAs(Form("%s/Mpt_%s_AllAcc.gif",outdir.Data(),tag.Data()));
+//    c1->cd(3);
+// //    balanceMetVsAj(inputFile_data,"hi_mptxtrkCorrAllAcc","1SigAll",false,false);
+//    balanceMetVsAj(inputFile_data,"hMpt12to40","",false,false);
+//    drawText("CMS",0.33,0.90);
+// //    float ptx(0.33),pty1(0.35);
+// //    drawText("p_{T,1}  > 120GeV/c",ptx,pty1);
+// //    drawText("p_{T,2}  > 50GeV/c",ptx,pty1-0.07);
+// //    drawText("#Delta#phi_{1,2}>  #frac{2}{3}#pi",ptx,pty1-0.14);
+//    drawText("Pb+Pb  #sqrt{s}_{_{NN}}=2.76 TeV",0.33,0.84);
+//    drawText("#intL dt = 100 #mub^{-1}",0.33,0.78);
+//    drawText(" 30-100%",0.85,0.93);
+// //    drawText("(c)",0.31,0.95);
+//    gPad->RedrawAxis();
+//    
+//    c1->cd(4);
+// //    balanceMetVsAj(inputFile_data,"hi_mptxtrkCorrAllAcc","0SigAll",false,false);
+//    balanceMetVsAj(inputFile_data,"hMpt0to12","",false,false);
+//    drawText("0-30%",0.7,0.93);
+// //    drawText("(d)",0.04,0.95);
+//    gPad->RedrawAxis();
+//    
+//    c1->SaveAs(Form("%s/Mpt_AllAcc_%s.pdf",outdir.Data(),tag.Data()));
+//    c1->SaveAs(Form("%s/Mpt_AllAcc_%s.gif",outdir.Data(),tag.Data()));
 }

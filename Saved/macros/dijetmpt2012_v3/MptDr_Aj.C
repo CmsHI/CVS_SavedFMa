@@ -16,7 +16,7 @@
 #include "loopMpt.h"
 
 
-bool doResCorr=true;
+bool doResCorr=false;
 
 void balanceMetVsAj(TString infname,
                     TString insrc, TString metType = "",bool drawLegend = false,
@@ -51,12 +51,15 @@ void balanceMetVsAj(TString infname,
    // Get Values
    for (int a=0; a<nAjBin; ++a) {
       if (a!=nAjBin-2) continue;
+      float sumInAjBin=0;
       for (int idr=0; idr<ndrbin; ++idr) {
+//       for (int idr=0; idr<1; ++idr) {
          float sum=0, sumerr=0;
          for (int i=0;i<nptrange;i++) {
             TString hname = insrc+Form("_pt%d_dr%d",i,idr);
+//             TString hname = insrc+Form("_pt%d",i);
             TH2D * hMptAj = (TH2D*)inf->Get(hname);
-            cout << hname << " " << hMptAj << endl;
+//             cout << hname << " " << hMptAj << ": " << hMptAj->GetEntries() << endl;
             TH1D * hMpt = hMptAj->ProjectionY(hname+Form("_a%d",a),a+1,a+2);
             float mpt = hMpt->GetMean();
             float mpterr = hMpt->GetRMS()/sqrt(hMpt->GetEntries());
@@ -67,14 +70,16 @@ void balanceMetVsAj(TString infname,
             }
             pe[i]->SetBinContent(idr+1,mpt);
             pe[i]->SetBinError(idr+1,mpterr);
-            cout << hMpt->GetName() << " " << hMpt << " mean: " << pe[i]->GetBinContent(idr+1) << endl;
+            cout << hMpt->GetName() << ": " << hMpt->GetEntries() << " mean: " << pe[i]->GetBinContent(idr+1) << " err: " << pe[i]->GetBinError(idr+1,mpterr) << endl;
             sum+=mpt;
             sumerr+=pow(mpterr,2);
          }      
          pe[nptrange]->SetBinContent(idr+1,sum);
          pe[nptrange]->SetBinError(idr+1,sumerr);
-         cout << idr << " iphi mean: " << pe[nptrange]->GetBinContent(idr+1) << endl;
+         cout << idr << " dr sum: " << sum << endl;
+         sumInAjBin+=sum;
       }
+      cout << a << " aj bin sum: " << sumInAjBin << endl;
    }
    
    StackHistograms(nptrange,pe,ppos,pneg,nAjBin);
@@ -96,6 +101,7 @@ void balanceMetVsAj(TString infname,
    pall->GetXaxis()->SetTitleOffset(1.8);
    pall->GetYaxis()->SetTitleOffset(2.4);
    pall->SetNdivisions(505);
+   pall->SetAxisRange(0,3.1415926/2,"X");
    pall->SetAxisRange(-59.9,59.9,"Y");
    pall->SetMarkerSize(1);
    pall->SetMarkerColor(kBlack);
@@ -184,16 +190,28 @@ void balanceMetVsAj(TString infname,
 }
 
 void MptDr_Aj(
-                  TString outdir = "./fig/06.25_mptdphi"
 )
 {
    TH1::SetDefaultSumw2();
-   gSystem->mkdir(outdir,kTRUE);
 
-   TString inputFile_mc="fig/06.25HIN_loop/HisMc_icPu5_trkHPCorr_120_50_2094_eta24.root";
-   TString inputFile_data="fig/06.25HIN_loop/HisData_icPu5_trkHPCorr_120_50_2094_eta24.root";
+//    TString inputFile_mc="fig/06.25HIN_loop/HisMc_icPu5_trkHPCorr_120_50_2094_eta24.root";
+//    TString inputFile_data="fig/06.25HIN_loop/HisData_icPu5_trkHPCorr_120_50_2094_eta24.root";
 //    TString inputFile_mc="fig/06.23Mpt2DAna/HisMc_icPu5_trkHPCorr_120_50_2094_eta24.root";
 //    TString inputFile_data="fig/06.23Mpt2DAna/HisData_icPu5_trkHPCorr_120_50_2094_eta24.root";
+//    TString inputFile_mc="fig/06.26_genploop/HisMc_icPu5_trkHPCorr_120_50_2094_eta24_prec0.root";
+//    TString inputFile_data="fig/06.26_genploop/HisData_icPu5_trkHPCorr_120_50_2094_eta24_prec4.root";
+   TString inputFile_mc="fig/06.26_genploop/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0.root";
+   TString inputFile_data="fig/06.26_genploop/HisData_icPu5_trkHPCorr_120_50_2749_eta24_prec4.root";
+
+   cout << "mc:   " << inputFile_mc << endl;
+   cout << "data: " << inputFile_data << endl;
+
+   string path=inputFile_data.Data();
+   TString outdir = path.substr(0, path.find_last_of('/'));
+   cout << "Output: " << outdir << endl;
+   gSystem->mkdir(outdir,kTRUE);
+
+   TString tag = Form("CorrRes%d-data-mcRec",doResCorr);
    
    Float_t leftMargin=0.28,bottomMargin=0.18;
    TCanvas *c1 = new TCanvas("c1","",1000,1000);
@@ -244,6 +262,6 @@ void MptDr_Aj(
 //    drawText("(d)",0.04,0.95);
    gPad->RedrawAxis();
    
-   c1->SaveAs(Form("%s/missingPtParallel-TrkHP-CorrRes%d-data-mcRec-Dr.pdf",outdir.Data(),doResCorr));
-   c1->SaveAs(Form("%s/missingPtParallel-TrkHP-CorrRes%d-data-mcRec-Dr.gif",outdir.Data(),doResCorr));
+   c1->SaveAs(Form("%s/Mpt_Dr_%s.pdf",outdir.Data(),tag.Data()));
+   c1->SaveAs(Form("%s/Mpt_Dr_%s.gif",outdir.Data(),tag.Data()));
 }

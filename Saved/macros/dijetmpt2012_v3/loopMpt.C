@@ -12,6 +12,7 @@ using namespace std;
 
 void loopMpt(
             TString outdir = "./fig/06.26_genploop"
+//             TString outdir = "./fig/test"
              )
 {
    TH1::SetDefaultSumw2();
@@ -28,8 +29,8 @@ void loopMpt(
    TString infdataname="../ntout/output-data-Forest2v3_v3_saveTrks_jpt120_icPu5.root";
    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_simtrk_jpt120_xsec_icPu5.root";
    
-   bool isMC=true;
-   int particleRecLevel = 4; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
+   bool isMC=false;
+   int particleRecLevel = 0; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
    if (!isMC) particleRecLevel=4;
    
    TString infname=infdataname;
@@ -37,7 +38,7 @@ void loopMpt(
    
    float minJetPt1=120;
    float minJetPt2=50;
-   float sigDPhi=3.1415926*2./3;
+   float sigDPhi=3.1415926*7./8;
    float etamax=2.4;
    TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel);
    if (isMC) tag.ReplaceAll("HisData","HisMc");
@@ -68,7 +69,7 @@ void loopMpt(
       ana.outf = hout;
       ana.Init(nt);
       ana.Loop();
-//       ana.Loop(5000);
+//       ana.Loop(10);
    }
    
    hout->Write();

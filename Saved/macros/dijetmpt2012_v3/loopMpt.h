@@ -27,7 +27,11 @@ const int nAjBin = 9;
 float AjBins[nAjBin+1] = {0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.55};
 
 const int ndrbin=7;
-float drbins[ndrbin+1]={0,0.2,0.4,0.6,0.8,1.0,1.2,100};
+float drbins[ndrbin+1]={0,0.2,0.4,0.6,0.8,1.0,1.2,PiOver2()};
+// const int ndrbin=2;
+// float drbins[ndrbin+1]={0,0.8,PiOver2()};
+// const int ndrbin=1;
+// float drbins[ndrbin+1]={0,PiOver2()};
 
 const int ndphibin=6;
 float dphibins[ndphibin+1]={0,Pi()/12.,2*Pi()/12.,3*Pi()/12.,4*Pi()/12,5*Pi()/12,PiOver2()};
@@ -73,22 +77,35 @@ public:
          float candPhi = phi[it];
          float candWt = weight[it];         
          float dr1 = deltaR(candEta,candPhi,eta1,phi1);
-         float dphi1 = fabs(deltaPhi(candPhi,phi1));
          float dr2 = deltaR(candEta,candPhi,eta2,phi2);
+         float dphi1 = fabs(deltaPhi(candPhi,phi1));
          float dphi2 = fabs(deltaPhi(candPhi,phi1+Pi()));
 
          float ptx = -candPt * cos(candPhi-phi1) * candWt;
          
          x += ptx;
-         
+//          if (it==0) cout << "add to x: " << ptx << endl;
          for (int i=0; i<nptrange; ++i) {
+//             if (it==0) cout << "pt range: " << ptranges[i] << " to " << ptranges[i+1] << endl;
             if (candPt>=ptranges[i] && candPt<ptranges[i+1]) {
+               //if (it==0) cout << "pt1, eta1, phi1: " << pt1 << ", " << eta1 << ", " << phi1 << " candPt: " << candPt << " ptx: " << ptx << endl;
                x_pt[i]+= ptx;
+//             if (it==0) cout << "add to x_pt: " << ptx << endl;
                for (int j=0; j<ndrbin; ++j) {
-                  if ( (dr1 >=drbins[j] && dr1<drbins[j+1]) ||
-                       (dr2 >=drbins[j] && dr2<drbins[j+1])
-                  ) {
-                     x_pt_dr[i][j] += ptx;
+                  float drmin=drbins[j];
+                  float drmax=drbins[j+1];
+//                   cout << "drbin " << j << ": " << drmin << " to " << drmax << endl;
+                  if (j!=ndrbin-1) {
+                     if ( (dr1>=drmin && dr1<drmax) ||
+                          (dr2>=drmin && dr2<drmax)) {
+//                         if (i==0) cout << "drbin " << j << ", dr1: " << dr1 << " dr2: " << dr2 << " ptx: " << ptx << endl;
+                        x_pt_dr[i][j] += ptx;
+                     }
+                  } else {
+                     if ( dr1 >=drmin && dr2 >=drmin) {
+//                         if (i==0) cout << "drbin rest, dr1: " << dr1 << " dr2: " << dr2 << " ptx: " << ptx << endl;
+                        x_pt_dr[i][j] += ptx;
+                     }
                   }
                }
 
@@ -98,11 +115,18 @@ public:
                   ) {
                      x_pt_dphi[i][k] += ptx;
                   }
-               }                  
+               }           
             }
          }
-//          cout << "x: " << x << endl;
       } // end of for cand
+//       float ptsum=0, ptdrsum=0;
+//       for (int i=0; i<nptrange; ++i) {
+//          ptsum+=x_pt[i];
+//          for (int j=0; j<ndrbin; ++j) {
+//             ptdrsum+=x_pt_dr[i][j];
+//          }
+//       }
+//       cout << "x: " << x << " ptsum: " << ptsum << " ptdrsum: " << ptdrsum << endl;
    }
 };
 
