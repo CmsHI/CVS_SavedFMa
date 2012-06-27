@@ -79,11 +79,13 @@ void balanceMetVsAj(TString infname,
          }
          pe[i]->SetBinContent(a+1,mpt);
          pe[i]->SetBinError(a+1,mpterr);
-         cout << hMpt->GetName() << ": " << hMpt->GetEntries() << " mean: " << pe[i]->GetBinContent(a+1) << " err: " << pe[i]->GetBinError(a+1) << endl;
-         sum+=mpt;
-         sumerr+=pow(mpterr,2);
+//          cout << hMpt->GetName() << ": " << hMpt->GetEntries() << " mean: " << pe[i]->GetBinContent(a+1) << " err: " << pe[i]->GetBinError(a+1) << endl;
+         if (i<nptrange) {
+            sum+=mpt;
+            sumerr+=pow(mpterr,2);
+         }
       }      
-      cout << a << " pt sum: " << sum << endl;
+      cout << "Aj " << a << " pt sum: " << sum << endl;
    }
    
    StackHistograms(nptrange,pe,ppos,pneg,nAjBin);
@@ -207,7 +209,7 @@ void MptAjPlotAllAcc_2Cent(
 //    TString inputFile_data="fig/06.26_genploop/HisData_icPu5_trkHPCorr_120_50_2094_eta24_prec4.root";
 //    TString inputFile_mc="fig/06.26_genploop/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0.root";
 //    TString inputFile_data="fig/06.26_genploop/HisData_icPu5_trkHPCorr_120_50_2749_eta24_prec4.root";
-   TString inputFile_mc="fig/06.26_tree/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0.root";
+   TString inputFile_mc="fig/06.26_tree/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec4.root";
    TString inputFile_data="fig/06.26_tree/HisData_icPu5_trkHPCorr_120_50_2749_eta24_prec4.root";
 
    string path=inputFile_data.Data();
@@ -215,7 +217,7 @@ void MptAjPlotAllAcc_2Cent(
    cout << "Output: " << outdir << endl;
    gSystem->mkdir(outdir,kTRUE);
 
-   TString tag = Form("CorrRes%d-data-mcGen",doResCorr);
+   TString tag = Form("CorrRes%d-data-mcRec",doResCorr);
 
    Float_t leftMargin=0.28,bottomMargin=0.18;
    TCanvas *c1 = new TCanvas("c1","",1000,1000);
