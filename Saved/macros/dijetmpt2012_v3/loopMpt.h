@@ -291,6 +291,7 @@ public:
             hTrkPtNoQual->Fill(dj.trkPt[ip]);
 //             if (dj.trkAlgo[ip]<4||dj.vtrkQual[ip][1]) hTrkPtQual3->Fill(dj.trkPt[ip]);
             if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
+            if (particleRecLevel==3&&dj.trkIsFake[ip]) continue;
             hTrkPt->Fill(dj.trkPt[ip]);
             hTrkEta->Fill(dj.trkEta[ip]);
             // trk correction
@@ -303,7 +304,8 @@ public:
                   me.pt[me.n] = dj.trkPt[ip];
                   me.eta[me.n] = dj.trkEta[ip];
                   me.phi[me.n] = dj.trkPhi[ip];
-                  me.weight[me.n] = trkWt;
+                  if (particleRecLevel==4) me.weight[me.n] = trkWt;
+                  if (particleRecLevel==3) me.weight[me.n] = trkWt/(1-dj.trkFak[ip]);
                   ++me.n;
             }
          }
@@ -314,13 +316,15 @@ public:
             for (int ip=0; ip<dj.nSim; ++ip) {
                if (dj.simPt[ip]<minPt) continue;
                if (fabs(dj.simEta[ip])>maxEta) continue;
+               if (particleRecLevel==2&&dj.simHasRec[ip]) continue;
                hGenpPt->Fill(dj.simPt[ip]);
                hGenpEta->Fill(dj.simEta[ip]);
                // set mpt input
                me.pt[me.n] = dj.simPt[ip];
                me.eta[me.n] = dj.simEta[ip];
                me.phi[me.n] = dj.simPhi[ip];
-               me.weight[me.n] = 1;
+               if (particleRecLevel==1) me.weight[me.n] = 1;
+               if (particleRecLevel==2) me.weight[me.n] = 1./dj.trkEff[ip];
                ++me.n;
             }
          }else if (particleRecLevel==0){
