@@ -15,13 +15,16 @@ using namespace std;
 
 void CompareJetTrk()
 {
+   TString outdir = "fig/06.26_tree";
    TH1::SetDefaultSumw2();
    TString tag = "compJetTrk_DataMc";
    const int nPtBin=20;
    float ptBins[nPtBin+1] = {0.5,0.75,1,1.5,2,2.5,3,4,5,7.5,10,12,15,20,25,30,45,60,90,120,200};
    // inputs
-   TString infdataname="../ntout/output-data-Forest2v2v3_saveTrks_v0_icPu5.root";
-   TString infrefname = "../ntout/output-hy18dj80_forest2_v0_xsec_icPu5.root";
+//    TString infdataname="../ntout/output-data-Forest2v2v3_saveTrks_v0_icPu5.root";
+//    TString infrefname = "../ntout/output-hy18dj80_forest2_v0_xsec_icPu5.root";
+   TString infdataname="../ntout/output-data-Forest2v3_v3_saveTrks_jpt120_icPu5.root";
+   TString infrefname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_simtrk_jpt120_xsec_icPu5.root";
 
    TFile * infdata = new TFile(infdataname);
    TTree * tdata = (TTree*)infdata->Get("tgj");
@@ -31,7 +34,7 @@ void CompareJetTrk()
    TTree * tref = (TTree*)infref->Get("tgj");
    cout << infref->GetName() << endl;
    
-   float minPt1=120,minPt2=50,sigDPhi=2./3*3.14159;
+   float minPt1=120,minPt2=50,sigDPhi=7./8*3.14159;
    TCut leadingSel  = Form("abs(eta1)<1.6&&pt1>%.3f",minPt1);
    TCut awaySel     = Form("abs(eta2)<1.6&&pt2>%.3f",minPt2);
    TCut sigSel      = Form("acos(cos(phi2-phi1))>%.3f",sigDPhi);
@@ -80,10 +83,10 @@ void CompareJetTrk()
       cmp.Legend(lx1,ly1,lx2,ly2);
       cmp.leg->AddEntry(cmp.vh[0],"0-30\%","");
       cmp.leg->AddEntry(cmp.vh[0],"p_{T,1}, p_{T,2} > 120, 50GeV","");
-      cmp.leg->AddEntry(cmp.vh[0],"#Delta#phi_{1,2} > #frac{2}{3}#pi","");
+      cmp.leg->AddEntry(cmp.vh[0],"#Delta#phi_{1,2} > #frac{7}{8}#pi","");
       cmp.leg->AddEntry(cmp.vh[0],"PbPb Data","p");
       cmp.leg->AddEntry(cmp.vh[1],"PYTHIA+HYDJET","p");
       cmp.leg->Draw();
-      c2->Print(Form("fig/%s_%d.gif",tag.Data(),i));
+      c2->Print(Form("%s/%s_%d.gif",outdir.Data(),tag.Data(),i));
    }
 }

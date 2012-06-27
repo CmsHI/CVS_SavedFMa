@@ -52,8 +52,8 @@ public:
       for (int i=0; i<vt.size(); ++i) {
          TCut finalcut = sel&&vsel[i];
          if (vwt.size()>0) finalcut*=vwt[i];
-//          vt[i]->Draw(Form("%s%s",var.Data(),vh[i]->GetName()),finalcut,"goff");
-         vt[i]->Draw(Form("%s%s",var.Data(),vh[i]->GetName()),finalcut,"goff",10000);
+         vt[i]->Draw(Form("%s%s",var.Data(),vh[i]->GetName()),finalcut,"goff");
+//          vt[i]->Draw(Form("%s%s",var.Data(),vh[i]->GetName()),finalcut,"goff",10000);
          cout << TString(finalcut) << " " << vh[i]->GetEntries() << endl;
          if (normMode>=20&&normMode<30) {
             vnorm[i] = vt[i]->GetEntries(sel);
@@ -64,7 +64,8 @@ public:
    
    void Draw(TString title, float ymin=0, float ymax=0) {
 //       int vstyl[10] = {kFullCircle,kOpenCircle,kOpenCircle,kOpenCircle,kOpenCircle};
-      int vstyl[10] = {kFullCircle,kOpenCircle,0,kOpenCircle,kOpenCircle};
+//       int vstyl[10] = {kFullCircle,kOpenCircle,0,kOpenCircle,kOpenCircle};
+      int vstyl[10] = {kFullCircle,0,0,kOpenCircle,kOpenCircle};
       int vcolor[10] = {kBlack,kRed,kBlue,kGreen+2,kOrange+2};
       float foundYMin=1e10,foundYMax=-1;
       for (int i=0; i<vt.size(); ++i) {
