@@ -11,7 +11,7 @@
 using namespace std;
 
 void loopMpt(
-            TString outdir = "./fig/06.26_genploop"
+            TString outdir = "./fig/06.26_tree"
 //             TString outdir = "./fig/test"
              )
 {
@@ -29,7 +29,7 @@ void loopMpt(
    TString infdataname="../ntout/output-data-Forest2v3_v3_saveTrks_jpt120_icPu5.root";
    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_simtrk_jpt120_xsec_icPu5.root";
    
-   bool isMC=false;
+   bool isMC=true;
    int particleRecLevel = 0; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
    if (!isMC) particleRecLevel=4;
    
