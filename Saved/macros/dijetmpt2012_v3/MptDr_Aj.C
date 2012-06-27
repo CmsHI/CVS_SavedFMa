@@ -60,7 +60,7 @@ void balanceMetVsAj(TString infname,
          for (int i=0;i<nptrange+1;i++) {
             TString hname = "hMpt"+insrc;
             if (i<nptrange) hname+=Form("_pt%d_dr%d",i,idr);
-            else hname+=Form("_ptall_dr%d",i,idr);
+            else hname+=Form("_ptall_dr%d",idr);
 //             TString hname = insrc+Form("_pt%d",i);
 //             TH2D * hMptAj = (TH2D*)inf->Get(hname);
 //             cout << hname << " " << hMptAj << ": " << hMptAj->GetEntries() << endl;
