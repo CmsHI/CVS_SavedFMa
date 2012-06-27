@@ -133,6 +133,10 @@ public:
 void MPTSetBranchAddress(TTree * tgj, EvtSel & evt, DiJet & gj, MPTEvent & mpt) {
    tgj->Branch("evt",&evt.run,evt.leaves);
    tgj->Branch("jet",&gj.pt1,gj.leaves);
+   tgj->Branch("x",&mpt.x,"x/F");
+   tgj->Branch("xpt",mpt.x_pt,Form("xpt[%d]/F",nptrange));
+   tgj->Branch("xptdr",mpt.x_pt_dr,Form("xptdr[%d][%d]/F",nptrange,ndrbin));
+   tgj->Branch("xptdphi",mpt.x_pt_dphi,Form("xptphi[%d][%d]/F",nptrange,ndphibin));
 }
 
 class AnaMPT
