@@ -130,6 +130,11 @@ public:
    }
 };
 
+void MPTSetBranchAddress(TTree * tgj, EvtSel & evt, DiJet & gj, MPTEvent & mpt) {
+   tgj->Branch("evt",&evt.run,evt.leaves);
+   tgj->Branch("jet",&gj.pt1,gj.leaves);
+}
+
 class AnaMPT
 {
 public:
@@ -173,6 +178,9 @@ public:
    TH2D * vhMptPt[nptrange];
    TH2D * vhMptPtDr[nptrange][ndrbin];
    TH2D * vhMptPtDPhi[nptrange][ndphibin];
+   
+   // output tree
+   TTree * tm;
 
    AnaMPT(TString myname) :
    name(myname),
@@ -234,8 +242,12 @@ public:
 
          for (int k=0; k<ndphibin; ++k) {
             vhMptPtDPhi[i][k] = new TH2D(Form("hMpt%s_pt%d_dphi%d",name.Data(),i,k),";Aj;mpt",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
-         }                  
+         }          
       }
+      
+      // output tree
+      tm = new TTree("t"+name,"dijet mpt tree "+name);
+      MPTSetBranchAddress(tm,evt,dj,me);
    }
    
    void Loop(int maxEntry=-1) {
@@ -334,6 +346,8 @@ public:
                vhMptPtDPhi[i][k]->Fill(Aj,me.x_pt_dphi[i][k]);
             }
          }
+         
+         tm->Fill();
       } // End of event loop
    }
 };
