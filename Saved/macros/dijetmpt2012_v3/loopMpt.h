@@ -144,6 +144,7 @@ class AnaMPT
 public:
    TString name;
    bool isMC;
+   int subEvtMode;
    int cMin, cMax;
    float minJetPt1,minJetPt2,maxJetEta,sigDPhi;
    float minPt, maxEta;
@@ -189,6 +190,7 @@ public:
    AnaMPT(TString myname) :
    name(myname),
    isMC(false),
+   subEvtMode(-1),
    trkCorr("Forest2_v19","hitrkEffAnalyzer_MergedGeneral")
    {
       cout << "Analyze MPT: " << name << endl;
@@ -333,6 +335,8 @@ public:
             for (int ip=0; ip<dj.nGenp; ++ip) {
                if (dj.genpPt[ip]<minPt) continue;
                if (fabs(dj.genpEta[ip])>maxEta) continue;
+               if (subEvtMode==0 && dj.genpSube[ip]!=0) continue;
+               if (subEvtMode==1 && dj.genpSube[ip]==0) continue;
                hGenpPt->Fill(dj.genpPt[ip]);
                hGenpEta->Fill(dj.genpEta[ip]);
                // set mpt input
