@@ -73,7 +73,7 @@ void analyzeDiJetMPT(
    double cutjetPt = 30;
    double cutjetEta = 2;
    double cutPtTrk=0.5;
-   double cutEtaTrk = 2.4;
+   double cutEtaTrk = 8;
    double cutPtPfCand=4;
    // Centrality reweiting
    CentralityReWeight cw(datafname,mcfname,"offlSel&&pt1>120&&pt2>0&&acos(cos(phi2-phi1))>2./3*3.14159");
