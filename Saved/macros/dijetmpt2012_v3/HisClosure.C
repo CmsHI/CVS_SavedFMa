@@ -14,33 +14,33 @@
 #include "loopMpt.h"
 
 TString HisClosure(
-   TString indir = "fig/06.26_genploop",
-   int anaMode=0, // 0=pt, 1=eta, 2=dphi
+   string infpath = "fig/06.26_tree/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec3.root",
+   int anaMode=1, // 0=pt, 1=eta, 2=dphi
    int idraw=-1,
    TCanvas ** cOut=0
 )
 {
    TH1::SetDefaultSumw2();
-   TString outdir = indir;
-   gSystem->mkdir(outdir,kTRUE);
 
    bool doCorr=true;
-   TString infname = "HisMc_icPu5_trkHPCorr_120_50_2094_eta24_prec1.root";
-   TFile * inf = new TFile(indir+"/"+infname);
+   TFile * inf = new TFile(infpath.c_str());
    
+   TString outdir = infpath.substr(0, infpath.find_last_of('/'));
+   cout << "Output: " << outdir << endl;
+   gSystem->mkdir(outdir,kTRUE);
+
    //////////////////////////////////////////
    // Analysis Setup
    //////////////////////////////////////////
    TString evt="0to12";
-   TString src=infname;
+   TString src=infpath.substr(infpath.find_last_of('/')+1);
    src.ReplaceAll(".root","");
-   TString tag=Form("hisClos%d_%s_%s",anaMode,src.Data(),evt.Data());
+   TString tag=Form("hisClos%d_%s_%s_recmat",anaMode,src.Data(),evt.Data());
 
    Compare cmp("cmp","");
    TH1D * hGenp, *hTrk, *hTrkCorr;
-   float xmin=0, xmax=0;
+   float xmin=0, xmax=0, ymin=0, ymax=0;
    bool doLogx=true, doLogy=true;
-   TString genVar, trkVar;
    TCut finalGenSel,finalTrkSel;
    if (anaMode==0) {
       hGenp = (TH1D*)inf->Get("hGenpPt"+evt);
@@ -53,14 +53,17 @@ TString HisClosure(
       xmin=0.5; xmax=179.9;
    } else if (anaMode==1) {
       hGenp = (TH1D*)inf->Get("hGenpEta"+evt);
+      hGenp->Rebin(4);
       hTrk = (TH1D*)inf->Get("hTrkEta"+evt);
+      hTrk->Rebin(4);
       hTrkCorr = (TH1D*)inf->Get("hTrkCorrEta"+evt);
+      hTrkCorr->Rebin(4);
       doLogx=false; doLogy=false;
       cmp.Legend(0.19,0.68,0.65,0.93);
 //       cmp.leg->AddEntry(hTrk,Form("%.1f<p_{T}<%.1f GeV/c",ptmin,ptmax),"");
 //       tag += Form("vs_eta_pt%.0f",ptmin);
       tag += Form("vs_eta");
-      genVar="genpEta"; trkVar="trkEta";
+      ymin=0; ymax=hGenp->GetMaximum()*4*1.5;
    }
 
    // Legend
@@ -91,6 +94,7 @@ TString HisClosure(
    if (doLogx) gPad->SetLogx();
    if (doLogy) gPad->SetLogy();
    if (xmax>xmin) hGenp->SetAxisRange(xmin,xmax,"X");
+   if (ymax>ymin) hGenp->SetAxisRange(ymin,ymax,"Y");
    hGenp->Draw("hist");
    hTrk->Draw("sameE");
    if (doCorr) hTrkCorr->Draw("sameE");
