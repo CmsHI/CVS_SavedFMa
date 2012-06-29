@@ -362,6 +362,56 @@ public:
          
          tm->Fill();
       } // End of event loop
+      
+      SetAliases(tm);
+   }
+
+   TString MakeConeVar(float radius=0.8, TString metType="InCone", int ipt=nptrange) {
+      // 1st find dr bin of the jet cone boundary
+      int coneidr=0;
+      for (int idr=0; idr<ndrbin; ++idr) {
+         if (drbins[idr]>=radius)  {
+            coneidr=idr;
+            break;
+         }
+      }
+      // 2nd make sum variable
+      TString var;
+      int idrbeg,idrend;
+      if (metType=="InCone") {
+         idrbeg=0; idrend=coneidr;
+      } else {
+         idrbeg=coneidr; idrend=ndrbin;
+      }
+      if (ipt<nptrange) {
+         var  = Form("xptdr[%d][%d]",ipt,idrbeg);
+         for (int idr=idrbeg+1; idr<idrend; ++idr) {
+            var+= Form("+xptdr[%d][%d]",ipt,idr);
+         }
+      } else {
+         var = Form("Sum$(xptdr[][%d])",idrbeg);
+         for (int idr=idrbeg+1; idr<idrend; ++idr) {
+            var+= Form("+Sum$(xptdr[][%d])",idr);
+         }
+      }
+      
+      return var;
+   }
+   
+   void SetAliases(TTree * tm) {
+      for (int i=0;i<nptrange+1;i++) {
+         TString app="cone8";
+         if (i<nptrange) app+=Form("pt%d",i);
+         TString aliasname;
+
+         aliasname="xin"+app;
+         tm->SetAlias(aliasname,"("+MakeConeVar(0.8,"InCone",i)+")");
+         cout << aliasname << ": " << tm->GetAlias(aliasname) << endl;
+
+         aliasname="xout"+app;
+         tm->SetAlias(aliasname,"("+MakeConeVar(0.8,"OutCone",i)+")");
+         cout << aliasname << ": " << tm->GetAlias(aliasname) << endl;
+      }
    }
 };
 #endif
