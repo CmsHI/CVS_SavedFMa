@@ -112,15 +112,16 @@ public:
       leg->SetTextSize(16);
    }
    
-   TProfile * Ratio(TString ytitle="ratio") {
+   TH1D * Ratio(TString ytitle="ratio") {
       if (vh.size()<2) {
          cout << "not enough histograms to divide" << endl;
          return 0;
       }
-      TProfile * hr = (TProfile*)vh[0]->Clone(Form("%s_div_%s",vh[0]->GetName(),vh[1]->GetName()));
-      hr->Divide(vh[1]);
+      TH1D * hr = (TH1D*)vh[0]->Clone(Form("%s_div_%s",vh[0]->GetName(),vh[1]->GetName()));
+      hr->Divide((TH1D*)vh[1]);
       hr->SetYTitle(ytitle);
       //hr->Fit("pol1","");
+      hr->SetAxisRange(0,2,"Y");
       return hr;
    }
 };

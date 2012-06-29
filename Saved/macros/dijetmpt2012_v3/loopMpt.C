@@ -11,7 +11,7 @@
 using namespace std;
 
 void loopMpt(
-            TString outdir = "./fig/06.28_genp"
+            TString outdir = "./fig/06.29_MPT0StudyDataMC"
              )
 {
    TH1::SetDefaultSumw2();
@@ -27,10 +27,11 @@ void loopMpt(
 //    TString infmcname="../ntout/output-hy18dj80_Forest2v21_v2_allTrks_simtrk_jpt100_xsec_icPu5.root";
    TString infdataname="../ntout/output-data-Forest2v3_v3_saveTrks_jpt120_icPu5.root";
 //    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_simtrk_jpt120_xsec_icPu5.root";
-   TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_genpeta8_jpt120_xsec_icPu5.root";
+   TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt120eta5_xsec_icPu5.root";
+//    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_gjpt120eta5_xsec_icPu5.root";
    
    bool isMC=true;
-   int particleRecLevel = 0; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
+   int particleRecLevel = 4; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
    if (!isMC) particleRecLevel=4;
    
    TString infname=infdataname;
@@ -42,7 +43,7 @@ void loopMpt(
    float etamax=2.4;
    TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel);
    if (isMC) tag.ReplaceAll("HisData","HisMc");
-   tag+="_bkgp";
+   tag+="_JetSel2HemSum";
 
    TFile *inf = TFile::Open(infname);
    TTree *nt =(TTree*)inf->FindObjectAny("tgj");
