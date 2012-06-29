@@ -49,6 +49,7 @@ public:
    float x;   
    float x_pt[nptrange];
    float x_pt_dr[nptrange][ndrbin];
+   float xhem_pt_dr[2][nptrange][ndrbin];
    float x_pt_dphi[nptrange][ndphibin];
    
    MPTEvent() :
@@ -61,6 +62,9 @@ public:
          x_pt[i]=0;
          for (int j=0; j<ndrbin; ++j) {
             x_pt_dr[i][j]=0;
+            for (int h=0; h<2; ++h) {
+               xhem_pt_dr[h][i][j]=0;
+            }
          }
          for (int k=0; k<ndphibin; ++k) {
             x_pt_dphi[i][k]=0;
@@ -107,6 +111,9 @@ public:
                         x_pt_dr[i][j] += ptx;
                      }
                   }
+                  // separate hemispheres
+                  if (ptx<=0 && dr1>=drmin && dr1<drmax) xhem_pt_dr[0][i][j] += -ptx;
+                  if (ptx>0  && dr2>=drmin && dr2<drmax) xhem_pt_dr[1][i][j] += ptx;
                }
 
                for (int k=0; k<ndphibin; ++k) {
@@ -119,6 +126,7 @@ public:
             }
          }
       } // end of for cand
+//       cout << "hem1 sum: " << xhem_pt_dr[0][nptrange-1][0] << endl;
 //       float ptsum=0, ptdrsum=0;
 //       for (int i=0; i<nptrange; ++i) {
 //          ptsum+=x_pt[i];
@@ -136,6 +144,8 @@ void MPTSetBranchAddress(TTree * tgj, EvtSel & evt, DiJet & gj, MPTEvent & mpt) 
    tgj->Branch("x",&mpt.x,"x/F");
    tgj->Branch("xpt",mpt.x_pt,Form("xpt[%d]/F",nptrange));
    tgj->Branch("xptdr",mpt.x_pt_dr,Form("xptdr[%d][%d]/F",nptrange,ndrbin));
+   tgj->Branch("xhem1ptdr",mpt.xhem_pt_dr[0],Form("xhem1ptdr[%d][%d]/F",nptrange,ndrbin));
+   tgj->Branch("xhem2ptdr",mpt.xhem_pt_dr[1],Form("xhem2ptdr[%d][%d]/F",nptrange,ndrbin));
    tgj->Branch("xptdphi",mpt.x_pt_dphi,Form("xptphi[%d][%d]/F",nptrange,ndphibin));
 }
 
@@ -268,11 +278,11 @@ public:
 
          if (evt.cBin<cMin||evt.cBin>=cMax) continue;
 
-//          me.pt1 = dj.pt1; me.phi1 = dj.phi1; me.eta1 = dj.eta1;
-//          me.pt2 = dj.pt2; me.phi2 = dj.phi2; me.eta2 = dj.eta2;
+         me.pt1 = dj.pt1; me.phi1 = dj.phi1; me.eta1 = dj.eta1;
+         me.pt2 = dj.pt2; me.phi2 = dj.phi2; me.eta2 = dj.eta2;
 
-         me.pt1 = dj.genjetpt1; me.phi1 = dj.genjetphi1; me.eta1 = dj.genjeteta1;
-         me.pt2 = dj.genjetpt2; me.phi2 = dj.genjetphi2; me.eta2 = dj.genjeteta2;
+//          me.pt1 = dj.genjetpt1; me.phi1 = dj.genjetphi1; me.eta1 = dj.genjeteta1;
+//          me.pt2 = dj.genjetpt2; me.phi2 = dj.genjetphi2; me.eta2 = dj.genjeteta2;
 
          // Jet Selection
          if (me.pt1<minJetPt1 || fabs(me.eta1)>maxJetEta) continue;
@@ -366,7 +376,7 @@ public:
       SetAliases(tm);
    }
 
-   TString MakeConeVar(float radius=0.8, TString metType="InCone", int ipt=nptrange) {
+   TString MakeConeVar(TString br="xptdr",float radius=0.8, TString metType="incone", int ipt=nptrange) {
       // 1st find dr bin of the jet cone boundary
       int coneidr=0;
       for (int idr=0; idr<ndrbin; ++idr) {
@@ -378,20 +388,20 @@ public:
       // 2nd make sum variable
       TString var;
       int idrbeg,idrend;
-      if (metType=="InCone") {
+      if (metType=="incone") {
          idrbeg=0; idrend=coneidr;
       } else {
          idrbeg=coneidr; idrend=ndrbin;
       }
       if (ipt<nptrange) {
-         var  = Form("xptdr[%d][%d]",ipt,idrbeg);
+         var  = Form("%s[%d][%d]",br.Data(),ipt,idrbeg);
          for (int idr=idrbeg+1; idr<idrend; ++idr) {
-            var+= Form("+xptdr[%d][%d]",ipt,idr);
+            var+= Form("+%s[%d][%d]",br.Data(),ipt,idr);
          }
       } else {
-         var = Form("Sum$(xptdr[][%d])",idrbeg);
+         var = Form("Sum$(%s[][%d])",br.Data(),idrbeg);
          for (int idr=idrbeg+1; idr<idrend; ++idr) {
-            var+= Form("+Sum$(xptdr[][%d])",idr);
+            var+= Form("+Sum$(%s[][%d])",br.Data(),idr);
          }
       }
       
@@ -399,18 +409,20 @@ public:
    }
    
    void SetAliases(TTree * tm) {
-      for (int i=0;i<nptrange+1;i++) {
-         TString app="cone8";
-         if (i<nptrange) app+=Form("pt%d",i);
-         TString aliasname;
-
-         aliasname="xin"+app;
-         tm->SetAlias(aliasname,"("+MakeConeVar(0.8,"InCone",i)+")");
-         cout << aliasname << ": " << tm->GetAlias(aliasname) << endl;
-
-         aliasname="xout"+app;
-         tm->SetAlias(aliasname,"("+MakeConeVar(0.8,"OutCone",i)+")");
-         cout << aliasname << ": " << tm->GetAlias(aliasname) << endl;
+      TString brs[3] = {"xptdr","xhem1ptdr","xhem2ptdr"};
+      TString mptType[2] = {"incone","outcone"};
+      for (int h=0; h<3; ++h) {
+         for (int i=0;i<nptrange+1;++i) {            
+            for (int m=0; m<2; ++m) {
+               TString aliasname = "x";
+               if (h>0) aliasname += Form("hem%d",h);
+               float dr=0.8;
+               aliasname += mptType[m]+Form("%.0f",dr*10);
+               if (i<nptrange) aliasname+=Form("pt%d",i);
+               tm->SetAlias(aliasname,"("+MakeConeVar(brs[h],dr,mptType[m],i)+")");
+               if (i==0||i==nptrange) cout << aliasname << ": " << tm->GetAlias(aliasname) << endl;
+            }
+         }
       }
    }
 };
