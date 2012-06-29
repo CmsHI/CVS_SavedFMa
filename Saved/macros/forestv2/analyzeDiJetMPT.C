@@ -71,7 +71,7 @@ void analyzeDiJetMPT(
    datafname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
    mixfname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
    double cutjetPt = 30;
-   double cutjetEta = 2;
+   double cutjetEta = 5;
    double cutPtTrk=0.5;
    double cutEtaTrk = 8;
    double cutPtPfCand=4;
@@ -256,6 +256,16 @@ void analyzeDiJetMPT(
             leadingIndex = j;
          }
       }
+
+      // Loop over genjets to look for leading genjet candidate in the event
+      for (int j=0;j<anajet->ngen;j++) {
+         if (anajet->genpt[j]<cutjetPt) continue;
+         if (fabs(anajet->geneta[j])>cutjetEta) continue;
+         if (anajet->genpt[j] > gj.genjetpt1) {
+            gj.genjetpt1=anajet->genpt[j];
+            genLeadingIndex=j;
+         }
+      }
       
       //
       // Skim
@@ -266,7 +276,8 @@ void analyzeDiJetMPT(
       if (doSkim) {
          if (dataSrcType==1&&!evt.anaEvtSel) continue;
 //          if (dataSrcType==0&&!evt.offlSel) continue;
-         if (gj.pt1<120) continue;
+//          if (gj.pt1<120) continue;
+         if (gj.genjetpt1<120) continue;
       }
       
       // Found a leading jet which passed basic quality cut!
@@ -379,15 +390,6 @@ void analyzeDiJetMPT(
       ////////////////////////////////////////
       // If mc, write genjets
       ////////////////////////////////////////
-      // leading
-      for (int j=0;j<anajet->ngen;j++) {
-         if (anajet->genpt[j]<cutjetPt) continue;
-         if (fabs(anajet->geneta[j])>cutjetEta) continue;
-         if (anajet->genpt[j] > gj.genjetpt1) {
-            gj.genjetpt1=anajet->genpt[j];
-            genLeadingIndex=j;
-         }
-      }
       if (genLeadingIndex!=-1) {
          gj.genjeteta1=anajet->geneta[genLeadingIndex];
          gj.genjetphi1=anajet->genphi[genLeadingIndex];
