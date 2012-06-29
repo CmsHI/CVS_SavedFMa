@@ -267,24 +267,25 @@ public:
          if (!isMC&&!evt.anaEvtSel) continue;
 
          if (evt.cBin<cMin||evt.cBin>=cMax) continue;
-         if (dj.pt1<minJetPt1 || fabs(dj.eta1)>maxJetEta) continue;
-         if (dj.pt2<minJetPt2 || fabs(dj.eta2)>maxJetEta) continue;
-         float jdphi = fabs(deltaPhi(dj.phi1,dj.phi2));
+
+//          me.pt1 = dj.pt1; me.phi1 = dj.phi1; me.eta1 = dj.eta1;
+//          me.pt2 = dj.pt2; me.phi2 = dj.phi2; me.eta2 = dj.eta2;
+
+         me.pt1 = dj.genjetpt1; me.phi1 = dj.genjetphi1; me.eta1 = dj.genjeteta1;
+         me.pt2 = dj.genjetpt2; me.phi2 = dj.genjetphi2; me.eta2 = dj.genjeteta2;
+
+         // Jet Selection
+         if (me.pt1<minJetPt1 || fabs(me.eta1)>maxJetEta) continue;
+         if (me.pt2<minJetPt2 || fabs(me.eta2)>maxJetEta) continue;
+         float jdphi = fabs(deltaPhi(me.phi1,me.phi2));
          if (  jdphi < sigDPhi) continue;
          // Fill Basics
-         float Aj = (dj.pt1-dj.pt2)/(dj.pt1+dj.pt2);
+         float Aj = (me.pt1-me.pt2)/(me.pt1+me.pt2);
          hCentrality->Fill(evt.cBin);
-         hJetPt2D->Fill(dj.pt1,dj.pt2);
+         hJetPt2D->Fill(me.pt1,me.pt2);
          hJDPhi->Fill(jdphi);
          hAj->Fill(Aj);
          
-         me.pt1 = dj.pt1;
-         me.phi1 = dj.phi1;
-         me.eta1 = dj.eta1;
-         me.pt2 = dj.pt2;
-         me.phi2 = dj.phi2;
-         me.eta2 = dj.eta2;
-
          // Track loop
          me.n=0;
          for (int ip=0; ip<dj.nTrk; ++ip) {
