@@ -294,6 +294,34 @@ public:
       tm = new TTree("t"+name,"dijet mpt tree "+name);
       MPTSetBranchAddress(tm,evt,dj,me);
    }
+
+   void CalcWeights(int maxEntry=-1) {
+      int numEvt = t->GetEntries();
+      if (maxEntry>0) numEvt = maxEntry;
+      for (int iEvt=0; iEvt<numEvt; ++iEvt) {
+         t->GetEntry(iEvt);
+      }
+   }
+
+   bool SelEvt() {
+      if (!isMC&&!evt.anaEvtSel) return false;
+
+      if (evt.cBin<cMin||evt.cBin>=cMax) return false;
+
+      me.pt1 = dj.pt1; me.phi1 = dj.phi1; me.eta1 = dj.eta1;
+      me.pt2 = dj.pt2; me.phi2 = dj.phi2; me.eta2 = dj.eta2;
+
+//          me.pt1 = dj.genjetpt1; me.phi1 = dj.genjetphi1; me.eta1 = dj.genjeteta1;
+//          me.pt2 = dj.genjetpt2; me.phi2 = dj.genjetphi2; me.eta2 = dj.genjeteta2;
+
+      // Jet Selection
+      if (me.pt1<minJetPt1 || fabs(me.eta1)>maxJetEta) return false;
+      if (me.pt2<minJetPt2 || fabs(me.eta2)>maxJetEta) return false;
+      float jdphi = fabs(deltaPhi(me.phi1,me.phi2));
+      if (  jdphi < sigDPhi) return false;
+      
+      return true;
+   }
    
    void Loop(int maxEntry=-1) {
       int numEvt = t->GetEntries();
@@ -301,24 +329,13 @@ public:
       for (int iEvt=0; iEvt<numEvt; ++iEvt) {
          t->GetEntry(iEvt);
          
-         // selection
       if (cMax<=12&&iEvt%1000==0) cout <<iEvt<<" / "<<numEvt << " run: " << evt.run << " evt: " << evt.evt << " bin: " << evt.cBin << " nT: " << evt.nT << " trig: " <<  evt.trig << " anaEvtSel: " << evt.anaEvtSel <<endl;
-         if (!isMC&&!evt.anaEvtSel) continue;
 
-         if (evt.cBin<cMin||evt.cBin>=cMax) continue;
+         // selection
+         if (!SelEvt()) continue;
 
-         me.pt1 = dj.pt1; me.phi1 = dj.phi1; me.eta1 = dj.eta1;
-         me.pt2 = dj.pt2; me.phi2 = dj.phi2; me.eta2 = dj.eta2;
-
-//          me.pt1 = dj.genjetpt1; me.phi1 = dj.genjetphi1; me.eta1 = dj.genjeteta1;
-//          me.pt2 = dj.genjetpt2; me.phi2 = dj.genjetphi2; me.eta2 = dj.genjeteta2;
-
-         // Jet Selection
-         if (me.pt1<minJetPt1 || fabs(me.eta1)>maxJetEta) continue;
-         if (me.pt2<minJetPt2 || fabs(me.eta2)>maxJetEta) continue;
-         float jdphi = fabs(deltaPhi(me.phi1,me.phi2));
-         if (  jdphi < sigDPhi) continue;
          // Fill Basics
+         float jdphi = fabs(deltaPhi(me.phi1,me.phi2));
          float Aj = (me.pt1-me.pt2)/(me.pt1+me.pt2);
          hCentrality->Fill(evt.cBin);
          hJetPt2D->Fill(me.pt1,me.pt2);
@@ -342,11 +359,17 @@ public:
 
             // correct leading subleading difference in trk eff
             if (doResCorr) {
-               if (cos(dj.trkPhi[ip]-me.phi1)<0) }
+               if ( cos(dj.trkPhi[ip]-me.phi1)<0 ) {
                   if (me.pt2<80) {
                      if (dj.trkPt[ip]>30) trkWt*=1.2;
                      else if (dj.trkPt[ip]>20) trkWt*=1.1;
                      else if (dj.trkPt[ip]>8) trkWt*=1.05;
+                  }
+               } else {
+                  if (me.pt2<80) {
+                     if (dj.trkPt[ip]>30) trkWt*=0.8;
+                     else if (dj.trkPt[ip]>20) trkWt*=0.9;
+                     else if (dj.trkPt[ip]>8) trkWt*=0.95;
                   }
                }
             }
