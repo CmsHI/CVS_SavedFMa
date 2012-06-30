@@ -36,18 +36,15 @@ void CompareMptMC()
    TCut leadingSel  = Form("abs(eta1)<1.6&&pt1>%.3f",minPt1);
    TCut awaySel     = Form("abs(eta2)<1.6&&pt2>%.3f",minPt2);
    TCut sigSel      = Form("acos(cos(phi2-phi1))>%.3f",sigDPhi);
+   TCut ajSel       = "Aj>0.3";
+
+   TString titleJet = "icPu5 Calo Jet";
+   TString titleSig = "#Delta#phi_{1,2} > #frac{7}{8}#pi";
+   TString titleAj = "A_{J} > 0.3";
 
    TCut sel = leadingSel&&awaySel;
    
-   // Legend
-   TString titledata = "Rec. Trk.";
-   TString titleref  = "Gen. Partl.";
-   Compare cmpLeg("cmpLeg","");
-   cmpLeg.Legend(0.1,0.18,0.6,0.35);
-   cmpLeg.leg->AddEntry((TObject*)0,Form("p_{T,1} > %.0f GeV/c",minPt1),"");
-   cmpLeg.leg->AddEntry((TObject*)0,Form("p_{T,2} > %.0f GeV/c",minPt2),"");
-   cmpLeg.leg->AddEntry((TObject*)0,"#Delta#phi_{1,2} > #frac{7}{8}#pi","");
-
+   
    // Output
    string path=infdataname.Data();
    TString outdir = path.substr(0, path.find_last_of('/'));
@@ -55,7 +52,13 @@ void CompareMptMC()
    gSystem->mkdir(outdir,kTRUE);
 
    // histograms
-   for (int i=0; i<4; ++i) {
+   for (int i=0; i<6; ++i) {
+      // Legend
+      TString titledata = "Rec. Trk.";
+      TString titleref  = "Gen. Partl.";
+      Compare cmpLeg("cmpLeg","");
+      float lex1=0.1, ley1=0.14, lex2=0.6, ley2=0.41;
+
 //       TCanvas * c2 = new TCanvas(Form("cComp%d",i),Form("cComp%d",i),400,400);
       TCanvas * c2 = new TCanvas(Form("cComp%d",i),Form("cComp%d",i),800,400);
       c2->Divide(2,1);
@@ -69,7 +72,6 @@ void CompareMptMC()
          c2->cd(1);
          cmp.vsel.push_back(sigSel);
          cmp.vsel.push_back(sigSel);
-         c2->SetLogy(0);
          cmp.Init(nAjBin,AjBins);
          cmp.Project("x:Aj>>");
          cmp.Draw(";A_{J};<#slash{p}_{T}^{#parallel}> (GeV/c)",-20,20);
@@ -77,38 +79,62 @@ void CompareMptMC()
          l0->Draw();
       } else if (i==1) {
          c2->cd(1);
-         cmp.vsel.push_back(sigSel);
-         cmp.vsel.push_back(sigSel);
-         c2->SetLogy(0);
+         cmp.vsel.push_back(sigSel&&ajSel);
+         cmp.vsel.push_back(sigSel&&ajSel);
          cmp.Init(40,-3.14,3.14);
          cmp.Project("x:phi1>>");
          cmp.Draw(";Leading Jet #phi;<#slash{p}_{T}^{#parallel}> (GeV/c)",-100,100);
          TLine * l0 = new TLine(-3.14,0,3.14,0);
          l0->Draw();
-      } else if (i==2) {
+      } else if (i==2||i==3) {
          c2->cd(1);
-         cmp.vsel.push_back(sigSel);
-         cmp.vsel.push_back(sigSel);
-         c2->SetLogy(0);
+         cmp.vsel.push_back(sigSel&&ajSel);
+         cmp.vsel.push_back(sigSel&&ajSel);
          cmp.Init(40,50,250);
-         cmp.Project("xhem1incone8:pt1>>");
-         cmp.Draw(";Leading Jet p_{T} (GeV/c);<#Sigma p_{T}^{#parallel}(incone)> (GeV/c)",0,500);
-         lx1=0.52, ly1=0.18, lx2=0.87, ly2=0.36;
+         if (i==2) {
+            cmp.Project("xhem1incone8:pt1>>");
+            cmp.Draw(";Leading Jet p_{T} (GeV/c);<#Sigma p_{T}^{#parallel}(incone)> (GeV/c)",0,500);
+         }
+         if (i==3) {
+            cmp.Project("xhem2incone8:pt2>>");
+            cmp.Draw(";SubLeading Jet p_{T} (GeV/c);<#Sigma p_{T}^{#parallel}(incone)> (GeV/c)",0,500);
+         }
+         lex1=0.094; ley1=0.65; lex2=0.594; ley2=0.95;
+         lx1=0.19, ly1=0.16, lx2=0.54, ly2=0.34;
          c2->cd(2);
          cmp.Ratio()->Draw("hist");
-      } else if (i==3) {
+         TLine * l1 = new TLine(50,1,250,1);
+         l1->SetLineStyle(2);
+         l1->Draw();
+      } else if (i==4||i==5) {
          c2->cd(1);
-         cmp.vsel.push_back(sigSel);
-         cmp.vsel.push_back(sigSel);
-         c2->SetLogy(0);
-         cmp.Init(40,50,250);
-         cmp.Project("xhem2incone8:pt2>>");
-         cmp.Draw(";SubLeading Jet p_{T} (GeV/c);<#Sigma p_{T}^{#parallel}(incone)> (GeV/c)",0,500);
-         lx1=0.52, ly1=0.18, lx2=0.87, ly2=0.36;
+         cmp.vsel.push_back(sigSel&&ajSel);
+         cmp.vsel.push_back(sigSel&&ajSel);
+         gPad->SetLogx(1);
+         cmp.Init(nptrange,ptranges);
+         if (i==4) {
+            cmp.Project("xhem1pt:ptbin>>");
+         }
+         if (i==5) {
+            cmp.Project("xhem2pt:ptbin>>");
+         }
+         cmp.Draw(";Track p_{T} (GeV/c);<#Sigma p_{T}^{#parallel}(hemisphere)> (GeV/c)",0,500);
+         lex1=0.5; ley1=0.65; lex2=0.88; ley2=0.95;
+         lx1=0.53, ly1=0.45, lx2=0.87, ly2=0.64;
          c2->cd(2);
+         gPad->SetLogx(1);
          cmp.Ratio()->Draw("hist");
+         TLine * l1 = new TLine(ptranges[0],1,ptranges[nptrange],1);
+         l1->SetLineStyle(2);
+         l1->Draw();
       }
       c2->cd(1);
+      cmpLeg.Legend(lex1,ley1,lex2,ley2);
+      cmpLeg.leg->AddEntry((TObject*)0,titleJet,"");
+      cmpLeg.leg->AddEntry((TObject*)0,Form("p_{T,1} > %.0f GeV/c",minPt1),"");
+      cmpLeg.leg->AddEntry((TObject*)0,Form("p_{T,2} > %.0f GeV/c",minPt2),"");
+      cmpLeg.leg->AddEntry((TObject*)0,titleSig,"");
+      cmpLeg.leg->AddEntry((TObject*)0,titleAj,"");
       cmpLeg.leg->Draw();
       cmp.Legend(lx1,ly1,lx2,ly2);
       if (insrc="0to12") cmp.leg->AddEntry(cmp.vh[0],Form("0 - 30 %%"),"");
