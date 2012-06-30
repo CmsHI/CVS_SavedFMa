@@ -341,13 +341,13 @@ public:
             float trkWt = dj.trkWt[ip];
 
             // correct leading subleading difference in trk eff
-            if (doResCorr&& me.pt2<80) {
-               if (dj.trkPt[ip]>20) {
-                  if (cos(dj.trkPhi[ip]-me.phi1)>0) trkWt*=0.9;
-                  else trkWt*=1.1;
-                } else if (dj.trkPt[ip]>8) {
-                  if (cos(dj.trkPhi[ip]-me.phi1)>0) trkWt*=0.95;
-                  else trkWt*=1.05;
+            if (doResCorr) {
+               if (cos(dj.trkPhi[ip]-me.phi1)<0) }
+                  if (me.pt2<80) {
+                     if (dj.trkPt[ip]>30) trkWt*=1.2;
+                     else if (dj.trkPt[ip]>20) trkWt*=1.1;
+                     else if (dj.trkPt[ip]>8) trkWt*=1.05;
+                  }
                }
             }
 
