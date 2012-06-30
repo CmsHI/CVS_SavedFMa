@@ -11,6 +11,18 @@
 #include "TLine.h"
 using namespace std;
 
+TH1D * Profile2TH1(TProfile * hp) {
+//    int nbin = hp->GetNbinsX();
+//    float xmin = hp->GetBinLowEdge(1);
+//    float xmax = hp->GetBinLowEdge(nbin+1);
+//    TH1D * h1 = new TH1D(Form("%s_h1",hp->GetName()),hp->GetTitle(),nbin,hp->GetXaxis()->GetXbins());
+   TH1D * h1 = (TH1D*)hp->Clone(Form("%s_h1",hp->GetName()));
+   for (int i=0; i<hp->GetNbinsX(); ++i) {
+      h1->SetBinContent(i,hp->GetBinContent(i+1));
+      h1->SetBinError(i,hp->GetBinError(i+1));
+   }
+   return h1;
+}
 class Compare
 {
 public:
@@ -112,16 +124,41 @@ public:
       leg->SetTextSize(16);
    }
    
+   void MoveLegend(float lx1=0.4, float ly1=0.18, float lx2=0.87, float ly2=0.28) {
+      leg->SetX1NDC(lx1);
+      leg->SetY1NDC(ly1);
+      leg->SetX2NDC(lx2);
+      leg->SetY2NDC(ly2);
+   }
+   
    TH1D * Ratio(TString ytitle="ratio") {
       if (vh.size()<2) {
          cout << "not enough histograms to divide" << endl;
          return 0;
       }
-      TH1D * hr = (TH1D*)vh[0]->Clone(Form("%s_div_%s",vh[0]->GetName(),vh[1]->GetName()));
-      hr->Divide((TH1D*)vh[1]);
+      TH1D * hnum = Profile2TH1(vh[0]);
+      TH1D * hden = Profile2TH1(vh[1]);
+//       TH1D * hnum = (TH1D*)vh[0]->Clone(Form("%s_num",vh[0]->GetName()));
+//       TH1D * hden = (TH1D*)vh[1]->Clone(Form("%s_den",vh[1]->GetName()));
+      TH1D * hr = (TH1D*)hnum->Clone(Form("%s_div_%s",vh[0]->GetName(),vh[1]->GetName()));
+      hr->Divide(hden);
       hr->SetYTitle(ytitle);
       //hr->Fit("pol1","");
       hr->SetAxisRange(0,2,"Y");
       return hr;
+   }
+
+   TH1D * Difference(TString ytitle="Difference") {
+      if (vh.size()<2) {
+         cout << "not enough histograms to divide" << endl;
+         return 0;
+      }
+      TH1D * h1 = (TH1D*)vh[0]->Clone(Form("%s_num",vh[0]->GetName()));
+      TH1D * h2 = (TH1D*)vh[1]->Clone(Form("%s_den",vh[1]->GetName()));
+      TH1D * h3 = (TH1D*)h1->Clone(Form("%s_sub_%s",vh[0]->GetName(),vh[1]->GetName()));
+      h3->Add(h1,h2,1,-1);
+      h3->SetYTitle(ytitle);
+      h3->SetAxisRange(-10,10,"Y");
+      return h3;
    }
 };

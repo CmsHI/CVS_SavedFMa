@@ -18,8 +18,12 @@ using namespace std;
 void CompareMptMC()
 {
    TH1::SetDefaultSumw2();
-   TString infdataname = "fig/06.29_MPT0StudyDataMC/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec4_JetSel2HemSum.root";
-   TString infrefname  = "fig/06.29_MPT0StudyDataMC/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0_JetSel2HemSum.root";
+//    TString infdataname = "fig/06.29_MPT0StudyDataMC/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec4_JetSel2HemSum.root";
+//    TString infrefname  = "fig/06.29_MPT0StudyDataMC/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0_JetSel2HemSum.root";
+//    TString infdataname = "fig/06.29_MPT0StudyDataMC/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec4_GenJetSelEta3HemSum.root";
+//    TString infrefname  = "fig/06.29_MPT0StudyDataMC/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0_GenJetSelEta3HemSum.root";
+   TString infdataname = "fig/06.29_MPT0StudyDataMC/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec4_JetSelEta3HemSum.root";
+   TString infrefname  = "fig/06.29_MPT0StudyDataMC/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0_JetSelEta3HemSum.root";
 
    TString insrc="0to12";
 
@@ -31,16 +35,17 @@ void CompareMptMC()
    TTree * tref = (TTree*)infref->Get("t"+insrc);
    cout << "Ref: " << infref->GetName() << " " << tref->GetEntries() << endl;
    
-   TString tag = Form("compMptRecGen_SelJet2_"+insrc);
+   TString tag = Form("compMptMc_JetSelEta3_Aj00_"+insrc);
    float minPt1=120,minPt2=50,sigDPhi=7./8*3.14159;
    TCut leadingSel  = Form("abs(eta1)<1.6&&pt1>%.3f",minPt1);
    TCut awaySel     = Form("abs(eta2)<1.6&&pt2>%.3f",minPt2);
    TCut sigSel      = Form("acos(cos(phi2-phi1))>%.3f",sigDPhi);
-   TCut ajSel       = "Aj>0.3";
+   TCut ajSel       = "Aj<0.11";
 
    TString titleJet = "icPu5 Calo Jet";
-   TString titleSig = "#Delta#phi_{1,2} > #frac{7}{8}#pi";
-   TString titleAj = "A_{J} > 0.3";
+//    TString titleJet = "Gen. Jet";
+   TString titleSig = "|#eta_{Jet}|<1.6  #Delta#phi_{1,2} > #frac{7}{8}#pi";
+   TString titleAj = "A_{J} < 0.11";
 
    TCut sel = leadingSel&&awaySel;
    
@@ -124,6 +129,7 @@ void CompareMptMC()
          c2->cd(2);
          gPad->SetLogx(1);
          cmp.Ratio()->Draw("hist");
+//          cmp.Difference()->Draw("hist");
          TLine * l1 = new TLine(ptranges[0],1,ptranges[nptrange],1);
          l1->SetLineStyle(2);
          l1->Draw();
