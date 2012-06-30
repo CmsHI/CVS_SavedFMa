@@ -11,7 +11,7 @@
 using namespace std;
 
 void loopMpt(
-            TString outdir = "./fig/06.29_MPT0StudyDataMC"
+            TString outdir = "./fig/06.30_MPT0StudyDataMC"
              )
 {
    TH1::SetDefaultSumw2();
@@ -43,7 +43,7 @@ void loopMpt(
    float etamax=2.4;
    TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel);
    if (isMC) tag.ReplaceAll("HisData","HisMc");
-   tag+="_JetSelEta3HemSum";
+   tag+="_JetSelEta3TrkCorrDiffLSL";
 
    TFile *inf = TFile::Open(infname);
    TTree *nt =(TTree*)inf->FindObjectAny("tgj");

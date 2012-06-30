@@ -181,6 +181,7 @@ class AnaMPT
 public:
    TString name;
    bool isMC;
+   bool doResCorr;
    int subEvtMode;
    int cMin, cMax;
    float minJetPt1,minJetPt2,maxJetEta,sigDPhi;
@@ -226,6 +227,7 @@ public:
 
    AnaMPT(TString myname) :
    name(myname),
+   doResCorr(false),
    isMC(false),
    subEvtMode(-1),
    trkCorr("Forest2_v19","hitrkEffAnalyzer_MergedGeneral")
@@ -337,6 +339,18 @@ public:
             // trk correction
 //             float trkWt = dj.vtrkWt[ip][0];
             float trkWt = dj.trkWt[ip];
+
+            // correct leading subleading difference in trk eff
+            if (doResCorr&& me.pt2<80) {
+               if (dj.trkPt[ip]>20) {
+                  if (cos(dj.trkPhi[ip]-me.phi1)>0) trkWt*=0.9;
+                  else trkWt*=1.1;
+                } else if (dj.trkPt[ip]>8) {
+                  if (cos(dj.trkPhi[ip]-me.phi1)>0) trkWt*=0.95;
+                  else trkWt*=1.05;
+               }
+            }
+
             hTrkCorrPt->Fill(dj.trkPt[ip],trkWt);
             hTrkCorrEta->Fill(dj.trkEta[ip],trkWt);
             // set mpt input
