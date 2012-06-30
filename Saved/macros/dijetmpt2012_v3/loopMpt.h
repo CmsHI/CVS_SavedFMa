@@ -49,12 +49,23 @@ public:
    float x;   
    float x_pt[nptrange];
    float x_pt_dr[nptrange][ndrbin];
-   float xhem_pt_dr[2][nptrange][ndrbin];
    float x_pt_dphi[nptrange][ndphibin];
+
+   float xhem_pt[2][nptrange];
+   float xhem_pt_dr[2][nptrange][ndrbin];
+   
+   float ptbin[nptrange];
+   float drbin[ndrbin];
    
    MPTEvent() :
-   n(0)
-   {}
+   n(0) {
+      for (int i=0; i<nptrange; ++i) {
+         ptbin[i] = ptranges[i];
+      }
+      for (int j=0; j<ndrbin; ++j) {
+         drbin[j] = drbins[j];
+      }
+   }
 
    void clear() {
       x=0;
@@ -62,14 +73,20 @@ public:
          x_pt[i]=0;
          for (int j=0; j<ndrbin; ++j) {
             x_pt_dr[i][j]=0;
-            for (int h=0; h<2; ++h) {
-               xhem_pt_dr[h][i][j]=0;
-            }
          }
          for (int k=0; k<ndphibin; ++k) {
             x_pt_dphi[i][k]=0;
          }
       }      
+      // separate hemispheres
+      for (int h=0; h<2; ++h) {
+         for (int i=0; i<nptrange; ++i) {
+            xhem_pt[h][i]=0;
+            for (int j=0; j<ndrbin; ++j) {
+               xhem_pt_dr[h][i][j]=0;
+            }
+         }
+      }   
    }
    
    void Calc() {
@@ -94,6 +111,9 @@ public:
             if (candPt>=ptranges[i] && candPt<ptranges[i+1]) {
                //if (it==0) cout << "pt1, eta1, phi1: " << pt1 << ", " << eta1 << ", " << phi1 << " candPt: " << candPt << " ptx: " << ptx << endl;
                x_pt[i]+= ptx;
+               // separate hemispheres
+               if (ptx<=0) xhem_pt[0][i] += -ptx;
+               if (ptx>0) xhem_pt[1][i] += ptx;
 //             if (it==0) cout << "add to x_pt: " << ptx << endl;
                for (int j=0; j<ndrbin; ++j) {
                   float drmin=drbins[j];
@@ -144,9 +164,16 @@ void MPTSetBranchAddress(TTree * tgj, EvtSel & evt, DiJet & gj, MPTEvent & mpt) 
    tgj->Branch("x",&mpt.x,"x/F");
    tgj->Branch("xpt",mpt.x_pt,Form("xpt[%d]/F",nptrange));
    tgj->Branch("xptdr",mpt.x_pt_dr,Form("xptdr[%d][%d]/F",nptrange,ndrbin));
-   tgj->Branch("xhem1ptdr",mpt.xhem_pt_dr[0],Form("xhem1ptdr[%d][%d]/F",nptrange,ndrbin));
-   tgj->Branch("xhem2ptdr",mpt.xhem_pt_dr[1],Form("xhem2ptdr[%d][%d]/F",nptrange,ndrbin));
    tgj->Branch("xptdphi",mpt.x_pt_dphi,Form("xptphi[%d][%d]/F",nptrange,ndphibin));
+
+   // separate hemispheres
+   for (int h=0; h<2; ++h) {
+      tgj->Branch(Form("xhem%dpt",h+1),mpt.xhem_pt[h],Form("xhem%dpt[%d]/F",h+1,nptrange));
+      tgj->Branch(Form("xhem%dptdr",h+1),mpt.xhem_pt_dr[h],Form("xhem%dptdr[%d][%d]/F",h+1,nptrange,ndrbin));
+   }
+
+   tgj->Branch("ptbin",mpt.ptbin,Form("ptbin[%d]/F",nptrange));
+   tgj->Branch("drbin",mpt.drbin,Form("drbin[%d]/F",ndrbin));   
 }
 
 class AnaMPT
