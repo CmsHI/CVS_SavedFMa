@@ -27,8 +27,8 @@ void loopMpt(
 //    TString infmcname="../ntout/output-hy18dj80_Forest2v21_v2_allTrks_simtrk_jpt100_xsec_icPu5.root";
    TString infdataname="../ntout/output-data-Forest2v3_v3_saveTrks_jpt120_icPu5.root";
 //    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_simtrk_jpt120_xsec_icPu5.root";
-   TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt120eta5_xsec_icPu5.root";
-//    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_gjpt120eta5_xsec_icPu5.root";
+   TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt120eta3_xsec_icPu5.root";
+//    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_gjpt120eta3_xsec_icPu5.root";
    
    bool isMC=true;
    int particleRecLevel = 4; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
@@ -43,7 +43,7 @@ void loopMpt(
    float etamax=2.4;
    TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel);
    if (isMC) tag.ReplaceAll("HisData","HisMc");
-   tag+="_JetSel2HemSum";
+   tag+="_JetSelEta3HemSum";
 
    TFile *inf = TFile::Open(infname);
    TTree *nt =(TTree*)inf->FindObjectAny("tgj");
