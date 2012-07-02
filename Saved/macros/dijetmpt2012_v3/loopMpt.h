@@ -38,8 +38,10 @@ float dphibins[ndphibin+1]={0,Pi()/12.,2*Pi()/12.,3*Pi()/12.,4*Pi()/12,5*Pi()/12
 
 class MPTEvent {
 public:
+   float jet1Wt,jet2Wt;
    float pt1,phi1,eta1;
    float pt2,phi2,eta2;
+   float jdphi,Aj;
    int n;
    float pt[MAXTRK];
    float eta[MAXTRK];
@@ -161,6 +163,7 @@ public:
 void MPTSetBranchAddress(TTree * tgj, EvtSel & evt, DiJet & gj, MPTEvent & mpt) {
    tgj->Branch("evt",&evt.run,evt.leaves);
    tgj->Branch("jet",&gj.pt1,gj.leaves);
+   tgj->Branch("mpt",&mpt.jet1Wt,"jet1Wt/F:jet2Wt");
    tgj->Branch("x",&mpt.x,"x/F");
    tgj->Branch("xpt",mpt.x_pt,Form("xpt[%d]/F",nptrange));
    tgj->Branch("xptdr",mpt.x_pt_dr,Form("xptdr[%d][%d]/F",nptrange,ndrbin));
@@ -182,6 +185,7 @@ public:
    TString name;
    bool isMC;
    bool doResCorr;
+   bool doJetPhiFlat;
    int subEvtMode;
    int cMin, cMax;
    float minJetPt1,minJetPt2,maxJetEta,sigDPhi;
@@ -222,13 +226,18 @@ public:
    TH2D * vhMptPtDr[nptrange][ndrbin];
    TH2D * vhMptPtDPhi[nptrange][ndphibin];
    
+   // weights
+   TH1D * hJetPhi[2];
+   TH2D * hJetWt[2];
+   
    // output tree
    TTree * tm;
 
    AnaMPT(TString myname) :
    name(myname),
-   doResCorr(false),
    isMC(false),
+   doResCorr(false),
+   doJetPhiFlat(false),
    subEvtMode(-1),
    trkCorr("Forest2_v19","hitrkEffAnalyzer_MergedGeneral")
    {
@@ -258,7 +267,7 @@ public:
       hCentrality = new TH1D("hCentrality"+name,";Centrality Bin;",40,0,40);
       hJetPt2D = new TH2D("hJetPt2D"+name,";p_{T,1} (GeV/c);p_{T,2} (GeV/c)",60,0,300,60,0,300);
       hJDPhi = new TH1D("hJDPhi"+name,";#Delta#phi(j1,j2);",40,0,3.14159);
-      hAj = new TH1D("hAj"+name,";A_{J};",40,0,0.8);
+      hAj = new TH1D("hAj"+name,";A_{J};",nAjBin,AjBins);
 
 //       hGenpPt = new TH1D("hGenpPt"+name,"; p_{T};",100,0,200);
 //       hTrkPtNoQual = new TH1D("hTrkPtNoQual"+name,"; p_{T};",100,0,200);
@@ -290,6 +299,15 @@ public:
          }          
       }
       
+      // Weights
+      const int njphibin=20;
+      float jphibins[njphibin];
+      for (int i=0; i<=njphibin; ++i) jphibins[i] = -Pi()+2*Pi()/njphibin*i;
+      for (int j=0; j<2; ++j) {
+         hJetPhi[j] = new TH1D(Form("hJet%dPhi%s",j+1,+name.Data()),";Leading Jet #phi;",njphibin,jphibins);
+         hJetWt[j]  = new TH2D(Form("hJet%dWt%s",j+1,name.Data()),";Aj;Jet #phi;",njphibin,jphibins,nAjBin,AjBins);
+      }
+
       // output tree
       tm = new TTree("t"+name,"dijet mpt tree "+name);
       MPTSetBranchAddress(tm,evt,dj,me);
@@ -300,25 +318,50 @@ public:
       if (maxEntry>0) numEvt = maxEntry;
       for (int iEvt=0; iEvt<numEvt; ++iEvt) {
          t->GetEntry(iEvt);
+         // selection
+         if (!SelEvt()) continue;
+
+         hJetPhi[0]->Fill(me.phi1);                  
+         hJetPhi[1]->Fill(me.phi2);
+         hJetWt[0]->Fill(me.phi1,me.Aj);
+         hJetWt[1]->Fill(me.phi2,me.Aj);
       }
+      
+      for (int k=0; k<2; ++k) {
+         float averagePhi = hJetPhi[k]->Integral()/hJetPhi[k]->GetNbinsX();
+         for (int i=1; i<=hJetPhi[k]->GetNbinsX(); ++i) {
+            hJetPhi[k]->SetBinContent(i,averagePhi/hJetPhi[k]->GetBinContent(i));
+         }
+      }      
+
+      for (int k=0; k<2; ++k) {
+         int nxbins = hJetWt[k]->GetNbinsX();
+         for (int j=1; j<=hJetWt[k]->GetNbinsY(); ++j) {
+            float averagePhi = hJetWt[k]->Integral(1,nxbins,j,j)/nxbins;
+            for (int i=1; i<=nxbins; ++i) {
+               hJetWt[k]->SetBinContent(i,j,averagePhi/hJetWt[k]->GetBinContent(i,j));
+            }
+         }
+      }      
    }
 
    bool SelEvt() {
-      if (!isMC&&!evt.anaEvtSel) return false;
-
-      if (evt.cBin<cMin||evt.cBin>=cMax) return false;
-
       me.pt1 = dj.pt1; me.phi1 = dj.phi1; me.eta1 = dj.eta1;
       me.pt2 = dj.pt2; me.phi2 = dj.phi2; me.eta2 = dj.eta2;
 
 //          me.pt1 = dj.genjetpt1; me.phi1 = dj.genjetphi1; me.eta1 = dj.genjeteta1;
 //          me.pt2 = dj.genjetpt2; me.phi2 = dj.genjetphi2; me.eta2 = dj.genjeteta2;
+      me.Aj = (me.pt1-me.pt2)/(me.pt1+me.pt2);
+      me.jdphi = fabs(deltaPhi(me.phi1,me.phi2));
+
+      if (!isMC&&!evt.anaEvtSel) return false;
+
+      if (evt.cBin<cMin||evt.cBin>=cMax) return false;
 
       // Jet Selection
       if (me.pt1<minJetPt1 || fabs(me.eta1)>maxJetEta) return false;
       if (me.pt2<minJetPt2 || fabs(me.eta2)>maxJetEta) return false;
-      float jdphi = fabs(deltaPhi(me.phi1,me.phi2));
-      if (  jdphi < sigDPhi) return false;
+      if (  me.jdphi < sigDPhi) return false;
       
       return true;
    }
@@ -326,6 +369,10 @@ public:
    void Loop(int maxEntry=-1) {
       int numEvt = t->GetEntries();
       if (maxEntry>0) numEvt = maxEntry;
+      
+      for (int i=1; i<=hJetWt[0]->GetNbinsX(); ++i) {
+         cout << "jet1 2d bin: " << i << " wt: " << hJetWt[0]->GetBinContent(i,hJetWt[0]->GetNbinsY()) << endl;    
+      }
       for (int iEvt=0; iEvt<numEvt; ++iEvt) {
          t->GetEntry(iEvt);
          
@@ -334,13 +381,24 @@ public:
          // selection
          if (!SelEvt()) continue;
 
+         // Jet Phi Flattening
+         me.jet1Wt=1; me.jet2Wt=1;
+         if (doJetPhiFlat) {
+            int jet1PhiBin = hJetPhi[0]->FindFixBin(me.phi1);
+            int jet2PhiBin = hJetPhi[1]->FindFixBin(me.phi2);
+            int jetAjBin = hAj->FindBin(me.Aj);
+            me.jet1Wt = hJetWt[0]->GetBinContent(jet1PhiBin,jetAjBin);
+            me.jet2Wt = hJetWt[1]->GetBinContent(jet2PhiBin,jetAjBin);
+//             me.jet1Wt = hJetPhi[0]->GetBinContent(jet1PhiBin);
+//             me.jet2Wt = hJetPhi[1]->GetBinContent(jet2PhiBin);
+//             if (jet1PhiBin==1&&jetAjBin==hJetWt[0]->GetNbinsY()) cout << "jet1 phi: " << me.phi1 << " bin: " << jet1PhiBin << "," << jetAjBin << " wt: " << me.jet1Wt << endl;
+         }
+         
          // Fill Basics
-         float jdphi = fabs(deltaPhi(me.phi1,me.phi2));
-         float Aj = (me.pt1-me.pt2)/(me.pt1+me.pt2);
          hCentrality->Fill(evt.cBin);
          hJetPt2D->Fill(me.pt1,me.pt2);
-         hJDPhi->Fill(jdphi);
-         hAj->Fill(Aj);
+         hJDPhi->Fill(me.jdphi);
+         hAj->Fill(me.Aj);
          
          // Track loop
          me.n=0;
@@ -423,14 +481,14 @@ public:
             }
          } // End of if rec level
          me.Calc();
-         hMpt->Fill(Aj,me.x);
+         hMpt->Fill(me.Aj,me.x);
          for (int i=0; i<nptrange; ++i) {
-            vhMptPt[i]->Fill(Aj,me.x_pt[i]);
+            vhMptPt[i]->Fill(me.Aj,me.x_pt[i]);
             for (int j=0; j<ndrbin; ++j) {
-               vhMptPtDr[i][j]->Fill(Aj,me.x_pt_dr[i][j]);
+               vhMptPtDr[i][j]->Fill(me.Aj,me.x_pt_dr[i][j]);
             }
             for (int k=0; k<ndphibin; ++k) {
-               vhMptPtDPhi[i][k]->Fill(Aj,me.x_pt_dphi[i][k]);
+               vhMptPtDPhi[i][k]->Fill(me.Aj,me.x_pt_dphi[i][k]);
             }
          }
          

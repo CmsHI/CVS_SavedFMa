@@ -11,13 +11,13 @@
 using namespace std;
 
 void loopMpt(
-            TString outdir = "./fig/06.30_MPT0StudyDataMC"
+            TString outdir = "./fig/07.02_JetDPhiFlattening"
              )
 {
    TH1::SetDefaultSumw2();
    gSystem->mkdir(outdir,kTRUE);
 
-   const int nCentBin = 2;
+   const int nCentBin = 1;
    int centBins[3] = {0,12,40};
 
 //    TString infdataname="../ntout/output-data-Forest2v2v3_saveTrks_v0_icPu5.root";
@@ -31,7 +31,7 @@ void loopMpt(
 //    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_gjpt120eta3_xsec_icPu5.root";
    
    bool isMC=true;
-   int particleRecLevel = 4; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
+   int particleRecLevel = 1; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
    if (!isMC) particleRecLevel=4;
    
    TString infname=infdataname;
@@ -41,9 +41,11 @@ void loopMpt(
    float minJetPt2=50;
    float sigDPhi=3.1415926*7./8;
    float etamax=2.4;
-   TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel);
+   bool doResCorr = false;
+   bool doJetPhiFlat = true;
+   TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d_resc%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel,doResCorr);
    if (isMC) tag.ReplaceAll("HisData","HisMc");
-   tag+="_JetSelEta3TrkCorrDiffLSL";
+   tag+="_JetSelEta3";
 
    TFile *inf = TFile::Open(infname);
    TTree *nt =(TTree*)inf->FindObjectAny("tgj");
@@ -59,6 +61,8 @@ void loopMpt(
       TString name = Form("%dto%d",centBins[c],centBins[c+1]);
       AnaMPT ana(name);
       ana.isMC = isMC;
+      ana.doResCorr = doResCorr;
+      ana.doJetPhiFlat = doJetPhiFlat;
 //       ana.subEvtMode = 1; // -1: all (default), 0: sig, 1: bkg
       ana.particleRecLevel = particleRecLevel;
       ana.cMin=centBins[c];
@@ -71,8 +75,8 @@ void loopMpt(
       ana.maxEta = etamax;
       ana.outf = hout;
       ana.Init(nt);
+      ana.CalcWeights();
       ana.Loop();
-//       ana.Loop(10);
    }
    
    hout->Write();
