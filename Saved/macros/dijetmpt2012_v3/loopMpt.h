@@ -111,25 +111,20 @@ public:
          for (int i=0; i<nptrange; ++i) {
 //             if (it==0) cout << "pt range: " << ptranges[i] << " to " << ptranges[i+1] << endl;
             if (candPt>=ptranges[i] && candPt<ptranges[i+1]) {
-               //if (it==0) cout << "pt1, eta1, phi1: " << pt1 << ", " << eta1 << ", " << phi1 << " candPt: " << candPt << " ptx: " << ptx << endl;
                x_pt[i]+= ptx;
                // separate hemispheres
                if (ptx<=0) xhem_pt[0][i] += -ptx;
                if (ptx>0) xhem_pt[1][i] += ptx;
-//             if (it==0) cout << "add to x_pt: " << ptx << endl;
                for (int j=0; j<ndrbin; ++j) {
                   float drmin=drbins[j];
                   float drmax=drbins[j+1];
-//                   cout << "drbin " << j << ": " << drmin << " to " << drmax << endl;
                   if (j!=ndrbin-1) {
                      if ( (dr1>=drmin && dr1<drmax) ||
                           (dr2>=drmin && dr2<drmax)) {
-//                         if (i==0) cout << "drbin " << j << ", dr1: " << dr1 << " dr2: " << dr2 << " ptx: " << ptx << endl;
                         x_pt_dr[i][j] += ptx;
                      }
                   } else {
                      if ( dr1 >=drmin && dr2 >=drmin) {
-//                         if (i==0) cout << "drbin rest, dr1: " << dr1 << " dr2: " << dr2 << " ptx: " << ptx << endl;
                         x_pt_dr[i][j] += ptx;
                      }
                   }
@@ -191,6 +186,7 @@ public:
    float minJetPt1,minJetPt2,maxJetEta,sigDPhi;
    float minPt, maxEta;
    int particleRecLevel; // 0 gen, 1 sim, 2 sim mat, 3 rec mat 4 rec
+   int maxEntry;
    TTree * t;
 
    EvtSel evt;
@@ -219,9 +215,6 @@ public:
    TH1D * hTrkCorrEta;
    // mpt
    TH2D * hMpt;
-//    TH3D * hMptPt;
-//    TH3D * hMptPtDr;
-//    TH3D * hMptPtDPhi;
    TH2D * vhMptPt[nptrange];
    TH2D * vhMptPtDr[nptrange][ndrbin];
    TH2D * vhMptPtDPhi[nptrange][ndphibin];
@@ -239,6 +232,8 @@ public:
    doResCorr(false),
    doJetPhiFlat(false),
    subEvtMode(-1),
+   particleRecLevel(4), // 0 gen, 1 sim, 2 sim mat, 3 rec mat 4 rec
+   maxEntry(-1) // -1 for everything
    trkCorr("Forest2_v19","hitrkEffAnalyzer_MergedGeneral")
    {
       cout << "Analyze MPT: " << name << endl;
@@ -264,19 +259,19 @@ public:
       JTSetBranchAddress(tgj,evt,dj);
       
       if (outf) outf->cd();
+      ///////////////////////////////////
+      // Event Distributions
+      ///////////////////////////////////
       hCentrality = new TH1D("hCentrality"+name,";Centrality Bin;",40,0,40);
       hJetPt2D = new TH2D("hJetPt2D"+name,";p_{T,1} (GeV/c);p_{T,2} (GeV/c)",60,0,300,60,0,300);
       hJDPhi = new TH1D("hJDPhi"+name,";#Delta#phi(j1,j2);",40,0,3.14159);
       hAj = new TH1D("hAj"+name,";A_{J};",nAjBin,AjBins);
 
-//       hGenpPt = new TH1D("hGenpPt"+name,"; p_{T};",100,0,200);
-//       hTrkPtNoQual = new TH1D("hTrkPtNoQual"+name,"; p_{T};",100,0,200);
-//       hTrkPtQual3 = new TH1D("hTrkPtQual3"+name,"; p_{T};",100,0,200);
-//       hTrkPt = new TH1D("hTrkPt"+name,"; p_{T};",100,0,200);
-//       hTrkCorrPt = new TH1D("hTrkCorrPt"+name,"; p_{T};",100,0,200);
+      ///////////////////////////////////
+      // Tracking Distributions
+      ///////////////////////////////////
       hGenpPt = (TH1D*)trkCorr.ptBin_->Clone("hGenpPt"+name);
       hTrkPtNoQual = (TH1D*)trkCorr.ptBin_->Clone("hTrkPtNoQual"+name);
-      hTrkPtQual3 = (TH1D*)trkCorr.ptBin_->Clone("hTrkPtQual3"+name);
       hTrkPt = (TH1D*)trkCorr.ptBin_->Clone("hTrkPt"+name);
       hTrkCorrPt = (TH1D*)trkCorr.ptBin_->Clone("hTrkCorrPt"+name);
 
@@ -284,10 +279,10 @@ public:
       hTrkEta = new TH1D("hTrkEta"+name,"; #eta;",48,-2.4,2.4);
       hTrkCorrEta = new TH1D("hTrkCorrEta"+name,"; #eta;",48,-2.4,2.4);
 
+      ///////////////////////////////////
+      // MPT Distributions
+      ///////////////////////////////////
       hMpt = new TH2D(Form("hMpt%s",name.Data()),";Aj;mpt;",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
-//       hMptPt = new TH3D(Form("hMptPt%s",name.Data()),";Aj;mpt;pt",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
-//       hMptPtDr = new TH3D(Form("hMptPtDr%s",name.Data()),";Aj;mpt;pt",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
-//       hMptPtDPhi = new TH3D(Form("hMptPtDPhi%s",name.Data()),";Aj;mpt;pt",nAjBin,AjBins,xbins.size()-1,&xbins[0],nptrange,ptranges);
       for (int i=0; i<nptrange; ++i) {
          vhMptPt[i] = new TH2D(Form("hMpt%s_pt%d",name.Data(),i),";Aj;mpt",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
          for (int j=0; j<ndrbin; ++j) {
@@ -299,7 +294,9 @@ public:
          }          
       }
       
-      // Weights
+      ///////////////////////////////////
+      // Distributions for reweighting
+      ///////////////////////////////////
       const int njphibin=20;
       float jphibins[njphibin];
       for (int i=0; i<=njphibin; ++i) jphibins[i] = -Pi()+2*Pi()/njphibin*i;
@@ -308,17 +305,52 @@ public:
          hJetWt[j]  = new TH2D(Form("hJet%dWt%s",j+1,name.Data()),";Aj;Jet #phi;",njphibin,jphibins,nAjBin,AjBins);
       }
 
-      // output tree
+      ///////////////////////////////////
+      // Output Tree
+      ///////////////////////////////////
       tm = new TTree("t"+name,"dijet mpt tree "+name);
       MPTSetBranchAddress(tm,evt,dj,me);
    }
 
-   void CalcWeights(int maxEntry=-1) {
+   // Function to Select Event And set event vars
+   //----------------------------------------------------------------------------------------
+   bool SelEvt() {
+      me.pt1 = dj.pt1; me.phi1 = dj.phi1; me.eta1 = dj.eta1;
+      me.pt2 = dj.pt2; me.phi2 = dj.phi2; me.eta2 = dj.eta2;
+
+//          me.pt1 = dj.genjetpt1; me.phi1 = dj.genjetphi1; me.eta1 = dj.genjeteta1;
+//          me.pt2 = dj.genjetpt2; me.phi2 = dj.genjetphi2; me.eta2 = dj.genjeteta2;
+
+      me.Aj = (me.pt1-me.pt2)/(me.pt1+me.pt2);
+      me.jdphi = fabs(deltaPhi(me.phi1,me.phi2));
+
+      if (!isMC&&!evt.anaEvtSel) return false;
+
+      if (evt.cBin<cMin||evt.cBin>=cMax) return false;
+
+      // Jet Selection
+      if (me.pt1<minJetPt1 || fabs(me.eta1)>maxJetEta) return false;
+      if (me.pt2<minJetPt2 || fabs(me.eta2)>maxJetEta) return false;
+      if (  me.jdphi < sigDPhi) return false;
+      
+      return true;
+   }
+
+   // Function to Calculate reweighting
+   //----------------------------------------------------------------------------------------
+   void CalcWeights() {
       int numEvt = t->GetEntries();
       if (maxEntry>0) numEvt = maxEntry;
+
+      ///////////////////////////////////
+      // Fill Jet Phi Distributions
+      ///////////////////////////////////
       for (int iEvt=0; iEvt<numEvt; ++iEvt) {
          t->GetEntry(iEvt);
-         // selection
+
+         ///////////////////////////////////
+         // Event Selection (Should be identical to event loop
+         ///////////////////////////////////
          if (!SelEvt()) continue;
 
          hJetPhi[0]->Fill(me.phi1);                  
@@ -327,6 +359,9 @@ public:
          hJetWt[1]->Fill(me.phi2,me.Aj);
       }
       
+      ///////////////////////////////////
+      // Calculate the reweighting factors
+      ///////////////////////////////////
       for (int k=0; k<2; ++k) {
          float averagePhi = hJetPhi[k]->Integral()/hJetPhi[k]->GetNbinsX();
          for (int i=1; i<=hJetPhi[k]->GetNbinsX(); ++i) {
@@ -344,41 +379,26 @@ public:
          }
       }      
    }
-
-   bool SelEvt() {
-      me.pt1 = dj.pt1; me.phi1 = dj.phi1; me.eta1 = dj.eta1;
-      me.pt2 = dj.pt2; me.phi2 = dj.phi2; me.eta2 = dj.eta2;
-
-//          me.pt1 = dj.genjetpt1; me.phi1 = dj.genjetphi1; me.eta1 = dj.genjeteta1;
-//          me.pt2 = dj.genjetpt2; me.phi2 = dj.genjetphi2; me.eta2 = dj.genjeteta2;
-      me.Aj = (me.pt1-me.pt2)/(me.pt1+me.pt2);
-      me.jdphi = fabs(deltaPhi(me.phi1,me.phi2));
-
-      if (!isMC&&!evt.anaEvtSel) return false;
-
-      if (evt.cBin<cMin||evt.cBin>=cMax) return false;
-
-      // Jet Selection
-      if (me.pt1<minJetPt1 || fabs(me.eta1)>maxJetEta) return false;
-      if (me.pt2<minJetPt2 || fabs(me.eta2)>maxJetEta) return false;
-      if (  me.jdphi < sigDPhi) return false;
-      
-      return true;
-   }
    
-   void Loop(int maxEntry=-1) {
+   // Function to Loop events
+   //----------------------------------------------------------------------------------------
+   void Loop() {
       int numEvt = t->GetEntries();
-      if (maxEntry>0) numEvt = maxEntry;
-      
-      for (int i=1; i<=hJetWt[0]->GetNbinsX(); ++i) {
-         cout << "jet1 2d bin: " << i << " wt: " << hJetWt[0]->GetBinContent(i,hJetWt[0]->GetNbinsY()) << endl;    
-      }
+      if (maxEntry>0) numEvt = maxEntry;      
+//       for (int i=1; i<=hJetWt[0]->GetNbinsX(); ++i) {
+//          cout << "jet1 2d bin: " << i << " wt: " << hJetWt[0]->GetBinContent(i,hJetWt[0]->GetNbinsY()) << endl;    
+//       }
+
+      ///////////////////////////////////
+      // Main Event Loop
+      ///////////////////////////////////
       for (int iEvt=0; iEvt<numEvt; ++iEvt) {
          t->GetEntry(iEvt);
-         
       if (cMax<=12&&iEvt%1000==0) cout <<iEvt<<" / "<<numEvt << " run: " << evt.run << " evt: " << evt.evt << " bin: " << evt.cBin << " nT: " << evt.nT << " trig: " <<  evt.trig << " anaEvtSel: " << evt.anaEvtSel <<endl;
 
-         // selection
+         ///////////////////////////////////
+         // Event Selection
+         ///////////////////////////////////
          if (!SelEvt()) continue;
 
          // Jet Phi Flattening
@@ -389,33 +409,42 @@ public:
             int jetAjBin = hAj->FindBin(me.Aj);
             me.jet1Wt = hJetWt[0]->GetBinContent(jet1PhiBin,jetAjBin);
             me.jet2Wt = hJetWt[1]->GetBinContent(jet2PhiBin,jetAjBin);
-//             me.jet1Wt = hJetPhi[0]->GetBinContent(jet1PhiBin);
-//             me.jet2Wt = hJetPhi[1]->GetBinContent(jet2PhiBin);
-//             if (jet1PhiBin==1&&jetAjBin==hJetWt[0]->GetNbinsY()) cout << "jet1 phi: " << me.phi1 << " bin: " << jet1PhiBin << "," << jetAjBin << " wt: " << me.jet1Wt << endl;
+//             if (jet1PhiBin==1&&jetAjBin==hJetWt[0]->GetNbinsY())
+//                cout << "jet1 phi: " << me.phi1 << " bin: " << jet1PhiBin << "," << jetAjBin << " wt: " << me.jet1Wt << endl;
          }
          
-         // Fill Basics
+         ///////////////////////////////////
+         // Event Distributions
+         ///////////////////////////////////
          hCentrality->Fill(evt.cBin);
          hJetPt2D->Fill(me.pt1,me.pt2);
          hJDPhi->Fill(me.jdphi);
          hAj->Fill(me.Aj);
          
-         // Track loop
+         ///////////////////////////////////
+         // Track Loop
+         ///////////////////////////////////
          me.n=0;
          for (int ip=0; ip<dj.nTrk; ++ip) {
+            // Track Selection
             if (dj.trkPt[ip]<minPt) continue;
             if (fabs(dj.trkEta[ip])>maxEta) continue;
             hTrkPtNoQual->Fill(dj.trkPt[ip]);
-//             if (dj.trkAlgo[ip]<4||dj.vtrkQual[ip][1]) hTrkPtQual3->Fill(dj.trkPt[ip]);
             if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
             if (particleRecLevel==3&&dj.trkIsFake[ip]) continue;
+
+            // Raw Track Distributions
             hTrkPt->Fill(dj.trkPt[ip]);
             hTrkEta->Fill(dj.trkEta[ip]);
-            // trk correction
-//             float trkWt = dj.vtrkWt[ip][0];
+
+            ///////////////////////////////////
+            // Tracking Corrections
+            ///////////////////////////////////
             float trkWt = dj.trkWt[ip];
 
-            // correct leading subleading difference in trk eff
+            ///////////////////////////////////
+            // Residual Corrections
+            ///////////////////////////////////
             if (doResCorr) {
                if ( cos(dj.trkPhi[ip]-me.phi1)<0 ) {
                   if (me.pt2<80) {
@@ -432,9 +461,11 @@ public:
                }
             }
 
+            // Corrected Track Distributions
             hTrkCorrPt->Fill(dj.trkPt[ip],trkWt);
             hTrkCorrEta->Fill(dj.trkEta[ip],trkWt);
-            // set mpt input
+
+            // Set mpt input
             if (particleRecLevel>=3) {
                   me.pt[me.n] = dj.trkPt[ip];
                   me.eta[me.n] = dj.trkEta[ip];
@@ -446,33 +477,45 @@ public:
          }
 
          if (particleRecLevel>=1&&particleRecLevel<3) {
+            ///////////////////////////////////
+            // Sim Loop
+            ///////////////////////////////////
             me.n=0;
-            // Sim loop
             for (int ip=0; ip<dj.nSim; ++ip) {
+               // Sim Selection
                if (dj.simPt[ip]<minPt) continue;
                if (fabs(dj.simEta[ip])>maxEta) continue;
                if (particleRecLevel==2&&dj.simHasRec[ip]) continue;
+
+               // Sim Distributions
                hGenpPt->Fill(dj.simPt[ip]);
                hGenpEta->Fill(dj.simEta[ip]);
-               // set mpt input
+
+               // Set mpt input
                me.pt[me.n] = dj.simPt[ip];
                me.eta[me.n] = dj.simEta[ip];
                me.phi[me.n] = dj.simPhi[ip];
                if (particleRecLevel==1) me.weight[me.n] = 1;
-               if (particleRecLevel==2) me.weight[me.n] = 1./dj.trkEff[ip];
+//                if (particleRecLevel==2) me.weight[me.n] = 1./dj.trkEff[ip];
                ++me.n;
             }
          }else if (particleRecLevel==0){
+            ///////////////////////////////////
+            // Genp Loop
+            ///////////////////////////////////
             me.n=0;
-            // Genp loop
             for (int ip=0; ip<dj.nGenp; ++ip) {
+               // Genp Selection
                if (dj.genpPt[ip]<minPt) continue;
                if (fabs(dj.genpEta[ip])>maxEta) continue;
                if (subEvtMode==0 && dj.genpSube[ip]!=0) continue;
                if (subEvtMode==1 && dj.genpSube[ip]==0) continue;
+
+               // Genp Distributions
                hGenpPt->Fill(dj.genpPt[ip]);
                hGenpEta->Fill(dj.genpEta[ip]);
-               // set mpt input
+
+               // Set mpt input
                me.pt[me.n] = dj.genpPt[ip];
                me.eta[me.n] = dj.genpEta[ip];
                me.phi[me.n] = dj.genpPhi[ip];
@@ -481,6 +524,10 @@ public:
             }
          } // End of if rec level
          me.Calc();
+
+         ///////////////////////////////////
+         // Fill Event Summed Variables
+         ///////////////////////////////////
          hMpt->Fill(me.Aj,me.x);
          for (int i=0; i<nptrange; ++i) {
             vhMptPt[i]->Fill(me.Aj,me.x_pt[i]);
@@ -498,6 +545,8 @@ public:
       SetAliases(tm);
    }
 
+   // Function to Build other meaning variables
+   //----------------------------------------------------------------------------------------
    TString MakeConeVar(TString br="xptdr",float radius=0.8, TString metType="incone", int ipt=nptrange) {
       // 1st find dr bin of the jet cone boundary
       int coneidr=0;
@@ -530,6 +579,8 @@ public:
       return var;
    }
    
+   // Function to Set useful aliases
+   //----------------------------------------------------------------------------------------
    void SetAliases(TTree * tm) {
       TString brs[3] = {"xptdr","xhem1ptdr","xhem2ptdr"};
       TString mptType[2] = {"incone","outcone"};
