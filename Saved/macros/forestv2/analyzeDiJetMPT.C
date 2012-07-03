@@ -71,7 +71,7 @@ void analyzeDiJetMPT(
    datafname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
    mixfname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
    double cutjetPt = 30;
-   double cutjetEta = 3;
+   double cutjetEta = 2;
    double cutPtTrk=0.5;
    double cutEtaTrk = 8;
    double cutPtPfCand=4;
@@ -276,7 +276,7 @@ void analyzeDiJetMPT(
       if (doSkim) {
          if (dataSrcType==1&&!evt.anaEvtSel) continue;
 //          if (dataSrcType==0&&!evt.offlSel) continue;
-         if (gj.pt1<120) continue;
+         if (gj.pt1<50) continue;
 //          if (gj.genjetpt1<120) continue;
       }
       
