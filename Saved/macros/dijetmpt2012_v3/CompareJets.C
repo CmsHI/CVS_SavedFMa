@@ -25,8 +25,10 @@ void CompareJets(
    // inputs
 //    TString infdataname="../ntout/output-data-Forest2v2v3_saveTrks_v0_icPu5.root";
 //    TString infrefname = "../ntout/output-hy18dj80_forest2_v0_xsec_icPu5.root";
-   TString infdataname="../ntout/output-data-Forest2v3_v3_saveTrks_jpt120_icPu5.root";
-   TString infrefname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_simtrk_jpt120_xsec_icPu5.root";
+//    TString infdataname="../ntout/output-data-Forest2v3_v3_saveTrks_jpt120_icPu5.root";
+//    TString infrefname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_simtrk_jpt120_xsec_icPu5.root";
+   TString infdataname="../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt120eta3_xsec_icPu5.root";
+   TString infrefname = "../ntout/output-hy18c10dj100_Forest2v21_v3_allTrks_Eta8_jpt120eta3_xsec_icPu5.root";
 
    TFile * infdata = new TFile(infdataname);
    TTree * tdata = (TTree*)infdata->Get("tgj");
@@ -41,7 +43,7 @@ void CompareJets(
    TCut leadingSel  = Form("abs(eta1)<1.6&&pt1>%.3f",minPt1);
    TCut awaySel     = Form("abs(eta2)<1.6&&pt2>%.3f",minPt2);
    TCut sigSel      = Form("acos(cos(phi2-phi1))>%.3f",sigDPhi);
-   int cMin=0, cMax=12;
+   int cMin=0, cMax=4;
    TCut mycut = Form("cBin>=%d&&cBin<%d",cMin,cMax);
 
    TCut sel = leadingSel&&awaySel;
