@@ -47,7 +47,7 @@ void loopMpt(
    bool doJetPhiFlat = false;
    TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d_resc%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel,doResCorr);
    if (isMC) tag.ReplaceAll("HisData","HisMc");
-   tag+="";
+   tag+="StPt8";
 
    TFile *inf = TFile::Open(infname);
    TTree *nt =(TTree*)inf->FindObjectAny("tgj");

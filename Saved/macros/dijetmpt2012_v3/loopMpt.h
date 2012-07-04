@@ -426,6 +426,7 @@ public:
 //       }
 
       bool studyEvent[10][2];
+      float studyPtMin = 8;
 
       ///////////////////////////////////
       // Main Event Loop
@@ -554,6 +555,7 @@ public:
             for (int i=0; i<10; ++i) {
                for (int j=0; j<2; ++j) {
                   if (studyEvent[i][j]) {
+                     if (trkPt<studyPtMin) continue;
                      vhTrkDPhi[i][j]->Fill(dphi1,trkPtp*me.evtWt);
                      vhTrkCorrDPhi[i][j]->Fill(dphi1,trkPtp*trkWt*me.evtWt);
                   }
@@ -623,6 +625,7 @@ public:
                for (int i=0; i<10; ++i) {
                   for (int j=0; j<2; ++j) {
                      if (studyEvent[i][j]) {
+                        if (genpPt<studyPtMin) continue;
                         vhGenpDPhi[i][j]->Fill(dphi1,genpPtp*me.evtWt);
                      }
                   }
