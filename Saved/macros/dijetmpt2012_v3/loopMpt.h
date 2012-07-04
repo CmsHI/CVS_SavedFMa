@@ -216,6 +216,10 @@ public:
    TH1D * hTrkEta;
    TH1D * hTrkCorrPt;
    TH1D * hTrkCorrEta;
+   TH1D * vhGenpDPhi[10][2];
+   TH1D * vhTrkDPhi[10][2];
+   TH1D * vhTrkCorrDPhi[10][2];
+   TH1D * vhAj[10][2];
    // mpt
    TH2D * hMpt;
    TH2D * vhMptPt[nptrange];
@@ -267,24 +271,40 @@ public:
       ///////////////////////////////////
       // Event Distributions
       ///////////////////////////////////
-      hCentrality = new TH1D("hCentrality"+name,";Centrality Bin;",40,0,40);
-      hPtHat = new TH1D("hPtHat"+name,";#hat{p}_{T} (GeV/c);",120,0,600);
-      hJetPt2D = new TH2D("hJetPt2D"+name,";p_{T,1} (GeV/c);p_{T,2} (GeV/c)",60,0,300,60,0,300);
-      hJDPhi = new TH1D("hJDPhi"+name,";#Delta#phi(j1,j2);",40,0,3.14159);
-      hAj = new TH1D("hAj"+name,";A_{J};",nAjBin,AjBins);
+      hCentrality = new TH1D("hCentrality_"+name,";Centrality Bin;",40,0,40);
+      hPtHat = new TH1D("hPtHat_"+name,";#hat{p}_{T} (GeV/c);",120,0,600);
+      hJetPt2D = new TH2D("hJetPt2D_"+name,";p_{T,1} (GeV/c);p_{T,2} (GeV/c)",60,0,300,60,0,300);
+      hJDPhi = new TH1D("hJDPhi_"+name,";#Delta#phi(j1,j2);",40,0,3.14159);
+      hAj = new TH1D("hAj_"+name,";A_{J};",nAjBin,AjBins);
 
       ///////////////////////////////////
       // Tracking Distributions
       ///////////////////////////////////
-      hGenpPt = (TH1D*)trkCorr.ptBin_->Clone("hGenpPt"+name);
-      hTrkPtNoQual = (TH1D*)trkCorr.ptBin_->Clone("hTrkPtNoQual"+name);
-      hTrkPt = (TH1D*)trkCorr.ptBin_->Clone("hTrkPt"+name);
-      hTrkCorrPt = (TH1D*)trkCorr.ptBin_->Clone("hTrkCorrPt"+name);
+      hGenpPt = (TH1D*)trkCorr.ptBin_->Clone("hGenpPt_"+name);
+      hGenpPt->Reset();
+      hTrkPtNoQual = (TH1D*)trkCorr.ptBin_->Clone("hTrkPtNoQual_"+name);
+      hTrkPtNoQual->Reset();
+      hTrkPt = (TH1D*)trkCorr.ptBin_->Clone("hTrkPt_"+name);
+      hTrkPt->Reset();
+      hTrkCorrPt = (TH1D*)trkCorr.ptBin_->Clone("hTrkCorrPt_"+name);
+      hTrkCorrPt->Reset();
 
-      hGenpEta = new TH1D("hGenpEta"+name,"; #eta;",48,-2.4,2.4);
-      hTrkEta = new TH1D("hTrkEta"+name,"; #eta;",48,-2.4,2.4);
-      hTrkCorrEta = new TH1D("hTrkCorrEta"+name,"; #eta;",48,-2.4,2.4);
+      hGenpEta = new TH1D("hGenpEta_"+name,"; #eta;",48,-2.4,2.4);
+      hTrkEta = new TH1D("hTrkEta_"+name,"; #eta;",48,-2.4,2.4);
+      hTrkCorrEta = new TH1D("hTrkCorrEta_"+name,"; #eta;",48,-2.4,2.4);
 
+      ///////////////////////////////////
+      // MPT Tracking Closure Studies
+      ///////////////////////////////////
+      for (int i=0; i<10; ++i) {
+         for (int j=0; j<2; ++j) {
+            vhGenpDPhi[i][j] = new TH1D(Form("hGenpDPhi_%d_%d_%s",i,j,name.Data()),"",40,0,Pi());
+            vhTrkDPhi[i][j] = new TH1D(Form("hTrkDPhi_%d_%d_%s",i,j,name.Data()),"",40,0,Pi());
+            vhTrkCorrDPhi[i][j] = new TH1D(Form("hTrkCorrDPhi_%d_%d_%s",i,j,name.Data()),"",40,0,Pi());
+            vhAj[i][j] = new TH1D(Form("hAj_%d_%d_%s",i,j,name.Data()),"",40,0,1);
+         }
+      }
+      
       ///////////////////////////////////
       // MPT Distributions
       ///////////////////////////////////
@@ -367,7 +387,7 @@ public:
          ///////////////////////////////////
          if (!SelEvt()) continue;
 
-         hJetPhi[0]->Fill(me.phi1);                  
+         hJetPhi[0]->Fill(me.phi1);
          hJetPhi[1]->Fill(me.phi2);
          hJetWt[0]->Fill(me.phi1,me.Aj);
          hJetWt[1]->Fill(me.phi2,me.Aj);
@@ -405,6 +425,8 @@ public:
 //          cout << "jet1 2d bin: " << i << " wt: " << hJetWt[0]->GetBinContent(i,hJetWt[0]->GetNbinsY()) << endl;    
 //       }
 
+      bool studyEvent[10][2];
+
       ///////////////////////////////////
       // Main Event Loop
       ///////////////////////////////////
@@ -433,7 +455,7 @@ public:
 //                cout << "jet1 phi: " << me.phi1 << " bin: " << jet1PhiBin << "," << jetAjBin << " wt: " << me.jet1Wt << endl;
          }
          // Sample Weight
-         if (isMC) me.evtWt = evt.sampleWeight;
+//          if (isMC) me.evtWt = evt.sampleWeight;
          
          ///////////////////////////////////
          // Event Distributions
@@ -444,6 +466,28 @@ public:
          hJDPhi->Fill(me.jdphi,me.evtWt);
          hAj->Fill(me.Aj,me.evtWt);
          
+
+         ///////////////////////////////////
+         // MPT Tracking Closure Studies
+         ///////////////////////////////////
+         for (int i=0; i<10; ++i) {
+            for (int j=0; j<2; ++j) {
+               studyEvent[i][j] = false;
+            }
+         }
+
+         // 0. Aj
+         if (me.Aj<0.1) studyEvent[0][0] = true;
+         else if (me.Aj>0.35) studyEvent[0][1] = true;
+
+         for (int i=0; i<10; ++i) {
+            for (int j=0; j<2; ++j) {
+               if (studyEvent[i][j]) {
+                  vhAj[i][j]->Fill(me.Aj,me.evtWt);
+               }
+            }
+         }
+         
          ///////////////////////////////////
          // Track Loop
          ///////////////////////////////////
@@ -452,7 +496,7 @@ public:
             // Track Selection
             if (dj.trkPt[ip]<minPt) continue;
             if (fabs(dj.trkEta[ip])>maxEta) continue;
-            hTrkPtNoQual->Fill(dj.trkPt[ip]);
+            hTrkPtNoQual->Fill(dj.trkPt[ip],me.evtWt);
             if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
             if (particleRecLevel==3&&dj.trkIsFake[ip]) continue;
 
@@ -463,10 +507,11 @@ public:
             float dr1 = deltaR(trkEta,trkPhi,me.eta1,me.phi1);
             float dr2 = deltaR(trkEta,trkPhi,me.eta2,me.phi2);
             float dphi1 = fabs(deltaPhi(trkPhi,me.phi1));
+            float trkPtp = trkPt * fabs(cos(trkPhi-me.phi1));
 
             // Raw Track Distributions
-            hTrkPt->Fill(trkPt);
-            hTrkEta->Fill(trkEta);
+            hTrkPt->Fill(trkPt,me.evtWt);
+            hTrkEta->Fill(trkEta,me.evtWt);
 
             ///////////////////////////////////
             // Tracking Corrections
@@ -500,8 +545,20 @@ public:
             }
 
             // Corrected Track Distributions
-            hTrkCorrPt->Fill(trkPt,trkWt);
-            hTrkCorrEta->Fill(trkEta,trkWt);
+            hTrkCorrPt->Fill(trkPt,trkWt*me.evtWt);
+            hTrkCorrEta->Fill(trkEta,trkWt*me.evtWt);
+
+            ///////////////////////////////////
+            // MPT Tracking Closure Studies
+            ///////////////////////////////////
+            for (int i=0; i<10; ++i) {
+               for (int j=0; j<2; ++j) {
+                  if (studyEvent[i][j]) {
+                     vhTrkDPhi[i][j]->Fill(dphi1,trkPtp*me.evtWt);
+                     vhTrkCorrDPhi[i][j]->Fill(dphi1,trkPtp*trkWt*me.evtWt);
+                  }
+               }
+            }
 
             // Set mpt input
             if (particleRecLevel>=3) {
@@ -526,8 +583,8 @@ public:
                if (particleRecLevel==2&&dj.simHasRec[ip]) continue;
 
                // Sim Distributions
-               hGenpPt->Fill(dj.simPt[ip]);
-               hGenpEta->Fill(dj.simEta[ip]);
+               hGenpPt->Fill(dj.simPt[ip],me.evtWt);
+               hGenpEta->Fill(dj.simEta[ip],me.evtWt);
 
                // Set mpt input
                me.pt[me.n] = dj.simPt[ip];
@@ -548,15 +605,33 @@ public:
                if (fabs(dj.genpEta[ip])>maxEta) continue;
                if (subEvtMode==0 && dj.genpSube[ip]!=0) continue;
                if (subEvtMode==1 && dj.genpSube[ip]==0) continue;
-//                cout << "genp " << ip << " pt: " << dj.genpPt[ip] << endl;
+
+               // Genp Variables
+               float genpPt = dj.genpPt[ip];
+               float genpEta = dj.genpEta[ip];
+               float genpPhi = dj.genpPhi[ip];
+               float dphi1 = fabs(deltaPhi(genpPhi,me.phi1));
+               float genpPtp = genpPt * fabs(cos(genpPhi-me.phi1));
+
                // Genp Distributions
-               hGenpPt->Fill(dj.genpPt[ip]);
-               hGenpEta->Fill(dj.genpEta[ip]);
+               hGenpPt->Fill(genpPt,me.evtWt);
+               hGenpEta->Fill(genpEta,me.evtWt);
+
+               ///////////////////////////////////
+               // MPT Tracking Closure Studies
+               ///////////////////////////////////
+               for (int i=0; i<10; ++i) {
+                  for (int j=0; j<2; ++j) {
+                     if (studyEvent[i][j]) {
+                        vhGenpDPhi[i][j]->Fill(dphi1,genpPtp*me.evtWt);
+                     }
+                  }
+               }
 
                // Set mpt input
-               me.pt[me.n] = dj.genpPt[ip];
-               me.eta[me.n] = dj.genpEta[ip];
-               me.phi[me.n] = dj.genpPhi[ip];
+               me.pt[me.n] = genpPt;
+               me.eta[me.n] = genpEta;
+               me.phi[me.n] = genpPhi;
                me.weight[me.n] = 1;
                ++me.n;
             }
@@ -570,14 +645,14 @@ public:
          ///////////////////////////////////
          // Fill Event Summed Variables
          ///////////////////////////////////
-         hMpt->Fill(me.Aj,me.x);
+         hMpt->Fill(me.Aj,me.x,me.evtWt);
          for (int i=0; i<nptrange; ++i) {
-            vhMptPt[i]->Fill(me.Aj,me.x_pt[i]);
+            vhMptPt[i]->Fill(me.Aj,me.x_pt[i],me.evtWt);
             for (int j=0; j<ndrbin; ++j) {
-               vhMptPtDr[i][j]->Fill(me.Aj,me.x_pt_dr[i][j]);
+               vhMptPtDr[i][j]->Fill(me.Aj,me.x_pt_dr[i][j],me.evtWt);
             }
             for (int k=0; k<ndphibin; ++k) {
-               vhMptPtDPhi[i][k]->Fill(me.Aj,me.x_pt_dphi[i][k]);
+               vhMptPtDPhi[i][k]->Fill(me.Aj,me.x_pt_dphi[i][k],me.evtWt);
             }
          }
          
@@ -585,7 +660,8 @@ public:
       } // End of event loop
 
       cout << "==================================================" << endl;
-      cout << "Selected Events: " << hAj->GetEntries() << endl;
+      cout << "Selected Events: " << hCentrality->GetEntries() << endl;
+      cout << "Weighted Events: " << hCentrality->Integral() << endl;
       cout << "==================================================" << endl;
       
       SetAliases(tm);

@@ -13,9 +13,10 @@
 #include "compare.h"
 #include "loopMpt.h"
 
-TString HisClosure(
-   string infpath = "fig/06.26_tree/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec3.root",
-   int anaMode=1, // 0=pt, 1=eta, 2=dphi
+void HisClosure(
+//    string infpath = "fig/06.26_tree/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec3.root",
+   string infpath = "fig/07.03_mithig/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0_resc0.root",
+   int anaMode=10, // 0=pt, 1=eta, 2=dphi
    int idraw=-1,
    TCanvas ** cOut=0
 )
@@ -35,35 +36,68 @@ TString HisClosure(
    TString evt="0to12";
    TString src=infpath.substr(infpath.find_last_of('/')+1);
    src.ReplaceAll(".root","");
-   TString tag=Form("hisClos%d_%s_%s_recmat",anaMode,src.Data(),evt.Data());
+   TString tag=Form("hisClos%d_%s_%s",anaMode,src.Data(),evt.Data());
 
+   // MPT Closure study
+   int iStudy=0, jStudy=0;
+
+   //////////////////////////////////////////
+   // Get Normalization
+   //////////////////////////////////////////
+   TH1D * hNorm = (TH1D*)inf->Get("hCentrality_"+evt);
+   if (anaMode>=10) hNorm = (TH1D*)inf->Get(Form("hAj_%d_%d_%s",iStudy,jStudy,evt.Data()));
+   if (!hNorm) {
+      cout << "bad normalization file" << endl;
+      exit(0);
+   }
+   float nEvt = hNorm->GetEntries();
+   cout << "=============================================" << endl;
+   cout << "nEvt = " << nEvt << endl;
+   cout << "=============================================" << endl;
+
+   //////////////////////////////////////////
+   // Get Distributions
+   //////////////////////////////////////////
    Compare cmp("cmp","");
    TH1D * hGenp, *hTrk, *hTrkCorr;
    float xmin=0, xmax=0, ymin=0, ymax=0;
    bool doLogx=true, doLogy=true;
    TCut finalGenSel,finalTrkSel;
    if (anaMode==0) {
-      hGenp = (TH1D*)inf->Get("hGenpPt"+evt);
-      hTrk = (TH1D*)inf->Get("hTrkPt"+evt);
-      hTrkCorr = (TH1D*)inf->Get("hTrkCorrPt"+evt);
+      hGenp = (TH1D*)inf->Get("hGenpPt_"+evt);
+      hTrk = (TH1D*)inf->Get("hTrkPt_"+evt);
+      hTrkCorr = (TH1D*)inf->Get("hTrkCorrPt_"+evt);
       cmp.Legend(0.24,0.23,0.7,0.4);
 //       cmp.leg->AddEntry(hTrk,Form("|#eta| < %.1f",maxEta),"");
 //       tag += Form("_vs_pt_eta%.0f",maxEta*10);
-      tag += Form("_vs_pt");
       xmin=0.5; xmax=179.9;
    } else if (anaMode==1) {
-      hGenp = (TH1D*)inf->Get("hGenpEta"+evt);
+      hGenp = (TH1D*)inf->Get("hGenpEta_"+evt);
       hGenp->Rebin(4);
-      hTrk = (TH1D*)inf->Get("hTrkEta"+evt);
+      hTrk = (TH1D*)inf->Get("hTrkEta_"+evt);
       hTrk->Rebin(4);
-      hTrkCorr = (TH1D*)inf->Get("hTrkCorrEta"+evt);
+      hTrkCorr = (TH1D*)inf->Get("hTrkCorrEta_"+evt);
       hTrkCorr->Rebin(4);
       doLogx=false; doLogy=false;
       cmp.Legend(0.19,0.68,0.65,0.93);
 //       cmp.leg->AddEntry(hTrk,Form("%.1f<p_{T}<%.1f GeV/c",ptmin,ptmax),"");
 //       tag += Form("vs_eta_pt%.0f",ptmin);
-      tag += Form("vs_eta");
       ymin=0; ymax=hGenp->GetMaximum()*4*1.5;
+   } else if (anaMode==10) {
+      hGenp = (TH1D*)inf->Get(Form("hGenpDPhi_%d_%d_%s",iStudy,jStudy,evt.Data()));
+      hTrk = (TH1D*)inf->Get(Form("hTrkDPhi_%d_%d_%s",iStudy,jStudy,evt.Data()));
+      hTrkCorr = (TH1D*)inf->Get(Form("hTrkCorrDPhi_%d_%d_%s",iStudy,jStudy,evt.Data()));
+      doLogx=false; doLogy=false;
+      cmp.Legend(0.19,0.68,0.65,0.93);
+//       cmp.leg->AddEntry(hTrk,Form("%.1f<p_{T}<%.1f GeV/c",ptmin,ptmax),"");
+//       tag += Form("vs_eta_pt%.0f",ptmin);
+//       ymin=0; ymax=hGenp->GetMaximum()*4*1.5;
+   }
+   
+   // Check
+   if (!hGenp||!hTrk||!hTrkCorr) {
+      cout << "bad histogram input" << endl;
+      exit(1);
    }
 
    // Legend
@@ -76,9 +110,9 @@ TString HisClosure(
    //////////////////////////////////////////
    // Run Analysis
    //////////////////////////////////////////
-//    hGenp->Scale(1./nEvt);
-//    hTrk->Scale(1./nEvt);
-//    hTrkCorr->Scale(1./nEvt);
+   hGenp->Scale(1./nEvt);
+   hTrk->Scale(1./nEvt);
+   hTrkCorr->Scale(1./nEvt);
 
    //////////////////////////////////////////
    // Draw
@@ -88,9 +122,11 @@ TString HisClosure(
    c2->cd(1);
    hGenp->SetLineColor(2);
    hTrk->SetMarkerStyle(kOpenCircle);
-   normHist(hGenp,-1,true);
-   normHist(hTrk,-1,true);
-   normHist(hTrkCorr,-1,true);
+   if (anaMode==0) {
+      normHist(hGenp,-1,true);
+      normHist(hTrk,-1,true);
+      normHist(hTrkCorr,-1,true);
+   }
    if (doLogx) gPad->SetLogx();
    if (doLogy) gPad->SetLogy();
    if (xmax>xmin) hGenp->SetAxisRange(xmin,xmax,"X");
@@ -118,48 +154,4 @@ TString HisClosure(
 
    c2->Print(Form("%s/%s.gif",outdir.Data(),tag.Data()));
       
-   // Summary
-   if (idraw>=0) {
-      delete c2;
-      cOut[0]->cd(idraw+1);
-      if (doLogx) gPad->SetLogx();
-      if (doLogy) gPad->SetLogy();
-      hGenp->Draw("hist");
-      hTrk->Draw("sameE");
-      if (doCorr) hTrkCorr->Draw("sameE");
-      cmp.leg->Draw();
-
-      cOut[1]->cd(idraw+1);
-      if (doLogx) gPad->SetLogx();
-      hTrkRat->Draw("E");
-      hGenRat->Draw("same hist");
-      hTrkRat->Draw("sameE");
-      if (doCorr) hTrkCorrRat->Draw("sameE");      
-      cmp.leg->Draw();
-   }
-   
-   return tag;
 }
-
-// void ClosureAll()
-// {
-//    TString outdir = "fig/06.13MptClos";
-//    TString tag;
-//    int anamode = 2;
-//    
-//    TCanvas * call[2] = { new TCanvas("call","call",1000,500), new TCanvas("crat","crat",1000,500) };
-// //    TCanvas * call[2] = { new TCanvas("call","call",1500,500), new TCanvas("crat","crat",1500,500) };
-//    for (int k=0; k<2; ++k) {
-// //       call[k]->Divide(6,2);
-//       call[k]->Divide(3,2);
-//    }
-// 
-//    for (int i=0; i<nptrange; ++i) {
-//       tag = ClosureMptTrk(anamode,i,call,outdir);
-//    }
-//    
-//    for (int k=0; k<2; ++k) {
-//       call[k]->cd();
-//       call[k]->Print(Form("%s/summary%d_%s.gif",outdir.Data(),k,tag.Data()));
-//    }
-// }

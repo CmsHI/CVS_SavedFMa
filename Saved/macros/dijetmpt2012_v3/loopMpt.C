@@ -29,6 +29,7 @@ void loopMpt(
 //    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_simtrk_jpt120_xsec_icPu5.root";
 //    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt120eta3_xsec_icPu5.root";
 //    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_gjpt120eta3_xsec_icPu5.root";
+//    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
    TString infmcname = "../ntout/output-hy18dj80to200_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
    
    bool isMC=true;
@@ -61,7 +62,7 @@ void loopMpt(
    for (int c=0; c<nCentBin; ++c) {
       TString name = Form("%dto%d",centBins[c],centBins[c+1]);
       AnaMPT ana(name);
-//       ana.maxEntry = 10000;
+//       ana.maxEntry = 400;
       ana.isMC = isMC;
       ana.doResCorr = doResCorr;
       ana.doJetPhiFlat = doJetPhiFlat;
