@@ -344,8 +344,8 @@ public:
       me.pt1 = dj.pt1; me.phi1 = dj.phi1; me.eta1 = dj.eta1;
       me.pt2 = dj.pt2; me.phi2 = dj.phi2; me.eta2 = dj.eta2;
 
-//          me.pt1 = dj.genjetpt1; me.phi1 = dj.genjetphi1; me.eta1 = dj.genjeteta1;
-//          me.pt2 = dj.genjetpt2; me.phi2 = dj.genjetphi2; me.eta2 = dj.genjeteta2;
+//       me.pt1 = dj.genjetpt1; me.phi1 = dj.genjetphi1; me.eta1 = dj.genjeteta1;
+//       me.pt2 = dj.genjetpt2; me.phi2 = dj.genjetphi2; me.eta2 = dj.genjeteta2;
 
       me.Aj = (me.pt1-me.pt2)/(me.pt1+me.pt2);
       me.jdphi = fabs(deltaPhi(me.phi1,me.phi2));
@@ -480,6 +480,21 @@ public:
          // 0. Aj
          if (me.Aj<0.1) studyEvent[0][0] = true;
          else if (me.Aj>0.35) studyEvent[0][1] = true;
+         // 1. pt1
+         if (me.pt1>60&&me.pt1<80) studyEvent[1][0] = true;
+         else if (me.pt1>220&&me.pt1<260) studyEvent[1][1] = true;
+         // 2. pt2
+         if (me.pt2>60&&me.pt2<80) studyEvent[2][0] = true;
+         else if (me.pt2>220&&me.pt2<260) studyEvent[2][1] = true;
+         // 3. eta1
+         if (fabs(me.eta1)<0.8) studyEvent[3][0] = true;
+         else studyEvent[3][1] = true;
+         // 4. eta2
+         if (fabs(me.eta2)<0.8) studyEvent[4][0] = true;
+         else studyEvent[4][1] = true;
+         // 5. vz
+         if (fabs(evt.vz)<5) studyEvent[5][0] = true;
+         else studyEvent[5][1] = true;
 
          for (int i=0; i<10; ++i) {
             for (int j=0; j<2; ++j) {
