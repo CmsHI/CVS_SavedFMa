@@ -340,11 +340,11 @@ public:
       if (  me.jdphi < sigDPhi) return false;
       
       // MC pt hat selection
-      if (isMC) {
-         if ( (evt.samplePtHat-50)<0.1 && evt.pthat > 80 ) return false;
-         if ( (evt.samplePtHat-80)<0.1 && evt.pthat > 120 ) return false;
-         if ( (evt.samplePtHat-120)<0.1 && evt.pthat > 200 ) return false;
-      }
+//       if (isMC) {
+//          if ( (evt.samplePtHat-50)<0.1 && evt.pthat > 80 ) return false;
+//          if ( (evt.samplePtHat-80)<0.1 && evt.pthat > 120 ) return false;
+//          if ( (evt.samplePtHat-120)<0.1 && evt.pthat > 200 ) return false;
+//       }
       
       return true;
    }
@@ -373,6 +373,8 @@ public:
          hJetWt[1]->Fill(me.phi2,me.Aj);
       }
       
+      cout << "Calc Event Weight: " << hJetPhi[0]->GetEntries() << endl;
+
       ///////////////////////////////////
       // Calculate the reweighting factors
       ///////////////////////////////////
@@ -546,7 +548,7 @@ public:
                if (fabs(dj.genpEta[ip])>maxEta) continue;
                if (subEvtMode==0 && dj.genpSube[ip]!=0) continue;
                if (subEvtMode==1 && dj.genpSube[ip]==0) continue;
-
+//                cout << "genp " << ip << " pt: " << dj.genpPt[ip] << endl;
                // Genp Distributions
                hGenpPt->Fill(dj.genpPt[ip]);
                hGenpEta->Fill(dj.genpEta[ip]);
@@ -581,6 +583,10 @@ public:
          
          tm->Fill();
       } // End of event loop
+
+      cout << "==================================================" << endl;
+      cout << "Selected Events: " << hAj->GetEntries() << endl;
+      cout << "==================================================" << endl;
       
       SetAliases(tm);
    }
