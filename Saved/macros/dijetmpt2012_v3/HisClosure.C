@@ -17,8 +17,9 @@ void HisClosure(
 //    string infpath = "fig/06.26_tree/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec3.root",
    string infpath = "fig/07.03_mithig/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0_resc0.root",
    int anaMode=10, // 0=pt, 1=eta, 2=dphi
-   int idraw=-1,
-   TCanvas ** cOut=0
+   int iStudy=0,
+   int jStudy=0,
+   TString legTitle=""
 )
 {
    TH1::SetDefaultSumw2();
@@ -37,9 +38,10 @@ void HisClosure(
    TString src=infpath.substr(infpath.find_last_of('/')+1);
    src.ReplaceAll(".root","");
    TString tag=Form("hisClos%d_%s_%s",anaMode,src.Data(),evt.Data());
-
+   bool doDiff=true;
+   
    // MPT Closure study
-   int iStudy=0, jStudy=0;
+   if (anaMode>=10) tag+=Form("_st%d_%d",iStudy,jStudy);
 
    //////////////////////////////////////////
    // Get Normalization
@@ -69,7 +71,6 @@ void HisClosure(
       hTrkCorr = (TH1D*)inf->Get("hTrkCorrPt_"+evt);
       cmp.Legend(0.24,0.23,0.7,0.4);
 //       cmp.leg->AddEntry(hTrk,Form("|#eta| < %.1f",maxEta),"");
-//       tag += Form("_vs_pt_eta%.0f",maxEta*10);
       xmin=0.5; xmax=179.9;
    } else if (anaMode==1) {
       hGenp = (TH1D*)inf->Get("hGenpEta_"+evt);
@@ -81,17 +82,16 @@ void HisClosure(
       doLogx=false; doLogy=false;
       cmp.Legend(0.19,0.68,0.65,0.93);
 //       cmp.leg->AddEntry(hTrk,Form("%.1f<p_{T}<%.1f GeV/c",ptmin,ptmax),"");
-//       tag += Form("vs_eta_pt%.0f",ptmin);
       ymin=0; ymax=hGenp->GetMaximum()*4*1.5;
    } else if (anaMode==10) {
       hGenp = (TH1D*)inf->Get(Form("hGenpDPhi_%d_%d_%s",iStudy,jStudy,evt.Data()));
       hTrk = (TH1D*)inf->Get(Form("hTrkDPhi_%d_%d_%s",iStudy,jStudy,evt.Data()));
       hTrkCorr = (TH1D*)inf->Get(Form("hTrkCorrDPhi_%d_%d_%s",iStudy,jStudy,evt.Data()));
       doLogx=false; doLogy=false;
-      cmp.Legend(0.19,0.68,0.65,0.93);
+      cmp.Legend(0.29,0.68,0.75,0.93);
 //       cmp.leg->AddEntry(hTrk,Form("%.1f<p_{T}<%.1f GeV/c",ptmin,ptmax),"");
-//       tag += Form("vs_eta_pt%.0f",ptmin);
-//       ymin=0; ymax=hGenp->GetMaximum()*4*1.5;
+      hGenp->SetTitle(";#Delta#phi(trk,jet1);p_{T}^{#parallel} (GeV/c)");
+      hGenp->SetTitle(";#Delta#phi(trk,jet1);p_{T}^{#parallel} (GeV/c)");
    }
    
    // Check
@@ -101,11 +101,11 @@ void HisClosure(
    }
 
    // Legend
-   if (idraw<1) {
-      cmp.leg->AddEntry(hTrk,"Raw Trk","p");
-      if (doCorr) cmp.leg->AddEntry(hTrkCorr,"Corr. Trk","p");
-      cmp.leg->AddEntry(hGenp,"Gen. Particle","l");
-   }
+   if (evt=="0to12") cmp.leg->AddEntry(hTrk,"0-10%","");
+   if (legTitle!="") cmp.leg->AddEntry(hTrk,legTitle,"");
+   cmp.leg->AddEntry(hTrk,"Raw Trk","p");
+   if (doCorr) cmp.leg->AddEntry(hTrkCorr,"Corr. Trk","p");
+   cmp.leg->AddEntry(hGenp,"Gen. Particle","l");
 
    //////////////////////////////////////////
    // Run Analysis
@@ -120,7 +120,6 @@ void HisClosure(
    TCanvas * c2 = new TCanvas("c2","c2",800,400);
    c2->Divide(2,1);
    c2->cd(1);
-   hGenp->SetLineColor(2);
    hTrk->SetMarkerStyle(kOpenCircle);
    if (anaMode==0) {
       normHist(hGenp,-1,true);
@@ -131,6 +130,7 @@ void HisClosure(
    if (doLogy) gPad->SetLogy();
    if (xmax>xmin) hGenp->SetAxisRange(xmin,xmax,"X");
    if (ymax>ymin) hGenp->SetAxisRange(ymin,ymax,"Y");
+   handsomeTH1(hGenp,kRed);
    hGenp->Draw("hist");
    hTrk->Draw("sameE");
    if (doCorr) hTrkCorr->Draw("sameE");
@@ -138,20 +138,33 @@ void HisClosure(
 
    c2->cd(2);
    TH1D * hGenRat = (TH1D*)hGenp->Clone("hGenRat");
-   hGenRat->Divide(hGenp);
+   if (!doDiff) hGenRat->Divide(hGenp);
+   else hGenRat->Add(hGenp,-1);
+
    TH1D * hTrkRat = (TH1D*)hTrk->Clone("hTrkRat");
-   hTrkRat->Divide(hGenp);
+   if (!doDiff) hTrkRat->Divide(hGenp);
+   else hTrkRat->Add(hGenp,-1);
+   
    TH1D * hTrkCorrRat = (TH1D*)hTrkCorr->Clone("hTrkCorrRat");
-   if (doCorr) hTrkCorrRat->Divide(hGenp);
+   if (doCorr) {
+      if (!doDiff) hTrkCorrRat->Divide(hGenp);
+      else hTrkCorrRat->Add(hGenp,-1);
+   }
+
    if (doLogx) gPad->SetLogx();
    if (xmax>xmin) hTrkRat->SetAxisRange(xmin,xmax,"X");
-   hTrkRat->SetAxisRange(0.,2,"Y");
-   hTrkRat->SetYTitle("Ratio");
-   hTrkRat->Draw("E");
-   hGenRat->Draw("same hist");
+   if (!doDiff) {
+      hGenRat->SetAxisRange(0.,2,"Y");
+      hGenRat->SetYTitle("Ratio");
+   } else {
+      hGenRat->SetAxisRange(-10,10,"Y");
+      hGenRat->SetYTitle("Rec - Gen");
+   }
+   handsomeTH1(hGenRat,kRed);
+   hGenRat->Draw("hist");
+   hTrkRat->Draw("same E");
    hTrkRat->Draw("sameE");
    if (doCorr) hTrkCorrRat->Draw("sameE");
 
    c2->Print(Form("%s/%s.gif",outdir.Data(),tag.Data()));
-      
 }
