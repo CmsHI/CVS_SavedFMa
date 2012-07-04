@@ -38,7 +38,7 @@ float dphibins[ndphibin+1]={0,Pi()/12.,2*Pi()/12.,3*Pi()/12.,4*Pi()/12,5*Pi()/12
 
 class MPTEvent {
 public:
-   float jet1Wt,jet2Wt;
+   float jet1Wt,jet2Wt,evtWt;
    float pt1,phi1,eta1;
    float pt2,phi2,eta2;
    float jdphi,Aj;
@@ -70,6 +70,9 @@ public:
    }
 
    void clear() {
+      jet1Wt=1.; jet2Wt=1; evtWt=1;
+      pt1=0; pt2=0;
+      n=0;
       x=0;
       for (int i=0; i<nptrange; ++i) {
          x_pt[i]=0;
@@ -92,7 +95,6 @@ public:
    }
    
    void Calc() {
-      clear();
 //       cout << "n: " << n << endl;
       for (int it=0; it<n; ++it) {
          float candPt  = pt[it];
@@ -158,7 +160,7 @@ public:
 void MPTSetBranchAddress(TTree * tgj, EvtSel & evt, DiJet & gj, MPTEvent & mpt) {
    tgj->Branch("evt",&evt.run,evt.leaves);
    tgj->Branch("jet",&gj.pt1,gj.leaves);
-   tgj->Branch("mpt",&mpt.jet1Wt,"jet1Wt/F:jet2Wt");
+   tgj->Branch("mpt",&mpt.jet1Wt,"jet1Wt/F:jet2Wt:evtWt");
    tgj->Branch("x",&mpt.x,"x/F");
    tgj->Branch("xpt",mpt.x_pt,Form("xpt[%d]/F",nptrange));
    tgj->Branch("xptdr",mpt.x_pt_dr,Form("xptdr[%d][%d]/F",nptrange,ndrbin));
@@ -201,6 +203,7 @@ public:
    
    // basics
    TH1D * hCentrality;
+   TH1D * hPtHat;
    TH2D * hJetPt2D;
    TH1D * hJDPhi;
    TH1D * hAj;
@@ -233,7 +236,7 @@ public:
    doJetPhiFlat(false),
    subEvtMode(-1),
    particleRecLevel(4), // 0 gen, 1 sim, 2 sim mat, 3 rec mat 4 rec
-   maxEntry(-1) // -1 for everything
+   maxEntry(-1), // -1 for everything
    trkCorr("Forest2_v19","hitrkEffAnalyzer_MergedGeneral")
    {
       cout << "Analyze MPT: " << name << endl;
@@ -252,6 +255,8 @@ public:
       trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj80_Forest2_v19.root",80);
       trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj120_Forest2_v19.root",120);
       trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj170_Forest2_v19.root",170);
+      trkCorr.AddSample("trkcorr/Forest2_v20_v2_large/trkcorr_hy18dj200_Forest2_v20.root",200);
+      trkCorr.AddSample("trkcorr/Forest2_v20_v2_large/trkcorr_hy18dj250_Forest2_v20.root",200);
       trkCorr.smoothLevel_ = 1; 	 
       trkCorr.Init();
    
@@ -263,6 +268,7 @@ public:
       // Event Distributions
       ///////////////////////////////////
       hCentrality = new TH1D("hCentrality"+name,";Centrality Bin;",40,0,40);
+      hPtHat = new TH1D("hPtHat"+name,";#hat{p}_{T} (GeV/c);",120,0,600);
       hJetPt2D = new TH2D("hJetPt2D"+name,";p_{T,1} (GeV/c);p_{T,2} (GeV/c)",60,0,300,60,0,300);
       hJDPhi = new TH1D("hJDPhi"+name,";#Delta#phi(j1,j2);",40,0,3.14159);
       hAj = new TH1D("hAj"+name,";A_{J};",nAjBin,AjBins);
@@ -333,6 +339,13 @@ public:
       if (me.pt2<minJetPt2 || fabs(me.eta2)>maxJetEta) return false;
       if (  me.jdphi < sigDPhi) return false;
       
+      // MC pt hat selection
+      if (isMC) {
+         if ( (evt.samplePtHat-50)<0.1 && evt.pthat > 80 ) return false;
+         if ( (evt.samplePtHat-80)<0.1 && evt.pthat > 120 ) return false;
+         if ( (evt.samplePtHat-120)<0.1 && evt.pthat > 200 ) return false;
+      }
+      
       return true;
    }
 
@@ -347,6 +360,7 @@ public:
       ///////////////////////////////////
       for (int iEvt=0; iEvt<numEvt; ++iEvt) {
          t->GetEntry(iEvt);
+         if (cMax<=12&&iEvt%1000==0) cout <<"Calc Weight: " << iEvt<<" / "<<numEvt <<endl;
 
          ///////////////////////////////////
          // Event Selection (Should be identical to event loop
@@ -396,13 +410,17 @@ public:
          t->GetEntry(iEvt);
       if (cMax<=12&&iEvt%1000==0) cout <<iEvt<<" / "<<numEvt << " run: " << evt.run << " evt: " << evt.evt << " bin: " << evt.cBin << " nT: " << evt.nT << " trig: " <<  evt.trig << " anaEvtSel: " << evt.anaEvtSel <<endl;
 
+         me.clear();
+
          ///////////////////////////////////
          // Event Selection
          ///////////////////////////////////
          if (!SelEvt()) continue;
 
+         ///////////////////////////////////
+         // Event Weighting
+         ///////////////////////////////////
          // Jet Phi Flattening
-         me.jet1Wt=1; me.jet2Wt=1;
          if (doJetPhiFlat) {
             int jet1PhiBin = hJetPhi[0]->FindFixBin(me.phi1);
             int jet2PhiBin = hJetPhi[1]->FindFixBin(me.phi2);
@@ -412,14 +430,17 @@ public:
 //             if (jet1PhiBin==1&&jetAjBin==hJetWt[0]->GetNbinsY())
 //                cout << "jet1 phi: " << me.phi1 << " bin: " << jet1PhiBin << "," << jetAjBin << " wt: " << me.jet1Wt << endl;
          }
+         // Sample Weight
+         if (isMC) me.evtWt = evt.sampleWeight;
          
          ///////////////////////////////////
          // Event Distributions
          ///////////////////////////////////
-         hCentrality->Fill(evt.cBin);
-         hJetPt2D->Fill(me.pt1,me.pt2);
-         hJDPhi->Fill(me.jdphi);
-         hAj->Fill(me.Aj);
+         hCentrality->Fill(evt.cBin,me.evtWt);
+         hPtHat->Fill(evt.pthat,me.evtWt);
+         hJetPt2D->Fill(me.pt1,me.pt2,me.evtWt);
+         hJDPhi->Fill(me.jdphi,me.evtWt);
+         hAj->Fill(me.Aj,me.evtWt);
          
          ///////////////////////////////////
          // Track Loop
@@ -433,14 +454,29 @@ public:
             if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
             if (particleRecLevel==3&&dj.trkIsFake[ip]) continue;
 
+            // Track Variables
+            float trkPt = dj.trkPt[ip];
+            float trkEta = dj.trkEta[ip];
+            float trkPhi = dj.trkPhi[ip];
+            float dr1 = deltaR(trkEta,trkPhi,me.eta1,me.phi1);
+            float dr2 = deltaR(trkEta,trkPhi,me.eta2,me.phi2);
+            float dphi1 = fabs(deltaPhi(trkPhi,me.phi1));
+
             // Raw Track Distributions
-            hTrkPt->Fill(dj.trkPt[ip]);
-            hTrkEta->Fill(dj.trkEta[ip]);
+            hTrkPt->Fill(trkPt);
+            hTrkEta->Fill(trkEta);
 
             ///////////////////////////////////
             // Tracking Corrections
             ///////////////////////////////////
             float trkWt = dj.trkWt[ip];
+            if (me.pt1>40&&dr1<0.8) {
+               trkWt = trkCorr.GetCorr(trkPt,trkEta,me.pt1,evt.cBin);
+            } else if (me.pt2>40&&dr2<0.8) {
+               trkWt = trkCorr.GetCorr(trkPt,trkEta,me.pt2,evt.cBin);
+            } else {
+               trkWt = trkCorr.GetCorr(trkPt,trkEta,0,evt.cBin);
+            }
 
             ///////////////////////////////////
             // Residual Corrections
@@ -448,27 +484,27 @@ public:
             if (doResCorr) {
                if ( cos(dj.trkPhi[ip]-me.phi1)<0 ) {
                   if (me.pt2<80) {
-                     if (dj.trkPt[ip]>30) trkWt*=1.2;
-                     else if (dj.trkPt[ip]>20) trkWt*=1.1;
-                     else if (dj.trkPt[ip]>8) trkWt*=1.05;
+                     if (trkPt>30) trkWt*=1.2;
+                     else if (trkPt>20) trkWt*=1.1;
+                     else if (trkPt>8) trkWt*=1.05;
                   }
                } else {
                   if (me.pt2<80) {
-                     if (dj.trkPt[ip]>30) trkWt*=0.8;
-                     else if (dj.trkPt[ip]>20) trkWt*=0.9;
-                     else if (dj.trkPt[ip]>8) trkWt*=0.95;
+                     if (trkPt>30) trkWt*=0.8;
+                     else if (trkPt>20) trkWt*=0.9;
+                     else if (trkPt>8) trkWt*=0.95;
                   }
                }
             }
 
             // Corrected Track Distributions
-            hTrkCorrPt->Fill(dj.trkPt[ip],trkWt);
-            hTrkCorrEta->Fill(dj.trkEta[ip],trkWt);
+            hTrkCorrPt->Fill(trkPt,trkWt);
+            hTrkCorrEta->Fill(trkEta,trkWt);
 
             // Set mpt input
             if (particleRecLevel>=3) {
-                  me.pt[me.n] = dj.trkPt[ip];
-                  me.eta[me.n] = dj.trkEta[ip];
+                  me.pt[me.n] = trkPt;
+                  me.eta[me.n] = trkEta;
                   me.phi[me.n] = dj.trkPhi[ip];
                   if (particleRecLevel==4) me.weight[me.n] = trkWt;
                   if (particleRecLevel==3) me.weight[me.n] = trkWt/(1-dj.trkFak[ip]);
@@ -523,6 +559,10 @@ public:
                ++me.n;
             }
          } // End of if rec level
+
+         ///////////////////////////////////
+         // Calculate MPT
+         ///////////////////////////////////
          me.Calc();
 
          ///////////////////////////////////
