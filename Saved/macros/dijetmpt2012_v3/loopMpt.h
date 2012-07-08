@@ -7,7 +7,8 @@
 #include "TTree.h"
 #include "commonTool.h"
 #include "JetTrkEvent.h"
-#include "Corrector3D.h"
+// #include "Corrector3D.h"
+#include "TrackingCorrections_trkPhi.h"
 using namespace TMath;
 
 // MPT Ranges
@@ -195,7 +196,7 @@ public:
    DiJet dj;
    MPTEvent me;
 
-   TrackingCorrections trkCorr;
+   std::vector<TrackingCorrections*> vtrkCorr;
    
    std::vector<float> xbins;
    
@@ -240,11 +241,15 @@ public:
    doJetPhiFlat(false),
    subEvtMode(-1),
    particleRecLevel(4), // 0 gen, 1 sim, 2 sim mat, 3 rec mat 4 rec
-   maxEntry(-1), // -1 for everything
-   trkCorr("Forest2_v19","hitrkEffAnalyzer_MergedGeneral")
+   maxEntry(-1) // -1 for everything
    {
       cout << "Analyze MPT: " << name << endl;
       t=0;
+
+      // Track corrections
+      vtrkCorr.push_back(new TrackingCorrections("Forest2_TrkCorrv5","hitrkEffAnalyzer_MergedGeneral_trkPhi_noJet"));
+      vtrkCorr.push_back(new TrackingCorrections("Forest2_TrkCorrv5","hitrkEffAnalyzer_MergedGeneral_trkPhi_j1"));
+      vtrkCorr.push_back(new TrackingCorrections("Forest2_TrkCorrv5","hitrkEffAnalyzer_MergedGeneral_trkPhi_j2"));
       
       // mpt bins
       int nxbins=1600;
@@ -253,16 +258,24 @@ public:
       for (int i=0; i<=nxbins; ++i) xbins.push_back(xmin+dx*i);
    }
    
-   void Init(TTree * tgj) {   
-      trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj30_Forest2_v19.root",30);
-      trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj50_Forest2_v19.root",50);
-      trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj80_Forest2_v19.root",80);
-      trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj120_Forest2_v19.root",120);
-      trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj170_Forest2_v19.root",170);
-      trkCorr.AddSample("trkcorr/Forest2_v20_v2_large/trkcorr_hy18dj200_Forest2_v20.root",200);
-      trkCorr.AddSample("trkcorr/Forest2_v20_v2_large/trkcorr_hy18dj250_Forest2_v20.root",200);
-      trkCorr.smoothLevel_ = 1; 	 
-      trkCorr.Init();
+   void Init(TTree * tgj) {
+      for (int i=0; i< vtrkCorr.size(); ++i) {
+//          trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj30_Forest2_v19.root",30);
+//          trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj50_Forest2_v19.root",50);
+//          trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj80_Forest2_v19.root",80);
+//          trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj120_Forest2_v19.root",120);
+//          trkCorr.AddSample("trkcorr/Forest2_v19/trkcorr_hy18dj170_Forest2_v19.root",170);
+//          trkCorr.AddSample("trkcorr/Forest2_v20_v2_large/trkcorr_hy18dj200_Forest2_v20.root",200);
+//          trkCorr.AddSample("trkcorr/Forest2_v20_v2_large/trkcorr_hy18dj250_Forest2_v20.root",200);
+//          trkCorr.smoothLevel_ = 1; 	 
+         vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv5/trkcorr_hy18dj30_Forest2_TrkCorrv5.root",30);
+         vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv5/trkcorr_hy18dj50_Forest2_TrkCorrv5.root",50);
+         vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv5/trkcorr_hy18dj80_Forest2_TrkCorrv5.root",80);
+         vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv5/trkcorr_hy18dj120_Forest2_TrkCorrv5.root",120);
+         vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv5/trkcorr_hy18dj200_Forest2_TrkCorrv5.root",200);
+         vtrkCorr[i]->weightSamples = true;
+         vtrkCorr[i]->Init();
+      }
    
       t=tgj;
       JTSetBranchAddress(tgj,evt,dj);
@@ -280,13 +293,13 @@ public:
       ///////////////////////////////////
       // Tracking Distributions
       ///////////////////////////////////
-      hGenpPt = (TH1D*)trkCorr.ptBin_->Clone("hGenpPt_"+name);
+      hGenpPt = (TH1D*)vtrkCorr[0]->ptBin_->Clone("hGenpPt_"+name);
       hGenpPt->Reset();
-      hTrkPtNoQual = (TH1D*)trkCorr.ptBin_->Clone("hTrkPtNoQual_"+name);
+      hTrkPtNoQual = (TH1D*)vtrkCorr[0]->ptBin_->Clone("hTrkPtNoQual_"+name);
       hTrkPtNoQual->Reset();
-      hTrkPt = (TH1D*)trkCorr.ptBin_->Clone("hTrkPt_"+name);
+      hTrkPt = (TH1D*)vtrkCorr[0]->ptBin_->Clone("hTrkPt_"+name);
       hTrkPt->Reset();
-      hTrkCorrPt = (TH1D*)trkCorr.ptBin_->Clone("hTrkCorrPt_"+name);
+      hTrkCorrPt = (TH1D*)vtrkCorr[0]->ptBin_->Clone("hTrkCorrPt_"+name);
       hTrkCorrPt->Reset();
 
       hGenpEta = new TH1D("hGenpEta_"+name,"; #eta;",48,-2.4,2.4);
@@ -533,12 +546,19 @@ public:
             // Tracking Corrections
             ///////////////////////////////////
             float trkWt = dj.trkWt[ip];
-            if (me.pt1>40&&dr1<0.8) {
-               trkWt = trkCorr.GetCorr(trkPt,trkEta,me.pt1,evt.cBin);
-            } else if (me.pt2>40&&dr2<0.8) {
-               trkWt = trkCorr.GetCorr(trkPt,trkEta,me.pt2,evt.cBin);
+//             if (me.pt1>40&&dr1<0.8) {
+//                trkWt = trkCorr.GetCorr(trkPt,trkEta,me.pt1,evt.cBin);
+//             } else if (me.pt2>40&&dr2<0.8) {
+//                trkWt = trkCorr.GetCorr(trkPt,trkEta,me.pt2,evt.cBin);
+//             } else {
+//                trkWt = trkCorr.GetCorr(trkPt,trkEta,0,evt.cBin);
+//             }
+            if (me.pt1>50&&dr1<0.5) {
+               trkWt = vtrkCorr[1]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
+            } else if (me.pt2>50&&dr2<0.5) {
+               trkWt = vtrkCorr[2]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
             } else {
-               trkWt = trkCorr.GetCorr(trkPt,trkEta,0,evt.cBin);
+               trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
             }
 
             ///////////////////////////////////

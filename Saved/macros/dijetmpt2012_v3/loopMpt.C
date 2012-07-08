@@ -11,7 +11,7 @@
 using namespace std;
 
 void loopMpt(
-            TString outdir = "./fig/07.03_mithig"
+            TString outdir = "./fig/07.07_trkPhiCorr"
              )
 {
    TH1::SetDefaultSumw2();
@@ -29,8 +29,8 @@ void loopMpt(
 //    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_simtrk_jpt120_xsec_icPu5.root";
 //    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt120eta3_xsec_icPu5.root";
 //    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_gjpt120eta3_xsec_icPu5.root";
-//    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
-   TString infmcname = "../ntout/output-hy18dj50to200_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
+   TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
+//    TString infmcname = "../ntout/output-hy18dj50to200_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
 //    TString infmcname = "../ntout/output-hy18dj80to200_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
    
    bool isMC=true;
@@ -40,7 +40,7 @@ void loopMpt(
    TString infname=infdataname;
    if (isMC) infname=infmcname;
    
-   float minJetPt1=50;
+   float minJetPt1=120;
    float minJetPt2=50;
    float sigDPhi=3.1415926*7./8;
    float etamax=2.4;
