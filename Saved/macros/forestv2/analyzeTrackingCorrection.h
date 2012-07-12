@@ -1,0 +1,368 @@
+#ifndef analyzeTrackingCorrection_h
+#define analyzeTrackingCorrection_h
+#include "TChain.h"
+#include "TFile.h"
+#include "TH2F.h"
+#include "TH3F.h"
+#include "TString.h"
+#include <iostream>
+#include <cmath>
+#include "analyzeDiJetMPT.h"
+
+typedef struct
+{
+   Int_t ids;
+   Float_t etas;
+   Float_t phis;
+   Float_t pts;
+   Int_t hits;
+   Int_t status;
+   Int_t acc;
+   Int_t nrec;
+   Float_t ptr;
+   Float_t dz;
+   Float_t d0;
+   Float_t pterr;
+   Float_t d0err;
+   Float_t dzerr;
+   Int_t hitr;
+   Int_t algo;
+   Float_t jet;
+   Float_t jeta;
+   Float_t jdr1;
+   Float_t jdr2;
+} SimTrack_t;
+
+typedef struct
+{
+   Int_t charge;
+   Float_t etar;
+   Float_t ptr;
+   Float_t phir;
+   Float_t dz;
+   Float_t d0;
+   Float_t pterr;
+   Float_t d0err;
+   Float_t dzerr;
+   Int_t hitr; 
+   Int_t algo;
+   Int_t nsim;
+   Int_t status;
+   Int_t ids;
+   Int_t parids;
+   Float_t etas;
+   Float_t pts;
+   Float_t jet;
+   Float_t jeta;
+   Float_t jdr1;
+   Float_t jdr2;
+} RecTrack_t;
+
+class TrkCorrHisAna
+{
+  public:
+    vector<Double_t> ptBins;
+    vector<Double_t> etaBins;
+    vector<Double_t> phiBins;
+    vector<Double_t> jetBins;
+    vector<Int_t> centBins;
+
+    TString name_;
+    TFile * outFile_;
+
+    // SimTrack
+    TH2F* hsim;
+    TH2F* hacc;
+    TH2F* heff;
+    TH2F* hmul;
+
+    TH3F* hsim3D;
+    TH3F* heff3D;
+    TH3F* hmul3D;
+    TH3F* hresStoR3D;
+
+    // RecTrack
+    TH2F* hrec;
+    TH2F* hfak;
+    TH2F* hsec;
+
+    TH3F* hrec3D;
+    TH3F* hfak3D;
+    TH3F* hsec3D;
+
+    // vector of histograms
+    std::vector<TH3F*> vhsim3D;
+    std::vector<TH3F*> vheff3D;
+    std::vector<TH3F*> vhmul3D;
+
+    std::vector<TH3F*> vhrec3D;
+    std::vector<TH3F*> vhfak3D;
+    std::vector<TH3F*> vhsec3D;
+
+    std::vector<TH3F*> vhresStoR3D;
+
+    // monitors
+    std::vector<TH2F*> hTrkJetPtDr;
+    std::vector<TH2F*> hSimJetPtDr;
+
+    // methods
+    TrkCorrHisAna(TString name);
+    void DeclareHistograms();
+    void FillSimHistograms(const EvtSel & evt, const DiJet & gj, const SimTrack_t & s);
+    void FillRecHistograms(const EvtSel & evt, const DiJet & gj, const RecTrack_t & r);
+    void WriteHistograms();
+};
+
+
+TrkCorrHisAna::TrkCorrHisAna(TString name) :
+  name_(name)
+{
+   // pt bins
+   const double small = 1e-3;
+   double pt;
+   vector<Double_t> ptBins;
+   for(pt =   0  ; pt <   1.2-small; pt +=  0.05) ptBinsA0.push_back(pt); // 24 bins
+   for(pt =   1.2; pt <   2.0-small; pt +=  0.1 ) ptBinsA0.push_back(pt); // 8 bins
+   const Int_t numHigtPtBins=18;
+   Float_t highPtBins[numHigtPtBins+1] = {2,2.5,3,4,5,7.5,10,12,15,20,25,30,45,60,90,120,180,300,500};
+   ptBins.insert(ptBins.end(),highPtBins,highPtBins+numHigtPtBins+1);   // eta bins
+
+   // eta bins
+   double etaMin   = -2.4;
+   double etaMax   =  2.4;
+   double etaWidth =  0.4;
+   vector<Double_t> etaBins;
+   for(double eta = etaMin; eta < etaMax + etaWidth/2; eta += etaWidth)
+    etaBins.push_back(eta);
+
+   // phi bins
+   double phiMin   = -TMath::Pi();
+   double phiMax   =  TMath::Pi();
+   double phiWidth =  (phiMax - phiMin)/15;
+   for(double phi = phiMin; phi < phiMax + phiWidth/2; phi += phiWidth)
+      phiBins.push_back(phi);
+       
+   //jet bins
+   const Int_t numJetBins=10;
+   Float_t jBins[numJetBins+1] = {0,20,40,60,80,120,160,200,250,500,1000};
+   jetBins.insert(jetBins.end(),jBins,jBins+numJetBins+1);
+      
+   //centrality bins
+   vector<Int_t> centBins;
+   centBins.push_back(0);
+//    centBins.push_back(2);
+//    centBins.push_back(4);
+   centBins.push_back(12);
+//    centBins.push_back(20);
+   centBins.push_back(30);
+}
+
+void TrkCorrHisAna::DeclareHistograms()
+{
+   cout << "===== " << name_ << " =====" << endl;
+
+   // Setup output dir
+   outFile_->mkdir(name_);
+   outFile_->cd(name_);
+   
+   // simulated
+   hsim = new TH2F("hsim","Sim Tracks;#eta;p_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0]);
+   
+   // accepted
+   hacc = new TH2F("hacc","Accepted Tracks;#eta;p_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0]);
+   
+   // efficiency
+   heff = new TH2F("heff","Effic Rec Tracks;#eta;p_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0]);
+   
+   // multiply reconstructed
+   hmul = new TH2F("hmul","Mult Rec Tracks;#eta;p_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0]);
+   
+   // reconstructed
+   hrec = new TH2F("hrec","Rec Tracks;#eta;p_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0]);
+   
+   // fakes
+   hfak = new TH2F("hfak","Fake Tracks;#eta;p_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0]);
+   
+   // secondary
+   hsec = new TH2F("hsec","Secondary Tracks;#eta;p_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0]);
+   
+   
+   // simulated 3D 
+   hsim3D = new TH3F("hsim3D","Sim Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0],
+      jetBins.size()-1, &jetBins[0]);
+   
+   // efficiency  3D 
+   heff3D = new TH3F("heff3D","Effic Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0],
+      jetBins.size()-1, &jetBins[0]);
+   
+   // multiply reconstructed 3D 
+   hmul3D = new TH3F("hmul3D","Mult Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0],
+      jetBins.size()-1, &jetBins[0]);
+   
+   
+   // reconstructed 3D 
+   hrec3D = new TH3F("hrec3D","Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0],
+      jetBins.size()-1, &jetBins[0]);
+   
+   // fakes 3D 
+   hfak3D = new TH3F("hfak3D","Fake Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0],
+      jetBins.size()-1, &jetBins[0]);
+   
+   // secondary
+   hsec3D = new TH3F("hsec3D","Secondary Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0],
+      jetBins.size()-1, &jetBins[0]);
+   
+   // mom resolution (Sim to Rec) 
+   hresStoR3D = new TH3F("hresStoR3D","Momentum resolution (sim to rec);#eta;sim p_{T} (GeV/c);rec p_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0],
+      ptBins.size()-1, &ptBins[0],
+      ptBins.size()-1, &ptBins[0]);
+
+   for(unsigned i=0;i<centBins.size()-1;i++){
+      vhsim3D.push_back(new TH3F("","Sim Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)", etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], jetBins.size()-1, &jetBins[0]) );
+      vheff3D.push_back(new TH3F("","Effic Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], jetBins.size()-1, &jetBins[0]) );
+      vhmul3D.push_back(new TH3F("","Mult Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], jetBins.size()-1, &jetBins[0]) );
+      vhrec3D.push_back(new TH3F("","Rec Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], jetBins.size()-1, &jetBins[0]) );
+      vhfak3D.push_back(new TH3F("","Fake Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], jetBins.size()-1, &jetBins[0]) );
+      vhsec3D.push_back(new TH3F("","Secondary Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
+      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], jetBins.size()-1, &jetBins[0]) );
+      vhresStoR3D.push_back(new TH3F("","Momentum resolution (sim to rec);#eta;sim p_{T} (GeV/c);rec p_{T} (GeV/c)", etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], ptBins.size()-1, &ptBins[0]) );
+
+      vhsim3D[i]->SetName(Form("hsim3D_cbin%dto%d",centBins[i],centBins[i+1]));
+      vheff3D[i]->SetName(Form("heff3D_cbin%dto%d",centBins[i],centBins[i+1]));
+      vhrec3D[i]->SetName(Form("hrec3D_cbin%dto%d",centBins[i],centBins[i+1]));
+      vhfak3D[i]->SetName(Form("hfak3D_cbin%dto%d",centBins[i],centBins[i+1]));
+      vhmul3D[i]->SetName(Form("hmul3D_cbin%dto%d",centBins[i],centBins[i+1]));
+      vhsec3D[i]->SetName(Form("hsec3D_cbin%dto%d",centBins[i],centBins[i+1]));
+      vhresStoR3D[i]->SetName(Form("hresStoR3D_cbin%dto%d",centBins[i],centBins[i+1]));
+   }
+
+   // monitors
+for (int j=0; j<2; ++j) hTrkJetPtDr.push_back(new TH2F(Form("hTrkJet%dDr",j+1),Form(";#DeltaR(trk,jet%d);p_{T} (GeV/c);;",j+1),50,0,100,50,0,8));
+for (int j=0; j<2; ++j) hSimJetPtDr.push_back(new TH2F(Form("hSimJet%dDr",j+1),Form(";#DeltaR(simtrk,jet%d);p_{T} (GeV/c);;",j+1),50,0,100,50,0,8));
+}
+
+void TrkCorrHisAna::FillSimHistograms(const EvtSel & evt, const DiJet & gj, const SimTrack_t & s)
+{
+   if(s.status>0) {
+      // monitor
+      hSimJetPtDr[0]->Fill(s.ptr,s.jdr1);
+      hSimJetPtDr[1]->Fill(s.ptr,s.jdr2);
+      
+      // corrections
+      hsim->Fill(s.etas, s.pts);
+      hsim3D->Fill(s.etas, s.pts, s.jetr);
+      if(s.acc)    hacc->Fill(s.etas, s.pts);
+      if(s.nrec==1) {
+         hresStoR3D->Fill(s.etas, s.pts, s.ptr);
+      }
+      if(s.nrec>0) heff->Fill(s.etas, s.pts), heff3D->Fill(s.etas, s.pts, s.jetr);
+      if(s.nrec>1) hmul->Fill(s.etas, s.pts), hmul3D->Fill(s.etas, s.pts, s.jetr);
+      
+      // filling histogram in vector 
+      for(unsigned i=0;i<centBins.size()-1;i++){
+         if(evt.cBin>=centBins[i] && evt.cBin<centBins[i+1]){
+            vhsim3D[i]->Fill(s.etas, s.pts, s.jetr);
+            if(s.nrec>0) vheff3D[i]->Fill(s.etas, s.pts, s.jetr);
+            if(s.nrec==1) vhresStoR3D[i]->Fill(s.etas, s.pts, s.ptr);
+            if(s.nrec>1) vhmul3D[i]->Fill(s.etas, s.pts, s.jetr);
+         }
+      } // end of vector loop 
+   } // end of (s.status) loop 
+}
+
+void TrkCorrHisAna::FillRecHistograms(const EvtSel & evt, const DiJet & gj, const RecTrack_t & r)
+{
+   // monitor
+   hSimJetPtDr[0]->Fill(r.ptr,r.jdr1);
+   hSimJetPtDr[1]->Fill(r.ptr,r.jdr2);
+
+   // corrections
+   hrec->Fill(r.etar, r.ptr);
+   hrec3D->Fill(r.etar, r.ptr, r.jetr);
+   if(!r.nsim) hfak->Fill(r.etar, r.ptr), hfak3D->Fill(r.etar, r.ptr, r.jetr);
+   if(r.nsim>0 && r.status<0) hsec->Fill(r.etar, r.ptr), hsec3D->Fill(r.etar, r.ptr, r.jetr); // nsim>0 redudant?
+   
+   // filling histogram in vector
+   for(unsigned i=0;i<centBins.size()-1;i++){
+      if(evt.cBin>=centBins[i] && evt.cBin<centBins[i+1]){
+         vhrec3D[i]->Fill(r.etar, r.ptr, r.jetr);
+         if(!r.nsim) vhfak3D[i]->Fill(r.etar, r.ptr, r.jetr);
+         if(r.nsim>0 && r.status<0) vhsec3D[i]->Fill(r.etar, r.ptr, r.jetr);
+      }
+   } // end of vector loop
+}
+
+void TrkCorrHisAna::WriteHistograms()
+{
+   outFile_->cd(name_);
+   
+   // SimTrack
+   hsim->Write();
+   hacc->Write();
+   heff->Write();
+   hmul->Write();
+   
+   hsim3D->Write();
+   heff3D->Write();
+   hmul3D->Write();
+   hresStoR3D->Write();
+   
+   // RecTrack;
+   hrec->Write();
+   hfak->Write();
+   hsec->Write();
+   
+   hrec3D->Write();
+   hfak3D->Write();
+   hsec3D->Write();
+   
+   // vector of histograms
+   for(UInt_t i=0;i<centBins.size()-1;i++){
+      vhsim3D[i]->Write();
+      vheff3D[i]->Write();
+      vhmul3D[i]->Write();
+      
+      vhrec3D[i]->Write();
+      vhfak3D[i]->Write();
+      vhsec3D[i]->Write();
+      
+      vhresStoR3D[i]->Write();
+   }
+   
+   // monitors
+   hPJPtDrSim->Write();
+   hPJPtDrRec->Write();
+   outFile_->cd("");
+}
+#endif
