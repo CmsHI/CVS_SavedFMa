@@ -29,8 +29,7 @@ typedef struct
    Int_t algo;
    Float_t jet;
    Float_t jeta;
-   Float_t jdr1;
-   Float_t jdr2;
+   Float_t jdr;
 } SimTrack_t;
 
 typedef struct
@@ -54,8 +53,7 @@ typedef struct
    Float_t pts;
    Float_t jet;
    Float_t jeta;
-   Float_t jdr1;
-   Float_t jdr2;
+   Float_t jdr;
 } RecTrack_t;
 
 class TrkCorrHisAna
@@ -65,9 +63,11 @@ class TrkCorrHisAna
     vector<Double_t> etaBins;
     vector<Double_t> phiBins;
     vector<Double_t> jetBins;
+    vector<Double_t> zBins;
     vector<Int_t> centBins;
 
     TString name_;
+    bool trkPhiMode_;
     TFile * outFile_;
 
     // SimTrack
@@ -102,27 +102,29 @@ class TrkCorrHisAna
     std::vector<TH3F*> vhresStoR3D;
 
     // monitors
-    std::vector<TH2F*> hTrkJetPtDr;
-    std::vector<TH2F*> hSimJetPtDr;
+    std::vector<TH2F*> vhTrkJetPtDr;
+    std::vector<TH2F*> vhSimJetPtDr;
 
     // methods
-    TrkCorrHisAna(TString name);
+    TrkCorrHisAna(TString name, TFile * outf);
     void DeclareHistograms();
-    void FillSimHistograms(const EvtSel & evt, const DiJet & gj, const SimTrack_t & s);
     void FillRecHistograms(const EvtSel & evt, const DiJet & gj, const RecTrack_t & r);
+    void FillSimHistograms(const EvtSel & evt, const DiJet & gj, const SimTrack_t & s);
     void WriteHistograms();
 };
 
 
-TrkCorrHisAna::TrkCorrHisAna(TString name) :
-  name_(name)
+TrkCorrHisAna::TrkCorrHisAna(TString name, TFile * outf) :
+  name_(name),
+  trkPhiMode_(false)
 {
+   outFile_ = outf;
+   
    // pt bins
    const double small = 1e-3;
    double pt;
-   vector<Double_t> ptBins;
-   for(pt =   0  ; pt <   1.2-small; pt +=  0.05) ptBinsA0.push_back(pt); // 24 bins
-   for(pt =   1.2; pt <   2.0-small; pt +=  0.1 ) ptBinsA0.push_back(pt); // 8 bins
+   for(pt =   0.2  ; pt <   1.2-small; pt +=  0.05) ptBins.push_back(pt); // 20 bins
+   for(pt =   1.2; pt <   2.0-small; pt +=  0.1 ) ptBins.push_back(pt); // 8 bins
    const Int_t numHigtPtBins=18;
    Float_t highPtBins[numHigtPtBins+1] = {2,2.5,3,4,5,7.5,10,12,15,20,25,30,45,60,90,120,180,300,500};
    ptBins.insert(ptBins.end(),highPtBins,highPtBins+numHigtPtBins+1);   // eta bins
@@ -131,7 +133,6 @@ TrkCorrHisAna::TrkCorrHisAna(TString name) :
    double etaMin   = -2.4;
    double etaMax   =  2.4;
    double etaWidth =  0.4;
-   vector<Double_t> etaBins;
    for(double eta = etaMin; eta < etaMax + etaWidth/2; eta += etaWidth)
     etaBins.push_back(eta);
 
@@ -146,22 +147,38 @@ TrkCorrHisAna::TrkCorrHisAna(TString name) :
    const Int_t numJetBins=10;
    Float_t jBins[numJetBins+1] = {0,20,40,60,80,120,160,200,250,500,1000};
    jetBins.insert(jetBins.end(),jBins,jBins+numJetBins+1);
-      
+
    //centrality bins
-   vector<Int_t> centBins;
    centBins.push_back(0);
 //    centBins.push_back(2);
 //    centBins.push_back(4);
    centBins.push_back(12);
 //    centBins.push_back(20);
    centBins.push_back(30);
+   
+   ////////////////////////////////////////////
+   // Set 3rd Dimension
+   ////////////////////////////////////////////
+   zBins = jetBins;
+   if (trkPhiMode_) zBins = phiBins;   
 }
 
 void TrkCorrHisAna::DeclareHistograms()
 {
    cout << "===== " << name_ << " =====" << endl;
-
+	cout << endl << "Pt " << ptBins.size()-1 << " bins:";
+	for (Int_t i=0; i<ptBins.size(); ++i) cout << ptBins[i] << " ";
+	cout << endl << "Eta " << etaBins.size()-1 << " bins:";
+	for (Int_t i=0; i<etaBins.size(); ++i) cout << etaBins[i] << " ";
+	cout << endl << "zaxis: " << zBins.size()-1 << " bins:";
+	for (Int_t i=0; i<zBins.size(); ++i) cout << zBins[i] << " ";
+	cout << endl;
+	
    // Setup output dir
+   if (!outFile_) {
+      cout << "No outfile defined" << endl;
+      exit(1);
+   }
    outFile_->mkdir(name_);
    outFile_->cd(name_);
    
@@ -205,38 +222,38 @@ void TrkCorrHisAna::DeclareHistograms()
    hsim3D = new TH3F("hsim3D","Sim Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
       etaBins.size()-1, &etaBins[0],
       ptBins.size()-1, &ptBins[0],
-      jetBins.size()-1, &jetBins[0]);
+      zBins.size()-1, &zBins[0]);
    
    // efficiency  3D 
    heff3D = new TH3F("heff3D","Effic Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
       etaBins.size()-1, &etaBins[0],
       ptBins.size()-1, &ptBins[0],
-      jetBins.size()-1, &jetBins[0]);
+      zBins.size()-1, &zBins[0]);
    
    // multiply reconstructed 3D 
    hmul3D = new TH3F("hmul3D","Mult Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
       etaBins.size()-1, &etaBins[0],
       ptBins.size()-1, &ptBins[0],
-      jetBins.size()-1, &jetBins[0]);
+      zBins.size()-1, &zBins[0]);
    
    
    // reconstructed 3D 
    hrec3D = new TH3F("hrec3D","Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
       etaBins.size()-1, &etaBins[0],
       ptBins.size()-1, &ptBins[0],
-      jetBins.size()-1, &jetBins[0]);
+      zBins.size()-1, &zBins[0]);
    
    // fakes 3D 
    hfak3D = new TH3F("hfak3D","Fake Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
       etaBins.size()-1, &etaBins[0],
       ptBins.size()-1, &ptBins[0],
-      jetBins.size()-1, &jetBins[0]);
+      zBins.size()-1, &zBins[0]);
    
    // secondary
    hsec3D = new TH3F("hsec3D","Secondary Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
       etaBins.size()-1, &etaBins[0],
       ptBins.size()-1, &ptBins[0],
-      jetBins.size()-1, &jetBins[0]);
+      zBins.size()-1, &zBins[0]);
    
    // mom resolution (Sim to Rec) 
    hresStoR3D = new TH3F("hresStoR3D","Momentum resolution (sim to rec);#eta;sim p_{T} (GeV/c);rec p_{T} (GeV/c)",
@@ -245,17 +262,17 @@ void TrkCorrHisAna::DeclareHistograms()
       ptBins.size()-1, &ptBins[0]);
 
    for(unsigned i=0;i<centBins.size()-1;i++){
-      vhsim3D.push_back(new TH3F("","Sim Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)", etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], jetBins.size()-1, &jetBins[0]) );
+      vhsim3D.push_back(new TH3F("","Sim Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)", etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], zBins.size()-1, &zBins[0]) );
       vheff3D.push_back(new TH3F("","Effic Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
-      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], jetBins.size()-1, &jetBins[0]) );
+      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], zBins.size()-1, &zBins[0]) );
       vhmul3D.push_back(new TH3F("","Mult Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
-      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], jetBins.size()-1, &jetBins[0]) );
+      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], zBins.size()-1, &zBins[0]) );
       vhrec3D.push_back(new TH3F("","Rec Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
-      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], jetBins.size()-1, &jetBins[0]) );
+      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], zBins.size()-1, &zBins[0]) );
       vhfak3D.push_back(new TH3F("","Fake Rec Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
-      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], jetBins.size()-1, &jetBins[0]) );
+      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], zBins.size()-1, &zBins[0]) );
       vhsec3D.push_back(new TH3F("","Secondary Tracks;#eta;p_{T} (GeV/c);jet E_{T} (GeV/c)",
-      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], jetBins.size()-1, &jetBins[0]) );
+      etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], zBins.size()-1, &zBins[0]) );
       vhresStoR3D.push_back(new TH3F("","Momentum resolution (sim to rec);#eta;sim p_{T} (GeV/c);rec p_{T} (GeV/c)", etaBins.size()-1, &etaBins[0], ptBins.size()-1, &ptBins[0], ptBins.size()-1, &ptBins[0]) );
 
       vhsim3D[i]->SetName(Form("hsim3D_cbin%dto%d",centBins[i],centBins[i+1]));
@@ -268,59 +285,56 @@ void TrkCorrHisAna::DeclareHistograms()
    }
 
    // monitors
-for (int j=0; j<2; ++j) hTrkJetPtDr.push_back(new TH2F(Form("hTrkJet%dDr",j+1),Form(";#DeltaR(trk,jet%d);p_{T} (GeV/c);;",j+1),50,0,100,50,0,8));
-for (int j=0; j<2; ++j) hSimJetPtDr.push_back(new TH2F(Form("hSimJet%dDr",j+1),Form(";#DeltaR(simtrk,jet%d);p_{T} (GeV/c);;",j+1),50,0,100,50,0,8));
-}
-
-void TrkCorrHisAna::FillSimHistograms(const EvtSel & evt, const DiJet & gj, const SimTrack_t & s)
-{
-   if(s.status>0) {
-      // monitor
-      hSimJetPtDr[0]->Fill(s.ptr,s.jdr1);
-      hSimJetPtDr[1]->Fill(s.ptr,s.jdr2);
-      
-      // corrections
-      hsim->Fill(s.etas, s.pts);
-      hsim3D->Fill(s.etas, s.pts, s.jetr);
-      if(s.acc)    hacc->Fill(s.etas, s.pts);
-      if(s.nrec==1) {
-         hresStoR3D->Fill(s.etas, s.pts, s.ptr);
-      }
-      if(s.nrec>0) heff->Fill(s.etas, s.pts), heff3D->Fill(s.etas, s.pts, s.jetr);
-      if(s.nrec>1) hmul->Fill(s.etas, s.pts), hmul3D->Fill(s.etas, s.pts, s.jetr);
-      
-      // filling histogram in vector 
-      for(unsigned i=0;i<centBins.size()-1;i++){
-         if(evt.cBin>=centBins[i] && evt.cBin<centBins[i+1]){
-            vhsim3D[i]->Fill(s.etas, s.pts, s.jetr);
-            if(s.nrec>0) vheff3D[i]->Fill(s.etas, s.pts, s.jetr);
-            if(s.nrec==1) vhresStoR3D[i]->Fill(s.etas, s.pts, s.ptr);
-            if(s.nrec>1) vhmul3D[i]->Fill(s.etas, s.pts, s.jetr);
-         }
-      } // end of vector loop 
-   } // end of (s.status) loop 
+for (int j=0; j<2; ++j) vhTrkJetPtDr.push_back(new TH2F(Form("hTrkJet%dDr",j+1),Form(";#DeltaR(trk,jet%d);p_{T} (GeV/c);",j+1),50,0,100,50,0,8));
+for (int j=0; j<2; ++j) vhSimJetPtDr.push_back(new TH2F(Form("hSimJet%dDr",j+1),Form(";#DeltaR(simtrk,jet%d);p_{T} (GeV/c);",j+1),50,0,100,50,0,8));
 }
 
 void TrkCorrHisAna::FillRecHistograms(const EvtSel & evt, const DiJet & gj, const RecTrack_t & r)
 {
    // monitor
-   hSimJetPtDr[0]->Fill(r.ptr,r.jdr1);
-   hSimJetPtDr[1]->Fill(r.ptr,r.jdr2);
+   vhTrkJetPtDr[0]->Fill(deltaR(r.etar,r.phir,gj.eta1,gj.phi1),r.ptr);
+   vhTrkJetPtDr[1]->Fill(deltaR(r.etar,r.phir,gj.eta2,gj.phi2),r.ptr);
 
    // corrections
    hrec->Fill(r.etar, r.ptr);
-   hrec3D->Fill(r.etar, r.ptr, r.jetr);
-   if(!r.nsim) hfak->Fill(r.etar, r.ptr), hfak3D->Fill(r.etar, r.ptr, r.jetr);
-   if(r.nsim>0 && r.status<0) hsec->Fill(r.etar, r.ptr), hsec3D->Fill(r.etar, r.ptr, r.jetr); // nsim>0 redudant?
+   hrec3D->Fill(r.etar, r.ptr, r.jet);
+   if(!r.nsim) hfak->Fill(r.etar, r.ptr), hfak3D->Fill(r.etar, r.ptr, r.jet);
+   if(r.nsim>0 && r.status<0) hsec->Fill(r.etar, r.ptr), hsec3D->Fill(r.etar, r.ptr, r.jet); // nsim>0 redudant?
    
    // filling histogram in vector
    for(unsigned i=0;i<centBins.size()-1;i++){
       if(evt.cBin>=centBins[i] && evt.cBin<centBins[i+1]){
-         vhrec3D[i]->Fill(r.etar, r.ptr, r.jetr);
-         if(!r.nsim) vhfak3D[i]->Fill(r.etar, r.ptr, r.jetr);
-         if(r.nsim>0 && r.status<0) vhsec3D[i]->Fill(r.etar, r.ptr, r.jetr);
+         vhrec3D[i]->Fill(r.etar, r.ptr, r.jet);
+         if(!r.nsim) vhfak3D[i]->Fill(r.etar, r.ptr, r.jet);
+         if(r.nsim>0 && r.status<0) vhsec3D[i]->Fill(r.etar, r.ptr, r.jet);
       }
    } // end of vector loop
+}
+
+void TrkCorrHisAna::FillSimHistograms(const EvtSel & evt, const DiJet & gj, const SimTrack_t & s) {
+   if(s.status>0) {
+      // monitor
+      vhSimJetPtDr[0]->Fill(deltaR(s.etas,s.phis,gj.eta1,gj.phi1),s.pts);
+      vhSimJetPtDr[1]->Fill(deltaR(s.etas,s.phis,gj.eta2,gj.phi2),s.pts);
+      
+      // corrections
+      hsim->Fill(s.etas, s.pts);
+      hsim3D->Fill(s.etas, s.pts, s.jet);
+      if(s.acc)    hacc->Fill(s.etas, s.pts);
+      if(s.nrec>0) heff->Fill(s.etas, s.pts), heff3D->Fill(s.etas, s.pts, s.jet);
+      if(s.nrec==1) hresStoR3D->Fill(s.etas, s.pts, s.ptr);
+      if(s.nrec>1) hmul->Fill(s.etas, s.pts), hmul3D->Fill(s.etas, s.pts, s.jet);
+      
+      // filling histogram in vector 
+      for(unsigned i=0;i<centBins.size()-1;i++){
+         if(evt.cBin>=centBins[i] && evt.cBin<centBins[i+1]){
+            vhsim3D[i]->Fill(s.etas, s.pts, s.jet);
+            if(s.nrec>0) vheff3D[i]->Fill(s.etas, s.pts, s.jet);
+            if(s.nrec==1) vhresStoR3D[i]->Fill(s.etas, s.pts, s.ptr);
+            if(s.nrec>1) vhmul3D[i]->Fill(s.etas, s.pts, s.jet);
+         }
+      } // end of vector loop 
+   } // end of (s.status) loop 
 }
 
 void TrkCorrHisAna::WriteHistograms()
@@ -361,8 +375,12 @@ void TrkCorrHisAna::WriteHistograms()
    }
    
    // monitors
-   hPJPtDrSim->Write();
-   hPJPtDrRec->Write();
+   for (int i=0; i<2; ++i) {
+      vhTrkJetPtDr[i]->Write();
+      vhSimJetPtDr[i]->Write();
+   }
+
+   // back to starting position!
    outFile_->cd("");
 }
 #endif
