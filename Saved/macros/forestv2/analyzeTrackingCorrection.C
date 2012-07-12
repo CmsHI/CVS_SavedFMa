@@ -21,6 +21,9 @@ void analyzeTrackingCorrection(
    int maxEntries = -1
 ) {
    outname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
+   cout << "Input: " << inname << endl;
+   cout << "Sample pthat = " << samplePtHat << endl;
+   cout << "Output: " << outname << endl;
 
    ///////////////////////////////////////////////////
    // Setup Analysis
@@ -62,7 +65,7 @@ void analyzeTrackingCorrection(
    // In separate centrality bins
    vector<TH1D*> vhCent;
    vector<TH1D*> vhPtHat;
-   for (int ib=0; ib<effMergedGeneral.centBins.size(); ++ib) {
+   for (int ib=0; ib<effMergedGeneral.centBins.size()-1; ++ib) {
       vhCent.push_back(new TH1D(Form("hCent_c%d",ib),"",40,0,40));
       vhPtHat.push_back(new TH1D(Form("hPtHat_c%d",ib),"",200,0,1000));
    }
@@ -85,7 +88,7 @@ void analyzeTrackingCorrection(
       evt.pthat = anajet->pthat;
       evt.samplePtHat = samplePtHat;
 
-      if (i%1000==0) cout <<i<<" / "<< maxEntries << " cBin: " << evt.cBin << " nT: " << evt.nT <<endl;
+      if (i%1000==0) cout <<i<<" / "<< maxEntries << " pthat: " << evt.pthat << " cBin: " << evt.cBin << " nT: " << evt.nT <<endl;
 
       // initialize
       int leadingIndex=-1,genLeadingIndex=-1;
@@ -186,21 +189,28 @@ void analyzeTrackingCorrection(
       ///////////////////////////////////////////////////////
       if (!evt.offlSel) continue;
       // ensure jet distribution unbiased by pthat turn on
-      if (evt.pthat>=300) {
+      if (samplePtHat>=300) {
          if (gj.pt1<350) continue;
-      } else if (evt.pthat>=250) {
+      } else if (samplePtHat>=250) {
+         if (evt.pthat>=300) continue;
          if (gj.pt1<290) continue;
-      } else if (evt.pthat>=200) {
+      } else if (samplePtHat>=200) {
+         if (evt.pthat>=250) continue;
          if (gj.pt1<240) continue;
-      } else if (evt.pthat>=170) {
+      } else if (samplePtHat>=170) {
+         if (evt.pthat>=200) continue;
          if (gj.pt1<200) continue;
-      } else if (evt.pthat>=120) {
+      } else if (samplePtHat>=120) {
+         if (evt.pthat>=170) continue;
          if (gj.pt1<150) continue;
-      } else if (evt.pthat>=80) {
+      } else if (samplePtHat>=80) {
+         if (evt.pthat>=120) continue;
          if (gj.pt1<110) continue;
-      } else if (evt.pthat>=50) {
+      } else if (samplePtHat>=50) {
+         if (evt.pthat>=80) continue;
          if (gj.pt1<80) continue;
-      } else if (evt.pthat>=30) {
+      } else if (samplePtHat>=30) {
+         if (evt.pthat>=50) continue;
          if (gj.pt1<30) continue;
       }
       
@@ -211,8 +221,10 @@ void analyzeTrackingCorrection(
       hJDPhi->Fill(fabs(gj.dphi));
       hAj->Fill(gj.Aj);
       for (int ib=0; ib<effMergedGeneral.centBins.size(); ++ib) {
-         vhCent[ib]->Fill(evt.cBin);
-         vhPtHat[ib]->Fill(evt.pthat);
+         if(evt.cBin>=effMergedGeneral.centBins[ib] && evt.cBin<effMergedGeneral.centBins[ib+1]){
+            vhCent[ib]->Fill(evt.cBin);
+            vhPtHat[ib]->Fill(evt.pthat);
+         }
       }
 
       ///////////////////////////////////////////////////////
@@ -290,7 +302,7 @@ void analyzeTrackingCorrection(
       // All done
    }
 
-   effMergedGeneral.WriteHistograms();
+//    effMergedGeneral.WriteHistograms();
    output->Write();
    output->Close();
    delete c;

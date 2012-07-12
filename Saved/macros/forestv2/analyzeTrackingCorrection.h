@@ -110,7 +110,6 @@ class TrkCorrHisAna
     void DeclareHistograms();
     void FillRecHistograms(const EvtSel & evt, const DiJet & gj, const RecTrack_t & r);
     void FillSimHistograms(const EvtSel & evt, const DiJet & gj, const SimTrack_t & s);
-    void WriteHistograms();
 };
 
 
@@ -285,8 +284,8 @@ void TrkCorrHisAna::DeclareHistograms()
    }
 
    // monitors
-for (int j=0; j<2; ++j) vhTrkJetPtDr.push_back(new TH2F(Form("hTrkJet%dDr",j+1),Form(";#DeltaR(trk,jet%d);p_{T} (GeV/c);",j+1),50,0,100,50,0,8));
-for (int j=0; j<2; ++j) vhSimJetPtDr.push_back(new TH2F(Form("hSimJet%dDr",j+1),Form(";#DeltaR(simtrk,jet%d);p_{T} (GeV/c);",j+1),50,0,100,50,0,8));
+for (int j=0; j<2; ++j) vhTrkJetPtDr.push_back(new TH2F(Form("hTrkJet%dDr",j+1),Form(";#DeltaR(trk,jet%d);p_{T} (GeV/c);",j+1),50,0,8,50,0,100));
+for (int j=0; j<2; ++j) vhSimJetPtDr.push_back(new TH2F(Form("hSimJet%dDr",j+1),Form(";#DeltaR(simtrk,jet%d);p_{T} (GeV/c);",j+1),50,0,8,50,0,100));
 }
 
 void TrkCorrHisAna::FillRecHistograms(const EvtSel & evt, const DiJet & gj, const RecTrack_t & r)
@@ -337,50 +336,4 @@ void TrkCorrHisAna::FillSimHistograms(const EvtSel & evt, const DiJet & gj, cons
    } // end of (s.status) loop 
 }
 
-void TrkCorrHisAna::WriteHistograms()
-{
-   outFile_->cd(name_);
-   
-   // SimTrack
-   hsim->Write();
-   hacc->Write();
-   heff->Write();
-   hmul->Write();
-   
-   hsim3D->Write();
-   heff3D->Write();
-   hmul3D->Write();
-   hresStoR3D->Write();
-   
-   // RecTrack;
-   hrec->Write();
-   hfak->Write();
-   hsec->Write();
-   
-   hrec3D->Write();
-   hfak3D->Write();
-   hsec3D->Write();
-   
-   // vector of histograms
-   for(UInt_t i=0;i<centBins.size()-1;i++){
-      vhsim3D[i]->Write();
-      vheff3D[i]->Write();
-      vhmul3D[i]->Write();
-      
-      vhrec3D[i]->Write();
-      vhfak3D[i]->Write();
-      vhsec3D[i]->Write();
-      
-      vhresStoR3D[i]->Write();
-   }
-   
-   // monitors
-   for (int i=0; i<2; ++i) {
-      vhTrkJetPtDr[i]->Write();
-      vhSimJetPtDr[i]->Write();
-   }
-
-   // back to starting position!
-   outFile_->cd("");
-}
-#endif
+#endif //analyzeTrackingCorrection_h
