@@ -310,14 +310,13 @@ public:
       ///////////////////////////////////
       // Tracking Distributions
       ///////////////////////////////////
-      hGenpPt = (TH1D*)vtrkCorr[0]->ptBin_->Clone("hGenpPt_"+name);
-      hGenpPt->Reset();
-      hTrkPtNoQual = (TH1D*)vtrkCorr[0]->ptBin_->Clone("hTrkPtNoQual_"+name);
-      hTrkPtNoQual->Reset();
-      hTrkPt = (TH1D*)vtrkCorr[0]->ptBin_->Clone("hTrkPt_"+name);
-      hTrkPt->Reset();
-      hTrkCorrPt = (TH1D*)vtrkCorr[0]->ptBin_->Clone("hTrkCorrPt_"+name);
-      hTrkCorrPt->Reset();
+//       TH1D * xBin = (TH1D*)vtrkCorr[0]->ptBin_->Clone("hX"+name);
+//       xBin->Reset();
+      TH1D * xBin    = new TH1D("hX"+name,"",200,0.5,2.5);
+      hGenpPt        = (TH1D*)xBin->Clone("hGenpPt_"+name);
+      hTrkPtNoQual   = (TH1D*)xBin->Clone("hTrkPtNoQual_"+name);
+      hTrkPt         = (TH1D*)xBin->Clone("hTrkPt_"+name);
+      hTrkCorrPt     = (TH1D*)xBin->Clone("hTrkCorrPt_"+name);
 
       hGenpEta = new TH1D("hGenpEta_"+name,"; #eta;",48,-2.4,2.4);
       hTrkEta = new TH1D("hTrkEta_"+name,"; #eta;",48,-2.4,2.4);
