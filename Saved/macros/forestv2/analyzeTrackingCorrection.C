@@ -213,7 +213,7 @@ void analyzeTrackingCorrection(
          if (gj.pt1<80) continue;
       } else if (samplePtHat>=30) {
 //          if (evt.pthat>=50) continue;
-         if (gj.pt1<30) continue;
+         if (gj.pt1<50) continue;
       }
       
       // Fill Baisc Event info
