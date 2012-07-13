@@ -31,7 +31,7 @@ void analyzeTrackingCorrection(
    double cutjetPt = 30;
    double cutjetEta = 2;
    double cutPtTrk=0.5;
-   double cutEtaTrk = 8;
+   double cutEtaTrk = 2.4;
    
    // Define the input file and HiForest
    HiForest * c = new HiForest(inname,"forest",0,0,0,jetAlgo);
@@ -65,9 +65,11 @@ void analyzeTrackingCorrection(
    // In separate centrality bins
    vector<TH1D*> vhCent;
    vector<TH1D*> vhPtHat;
+   vector<TH2D*> vhJetPt2D;
    for (int ib=0; ib<effMergedGeneral.centBins.size()-1; ++ib) {
       vhCent.push_back(new TH1D(Form("hCent_c%d",ib),"",40,0,40));
       vhPtHat.push_back(new TH1D(Form("hPtHat_c%d",ib),"",200,0,1000));
+      vhJetPt2D.push_back(new TH2D(Form("hJetPt2D_c%d",ib),"",100,0,500,100,0,500));
    }
    
    ///////////////////////////////////////////////////
@@ -192,25 +194,25 @@ void analyzeTrackingCorrection(
       if (samplePtHat>=300) {
          if (gj.pt1<350) continue;
       } else if (samplePtHat>=250) {
-         if (evt.pthat>=300) continue;
+//          if (evt.pthat>=300) continue;
          if (gj.pt1<290) continue;
       } else if (samplePtHat>=200) {
-         if (evt.pthat>=250) continue;
+//          if (evt.pthat>=250) continue;
          if (gj.pt1<240) continue;
       } else if (samplePtHat>=170) {
-         if (evt.pthat>=200) continue;
+//          if (evt.pthat>=200) continue;
          if (gj.pt1<200) continue;
       } else if (samplePtHat>=120) {
-         if (evt.pthat>=170) continue;
+//          if (evt.pthat>=170) continue;
          if (gj.pt1<150) continue;
       } else if (samplePtHat>=80) {
-         if (evt.pthat>=120) continue;
+//          if (evt.pthat>=120) continue;
          if (gj.pt1<110) continue;
       } else if (samplePtHat>=50) {
-         if (evt.pthat>=80) continue;
+//          if (evt.pthat>=80) continue;
          if (gj.pt1<80) continue;
       } else if (samplePtHat>=30) {
-         if (evt.pthat>=50) continue;
+//          if (evt.pthat>=50) continue;
          if (gj.pt1<30) continue;
       }
       
@@ -224,6 +226,7 @@ void analyzeTrackingCorrection(
          if(evt.cBin>=effMergedGeneral.centBins[ib] && evt.cBin<effMergedGeneral.centBins[ib+1]){
             vhCent[ib]->Fill(evt.cBin);
             vhPtHat[ib]->Fill(evt.pthat);
+            vhJetPt2D[ib]->Fill(gj.pt1,gj.pt2);
          }
       }
 
@@ -247,11 +250,11 @@ void analyzeTrackingCorrection(
          r.status = 1; // for now correct all tracks
          float dr1 = deltaR(r.etar,r.phir,gj.eta1,gj.phi1);
          float dr2 = deltaR(r.etar,r.phir,gj.eta2,gj.phi2);
-         if (dr1<0.5&&gj.pt1>50) {
+         if (dr1<0.5&&gj.pt1>40) {
             r.jet = gj.pt1;
             r.jeta = gj.eta1;
             r.jdr = dr1;
-         } else if (dr2<0.5&&gj.pt2>50) {
+         } else if (dr2<0.5&&gj.pt2>40) {
             r.jet = gj.pt2;
             r.jeta = gj.eta2;
             r.jdr = dr2;
@@ -277,17 +280,17 @@ void analyzeTrackingCorrection(
          s.etas = anaTrks[0]->pEta[ip];
          s.phis = anaTrks[0]->pPhi[ip];
          s.status = 1; // for now assume all simtracks as signal tracks
-         s.nrec = (anaTrks[0]->mtrkQual[ip]>0&&anaTrks[0]->pNRec[ip]<1);
+         s.nrec = (anaTrks[0]->pNRec[ip])*(int)(anaTrks[0]->mtrkAlgo[ip]<4||anaTrks[0]->mtrkQual[ip]>0);
          s.acc = anaTrks[0]->pAcc[ip];
          s.jet = gj.pt1;
          s.jeta = gj.eta1;
          float dr1 = deltaR(s.etas,s.phis,gj.eta1,gj.phi1);
          float dr2 = deltaR(s.etas,s.phis,gj.eta2,gj.phi2);
-         if (dr1<0.5&&gj.pt1>50) {
+         if (dr1<0.5&&gj.pt1>40) {
             s.jet = gj.pt1;
             s.jeta = gj.eta1;
             s.jdr = dr1;
-         } else if (dr2<0.5&&gj.pt2>50) {
+         } else if (dr2<0.5&&gj.pt2>40) {
             s.jet = gj.pt2;
             s.jeta = gj.eta2;
             s.jdr = dr2;
