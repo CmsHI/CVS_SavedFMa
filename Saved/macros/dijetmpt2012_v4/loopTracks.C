@@ -22,13 +22,13 @@ void loopTracks(
    int centBins[2] = {0,12};
 
 //    TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
-   TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt110eta2_xsec_10k_icPu5.root";
+   TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt110eta2_xsec_50k_icPu5.root";
    
    int particleRecLevel = 2; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
    
-   float minJetPt1=110;
-   float minJetPt2=-1; //50;
-   float sigDPhi=-1; // 3.1415926*7./8;
+   float minJetPt1=110; // 120, 110
+   float minJetPt2=80;  // 50, -1
+   float sigDPhi=-1; // Pi()*7./8, -1
    float etamax=2.4;
    TString tag = Form("%s/HisMc_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel);
    tag+="SelfCorrLowPt";
@@ -55,7 +55,7 @@ void loopTracks(
       ana.minJetPt2 = minJetPt2;
       ana.maxJetEta = 2;
       ana.sigDPhi = sigDPhi;
-      ana.minPt = 0.5;
+      ana.minPt = 0.5; // 0.5, 8
       ana.maxEta = etamax;
       ana.outf = hout;
       ana.Init(nt);
@@ -66,14 +66,16 @@ void loopTracks(
       TH1D * hGenp = ana.hGenpPt;
       TH1D * hTrk = ana.hTrkPt;
       TH1D * hCorr = ana.hTrkCorrPt;
+      float xmin=0, xmax=119.9;
 //       TH1D * hGenp = ana.hGenpEta;
 //       TH1D * hTrk = ana.hTrkEta;
 //       TH1D * hCorr = ana.hTrkCorrEta;
+//       float xmin=-2.4, xmax=2.4;
       c2->Divide(2,1);
       c2->cd(1);
       hGenp->SetLineColor(2);
       hTrk->SetMarkerStyle(kOpenCircle);
-      hGenp->SetAxisRange(0,5,"X");
+      hGenp->SetAxisRange(xmin,xmax,"X");
       hGenp->Draw("hist");
       hTrk->Draw("sameE");
       hCorr->Draw("sameE");
@@ -84,7 +86,7 @@ void loopTracks(
       hTrkRat->Divide(hGenp);
       TH1D * hTrkCorrRat = (TH1D*)hCorr->Clone("hTrkCorrRat");
       hTrkCorrRat->Divide(hGenp);
-      hGenpRat->SetAxisRange(0,5,"X");
+      hGenpRat->SetAxisRange(xmin,xmax,"X");
       hGenpRat->Draw("hist");
       hTrkRat->Draw("sameE");
       hTrkCorrRat->Draw("sameE");
@@ -99,12 +101,14 @@ void loopTracks(
       cout << "Ana tracks: " << hTrk->GetEntries() << endl;
       c3->Divide(2,1);
       c3->cd(1);
+      gPad->SetLogy();
       hHisSim->SetLineColor(2);
-      hHisSim->SetAxisRange(0,5,"X");
+      hHisSim->SetAxisRange(xmin,xmax,"X");
       hHisSim->Draw("hist");
       hGenp->Draw("sameE");
       c3->cd(2);
-      hHisRec->SetAxisRange(0,5,"X");
+      gPad->SetLogy();
+      hHisRec->SetAxisRange(xmin,xmax,"X");
       hHisRec->SetLineColor(2);
       hHisRec->Draw("hist");
       hTrk->Draw("sameE");

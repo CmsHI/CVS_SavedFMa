@@ -40,6 +40,8 @@ public:
    TH1D * hTrkEta;
    TH1D * hTrkCorrPt;
    TH1D * hTrkCorrEta;
+   std::vector<TH2D*> vhEffZero;
+   std::vector<TH2D*> vhEffNonZero;
    
    AnaTrk(TString myname) :
    name(myname),
@@ -75,7 +77,9 @@ public:
       for (int i=0; i< vtrkCorr.size(); ++i) {
          if (!trkPhiMode) {
 //             vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv4/trkcorr_hy18dj80_Forest2_TrkCorrv4.root",80);
-            vtrkCorr[i]->AddSample("trkcorr/TrkCorrv8/TrkCorrv8_hy18dj80_10k_icPu5.root",80);
+//             vtrkCorr[i]->AddSample("trkcorr/TrkCorrv8/TrkCorrv8_hy18dj80_10k_icPu5.root",80);
+            vtrkCorr[i]->AddSample("trkcorr/TrkCorrv8/TrkCorrv8_hy18dj80_50k_icPu5.root",80);
+//             vtrkCorr[i]->AddSample("trkcorr/TrkCorrv8/TrkCorrv8_hy18dj80_icPu5.root",80);
          } else {
             vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv6/trkcorr_hy18dj80_Forest2_TrkCorrv6.root",80);
          }
@@ -109,6 +113,13 @@ public:
       hGenpEta = new TH1D("hGenpEta_"+name,"; #eta;",12,-2.4,2.4);
       hTrkEta = new TH1D("hTrkEta_"+name,"; #eta;",12,-2.4,2.4);
       hTrkCorrEta = new TH1D("hTrkCorrEta_"+name,"; #eta;",12,-2.4,2.4);
+      
+      ///////////////////////////////////
+      // Eff. Distributions
+      ///////////////////////////////////
+      for (unsigned int i=0; i<3; ++i) {
+         vhEffZero.push_back(new TH2D(Form("hEffZero_%d",i),";Jet p_{T} (GeV/c);Trk p_{T} (GeV/c);",100,0,500,50,0,100));
+      }
    }
 
    // Function to Select Event And set event vars
@@ -164,6 +175,8 @@ public:
          hJDPhi->Fill(me.jdphi);
          hAj->Fill(me.Aj);
          
+         cout << "pt1/eta: " << me.pt1 << "/" << me.eta1 << " pt2/eta2: " << me.pt2 << "/" << me.eta2 << endl;
+          
          ///////////////////////////////////
          // Track Loop
          ///////////////////////////////////
@@ -193,10 +206,13 @@ public:
                float trkWt;
                if (me.pt1>40&&dr1<0.5) {
                   trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,me.pt1,evt.cBin,trkcorr);
+                  if (fabs(trkcorr[0]-1)<0.01) cout << "warning eff=0 for LJ pt eta jet cent: " << trkPt << " " << trkEta << " " << me.pt1 << " c" << evt.cBin << endl;
                } else if (me.pt2>40&&dr2<0.5) {
                   trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,me.pt2,evt.cBin,trkcorr);
+                  if (fabs(trkcorr[0]-1)<0.01) cout << "warning eff=0 for SubLJ pt eta jet cent: " << trkPt << " " << trkEta << " " << me.pt2 << " c" << evt.cBin << endl;
                } else {
                   trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,0,evt.cBin,trkcorr);
+                  if (fabs(trkcorr[0]-1)<0.01) cout << "warning eff=0 for NoLJ pt eta jet cent: " << trkPt << " " << trkEta << " " << 0 << " c" << evt.cBin << endl;
                }
                if (particleRecLevel==3) trkWt=1./trkcorr[0];
    
@@ -233,10 +249,22 @@ public:
                float trkWt;
                if (me.pt1>40&&dr1<0.5) {
                   trkWt = vtrkCorr[0]->GetCorr(simPt,simEta,me.pt1,evt.cBin,trkcorr);
+                   if (fabs(trkcorr[0]-1)<0.01) {
+                     cout << "warning eff=0 for LJ pt eta jet cent: " << simPt << " " << simEta << " " << me.pt1 << " c" << evt.cBin << endl;
+                     vhEffZero[1]->Fill(me.pt1,simPt);
+                     }
                } else if (me.pt2>40&&dr2<0.5) {
                   trkWt = vtrkCorr[0]->GetCorr(simPt,simEta,me.pt2,evt.cBin,trkcorr);
+                  if (fabs(trkcorr[0]-1)<0.01) {
+                     cout << "warning eff=0 for SubLJ pt eta jet cent: " << simPt << " " << simEta << " " << me.pt2 << " c" << evt.cBin << endl;
+                     vhEffZero[2]->Fill(me.pt2,simPt);
+                  }
                } else {
                   trkWt = vtrkCorr[0]->GetCorr(simPt,simEta,0,evt.cBin,trkcorr);
+                  if (fabs(trkcorr[0]-1)<0.01) {
+                     cout << "warning eff=0 for NoLJ pt eta jet cent: " << simPt << " " << simEta << " " << 0 << " c" << evt.cBin << endl;
+                     vhEffZero[0]->Fill(0.,simPt);
+                  }
                }
                // Track Distributions
                hTrkPt->Fill(simPt);

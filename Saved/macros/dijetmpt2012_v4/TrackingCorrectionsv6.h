@@ -93,7 +93,7 @@ trkPhiMode_(false)
    levelInput_.resize(numLevels_);
    levelInput_[0].push_back("heff3D"); levelInput_[0].push_back("hsim3D");
    levelInput_[1].push_back("hfak3D"); levelInput_[1].push_back("hrec3D");
-   levelInput_[2].push_back("hmul3D"); levelInput_[2].push_back("hsim3D");
+   levelInput_[2].push_back("hmul3D"); levelInput_[2].push_back("heff3D");
    levelInput_[3].push_back("hsec3D"); levelInput_[3].push_back("hrec3D");
    
    matName_.push_back("Num");
@@ -322,7 +322,8 @@ Float_t TrackingCorrections::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float
    for (Int_t lv=0; lv<numLevels_; ++lv) {
       corr[lv] = correctionHists_[lv][bin]->GetBinContent(etaBin,ptBin,jetBin);
       if (lv==0&&corr[lv]<0.001) { // if eff==0, no correction, b/c too few statistics
-       corr[lv] = 1;
+         cout << " warning eff=0 for pt eta jet cent: " << pt << " " << eta << " " << jet << " " << cent << endl;
+         corr[lv] = 1;
       }
       if (outCorr) outCorr[lv] = corr[lv];
    }

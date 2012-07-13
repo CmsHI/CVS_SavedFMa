@@ -13,7 +13,7 @@
 #include "loopMpt.h"
 
 void HisClosure(
-   string infpath = "fig/07.12_F2STATrkCorrv7/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0_resc0SelfCorr.root",
+   string infpath = "fig/07.12_F2STATrkCorrv7/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0_resc0SelfCorrLowPt.root",
    int anaMode=0, // 0=pt, 1=eta, 2=dphi
    int iStudy=0,
    int jStudy=0,
@@ -80,7 +80,7 @@ void HisClosure(
       hTrkCorr->Rebin(4);
       doLogx=false; doLogy=false;
       cmp.Legend(0.19,0.68,0.65,0.93);
-      ymin=0; ymax=hGenp->GetMaximum()*4*1.5;
+      ymin=0; ymax=hGenp->GetMaximum()/nEvt*4*1.5;
    } else if (anaMode==10) {
       hGenp = (TH1D*)inf->Get(Form("hGenpDPhi_%d_%d_%s",iStudy,jStudy,evt.Data()));
       hTrk = (TH1D*)inf->Get(Form("hTrkDPhi_%d_%d_%s",iStudy,jStudy,evt.Data()));
@@ -111,9 +111,9 @@ void HisClosure(
    //////////////////////////////////////////
    // Run Analysis
    //////////////////////////////////////////
-   hGenp->Scale(1./nEvt);
-   hTrk->Scale(1./nEvt);
-   hTrkCorr->Scale(1./nEvt);
+//    hGenp->Scale(1./nEvt);
+//    hTrk->Scale(1./nEvt);
+//    hTrkCorr->Scale(1./nEvt);
 
    //////////////////////////////////////////
    // Draw
@@ -122,11 +122,11 @@ void HisClosure(
    c2->Divide(2,1);
    c2->cd(1);
    hTrk->SetMarkerStyle(kOpenCircle);
-   if (anaMode==0) {
-      normHist(hGenp,-1,true);
-      normHist(hTrk,-1,true);
-      normHist(hTrkCorr,-1,true);
-   }
+//    if (anaMode==0) {
+//       normHist(hGenp,-1,true);
+//       normHist(hTrk,-1,true);
+//       normHist(hTrkCorr,-1,true);
+//    }
    if (doLogx) gPad->SetLogx();
    if (doLogy) gPad->SetLogy();
    if (xmax>xmin) hGenp->SetAxisRange(xmin,xmax,"X");

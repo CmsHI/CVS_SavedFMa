@@ -34,7 +34,7 @@ void loopMpt(
 //    TString infmcname = "../ntout/output-hy18dj80to200_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
    
    bool isMC=true;
-   int particleRecLevel = 0; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
+   int particleRecLevel = 1; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
    if (!isMC) particleRecLevel=4;
    
    TString infname=infdataname;
@@ -48,7 +48,7 @@ void loopMpt(
    bool doJetPhiFlat = false;
    TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d_resc%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel,doResCorr);
    if (isMC) tag.ReplaceAll("HisData","HisMc");
-   tag+="SelfCorr";
+   tag+="SelfCorrLowPt";
 
    TFile *inf = TFile::Open(infname);
    TTree *nt =(TTree*)inf->FindObjectAny("tgj");
@@ -63,7 +63,7 @@ void loopMpt(
    for (int c=0; c<nCentBin; ++c) {
       TString name = Form("%dto%d",centBins[c],centBins[c+1]);
       AnaMPT ana(name);
-//       ana.maxEntry = 400;
+      ana.maxEntry = 10000;
       ana.isMC = isMC;
       ana.doResCorr = doResCorr;
       ana.doJetPhiFlat = doJetPhiFlat;
