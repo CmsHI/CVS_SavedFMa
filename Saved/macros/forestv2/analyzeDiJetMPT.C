@@ -56,7 +56,8 @@ void analyzeDiJetMPT(
                       TString mcfname="",
                       TString datafname="output-data-Photon-v7_v30.root",
                       int makeMixing=0, // 0=default (no mix), 1=make mixing classes 2=mix
-                      TString mixfname="output-data-Photon-v7_v30classes.root"
+                      TString mixfname="output-data-Photon-v7_v30classes.root",
+                      int maxEntries = -1
                       )
 {
    bool doSkim=true;
@@ -188,7 +189,8 @@ void analyzeDiJetMPT(
    ///////////////////////////////////////////////////
    // Main loop
    ///////////////////////////////////////////////////
-   for (int i=0;i<c->GetEntries();i++)
+   if (maxEntries<0) maxEntries = c->GetEntries();
+   for (int i=0;i<maxEntries;i++)
 //    for (int i=0;i<1000;i++)
    {
       c->GetEntry(i);
@@ -236,11 +238,11 @@ void analyzeDiJetMPT(
       else evt.weight = 1;
       evt.npart = getNpart(evt.cBin);
       evt.ncoll = getNcoll(evt.cBin);
-      evt.sampleWeight = sampleWeight/c->GetEntries(); // for different mc sample, 1 for data
+      evt.sampleWeight = sampleWeight/maxEntries; // for different mc sample, 1 for data
       evt.pthat = anajet->pthat;
       evt.samplePtHat = samplePtHat;
 
-      if (i%1000==0) cout <<i<<" / "<<c->GetEntries() << " run: " << evt.run << " evt: " << evt.evt << " bin: " << evt.cBin << " epbin: " << evtPlaneBin << " nT: " << evt.nT << " trig: " <<  evt.trig << " anaEvtSel: " << evt.anaEvtSel <<endl;
+      if (i%1000==0) cout <<i<<" / "<<maxEntries << " run: " << evt.run << " evt: " << evt.evt << " bin: " << evt.cBin << " epbin: " << evtPlaneBin << " nT: " << evt.nT << " trig: " <<  evt.trig << " anaEvtSel: " << evt.anaEvtSel <<endl;
 
       // initialize
       int leadingIndex=-1,genLeadingIndex=-1;
@@ -275,8 +277,8 @@ void analyzeDiJetMPT(
       if (makeMixing==1&&!evt.offlSel) continue;
       if (doSkim) {
          if (dataSrcType==1&&!evt.anaEvtSel) continue;
-//          if (dataSrcType==0&&!evt.offlSel) continue;
-         if (gj.pt1<50) continue;
+	 if (dataSrcType==0&&!evt.offlSel) continue;
+         if (gj.pt1<110) continue;
 //          if (gj.genjetpt1<120) continue;
       }
       
