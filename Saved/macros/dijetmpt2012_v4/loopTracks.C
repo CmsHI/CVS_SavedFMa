@@ -21,13 +21,14 @@ void loopTracks(
    const int nCentBin = 1;
    int centBins[2] = {0,12};
 
-   TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
+//    TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
+   TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt110eta2_xsec_10k_icPu5.root";
    
    int particleRecLevel = 2; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
    
-   float minJetPt1=120;
-   float minJetPt2=50;
-   float sigDPhi=3.1415926*7./8;
+   float minJetPt1=110;
+   float minJetPt2=-1; //50;
+   float sigDPhi=-1; // 3.1415926*7./8;
    float etamax=2.4;
    TString tag = Form("%s/HisMc_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel);
    tag+="SelfCorrLowPt";
@@ -45,32 +46,34 @@ void loopTracks(
    for (int c=0; c<nCentBin; ++c) {
       TString name = Form("%dto%d",centBins[c],centBins[c+1]);
       AnaTrk ana(name);
-      ana.maxEntry = 10000;
+//       ana.maxEntry = 10000;
       ana.isMC = true;
       ana.particleRecLevel = particleRecLevel;
       ana.cMin=centBins[c];
       ana.cMax=centBins[c+1];
       ana.minJetPt1 = minJetPt1;
       ana.minJetPt2 = minJetPt2;
-      ana.maxJetEta = 1.6;
+      ana.maxJetEta = 2;
       ana.sigDPhi = sigDPhi;
       ana.minPt = 0.5;
       ana.maxEta = etamax;
       ana.outf = hout;
       ana.Init(nt);
       ana.Loop();
+
       // Inspect
       TCanvas * c2 = new TCanvas("c"+name,"c"+name,800,400);
-//       TH1D * hGenp = ana.hGenpPt;
-//       TH1D * hTrk = ana.hTrkPt;
-//       TH1D * hCorr = ana.hTrkCorrPt;
-      TH1D * hGenp = ana.hGenpEta;
-      TH1D * hTrk = ana.hTrkEta;
-      TH1D * hCorr = ana.hTrkCorrEta;
+      TH1D * hGenp = ana.hGenpPt;
+      TH1D * hTrk = ana.hTrkPt;
+      TH1D * hCorr = ana.hTrkCorrPt;
+//       TH1D * hGenp = ana.hGenpEta;
+//       TH1D * hTrk = ana.hTrkEta;
+//       TH1D * hCorr = ana.hTrkCorrEta;
       c2->Divide(2,1);
       c2->cd(1);
       hGenp->SetLineColor(2);
       hTrk->SetMarkerStyle(kOpenCircle);
+      hGenp->SetAxisRange(0,5,"X");
       hGenp->Draw("hist");
       hTrk->Draw("sameE");
       hCorr->Draw("sameE");
@@ -81,9 +84,30 @@ void loopTracks(
       hTrkRat->Divide(hGenp);
       TH1D * hTrkCorrRat = (TH1D*)hCorr->Clone("hTrkCorrRat");
       hTrkCorrRat->Divide(hGenp);
+      hGenpRat->SetAxisRange(0,5,"X");
       hGenpRat->Draw("hist");
       hTrkRat->Draw("sameE");
       hTrkCorrRat->Draw("sameE");
+
+      // Compare to Table
+      TCanvas * c3 = new TCanvas("c3_"+name,"c3_"+name,800,400);
+      TH1D * hHisSim = (TH1D*)ana.vtrkCorr[0]->inputHists_[0][0][0][1]->Project3D("sim_y");
+      TH1D * hHisRec = (TH1D*)ana.vtrkCorr[0]->inputHists_[0][0][0][0]->Project3D("rec_y");
+      cout << "Table simtracks: " << hHisSim->GetEntries() << endl;
+      cout << "Ana simtracks: " << hGenp->GetEntries() << endl;
+      cout << "Table tracks: " << hHisRec->GetEntries() << endl;
+      cout << "Ana tracks: " << hTrk->GetEntries() << endl;
+      c3->Divide(2,1);
+      c3->cd(1);
+      hHisSim->SetLineColor(2);
+      hHisSim->SetAxisRange(0,5,"X");
+      hHisSim->Draw("hist");
+      hGenp->Draw("sameE");
+      c3->cd(2);
+      hHisRec->SetAxisRange(0,5,"X");
+      hHisRec->SetLineColor(2);
+      hHisRec->Draw("hist");
+      hTrk->Draw("sameE");
    }
    hout->Write();   
 }

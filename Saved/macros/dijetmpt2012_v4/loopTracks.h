@@ -75,7 +75,7 @@ public:
       for (int i=0; i< vtrkCorr.size(); ++i) {
          if (!trkPhiMode) {
 //             vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv4/trkcorr_hy18dj80_Forest2_TrkCorrv4.root",80);
-            vtrkCorr[i]->AddSample("trkcorr/TrkCorrv8/TrkCorrv8_hy18dj80_icPu5.root",80);
+            vtrkCorr[i]->AddSample("trkcorr/TrkCorrv8/TrkCorrv8_hy18dj80_10k_icPu5.root",80);
          } else {
             vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv6/trkcorr_hy18dj80_Forest2_TrkCorrv6.root",80);
          }
@@ -91,14 +91,16 @@ public:
       ///////////////////////////////////
       hCentrality = new TH1D("hCentrality_"+name,";Centrality Bin;",40,0,40);
       hPtHat = new TH1D("hPtHat_"+name,";#hat{p}_{T} (GeV/c);",120,0,600);
-      hJetPt2D = new TH2D("hJetPt2D_"+name,";p_{T,1} (GeV/c);p_{T,2} (GeV/c)",60,0,300,60,0,300);
+      hJetPt2D = new TH2D("hJetPt2D_"+name,";p_{T,1} (GeV/c);p_{T,2} (GeV/c)",100,0,500,100,0,500);
       hJDPhi = new TH1D("hJDPhi_"+name,";#Delta#phi(j1,j2);",40,0,3.14159);
       hAj = new TH1D("hAj_"+name,";A_{J};",nAjBin,AjBins);
 
       ///////////////////////////////////
       // Tracking Distributions
       ///////////////////////////////////
-      TH1D * xBin    = new TH1D("hX"+name,"",200,0.5,5.5);
+      TH1D * xBin = (TH1D*)vtrkCorr[0]->ptBin_->Clone("hX"+name);
+      xBin->Reset();
+//       TH1D * xBin    = new TH1D("hX"+name,"",200,0.5,5.5);
       hGenpPt        = (TH1D*)xBin->Clone("hGenpPt_"+name);
       hTrkPtNoQual   = (TH1D*)xBin->Clone("hTrkPtNoQual_"+name);
       hTrkPt         = (TH1D*)xBin->Clone("hTrkPt_"+name);
@@ -119,13 +121,18 @@ public:
       me.jdphi = fabs(deltaPhi(me.phi1,me.phi2));
 
       if (!isMC&&!evt.anaEvtSel) return false;
+      if (isMC&&!evt.offlSel) return false;
 
       if (evt.cBin<cMin||evt.cBin>=cMax) return false;
 
       // Jet Selection
       if (me.pt1<minJetPt1 || fabs(me.eta1)>maxJetEta) return false;
-      if (me.pt2<minJetPt2 || fabs(me.eta2)>maxJetEta) return false;
-      if (  me.jdphi < sigDPhi) return false;
+      if (minJetPt2>0) {
+         if (me.pt2<minJetPt2 || fabs(me.eta2)>maxJetEta) return false;
+      }
+      if (sigDPhi>0) {
+         if (  me.jdphi < sigDPhi) return false;
+      }
       
       return true;
    }
