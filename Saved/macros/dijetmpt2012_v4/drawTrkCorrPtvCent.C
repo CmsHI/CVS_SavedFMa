@@ -96,7 +96,7 @@ void drawTrkCorrPtvCent(
 
 	TCanvas * cEff2D = new TCanvas("cEff2D","cEff2D",800,400);
 	gPad->SetLogy();
-   Double_t pt=10,eta=0,jet=120;
+   Double_t pt=8,eta=0,jet=50;
    Int_t cBin = 0;
    cEff2D->Divide(2,1);
    cEff2D->cd(1);

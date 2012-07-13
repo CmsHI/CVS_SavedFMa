@@ -12,7 +12,7 @@
 using namespace std;
 
 void loopTracks(
-               TString outdir = "./fig/07.12_loopTrks_F2STATrkCorrv8"
+               TString outdir = "./fig/07.13_F2STA_ZeroEffProblem"
              )
 {
    TH1::SetDefaultSumw2();
@@ -21,17 +21,17 @@ void loopTracks(
    const int nCentBin = 1;
    int centBins[2] = {0,12};
 
-//    TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
-   TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt110eta2_xsec_50k_icPu5.root";
+   TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
+//    TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt110eta2_xsec_50k_icPu5.root";
    
    int particleRecLevel = 2; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
    
    float minJetPt1=110; // 120, 110
-   float minJetPt2=80;  // 50, -1
+   float minJetPt2=-1;  // 50, -1
    float sigDPhi=-1; // Pi()*7./8, -1
    float etamax=2.4;
    TString tag = Form("%s/HisMc_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel);
-   tag+="SelfCorrLowPt";
+   tag+="SelfCorr";
 
    TFile *inf = TFile::Open(infname);
    TTree *nt =(TTree*)inf->FindObjectAny("tgj");
@@ -66,13 +66,15 @@ void loopTracks(
       TH1D * hGenp = ana.hGenpPt;
       TH1D * hTrk = ana.hTrkPt;
       TH1D * hCorr = ana.hTrkCorrPt;
-      float xmin=0, xmax=119.9;
+      float xmin=0.5, xmax=119.9;
 //       TH1D * hGenp = ana.hGenpEta;
 //       TH1D * hTrk = ana.hTrkEta;
 //       TH1D * hCorr = ana.hTrkCorrEta;
 //       float xmin=-2.4, xmax=2.4;
       c2->Divide(2,1);
       c2->cd(1);
+      gPad->SetLogx();
+      gPad->SetLogy();
       hGenp->SetLineColor(2);
       hTrk->SetMarkerStyle(kOpenCircle);
       hGenp->SetAxisRange(xmin,xmax,"X");
@@ -80,6 +82,7 @@ void loopTracks(
       hTrk->Draw("sameE");
       hCorr->Draw("sameE");
       c2->cd(2);
+      gPad->SetLogx();
       TH1D * hGenpRat = (TH1D*)hGenp->Clone("hGenpRat");
       hGenpRat->Divide(hGenp);
       TH1D * hTrkRat = (TH1D*)hTrk->Clone("hTrkRat");
@@ -87,9 +90,11 @@ void loopTracks(
       TH1D * hTrkCorrRat = (TH1D*)hCorr->Clone("hTrkCorrRat");
       hTrkCorrRat->Divide(hGenp);
       hGenpRat->SetAxisRange(xmin,xmax,"X");
+      hGenpRat->SetAxisRange(0.5,1.2,"Y");
       hGenpRat->Draw("hist");
       hTrkRat->Draw("sameE");
       hTrkCorrRat->Draw("sameE");
+      c2->Print(tag+Form("_clos_c%d.gif",c));
 
       // Compare to Table
       TCanvas * c3 = new TCanvas("c3_"+name,"c3_"+name,800,400);
@@ -112,6 +117,7 @@ void loopTracks(
       hHisRec->SetLineColor(2);
       hHisRec->Draw("hist");
       hTrk->Draw("sameE");
+      c2->Print(tag+Form("_compTable_c%d.gif",c));
    }
    hout->Write();   
 }
