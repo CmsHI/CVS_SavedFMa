@@ -47,6 +47,7 @@ public:
    float eta[MAXTRK];
    float phi[MAXTRK];
    float weight[MAXTRK];
+   float eff[MAXTRK];
 
    float x;   
    float x_pt[nptrange];
@@ -94,13 +95,14 @@ public:
       }   
    }
    
-   void Calc() {
+   void Calc(bool ** studyEvent=0, TH1D *** vhTrkDPhi=0, TH1D *** vhTrkCorrDPhi=0, float studyPtMin=1., TH2D *** vhEffChkZero=0) {
 //       cout << "n: " << n << endl;
       for (int it=0; it<n; ++it) {
          float candPt  = pt[it];
          float candEta = eta[it];
          float candPhi = phi[it];
          float candWt = weight[it];         
+         float candEff = eff[it];         
          float dr1 = deltaR(candEta,candPhi,eta1,phi1);
          float dr2 = deltaR(candEta,candPhi,eta2,phi2);
          float dphi1 = fabs(deltaPhi(candPhi,phi1));
@@ -144,16 +146,44 @@ public:
                }           
             }
          }
+
+         ///////////////////////////////////
+         // MPT Tracking Closure Studies
+         ///////////////////////////////////
+         if (studyEvent &&vhTrkDPhi) {
+            for (int i=0; i<10; ++i) {
+               for (int j=0; j<2; ++j) {
+                  if (studyEvent[i][j]) {
+                     if (candPt<studyPtMin) continue;
+                     vhTrkDPhi[i][j]->Fill(dphi1,fabs(ptx));
+                     vhTrkCorrDPhi[i][j]->Fill(dphi1,fabs(ptx));
+                  }
+               }
+            }
+         }
+
+         ///////////////////////////////////
+         // Tracking Monitor
+         ///////////////////////////////////
+         if (vhEffChkZero) {
+            if (fabs(candEff-0)<0.001) {
+               if (pt1>40&&dr1<0.5) {
+                  cout << " LJet - warning eff=" << candEff << " for pt eta jet: " << candPt << " " << candEta << " " << pt1 << endl;
+                  vhEffChkZero[0][1]->Fill(pt1,candPt);
+               } else if (pt2>40&&dr2<0.5) {
+                  cout << " SubLJet - warning eff=" << candEff << " for pt eta jet: " << candPt << " " << candEta << " " << pt2 << endl;
+                  vhEffChkZero[0][2]->Fill(pt2,candPt);
+               } else {
+                  cout << " NoJet - warning eff=" << candEff << " for pt eta jet: " << candPt << " " << candEta << " " << 0 << endl;
+                  vhEffChkZero[0][0]->Fill(0.,candPt);
+               }
+            } else {
+               if (pt1>40&&dr1<0.5) vhEffChkZero[1][1]->Fill(pt1,candPt);
+               else if (pt2>40&&dr2<0.5) vhEffChkZero[1][2]->Fill(pt2,candPt);
+               else vhEffChkZero[1][0]->Fill(0.,candPt);
+            }
+         }         
       } // end of for cand
-//       cout << "hem1 sum: " << xhem_pt_dr[0][nptrange-1][0] << endl;
-//       float ptsum=0, ptdrsum=0;
-//       for (int i=0; i<nptrange; ++i) {
-//          ptsum+=x_pt[i];
-//          for (int j=0; j<ndrbin; ++j) {
-//             ptdrsum+=x_pt_dr[i][j];
-//          }
-//       }
-//       cout << "x: " << x << " ptsum: " << ptsum << " ptdrsum: " << ptdrsum << endl;
    }
 };
 
@@ -221,6 +251,8 @@ public:
    TH1D * vhTrkDPhi[10][2];
    TH1D * vhTrkCorrDPhi[10][2];
    TH1D * vhAj[10][2];
+   // Monitor for Tracking Correction
+   TH2D * vhEffChkZero[2][3];
    // mpt
    TH2D * hMpt;
    TH2D * vhMptPt[nptrange];
@@ -280,7 +312,7 @@ public:
 //             vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv4/trkcorr_hy18dj200_Forest2_TrkCorrv4.root",200);
 //             vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv4/trkcorr_hy18dj250_Forest2_TrkCorrv4.root",250);
 //             vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv4/trkcorr_hy18dj300_Forest2_TrkCorrv4.root",300);
-            vtrkCorr[i]->AddSample("trkcorr/TrkCorrv7/TrkCorrv7_hy18dj80_icPu5.root",80);
+            vtrkCorr[i]->AddSample("trkcorr/TrkCorrv8/TrkCorrv8_hy18dj80_icPu5.root",80);
          } else {
             vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv6/trkcorr_hy18dj80_Forest2_TrkCorrv6.root",80);
             vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv6/trkcorr_hy18dj120_Forest2_TrkCorrv6.root",120);
@@ -289,7 +321,7 @@ public:
             vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv6/trkcorr_hy18dj250_Forest2_TrkCorrv6.root",250);
             vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv6/trkcorr_hy18dj300_Forest2_TrkCorrv6.root",300);
          }
-         vtrkCorr[i]->smoothLevel_ = 1;
+         vtrkCorr[i]->smoothLevel_ = 0;
          vtrkCorr[i]->weightSamples_ = false;
          vtrkCorr[i]->Init();
       }
@@ -310,9 +342,9 @@ public:
       ///////////////////////////////////
       // Tracking Distributions
       ///////////////////////////////////
-//       TH1D * xBin = (TH1D*)vtrkCorr[0]->ptBin_->Clone("hX"+name);
-//       xBin->Reset();
-      TH1D * xBin    = new TH1D("hX"+name,"",200,0.5,2.5);
+      TH1D * xBin = (TH1D*)vtrkCorr[0]->ptBin_->Clone("hX"+name);
+      xBin->Reset();
+//       TH1D * xBin    = new TH1D("hX"+name,"",200,0.5,200.5);
       hGenpPt        = (TH1D*)xBin->Clone("hGenpPt_"+name);
       hTrkPtNoQual   = (TH1D*)xBin->Clone("hTrkPtNoQual_"+name);
       hTrkPt         = (TH1D*)xBin->Clone("hTrkPt_"+name);
@@ -321,6 +353,15 @@ public:
       hGenpEta = new TH1D("hGenpEta_"+name,"; #eta;",48,-2.4,2.4);
       hTrkEta = new TH1D("hTrkEta_"+name,"; #eta;",48,-2.4,2.4);
       hTrkCorrEta = new TH1D("hTrkCorrEta_"+name,"; #eta;",48,-2.4,2.4);
+
+      ///////////////////////////////////
+      // Eff. Monitor Distributions
+      ///////////////////////////////////
+      for (unsigned int k=0; k<2; ++k) {
+         for (unsigned int i=0; i<3; ++i) {
+            vhEffChkZero[k][i] =new TH2D(Form("hEffChkZero%d_%d",k,i),";Jet p_{T} (GeV/c);Trk p_{T} (GeV/c);",100,0,500,50,0,100);
+         }
+      }
 
       ///////////////////////////////////
       // MPT Tracking Closure Studies
@@ -337,17 +378,17 @@ public:
       ///////////////////////////////////
       // MPT Distributions
       ///////////////////////////////////
-      hMpt = new TH2D(Form("hMpt%s",name.Data()),";Aj;mpt;",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
-      for (int i=0; i<nptrange; ++i) {
-         vhMptPt[i] = new TH2D(Form("hMpt%s_pt%d",name.Data(),i),";Aj;mpt",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
-         for (int j=0; j<ndrbin; ++j) {
-            vhMptPtDr[i][j] = new TH2D(Form("hMpt%s_pt%d_dr%d",name.Data(),i,j),";Aj;mpt",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
-         }
-
-         for (int k=0; k<ndphibin; ++k) {
-            vhMptPtDPhi[i][k] = new TH2D(Form("hMpt%s_pt%d_dphi%d",name.Data(),i,k),";Aj;mpt",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
-         }          
-      }
+//       hMpt = new TH2D(Form("hMpt%s",name.Data()),";Aj;mpt;",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
+//       for (int i=0; i<nptrange; ++i) {
+//          vhMptPt[i] = new TH2D(Form("hMpt%s_pt%d",name.Data(),i),";Aj;mpt",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
+//          for (int j=0; j<ndrbin; ++j) {
+//             vhMptPtDr[i][j] = new TH2D(Form("hMpt%s_pt%d_dr%d",name.Data(),i,j),";Aj;mpt",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
+//          }
+// 
+//          for (int k=0; k<ndphibin; ++k) {
+//             vhMptPtDPhi[i][k] = new TH2D(Form("hMpt%s_pt%d_dphi%d",name.Data(),i,k),";Aj;mpt",nAjBin,AjBins,xbins.size()-1,&xbins[0]);
+//          }          
+//       }
       
       ///////////////////////////////////
       // Distributions for reweighting
@@ -532,133 +573,110 @@ public:
                }
             }
          }
-         
+
          ///////////////////////////////////
-         // Track Loop
+         // Jet Track Analyais
          ///////////////////////////////////
          me.n=0;
-         for (int ip=0; ip<dj.nTrk; ++ip) {
-            // Track Selection
-            if (dj.trkPt[ip]<minPt) continue;
-            if (fabs(dj.trkEta[ip])>maxEta) continue;
-            hTrkPtNoQual->Fill(dj.trkPt[ip],me.evtWt);
-            if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
-            if (particleRecLevel==3&&dj.trkIsFake[ip]) continue;
-
-            // Track Variables
-            float trkPt = dj.trkPt[ip];
-            float trkEta = dj.trkEta[ip];
-            float trkPhi = dj.trkPhi[ip];
-            float dr1 = deltaR(trkEta,trkPhi,me.eta1,me.phi1);
-            float dr2 = deltaR(trkEta,trkPhi,me.eta2,me.phi2);
-            float dphi1 = fabs(deltaPhi(trkPhi,me.phi1));
-            float trkPtp = trkPt * fabs(cos(trkPhi-me.phi1));
-
-            // Raw Track Distributions
-            hTrkPt->Fill(trkPt,me.evtWt);
-            hTrkEta->Fill(trkEta,me.evtWt);
-
+         if (particleRecLevel>=3) {
             ///////////////////////////////////
-            // Tracking Corrections
+            // Track Loop
             ///////////////////////////////////
-            float trkWt = dj.trkWt[ip];
-            if (me.pt1>40&&dr1<0.5) {
-               trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,me.pt1,evt.cBin);
-            } else if (me.pt2>40&&dr2<0.5) {
-               trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,me.pt2,evt.cBin);
-            } else {
-               trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,0,evt.cBin);
-            }
-//             if (me.pt1>=50&&dr1<0.5) {
-//                trkWt = vtrkCorr[1]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
-//             } else if (me.pt2>=50&&dr2<0.5) {
-//                trkWt = vtrkCorr[2]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
-//             } else {
-//                trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
-//             }
-//             if (me.pt1>=50&&dr1<0.5) {
-//                if (me.pt1>=50&&me.pt1<120) trkWt = vtrkCorr[1]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
-//                else if (me.pt1>=120&&me.pt1<200) trkWt = vtrkCorr[2]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
-//                else if (me.pt1>=200) trkWt = vtrkCorr[3]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
-//             } else if (me.pt2>=50&&dr2<0.5) {
-//                if (me.pt2>=50&&me.pt2<120) trkWt = vtrkCorr[4]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
-//                else if (me.pt2>=120&&me.pt2<200) trkWt = vtrkCorr[5]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
-//                else if (me.pt2>=200) trkWt = vtrkCorr[6]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
-//             } else {
-//                trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,trkPhi,evt.cBin);
-//             }
-
-            ///////////////////////////////////
-            // Residual Corrections
-            ///////////////////////////////////
-            if (doResCorr) {
-               if ( cos(dj.trkPhi[ip]-me.phi1)<0 ) {
-                  if (me.pt2<80) {
-                     if (trkPt>30) trkWt*=1.2;
-                     else if (trkPt>20) trkWt*=1.1;
-                     else if (trkPt>8) trkWt*=1.05;
-                  }
+            for (int ip=0; ip<dj.nTrk; ++ip) {
+               // Track Selection
+               if (dj.trkPt[ip]<minPt) continue;
+               if (fabs(dj.trkEta[ip])>maxEta) continue;
+               if (dj.trkAlgo[ip]>=4&&!dj.vtrkQual[ip][0]) continue;
+               if (particleRecLevel==3&&dj.trkIsFake[ip]) continue;
+   
+               // Track Variables
+               float trkPt = dj.trkPt[ip];
+               float trkEta = dj.trkEta[ip];
+               float trkPhi = dj.trkPhi[ip];
+               float dr1 = deltaR(trkEta,trkPhi,me.eta1,me.phi1);
+               float dr2 = deltaR(trkEta,trkPhi,me.eta2,me.phi2);
+               float dphi1 = fabs(deltaPhi(trkPhi,me.phi1));
+               float trkPtp = trkPt * fabs(cos(trkPhi-me.phi1));
+   
+               // Raw Track Distributions
+               hTrkPt->Fill(trkPt,me.evtWt);
+               hTrkEta->Fill(trkEta,me.evtWt);
+   
+               ///////////////////////////////////
+               // Tracking Corrections
+               ///////////////////////////////////
+               double trkcorr[4];
+//                float trkWt = dj.trkWt[ip];
+               float trkWt = 1.;
+               if (me.pt1>40&&dr1<0.5) {
+                  trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,me.pt1,evt.cBin,trkcorr);
+               } else if (me.pt2>40&&dr2<0.5) {
+                  trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,me.pt2,evt.cBin,trkcorr);
                } else {
-                  if (me.pt2<80) {
-                     if (trkPt>30) trkWt*=0.8;
-                     else if (trkPt>20) trkWt*=0.9;
-                     else if (trkPt>8) trkWt*=0.95;
-                  }
+                  trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,0,evt.cBin,trkcorr);
                }
+               if (particleRecLevel==3) trkWt/=(1-trkcorr[1]);
+               
+                // Corrected Track Distributions
+                hTrkCorrPt->Fill(trkPt,trkWt*me.evtWt);
+                hTrkCorrEta->Fill(trkEta,trkWt*me.evtWt);
+               
+                // Set mpt input
+                me.pt[me.n] = trkPt;
+                me.eta[me.n] = trkEta;
+                me.phi[me.n] = dj.trkPhi[ip];
+                me.weight[me.n] = trkWt;
+                me.eff[me.n] = trkcorr[0];
+                ++me.n;
             }
-
-            // Corrected Track Distributions
-            hTrkCorrPt->Fill(trkPt,trkWt*me.evtWt);
-            hTrkCorrEta->Fill(trkEta,trkWt*me.evtWt);
-
-            ///////////////////////////////////
-            // MPT Tracking Closure Studies
-            ///////////////////////////////////
-            for (int i=0; i<10; ++i) {
-               for (int j=0; j<2; ++j) {
-                  if (studyEvent[i][j]) {
-                     if (trkPt<studyPtMin) continue;
-                     vhTrkDPhi[i][j]->Fill(dphi1,trkPtp*me.evtWt);
-                     vhTrkCorrDPhi[i][j]->Fill(dphi1,trkPtp*trkWt*me.evtWt);
-                  }
-               }
-            }
-
-            // Set mpt input
-            if (particleRecLevel>=3) {
-                  me.pt[me.n] = trkPt;
-                  me.eta[me.n] = trkEta;
-                  me.phi[me.n] = dj.trkPhi[ip];
-                  if (particleRecLevel==4) me.weight[me.n] = trkWt;
-                  if (particleRecLevel==3) me.weight[me.n] = trkWt/(1-dj.trkFak[ip]);
-                  ++me.n;
-            }
-         }
-
-         if (particleRecLevel>=1&&particleRecLevel<3) {
+         } else if (particleRecLevel>=1) {
             ///////////////////////////////////
             // Sim Loop
             ///////////////////////////////////
-            me.n=0;
             for (int ip=0; ip<dj.nSim; ++ip) {
                // Sim Selection
                if (dj.simPt[ip]<minPt) continue;
                if (fabs(dj.simEta[ip])>maxEta) continue;
-               if (particleRecLevel==2&&dj.simHasRec[ip]) continue;
-
+               if (particleRecLevel==2&&!dj.simHasRec[ip]) continue;
+   
+               // Sim Variables
+               float simPt = dj.simPt[ip];
+               float simEta = dj.simEta[ip];
+               float simPhi = dj.simPhi[ip];
+               float dr1 = deltaR(simEta,simPhi,me.eta1,me.phi1);
+               float dr2 = deltaR(simEta,simPhi,me.eta2,me.phi2);
+   
                // Sim Distributions
-               hGenpPt->Fill(dj.simPt[ip],me.evtWt);
-               hGenpEta->Fill(dj.simEta[ip],me.evtWt);
-
+               hTrkPt->Fill(simPt,me.evtWt);
+               hTrkEta->Fill(simEta,me.evtWt);
+               
+               double trkcorr[4];
+               float trkWt = 1., trkEff=1.;
+               if (particleRecLevel==2) {
+                  ///////////////////////////////////
+                  // Matched Simtracks
+                  ///////////////////////////////////
+                  if (me.pt1>40&&dr1<0.5) {
+                     trkWt = vtrkCorr[0]->GetCorr(simPt,simEta,me.pt1,evt.cBin,trkcorr);
+                  } else if (me.pt2>40&&dr2<0.5) {
+                     trkWt = vtrkCorr[0]->GetCorr(simPt,simEta,me.pt2,evt.cBin,trkcorr);
+                  } else {
+                     trkWt = vtrkCorr[0]->GetCorr(simPt,simEta,0,evt.cBin,trkcorr);
+                  }
+                  if (trkEff>0) trkEff = trkcorr[0];
+                  // Corrected Matched SimTrack Distributions
+                  hTrkCorrPt->Fill(simPt,me.evtWt/trkEff);
+                  hTrkCorrEta->Fill(simEta,me.evtWt/trkEff);
+               }   
                // Set mpt input
                me.pt[me.n] = dj.simPt[ip];
                me.eta[me.n] = dj.simEta[ip];
                me.phi[me.n] = dj.simPhi[ip];
-               if (particleRecLevel==1) me.weight[me.n] = 1;
-//                if (particleRecLevel==2) me.weight[me.n] = 1./dj.trkEff[ip];
+               me.weight[me.n] = trkWt;
+               me.eff[me.n] = trkcorr[0];
                ++me.n;
             }
-         }else if (particleRecLevel==0){
+         } else if (particleRecLevel==0) {
             ///////////////////////////////////
             // Genp Loop
             ///////////////////////////////////
@@ -669,38 +687,25 @@ public:
                if (fabs(dj.genpEta[ip])>maxEta) continue;
                if (subEvtMode==0 && dj.genpSube[ip]!=0) continue;
                if (subEvtMode==1 && dj.genpSube[ip]==0) continue;
-
+   
                // Genp Variables
                float genpPt = dj.genpPt[ip];
                float genpEta = dj.genpEta[ip];
                float genpPhi = dj.genpPhi[ip];
-               float dphi1 = fabs(deltaPhi(genpPhi,me.phi1));
-               float genpPtp = genpPt * fabs(cos(genpPhi-me.phi1));
-
+   
                // Genp Distributions
-               hGenpPt->Fill(genpPt,me.evtWt);
-               hGenpEta->Fill(genpEta,me.evtWt);
-
-               ///////////////////////////////////
-               // MPT Tracking Closure Studies
-               ///////////////////////////////////
-               for (int i=0; i<10; ++i) {
-                  for (int j=0; j<2; ++j) {
-                     if (studyEvent[i][j]) {
-                        if (genpPt<studyPtMin) continue;
-                        vhGenpDPhi[i][j]->Fill(dphi1,genpPtp*me.evtWt);
-                     }
-                  }
-               }
-
+               hTrkPt->Fill(genpPt,me.evtWt);
+               hTrkEta->Fill(genpEta,me.evtWt);
+      
                // Set mpt input
                me.pt[me.n] = genpPt;
                me.eta[me.n] = genpEta;
                me.phi[me.n] = genpPhi;
                me.weight[me.n] = 1;
+               me.eff[me.n] = 1;
                ++me.n;
             }
-         } // End of if rec level
+         } // end of if particleRecLevel
 
          ///////////////////////////////////
          // Calculate MPT
@@ -710,17 +715,17 @@ public:
          ///////////////////////////////////
          // Fill Event Summed Variables
          ///////////////////////////////////
-         hMpt->Fill(me.Aj,me.x,me.evtWt);
-         for (int i=0; i<nptrange; ++i) {
-            vhMptPt[i]->Fill(me.Aj,me.x_pt[i],me.evtWt);
-            for (int j=0; j<ndrbin; ++j) {
-               vhMptPtDr[i][j]->Fill(me.Aj,me.x_pt_dr[i][j],me.evtWt);
-            }
-            for (int k=0; k<ndphibin; ++k) {
-               vhMptPtDPhi[i][k]->Fill(me.Aj,me.x_pt_dphi[i][k],me.evtWt);
-            }
-         }
-         
+//          hMpt->Fill(me.Aj,me.x,me.evtWt);
+//          for (int i=0; i<nptrange; ++i) {
+//             vhMptPt[i]->Fill(me.Aj,me.x_pt[i],me.evtWt);
+//             for (int j=0; j<ndrbin; ++j) {
+//                vhMptPtDr[i][j]->Fill(me.Aj,me.x_pt_dr[i][j],me.evtWt);
+//             }
+//             for (int k=0; k<ndphibin; ++k) {
+//                vhMptPtDPhi[i][k]->Fill(me.Aj,me.x_pt_dphi[i][k],me.evtWt);
+//             }
+//          }
+
          tm->Fill();
       } // End of event loop
 

@@ -11,27 +11,17 @@
 using namespace std;
 
 void loopMpt(
-            TString outdir = "./fig/07.12_F2STATrkCorrv7"
+            TString outdir = "./fig/07.13_F2STA_MPT80"
              )
 {
    TH1::SetDefaultSumw2();
    gSystem->mkdir(outdir,kTRUE);
 
-   const int nCentBin = 2;
+   const int nCentBin = 1;
    int centBins[3] = {0,12,30};
 
-//    TString infdataname="../ntout/output-data-Forest2v2v3_saveTrks_v0_icPu5.root";
-//    TString infmcname = "../ntout/output-hy18dj80_forest2_v0_xsec_icPu5.root";
-//    TString infdataname = "../ntout/output-data-Forest2v3_v2_saveTrks_jpt120_icPu5.root";
-//    TString infmcname="../ntout/output-hy18dj80_Forest2v21_v1_allTrks_simtrk_jpt95_xsec_icPu5.root";
-//    TString infmcname="../ntout/output-hy18dj80_Forest2v21_v2_allTrks_simtrk_jpt100_xsec_icPu5.root";
    TString infdataname="../ntout/output-data-Forest2v3_v3_saveTrks_jpt120_icPu5.root";
-//    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_simtrk_jpt120_xsec_icPu5.root";
-//    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt120eta3_xsec_icPu5.root";
-//    TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_gjpt120eta3_xsec_icPu5.root";
-   TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
-//    TString infmcname = "../ntout/output-hy18dj50to200_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
-//    TString infmcname = "../ntout/output-hy18dj80to200_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
+   TString infmcname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta24_jpt110eta2_xsec_icPu5.root";
    
    bool isMC=true;
    int particleRecLevel = 1; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
@@ -46,9 +36,9 @@ void loopMpt(
    float etamax=2.4;
    bool doResCorr = false;
    bool doJetPhiFlat = false;
-   TString tag = Form("%s/HisData_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d_resc%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel,doResCorr);
+   TString tag = Form("%s/HisData_icPu5_%.0f_%.0f_%.0f_eta%.0f_prec%d_resc%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel,doResCorr);
    if (isMC) tag.ReplaceAll("HisData","HisMc");
-   tag+="SelfCorrLowPt";
+   tag+="SelfCorr";
 
    TFile *inf = TFile::Open(infname);
    TTree *nt =(TTree*)inf->FindObjectAny("tgj");
@@ -63,7 +53,7 @@ void loopMpt(
    for (int c=0; c<nCentBin; ++c) {
       TString name = Form("%dto%d",centBins[c],centBins[c+1]);
       AnaMPT ana(name);
-      ana.maxEntry = 10000;
+//       ana.maxEntry = 10000;
       ana.isMC = isMC;
       ana.doResCorr = doResCorr;
       ana.doJetPhiFlat = doJetPhiFlat;
