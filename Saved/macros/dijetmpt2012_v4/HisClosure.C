@@ -13,7 +13,6 @@
 #include "loopMpt.h"
 
 void HisClosure(
-   string infpath = "fig/07.12_F2STATrkCorrv7/HisMc_icPu5_trkHPCorr_120_50_2749_eta24_prec0_resc0SelfCorrLowPt.root",
    int anaMode=0, // 0=pt, 1=eta, 2=dphi
    int iStudy=0,
    int jStudy=0,
@@ -24,7 +23,15 @@ void HisClosure(
    TH1::SetDefaultSumw2();
 
    bool doCorr=true;
+//    string infpath = "fig/07.13_F2STA_MPT80/HisMc_icPu5_120_50_2749_eta24_prec4_resc0SelfCorr.root";
+//    string refpath = "fig/07.13_F2STA_MPT80/HisMc_icPu5_120_50_2749_eta24_prec0_resc0SelfCorr.root";
+//    string infpath = "fig/07.13_F2STA_MPT80Ak3Calo/HisMc_akPu3Calo_120_50_2749_eta24_prec4_resc0SelfCorr.root";
+//    string refpath = "fig/07.13_F2STA_MPT80Ak3Calo/HisMc_akPu3Calo_120_50_2749_eta24_prec0_resc0SelfCorr.root";
+   string infpath = "fig/07.13_F2STA_MPT100_AllPtHatTrkCorr/HisMc_icPu5_120_50_2749_eta24_prec0_resc0SelfCorr.root";
+   string refpath = "fig/07.13_F2STA_MPT100_AllPtHatTrkCorr/HisMc_icPu5_120_50_2749_eta24_prec0_resc0SelfCorr.root";
+
    TFile * inf = new TFile(infpath.c_str());
+   TFile * inref = new TFile(refpath.c_str());
    
    TString outdir = infpath.substr(0, infpath.find_last_of('/'));
    cout << "Output: " << outdir << endl;
@@ -46,14 +53,19 @@ void HisClosure(
    // Get Normalization
    //////////////////////////////////////////
    TH1D * hNorm = (TH1D*)inf->Get("hCentrality_"+evt);
-   if (anaMode>=10) hNorm = (TH1D*)inf->Get(Form("hAj_%d_%d_%s",iStudy,jStudy,evt.Data()));
-   if (!hNorm) {
+   TH1D * hNormRef = (TH1D*)inref->Get("hCentrality_"+evt);
+   if (anaMode>=10) {
+      hNorm = (TH1D*)inf->Get(Form("hAj_%d_%d_%s",iStudy,jStudy,evt.Data()));
+      hNormRef = (TH1D*)inref->Get(Form("hAj_%d_%d_%s",iStudy,jStudy,evt.Data()));
+   }
+   if (!hNorm||!hNormRef) {
       cout << "bad normalization file" << endl;
       exit(0);
    }
    float nEvt = hNorm->GetEntries();
    cout << "=============================================" << endl;
-   cout << "nEvt = " << nEvt << endl;
+   cout << "Ana nEvt = " << nEvt << endl;
+   cout << "Ref nEvt = " << hNorm->GetEntries() << endl;
    cout << "=============================================" << endl;
 
    //////////////////////////////////////////
@@ -65,14 +77,14 @@ void HisClosure(
    bool doLogx=true, doLogy=true;
    TCut finalGenSel,finalTrkSel;
    if (anaMode==0) {
-      hGenp = (TH1D*)inf->Get("hGenpPt_"+evt);
+      hGenp = (TH1D*)inref->Get("hTrkPt_"+evt);
       hTrk = (TH1D*)inf->Get("hTrkPt_"+evt);
       hTrkCorr = (TH1D*)inf->Get("hTrkCorrPt_"+evt);
       cmp.Legend(0.24,0.23,0.7,0.4);
 //       cmp.leg->AddEntry(hTrk,Form("|#eta| < %.1f",maxEta),"");
       xmin=0.5; xmax=179.9;
    } else if (anaMode==1) {
-      hGenp = (TH1D*)inf->Get("hGenpEta_"+evt);
+      hGenp = (TH1D*)inref->Get("hTrkEta_"+evt);
       hGenp->Rebin(4);
       hTrk = (TH1D*)inf->Get("hTrkEta_"+evt);
       hTrk->Rebin(4);
@@ -82,7 +94,7 @@ void HisClosure(
       cmp.Legend(0.19,0.68,0.65,0.93);
       ymin=0; ymax=hGenp->GetMaximum()/nEvt*4*1.5;
    } else if (anaMode==10) {
-      hGenp = (TH1D*)inf->Get(Form("hGenpDPhi_%d_%d_%s",iStudy,jStudy,evt.Data()));
+      hGenp = (TH1D*)inref->Get(Form("hTrkDPhi_%d_%d_%s",iStudy,jStudy,evt.Data()));
       hTrk = (TH1D*)inf->Get(Form("hTrkDPhi_%d_%d_%s",iStudy,jStudy,evt.Data()));
       hTrkCorr = (TH1D*)inf->Get(Form("hTrkCorrDPhi_%d_%d_%s",iStudy,jStudy,evt.Data()));
       doLogx=false; doLogy=false;
@@ -111,9 +123,9 @@ void HisClosure(
    //////////////////////////////////////////
    // Run Analysis
    //////////////////////////////////////////
-//    hGenp->Scale(1./nEvt);
-//    hTrk->Scale(1./nEvt);
-//    hTrkCorr->Scale(1./nEvt);
+   hGenp->Scale(1./nEvt);
+   hTrk->Scale(1./nEvt);
+   hTrkCorr->Scale(1./nEvt);
 
    //////////////////////////////////////////
    // Draw
@@ -122,11 +134,11 @@ void HisClosure(
    c2->Divide(2,1);
    c2->cd(1);
    hTrk->SetMarkerStyle(kOpenCircle);
-//    if (anaMode==0) {
-//       normHist(hGenp,-1,true);
-//       normHist(hTrk,-1,true);
-//       normHist(hTrkCorr,-1,true);
-//    }
+   if (anaMode==0) {
+      normHist(hGenp,-1,true);
+      normHist(hTrk,-1,true);
+      normHist(hTrkCorr,-1,true);
+   }
    if (doLogx) gPad->SetLogx();
    if (doLogy) gPad->SetLogy();
    if (xmax>xmin) hGenp->SetAxisRange(xmin,xmax,"X");
