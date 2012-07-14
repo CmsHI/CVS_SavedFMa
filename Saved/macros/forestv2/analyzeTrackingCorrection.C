@@ -205,8 +205,11 @@ void analyzeTrackingCorrection(
       } else if (samplePtHat>=120) {
 //          if (evt.pthat>=170) continue;
          if (gj.pt1<150) continue;
-      } else if (samplePtHat>=80) {
+      } else if (samplePtHat>=100) {
 //          if (evt.pthat>=120) continue;
+         if (gj.pt1<130) continue;
+      } else if (samplePtHat>=80) {
+//          if (evt.pthat>=100) continue;
          if (gj.pt1<110) continue;
       } else if (samplePtHat>=50) {
 //          if (evt.pthat>=80) continue;
