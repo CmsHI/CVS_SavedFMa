@@ -80,12 +80,12 @@ public:
 //             vtrkCorr[i]->AddSample("trkcorr/TrkCorrv8/TrkCorrv8_hy18dj80_10k_icPu5.root",80);
 //             vtrkCorr[i]->AddSample("trkcorr/TrkCorrv8/TrkCorrv8_hy18dj80_50k_icPu5.root",80);
             vtrkCorr[i]->AddSample("trkcorr/TrkCorrv8/TrkCorrv8_hy18dj80_icPu5.root",80);
+//             vtrkCorr[i]->AddSample("trkcorr/TrkCorrv8/TrkCorrv8_hy18dj80_icPu5.root",80);
          } else {
             vtrkCorr[i]->AddSample("trkcorr/Forest2_TrkCorrv6/trkcorr_hy18dj80_Forest2_TrkCorrv6.root",80);
          }
          vtrkCorr[i]->smoothLevel_ = 0;
          vtrkCorr[i]->weightSamples_ = false;
-         vtrkCorr[i]->doZeroEffCheck_ = true;
          vtrkCorr[i]->Init();
       }
    
@@ -214,7 +214,7 @@ public:
                } else {
                   trkWt = vtrkCorr[0]->GetCorr(trkPt,trkEta,0,evt.cBin,trkcorr);
                }
-               if (particleRecLevel==3) trkWt=1./trkcorr[0];
+               if (particleRecLevel==3) trkWt/=(1-trkcorr[1]);
    
                // Corrected Track Distributions
                hTrkCorrPt->Fill(trkPt,trkWt);

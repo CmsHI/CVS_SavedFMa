@@ -21,17 +21,19 @@ void loopTracks(
    const int nCentBin = 1;
    int centBins[2] = {0,12};
 
-   TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
+//    TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt50eta2_xsec_icPu5.root";
 //    TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta8_jpt110eta2_xsec_50k_icPu5.root";
+   TString infname = "../ntout/output-hy18dj80_Forest2v21_v3_allTrks_Eta24_jpt110eta2_xsec_icPu5.root";
+//    TString infname = "../ntout/output-hy18dj100_Forest2v21_v3_allTrks_Eta24_jpt110eta2_xsec_icPu5.root";
    
-   int particleRecLevel = 2; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
+   int particleRecLevel = 4; // 0 gen, 1 sim, 2 sim mat, 3 rec mat, 4 rec
    
    float minJetPt1=110; // 120, 110
    float minJetPt2=-1;  // 50, -1
    float sigDPhi=-1; // Pi()*7./8, -1
    float etamax=2.4;
-   TString tag = Form("%s/HisMc_icPu5_trkHPCorr_%.0f_%.0f_%.0f_eta%.0f_prec%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel);
-   tag+="SelfCorr";
+   TString tag = Form("%s/HisMc_icPu5_trk_%.0f_%.0f_%.0f_eta%.0f_prec%d",outdir.Data(),minJetPt1,minJetPt2,sigDPhi*1000,etamax*10,particleRecLevel);
+   tag+="SelfCorrDJSel";
 
    TFile *inf = TFile::Open(infname);
    TTree *nt =(TTree*)inf->FindObjectAny("tgj");
@@ -117,7 +119,7 @@ void loopTracks(
       hHisRec->SetLineColor(2);
       hHisRec->Draw("hist");
       hTrk->Draw("sameE");
-      c2->Print(tag+Form("_compTable_c%d.gif",c));
+      c3->Print(tag+Form("_compTable_c%d.gif",c));
    }
    hout->Write();   
 }
