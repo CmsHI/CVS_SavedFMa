@@ -304,7 +304,7 @@ Float_t TrackingCorrections::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float
    Int_t ptBin = ptBin_->FindBin(pt);
    Int_t etaBin = etaBin_->FindBin(eta);
    Int_t jetBin = jetBin_->FindBin(jet);
-   if (!trkPhiMode_&&jet<40) jetBin = 1; // jet pt < 40 cases are all gathered in jet=0 bin
+   if (!trkPhiMode_&&jet<50) jetBin = 1; // jet pt < 40 cases are all gathered in jet=0 bin
    
    Int_t bin = -1;   
    // Get the corresponding centrality bin
