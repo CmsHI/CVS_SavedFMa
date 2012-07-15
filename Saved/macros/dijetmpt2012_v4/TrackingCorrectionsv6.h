@@ -190,7 +190,7 @@ void TrackingCorrections::Init()
    if (weightSamples_) {
       for (UInt_t s=0; s<ptHatMin_.size(); ++s) { // merge pt hat samples with weight                                                             
         for (Int_t c=0; c<numCentBins_; ++c) {
-          TString hnameNoE(Form("hitrkEffAnalyzer_MergedGeneral_trkPhi_noJet/hPtHat_cbin%s",centBin_[c].Data()));
+          TString hnameNoE(Form("hPtHat_c%d",c));
           hNoEvts_[s][c] =  (TH1D*)sample_[s]->Get(hnameNoE);
           numOfEvts_[s][c] = hNoEvts_[s][c]->Integral();
           cout << " number of events in ptHat :" << ptHatMin_[s] << ", centrality : " << centBin_[c].Data()  << "  = " << numOfEvts_[s][c] << endl;
@@ -206,7 +206,8 @@ void TrackingCorrections::Init()
    for (UInt_t s=0; s<ptHatMin_.size(); ++s) { // merge pt hat samples with weight
      if ( ptHatMin_[s] == 30    ) sampleCroSec_[s] = 1.079e-02 - 1.021e-03;
      else if ( ptHatMin_[s]==50 ) sampleCroSec_[s] = 1.021e-03 - 9.913e-05;
-     else if ( ptHatMin_[s]==80 ) sampleCroSec_[s] = 9.913e-05 - 1.128e-05;
+     else if ( ptHatMin_[s]==80 ) sampleCroSec_[s] = 9.913e-05 - 3.0698e-05;
+     else if ( ptHatMin_[s]==100) sampleCroSec_[s] = 3.069-05 - 1.128e-05;
      else if ( ptHatMin_[s]==120) sampleCroSec_[s] = 1.128e-05 - 1.470e-06;
      else if ( ptHatMin_[s]==170) sampleCroSec_[s] = 1.470e-06 - 5.310e-07;
      else if ( ptHatMin_[s]==200) sampleCroSec_[s] = 5.310e-07 - 1.192e-07;
