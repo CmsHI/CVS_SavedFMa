@@ -69,13 +69,9 @@ void analyzeTrackingCorrection(
    effMergedGeneral_trkPhi_noJet.trkPhiMode_ = true;
    effMergedGeneral_trkPhi_noJet.DeclareHistograms();
 
-   TrkCorrHisAna effMergedGeneral_trkPhi_jet_50to80("Forest2_MergedGeneral_trkPhi_jet_50to80",output);
-   effMergedGeneral_trkPhi_jet_50to80.trkPhiMode_ = true;
-   effMergedGeneral_trkPhi_jet_50to80.DeclareHistograms();
-
-   TrkCorrHisAna effMergedGeneral_trkPhi_jet_80to120("Forest2_MergedGeneral_trkPhi_jet_80to120",output);
-   effMergedGeneral_trkPhi_jet_80to120.trkPhiMode_ = true;
-   effMergedGeneral_trkPhi_jet_80to120.DeclareHistograms();
+   TrkCorrHisAna effMergedGeneral_trkPhi_jet_50to120("Forest2_MergedGeneral_trkPhi_jet_50to120",output);
+   effMergedGeneral_trkPhi_jet_50to120.trkPhiMode_ = true;
+   effMergedGeneral_trkPhi_jet_50to120.DeclareHistograms();
 
    TrkCorrHisAna effMergedGeneral_trkPhi_jet_120to999("Forest2_MergedGeneral_trkPhi_jet_120to999",output);
    effMergedGeneral_trkPhi_jet_120to999.trkPhiMode_ = true;
@@ -297,8 +293,7 @@ void analyzeTrackingCorrection(
          effMergedGeneral.FillRecHistograms(evt,gj,r);
          effMergedGeneral_trkPhi.FillRecHistograms(evt,gj,r);
          if (r.jet>=120) effMergedGeneral_trkPhi_jet_120to999.FillRecHistograms(evt,gj,r);
-         else if (r.jet>=80) effMergedGeneral_trkPhi_jet_80to120.FillRecHistograms(evt,gj,r);
-         else if (r.jet>=50) effMergedGeneral_trkPhi_jet_50to80.FillRecHistograms(evt,gj,r);
+         else if (r.jet>=50) effMergedGeneral_trkPhi_jet_50to120.FillRecHistograms(evt,gj,r);
          else effMergedGeneral_trkPhi_noJet.FillRecHistograms(evt,gj,r);
       }
 
@@ -339,8 +334,7 @@ void analyzeTrackingCorrection(
          effMergedGeneral.FillSimHistograms(evt,gj,s);
          effMergedGeneral_trkPhi.FillSimHistograms(evt,gj,s);
          if (s.jet>=120) effMergedGeneral_trkPhi_jet_120to999.FillSimHistograms(evt,gj,s);
-         else if (s.jet>=80) effMergedGeneral_trkPhi_jet_80to120.FillSimHistograms(evt,gj,s);
-         else if (s.jet>=50) effMergedGeneral_trkPhi_jet_50to80.FillSimHistograms(evt,gj,s);
+         else if (s.jet>=50) effMergedGeneral_trkPhi_jet_50to120.FillSimHistograms(evt,gj,s);
          else effMergedGeneral_trkPhi_noJet.FillSimHistograms(evt,gj,s);
       }
       // All done
