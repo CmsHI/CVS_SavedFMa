@@ -32,6 +32,7 @@ void analyzeTrackingCorrection(
    double cutjetEta = 2;
    double cutPtTrk=0.5;
    double cutEtaTrk = 2.4;
+   bool mergePtHat = true;
    
    // Define the input file and HiForest
    HiForest * c = new HiForest(inname,"forest",0,0,0,jetAlgo);
@@ -53,7 +54,33 @@ void analyzeTrackingCorrection(
    // Tracking Corrections
    TrkCorrHisAna effMergedGeneral("Forest2_MergedGeneral",output);
    effMergedGeneral.DeclareHistograms();
+
+   TrkCorrHisAna effMergedGeneral_j1("Forest2_MergedGeneral_j1",output);
+   effMergedGeneral_j1.DeclareHistograms();
+
+   TrkCorrHisAna effMergedGeneral_j2("Forest2_MergedGeneral_j2",output);
+   effMergedGeneral_j2.DeclareHistograms();
+
+   TrkCorrHisAna effMergedGeneral_trkPhi("Forest2_MergedGeneral_trkPhi",output);
+   effMergedGeneral_trkPhi.trkPhiMode_ = true;
+   effMergedGeneral_trkPhi.DeclareHistograms();
             
+   TrkCorrHisAna effMergedGeneral_trkPhi_noJet("Forest2_MergedGeneral_trkPhi_noJet",output);
+   effMergedGeneral_trkPhi_noJet.trkPhiMode_ = true;
+   effMergedGeneral_trkPhi_noJet.DeclareHistograms();
+
+   TrkCorrHisAna effMergedGeneral_trkPhi_jet_50to80("Forest2_MergedGeneral_trkPhi_jet_50to80",output);
+   effMergedGeneral_trkPhi_jet_50to80.trkPhiMode_ = true;
+   effMergedGeneral_trkPhi_jet_50to80.DeclareHistograms();
+
+   TrkCorrHisAna effMergedGeneral_trkPhi_jet_80to120("Forest2_MergedGeneral_trkPhi_jet_80to120",output);
+   effMergedGeneral_trkPhi_jet_80to120.trkPhiMode_ = true;
+   effMergedGeneral_trkPhi_jet_80to120.DeclareHistograms();
+
+   TrkCorrHisAna effMergedGeneral_trkPhi_jet_120to999("Forest2_MergedGeneral_trkPhi_jet_120to999",output);
+   effMergedGeneral_trkPhi_jet_120to999.trkPhiMode_ = true;
+   effMergedGeneral_trkPhi_jet_120to999.DeclareHistograms();
+
    // basics
    output->cd();
    TH1D * hCent = new TH1D("hCent","",40,0,40);
@@ -190,34 +217,31 @@ void analyzeTrackingCorrection(
       // Skim
       ///////////////////////////////////////////////////////
       if (!evt.offlSel) continue;
-      // ensure jet distribution unbiased by pthat turn on
-      if (samplePtHat>=300) {
-         if (gj.pt1<350) continue;
-      } else if (samplePtHat>=250) {
-//          if (evt.pthat>=300) continue;
-         if (gj.pt1<290) continue;
-      } else if (samplePtHat>=200) {
-//          if (evt.pthat>=250) continue;
-         if (gj.pt1<240) continue;
-      } else if (samplePtHat>=170) {
-//          if (evt.pthat>=200) continue;
-         if (gj.pt1<200) continue;
-      } else if (samplePtHat>=120) {
-//          if (evt.pthat>=170) continue;
-         if (gj.pt1<150) continue;
-      } else if (samplePtHat>=100) {
-//          if (evt.pthat>=120) continue;
-         if (gj.pt1<130) continue;
-      } else if (samplePtHat>=80) {
-//          if (evt.pthat>=100) continue;
-         if (gj.pt1<110) continue;
-      } else if (samplePtHat>=50) {
-//          if (evt.pthat>=80) continue;
-         if (gj.pt1<80) continue;
-      } else if (samplePtHat>=30) {
-//          if (evt.pthat>=50) continue;
-         if (gj.pt1<50) continue;
+      if (mergePtHat) {
+         if (samplePtHat>=300) {
+            // do nothing for highest pthat sample
+         } else if (samplePtHat>=250) {
+            if (evt.pthat>=300||gj.ref1partonpt>=310) continue;
+         } else if (samplePtHat>=200) {
+            if (evt.pthat>=250||gj.ref1partonpt>=260) continue;
+         } else if (samplePtHat>=170) {
+            if (evt.pthat>=200||gj.ref1partonpt>=210) continue;
+         } else if (samplePtHat>=120) {
+            if (evt.pthat>=170||gj.ref1partonpt>=180) continue;
+         } else if (samplePtHat>=100) {
+            if (evt.pthat>=120||gj.ref1partonpt>=130) continue;
+         } else if (samplePtHat>=80) {
+            if (evt.pthat>=100||gj.ref1partonpt>=10) continue;
+         } else if (samplePtHat>=50) {
+            if (evt.pthat>=80||gj.ref1partonpt>=90) continue;
+         } else if (samplePtHat>=30) {
+            if (evt.pthat>=50||gj.ref1partonpt>=60) continue;
+         }
+      // protection against high pt jet from background event
+//       if (anajet->subid[genLeadingIndex]>0) continue;
       }
+      // ensure jet distribution unbiased by pthat turn on
+      if (gj.pt1<samplePtHat) continue;
       
       // Fill Baisc Event info
       hCent->Fill(evt.cBin);
@@ -253,14 +277,16 @@ void analyzeTrackingCorrection(
          r.status = 1; // for now correct all tracks
          float dr1 = deltaR(r.etar,r.phir,gj.eta1,gj.phi1);
          float dr2 = deltaR(r.etar,r.phir,gj.eta2,gj.phi2);
-         if (dr1<0.5&&gj.pt1>40) {
+         if (dr1<0.5&&gj.pt1>=50) {
             r.jet = gj.pt1;
             r.jeta = gj.eta1;
             r.jdr = dr1;
-         } else if (dr2<0.5&&gj.pt2>40) {
+            effMergedGeneral_j1.FillRecHistograms(evt,gj,r);
+         } else if (dr2<0.5&&gj.pt2>=50) {
             r.jet = gj.pt2;
             r.jeta = gj.eta2;
             r.jdr = dr2;
+            effMergedGeneral_j2.FillRecHistograms(evt,gj,r);
          } else {
             r.jet = 0;
             r.jeta = -99;
@@ -269,6 +295,11 @@ void analyzeTrackingCorrection(
 
          // Fill
          effMergedGeneral.FillRecHistograms(evt,gj,r);
+         effMergedGeneral_trkPhi.FillRecHistograms(evt,gj,r);
+         if (r.jet>=120) effMergedGeneral_trkPhi_jet_120to999.FillRecHistograms(evt,gj,r);
+         else if (r.jet>=80) effMergedGeneral_trkPhi_jet_80to120.FillRecHistograms(evt,gj,r);
+         else if (r.jet>=50) effMergedGeneral_trkPhi_jet_50to80.FillRecHistograms(evt,gj,r);
+         else effMergedGeneral_trkPhi_noJet.FillRecHistograms(evt,gj,r);
       }
 
       ///////////////////////////////////////////////////////
@@ -289,14 +320,16 @@ void analyzeTrackingCorrection(
          s.jeta = gj.eta1;
          float dr1 = deltaR(s.etas,s.phis,gj.eta1,gj.phi1);
          float dr2 = deltaR(s.etas,s.phis,gj.eta2,gj.phi2);
-         if (dr1<0.5&&gj.pt1>40) {
+         if (dr1<0.5&&gj.pt1>=50) {
             s.jet = gj.pt1;
             s.jeta = gj.eta1;
             s.jdr = dr1;
-         } else if (dr2<0.5&&gj.pt2>40) {
+            effMergedGeneral_j1.FillSimHistograms(evt,gj,s);
+         } else if (dr2<0.5&&gj.pt2>=50) {
             s.jet = gj.pt2;
             s.jeta = gj.eta2;
             s.jdr = dr2;
+            effMergedGeneral_j2.FillSimHistograms(evt,gj,s);
          } else {
             s.jet = 0;
             s.jeta = -99;
@@ -304,6 +337,11 @@ void analyzeTrackingCorrection(
          }
          // Fill
          effMergedGeneral.FillSimHistograms(evt,gj,s);
+         effMergedGeneral_trkPhi.FillSimHistograms(evt,gj,s);
+         if (s.jet>=120) effMergedGeneral_trkPhi_jet_120to999.FillSimHistograms(evt,gj,s);
+         else if (s.jet>=80) effMergedGeneral_trkPhi_jet_80to120.FillSimHistograms(evt,gj,s);
+         else if (s.jet>=50) effMergedGeneral_trkPhi_jet_50to80.FillSimHistograms(evt,gj,s);
+         else effMergedGeneral_trkPhi_noJet.FillSimHistograms(evt,gj,s);
       }
       // All done
    }
