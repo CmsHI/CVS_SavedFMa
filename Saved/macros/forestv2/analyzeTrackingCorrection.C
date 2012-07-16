@@ -17,12 +17,15 @@ void analyzeTrackingCorrection(
    TString inname="/mnt/hadoop/cms/store/user/velicanu/forest/HiForestDijet_v7.root",
    TString outname="output-data-DiJet-v7_v0.root",
    double samplePtHat=0,
+   double ptHatMax=9999,
    double sampleWeight = 1,
+   double cutPtTrk=0.5,
    int maxEntries = -1
 ) {
    outname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
    cout << "Input: " << inname << endl;
-   cout << "Sample pthat = " << samplePtHat << endl;
+   cout << "Sample pthat = " << samplePtHat << " ptHatMax = " << ptHatMax << endl;
+   cout << "Track pt min = " << cutPtTrk << endl;
    cout << "Output: " << outname << endl;
 
    ///////////////////////////////////////////////////
@@ -30,9 +33,7 @@ void analyzeTrackingCorrection(
    ///////////////////////////////////////////////////
    double cutjetPt = 30;
    double cutjetEta = 2;
-   double cutPtTrk=0.5;
    double cutEtaTrk = 2.4;
-   bool mergePtHat = true;
    
    // Define the input file and HiForest
    HiForest * c = new HiForest(inname,"forest",0,0,0,jetAlgo);
@@ -60,6 +61,13 @@ void analyzeTrackingCorrection(
 
    TrkCorrHisAna effMergedGeneral_j2("Forest2_MergedGeneral_j2",output);
    effMergedGeneral_j2.DeclareHistograms();
+
+   TrkCorrHisAna effMergedGeneral_jet_2Bin("effMergedGeneral_jet_2Bin",output);
+   effMergedGeneral_jet_2Bin.jetBins.clear();
+   effMergedGeneral_jet_2Bin.jetBins.push_back(0);
+   effMergedGeneral_jet_2Bin.jetBins.push_back(50);
+   effMergedGeneral_jet_2Bin.jetBins.push_back(1000);
+   effMergedGeneral_jet_2Bin.DeclareHistograms();
 
    TrkCorrHisAna effMergedGeneral_trkPhi("Forest2_MergedGeneral_trkPhi",output);
    effMergedGeneral_trkPhi.trkPhiMode_ = true;
@@ -213,29 +221,9 @@ void analyzeTrackingCorrection(
       // Skim
       ///////////////////////////////////////////////////////
       if (!evt.offlSel) continue;
-      if (mergePtHat) {
-         if (samplePtHat>=300) {
-            // do nothing for highest pthat sample
-         } else if (samplePtHat>=250) {
-            if (evt.pthat>=300||gj.ref1partonpt>=310) continue;
-         } else if (samplePtHat>=200) {
-            if (evt.pthat>=250||gj.ref1partonpt>=260) continue;
-         } else if (samplePtHat>=170) {
-            if (evt.pthat>=200||gj.ref1partonpt>=210) continue;
-         } else if (samplePtHat>=120) {
-            if (evt.pthat>=170||gj.ref1partonpt>=180) continue;
-         } else if (samplePtHat>=100) {
-            if (evt.pthat>=120||gj.ref1partonpt>=130) continue;
-         } else if (samplePtHat>=80) {
-            if (evt.pthat>=100||gj.ref1partonpt>=10) continue;
-         } else if (samplePtHat>=50) {
-            if (evt.pthat>=80||gj.ref1partonpt>=90) continue;
-         } else if (samplePtHat>=30) {
-            if (evt.pthat>=50||gj.ref1partonpt>=60) continue;
-         }
+      if (evt.pthat>=ptHatMax||gj.ref1partonpt>=ptHatMax*1.1) continue;
       // protection against high pt jet from background event
 //       if (anajet->subid[genLeadingIndex]>0) continue;
-      }
       // ensure jet distribution unbiased by pthat turn on
       if (gj.pt1<samplePtHat) continue;
       
@@ -291,6 +279,7 @@ void analyzeTrackingCorrection(
 
          // Fill
          effMergedGeneral.FillRecHistograms(evt,gj,r);
+         effMergedGeneral_jet_2Bin.FillRecHistograms(evt,gj,r);
          effMergedGeneral_trkPhi.FillRecHistograms(evt,gj,r);
          if (r.jet>=120) effMergedGeneral_trkPhi_jet_120to999.FillRecHistograms(evt,gj,r);
          else if (r.jet>=50) effMergedGeneral_trkPhi_jet_50to120.FillRecHistograms(evt,gj,r);
@@ -332,6 +321,7 @@ void analyzeTrackingCorrection(
          }
          // Fill
          effMergedGeneral.FillSimHistograms(evt,gj,s);
+         effMergedGeneral_jet_2Bin.FillSimHistograms(evt,gj,s);
          effMergedGeneral_trkPhi.FillSimHistograms(evt,gj,s);
          if (s.jet>=120) effMergedGeneral_trkPhi_jet_120to999.FillSimHistograms(evt,gj,s);
          else if (s.jet>=50) effMergedGeneral_trkPhi_jet_50to120.FillSimHistograms(evt,gj,s);
