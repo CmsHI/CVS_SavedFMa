@@ -25,7 +25,7 @@ for algo in icPu5 akPu3Calo akPu3PF; do
       outputFile=trkcorr/$corrset"/"$corrset"_hy18dj${pthat}.root"
 #       ls $inputFile
       echo $outputFile
-      if [ $pthat -eq 30 ]; then ptMin=1; fi
+      if [ $pthat -eq 30 ]; then trkPtMin=1; fi
       root -b -q analyzeTrackingCorrection.C+'("'$algo'","'$inputFile'","'$outputFile'",'$pthat,$pthatMax,$sampleWt','$trkPtMin',-1)'
    done
 done
