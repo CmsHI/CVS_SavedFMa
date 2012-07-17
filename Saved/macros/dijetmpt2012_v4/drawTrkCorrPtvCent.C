@@ -7,26 +7,38 @@
 #include "commonUtility.h"
 
 void drawTrkCorrPtvCent(
-                           TString outdir="fig/07.13_F2STA_ZeroEffProblem"
+                           TString outdir="fig/07.16_TrkCorrv10"
 )
 {
+   TH1::SetDefaultSumw2();
    gSystem->mkdir(outdir,kTRUE);
    float xmin=0.5,xmax=179.9;
    TString title="Iterative Tracking";
-
+   
+   /////////////////////////////////////////////////////////////////////////////////////
+   // Load Histograms
+   /////////////////////////////////////////////////////////////////////////////////////
 //    TString mod="hitrkEffAnalyzer_MergedGeneral";
 //    TrackingCorrections trkCorr("TrkCorrv4",mod);
 //    trkCorr.AddSample("trkcorr/Forest2_TrkCorrv4/trkcorr_hy18dj80_Forest2_TrkCorrv4.root",80);
 
    TString mod="Forest2_MergedGeneral";
    TrackingCorrections trkCorr("Forest2STA",mod);
-   trkCorr.AddSample("trkcorr/TrkCorrv8/TrkCorrv8_hy18dj80_icPu5.root",80);
+   trkCorr.AddSample("trkcorr/TrkCorrv10XSec/TrkCorrv10XSec_hy18dj30_icPu5.root",30);
+   trkCorr.AddSample("trkcorr/TrkCorrv10XSec/TrkCorrv10XSec_hy18dj50_icPu5.root",50);
+   trkCorr.AddSample("trkcorr/TrkCorrv10XSec/TrkCorrv10XSec_hy18dj80_icPu5.root",80);
+   trkCorr.AddSample("trkcorr/TrkCorrv10XSec/TrkCorrv10XSec_hy18dj100_icPu5.root",100);
+   trkCorr.AddSample("trkcorr/TrkCorrv10XSec/TrkCorrv10XSec_hy18dj120_icPu5.root",120);
+   trkCorr.AddSample("trkcorr/TrkCorrv10XSec/TrkCorrv10XSec_hy18dj170_icPu5.root",170);
+   trkCorr.AddSample("trkcorr/TrkCorrv10XSec/TrkCorrv10XSec_hy18dj200_icPu5.root",200);
+   trkCorr.AddSample("trkcorr/TrkCorrv10XSec/TrkCorrv10XSec_hy18dj250_icPu5.root",250);
+   trkCorr.AddSample("trkcorr/TrkCorrv10XSec/TrkCorrv10XSec_hy18dj300_icPu5.root",300);
 
-   trkCorr.weightSamples_ = false;
+   trkCorr.weightSamples_ = true;
    trkCorr.smoothLevel_ = 0;
    trkCorr.trkPhiMode_ = false;
    trkCorr.Init();
-   
+      
    cout << endl << "========= plot =========" << endl;
    Int_t etaPM=2; // 7 +2,-3 for |eta|<1.2, 7 =5,-6 for full eta
    Float_t jetPtMin=0;
@@ -34,7 +46,13 @@ void drawTrkCorrPtvCent(
    Int_t jetEndBin = trkCorr.numJEtBins_;
    cout << Form("jet pt %.0f bin: ",jetPtMin) << jetBegBin << " to " << jetEndBin << endl;
    cout << "========================" << endl;
+   bool doTestCorr = false;
    
+   TString tag = mod+Form("_vs_Pt_vsCentrality_jet%.0f_ieta%d_wts%d",jetPtMin,etaPM,trkCorr.weightSamples_);
+
+   /////////////////////////////////////////////////////////////////////////////////////
+   // Inspect Projection
+   /////////////////////////////////////////////////////////////////////////////////////
    // Get Eff/fake histograms
    int numCentBin=trkCorr.numCentBins_;
 	TH1D * vhCorrPtRef[2][5], *vhCorrPt[2][5];
@@ -48,6 +66,7 @@ void drawTrkCorrPtvCent(
 		}
 	}
    
+   // Draw Histograms
 	TCanvas * cEff = new TCanvas("cEff","cEff",500,500);
    cEff->SetLogx();
    vhCorrPt[0][0]->SetAxisRange(xmin,xmax,"X");
@@ -91,9 +110,32 @@ void drawTrkCorrPtvCent(
 	drawText("CMS Simulation",0.64,0.89);
 	drawText("Fake Rate",0.69,0.26);
    
-   cEff->Print(outdir+"/"+mod+Form("_vs_Pt_vsCentrality_jet%.0f_ieta%d.gif",jetPtMin,etaPM));
-   cEff->Print(outdir+"/"+mod+Form("_vs_Pt_vsCentrality_jet%.0f_ieta%d.pdf",jetPtMin,etaPM));
+   cEff->Print(outdir+"/"+tag+".gif");
+   cEff->Print(outdir+"/"+tag+".pdf");
 
+   /////////////////////////////////////////////////////////////////////////////////////
+   // Inspect Events
+   /////////////////////////////////////////////////////////////////////////////////////
+	TCanvas * cPtHat = new TCanvas("cPtHat","cPtHat",500,500);
+	cPtHat->SetLogy();
+	trkCorr.vhPtHat[0][0]->SetMarkerStyle(kOpenCircle);
+	trkCorr.vhPtHat[0][0]->SetMarkerColor(kRed);
+	trkCorr.vhPtHat[0][0]->SetTitle(";#hat{p}_{T} (GeV/c);a.u.");
+	trkCorr.vhPtHat[0][0]->SetAxisRange(0,500,"X");
+	trkCorr.vhPtHat[0][0]->SetAxisRange(1e-2,1e8,"Y");
+	trkCorr.vhPtHat[0][0]->Draw("E");
+	trkCorr.vhPtHat[1][0]->Draw("Esame");
+   TLegend *legev0 = new TLegend(0.53,0.76,0.75,0.90);
+   legev0->SetFillStyle(0);
+   legev0->SetBorderSize(0);
+   legev0->SetTextSize(0.035);
+   legev0->AddEntry(trkCorr.vhPtHat[0][0],"Raw","p");
+   legev0->AddEntry(trkCorr.vhPtHat[1][0],"Weighted","p");
+   legev0->Draw();
+
+   /////////////////////////////////////////////////////////////////////////////////////
+   // Inspect Each Bin
+   /////////////////////////////////////////////////////////////////////////////////////
 	TCanvas * cEff2D = new TCanvas("cEff2D","cEff2D",800,400);
 	gPad->SetLogy();
    Double_t pt=8,eta=0,jet=50;
@@ -114,12 +156,15 @@ void drawTrkCorrPtvCent(
    hCorr2DFak->SetAxisRange(0,1,"Z");
    hCorr2DFak->Draw("colz");
    
-   // test corr
-   cout << "trk weight: " << trkCorr.GetCorr(pt,eta,jet,cBin) << endl;
-   Double_t corr[4];
-   for (Int_t i=1; i<=trkCorr.ptBin_->GetNbinsX(); ++i) {
-      trkCorr.GetCorr(trkCorr.ptBin_->GetBinCenter(i),eta,jet,cBin,corr);
-      cout << "trk pt: " << trkCorr.ptBin_->GetBinLowEdge(i) << " trk eff: " << corr[0] << " trk fak: " << corr[1] << endl;
-   }
-   
+   /////////////////////////////////////////////////////////////////////////////////////
+   // Test corr
+   /////////////////////////////////////////////////////////////////////////////////////
+   if (doTestCorr) {
+      cout << "trk weight: " << trkCorr.GetCorr(pt,eta,jet,cBin) << endl;
+      Double_t corr[4];
+      for (Int_t i=1; i<=trkCorr.ptBin_->GetNbinsX(); ++i) {
+         trkCorr.GetCorr(trkCorr.ptBin_->GetBinCenter(i),eta,jet,cBin,corr);
+         cout << "trk pt: " << trkCorr.ptBin_->GetBinLowEdge(i) << " trk eff: " << corr[0] << " trk fak: " << corr[1] << endl;
+      }
+   }   
 }

@@ -40,11 +40,18 @@ public:
    Int_t numJEtBins_;
    Int_t numLevels_;
    
+   // correction analysis
    vector< vector<TH1D*> >  hNoEvts_;
    vector< vector<float> >  numOfEvts_;// number of events
    vector<vector<vector<vector<TH3F*> > > > inputHists_;
    vector<vector<vector<TH3F*> > > combInputHists_;
    vector<vector<TH3F*> > correctionHists_;
+   
+   // inspection
+   TH2D *hNum2D, *hDen2D, *hCorr2D;
+   TH1D *hNum1D, *hDen1D, *hCorr1D;
+   TH1D *vhPtHat[2][9], *vhJetPt[2][9], *vhCent[2][9];
+   
    
    TrackingCorrections(TString name="trkCorrHisAna_djuqv1",TString mod="hitrkEffAnalyzer");
    void AddSample(TString file, Float_t pthat) {
@@ -207,14 +214,17 @@ void TrackingCorrections::Init()
      if ( ptHatMin_[s] == 30    ) sampleCroSec_[s] = 1.079e-02 - 1.021e-03;
      else if ( ptHatMin_[s]==50 ) sampleCroSec_[s] = 1.021e-03 - 9.913e-05;
      else if ( ptHatMin_[s]==80 ) sampleCroSec_[s] = 9.913e-05 - 3.0698e-05;
-     else if ( ptHatMin_[s]==100) sampleCroSec_[s] = 3.069-05 - 1.128e-05;
+     else if ( ptHatMin_[s]==100) sampleCroSec_[s] = 3.069e-05 - 1.128e-05;
      else if ( ptHatMin_[s]==120) sampleCroSec_[s] = 1.128e-05 - 1.470e-06;
      else if ( ptHatMin_[s]==170) sampleCroSec_[s] = 1.470e-06 - 5.310e-07;
      else if ( ptHatMin_[s]==200) sampleCroSec_[s] = 5.310e-07 - 1.192e-07;
      else if ( ptHatMin_[s]==250) sampleCroSec_[s] = 1.192e-07 - 3.176e-08;
      else if ( ptHatMin_[s]==300) sampleCroSec_[s] = 3.176e-08;
      else cout << endl << endl << " Error no such pt hat!!!!!" << endl << endl << endl;
-     cout << "sample pthat: " << ptHatMin_[s] << " cross section: " << sampleCroSec_[s] << endl;
+     float basePtHat;
+     if (s==0) basePtHat = 1e-9;
+     sampleCroSec_[s]/=basePtHat;
+     cout << "sample pthat: " << ptHatMin_[s] << ", cross section: " << sampleCroSec_[s] << endl;
    }
    
    // =============================
@@ -356,8 +366,9 @@ TH1 * TrackingCorrections::InspectCorr(Int_t lv, Int_t centBeg, Int_t centEnd, I
 {
    Int_t rebinFactor=1;
    TH3F *hNum=0, *hDen=0;
-   TH2D *hNum2D=0, *hDen2D=0, *hCorr2D=0;
-   TH1D *hNum1D=0, *hDen1D=0, *hCorr1D=0;
+   hNum2D=0; hDen2D=0; hCorr2D=0;
+   hNum1D=0; hDen1D=0; hCorr1D=0;
+   
    TString inspName(Form("%s_%s_Lv%d_c%d_%d_j%d_%d_%d",(corrSetName_).Data(),trkCorrModule_.Data(),lv,centBeg,centEnd,jetBegBin,jetEndBin,mode));
    if (mode>0) inspName+=Form("_bin_%d_%d",begbin,endbin);
    
@@ -413,6 +424,28 @@ TH1 * TrackingCorrections::InspectCorr(Int_t lv, Int_t centBeg, Int_t centEnd, I
       hDen1D->Rebin(rebinFactor);
       hCorr1D = (TH1D*)hNum1D->Clone(inspName+"Corr1Dz");
       hCorr1D->Divide(hNum1D,hDen1D);
+   }
+   
+   // Event Level Inspection
+   for (UInt_t s=0; s<ptHatMin_.size(); ++s) { // merge pt hat samples with weight                                                             
+      for (Int_t c=0; c<numCentBins_; ++c) {
+         TString hname(Form("hPtHat_c%d",c));
+         TH1D * h =  (TH1D*)sample_[s]->Get(hname);
+         if (!h) {
+            cout << "bad histogram: " << hname << endl;
+            exit(1);
+         }
+         TH1D * hs = (TH1D*)h->Clone(Form("%s_weighted",h->GetName()));
+         float weight = sampleCroSec_[s]/numOfEvts_[s][c];
+         if (weightSamples_) hs->Scale(weight);
+         if (s==0) {
+            vhPtHat[0][c] = (TH1D*)h->Clone(Form("%s_merge",h->GetName()));
+            vhPtHat[1][c] = (TH1D*)hs->Clone(Form("%s_merge",hs->GetName()));
+         } else {
+            vhPtHat[0][c]->Add(h);
+            vhPtHat[1][c]->Add(hs);
+         }
+      }
    }
    return hCorr1D;
 }
