@@ -20,6 +20,7 @@ void analyzeTrackingCorrection(
    double ptHatMax=9999,
    double sampleWeight = 1,
    double cutPtTrk=0.5,
+   double vzMax = -99,
    int maxEntries = -1
 ) {
    outname.ReplaceAll(".root",Form("_%s.root",jetAlgo.Data()));
@@ -91,6 +92,7 @@ void analyzeTrackingCorrection(
    // basics
    output->cd();
    TH1D * hCent = new TH1D("hCent","",40,0,40);
+   TH1D * hVz = new TH1D("hVz","",60,-30,30);
    TH1D * hPtHat = new TH1D("hPtHat","",200,0,1000);
    TH2D * hJetPt2D = new TH2D("hJetPt2D","",100,0,500,100,0,500);
    TH1D * hJDPhi = new TH1D("hJDPhi","",40,0,Pi());
@@ -226,6 +228,7 @@ void analyzeTrackingCorrection(
       ///////////////////////////////////////////////////////
       if (!evt.offlSel) continue;
       if (evt.pthat>=ptHatMax) continue;
+      if (vzMax>0 && fabs(evt.vz)>vzMax) continue;
       // protection against high pt jet from background event
 //       if (anajet->subid[genLeadingIndex]>0) continue;
       // ensure jet distribution unbiased by pthat turn on
@@ -233,6 +236,7 @@ void analyzeTrackingCorrection(
       
       // Fill Baisc Event info
       hCent->Fill(evt.cBin);
+      hVz->Fill(evt.vz);
       hPtHat->Fill(evt.pthat);
       hJetPt2D->Fill(gj.pt1,gj.pt2);
       hJDPhi->Fill(fabs(gj.dphi));
