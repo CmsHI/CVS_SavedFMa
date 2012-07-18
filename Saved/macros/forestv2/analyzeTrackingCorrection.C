@@ -48,6 +48,7 @@ void analyzeTrackingCorrection(
 
    EvtSel evt;
    DiJet gj;
+//    TrkReso trkRes1(1.6);
 
    ///////////////////////////////////////////////////
    // Book Histograms
@@ -62,28 +63,30 @@ void analyzeTrackingCorrection(
    TrkCorrHisAna effMergedGeneral_j2("Forest2_MergedGeneral_j2",output);
    effMergedGeneral_j2.DeclareHistograms();
 
-   TrkCorrHisAna effMergedGeneral_jet_2Bin("effMergedGeneral_jet_2Bin",output);
-   effMergedGeneral_jet_2Bin.jetBins.clear();
-   effMergedGeneral_jet_2Bin.jetBins.push_back(0);
-   effMergedGeneral_jet_2Bin.jetBins.push_back(50);
-   effMergedGeneral_jet_2Bin.jetBins.push_back(1000);
-   effMergedGeneral_jet_2Bin.DeclareHistograms();
+   TrkCorrHisAna effMergedGeneral_jet_fineBin("effMergedGeneral_jet_fineBin",output);
+   effMergedGeneral_jet_fineBin.jetBins.clear();
+   float fineJetBins[9] = {0,50,80,120,160,200,250,500,1000};
+   effMergedGeneral_jet_fineBin.jetBins.insert(effMergedGeneral_jet_fineBin.jetBins.begin(),fineJetBins,fineJetBins+9);
+   effMergedGeneral_jet_fineBin.DeclareHistograms();
 
-   TrkCorrHisAna effMergedGeneral_trkPhi("Forest2_MergedGeneral_trkPhi",output);
-   effMergedGeneral_trkPhi.trkPhiMode_ = true;
-   effMergedGeneral_trkPhi.DeclareHistograms();
-            
-   TrkCorrHisAna effMergedGeneral_trkPhi_noJet("Forest2_MergedGeneral_trkPhi_noJet",output);
-   effMergedGeneral_trkPhi_noJet.trkPhiMode_ = true;
-   effMergedGeneral_trkPhi_noJet.DeclareHistograms();
-
-   TrkCorrHisAna effMergedGeneral_trkPhi_jet_50to120("Forest2_MergedGeneral_trkPhi_jet_50to120",output);
-   effMergedGeneral_trkPhi_jet_50to120.trkPhiMode_ = true;
-   effMergedGeneral_trkPhi_jet_50to120.DeclareHistograms();
-
-   TrkCorrHisAna effMergedGeneral_trkPhi_jet_120to999("Forest2_MergedGeneral_trkPhi_jet_120to999",output);
-   effMergedGeneral_trkPhi_jet_120to999.trkPhiMode_ = true;
-   effMergedGeneral_trkPhi_jet_120to999.DeclareHistograms();
+//    TrkCorrHisAna effMergedGeneral_SimSmear("Forest2_MergedGeneral_SimSmear",output);
+//    effMergedGeneral_SimSmear.DeclareHistograms();
+// 
+//    TrkCorrHisAna effMergedGeneral_trkPhi("Forest2_MergedGeneral_trkPhi",output);
+//    effMergedGeneral_trkPhi.trkPhiMode_ = true;
+//    effMergedGeneral_trkPhi.DeclareHistograms();
+//             
+//    TrkCorrHisAna effMergedGeneral_trkPhi_noJet("Forest2_MergedGeneral_trkPhi_noJet",output);
+//    effMergedGeneral_trkPhi_noJet.trkPhiMode_ = true;
+//    effMergedGeneral_trkPhi_noJet.DeclareHistograms();
+// 
+//    TrkCorrHisAna effMergedGeneral_trkPhi_jet_50to120("Forest2_MergedGeneral_trkPhi_jet_50to120",output);
+//    effMergedGeneral_trkPhi_jet_50to120.trkPhiMode_ = true;
+//    effMergedGeneral_trkPhi_jet_50to120.DeclareHistograms();
+// 
+//    TrkCorrHisAna effMergedGeneral_trkPhi_jet_120to999("Forest2_MergedGeneral_trkPhi_jet_120to999",output);
+//    effMergedGeneral_trkPhi_jet_120to999.trkPhiMode_ = true;
+//    effMergedGeneral_trkPhi_jet_120to999.DeclareHistograms();
 
    // basics
    output->cd();
@@ -98,7 +101,8 @@ void analyzeTrackingCorrection(
    vector<TH1D*> vhPtHat;
    vector<TH2D*> vhJetPt2D;
    for (int ib=0; ib<effMergedGeneral.centBins.size()-1; ++ib) {
-      vhCent.push_back(new TH1D(Form("hCent_c%d",ib),"",40,0,40));
+      vhCent.push_back(new TH1D(Form("hCent_c%d",ib),
+      Form("cbin%dto%d;Centrality Bin;",effMergedGeneral.centBins[ib],effMergedGeneral.centBins[ib+1]),40,0,40));
       vhPtHat.push_back(new TH1D(Form("hPtHat_c%d",ib),"",200,0,1000));
       vhJetPt2D.push_back(new TH2D(Form("hJetPt2D_c%d",ib),"",100,0,500,100,0,500));
    }
@@ -221,11 +225,11 @@ void analyzeTrackingCorrection(
       // Skim
       ///////////////////////////////////////////////////////
       if (!evt.offlSel) continue;
-      if (evt.pthat>=ptHatMax||gj.ref1partonpt>=ptHatMax*1.1) continue;
+      if (evt.pthat>=ptHatMax) continue;
       // protection against high pt jet from background event
 //       if (anajet->subid[genLeadingIndex]>0) continue;
       // ensure jet distribution unbiased by pthat turn on
-      if (gj.pt1<samplePtHat) continue;
+//       if (gj.pt1<samplePtHat) continue;
       
       // Fill Baisc Event info
       hCent->Fill(evt.cBin);
@@ -279,11 +283,12 @@ void analyzeTrackingCorrection(
 
          // Fill
          effMergedGeneral.FillRecHistograms(evt,gj,r);
-         effMergedGeneral_jet_2Bin.FillRecHistograms(evt,gj,r);
-         effMergedGeneral_trkPhi.FillRecHistograms(evt,gj,r);
-         if (r.jet>=120) effMergedGeneral_trkPhi_jet_120to999.FillRecHistograms(evt,gj,r);
-         else if (r.jet>=50) effMergedGeneral_trkPhi_jet_50to120.FillRecHistograms(evt,gj,r);
-         else effMergedGeneral_trkPhi_noJet.FillRecHistograms(evt,gj,r);
+         effMergedGeneral_jet_fineBin.FillRecHistograms(evt,gj,r);
+//          effMergedGeneral_trkPhi.FillRecHistograms(evt,gj,r);
+//          if (r.jet>=120) effMergedGeneral_trkPhi_jet_120to999.FillRecHistograms(evt,gj,r);
+//          else if (r.jet>=50) effMergedGeneral_trkPhi_jet_50to120.FillRecHistograms(evt,gj,r);
+//          else effMergedGeneral_trkPhi_noJet.FillRecHistograms(evt,gj,r);
+//          effMergedGeneral_SimSmear.FillRecHistograms(evt,gj,r);
       }
 
       ///////////////////////////////////////////////////////
@@ -299,6 +304,8 @@ void analyzeTrackingCorrection(
          s.phis = anaTrks[0]->pPhi[ip];
          s.status = 1; // for now assume all simtracks as signal tracks
          s.nrec = (anaTrks[0]->pNRec[ip])*(int)(anaTrks[0]->mtrkAlgo[ip]<4||anaTrks[0]->mtrkQual[ip]>0);
+//          if (s.pts<1.5) s.nrec = anaTrks[0]->pNRec[ip];
+//          else s.nrec = (anaTrks[0]->pNRec[ip])*(anaTrks[0]->mtrkQual[ip]);
          s.acc = anaTrks[0]->pAcc[ip];
          s.jet = gj.pt1;
          s.jeta = gj.eta1;
@@ -321,11 +328,17 @@ void analyzeTrackingCorrection(
          }
          // Fill
          effMergedGeneral.FillSimHistograms(evt,gj,s);
-         effMergedGeneral_jet_2Bin.FillSimHistograms(evt,gj,s);
-         effMergedGeneral_trkPhi.FillSimHistograms(evt,gj,s);
-         if (s.jet>=120) effMergedGeneral_trkPhi_jet_120to999.FillSimHistograms(evt,gj,s);
-         else if (s.jet>=50) effMergedGeneral_trkPhi_jet_50to120.FillSimHistograms(evt,gj,s);
-         else effMergedGeneral_trkPhi_noJet.FillSimHistograms(evt,gj,s);
+         effMergedGeneral_jet_fineBin.FillSimHistograms(evt,gj,s);
+//          effMergedGeneral_trkPhi.FillSimHistograms(evt,gj,s);
+//          if (s.jet>=120) effMergedGeneral_trkPhi_jet_120to999.FillSimHistograms(evt,gj,s);
+//          else if (s.jet>=50) effMergedGeneral_trkPhi_jet_50to120.FillSimHistograms(evt,gj,s);
+//          else effMergedGeneral_trkPhi_noJet.FillSimHistograms(evt,gj,s);
+         // Sim Smearing
+//          if (s.pts>=1&&s.pts<2) {
+//             float trksm = trkRes1.GetSmear(s.pts);
+//             s.pts*=trksm;
+//          }
+//          effMergedGeneral_SimSmear.FillSimHistograms(evt,gj,s);
       }
       // All done
    }

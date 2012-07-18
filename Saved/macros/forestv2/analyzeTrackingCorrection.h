@@ -155,7 +155,8 @@ TrkCorrHisAna::TrkCorrHisAna(TString name, TFile * outf) :
 //    centBins.push_back(4);
    centBins.push_back(12);
 //    centBins.push_back(20);
-   centBins.push_back(30);   
+//   centBins.push_back(30);   
+   centBins.push_back(40);   
 }
 
 void TrkCorrHisAna::DeclareHistograms()
@@ -348,4 +349,36 @@ void TrkCorrHisAna::FillSimHistograms(const EvtSel & evt, const DiJet & gj, cons
    } // end of (s.status) loop 
 }
 
+
+class TrkReso {
+public:
+   // Tracking Resolution
+   TF1 * fGaus;
+   TF1 * fReso;
+   TrkReso(float pt=-1) {
+      fGaus = new TF1("fGaus","gaus",-1,3);
+      fGaus->SetParameter(0,1); // normalization
+      fGaus->SetParameter(1,1); // mean
+      fReso = new TF1("fReso","[0]*pow(x,[3])/(1+exp([1]*(x+[2]))) + [4]*pow(x,[5])",0.8,120);
+      fReso->FixParameter(0,-0.351);
+      fReso->FixParameter(1,0.0177);
+      fReso->FixParameter(2,9.084);
+      fReso->FixParameter(3,-0.174);
+      fReso->FixParameter(4,0.221);
+      fReso->FixParameter(5,-0.299);
+      if (pt>0.5) {
+         float reso = fReso->Eval(pt);
+         fGaus->SetParameter(2,reso); // resolution
+      }
+     }
+   float GetSmear(float pt) {
+      float reso = fReso->Eval(pt);
+      fGaus->SetParameter(2,reso);
+      float sm = fGaus->GetRandom();
+      return sm;
+   }
+   float GetSmear() {
+      return fGaus->GetRandom();
+   }
+};
 #endif //analyzeTrackingCorrection_h
