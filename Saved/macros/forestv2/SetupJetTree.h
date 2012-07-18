@@ -35,7 +35,7 @@ public :
    Float_t         refdphijt[maxEntry];   //[nref]
    Float_t         refdrjt[maxEntry];   //[nref]
    Float_t         refparton_pt[maxEntry];   //[nref]
-   Float_t         refparton_flavor[maxEntry];   //[nref]
+   Int_t           refparton_flavor[maxEntry];   //[nref]
    Int_t           ngen;
    Int_t           genmatchindex[maxEntry];   //[ngen]
    Float_t         genpt[maxEntry];   //[ngen]
