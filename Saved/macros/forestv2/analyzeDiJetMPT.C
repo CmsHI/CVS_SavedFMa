@@ -74,7 +74,7 @@ void analyzeDiJetMPT(
    double cutjetPt = 30;
    double cutjetEta = 2;
    double cutPtTrk=0.5;
-   double cutEtaTrk = 8;
+   double cutEtaTrk = 2.4;
    double cutPtPfCand=4;
    // Centrality reweiting
    CentralityReWeight cw(datafname,mcfname,"offlSel&&pt1>120&&pt2>0&&acos(cos(phi2-phi1))>2./3*3.14159");
@@ -277,8 +277,8 @@ void analyzeDiJetMPT(
       if (makeMixing==1&&!evt.offlSel) continue;
       if (doSkim) {
          if (dataSrcType==1&&!evt.anaEvtSel) continue;
-	 if (dataSrcType==0&&!evt.offlSel) continue;
-         if (gj.pt1<110) continue;
+	      if (dataSrcType==0&&!evt.offlSel) continue;
+         if (gj.pt1<120) continue;
 //          if (gj.genjetpt1<120) continue;
       }
       
