@@ -227,7 +227,7 @@ void analyzeTrackingCorrection(
       // Skim
       ///////////////////////////////////////////////////////
       if (!evt.offlSel) continue;
-      if (evt.pthat>=ptHatMax) continue;
+      if (samplePtHat>0 && evt.pthat>=ptHatMax) continue;
       if (vzMax>0 && fabs(evt.vz)>vzMax) continue;
       // protection against high pt jet from background event
 //       if (anajet->subid[genLeadingIndex]>0) continue;
@@ -269,20 +269,21 @@ void analyzeTrackingCorrection(
          r.status = 1; // for now correct all tracks
          float dr1 = deltaR(r.etar,r.phir,gj.eta1,gj.phi1);
          float dr2 = deltaR(r.etar,r.phir,gj.eta2,gj.phi2);
-         if (dr1<0.5&&gj.pt1>=50) {
-            r.jet = gj.pt1;
-            r.jeta = gj.eta1;
-            r.jdr = dr1;
-            effMergedGeneral_j1.FillRecHistograms(evt,gj,r);
-         } else if (dr2<0.5&&gj.pt2>=50) {
-            r.jet = gj.pt2;
-            r.jeta = gj.eta2;
-            r.jdr = dr2;
-            effMergedGeneral_j2.FillRecHistograms(evt,gj,r);
-         } else {
-            r.jet = 0;
-            r.jeta = -99;
-            r.jdr = -99;
+         r.jet  = 0;
+         r.jeta = -99;
+         r.jdr  = -99;
+         if (samplePtHat>0) {
+           if (dr1<0.5&&gj.pt1>=50) {
+              r.jet = gj.pt1;
+              r.jeta = gj.eta1;
+              r.jdr = dr1;
+              effMergedGeneral_j1.FillRecHistograms(evt,gj,r);
+           } else if (dr2<0.5&&gj.pt2>=50) {
+              r.jet = gj.pt2;
+              r.jeta = gj.eta2;
+              r.jdr = dr2;
+              effMergedGeneral_j2.FillRecHistograms(evt,gj,r);
+           }
          }
 
          // Fill
@@ -315,20 +316,21 @@ void analyzeTrackingCorrection(
          s.jeta = gj.eta1;
          float dr1 = deltaR(s.etas,s.phis,gj.eta1,gj.phi1);
          float dr2 = deltaR(s.etas,s.phis,gj.eta2,gj.phi2);
-         if (dr1<0.5&&gj.pt1>=50) {
-            s.jet = gj.pt1;
-            s.jeta = gj.eta1;
-            s.jdr = dr1;
-            effMergedGeneral_j1.FillSimHistograms(evt,gj,s);
-         } else if (dr2<0.5&&gj.pt2>=50) {
-            s.jet = gj.pt2;
-            s.jeta = gj.eta2;
-            s.jdr = dr2;
-            effMergedGeneral_j2.FillSimHistograms(evt,gj,s);
-         } else {
-            s.jet = 0;
-            s.jeta = -99;
-            s.jdr = -99;
+         s.jet = 0;
+         s.jeta = -99;
+         s.jdr = -99;
+         if (samplePtHat>0) {
+           if (dr1<0.5&&gj.pt1>=50) {
+              s.jet = gj.pt1;
+              s.jeta = gj.eta1;
+              s.jdr = dr1;
+              effMergedGeneral_j1.FillSimHistograms(evt,gj,s);
+           } else if (dr2<0.5&&gj.pt2>=50) {
+              s.jet = gj.pt2;
+              s.jeta = gj.eta2;
+              s.jdr = dr2;
+              effMergedGeneral_j2.FillSimHistograms(evt,gj,s);
+           }
          }
          // Fill
          effMergedGeneral.FillSimHistograms(evt,gj,s);
