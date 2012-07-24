@@ -69,6 +69,7 @@ class TrkCorrHisAna
     TString name_;
     bool trkPhiMode_;
     TFile * outFile_;
+    float jetPtMin;
 
     // SimTrack
     TH2F* hsim;
@@ -106,16 +107,17 @@ class TrkCorrHisAna
     std::vector<TH2F*> vhSimJetPtDr;
 
     // methods
-    TrkCorrHisAna(TString name, TFile * outf);
+    TrkCorrHisAna(TString name, TFile * outf, float jetPtMin=40);
     void DeclareHistograms();
     void FillRecHistograms(const EvtSel & evt, const DiJet & gj, const RecTrack_t & r);
     void FillSimHistograms(const EvtSel & evt, const DiJet & gj, const SimTrack_t & s);
 };
 
 
-TrkCorrHisAna::TrkCorrHisAna(TString name, TFile * outf) :
+TrkCorrHisAna::TrkCorrHisAna(TString name, TFile * outf, float jPtMin) :
   name_(name),
-  trkPhiMode_(false)
+  trkPhiMode_(false),
+  jetPtMin(jPtMin)
 {
    outFile_ = outf;
    
@@ -146,7 +148,7 @@ TrkCorrHisAna::TrkCorrHisAna(TString name, TFile * outf) :
 //    const Int_t numJetBins=10;
 //    Float_t jBins[numJetBins+1] = {0,20,40,60,80,120,160,200,250,500,1000};
    const Int_t numJetBins=5;
-   Float_t jBins[numJetBins+1] = {0,50,80,120,200,1000};
+   Float_t jBins[numJetBins+1] = {0,jetPtMin,80,120,200,1000};
    jetBins.insert(jetBins.end(),jBins,jBins+numJetBins+1);
 
    //centrality bins

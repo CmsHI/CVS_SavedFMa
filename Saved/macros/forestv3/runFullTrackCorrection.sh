@@ -1,5 +1,5 @@
 #!/bin/bash -
-corrset=TrkCorrv12XSec
+corrset=FullTrkCorrv12XSec
 mkdir -p trkcorr/$corrset
 
 # declare -a ptHatSamples=(80 100 120 170 200 250 300 9999 -1)
@@ -32,6 +32,6 @@ for algo in akPu3PF; do
       # final checks
       echo "input:  "$inputFile
       echo "output: "$outputFile
-      root -b -q analyzeTrackingCorrection.C+'("'$algo'","'$inputFile'","'$outputFile'",'$pthat,$pthatMax,$sampleWt','$trkPtMin,$vzMax',1000)'
+      root -b -q analyzeTrackingCorrection.C+'("'$algo'","anaTrack","'$inputFile'","'$outputFile'",'$pthat,$pthatMax,$sampleWt','$trkPtMin,$vzMax',-1)'
    done
 done
