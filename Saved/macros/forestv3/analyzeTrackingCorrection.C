@@ -89,6 +89,7 @@ void analyzeTrackingCorrection(
    output->cd();
    TH1D * hCent = new TH1D("hCent","",40,0,40);
    TH1D * hVz = new TH1D("hVz","",60,-30,30);
+   TH1D * hPtHatBeforeSel = new TH1D("hPtHatBeforeSel","",200,0,1000);
    TH1D * hPtHat = new TH1D("hPtHat","",200,0,1000);
    TH2D * hJetPt2D = new TH2D("hJetPt2D","",100,0,500,100,0,500);
    TH1D * hJDPhi = new TH1D("hJDPhi","",40,0,Pi());
@@ -236,6 +237,7 @@ void analyzeTrackingCorrection(
       if (vzMax>0 && fabs(evt.vz)>vzMax) continue;
       // protection against high pt jet from background event
       if (leadingIndex>=0&&anajet->subid[leadingIndex]>0) continue;
+      hPtHatBeforeSel->Fill(evt.pthat);
       // ensure jet distribution unbiased by pthat turn on
       if (leadingJetPtMin>0&&gj.pt1<leadingJetPtMin) continue;
       if (subleadingJetPtMin>0&&gj.pt2<subleadingJetPtMin) continue;
