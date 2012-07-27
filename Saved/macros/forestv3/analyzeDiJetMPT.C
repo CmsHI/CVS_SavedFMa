@@ -35,7 +35,7 @@ void analyzeDiJetMPT(
    ///////////////////////////////////////////////////
    // Setup Analysis
    ///////////////////////////////////////////////////
-   int saveTracks = 10; // 0=none, 1=all, 10=cone
+   int saveTracks = 1; // 0=none, 1=all, 10=cone
    double cutjetPt = 100;
    double cutjetEta = 2;
    double cutPtTrk=1.;
@@ -338,12 +338,12 @@ void analyzeDiJetMPT(
          float dr2bkg = deltaR(simEta,simPhi,-gj.eta2,gj.phi2);
          gj.simAsso[gj.nSim] = 0;
          if (dr1<trkJetAssoR) gj.simAsso[gj.nSim] = 1;
-         if (dr2<trkJetAssoR) gj.simAsso[gj.nSim] = 2;
-         if (dr1bkg<trkJetAssoR) gj.simAsso[gj.nSim] = 11;
-         if (dr2bkg<trkJetAssoR) gj.simAsso[gj.nSim] = 12;
+         else if (dr1bkg<trkJetAssoR) gj.simAsso[gj.nSim] = 11;
+         else if (dr2<trkJetAssoR) gj.simAsso[gj.nSim] = 2;
+         else if (dr2bkg<trkJetAssoR) gj.simAsso[gj.nSim] = 12;
          // Select what to save
          if (saveTracks==0) continue;
-         if (saveTracks==10&&gj.simAsso[gj.nTrk]==0) continue;
+         if (saveTracks==10&&gj.simAsso[gj.nSim]==0) continue;
 
          // Fill
          gj.simPt[gj.nSim] = simPt;
