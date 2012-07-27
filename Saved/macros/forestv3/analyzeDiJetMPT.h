@@ -51,7 +51,7 @@ public:
    bool trkHP[MAXTRK];
    int trkAlgo[MAXTRK];
    bool vtrkQual[MAXTRK][NTRKQUAL];
-   bool trkSel[MAXTRK];
+   int trkAsso[MAXTRK];
    bool trkIsFake[MAXTRK];
    int nJet;
    float inclJetPt[MAXTRK];
@@ -81,6 +81,7 @@ public:
    float simPt[MAXTRK];
    float simEta[MAXTRK];
    float simPhi[MAXTRK];
+   int simAsso[MAXTRK];
    bool simHasRec[MAXTRK];
    TString leaves;
    void clear() {
@@ -109,16 +110,17 @@ void BookGJBranches(TTree * tgj, EvtSel & evt, DiJet & gj) {
    tgj->Branch("trkPhi",gj.trkPhi,"trkPhi[nTrk]/F");
 //    tgj->Branch("trkJetDr",gj.trkJetDr,"trkJetDr[nTrk][2]/F");
    tgj->Branch("trkWt",gj.trkWt,"trkWt[nTrk]/F");
-   tgj->Branch("vtrkWt",gj.vtrkWt,Form("vtrkWt[nTrk][%d]/F",NTRKQUAL));
+//    tgj->Branch("vtrkWt",gj.vtrkWt,Form("vtrkWt[nTrk][%d]/F",NTRKQUAL));
 //    tgj->Branch("vtrkEff",gj.vtrkEff,Form("vtrkEff[nTrk][%d]/F",NTRKQUAL));
 //    tgj->Branch("vtrkFak",gj.vtrkFak,Form("vtrkFak[nTrk][%d]/F",NTRKQUAL));
-   tgj->Branch("trkEff",gj.trkEff,"trkEff[nTrk]/F");
-   tgj->Branch("trkFak",gj.trkFak,"trkFak[nTrk]/F");
+//    tgj->Branch("trkEff",gj.trkEff,"trkEff[nTrk]/F");
+//    tgj->Branch("trkFak",gj.trkFak,"trkFak[nTrk]/F");
    tgj->Branch("trkNHit",gj.trkNHit,"trkNHit[nTrk]/F");
    tgj->Branch("trkChi2Norm",gj.trkChi2Norm,"trkChi2Norm[nTrk]/F");
    tgj->Branch("trkHP",gj.trkHP,"trkHP[nTrk]/O");
    tgj->Branch("trkAlgo",gj.trkAlgo,"trkAlgo[nTrk]/I");
    tgj->Branch("vtrkQual",gj.vtrkQual,Form("vtrkQual[nTrk][%d]/O",NTRKQUAL));
+   tgj->Branch("trkAsso",gj.trkAsso,"trkAsso[nTrk]/I");
    tgj->Branch("trkIsFake",gj.trkIsFake,"trkIsFake[nTrk]/O");
    tgj->Branch("nJet",&gj.nJet,"nJet/I");
    tgj->Branch("inclJetPt",gj.inclJetPt,"inclJetPt[nJet]/F");
@@ -126,17 +128,17 @@ void BookGJBranches(TTree * tgj, EvtSel & evt, DiJet & gj) {
    tgj->Branch("inclJetPhi",gj.inclJetPhi,"inclJetPhi[nJet]/F");
    tgj->Branch("inclJetRefPt",gj.inclJetRefPt,"inclJetRefPt[nJet]/F");
    tgj->Branch("inclJetRefPartonPt",gj.inclJetRefPartonPt,"inclJetRefPartonPt[nJet]/F");
-   tgj->Branch("inclJetRefResp",gj.inclJetRefResp,"inclJetRefResp[nJet]/F");
+//    tgj->Branch("inclJetRefResp",gj.inclJetRefResp,"inclJetRefResp[nJet]/F");
    tgj->Branch("nGenJet",&gj.nGenJet,"nGenJet/I");
    tgj->Branch("inclGenJetPt",gj.inclGenJetPt,"inclGenJetPt[nGenJet]/F");
    tgj->Branch("inclGenJetEta",gj.inclGenJetEta,"inclGenJetEta[nGenJet]/F");
    tgj->Branch("inclGenJetPhi",gj.inclGenJetPhi,"inclGenJetPhi[nGenJet]/F");
-   tgj->Branch("inclGenJetResp",gj.inclGenJetResp,"inclGenJetResp[nGenJet]/F");
-   tgj->Branch("nPf",&gj.nPf,"nPf/I");
-   tgj->Branch("pfPt",gj.pfPt,"pfPt[nPf]/F");
-   tgj->Branch("pfEta",gj.pfEta,"pfEta[nPf]/F");
-   tgj->Branch("pfPhi",gj.pfPhi,"pfPhi[nPf]/F");
-   tgj->Branch("pfId",gj.pfId,"pfId[nPf]/I");
+//    tgj->Branch("inclGenJetResp",gj.inclGenJetResp,"inclGenJetResp[nGenJet]/F");
+//    tgj->Branch("nPf",&gj.nPf,"nPf/I");
+//    tgj->Branch("pfPt",gj.pfPt,"pfPt[nPf]/F");
+//    tgj->Branch("pfEta",gj.pfEta,"pfEta[nPf]/F");
+//    tgj->Branch("pfPhi",gj.pfPhi,"pfPhi[nPf]/F");
+//    tgj->Branch("pfId",gj.pfId,"pfId[nPf]/I");
    tgj->Branch("nGenp",&gj.nGenp,"nGenp/I");
    tgj->Branch("genpPt",gj.genpPt,"genpPt[nGenp]/F");
    tgj->Branch("genpEta",gj.genpEta,"genpEta[nGenp]/F");
@@ -147,6 +149,7 @@ void BookGJBranches(TTree * tgj, EvtSel & evt, DiJet & gj) {
    tgj->Branch("simPt",gj.simPt,"simPt[nSim]/F");
    tgj->Branch("simEta",gj.simEta,"simEta[nSim]/F");
    tgj->Branch("simPhi",gj.simPhi,"simPhi[nSim]/F");
+   tgj->Branch("simAsso",gj.simAsso,"simAsso[nSim]/I");
    tgj->Branch("simHasRec",gj.simHasRec,"simHasRec[nSim]/O");
 }
 
