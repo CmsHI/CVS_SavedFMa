@@ -28,6 +28,7 @@ void analyzeTrackingCorrection(
    double sigDPhi=-1,
    bool genJetMode=false
 ) {
+   TH1::SetDefaultSumw2();
    TString tag=Form("%s_%.0f_%.0f_%.0f_genJetMode%d",jetAlgo.Data(),leadingJetPtMin,subleadingJetPtMin,sigDPhi*1000,genJetMode);
    outname.ReplaceAll(".root",Form("_%s.root",tag.Data()));
    cout << "Input: " << inname << endl;
@@ -105,13 +106,12 @@ void analyzeTrackingCorrection(
       vhPtHat.push_back(new TH1D(Form("hPtHat_c%d",ib),"",200,0,1000));
       vhJetPt2D.push_back(new TH2D(Form("hJetPt2D_c%d",ib),"",100,0,500,100,0,500));
    }
-   
+
    ///////////////////////////////////////////////////
    // Main loop
    ///////////////////////////////////////////////////
    if (maxEntries<0) maxEntries = c->GetEntries();
-   for (int i=0;i<maxEntries;i++)
-   {
+   for (int i=0;i<maxEntries;i++) {
       c->GetEntry(i);
       evt.cBin = c->evt.hiBin;
       evt.evtPlane = c->evt.hiEvtPlanes[21];
@@ -199,7 +199,7 @@ void analyzeTrackingCorrection(
             genLeadingIndex=j;
          }
       }
-      
+
       if (genLeadingIndex!=-1) {
          gj.genjeteta1=anajet->geneta[genLeadingIndex];
          gj.genjetphi1=anajet->genphi[genLeadingIndex];
