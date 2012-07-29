@@ -43,7 +43,7 @@ void analyzeDiJetMPT(
    double cutEtaTrk = 2.4;
    double trkJetAssoR=0.3;
 
-   TString tag=Form("%s_%.0f_%.0f_%.0f_saveTrk%d_jmin%.0f_tmin%.0f_genJetMode%d_corrppv14",jetAlgo.Data(),leadingJetPtMin,subleadingJetPtMin,sigDPhi*1000,saveTracks,cutjetPt,cutPtTrk,genJetMode);
+   TString tag=Form("%s_%.0f_%.0f_%.0f_saveTrk%d_jmin%.0f_tmin%.0f_genJetMode%d",jetAlgo.Data(),leadingJetPtMin,subleadingJetPtMin,sigDPhi*1000,saveTracks,cutjetPt,cutPtTrk,genJetMode);
    outname.ReplaceAll(".root",Form("_%s.root",tag.Data()));
    cout << "Input: " << inname << " isPP: " << isPP << endl;
    cout << "Sample pthat = " << samplePtHat << " ptHatMax = " << ptHatMax << endl;
@@ -56,7 +56,6 @@ void analyzeDiJetMPT(
    CentralityReWeight cw(datafname,mcfname,"offlSel&&pt1>100&&pt2>0&&acos(cos(phi2-phi1))>2./3*3.14159");
 
    // Define the input file and HiForest
-//    HiForest * c = new HiForest(inname,trkCol.Data(),0);
    HiForest * c = new HiForest(inname,trkCol.Data(),isPP);
    c->doTrackCorrections = true;
    c->doTrackingSeparateLeadingSubleading = false;
@@ -110,7 +109,7 @@ void analyzeDiJetMPT(
    ///////////////////////////////////////////////////
    // Main loop
    ///////////////////////////////////////////////////
-   if (maxEntries<0) maxEntries = c->GetEntries();
+   if (maxEntries<0||maxEntries > c->GetEntries()) maxEntries = c->GetEntries();
    for (int i=0;i<maxEntries;i++) {
       c->GetEntry(i);
       // Event Info
@@ -134,8 +133,8 @@ void analyzeDiJetMPT(
          evt.offlSel = (c->skim.phfCoincFilter && c->skim.ppurityFractionFilter);
       }
       if (!c->hasHltTree) evt.trig = true;
-      evt.anaEvtSel = evt.offlSel && evt.noiseFilt;
-      if (dataSrcType>0) evt.anaEvtSel = evt.anaEvtSel && evt.trig;
+      evt.anaEvtSel = evt.offlSel;
+      if (dataSrcType>0) evt.anaEvtSel = evt.anaEvtSel && evt.trig && evt.noiseFilt;
       evt.vz = c->track.vz[1];
       // Get Centrality Weight
       if (doCentReWeight) evt.weight = cw.GetWeight(evt.cBin);
