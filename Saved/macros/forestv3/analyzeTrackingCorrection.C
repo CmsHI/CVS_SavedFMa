@@ -236,16 +236,16 @@ void analyzeTrackingCorrection(
       // Skim
       ///////////////////////////////////////////////////////
       if (!evt.offlSel) continue;
-      for (int ib=0; ib<effMergedGeneral.centBins.size(); ++ib) {
-         if(evt.cBin>=effMergedGeneral.centBins[ib] && evt.cBin<effMergedGeneral.centBins[ib+1]){
-            vhPtHatBeforeSel[ib]->Fill(evt.pthat);
-         }
-      }
       if (samplePtHat>0 && evt.pthat>=ptHatMax) continue;
       if (vzMax>0 && fabs(evt.vz)>vzMax) continue;
       // protection against high pt jet from background event
       if (leadingIndex>=0&&anajet->subid[leadingIndex]>0) continue;
       hPtHatBeforeSel->Fill(evt.pthat);
+      for (int ib=0; ib<effMergedGeneral.centBins.size(); ++ib) {
+         if(evt.cBin>=effMergedGeneral.centBins[ib] && evt.cBin<effMergedGeneral.centBins[ib+1]){
+            vhPtHatBeforeSel[ib]->Fill(evt.pthat);
+         }
+      }
       // ensure jet distribution unbiased by pthat turn on
       if (leadingJetPtMin>0&&gj.pt1<leadingJetPtMin) continue;
       if (subleadingJetPtMin>0&&gj.pt2<subleadingJetPtMin) continue;
