@@ -17,6 +17,7 @@ void analyzeDiJetMPT(
    TString trkCol = "anaTrack",
    TString inname="/mnt/hadoop/cms/store/user/yenjie/HiForest_v27/Dijet${pthat}_HydjetDrum_v27_mergedV1.root",
    TString outname="output.root",
+   bool isPP=false,
    int dataSrcType = 1, // 0 mc, 1 hi, 2 pp 2.76 TeV, 3 pp 7TeV
    double samplePtHat=0,
    double ptHatMax=9999,
@@ -42,9 +43,9 @@ void analyzeDiJetMPT(
    double cutEtaTrk = 2.4;
    double trkJetAssoR=0.3;
 
-   TString tag=Form("%s_%.0f_%.0f_%.0f_saveTrk%d_jmin%.0f_tmin%.0f_genJetMode%d",jetAlgo.Data(),leadingJetPtMin,subleadingJetPtMin,sigDPhi*1000,saveTracks,cutjetPt,cutPtTrk,genJetMode);
+   TString tag=Form("%s_%.0f_%.0f_%.0f_saveTrk%d_jmin%.0f_tmin%.0f_genJetMode%d_corrppv14",jetAlgo.Data(),leadingJetPtMin,subleadingJetPtMin,sigDPhi*1000,saveTracks,cutjetPt,cutPtTrk,genJetMode);
    outname.ReplaceAll(".root",Form("_%s.root",tag.Data()));
-   cout << "Input: " << inname << endl;
+   cout << "Input: " << inname << " isPP: " << isPP << endl;
    cout << "Sample pthat = " << samplePtHat << " ptHatMax = " << ptHatMax << endl;
    cout << "Track pt min = " << cutPtTrk << endl;
    cout << "skim: leading Jet > " << leadingJetPtMin << " subleading > " << subleadingJetPtMin << " dphi > " << sigDPhi  << endl;
@@ -55,7 +56,8 @@ void analyzeDiJetMPT(
    CentralityReWeight cw(datafname,mcfname,"offlSel&&pt1>100&&pt2>0&&acos(cos(phi2-phi1))>2./3*3.14159");
 
    // Define the input file and HiForest
-   HiForest * c = new HiForest(inname,trkCol.Data());
+//    HiForest * c = new HiForest(inname,trkCol.Data(),0);
+   HiForest * c = new HiForest(inname,trkCol.Data(),isPP);
    c->doTrackCorrections = true;
    c->doTrackingSeparateLeadingSubleading = false;
    c->InitTree();
