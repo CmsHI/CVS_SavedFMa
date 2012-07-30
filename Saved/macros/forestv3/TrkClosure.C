@@ -24,12 +24,13 @@ void TrkClosure(
    float maxEta=2.4;
    float ptmin=0.5,ptmax=200;
    TString mod="Forest2_MergedGeneral";
-   TrackingCorrections trkCorr("Forest2STAv12",mod);
-   trkCorr.AddSample("trkcorr/IterTrkCorrv12XSec_part3/IterTrkCorrv12XSec_part3_hy18dj100to170_akPu3PF_100_-1_-1000_genJetMode0.root",80);
+   TrackingCorrections trkCorr("Forest2STAv14",mod);
+   trkCorr.AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj80to100_akPu3Calo_100_-1_-1000_genJetMode0.root",80);
    trkCorr.Init();
    
 //  TFile * inf = new TFile("output_hy18dj80_fv27_ntv1_corrv13_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0.root");
-  TFile * inf = new TFile("output_hy18dj100_fv27_ntv1_corrv13_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0.root");
+//   TFile * inf = new TFile("output_hy18dj100_fv27_ntv1_corrv13_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0.root");
+  TFile * inf = new TFile("output_hy18dj80_fv27_ntv1_corrv14_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0.root");
 //    TFile * inf = new TFile("output_sigdj80_fv27_ntv1_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0_corrhi.root");
 //    TFile * inf = new TFile("output_sigdj80_fv27_ntv1_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0_corrppv14jetfinexsec.root");
    TTree * t = (TTree*)inf->Get("tgj");
@@ -40,10 +41,10 @@ void TrkClosure(
    TString tag=Form("trkClos%d_0to30_jpt100_incone",anaMode);
    TCut sel = "cBin<12&&pt1>100";
 //    TCut sel = "pt1>100";
-//   TCut genpSel = "";
-//   TCut trkSel = "";
-    TCut genpSel = "simAsso==1||simAsso==2";
-    TCut trkSel = "trkAsso==1||trkAsso==2";
+  TCut genpSel = "";
+  TCut trkSel = "";
+//     TCut genpSel = "simAsso==1||simAsso==2";
+//     TCut trkSel = "trkAsso==1||trkAsso==2";
    TString trkWt = "trkWt";
 
    float nEvt = t->GetEntries(sel);
