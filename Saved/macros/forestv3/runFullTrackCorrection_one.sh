@@ -26,4 +26,4 @@ then inputFile="/net/hidsk0001/d00/scratch/yjlee/merge/v27/pthat${pthat}/Dijet${
 # final checks
 echo "input:  "$inputFile
 echo "output: "$outputFile
-root -b -q analyzeTrackingCorrection.C+'("'$algo'","anaTrack","'$inputFile'","'$outputFile'",'$pthat,$pthatMax,$sampleWt','$trkPtMin,$vzMax',-1,'$leadingPtMin,$subleadingPtMin,$sigDPhi,$genJetMode')'
+root -b -q analyzeTrackingCorrection.C+'("'$algo'","anaTrack","'$inputFile'","'$outputFile'",0,'$pthat,$pthatMax,$sampleWt','$trkPtMin,$vzMax',-1,'$leadingPtMin,$subleadingPtMin,$sigDPhi,$genJetMode')'
