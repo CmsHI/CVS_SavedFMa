@@ -24,7 +24,7 @@ void drawDijetFragSingle( TH1D* htrkPt[3][5]=0,
 
 void drawDijetFragSingleSet(int fragMode = 2, int dataset = kHIDATA, float trackPtMin=1, float trackPtMax=200, int doClosure=0, bool usingPara =true) ;
 
-int weightMode = 1; // 0=no weight, 1=trakpt, 2=trakppt/jetpt
+int weightMode = 0; // 0=no weight, 1=trakpt, 2=trakppt/jetpt
 bool intPt=true;
 
 void drawDijetFrag() {
@@ -32,7 +32,7 @@ void drawDijetFrag() {
   bool doHIDATA = 1;
   bool doPPDATA = 1;
 //   float trackPtCut = 1;
-  bool usingPara = true;
+  bool usingPara = false;
   
   // doClosure  //////
   // 0 : default
@@ -104,9 +104,7 @@ void drawDijetFragSingleSet(int fragMode, int dataset, float trackPtMin, float t
 	
 	///////////////////////////////////////  define what to draw!! ///////////////////////
 	TString suffix = Form("%s_icent%d_irj%d_fragMode%d_closure%d%s",datasetName.Data(),icent,irj,fragMode,doClosure,attPara.Data());
-	if (weightMode) {
-	  suffix += Form("_wtmode%d_pt%dto%d",weightMode,(int)trackPtMin,(int)trackPtMax);
-	}
+  suffix += Form("_wtmode%d_pt%dto%d",weightMode,(int)trackPtMin,(int)trackPtMax);
 	if ( fragMode   == 1 )
 	  htrkFF[index][kLjet][kRAW]= new TH1D(Form("hpt_lJet_rawTrk_%s",suffix.Data()),";track p_{T} (GeV/c);dN/dp_{T} (GeV/c)^{-1}",nPtBin,ptBin);
 	else if ( fragMode==2)
