@@ -24,7 +24,7 @@ void drawDijetFragSingle( TH1D* htrkPt[3][5]=0,
 
 void drawDijetFragSingleSet(int fragMode = 2, int dataset = kHIDATA, float trackPtMin=1, float trackPtMax=200, int doClosure=0, bool usingPara =true) ;
 
-int weightMode = 0; // 0=no weight, 1=trakpt, 2=trakppt/jetpt
+int weightMode = 2; // 0=no weight, 1=trakpt, 2=trakppt/jetpt
 bool intPt=true;
 
 void drawDijetFrag() {
@@ -404,44 +404,46 @@ void drawDijetFragSingle( TH1D* htrkPt[3][5],
         }
       }
     }
+    TString jet1Cut = Form("abs(lJetEta)<%f",finalEtaCut);
+    TString jet2Cut = Form("abs(slJetEta)<%f && slJetPt>100",finalEtaCut);
     
     if (doClosure <= 0) {
-      dj->Draw2(htrkPt[kLjet][kRAW],"yTrk.jetDr"  ,Form("abs(lJetEta)<%f && yTrk.jetMatch==1 && yTrk.jetDr<%f && yTrk.pt>%f && yTrk.pt<%f", finalEtaCut, jetDrCut,trackPtMin,trackPtMax),finalEtaCut, trackWeight[kLjet] +theWeight + ppWeightLjet);
-      dj->Draw2(htrkPt[kSljet][kRAW],"yTrk.jetDr",Form("abs(slJetEta)<%f &&  slJetPt>100 && yTrk.jetMatch==2 && yTrk.jetDr<%f && yTrk.pt>%f && yTrk.pt<%f", finalEtaCut, jetDrCut,trackPtMin,trackPtMax),trackWeight[kSljet] +theWeight + ppWeightSljet);
-      dj->Draw2(htrkPt[kLjet][kBKG],"mTrk.jetDr"  ,Form("abs(lJetEta)<%f &&  mTrk.jetMatch==1 && mTrk.jetDr<%f && mTrk.pt>%f && mTrk.pt<%f", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), matchedTrackWeight[kLjet] +theWeight + ppWeightLjet);
-      dj->Draw2(htrkPt[kSljet][kBKG],"mTrk.jetDr",Form("abs(slJetEta)<%f &&  slJetPt>100 && mTrk.jetMatch==2 && mTrk.jetDr<%f && mTrk.pt>%f && mTrk.pt<%f", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), matchedTrackWeight[kSljet] +theWeight + ppWeightSljet);
+      dj->Draw2(htrkPt[kLjet][kRAW],"yTrk.jetDr"  ,Form("%s && yTrk.jetMatch==1 && yTrk.jetDr<%f && yTrk.pt>%f && yTrk.pt<%f", jet1Cut.Data(), jetDrCut,trackPtMin,trackPtMax), trackWeight[kLjet] +theWeight + ppWeightLjet);
+      dj->Draw2(htrkPt[kSljet][kRAW],"yTrk.jetDr",Form("%s && yTrk.jetMatch==2 && yTrk.jetDr<%f && yTrk.pt>%f && yTrk.pt<%f", jet2Cut.Data(), jetDrCut,trackPtMin,trackPtMax), trackWeight[kSljet] +theWeight + ppWeightSljet);
+      dj->Draw2(htrkPt[kLjet][kBKG],"mTrk.jetDr"  ,Form("%s &&  mTrk.jetMatch==1 && mTrk.jetDr<%f && mTrk.pt>%f && mTrk.pt<%f", jet1Cut.Data(), jetDrCut,trackPtMin,trackPtMax), matchedTrackWeight[kLjet] +theWeight + ppWeightLjet);
+      dj->Draw2(htrkPt[kSljet][kBKG],"mTrk.jetDr",Form("%s && mTrk.jetMatch==2 && mTrk.jetDr<%f && mTrk.pt>%f && mTrk.pt<%f", jet2Cut.Data(), jetDrCut,trackPtMin,trackPtMax), matchedTrackWeight[kSljet] +theWeight + ppWeightSljet);
     }
     else if ( doClosure == 100 ) {
-      dj->Draw2(htrkPt[kLjet][kRAW],"yTrk.jetDr"  ,Form("abs(lJetEta)<%f &&  abs(lJetEta)>0.3  && yTrk.jetMatch==1   && yTrk.jetDr<%f && yTrk.pt>%f && yTrk.pt<%f", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), trackWeight[kLjet] +theWeight+ppWeightSljet );
-      dj->Draw2(htrkPt[kSljet][kRAW],"yTrk.jetDr",Form("abs(slJetEta)<%f && slJetPt>100 && abs(slJetEta)>0.3 && yTrk.jetMatch==2   && yTrk.jetDr<%f && yTrk.pt>%f && yTrk.pt<%f", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), trackWeight[kSljet] +theWeight+ppWeightSljet);
-      dj->Draw2(htrkPt[kLjet][kBKG],"yTrk.jetDr"  ,Form("abs(lJetEta)<%f && abs(lJetEta)>0.3  && yTrk.jetMatch==-1  && yTrk.jetDr<%f && yTrk.pt>%f && yTrk.pt<%f", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), trackWeight[kLjet] +theWeight+ppWeightSljet);
-      dj->Draw2(htrkPt[kSljet][kBKG],"yTrk.jetDr",Form("abs(slJetEta)<%f && slJetPt>100 && abs(slJetEta)>0.3  && yTrk.jetMatch==-2 && yTrk.jetDr<%f && yTrk.pt>%f && yTrk.pt<%f", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), trackWeight[kSljet] +theWeight+ppWeightSljet);
+      dj->Draw2(htrkPt[kLjet][kRAW],"yTrk.jetDr"  ,Form("%s &&  abs(lJetEta)>0.3  && yTrk.jetMatch==1   && yTrk.jetDr<%f && yTrk.pt>%f && yTrk.pt<%f", jet1Cut.Data(), jetDrCut,trackPtMin,trackPtMax), trackWeight[kLjet] +theWeight+ppWeightSljet );
+      dj->Draw2(htrkPt[kSljet][kRAW],"yTrk.jetDr",Form("%s && abs(slJetEta)>0.3 && yTrk.jetMatch==2   && yTrk.jetDr<%f && yTrk.pt>%f && yTrk.pt<%f", jet2Cut.Data(), jetDrCut,trackPtMin,trackPtMax), trackWeight[kSljet] +theWeight+ppWeightSljet);
+      dj->Draw2(htrkPt[kLjet][kBKG],"yTrk.jetDr"  ,Form("%s && abs(lJetEta)>0.3  && yTrk.jetMatch==-1  && yTrk.jetDr<%f && yTrk.pt>%f && yTrk.pt<%f", jet1Cut.Data(), jetDrCut,trackPtMin,trackPtMax), trackWeight[kLjet] +theWeight+ppWeightSljet);
+      dj->Draw2(htrkPt[kSljet][kBKG],"yTrk.jetDr",Form("%s && abs(slJetEta)>0.3  && yTrk.jetMatch==-2 && yTrk.jetDr<%f && yTrk.pt>%f && yTrk.pt<%f", jet2Cut.Data(), jetDrCut,trackPtMin,trackPtMax), trackWeight[kSljet] +theWeight+ppWeightSljet);
     } 
     else if ( doClosure == 101 ) {
-      dj->Draw2(htrkPt[kLjet][kRAW],"genPar.jetDr"  ,Form("abs(lJetEta)<%f && abs(lJetEta)>0.3   && (abs(genPar.chg)>0) && (genPar.jetMatch==1) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
-      dj->Draw2(htrkPt[kSljet][kRAW],"genPar.jetDr",Form("abs(slJetEta)<%f && slJetPt>100 && abs(slJetEta)>0.3 && (abs(genPar.chg)>0) && (genPar.jetMatch==2) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
-      dj->Draw2(htrkPt[kLjet][kBKG],"genPar.jetDr"  ,Form("abs(lJetEta)<%f && abs(lJetEta)>0.3 && (genPar.sube!=0) && (abs(genPar.chg)>0) && (genPar.jetMatch==1) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
-      dj->Draw2(htrkPt[kSljet][kBKG],"genPar.jetDr",Form("abs(slJetEta)<%f && slJetPt>100 && abs(slJetEta)>0.3 && (genPar.sube!=0) && (abs(genPar.chg)>0) && (genPar.jetMatch==2) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
+      dj->Draw2(htrkPt[kLjet][kRAW],"genPar.jetDr"  ,Form("%s && abs(lJetEta)>0.3   && (abs(genPar.chg)>0) && (genPar.jetMatch==1) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", jet1Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
+      dj->Draw2(htrkPt[kSljet][kRAW],"genPar.jetDr",Form("%s && abs(slJetEta)>0.3 && (abs(genPar.chg)>0) && (genPar.jetMatch==2) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", jet2Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
+      dj->Draw2(htrkPt[kLjet][kBKG],"genPar.jetDr"  ,Form("%s && abs(lJetEta)>0.3 && (genPar.sube!=0) && (abs(genPar.chg)>0) && (genPar.jetMatch==1) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", jet1Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
+      dj->Draw2(htrkPt[kSljet][kBKG],"genPar.jetDr",Form("%s && abs(slJetEta)>0.3 && (genPar.sube!=0) && (abs(genPar.chg)>0) && (genPar.jetMatch==2) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", jet2Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
     } 
     else if ( doClosure == 102 ) {
-      dj->Draw2(htrkPt[kLjet][kRAW],"genPar.jetDr"  ,Form("abs(lJetEta)<%f && abs(lJetEta)>0.3 && (abs(genPar.chg)>0) && (genPar.jetMatch==1)    && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
-      dj->Draw2(htrkPt[kSljet][kRAW]," genPar.jetDr",Form("abs(slJetEta)<%f && slJetPt>100 && abs(slJetEta)>0.3 && (abs(genPar.chg)>0) && (genPar.jetMatch==2)   && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
-      dj->Draw2(htrkPt[kLjet][kBKG]," genPar.jetDr"  ,Form("abs(lJetEta)<%f && abs(lJetEta)>0.3 && (abs(genPar.chg)>0) && (genPar.jetMatch==-1)   && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
-      dj->Draw2(htrkPt[kSljet][kBKG]," genPar.jetDr",Form("abs(slJetEta)<%f && slJetPt>100 && abs(slJetEta)>0.3 && (abs(genPar.chg)>0) && (genPar.jetMatch==-2) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
+      dj->Draw2(htrkPt[kLjet][kRAW],"genPar.jetDr"  ,Form("%s && abs(lJetEta)>0.3 && (abs(genPar.chg)>0) && (genPar.jetMatch==1)    && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", jet1Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
+      dj->Draw2(htrkPt[kSljet][kRAW]," genPar.jetDr",Form("%s && abs(slJetEta)>0.3 && (abs(genPar.chg)>0) && (genPar.jetMatch==2)   && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", jet2Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
+      dj->Draw2(htrkPt[kLjet][kBKG]," genPar.jetDr"  ,Form("%s && abs(lJetEta)>0.3 && (abs(genPar.chg)>0) && (genPar.jetMatch==-1)   && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)", jet1Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
+      dj->Draw2(htrkPt[kSljet][kBKG]," genPar.jetDr",Form("%s && abs(slJetEta)>0.3 && (abs(genPar.chg)>0) && (genPar.jetMatch==-2) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",jet2Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
       
     }
     
     else if ( doClosure == 1 ) {
-      dj->Draw2(htrkPt[kLjet][kRAW]," genPar.jetDr"  ,Form("abs(lJetEta)<%f &&     (abs(genPar.chg)>0) && (genPar.jetMatch==1) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
-      dj->Draw2(htrkPt[kSljet][kRAW]," genPar.jetDr",Form("abs(slJetEta)<%f && slJetPt>100 &&     (abs(genPar.chg)>0) && (genPar.jetMatch==2) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
-      dj->Draw2(htrkPt[kLjet][kBKG]," genPar.jetDr"  ,Form("abs(lJetEta)<%f && (genPar.sube!=0) && (abs(genPar.chg)>0) && (genPar.jetMatch==1) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
-      dj->Draw2(htrkPt[kSljet][kBKG]," genPar.jetDr",Form("abs(slJetEta)<%f && slJetPt>100 && (genPar.sube!=0) && (abs(genPar.chg)>0) && (genPar.jetMatch==2) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
+      dj->Draw2(htrkPt[kLjet][kRAW]," genPar.jetDr"  ,Form("%s &&     (abs(genPar.chg)>0) && (genPar.jetMatch==1) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",jet1Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
+      dj->Draw2(htrkPt[kSljet][kRAW]," genPar.jetDr",Form("%s &&     (abs(genPar.chg)>0) && (genPar.jetMatch==2) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",jet2Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
+      dj->Draw2(htrkPt[kLjet][kBKG]," genPar.jetDr"  ,Form("%s && (genPar.sube!=0) && (abs(genPar.chg)>0) && (genPar.jetMatch==1) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",jet1Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
+      dj->Draw2(htrkPt[kSljet][kBKG]," genPar.jetDr",Form("%s && (genPar.sube!=0) && (abs(genPar.chg)>0) && (genPar.jetMatch==2) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",jet2Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
     }
     else if ( doClosure == 2 ) {
-      dj->Draw2(htrkPt[kLjet][kRAW]," genPar.jetDr"  ,Form("abs(lJetEta)<%f &&                     (abs(genPar.chg)>0) && (genPar.jetMatch==1) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
-      dj->Draw2(htrkPt[kSljet][kRAW]," genPar.jetDr",Form("abs(slJetEta)<%f && slJetPt>100 &&                     (abs(genPar.chg)>0) && (genPar.jetMatch==2) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
-      dj->Draw2(htrkPt[kLjet][kBKG], "mGenPar.jetDr" ,Form("abs(lJetEta)<%f &&  (abs(mGenPar.chg)>0) && (mGenPar.jetMatch==1) && (mGenPar.jetDr<%f) && (mGenPar.pt>%f && mGenPar.pt<%f)",finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
-      dj->Draw2(htrkPt[kSljet][kBKG],"mGenPar.jetDr",Form("abs(slJetEta)<%f && slJetPt>100 &&  (abs(mGenPar.chg)>0) && (mGenPar.jetMatch==2) && (mGenPar.jetDr<%f) && (mGenPar.pt>%f && mGenPar.pt<%f)",finalEtaCut, jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
+      dj->Draw2(htrkPt[kLjet][kRAW]," genPar.jetDr"  ,Form("%s &&                     (abs(genPar.chg)>0) && (genPar.jetMatch==1) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",jet1Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
+      dj->Draw2(htrkPt[kSljet][kRAW]," genPar.jetDr",Form("%s &&                     (abs(genPar.chg)>0) && (genPar.jetMatch==2) && (genPar.jetDr<%f) && (genPar.pt>%f && genPar.pt<%f)",jet2Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
+      dj->Draw2(htrkPt[kLjet][kBKG], "mGenPar.jetDr" ,Form("%s &&  (abs(mGenPar.chg)>0) && (mGenPar.jetMatch==1) && (mGenPar.jetDr<%f) && (mGenPar.pt>%f && mGenPar.pt<%f)",jet1Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kLjet]+theWeight);
+      dj->Draw2(htrkPt[kSljet][kBKG],"mGenPar.jetDr",Form("%s &&  (abs(mGenPar.chg)>0) && (mGenPar.jetMatch==2) && (mGenPar.jetDr<%f) && (mGenPar.pt>%f && mGenPar.pt<%f)",jet2Cut.Data(), jetDrCut,trackPtMin,trackPtMax), genpWeight[kSljet]+theWeight);
     }
   }
 
@@ -568,7 +570,7 @@ void drawDijetFragSingle( TH1D* htrkPt[3][5],
   TCanvas* c0 = new TCanvas("ctempTemp","",100,100);
 
   
-  TFile outf = TFile(Form("dijetFF_output_histograms_trkPtProjectOnJetAxis_trackPtCut%.0f_FinaletaCut%.2f.root",ptranges[0],(float)finalEtaCut),"update");
+  TFile outf = TFile(Form("dijetFF_output_histograms_trkPtProjectOnJetAxis_trackPtCut%.0f_FinaletaCut%.2f_v2.root",ptranges[0],(float)finalEtaCut),"update");
   if (trackPtMax>=ptranges[nptrange]) {
     hLjetPt->Write();
     hSljetPt->Write();
