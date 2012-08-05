@@ -24,8 +24,13 @@ void drawDijetFragSingle( TH1D* htrkPt[3][5]=0,
 
 void drawDijetFragSingleSet(int fragMode = 2, int dataset = kHIDATA, float trackPtMin=1, float trackPtMax=200, int doClosure=0, bool usingPara =true) ;
 
-int weightMode = 2; // 0=no weight, 1=trakpt, 2=trakppt/jetpt
+int weightMode = 0; // 0=no weight, 1=trakpt, 2=trakppt/jetpt
 bool intPt=true;
+
+// TString tag="";
+// TString tag="_quark";
+TString tag="_gluon";
+
 
 void drawDijetFrag() {
   bool doHIMC = 1;
@@ -55,12 +60,12 @@ void drawDijetFrag() {
         
       }
       if ( doPPDATA ) {
-        drawDijetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, 0, usingPara);     
-        drawDijetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, -1, usingPara);    // -1 means that you don't reweight by jet spectrum
+//         drawDijetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, 0, usingPara);     
+//         drawDijetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, -1, usingPara);    // -1 means that you don't reweight by jet spectrum
         drawDijetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, 100, usingPara);     
       }
       if ( doHIDATA) {
-        drawDijetFragSingleSet(fragMode, kHIDATA, trackPtMin,trackPtMax, 0, usingPara);
+//         drawDijetFragSingleSet(fragMode, kHIDATA, trackPtMin,trackPtMax, 0, usingPara);
         drawDijetFragSingleSet(fragMode, kHIDATA, trackPtMin,trackPtMax, 100, usingPara);
       }
     }
@@ -103,7 +108,7 @@ void drawDijetFragSingleSet(int fragMode, int dataset, float trackPtMin, float t
 	  index = icent;
 	
 	///////////////////////////////////////  define what to draw!! ///////////////////////
-	TString suffix = Form("%s_icent%d_irj%d_fragMode%d_closure%d%s",datasetName.Data(),icent,irj,fragMode,doClosure,attPara.Data());
+	TString suffix = Form("%s_icent%d_irj%d_fragMode%d_closure%d%s%s",datasetName.Data(),icent,irj,fragMode,doClosure,attPara.Data(),tag.Data());
   suffix += Form("_wtmode%d_pt%dto%d",weightMode,(int)trackPtMin,(int)trackPtMax);
 	if ( fragMode   == 1 )
 	  htrkFF[index][kLjet][kRAW]= new TH1D(Form("hpt_lJet_rawTrk_%s",suffix.Data()),";track p_{T} (GeV/c);dN/dp_{T} (GeV/c)^{-1}",nPtBin,ptBin);
@@ -141,7 +146,7 @@ void drawDijetFragSingle( TH1D* htrkPt[3][5],
 			  bool usingPara
 			  ) {
   
-  float finalEtaCut = 2;
+  float finalEtaCut = 2.;
   /// Inclusive ////////////////////////
   //  TCut dijetSelCut = Form("lJetPt>100 && slJetPt>100 && acos(cos(lJetPhi - slJetPhi))>%f",jetDPhiCut);
   TCut dijetSelCut = "lJetPt>100";
@@ -153,7 +158,7 @@ void drawDijetFragSingle( TH1D* htrkPt[3][5],
   else if (dataset == kPPDATA)  datasetName = "ppdata";
   TString attPara = ( (usingPara == true) ? "Para" : "" ) ;
   
-  TString suffix = Form("%s_icent%d_irj%d_fragMode%d_closure%d",datasetName.Data(),icent,irj,fragMode,doClosure);
+  TString suffix = Form("%s_icent%d_irj%d_fragMode%d_closure%d%s",datasetName.Data(),icent,irj,fragMode,doClosure,tag.Data());
   
   TString clsText = "evtMixing";
   TString clsText_ = "event mixing method";
@@ -183,15 +188,15 @@ dj->addFile("../hiPhotonAna2011/jskim_HiForest-promptskim-hihighpt-hltjet80-pt90
   }
   else if ( dataset == kHIMC) {
     //    dj->addFile("jskim_mergedFile100_nMix10_akPu3PF_July-v4-4VtxBin-24PlnBin-40CentBin-EtaReflectionAdded_jetPt_100_40_jetEtaCut_2.00_dphi_2.748893_yesPbin_doSmear0_useGenJet0.root", 
-dj->addFile("jskim_Dijet100_HydjetDrum_v27_mergedV1_nMix10_akPu3PF_July-v6-8VtxBin-24PlnBin-40CentBin-trackingV2-02-14_jetPt_100_-1_jetEtaCut_2.00_yesPbin_smearCentBin0_useGenJet0.root",
-    // dj->addFile("../hiPhotonAna2011/jskim_Dijet80_HydjetDrum_v27_mergedV1_nMix10_akPu3PF_Aug-v7-8VtxBin-24PlnBin-40CentBin-hin-12-013_v2_jetPt_100_-1_jetEtaCut_2.00_noPbin_smearCentBin0_useGenJet0.root",
+// dj->addFile("jskim_Dijet100_HydjetDrum_v27_mergedV1_nMix10_akPu3PF_July-v6-8VtxBin-24PlnBin-40CentBin-trackingV2-02-14_jetPt_100_-1_jetEtaCut_2.00_yesPbin_smearCentBin0_useGenJet0.root",
+dj->addFile("../hiPhotonAna2011/jskim_Dijet80_HydjetDrum_v27_mergedV1_nMix10_akPu3PF_Aug-v7-8VtxBin-24PlnBin-40CentBin-hin-12-013_v2_jetPt_100_-1_jetEtaCut_2.00_noPbin_smearCentBin0_useGenJet0.root",
 		"tdj", dijetSelCut &&  centCut && rjCut,1);
     
   }
   else if ( dataset == kPPDATA) {
     //    dj->addFile(Form("jskim_forest2_2760GeV_ppJet_full_July14_akPu3Calo_July-v6-8VtxBin-24PlnBin-40CentBin-trackingV2-02-14_jetPt_100_-1_jetEtaCut_2.00_yesPbin_smearCentBin%d_useGenJet0_jetWeightAdded.root",icent),
 //     dj->addFile(Form("jskim_forest2_2760GeV_ppJet_full_July14_akPu3PF_July-v6-8VtxBin-24PlnBin-40CentBin-EtaReflectionAdded_jetPt_100_-1_jetEtaCut_2.00_yesPbin_smearCentBin%d_useGenJet0_jetWeightAdded.root",icent),
-    dj->addFile(Form("../hiPhotonAna2011/jskim_forest2_2760GeV_ppJet_full_July14_akPu3PF_Aug-v7-8VtxBin-24PlnBin-40CentBin-hin-12-013_v2_jetPt_100_-1_jetEtaCut_2.00_noPbin_smearCentBin%d_useGenJet0.root",icent),
+    dj->addFile(Form("../hiPhotonAna2011/jskim_forest2_2760GeV_ppJet_full_July14_akPu3PF_Aug-v7-8VtxBin-24PlnBin-40CentBin-hin-12-013_v2_jetPt_100_-1_jetEtaCut_2.00_noPbin_smearCentBin%d_useGenJet0_jetWeightAdded.root",icent),
 		"tdj", dijetSelCut, 1); // no centrality cut or aj cut
     
   }
@@ -263,14 +268,15 @@ dj->addFile("jskim_Dijet100_HydjetDrum_v27_mergedV1_nMix10_akPu3PF_July-v6-8VtxB
   // inclusive /////////
     TString jet1Cut = Form("abs(lJetEta)<%f",finalEtaCut);
     TString jet2Cut = Form("abs(slJetEta)<%f && slJetPt>100",finalEtaCut);
-
-//     TString jet1Cut = Form("abs(lJetEta)<%f && lJetFlav>=-6&&lJetFlav<=6",finalEtaCut);
-//     TString jet2Cut = Form("abs(slJetEta)<%f && slJetPt>100 && slJetFlav>=-6&&slJetFlav<=6",finalEtaCut);
-
-//     TString jet1Cut = Form("abs(lJetEta)<%f && lJetFlav==21",finalEtaCut);
-//     TString jet2Cut = Form("abs(slJetEta)<%f && slJetPt>100 && slJetFlav==21",finalEtaCut);
+    if (tag.Contains("quark")) {
+      jet1Cut = Form("abs(lJetEta)<%f && lJetFlav>=-6&&lJetFlav<=6",finalEtaCut);
+      jet2Cut = Form("abs(slJetEta)<%f && slJetPt>100 && slJetFlav>=-6&&slJetFlav<=6",finalEtaCut);
+    } else if (tag.Contains("gluon")) {
+      jet1Cut = Form("abs(lJetEta)<%f && lJetFlav==21",finalEtaCut);
+      jet2Cut = Form("abs(slJetEta)<%f && slJetPt>100 && slJetFlav==21",finalEtaCut);
+    }
   
-  if (doClosure>=100) {
+  if (doClosure>=100&&doClosure!=101) {
     jet1Cut = Form("%s && abs(lJetEta)>0.3",jet1Cut.Data());
     jet2Cut = Form("%s && abs(slJetEta)>0.3",jet2Cut.Data());
   }
@@ -560,13 +566,13 @@ dj->addFile("jskim_Dijet100_HydjetDrum_v27_mergedV1_nMix10_akPu3PF_July-v6-8VtxB
 
   
   if ( fragMode==2) {
-    c1->SaveAs(Form("plotsOfDijetFF/dijetFF_xi_icent%d_irj%d_%s_%s.pdf",icent,irj,datasetName.Data(),clsText.Data()));
+    c1->SaveAs(Form("plotsOfDijetFF/dijetFF_xi_icent%d_irj%d_%s_%s%s.pdf",icent,irj,datasetName.Data(),clsText.Data(),tag.Data()));
   }
   else if ( fragMode==1) {
-    c1->SaveAs(Form("plotsOfDijetFF/dijetFF_pt_icent%d_irj%d_%s_%s.pdf",icent,irj,datasetName.Data(),clsText.Data()));
+    c1->SaveAs(Form("plotsOfDijetFF/dijetFF_pt_icent%d_irj%d_%s_%s%s.pdf",icent,irj,datasetName.Data(),clsText.Data(),tag.Data()));
   }
   else if ( fragMode==10) {
-    c1->SaveAs(Form("plotsOfDijetFF/dijetFF_dr_wttrkpt%d_icent%d_irj%d_%s_%s.pdf",weightMode,icent,irj,datasetName.Data(),clsText.Data()));
+    c1->SaveAs(Form("plotsOfDijetFF/dijetFF_dr_pt%.0fto%.0f_wtMode%d_icent%d_irj%d_%s_%s%s.pdf",trackPtMin,trackPtMax,weightMode,icent,irj,datasetName.Data(),clsText.Data(),tag.Data()));
   }
   TCanvas* c0 = new TCanvas("ctempTemp","",100,100);
 
