@@ -27,16 +27,15 @@ void drawDijetFragSingleSet(int fragMode = 2, int dataset = kHIDATA, float track
 int weightMode = 0; // 0=no weight, 1=trakpt, 2=trakppt/jetpt
 bool intPt=true;
 
-// TString tag="";
+TString tag="";
 // TString tag="_quark";
-TString tag="_gluon";
+// TString tag="_gluon";
 
 
 void drawDijetFrag() {
   bool doHIMC = 1;
-  bool doHIDATA = 0;
-  bool doPPDATA = 0;
-//   float trackPtCut = 1;
+  bool doHIDATA = 1;
+  bool doPPDATA = 1;
   bool usingPara = false;
   
   // doClosure  //////
