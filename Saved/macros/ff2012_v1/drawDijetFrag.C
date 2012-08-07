@@ -27,10 +27,10 @@ void drawDijetFragSingleSet(int fragMode = 2, int dataset = kHIDATA, float track
 int weightMode = 2; // 0=no weight, 1=trakpt, 2=trakppt/jetpt, 20=trackpt/jetrawpt
 bool intPt=true;
 
-// TString tag="";
+TString tag="";
 // TString tag="_quark";
 // TString tag="_gluon";
-TString tag="_rawtrk";
+//TString tag="_rawtrk";
 
 
 void drawDijetFrag() {
@@ -169,7 +169,7 @@ void drawDijetFragSingle( TH1D* htrkPt[3][5],
 			  bool usingPara
 			  ) {
   
-  float finalEtaCut = 0.8;
+  float finalEtaCut = 2.0;
   /// Inclusive ////////////////////////
   //  TCut dijetSelCut = Form("lJetPt>100 && slJetPt>100 && acos(cos(lJetPhi - slJetPhi))>%f",jetDPhiCut);
   TCut dijetSelCut = "lJetPt>100";
@@ -645,7 +645,7 @@ dj->addFile(Form("../hiPhotonAna2011/jskim_DiJet80_akPu3PF_Aug-v7-8VtxBin-24PlnB
   TCanvas* c0 = new TCanvas("ctempTemp","",100,100);
 
   
-  TFile outf = TFile(Form("dijetFF_output_histograms_trkPtProjectOnJetAxis_trackPtCut%.0f_FinaletaCut%.2f_v2pp.root",ptranges[0],(float)finalEtaCut),"update");
+  TFile outf = TFile(Form("dijetFF_output_histograms_trkPtProjectOnJetAxis_trackPtCut%.0f_FinaletaCut%.2f_v2.root",ptranges[0],(float)finalEtaCut),"update");
   if (trackPtMax>=ptranges[nptrange]) {
     hLjetPt->Write();
     hSljetPt->Write();
