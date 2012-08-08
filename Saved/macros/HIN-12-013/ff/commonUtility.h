@@ -1363,14 +1363,16 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
   int markerColor[2] = {1,1};
   int sysMarkerColor[20] = {kBlack,kGray+2,kBlue,kGreen+2,kOrange+2,kRed};
 
-  bool subtract = 1;
+  float subtract = 1;
   bool reference = 0;
-  bool fitData = 1;
+  bool fitData = 0;
   bool useFit = 1;
   int fill = 1;
   bool skipZero = 1;
 
   bool box = 1;
+
+  cout << "Sys error: " << Nerror << endl;
 
   int n = h->GetNbinsX()+1;
 
@@ -1389,8 +1391,8 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
   TH1D * hErrorTot = (TH1D*)he[0]->Clone(Form("%s_tot",he[0]->GetName()));
   if (cerr) {
      cerr->cd();
-     cout << "draw errors" << endl;
      for(int ie = 0; ie< Nerror; ++ie){
+     cout << "draw errors" << he[ie]->GetName() << endl;
       he[ie]->SetMarkerStyle(kOpenCircle);
       he[ie]->SetMarkerColor(sysMarkerColor[ie]);
       if (ie==0) he[ie]->DrawClone();
@@ -1399,7 +1401,7 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
         fe[ie]->SetLineColor(sysMarkerColor[ie]);
         fe[ie]->Draw("same");
       }
-     }
+    }
   }
   if (inc) inc->cd();
 
@@ -1410,31 +1412,28 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
   for(int i = 1; i < n; ++i){
     if(skipZero && h->GetBinContent(i) ==0) continue;
     double x0 = h->GetBinCenter(i);
+    cout << "##xi: " << x0 << endl;
     
+    e[i] = 0;
     // Add Errors in Quadrature
     for(int ie = 0; ie< Nerror; ++ie){
       double xbin = he[ie]->FindBin(x0);
-     double ec = he[ie]->GetBinContent(xbin)-(int)subtract;
-     if(useFit) ec = fe[ie]->Eval(x0) - (int)subtract;
+//       cout << "error" << ie << " before subtract: " << he[ie]->GetBinContent(xbin) << endl;
+      double ec = he[ie]->GetBinContent(xbin) - subtract;
+//       cout << "error" << ie << " after subtract: " << ec << endl;
+      if(useFit) ec = fe[ie]->Eval(x0) - subtract;
+//       cout << "error" << ie << " after fit: " << ec << endl;
       e[i] += pow(ec,2);
+//       cout << "error" << ie << " add: " << pow(ec,2) << " tot: " << sqrt(e[i]) << endl;
       if(ec < 0) sign[i] = -1;
       else sign[i] = 1;
     }
+    hErrorTot->SetBinContent(i,1+sqrt(e[i]));
+    cout << "tothist: " << i << ": " << hErrorTot->GetBinContent(i) << endl;
+    // Multiply error to y value
     double y = h->GetBinContent(i);
     if (fitData) if(y > 1.5) y = f->Eval(x0);
     e[i] = sqrt(e[i])*y;
-    
-    // Show The Individual Errors
-    if (cerr) {
-     cerr->cd();
-     for(int i = 1; i < n; ++i){
-      hErrorTot->SetBinContent(i,1+fabs(e[i]));
-     }
-     hErrorTot->SetLineColor(kBlack);
-     hErrorTot->Draw("hist same");
-     inc->cd();
-    }
-
     // Make Box for Final Errors
     if(box && plot){
       double xg = h->GetBinCenter(i);
@@ -1469,6 +1468,15 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
       }
     }
   }
+  
+  // Show The Individual Errors
+  if (cerr) {
+    cerr->cd();
+    hErrorTot->SetLineColor(kBlack);
+    hErrorTot->Draw("hist same");
+    inc->cd();
+  }
+
 }
 
 
