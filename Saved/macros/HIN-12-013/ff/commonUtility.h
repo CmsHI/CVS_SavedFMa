@@ -1361,7 +1361,7 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
   int fillStyle[2] = {1,1};
   int fillColor[2] = {1,1};
   int markerColor[2] = {1,1};
-  int sysMarkerColor[20] = {kBlack,kGray+2,kBlue,kGreen+2,kOrange+2,kRed};
+  int sysMarkerColor[20] = {kBlack,kGray+2,kBlue,kGreen+2,kOrange+2,kRed,kYellow-3,kCyan+3};
 
   float subtract = 1;
   bool reference = 0;
@@ -1384,11 +1384,12 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
 
   TF1* fe[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   for(int ie = 0; ie< Nerror; ++ie){
-    fe[ie] = new TF1(Form("%s_fit%d_%d",h->GetName(),fill,ie),"pol3",0,5.5);
+    if (ie<6) fe[ie] = new TF1(Form("%s_fit%d_%d",h->GetName(),fill,ie),"pol3",0,5.5);
+    else fe[ie] = new TF1(Form("%s_fit%d_%d",h->GetName(),fill,ie),"pol4",0,5.5);
     he[ie]->Fit(fe[ie],"QRN");
   }
   
-  TH1D * hErrorTot = (TH1D*)he[0]->Clone(Form("%s_tot",he[0]->GetName()));
+  TH1D * hErrorTot = (TH1D*)he[1]->Clone(Form("%s_tot",he[1]->GetName()));
   if (cerr) {
      cerr->cd();
      for(int ie = 0; ie< Nerror; ++ie){
@@ -1475,8 +1476,15 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
     hErrorTot->SetLineColor(kBlack);
     hErrorTot->Draw("hist same");
     inc->cd();
-  }
 
+    TFile outf("finalSys.root","update");
+    for(int ie = 0; ie< Nerror; ++ie){
+      he[ie]->Write();
+      fe[ie]->Write();
+    }
+    hErrorTot->Write();
+    outf.Close();
+  }
 }
 
 

@@ -17,7 +17,6 @@ using namespace std;
 static const int MAXTRK = 30000;
 
 void combineSysErrors(TH1 * he1[3][5], TH1 * he2[3][5]) {
-  
 }
 
 void drawDijetResultSys(int binMode =2, // 1 : aj, 2 : cent
@@ -182,6 +181,13 @@ void drawDijetResultSys(int binMode =2, // 1 : aj, 2 : cent
       handsomeTH1(ffratiocmp[ijet][iaj],kBlue,1.3,kOpenCircle);
     }
   }
+  
+
+  /////////////////////////////////////////////////
+  // Monitor
+  /////////////////////////////////////////////////
+  TFile outf("finalSys.root","recreate");
+  outf.Close();
   
   /////////////////////////////////////////////////
   // Draw Result
