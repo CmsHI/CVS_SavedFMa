@@ -47,7 +47,7 @@
    hPadPtTrack->GetXaxis()->SetLabelFont(43);
    hPadPtTrack->GetXaxis()->SetLabelOffset(0.01);
    hPadPtTrack->GetXaxis()->SetLabelSize(25);
-   hPadPtTrack->GetXaxis()->SetTitleSize(33);
+   hPadPtTrack->GetXaxis()->SetTitleSize(30);
    hPadPtTrack->GetXaxis()->SetTitleOffset(2.16);
    hPadPtTrack->GetXaxis()->SetTitleFont(43);
    hPadPtTrack->GetYaxis()->SetTitle("dN_{ track} /dp_{T}");
@@ -55,7 +55,7 @@
    hPadPtTrack->GetYaxis()->SetLabelFont(43);
    hPadPtTrack->GetYaxis()->SetLabelOffset(0.01);
    hPadPtTrack->GetYaxis()->SetLabelSize(25);
-   hPadPtTrack->GetYaxis()->SetTitleSize(33);
+   hPadPtTrack->GetYaxis()->SetTitleSize(30);
    hPadPtTrack->GetYaxis()->SetTitleOffset(2.28);
    hPadPtTrack->GetYaxis()->SetTitleFont(43);
    hPadPtTrack->GetZaxis()->SetLabelFont(43);
@@ -1290,7 +1290,7 @@
    hPadPtTrackR->GetXaxis()->SetLabelFont(43);
    hPadPtTrackR->GetXaxis()->SetLabelOffset(0.01);
    hPadPtTrackR->GetXaxis()->SetLabelSize(25);
-   hPadPtTrackR->GetXaxis()->SetTitleSize(33);
+   hPadPtTrackR->GetXaxis()->SetTitleSize(30);
    hPadPtTrackR->GetXaxis()->SetTitleOffset(2.16);
    hPadPtTrackR->GetXaxis()->SetTitleFont(43);
    hPadPtTrackR->GetYaxis()->SetTitle("PbPb - pp");
@@ -1298,7 +1298,7 @@
    hPadPtTrackR->GetYaxis()->SetLabelFont(43);
    hPadPtTrackR->GetYaxis()->SetLabelOffset(0.01);
    hPadPtTrackR->GetYaxis()->SetLabelSize(25);
-   hPadPtTrackR->GetYaxis()->SetTitleSize(33);
+   hPadPtTrackR->GetYaxis()->SetTitleSize(30);
    hPadPtTrackR->GetYaxis()->SetTitleOffset(2.28);
    hPadPtTrackR->GetYaxis()->SetTitleFont(43);
    hPadPtTrackR->GetZaxis()->SetLabelFont(43);
@@ -2421,7 +2421,7 @@
    hPadPtTrack->GetXaxis()->SetLabelFont(43);
    hPadPtTrack->GetXaxis()->SetLabelOffset(0.01);
    hPadPtTrack->GetXaxis()->SetLabelSize(25);
-   hPadPtTrack->GetXaxis()->SetTitleSize(33);
+   hPadPtTrack->GetXaxis()->SetTitleSize(30);
    hPadPtTrack->GetXaxis()->SetTitleOffset(2.16);
    hPadPtTrack->GetXaxis()->SetTitleFont(43);
    hPadPtTrack->GetYaxis()->SetTitle("dN_{ track} /dp_{T}");
@@ -2429,7 +2429,7 @@
    hPadPtTrack->GetYaxis()->SetLabelFont(43);
    hPadPtTrack->GetYaxis()->SetLabelOffset(0.01);
    hPadPtTrack->GetYaxis()->SetLabelSize(25);
-   hPadPtTrack->GetYaxis()->SetTitleSize(33);
+   hPadPtTrack->GetYaxis()->SetTitleSize(30);
    hPadPtTrack->GetYaxis()->SetTitleOffset(2.28);
    hPadPtTrack->GetYaxis()->SetTitleFont(43);
    hPadPtTrack->GetZaxis()->SetLabelFont(43);
@@ -3665,7 +3665,7 @@
    hPadPtTrackR->GetXaxis()->SetLabelFont(43);
    hPadPtTrackR->GetXaxis()->SetLabelOffset(0.01);
    hPadPtTrackR->GetXaxis()->SetLabelSize(25);
-   hPadPtTrackR->GetXaxis()->SetTitleSize(33);
+   hPadPtTrackR->GetXaxis()->SetTitleSize(30);
    hPadPtTrackR->GetXaxis()->SetTitleOffset(2.16);
    hPadPtTrackR->GetXaxis()->SetTitleFont(43);
    hPadPtTrackR->GetYaxis()->SetTitle("PbPb - pp");
@@ -3673,7 +3673,7 @@
    hPadPtTrackR->GetYaxis()->SetLabelFont(43);
    hPadPtTrackR->GetYaxis()->SetLabelOffset(0.01);
    hPadPtTrackR->GetYaxis()->SetLabelSize(25);
-   hPadPtTrackR->GetYaxis()->SetTitleSize(33);
+   hPadPtTrackR->GetYaxis()->SetTitleSize(30);
    hPadPtTrackR->GetYaxis()->SetTitleOffset(2.28);
    hPadPtTrackR->GetYaxis()->SetTitleFont(43);
    hPadPtTrackR->GetZaxis()->SetLabelFont(43);
@@ -4799,7 +4799,7 @@
    hPadPtTrack->GetXaxis()->SetLabelFont(43);
    hPadPtTrack->GetXaxis()->SetLabelOffset(0.01);
    hPadPtTrack->GetXaxis()->SetLabelSize(25);
-   hPadPtTrack->GetXaxis()->SetTitleSize(33);
+   hPadPtTrack->GetXaxis()->SetTitleSize(30);
    hPadPtTrack->GetXaxis()->SetTitleOffset(2.16);
    hPadPtTrack->GetXaxis()->SetTitleFont(43);
    hPadPtTrack->GetYaxis()->SetTitle("dN_{ track} /dp_{T}");
@@ -4807,7 +4807,7 @@
    hPadPtTrack->GetYaxis()->SetLabelFont(43);
    hPadPtTrack->GetYaxis()->SetLabelOffset(0.01);
    hPadPtTrack->GetYaxis()->SetLabelSize(25);
-   hPadPtTrack->GetYaxis()->SetTitleSize(33);
+   hPadPtTrack->GetYaxis()->SetTitleSize(30);
    hPadPtTrack->GetYaxis()->SetTitleOffset(2.28);
    hPadPtTrack->GetYaxis()->SetTitleFont(43);
    hPadPtTrack->GetZaxis()->SetLabelFont(43);
@@ -6037,7 +6037,7 @@
    hPadPtTrackR->GetXaxis()->SetLabelFont(43);
    hPadPtTrackR->GetXaxis()->SetLabelOffset(0.01);
    hPadPtTrackR->GetXaxis()->SetLabelSize(25);
-   hPadPtTrackR->GetXaxis()->SetTitleSize(33);
+   hPadPtTrackR->GetXaxis()->SetTitleSize(30);
    hPadPtTrackR->GetXaxis()->SetTitleOffset(2.16);
    hPadPtTrackR->GetXaxis()->SetTitleFont(43);
    hPadPtTrackR->GetYaxis()->SetTitle("PbPb - pp");
@@ -6045,7 +6045,7 @@
    hPadPtTrackR->GetYaxis()->SetLabelFont(43);
    hPadPtTrackR->GetYaxis()->SetLabelOffset(0.01);
    hPadPtTrackR->GetYaxis()->SetLabelSize(25);
-   hPadPtTrackR->GetYaxis()->SetTitleSize(33);
+   hPadPtTrackR->GetYaxis()->SetTitleSize(30);
    hPadPtTrackR->GetYaxis()->SetTitleOffset(2.28);
    hPadPtTrackR->GetYaxis()->SetTitleFont(43);
    hPadPtTrackR->GetZaxis()->SetLabelFont(43);
@@ -7168,7 +7168,7 @@
    hPadPtTrack->GetXaxis()->SetLabelFont(43);
    hPadPtTrack->GetXaxis()->SetLabelOffset(0.01);
    hPadPtTrack->GetXaxis()->SetLabelSize(25);
-   hPadPtTrack->GetXaxis()->SetTitleSize(33);
+   hPadPtTrack->GetXaxis()->SetTitleSize(30);
    hPadPtTrack->GetXaxis()->SetTitleOffset(2.16);
    hPadPtTrack->GetXaxis()->SetTitleFont(43);
    hPadPtTrack->GetYaxis()->SetTitle("dN_{ track} /dp_{T}");
@@ -7176,7 +7176,7 @@
    hPadPtTrack->GetYaxis()->SetLabelFont(43);
    hPadPtTrack->GetYaxis()->SetLabelOffset(0.01);
    hPadPtTrack->GetYaxis()->SetLabelSize(25);
-   hPadPtTrack->GetYaxis()->SetTitleSize(33);
+   hPadPtTrack->GetYaxis()->SetTitleSize(30);
    hPadPtTrack->GetYaxis()->SetTitleOffset(2.28);
    hPadPtTrack->GetYaxis()->SetTitleFont(43);
    hPadPtTrack->GetZaxis()->SetLabelFont(43);
@@ -8412,7 +8412,7 @@
    hPadPtTrackR->GetXaxis()->SetLabelFont(43);
    hPadPtTrackR->GetXaxis()->SetLabelOffset(0.01);
    hPadPtTrackR->GetXaxis()->SetLabelSize(25);
-   hPadPtTrackR->GetXaxis()->SetTitleSize(33);
+   hPadPtTrackR->GetXaxis()->SetTitleSize(30);
    hPadPtTrackR->GetXaxis()->SetTitleOffset(2.16);
    hPadPtTrackR->GetXaxis()->SetTitleFont(43);
    hPadPtTrackR->GetYaxis()->SetTitle("PbPb - pp");
@@ -8420,7 +8420,7 @@
    hPadPtTrackR->GetYaxis()->SetLabelFont(43);
    hPadPtTrackR->GetYaxis()->SetLabelOffset(0.01);
    hPadPtTrackR->GetYaxis()->SetLabelSize(25);
-   hPadPtTrackR->GetYaxis()->SetTitleSize(33);
+   hPadPtTrackR->GetYaxis()->SetTitleSize(30);
    hPadPtTrackR->GetYaxis()->SetTitleOffset(2.28);
    hPadPtTrackR->GetYaxis()->SetTitleFont(43);
    hPadPtTrackR->GetZaxis()->SetLabelFont(43);
