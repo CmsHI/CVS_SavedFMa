@@ -7,6 +7,7 @@
 #include <TLatex.h>
 #include <TLine.h>
 #include <TCanvas.h>
+#include <TColor.h>
 #include <TBox.h>
 #include <TH1F.h>
 #include <TH1D.h>
@@ -186,20 +187,23 @@ void drawErrorBand(TH1* h, double* err, int theColor=kSpring+8)
 
 
 
-void drawText(const char *text, float xp, float yp, int textColor=kBlack, int textSize=18){
-   TLatex *tex = new TLatex(xp,yp,text);
-   tex->SetTextFont(63);
-   //   if(bold)tex->SetTextFont(43);
-   tex->SetTextSize(textSize);
-   tex->SetTextColor(textColor);
-   tex->SetLineWidth(1);
-   tex->SetNDC();
-   tex->Draw();
+void drawText(const char *text, float xp, float yp, int textColor=kBlack, int textSize=18, bool setNDC=true) {
+  
+  TLatex *tex = new TLatex(xp,yp,text);
+  tex->SetNDC(setNDC);
+  tex->SetTextFont(43);
+  //   if(bold)tex->SetTextFont(43);
+  tex->SetTextSize(textSize);
+  tex->SetTextColor(textColor);
+  tex->SetLineWidth(1);
+  //tex->SetNDC();
+  tex->Draw();
 }
+
 
 void drawText2(const char *text, float xp, float yp, int textSize=18){
    TLatex *tex = new TLatex(xp,yp,text);
-   tex->SetTextFont(63);
+   tex->SetTextFont(43);
    tex->SetTextSize(textSize);
    tex->SetTextColor(kBlack);
    tex->SetLineWidth(1);
@@ -370,25 +374,25 @@ void fixedFontAxis(TGaxis * ax)
 {
    ax->SetLabelFont(43);
    ax->SetLabelOffset(0.01);
-   ax->SetLabelSize(22);
+   ax->SetLabelSize(25);
    ax->SetTitleFont(43);
    ax->SetTitleSize(14);
    ax->SetTitleOffset(2);
 }
 
-void fixedFontHist (TH1 * h, Float_t xoffset=1.3, Float_t yoffset=1.2,int size=22)
+void fixedFontHist (TH1 * h, Float_t xoffset=1.3, Float_t yoffset=1.2,int size=25)
 {
    h->SetLabelFont(43,"X");
    h->SetLabelFont(43,"Y");
    //h->SetLabelOffset(0.01);
    h->SetLabelSize(size);
    h->SetTitleFont(43);
-   h->SetTitleSize(size);
+   h->SetTitleSize(size+5);
    h->SetLabelSize(size,"Y");
    h->SetLabelSize(size,"X");
    h->SetTitleFont(43,"Y");
-   h->SetTitleSize(size,"Y");
-   h->SetTitleSize(size,"X");
+   h->SetTitleSize(size+5,"Y");
+   h->SetTitleSize(size+5,"X");
    h->SetTitleOffset(xoffset,"X");
    h->SetTitleOffset(yoffset,"Y");
    h->GetXaxis()->CenterTitle();
@@ -499,8 +503,9 @@ void easyLeg( TLegend *a=0 , TString head="", int size=25)
 {
   a->SetBorderSize(0);
   a->SetHeader(head);
-//   a->SetTextFont(62);
-  a->SetTextFont(63);
+  //  a->SetTextFont(62);
+  //h->SetLabelOffset(0.01);                                                                                                                
+  a->SetTextFont(43);
   a->SetTextSize(size);
   a->SetLineColor(1);
   a->SetLineStyle(1);
@@ -1353,10 +1358,10 @@ TGraph* cheatFit(TH1* h, TF1* f){
 TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd = 0,int npar = 3, bool symmetric = 1, int opt = 0, int infill = 0, TF1* f = 0, TPad * inc=0, TPad * cerr=0){
 
   bool plot = 1;
+  
+  int color[2] = {TColor::GetColor(0xFFEE00),1};
 
-  int color[2] = {kGray,1};
-
-  int errorColor = kGray;
+  int errorColor = TColor::GetColor(0xFFEE00);
 
   int fillStyle[2] = {1,1};
   int fillColor[2] = {1,1};
