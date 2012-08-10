@@ -1,6 +1,6 @@
 {
 //=========Macro generated from canvas: cc3/
-//=========  (Wed Aug  8 11:43:33 2012) by ROOT version5.32/00
+//=========  (Fri Aug 10 18:58:48 2012) by ROOT version5.32/00
    TCanvas *cc3 = new TCanvas("cc3", "",0,22,1500,860);
    gStyle->SetOptFit(1);
    gStyle->SetOptStat(0);
@@ -38,7 +38,7 @@
    p_0_0->SetFrameLineColor(0);
    p_0_0->SetFrameBorderMode(0);
    
-   TH2F *hPadPtTrack = new TH2F("hPadPtTrack","",100,0.95,60,100,0.007,20);
+   TH2F *hPadPtTrack = new TH2F("hPadPtTrack","",100,0.95,60,100,0.003,20);
    hPadPtTrack->SetLineStyle(0);
    hPadPtTrack->SetMarkerStyle(20);
    hPadPtTrack->SetMarkerSize(1.3);
@@ -67,10 +67,7 @@
    TGraph *graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   Int_t ci;   // for color index setting
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1,1.11814068);
@@ -110,9 +107,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.203915408,1.057472401);
@@ -152,9 +147,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.449412309,1.008405788);
@@ -194,9 +187,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.74496981,0.9681178093);
@@ -236,9 +227,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.100796041,0.8406376323);
@@ -278,9 +267,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.529180722,0.7773558739);
@@ -320,9 +307,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.044919639,0.6175781635);
@@ -362,9 +347,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.665825669,0.5228555191);
@@ -404,9 +387,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,4.413344004,0.4329507894);
@@ -446,9 +427,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,5.313292846,0.3657004194);
@@ -488,9 +467,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,6.396755122,0.2859672046);
@@ -530,9 +507,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,7.701152051,0.242589083);
@@ -572,9 +547,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,9.27153561,0.2009582939);
@@ -614,9 +587,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,11.16214457,0.1426269256);
@@ -656,9 +627,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,13.43827783,0.1127543523);
@@ -698,9 +667,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,16.17854974,0.08194344704);
@@ -740,9 +707,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,19.4776053,0.05991669393);
@@ -782,9 +747,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,23.44938912,0.04316484015);
@@ -824,9 +787,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,28.23108087,0.02836832703);
@@ -866,9 +827,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,33.98783323,0.01728445061);
@@ -908,9 +867,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,40.9184761,0.01023233738);
@@ -950,9 +907,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,49.26238383,0.005668049292);
@@ -992,9 +947,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,59.30774291,0.002767250872);
@@ -1034,9 +987,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,71.40150548,0.000939956206);
@@ -1076,9 +1027,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,85.96137257,0);
@@ -1270,7 +1219,7 @@
    TLegend *leg = new TLegend(0.3,0.05,0.7,0.1,NULL,"brNDC");
    leg->SetBorderSize(0);
    leg->SetTextFont(43);
-   leg->SetTextSize(28);
+   leg->SetTextSize(25);
    leg->SetLineColor(1);
    leg->SetLineStyle(1);
    leg->SetLineWidth(1);
@@ -1285,16 +1234,23 @@
    entry->SetMarkerSize(1);
    leg->Draw();
    
-   leg = new TLegend(0.25,0.86,0.4,0.92,NULL,"brNDC");
+   leg = new TLegend(0.2494589,0.8012468,0.398668,0.9617133,NULL,"brNDC");
    leg->SetBorderSize(0);
    leg->SetTextFont(43);
-   leg->SetTextSize(28);
+   leg->SetTextSize(25);
    leg->SetLineColor(1);
    leg->SetLineStyle(1);
    leg->SetLineWidth(1);
    leg->SetFillColor(0);
    leg->SetFillStyle(0);
    entry=leg->AddEntry("","CMS Preliminary","");
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry=leg->AddEntry("","L_{Int} = 129 #mub^{-1}","");
    entry->SetLineColor(1);
    entry->SetLineStyle(1);
    entry->SetLineWidth(1);
@@ -1354,9 +1310,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1,0.05797399296);
@@ -1396,9 +1350,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.203915408,-0.0325382439);
@@ -1438,9 +1390,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.449412309,-0.02837130788);
@@ -1480,9 +1430,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.74496981,-0.0257712689);
@@ -1522,9 +1470,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.100796041,-0.1229686787);
@@ -1564,9 +1510,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.529180722,-0.05345806632);
@@ -1606,9 +1550,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.044919639,-0.131846877);
@@ -1648,9 +1590,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.665825669,-0.08995871767);
@@ -1690,9 +1630,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,4.413344004,-0.09000269077);
@@ -1732,9 +1670,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,5.313292846,-0.06570470187);
@@ -1774,9 +1710,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,6.396755122,-0.06833054329);
@@ -1816,9 +1750,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,7.701152051,-0.04421282471);
@@ -1858,9 +1790,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,9.27153561,-0.03281527205);
@@ -1900,9 +1830,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,11.16214457,-0.03275079738);
@@ -1942,9 +1870,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,13.43827783,-0.02429314892);
@@ -1984,9 +1910,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,16.17854974,-0.01953045789);
@@ -2026,9 +1950,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,19.4776053,-0.008590533395);
@@ -2068,9 +1990,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,23.44938912,-0.005136070838);
@@ -2110,9 +2030,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,28.23108087,-0.003460135017);
@@ -2152,9 +2070,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,33.98783323,-0.004789908127);
@@ -2194,9 +2110,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,40.9184761,-0.001874070352);
@@ -2236,9 +2150,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,49.26238383,-0.0007690813851);
@@ -2278,9 +2190,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,59.30774291,-0.0001032841642);
@@ -2320,9 +2230,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,71.40150548,-0.0007026025336);
@@ -2362,9 +2270,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,85.96137257,0);
@@ -2535,9 +2441,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1,1.155924184);
@@ -2577,9 +2481,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.203915408,1.164024642);
@@ -2619,9 +2521,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.449412309,1.128313203);
@@ -2661,9 +2561,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.74496981,0.9468476121);
@@ -2703,9 +2601,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.100796041,0.840503617);
@@ -2745,9 +2641,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.529180722,0.7142593774);
@@ -2787,9 +2681,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.044919639,0.5722085874);
@@ -2829,9 +2721,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.665825669,0.4940676992);
@@ -2871,9 +2761,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,4.413344004,0.4109067051);
@@ -2913,9 +2801,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,5.313292846,0.3157921649);
@@ -2955,9 +2841,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,6.396755122,0.2658447254);
@@ -2997,9 +2881,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,7.701152051,0.2198674827);
@@ -3039,9 +2921,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,9.27153561,0.1680489673);
@@ -3081,9 +2961,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,11.16214457,0.1320307317);
@@ -3123,9 +3001,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,13.43827783,0.1039905164);
@@ -3165,9 +3041,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,16.17854974,0.0752684729);
@@ -3207,9 +3081,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,19.4776053,0.05582978865);
@@ -3249,9 +3121,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,23.44938912,0.03616668532);
@@ -3291,9 +3161,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,28.23108087,0.02399098121);
@@ -3333,9 +3201,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,33.98783323,0.01629660885);
@@ -3375,9 +3241,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,40.9184761,0.009446175551);
@@ -3417,9 +3281,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,49.26238383,0.005128252365);
@@ -3459,9 +3321,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,59.30774291,0.002423869819);
@@ -3501,9 +3361,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,71.40150548,0.000989211106);
@@ -3543,9 +3401,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,85.96137257,0);
@@ -3737,7 +3593,7 @@
    leg = new TLegend(0.1,0.05,0.6,0.1,NULL,"brNDC");
    leg->SetBorderSize(0);
    leg->SetTextFont(43);
-   leg->SetTextSize(28);
+   leg->SetTextSize(25);
    leg->SetLineColor(1);
    leg->SetLineStyle(1);
    leg->SetLineWidth(1);
@@ -3755,14 +3611,15 @@
    leg = new TLegend(0.18,0.73,0.93,0.94,NULL,"brNDC");
    leg->SetBorderSize(0);
    leg->SetTextFont(43);
-   leg->SetTextSize(23);
+   leg->SetTextSize(25);
    leg->SetLineColor(1);
    leg->SetLineStyle(1);
    leg->SetLineWidth(1);
    leg->SetFillColor(0);
    leg->SetFillStyle(0);
-   entry=leg->AddEntry("hLead","PbPb","p");
-   entry->SetLineColor(1);
+   entry=leg->AddEntry("hLead","PbPb","pl");
+   entry->SetFillColor(90);
+   entry->SetFillStyle(1001);
    entry->SetLineStyle(1);
    entry->SetLineWidth(1);
    entry->SetMarkerColor(1);
@@ -3828,9 +3685,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1,0.08015913701);
@@ -3870,9 +3725,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.203915408,0.04616716339);
@@ -3912,9 +3765,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.449412309,0.06274277266);
@@ -3954,9 +3805,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.74496981,-0.05166494346);
@@ -3996,9 +3845,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.100796041,-0.1272753138);
@@ -4038,9 +3885,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.529180722,-0.1251417045);
@@ -4080,9 +3925,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.044919639,-0.1813896756);
@@ -4122,9 +3965,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.665825669,-0.1160842414);
@@ -4164,9 +4005,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,4.413344004,-0.1087121927);
@@ -4206,9 +4045,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,5.313292846,-0.1160739145);
@@ -4248,9 +4085,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,6.396755122,-0.08639094815);
@@ -4290,9 +4125,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,7.701152051,-0.06470457968);
@@ -4332,9 +4165,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,9.27153561,-0.06616639799);
@@ -4374,9 +4205,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,11.16214457,-0.04179223765);
@@ -4416,9 +4245,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,13.43827783,-0.03011225469);
@@ -4458,9 +4285,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,16.17854974,-0.025346039);
@@ -4500,9 +4325,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,19.4776053,-0.01283669604);
@@ -4542,9 +4365,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,23.44938912,-0.01269236991);
@@ -4584,9 +4405,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,28.23108087,-0.007664427927);
@@ -4626,9 +4445,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,33.98783323,-0.005296949102);
@@ -4668,9 +4485,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,40.9184761,-0.002425898019);
@@ -4710,9 +4525,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,49.26238383,-0.0008648416761);
@@ -4752,9 +4565,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,59.30774291,-0.0002008654454);
@@ -4794,9 +4605,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,71.40150548,-0.0005570547546);
@@ -4836,9 +4645,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,85.96137257,0);
@@ -4956,6 +4763,9 @@
    line = new TLine(0,0,60,0);
    line->SetLineStyle(2);
    line->Draw();
+
+
+
    p_1_1->Modified();
    cc3->cd();
   
@@ -5009,9 +4819,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1,1.525614898);
@@ -5051,9 +4859,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.203915408,1.391426869);
@@ -5093,9 +4899,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.449412309,1.236149373);
@@ -5135,9 +4939,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.74496981,1.07610161);
@@ -5177,9 +4979,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.100796041,0.9643486254);
@@ -5219,9 +5019,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.529180722,0.7615627331);
@@ -5261,9 +5059,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.044919639,0.5873756628);
@@ -5303,9 +5099,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.665825669,0.4661039354);
@@ -5345,9 +5139,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,4.413344004,0.3762724245);
@@ -5387,9 +5179,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,5.313292846,0.3006313196);
@@ -5429,9 +5219,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,6.396755122,0.2421378409);
@@ -5471,9 +5259,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,7.701152051,0.1903447119);
@@ -5513,9 +5299,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,9.27153561,0.1519170036);
@@ -5555,9 +5339,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,11.16214457,0.1197137155);
@@ -5597,9 +5379,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,13.43827783,0.0902225206);
@@ -5639,9 +5419,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,16.17854974,0.06590106635);
@@ -5681,9 +5459,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,19.4776053,0.04838841177);
@@ -5723,9 +5499,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,23.44938912,0.03296294063);
@@ -5765,9 +5539,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,28.23108087,0.02115484845);
@@ -5807,9 +5579,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,33.98783323,0.01371686602);
@@ -5849,9 +5619,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,40.9184761,0.007866966213);
@@ -5891,9 +5659,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,49.26238383,0.003963796422);
@@ -5933,9 +5699,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,59.30774291,0.001995537438);
@@ -5975,9 +5739,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,71.40150548,0.00075305436);
@@ -6017,9 +5779,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,85.96137257,0);
@@ -6211,7 +5971,7 @@
    leg = new TLegend(0.1,0.05,0.6,0.1,NULL,"brNDC");
    leg->SetBorderSize(0);
    leg->SetTextFont(43);
-   leg->SetTextSize(28);
+   leg->SetTextSize(25);
    leg->SetLineColor(1);
    leg->SetLineStyle(1);
    leg->SetLineWidth(1);
@@ -6225,31 +5985,26 @@
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);
    leg->Draw();
-   
-   leg = new TLegend(0.07,0.73,0.65,0.94,NULL,"brNDC");
+   leg = new TLegend(0.05830729,0.84629,0.8085374,0.9335612,NULL,"brNDC");
    leg->SetBorderSize(0);
    leg->SetTextFont(43);
-   leg->SetTextSize(23);
+   leg->SetTextSize(25);
    leg->SetLineColor(1);
    leg->SetLineStyle(1);
    leg->SetLineWidth(1);
    leg->SetFillColor(0);
    leg->SetFillStyle(0);
-   entry=leg->AddEntry("hLeadMC","Jet p_{T} > 100 GeV/c, |#eta| < 2","");
-   entry->SetLineColor(1);
-   entry->SetLineStyle(1);
-   entry->SetLineWidth(1);
-   entry->SetMarkerColor(1);
-   entry->SetMarkerStyle(21);
-   entry->SetMarkerSize(1);
-   entry=leg->AddEntry("hLeadMC","Track p_{T} > 1 GeV/c, r < 0.3","");
-   entry->SetLineColor(1);
-   entry->SetLineStyle(1);
-   entry->SetLineWidth(1);
-   entry->SetMarkerColor(1);
-   entry->SetMarkerStyle(21);
-   entry->SetMarkerSize(1);
+   entry=leg->AddEntry("hLead1","Systematic uncertainty","f");
+   entry->SetFillColor(TColor::GetColor(0xFFEE00));
+   entry->SetLineColor(TColor::GetColor(0xFFEE00));
+   entry->SetFillStyle(1001);
+   entry->SetLineStyle(0);
+   entry->SetLineWidth(0);
+   entry->SetMarkerColor(TColor::GetColor(0xFFEE00));
+   entry->SetMarkerStyle(20);
+   entry->SetMarkerSize(1.1);
    leg->Draw();
+   
    p_2_0->Modified();
    cc3->cd();
   
@@ -6302,9 +6057,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1,0.437572877);
@@ -6344,9 +6097,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.203915408,0.2863169165);
@@ -6386,9 +6137,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.449412309,0.1486496572);
@@ -6428,9 +6177,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.74496981,0.07677214148);
@@ -6470,9 +6217,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.100796041,-0.01009402113);
@@ -6512,9 +6257,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.529180722,-0.08119093537);
@@ -6554,9 +6297,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.044919639,-0.1735265534);
@@ -6596,9 +6337,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.665825669,-0.1430505186);
@@ -6638,9 +6377,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,4.413344004,-0.1403716891);
@@ -6680,9 +6417,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,5.313292846,-0.1298610021);
@@ -6722,9 +6457,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,6.396755122,-0.1098546445);
@@ -6764,9 +6497,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,7.701152051,-0.09300369393);
@@ -6806,9 +6537,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,9.27153561,-0.08151092002);
@@ -6848,9 +6577,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,11.16214457,-0.05270094528);
@@ -6890,9 +6617,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,13.43827783,-0.04363091606);
@@ -6932,9 +6657,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,16.17854974,-0.03379221018);
@@ -6974,9 +6697,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,19.4776053,-0.01954140677);
@@ -7016,9 +6737,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,23.44938912,-0.01440531704);
@@ -7058,9 +6777,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,28.23108087,-0.01014090187);
@@ -7100,9 +6817,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,33.98783323,-0.007456813402);
@@ -7142,9 +6857,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,40.9184761,-0.003504742292);
@@ -7184,9 +6897,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,49.26238383,-0.001610330759);
@@ -7226,9 +6937,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,59.30774291,-0.000414679951);
@@ -7268,9 +6977,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,71.40150548,-0.0007688286595);
@@ -7310,9 +7017,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,85.96137257,0);
@@ -7483,9 +7188,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1,1.555285638);
@@ -7525,9 +7228,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.203915408,1.304986108);
@@ -7567,9 +7268,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.449412309,1.408993401);
@@ -7609,9 +7308,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.74496981,1.111066758);
@@ -7651,9 +7348,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.100796041,0.9627258724);
@@ -7693,9 +7388,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.529180722,0.7210467937);
@@ -7735,9 +7428,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.044919639,0.5677877214);
@@ -7777,9 +7468,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.665825669,0.4388300044);
@@ -7819,9 +7508,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,4.413344004,0.3418828446);
@@ -7861,9 +7548,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,5.313292846,0.2727357564);
@@ -7903,9 +7588,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,6.396755122,0.2225311413);
@@ -7945,9 +7628,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,7.701152051,0.1691776663);
@@ -7987,9 +7668,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,9.27153561,0.1421583106);
@@ -8029,9 +7708,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,11.16214457,0.1102384787);
@@ -8071,9 +7748,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,13.43827783,0.08225271675);
@@ -8113,9 +7788,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,16.17854974,0.06016778042);
@@ -8155,9 +7828,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,19.4776053,0.0433015366);
@@ -8197,9 +7868,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,23.44938912,0.02891167771);
@@ -8239,9 +7908,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,28.23108087,0.01956145799);
@@ -8281,9 +7948,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,33.98783323,0.01230738349);
@@ -8323,9 +7988,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,40.9184761,0.006935203268);
@@ -8365,9 +8028,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,49.26238383,0.003353884412);
@@ -8407,9 +8068,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,59.30774291,0.001695177877);
@@ -8449,9 +8108,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,71.40150548,0.0007333493084);
@@ -8491,9 +8148,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,85.96137257,0);
@@ -8610,7 +8265,7 @@
    leg = new TLegend(0.1,0.05,0.6,0.1,NULL,"brNDC");
    leg->SetBorderSize(0);
    leg->SetTextFont(43);
-   leg->SetTextSize(28);
+   leg->SetTextSize(25);
    leg->SetLineColor(1);
    leg->SetLineStyle(1);
    leg->SetLineWidth(1);
@@ -8624,6 +8279,32 @@
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);
    leg->Draw();
+
+   leg = new TLegend(-0.1,0.73,0.65,0.94,NULL,"brNDC");
+   leg->SetBorderSize(0);
+   leg->SetTextFont(43);
+   leg->SetTextSize(25);
+   leg->SetLineColor(1);
+   leg->SetLineStyle(1);
+   leg->SetLineWidth(1);
+   leg->SetFillColor(0);
+   leg->SetFillStyle(0);
+   entry=leg->AddEntry("hLeadMC","Jet p_{T} > 100 GeV/c, |#eta| < 2","");
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry=leg->AddEntry("hLeadMC","Track p_{T} > 1 GeV/c, r < 0.3","");
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(1);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   leg->Draw();
+
    Double_t xAxis11[28] = {0, 0.5, 1, 1.203915, 1.449412, 1.74497, 2.100796, 2.529181, 3.04492, 3.665826, 4.413344, 5.313293, 6.396755, 7.701152, 9.271536, 11.16214, 13.43828, 16.17855, 19.47761, 23.44939, 28.23108, 33.98783, 40.91848, 49.26238, 59.30774, 71.40151, 85.96137, 103.4902}; 
    
    TH1D *hTrkmc1 = new TH1D("hTrkmc1"," zy projection",27, xAxis11);
@@ -8751,9 +8432,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1,0.4898413302);
@@ -8793,9 +8472,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.203915408,0.201189696);
@@ -8835,9 +8512,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.449412309,0.3178243497);
@@ -8877,9 +8552,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,1.74496981,0.1115966677);
@@ -8919,9 +8592,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.100796041,-0.01477153739);
@@ -8961,9 +8632,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,2.529180722,-0.1267855413);
@@ -9003,9 +8672,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.044919639,-0.1950707875);
@@ -9045,9 +8712,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,3.665825669,-0.1750044687);
@@ -9087,9 +8752,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,4.413344004,-0.1728590474);
@@ -9129,9 +8792,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,5.313292846,-0.155830915);
@@ -9171,9 +8832,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,6.396755122,-0.1290240563);
@@ -9213,9 +8872,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,7.701152051,-0.1128300016);
@@ -9255,9 +8912,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,9.27153561,-0.09145869235);
@@ -9297,9 +8952,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,11.16214457,-0.06110877918);
@@ -9339,9 +8992,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,13.43827783,-0.05106901834);
@@ -9381,9 +9032,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,16.17854974,-0.03901915069);
@@ -9423,9 +9072,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,19.4776053,-0.02376995359);
@@ -9465,9 +9112,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,23.44938912,-0.01806093184);
@@ -9507,9 +9152,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,28.23108087,-0.01142501331);
@@ -9549,9 +9192,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,33.98783323,-0.008487280852);
@@ -9591,9 +9232,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,40.9184761,-0.004216966475);
@@ -9633,9 +9272,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,49.26238383,-0.001868768412);
@@ -9675,9 +9312,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,59.30774291,-0.0005104197361);
@@ -9717,9 +9352,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,71.40150548,-0.0007305987579);
@@ -9759,9 +9392,7 @@
    graph = new TGraph(5);
    graph->SetName("");
    graph->SetTitle("");
-
-   ci = TColor::GetColor("#cccccc");
-   graph->SetFillColor(ci);
+   graph->SetFillColor(90);
    graph->SetMarkerStyle(20);
    graph->SetMarkerSize(1.3);
    graph->SetPoint(0,85.96137257,0);
@@ -9884,4 +9515,7 @@
    cc3->Modified();
    cc3->cd();
    cc3->SetSelected(cc3);
+
+   cc3->SaveAs("ptFF.pdf");
+   cc3->SaveAs("ptFF.gif");
 }
