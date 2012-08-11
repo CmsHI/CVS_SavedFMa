@@ -20,8 +20,10 @@ void combineSysErrors(TH1 * he1[3][5], TH1 * he2[3][5]) {
 }
 
 void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
-  bool doEtaRef = true ) 
+			      bool doEtaRef = true,
+			      bool draw2010 = true) 
 {  
+
   TH1::SetDefaultSumw2();
 //   std::string Input_="dijetFF_output_histograms_trkPtProjectOnJetAxis_trackPtCut1_FinaletaCut2.00_pfJet.root";
   std::string Input_="dijetFF_output_histograms_trkPtProjectOnJetAxis_trackPtCut1_FinaletaCut2.00_pas.root";
@@ -219,12 +221,12 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
   /////////////////////////////////////////////////
   gPad->RedrawAxis();
   jumSun(0,1,6,1);
-  drawText("CMS Preliminary",0.27,0.88,1,25); 
-	drawText("L_{Int} = 129 #mub^{-1}",0.27,0.80,1,25);
-	drawText(Form("%.0f%% - %.0f%%", float(centBin1[iaj-1]*2.5), float(centBin1[iaj]*2.5)),0.55,2.35,kBlack,25,false);
+  drawText("CMS Preliminary",0.2,0.88,1,25); 
+	drawText("L_{Int} = 129 #mub^{-1}",0.6,0.88,1,25);
+	//	drawText(Form("%.0f%% - %.0f%%", float(centBin1[iaj-1]*2.5), float(centBin1[iaj]*2.5)),0.2,0.8,kBlack,25);
   float ptx(0.08),pty1(0.89);
-  drawText("Jet p_{T}  > 100GeV/c, |#eta| < 2",0.22,0.58,kBlack,25);
-  drawText("Track p_{T}  > 1 GeV/c, r < 0.3",0.319,0.206,kBlack,25);
+  //  drawText("Jet p_{T}  > 100GeV/c, |#eta| < 2",0.22,0.58,kBlack,25);
+  //  drawText("Track p_{T}  > 1 GeV/c, r < 0.3",0.319,0.206,kBlack,25);
 
 //   TH1D* hYel = new TH1D("hYel","",0,10,20);
 //   handsomeTH1(hYel,TColor::GetColor(0xFFEE00));
@@ -238,9 +240,85 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
 // 	lsys->Draw();
 	
 	// Save Plot
-  c->SaveAs(outdir+Form("/FF_ratio_ijet%d_%s_0to10.gif",ijet,tag.Data()));
-  c->SaveAs(outdir+Form("/FF_ratio_ijet%d_%s_0to10.pdf",ijet,tag.Data()));
-  c->SaveAs(outdir+Form("/FF_ratio_ijet%d_%s_0to10.C",ijet,tag.Data()));
+
+
+  TGraph *graph = new TGraph(5);
+  graph->SetName("");
+  graph->SetTitle("");
+  graph->SetFillColor(90);
+  graph->SetMarkerStyle(20);
+  graph->SetMarkerSize(1.3);
+
+  int ient = 0;
+  graph->SetPoint(ient,0,0.827905485);  ient++;
+  graph->SetPoint(ient,0,2.321370321);   ient++;
+  graph->SetPoint(ient,0.5,2.321370321);   ient++;
+  graph->SetPoint(ient,0.5,1.431080934); ient++;
+  graph->SetPoint(ient,1,1.431080934);  ient++;
+  graph->SetPoint(ient,1,1.187297662);  ient++;
+  graph->SetPoint(ient,1.5,1.187297662);  ient++;
+  graph->SetPoint(ient,1.5,1.123097754);  ient++;
+  graph->SetPoint(ient,2,1.123097754);  ient++;
+  graph->SetPoint(ient,2,1.022374646);  ient++;
+  graph->SetPoint(ient,2.5,1.022374646);  ient++;
+  graph->SetPoint(ient,2.5,1.141584158);  ient++;
+  graph->SetPoint(ient,3,1.141584158);  ient++;
+  graph->SetPoint(ient,3,1.152100906);  ient++;
+  graph->SetPoint(ient,3.5,1.152100906);  ient++;
+  graph->SetPoint(ient,3.5,1.260215016);  ient++;
+  graph->SetPoint(ient,4,1.260215016);  ient++;
+  graph->SetPoint(ient,4,1.865199831); ient++;
+  graph->SetPoint(ient,4.5,1.865199831); ient++;
+  // half way!                                                                                                                               
+  graph->SetPoint(ient,4.5,0.6033820821); ient++;
+  graph->SetPoint(ient,4,0.6033820821); ient++;
+  graph->SetPoint(ient,4,0.62840846);   ient++;
+  graph->SetPoint(ient,3.5,0.62840846); ient++;
+  graph->SetPoint(ient,3.5,0.7333786452); ient++;
+  graph->SetPoint(ient,3,0.7333786452); ient++;
+  graph->SetPoint(ient,3,0.8043352398); ient++;
+  graph->SetPoint(ient,2.5,0.8043352398); ient++;
+  graph->SetPoint(ient,2.5,0.7257791577); ient++;
+  graph->SetPoint(ient,2,0.7257791577); ient++;
+  graph->SetPoint(ient,2,0.7548269812); ient++;
+  graph->SetPoint(ient,1.5,0.7548269812); ient++;
+  graph->SetPoint(ient,1.5,0.690144622); ient++;
+  graph->SetPoint(ient,1,0.690144622); ient++;
+  graph->SetPoint(ient,1,0.6262867487); ient++;
+  graph->SetPoint(ient,0.5,0.6262867487); ient++;
+  graph->SetPoint(ient,0.5,0.827905485); ient++;
+  graph->SetPoint(ient,0,0.827905485); ient++;
+
+
+
+  if (draw2010) 
+    graph->Draw("l");
+  
+  
+  TH1D* hdum = new TH1D("hdum","",10,0,10);
+  handsomeTH1(hdum,1);
+  hdum->SetFillColor(0);
+  hdum->SetLineColor(1);
+  hdum->SetFillStyle(1000);
+
+  TH1D* hdum2 = new TH1D("hdum2","",10,0,10);
+  handsomeTH1(hdum2,1);
+  hdum2->SetFillColor(TColor::GetColor(0xFFEE00));
+  hdum2->SetLineColor(TColor::GetColor(0xFFEE00));
+  hdum2->SetLineStyle(1);
+  hdum2->SetFillStyle(1001);
+
+  
+  TLegend* l2   = new TLegend(0.1834677,0.720339,0.75,0.8983051,NULL,"brNDC");
+  easyLeg(l2,"");
+  l2->AddEntry(hdum2,"2011, 0-10%, Inclusive jet","plf");
+  l2->AddEntry(hdum, "2010, 0-30%, Leading jet","f");
+  l2->Draw();
+  
+
+  c->SaveAs(outdir+Form("/FF_ratio_ijet%d_%s_0to10_with2010%d.gif",ijet,tag.Data(),draw2010));
+  c->SaveAs(outdir+Form("/FF_ratio_ijet%d_%s_0to10_with2010%d.pdf",ijet,tag.Data(),draw2010));
+  c->SaveAs(outdir+Form("/FF_ratio_ijet%d_%s_0to10_with2010%d.C",ijet,tag.Data(),draw2010));
 }
 
  
