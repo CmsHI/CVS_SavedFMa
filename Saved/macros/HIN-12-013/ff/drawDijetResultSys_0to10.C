@@ -223,12 +223,12 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
   hPadR->Draw();
 
   drawSysErr(ffratio[ijet][iaj],vError[ijet][iajSys],Nerror,ijet-1,1,2,1,ijet == 1,0,0,0,0,TColor::GetColor(0xFFEE00));
-  drawSysErr(ffratio[ijet][2],vError[ijet][2],Nerror,ijet-1,1,2,1,ijet == 1,0,0,0,0,kGreen-3);
+  if (draw2010)   drawSysErr(ffratio[ijet][2],vError[ijet][2],Nerror,ijet-1,1,2,1,ijet == 1,0,0,0,0,kGreen-3);
   handsomeTH1(ffratio[ijet][2],1);
   ffratio[ijet][2]->SetMarkerStyle(25);
 
   ffratio[ijet][iaj]->Draw("same");
-  ffratio[ijet][2]->Draw("same");
+  if (draw2010)  ffratio[ijet][2]->Draw("same");
 
 
   
@@ -238,8 +238,8 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
 	drawText("L_{Int} = 129 #mub^{-1}",0.6,0.88,1,25);
 	//	drawText(Form("%.0f%% - %.0f%%", float(centBin1[iaj-1]*2.5), float(centBin1[iaj]*2.5)),0.2,0.8,kBlack,25);
   float ptx(0.08),pty1(0.89);
-  //  drawText("Jet p_{T}  > 100GeV/c, |#eta| < 2",0.22,0.58,kBlack,25);
-  //  drawText("Track p_{T}  > 1 GeV/c, r < 0.3",0.319,0.206,kBlack,25);
+  if (!draw2010)  drawText("Jet p_{T}  > 100GeV/c, |#eta| < 2",0.2,0.75,kBlack,25);
+  if (!draw2010)   drawText("Track p_{T}  > 1 GeV/c, r < 0.3",0.2,0.69,kBlack,25);
 
 //   TH1D* hYel = new TH1D("hYel","",0,10,20);
 //   handsomeTH1(hYel,TColor::GetColor(0xFFEE00));
@@ -264,24 +264,26 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
 
   int ient = 0;
   //  graph1->SetPoint(ient,0,0.827905485);  ient++;
-  graph1->SetPoint(ient,0,2.321370321);   ient++;
-  graph1->SetPoint(ient,0.5,2.321370321);   ient++;
-  graph1->SetPoint(ient,0.5,1.431080934); ient++;
-  graph1->SetPoint(ient,1,1.431080934);  ient++;
-  graph1->SetPoint(ient,1,1.187297662);  ient++;
-  graph1->SetPoint(ient,1.5,1.187297662);  ient++;
-  graph1->SetPoint(ient,1.5,1.123097754);  ient++;
-  graph1->SetPoint(ient,2,1.123097754);  ient++;
-  graph1->SetPoint(ient,2,1.022374646);  ient++;
-  graph1->SetPoint(ient,2.5,1.022374646);  ient++;
-  graph1->SetPoint(ient,2.5,1.141584158);  ient++;
-  graph1->SetPoint(ient,3,1.141584158);  ient++;
-  graph1->SetPoint(ient,3,1.152100906);  ient++;
-  graph1->SetPoint(ient,3.5,1.152100906);  ient++;
-  graph1->SetPoint(ient,3.5,1.260215016);  ient++;
-  graph1->SetPoint(ient,4,1.260215016);  ient++;
-  graph1->SetPoint(ient,4,1.865199831); ient++;
-  graph1->SetPoint(ient,4.5,1.865199831); ient++;
+  graph1->SetPoint(ient,0,0.7941284219);  ient++;
+  graph1->SetPoint(ient,0,1.615971456);  ient++;
+  graph1->SetPoint(ient,0.5,1.615971456);  ient++;
+  graph1->SetPoint(ient,0.5,1.30570635);  ient++;
+  graph1->SetPoint(ient,1,1.30570635);  ient++;
+  graph1->SetPoint(ient,1,1.054754209);  ient++;
+  graph1->SetPoint(ient,1.5,1.054754209);  ient++;
+  graph1->SetPoint(ient,1.5,0.99417728);  ient++;
+  graph1->SetPoint(ient,2,0.99417728);  ient++;
+  graph1->SetPoint(ient,2,0.9416682292);  ient++;
+  graph1->SetPoint(ient,2.5,0.9416682292);  ient++;
+  graph1->SetPoint(ient,2.5,0.9237305945);  ient++;
+  graph1->SetPoint(ient,3,0.9237305945);  ient++;
+  graph1->SetPoint(ient,3,1.0476436);  ient++;
+  graph1->SetPoint(ient,3.5,1.0476436);  ient++;
+  graph1->SetPoint(ient,3.5,1.322757561);  ient++;
+  graph1->SetPoint(ient,4,1.322757561);  ient++;
+  graph1->SetPoint(ient,4,0.8974300895);  ient++;
+  graph1->SetPoint(ient,4.5,0.8974300895);  ient++;
+ 
 
 
   // half way!                                                                                                                 
@@ -293,24 +295,25 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
   graph2->SetMarkerSize(1.3);
 
   ient = 0;
-  graph2->SetPoint(ient,4.5,0.6033820821); ient++;
-  graph2->SetPoint(ient,4,0.6033820821); ient++;
-  graph2->SetPoint(ient,4,0.62840846);   ient++;
-  graph2->SetPoint(ient,3.5,0.62840846); ient++;
-  graph2->SetPoint(ient,3.5,0.7333786452); ient++;
-  graph2->SetPoint(ient,3,0.7333786452); ient++;
-  graph2->SetPoint(ient,3,0.8043352398); ient++;
-  graph2->SetPoint(ient,2.5,0.8043352398); ient++;
-  graph2->SetPoint(ient,2.5,0.7257791577); ient++;
-  graph2->SetPoint(ient,2,0.7257791577); ient++;
-  graph2->SetPoint(ient,2,0.7548269812); ient++;
-  graph2->SetPoint(ient,1.5,0.7548269812); ient++;
-  graph2->SetPoint(ient,1.5,0.690144622); ient++;
-  graph2->SetPoint(ient,1,0.690144622); ient++;
-  graph2->SetPoint(ient,1,0.6262867487); ient++;
-  graph2->SetPoint(ient,0.5,0.6262867487); ient++;
-  graph2->SetPoint(ient,0.5,0.827905485); ient++;
-  graph2->SetPoint(ient,0,0.827905485); ient++;
+  graph2->SetPoint(ient,4.5,0.8974300895);  ient++;
+  graph2->SetPoint(ient,4.5,0.5225442278); ient++; 
+  graph2->SetPoint(ient,4,0.5225442278); ient++;
+  graph2->SetPoint(ient,4,0.8738474167); ient++;
+  graph2->SetPoint(ient,3.5,0.8738474167); ient++;
+  graph2->SetPoint(ient,3.5,0.7402560788); ient++;
+  graph2->SetPoint(ient,3,0.7402560788); ient++;
+  graph2->SetPoint(ient,3,0.670229673); ient++;
+  graph2->SetPoint(ient,2.5,0.670229673); ient++;
+  graph2->SetPoint(ient,2.5,0.6846419401); ient++;
+  graph2->SetPoint(ient,2,0.6846419401); ient++;
+  graph2->SetPoint(ient,2,0.7073446889); ient++;
+  graph2->SetPoint(ient,1.5,0.7073446889); ient++;
+  graph2->SetPoint(ient,1.5,0.7060627085); ient++;
+  graph2->SetPoint(ient,1,0.7060627085); ient++;
+  graph2->SetPoint(ient,1,0.7759279165); ient++;
+  graph2->SetPoint(ient,0.5,0.7759279165); ient++;
+  graph2->SetPoint(ient,0.5,0.7941284219); ient++;
+  graph2->SetPoint(ient,0,0.7941284219); ient++;
 
   graph1->SetLineWidth(2);
   graph2->SetLineWidth(2);
@@ -345,11 +348,20 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
 
   
 
-  TLegend* l2   = new TLegend(0.1834677,0.720339,0.75,0.8983051,NULL,"brNDC");
+  TLegend* l2;
+  l2 = new TLegend(0.1834677,0.720339,0.75,0.8983051,NULL,"brNDC");
+  if (!draw2010) l2 =  new TLegend(0.1814516,0.7966102,0.7479839,0.9237288,NULL,"brNDC");
+
+  
   easyLeg(l2,"");
-  l2->AddEntry(hdum, "2010, 0-30%,  Leading jet","f");
-  l2->AddEntry(hdum2,"2011, 0-10%,  Inclusive jet","plf");
-  l2->AddEntry(hdum3,"2011, 10-30%,Inclusive jet","plf");
+  if (draw2010)  { 
+    l2->AddEntry(hdum, "2010, 0-30%,  Leading jet","f");
+    l2->AddEntry(hdum2,"2011, 0-10%,  Inclusive jet","plf");
+    l2->AddEntry(hdum3,"2011, 10-30%,Inclusive jet","plf");
+  }
+  else  {
+    l2->AddEntry(hdum2,"0-10%","plf");
+  }
   l2->Draw();
   
 
