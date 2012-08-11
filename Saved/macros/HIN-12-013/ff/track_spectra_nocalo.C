@@ -2412,7 +2412,7 @@
    p_1_0->SetFrameLineColor(0);
    p_1_0->SetFrameBorderMode(0);
    
-   TH2F *hPadPtTrack = new TH2F("hPadPtTrack","",100,0.95,60,100,0.007,20);
+   TH2F *hPadPtTrack = new TH2F("hPadPtTrack","",100,0.95,60,100,0.003,20);  
    hPadPtTrack->SetLineStyle(0);
    hPadPtTrack->SetMarkerStyle(20);
    hPadPtTrack->SetMarkerSize(1.3);
@@ -4790,7 +4790,7 @@
    p_2_0->SetFrameLineColor(0);
    p_2_0->SetFrameBorderMode(0);
    
-   TH2F *hPadPtTrack = new TH2F("hPadPtTrack","",100,0.95,60,100,0.007,20);
+   TH2F *hPadPtTrack = new TH2F("hPadPtTrack","",100,0.95,60,100,0.003,20);
    hPadPtTrack->SetLineStyle(0);
    hPadPtTrack->SetMarkerStyle(20);
    hPadPtTrack->SetMarkerSize(1.3);
@@ -7159,7 +7159,7 @@
    p_3_0->SetFrameLineColor(0);
    p_3_0->SetFrameBorderMode(0);
    
-   TH2F *hPadPtTrack = new TH2F("hPadPtTrack","",100,0.95,60,100,0.007,20);
+   TH2F *hPadPtTrack = new TH2F("hPadPtTrack","",100,0.95,60,100,0.003,20);
    hPadPtTrack->SetLineStyle(0);
    hPadPtTrack->SetMarkerStyle(20);
    hPadPtTrack->SetMarkerSize(1.3);
