@@ -50,7 +50,7 @@
    hPadPtTrack->GetXaxis()->SetTitleSize(30);
    hPadPtTrack->GetXaxis()->SetTitleOffset(2.16);
    hPadPtTrack->GetXaxis()->SetTitleFont(43);
-   hPadPtTrack->GetYaxis()->SetTitle("dN_{ track} /dp_{T}");
+   hPadPtTrack->GetYaxis()->SetTitle("1/N_{ jet} dN_{ track} /dp_{T}");
    hPadPtTrack->GetYaxis()->CenterTitle(true);
    hPadPtTrack->GetYaxis()->SetLabelFont(43);
    hPadPtTrack->GetYaxis()->SetLabelOffset(0.01);
@@ -2424,7 +2424,7 @@
    hPadPtTrack->GetXaxis()->SetTitleSize(30);
    hPadPtTrack->GetXaxis()->SetTitleOffset(2.16);
    hPadPtTrack->GetXaxis()->SetTitleFont(43);
-   hPadPtTrack->GetYaxis()->SetTitle("dN_{ track} /dp_{T}");
+   hPadPtTrack->GetYaxis()->SetTitle("1/N_{ jet} dN_{ track} /dp_{T}");
    hPadPtTrack->GetYaxis()->CenterTitle(true);
    hPadPtTrack->GetYaxis()->SetLabelFont(43);
    hPadPtTrack->GetYaxis()->SetLabelOffset(0.01);
@@ -4802,7 +4802,7 @@
    hPadPtTrack->GetXaxis()->SetTitleSize(30);
    hPadPtTrack->GetXaxis()->SetTitleOffset(2.16);
    hPadPtTrack->GetXaxis()->SetTitleFont(43);
-   hPadPtTrack->GetYaxis()->SetTitle("dN_{ track} /dp_{T}");
+   hPadPtTrack->GetYaxis()->SetTitle("1/N_{ jet} dN_{ track} /dp_{T}");
    hPadPtTrack->GetYaxis()->CenterTitle(true);
    hPadPtTrack->GetYaxis()->SetLabelFont(43);
    hPadPtTrack->GetYaxis()->SetLabelOffset(0.01);
@@ -7171,7 +7171,7 @@
    hPadPtTrack->GetXaxis()->SetTitleSize(30);
    hPadPtTrack->GetXaxis()->SetTitleOffset(2.16);
    hPadPtTrack->GetXaxis()->SetTitleFont(43);
-   hPadPtTrack->GetYaxis()->SetTitle("dN_{ track} /dp_{T}");
+   hPadPtTrack->GetYaxis()->SetTitle("1/N_{ jet} dN_{ track} /dp_{T}");
    hPadPtTrack->GetYaxis()->CenterTitle(true);
    hPadPtTrack->GetYaxis()->SetLabelFont(43);
    hPadPtTrack->GetYaxis()->SetLabelOffset(0.01);
@@ -9516,6 +9516,6 @@
    cc3->cd();
    cc3->SetSelected(cc3);
 
-   cc3->SaveAs("ptFF.pdf");
-   cc3->SaveAs("ptFF.gif");
+   cc3->SaveAs("track_spectra_nocalo.pdf");
+   cc3->SaveAs("track_spectra_nocalo.gif");
 }
