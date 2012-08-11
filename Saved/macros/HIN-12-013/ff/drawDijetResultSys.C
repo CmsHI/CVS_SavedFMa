@@ -132,7 +132,7 @@ void drawDijetResultSys(int binMode =2, // 1 : aj, 2 : cent
    TCanvas * cerr = new TCanvas("cerr","cerr",4*300,300);
    cerr->Divide(4,1);
 
-  TCanvas *c = new TCanvas("c","",1500,760);
+  TCanvas *c = new TCanvas("c","",1500,860);
   makeMultiPanelCanvasNew(c,4,2,0.0,0.0,0.22,0.22,0.01,1.0,0.95);
 
   /////////////////////////////////////////////////
