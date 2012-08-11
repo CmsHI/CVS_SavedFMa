@@ -277,6 +277,7 @@ void drawDijetResultSys(int binMode =2, // 1 : aj, 2 : cent
     }
     c->SaveAs(outdir+Form("/FF_distribution_ijet%d_%s.gif",ijet,tag.Data()));
     c->SaveAs(outdir+Form("/FF_distribution_ijet%d_%s.pdf",ijet,tag.Data()));
+    c->SaveAs(outdir+Form("/FF_distribution_ijet%d_%s.C",ijet,tag.Data()));
   }
 }
 
