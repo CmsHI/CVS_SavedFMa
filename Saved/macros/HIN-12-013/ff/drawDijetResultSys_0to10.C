@@ -204,21 +204,34 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
 //   gPad->RedrawAxis();
 
   // Draw Ratio
-  ffratio[ijet][iaj]= (TH1D*)ffhi[ijet][iaj]->Clone(Form("ffRattio_ijet%d_iaj%d",ijet,iaj));
-  ffratio[ijet][iaj]->Divide(ffpp[ijet][iaj]);
-  ffratio[ijet][iaj]->SetAxisRange(0,3,"Y");
-  ffratio[ijet][iaj]->SetAxisRange(0,5.8,"X");
+  for ( int iaj1= 1 ; iaj1<=4 ; iaj1++) {
+  ffratio[ijet][iaj1]= (TH1D*)ffhi[ijet][iaj1]->Clone(Form("ffRattio_ijet%d_iaj%d",ijet,iaj1));
+  ffratio[ijet][iaj1]->Divide(ffpp[ijet][iaj1]);
+  ffratio[ijet][iaj1]->SetAxisRange(0,3,"Y");
+  ffratio[ijet][iaj1]->SetAxisRange(0,5.8,"X");
+  }
+
+//       drawSysErr(ffratiocmp[ijet][iaj],vError[ijet][iajSys],Nerror,ijet-1,1,2,1,0,0,0);
+  //ffratiocmp[ijet][iaj]->Draw("sameE");
+
+  //   PrintHistogram(ffratio[ijet][iaj]);
+  
+  /////////////////////////////////////////////////
+  // DRAW
+  /////////////////////////////////////////////////
 
   hPadR->Draw();
-  drawSysErr(ffratio[ijet][iaj],vError[ijet][iajSys],Nerror,ijet-1,1,2,1,ijet == 1,0,0);
-//       drawSysErr(ffratiocmp[ijet][iaj],vError[ijet][iajSys],Nerror,ijet-1,1,2,1,0,0,0);
-//       ffratiocmp[ijet][iaj]->Draw("sameE");
-  ffratio[ijet][iaj]->Draw("same");    
-//   PrintHistogram(ffratio[ijet][iaj]);
 
-  /////////////////////////////////////////////////
-  // Annotate
-  /////////////////////////////////////////////////
+  drawSysErr(ffratio[ijet][iaj],vError[ijet][iajSys],Nerror,ijet-1,1,2,1,ijet == 1,0,0,0,0,TColor::GetColor(0xFFEE00));
+  drawSysErr(ffratio[ijet][2],vError[ijet][2],Nerror,ijet-1,1,2,1,ijet == 1,0,0,0,0,kGreen-3);
+  handsomeTH1(ffratio[ijet][2],1);
+  ffratio[ijet][2]->SetMarkerStyle(25);
+
+  ffratio[ijet][iaj]->Draw("same");
+  ffratio[ijet][2]->Draw("same");
+
+
+  
   gPad->RedrawAxis();
   jumSun(0,1,6,1);
   drawText("CMS Preliminary",0.2,0.88,1,25); 
@@ -242,63 +255,77 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
 	// Save Plot
 
 
-  TGraph *graph = new TGraph(5);
-  graph->SetName("");
-  graph->SetTitle("");
-  graph->SetFillColor(90);
-  graph->SetMarkerStyle(20);
-  graph->SetMarkerSize(1.3);
+  TGraph *graph1 = new TGraph(5);
+  graph1->SetName("");
+  graph1->SetTitle("");
+  graph1->SetFillColor(90);
+  graph1->SetMarkerStyle(20);
+  graph1->SetMarkerSize(1.3);
 
   int ient = 0;
-  graph->SetPoint(ient,0,0.827905485);  ient++;
-  graph->SetPoint(ient,0,2.321370321);   ient++;
-  graph->SetPoint(ient,0.5,2.321370321);   ient++;
-  graph->SetPoint(ient,0.5,1.431080934); ient++;
-  graph->SetPoint(ient,1,1.431080934);  ient++;
-  graph->SetPoint(ient,1,1.187297662);  ient++;
-  graph->SetPoint(ient,1.5,1.187297662);  ient++;
-  graph->SetPoint(ient,1.5,1.123097754);  ient++;
-  graph->SetPoint(ient,2,1.123097754);  ient++;
-  graph->SetPoint(ient,2,1.022374646);  ient++;
-  graph->SetPoint(ient,2.5,1.022374646);  ient++;
-  graph->SetPoint(ient,2.5,1.141584158);  ient++;
-  graph->SetPoint(ient,3,1.141584158);  ient++;
-  graph->SetPoint(ient,3,1.152100906);  ient++;
-  graph->SetPoint(ient,3.5,1.152100906);  ient++;
-  graph->SetPoint(ient,3.5,1.260215016);  ient++;
-  graph->SetPoint(ient,4,1.260215016);  ient++;
-  graph->SetPoint(ient,4,1.865199831); ient++;
-  graph->SetPoint(ient,4.5,1.865199831); ient++;
-  // half way!                                                                                                                               
-  graph->SetPoint(ient,4.5,0.6033820821); ient++;
-  graph->SetPoint(ient,4,0.6033820821); ient++;
-  graph->SetPoint(ient,4,0.62840846);   ient++;
-  graph->SetPoint(ient,3.5,0.62840846); ient++;
-  graph->SetPoint(ient,3.5,0.7333786452); ient++;
-  graph->SetPoint(ient,3,0.7333786452); ient++;
-  graph->SetPoint(ient,3,0.8043352398); ient++;
-  graph->SetPoint(ient,2.5,0.8043352398); ient++;
-  graph->SetPoint(ient,2.5,0.7257791577); ient++;
-  graph->SetPoint(ient,2,0.7257791577); ient++;
-  graph->SetPoint(ient,2,0.7548269812); ient++;
-  graph->SetPoint(ient,1.5,0.7548269812); ient++;
-  graph->SetPoint(ient,1.5,0.690144622); ient++;
-  graph->SetPoint(ient,1,0.690144622); ient++;
-  graph->SetPoint(ient,1,0.6262867487); ient++;
-  graph->SetPoint(ient,0.5,0.6262867487); ient++;
-  graph->SetPoint(ient,0.5,0.827905485); ient++;
-  graph->SetPoint(ient,0,0.827905485); ient++;
+  //  graph1->SetPoint(ient,0,0.827905485);  ient++;
+  graph1->SetPoint(ient,0,2.321370321);   ient++;
+  graph1->SetPoint(ient,0.5,2.321370321);   ient++;
+  graph1->SetPoint(ient,0.5,1.431080934); ient++;
+  graph1->SetPoint(ient,1,1.431080934);  ient++;
+  graph1->SetPoint(ient,1,1.187297662);  ient++;
+  graph1->SetPoint(ient,1.5,1.187297662);  ient++;
+  graph1->SetPoint(ient,1.5,1.123097754);  ient++;
+  graph1->SetPoint(ient,2,1.123097754);  ient++;
+  graph1->SetPoint(ient,2,1.022374646);  ient++;
+  graph1->SetPoint(ient,2.5,1.022374646);  ient++;
+  graph1->SetPoint(ient,2.5,1.141584158);  ient++;
+  graph1->SetPoint(ient,3,1.141584158);  ient++;
+  graph1->SetPoint(ient,3,1.152100906);  ient++;
+  graph1->SetPoint(ient,3.5,1.152100906);  ient++;
+  graph1->SetPoint(ient,3.5,1.260215016);  ient++;
+  graph1->SetPoint(ient,4,1.260215016);  ient++;
+  graph1->SetPoint(ient,4,1.865199831); ient++;
+  graph1->SetPoint(ient,4.5,1.865199831); ient++;
 
 
+  // half way!                                                                                                                 
+  TGraph *graph2 = new TGraph(5);
+  graph2->SetName("");
+  graph2->SetTitle("");
+  graph2->SetFillColor(90);
+  graph2->SetMarkerStyle(20);
+  graph2->SetMarkerSize(1.3);
 
-  if (draw2010) 
-    graph->Draw("l");
-  
+  ient = 0;
+  graph2->SetPoint(ient,4.5,0.6033820821); ient++;
+  graph2->SetPoint(ient,4,0.6033820821); ient++;
+  graph2->SetPoint(ient,4,0.62840846);   ient++;
+  graph2->SetPoint(ient,3.5,0.62840846); ient++;
+  graph2->SetPoint(ient,3.5,0.7333786452); ient++;
+  graph2->SetPoint(ient,3,0.7333786452); ient++;
+  graph2->SetPoint(ient,3,0.8043352398); ient++;
+  graph2->SetPoint(ient,2.5,0.8043352398); ient++;
+  graph2->SetPoint(ient,2.5,0.7257791577); ient++;
+  graph2->SetPoint(ient,2,0.7257791577); ient++;
+  graph2->SetPoint(ient,2,0.7548269812); ient++;
+  graph2->SetPoint(ient,1.5,0.7548269812); ient++;
+  graph2->SetPoint(ient,1.5,0.690144622); ient++;
+  graph2->SetPoint(ient,1,0.690144622); ient++;
+  graph2->SetPoint(ient,1,0.6262867487); ient++;
+  graph2->SetPoint(ient,0.5,0.6262867487); ient++;
+  graph2->SetPoint(ient,0.5,0.827905485); ient++;
+  graph2->SetPoint(ient,0,0.827905485); ient++;
+
+  graph1->SetLineWidth(2);
+  graph2->SetLineWidth(2);
+  graph1->SetLineColor(2);
+  graph2->SetLineColor(2);
+  if (draw2010) {
+    graph1->Draw("l");
+    graph2->Draw("l");
+  }
   
   TH1D* hdum = new TH1D("hdum","",10,0,10);
   handsomeTH1(hdum,1);
   hdum->SetFillColor(0);
-  hdum->SetLineColor(1);
+  hdum->SetLineColor(2);
+  hdum->SetLineWidth(2);
   hdum->SetFillStyle(1000);
 
   TH1D* hdum2 = new TH1D("hdum2","",10,0,10);
@@ -308,11 +335,21 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
   hdum2->SetLineStyle(1);
   hdum2->SetFillStyle(1001);
 
+  TH1D* hdum3 = new TH1D("hdum3","",10,0,10);
+  handsomeTH1(hdum3,1);
+  hdum3->SetFillColor(kGreen-3);
+  hdum3->SetLineColor(kGreen+4);
+  hdum3->SetMarkerStyle(25);
+  hdum3->SetLineStyle(1);
+  hdum3->SetFillStyle(1001);
+
   
+
   TLegend* l2   = new TLegend(0.1834677,0.720339,0.75,0.8983051,NULL,"brNDC");
   easyLeg(l2,"");
-  l2->AddEntry(hdum2,"2011, 0-10%, Inclusive jet","plf");
-  l2->AddEntry(hdum, "2010, 0-30%, Leading jet","f");
+  l2->AddEntry(hdum, "2010, 0-30%,  Leading jet","f");
+  l2->AddEntry(hdum2,"2011, 0-10%,  Inclusive jet","plf");
+  l2->AddEntry(hdum3,"2011, 10-30%,Inclusive jet","plf");
   l2->Draw();
   
 
