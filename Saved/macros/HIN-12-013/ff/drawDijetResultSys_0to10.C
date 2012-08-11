@@ -235,10 +235,10 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
   gPad->RedrawAxis();
   jumSun(0,1,6,1);
   drawText("CMS Preliminary",0.2,0.88,1,25); 
-	drawText("L_{Int} = 129 #mub^{-1}",0.6,0.88,1,25);
-	//	drawText(Form("%.0f%% - %.0f%%", float(centBin1[iaj-1]*2.5), float(centBin1[iaj]*2.5)),0.2,0.8,kBlack,25);
+	drawText("L_{Int} = 140 #mub^{-1}",0.6,0.88,1,25);
+// 	drawText(Form("%.0f%% - %.0f%%", float(centBin1[iaj-1]*2.5), float(centBin1[iaj]*2.5)),0.55,2.35,kBlack,25,false);
   float ptx(0.08),pty1(0.89);
-  if (!draw2010)  drawText("Jet p_{T}  > 100GeV/c, |#eta| < 2",0.2,0.75,kBlack,25);
+  drawText("Jet p_{T}  > 100GeV/c",0.21,0.2,kBlack,25);
   if (!draw2010)   drawText("Track p_{T}  > 1 GeV/c, r < 0.3",0.2,0.69,kBlack,25);
 
 //   TH1D* hYel = new TH1D("hYel","",0,10,20);
@@ -253,8 +253,32 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
 // 	lsys->Draw();
 	
 	// Save Plot
-
-
+  //////// 2010 0-10% leading jet xi
+  TH1D *xsin4_1_0_R = new TH1D("xsin4_1_0_R","",20,-1,9);
+  xsin4_1_0_R->SetBinContent(3,1.20505);
+  xsin4_1_0_R->SetBinContent(4,1.040817);
+  xsin4_1_0_R->SetBinContent(5,0.8804085);
+  xsin4_1_0_R->SetBinContent(6,0.850761);
+  xsin4_1_0_R->SetBinContent(7,0.8131551);
+  xsin4_1_0_R->SetBinContent(8,0.7969801);
+  xsin4_1_0_R->SetBinContent(9,0.8939498);
+  xsin4_1_0_R->SetBinContent(10,1.098302);
+  xsin4_1_0_R->SetBinContent(11,0.7099872);
+  xsin4_1_0_R->SetBinError(3,0.2486326);
+  xsin4_1_0_R->SetBinError(4,0.07325915);
+  xsin4_1_0_R->SetBinError(5,0.03967401);
+  xsin4_1_0_R->SetBinError(6,0.02982589);
+  xsin4_1_0_R->SetBinError(7,0.02485484);
+  xsin4_1_0_R->SetBinError(8,0.02288269);
+  xsin4_1_0_R->SetBinError(9,0.02875025);
+  xsin4_1_0_R->SetBinError(10,0.09731627);
+  xsin4_1_0_R->SetBinError(11,0.3331674);
+  handsomeTH1(xsin4_1_0_R,kRed,1.3,24);
+  xsin4_1_0_R->SetLineWidth(2);
+  xsin4_1_0_R->Draw("sameE");
+  //////// end of 2010 0-10% leading jet xi
+  ffratio[ijet][iaj]->Draw("same");    
+  
   TGraph *graph1 = new TGraph(5);
   graph1->SetName("");
   graph1->SetTitle("");
@@ -329,6 +353,8 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
   hdum->SetFillColor(0);
   hdum->SetLineColor(2);
   hdum->SetLineWidth(2);
+  hdum->SetMarkerColor(2);
+  hdum->SetMarkerStyle(24);
   hdum->SetFillStyle(1000);
 
   TH1D* hdum2 = new TH1D("hdum2","",10,0,10);
@@ -355,9 +381,9 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
   
   easyLeg(l2,"");
   if (draw2010)  { 
-    l2->AddEntry(hdum, "2010, 0-30%,  Leading jet","f");
-    l2->AddEntry(hdum2,"2011, 0-10%,  Inclusive jet","plf");
-    l2->AddEntry(hdum3,"2011, 10-30%,Inclusive jet","plf");
+    l2->AddEntry(hdum, "2010, 0-30%,  Leading jet","pf");
+    l2->AddEntry(hdum2,"2011, 0-10%,  Inclusive jet","pf");
+    l2->AddEntry(hdum3,"2011, 10-30%,Inclusive jet","pf");
   }
   else  {
     l2->AddEntry(hdum2,"0-10%","plf");
@@ -365,9 +391,9 @@ void drawDijetResultSys_0to10(int binMode =2, // 1 : aj, 2 : cent
   l2->Draw();
   
 
-  c->SaveAs(outdir+Form("/FF_ratio_ijet%d_%s_0to10_with2010%d.gif",ijet,tag.Data(),draw2010));
-  c->SaveAs(outdir+Form("/FF_ratio_ijet%d_%s_0to10_with2010%d.pdf",ijet,tag.Data(),draw2010));
-  c->SaveAs(outdir+Form("/FF_ratio_ijet%d_%s_0to10_with2010%d.C",ijet,tag.Data(),draw2010));
+  c->SaveAs(outdir+Form("/FF_ratio_ijet%d_%s_0to10and30_with2010%d.gif",ijet,tag.Data(),draw2010));
+  c->SaveAs(outdir+Form("/FF_ratio_ijet%d_%s_0to10and30_with2010%d.pdf",ijet,tag.Data(),draw2010));
+  c->SaveAs(outdir+Form("/FF_ratio_ijet%d_%s_0to10and30_with2010%d.C",ijet,tag.Data(),draw2010));
 }
 
  
