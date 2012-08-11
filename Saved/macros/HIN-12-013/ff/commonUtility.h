@@ -1355,13 +1355,13 @@ TGraph* cheatFit(TH1* h, TF1* f){
 
 
 
-TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd = 0,int npar = 3, bool symmetric = 1, int opt = 0, int infill = 0, TF1* f = 0, TPad * inc=0, TPad * cerr=0){
+TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd = 0,int npar = 3, bool symmetric = 1, int opt = 0, int infill = 0, TF1* f = 0, TPad * inc=0, TPad * cerr=0, int theColor=TColor::GetColor(0xFFEE00), int theStyle=1001){
 
   bool plot = 1;
   
-  int color[2] = {TColor::GetColor(0xFFEE00),1};
+  int color[2] = {theColor,1};
 
-  int errorColor = TColor::GetColor(0xFFEE00);
+  int errorColor = theColor;
 
   int fillStyle[2] = {1,1};
   int fillColor[2] = {1,1};
@@ -1467,7 +1467,9 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
       
       if(opt == 1){
         gp->SetFillColor(errorColor);
-        gp->Draw("F same");
+	gp->SetFillStyle(theStyle);
+
+	gp->Draw("F same");
 //         cout << "x: " << xg << ": " << eg << " low: " << yg-eg << " high: " << yg+eg << endl;
       }else{
         gp->Draw("l same");	  
