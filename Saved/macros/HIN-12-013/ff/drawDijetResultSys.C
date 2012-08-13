@@ -87,10 +87,10 @@ void drawDijetResultSys(int binMode =2, // 1 : aj, 2 : cent
         pyquenGenJetSelError[ijet][iaj] = loadError(PyquenGenJetSelfile,Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode2_closure100",jname[ijet].Data(),iaj));
       }
       
-      // additional track error to be flat 4%
+      // additional track error to be flat 10%, add another 6% from pp reweightin sqrt(10*10+6*6)= 11.7
       constError[ijet][iaj] =  (TH1D*)jesError[ijet][iaj]->Clone(Form("%s_constsys",jesError[ijet][iaj]->GetName()));
       for(int i = 1; i <= constError[ijet][iaj]->GetNbinsX(); ++i){
-        constError[ijet][iaj]->SetBinContent(i,1.10);
+        constError[ijet][iaj]->SetBinContent(i,1.117);
         constError[ijet][iaj]->SetBinError(i,0.1);
         constError[ijet][iaj]->SetBinError(i,0.1);
       }
