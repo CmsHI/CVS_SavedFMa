@@ -77,6 +77,7 @@ void analyzeTrackingCorrectionGJ(
 //    HiForest * c = new HiForest(inname,"mergedTrack");
    HiForest * c = new HiForest(inname,trkCol.Data());
    c->doTrackCorrections = false;
+   c->GetEnergyScaleTable("./photonEnergyScaleTable_Hydjet_GammaJet.root");
 
    // intialize jet variables
    Jets * anajet = 0;
@@ -112,7 +113,8 @@ void analyzeTrackingCorrectionGJ(
    TH1D * hPtHatBeforeSel = new TH1D("hPtHatBeforeSel","",200,0,1000);
    TH1D * hPtHat = new TH1D("hPtHat","",200,0,1000);
    TH2D * hJetPt2D = new TH2D("hJetPt2D","",100,0,500,100,0,500);
-   TH1D * hDPhiJG = new TH1D("hDPhiJG","",40,0,Pi());
+   TH1D * hDPhijg = new TH1D("hDPhijg","",40,0,Pi());
+   TH2D * hJPtDPhijg = new TH2D("hJPtDPhijg","",40,0,Pi(),100,0,500);
    TH1D * hXjg = new TH1D("hXjg","",50,0,2);
    TH1D * hSS = new TH1D("hSS","",100,0,0.02);
    TH1D * hSumIso = new TH1D("hSumIso","",100,-50,50);
@@ -162,12 +164,12 @@ void analyzeTrackingCorrectionGJ(
          // loose cut!!! 
          if ( c->photon.pt[j]  < preCutPhotonEt ) continue; 
          if ( fabs(c->photon.eta[j]) > cutphotonEta ) continue;
-         if (c->isSpike(j)) continue;       
+         if (c->isSpike(j)) continue;
          if (!(c->isLoosePhoton(j))) continue;
          
          // sort using corrected photon pt        
-//          float theCorrPt= corrPt[j];
-         float theCorrPt= c->photon.pt[j];
+         float theCorrPt= c->getCorrEt(j);
+//          float theCorrPt= c->photon.pt[j];
          if ( theCorrPt > gj.photonEt) {
            gj.photonEt = theCorrPt;
            leadingIndex = j;
@@ -233,7 +235,8 @@ void analyzeTrackingCorrectionGJ(
       hVz->Fill(evt.vz);
       hPtHat->Fill(evt.pthat);
       hJetPt2D->Fill(gj.photonEt,gj.lJetPt);
-      hDPhiJG->Fill( fabs(dphijg) );
+      hDPhijg->Fill( fabs(dphijg) );
+      hJPtDPhijg->Fill(fabs(dphijg),gj.lJetPt);
       hXjg->Fill(gj.lJetPt/gj.photonEt);
       hSS->Fill(gj.sigmaIetaIeta);
       hSumIso->Fill(gj.sumIsol);
