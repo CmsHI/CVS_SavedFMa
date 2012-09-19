@@ -228,7 +228,7 @@ void analyzeTrackingCorrectionGJ(
       
       // additional photon cuts
       bool isAnaPhoton = (gj.sumIsol<1 && gj.sigmaIetaIeta<0.010 && gj.genIso<5 && fabs(gj.genMomId)<=22);
-      if (!isAnaPhoton) continue;
+      if (leadingJetPtMin>0&&!isAnaPhoton) continue;
       
       // Fill Baisc Event info
       hCent->Fill(evt.cBin);
