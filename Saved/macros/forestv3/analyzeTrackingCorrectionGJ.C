@@ -252,100 +252,76 @@ void analyzeTrackingCorrectionGJ(
       ///////////////////////////////////////////////////////
       // Tracks
       ///////////////////////////////////////////////////////
+      effIter.pt1 = gj.photonEt;
+      effIter.eta1 = gj.photonEta;
+      effIter.phi1 = gj.photonPhi;
+      effIter.pt2 = gj.lJetPt;
+      effIter.eta2 = gj.lJetEta;
+      effIter.phi2 = gj.lJetPhi;
       // Full Tracks, Pixel Tracks
-//       Tracks * anaTrks[1] = {&(c->track)};
-//       for (int it=0; it<anaTrks[0]->nTrk; ++it) {
-//          // Kinematic Selection
-//          if (anaTrks[0]->trkPt[it] < cutPtTrk) continue;
-//          if (fabs(anaTrks[0]->trkEta[it]) > cutEtaTrk) continue;
-//          if (anaTrks[0]->trkAlgo[it]>=4&&!anaTrks[0]->highPurity[it]) continue; // quality selection
-// 
-//          RecTrack_t r;
-//          r.ptr = anaTrks[0]->trkPt[it];
-//          r.etar = anaTrks[0]->trkEta[it];
-//          r.phir = anaTrks[0]->trkPhi[it];
-//          r.algo = anaTrks[0]->trkAlgo[it];
-//          r.nsim = !anaTrks[0]->trkFake[it];
-//          r.status = 1; // for now correct all tracks
-//          float dr1 = deltaR(r.etar,r.phir,gj.eta1,gj.phi1);
-//          float dr2 = deltaR(r.etar,r.phir,gj.eta2,gj.phi2);
-//          r.jet  = 0;
-//          r.jeta = -99;
-//          r.jdr  = -99;
-//          if (samplePtHat>0) {
-//            if (dr1<0.5&&gj.photonEt>=40) {
-//               r.jet = gj.photonEt;
-//               r.jeta = gj.eta1;
-//               r.jdr = dr1;
-//               effIter_j1.FillRecHistograms(evt,gj,r);
-//            } else if (dr2<0.5&&gj.lJetPt>=40) {
-//               r.jet = gj.lJetPt;
-//               r.jeta = gj.eta2;
-//               r.jdr = dr2;
-//               effIter_j2.FillRecHistograms(evt,gj,r);
-//            }
-//          }
-// 
-//          // Fill
-//          effIter.FillRecHistograms(evt,gj,r);
-//          effIter_jetfine.FillRecHistograms(evt,gj,r);
-// //          effIter_trkPhi.FillRecHistograms(evt,gj,r);
-// //          if (r.jet>=120) effIter_trkPhi_jet_120to999.FillRecHistograms(evt,gj,r);
-// //          else if (r.jet>=cutjetPt) effIter_trkPhi_jet_50to120.FillRecHistograms(evt,gj,r);
-// //          else effIter_trkPhi_noJet.FillRecHistograms(evt,gj,r);
-// //          effIter_SimSmear.FillRecHistograms(evt,gj,r);
-//       }
+      Tracks * anaTrks[1] = {&(c->track)};
+      for (int it=0; it<anaTrks[0]->nTrk; ++it) {
+         // Kinematic Selection
+         if (anaTrks[0]->trkPt[it] < cutPtTrk) continue;
+         if (fabs(anaTrks[0]->trkEta[it]) > cutEtaTrk) continue;
+         if (anaTrks[0]->trkAlgo[it]>=4&&!anaTrks[0]->highPurity[it]) continue; // quality selection
+
+         RecTrack_t r;
+         r.ptr = anaTrks[0]->trkPt[it];
+         r.etar = anaTrks[0]->trkEta[it];
+         r.phir = anaTrks[0]->trkPhi[it];
+         r.algo = anaTrks[0]->trkAlgo[it];
+         r.nsim = !anaTrks[0]->trkFake[it];
+         r.status = 1; // for now correct all tracks
+         float dr1 = deltaR(r.etar,r.phir,gj.photonEta,gj.photonPhi);
+         float dr2 = deltaR(r.etar,r.phir,gj.lJetEta,gj.lJetPhi);
+         r.jet  = 0;
+         r.jeta = -99;
+         r.jdr  = -99;
+         if (samplePtHat>0) {
+           if (dr2<0.5&&gj.lJetPt>=40) {
+              r.jet = gj.lJetPt;
+              r.jeta = gj.lJetEta;
+              r.jdr = dr2;
+           }
+         }
+
+         // Fill
+         effIter.FillRecHistograms(evt,r);
+      }
 
       ///////////////////////////////////////////////////////
       // SimTracks
       ///////////////////////////////////////////////////////
-//       for (int ip=0; ip<anaTrks[0]->nParticle; ++ip) {
-//          if (anaTrks[0]->pPt[ip] < cutPtTrk) continue;
-//          if (fabs(anaTrks[0]->pEta[ip]) > cutEtaTrk) continue;
-// 
-//          SimTrack_t s;
-//          s.pts = anaTrks[0]->pPt[ip];
-//          s.etas = anaTrks[0]->pEta[ip];
-//          s.phis = anaTrks[0]->pPhi[ip];
-//          s.status = 1; // for now assume all simtracks as signal tracks
-//          s.nrec = (anaTrks[0]->pNRec[ip])*(int)(anaTrks[0]->mtrkAlgo[ip]<4||anaTrks[0]->mtrkQual[ip]>0);
-// //          if (s.pts<1.5) s.nrec = anaTrks[0]->pNRec[ip];
-// //          else s.nrec = (anaTrks[0]->pNRec[ip])*(anaTrks[0]->mtrkQual[ip]);
-//          s.acc = anaTrks[0]->pAcc[ip];
-//          s.jet = gj.photonEt;
-//          s.jeta = gj.eta1;
-//          float dr1 = deltaR(s.etas,s.phis,gj.eta1,gj.phi1);
-//          float dr2 = deltaR(s.etas,s.phis,gj.eta2,gj.phi2);
-//          s.jet = 0;
-//          s.jeta = -99;
-//          s.jdr = -99;
-//          if (samplePtHat>0) {
-//            if (dr1<0.5&&gj.photonEt>=40) {
-//               s.jet = gj.photonEt;
-//               s.jeta = gj.eta1;
-//               s.jdr = dr1;
-//               effIter_j1.FillSimHistograms(evt,gj,s);
-//            } else if (dr2<0.5&&gj.lJetPt>=40) {
-//               s.jet = gj.lJetPt;
-//               s.jeta = gj.eta2;
-//               s.jdr = dr2;
-//               effIter_j2.FillSimHistograms(evt,gj,s);
-//            }
-//          }
-//          // Fill
-//          effIter.FillSimHistograms(evt,gj,s);
-//          effIter_jetfine.FillSimHistograms(evt,gj,s);
-// //          effIter_trkPhi.FillSimHistograms(evt,gj,s);
-// //          if (s.jet>=120) effIter_trkPhi_jet_120to999.FillSimHistograms(evt,gj,s);
-// //          else if (s.jet>=cutjetPt) effIter_trkPhi_jet_50to120.FillSimHistograms(evt,gj,s);
-// //          else effIter_trkPhi_noJet.FillSimHistograms(evt,gj,s);
-//          // Sim Smearing
-// //          if (s.pts>=1&&s.pts<2) {
-// //             float trksm = trkRes1.GetSmear(s.pts);
-// //             s.pts*=trksm;
-// //          }
-// //          effIter_SimSmear.FillSimHistograms(evt,gj,s);
-//       }
+      for (int ip=0; ip<anaTrks[0]->nParticle; ++ip) {
+         if (anaTrks[0]->pPt[ip] < cutPtTrk) continue;
+         if (fabs(anaTrks[0]->pEta[ip]) > cutEtaTrk) continue;
+
+         SimTrack_t s;
+         s.pts = anaTrks[0]->pPt[ip];
+         s.etas = anaTrks[0]->pEta[ip];
+         s.phis = anaTrks[0]->pPhi[ip];
+         s.status = 1; // for now assume all simtracks as signal tracks
+         s.nrec = (anaTrks[0]->pNRec[ip])*(int)(anaTrks[0]->mtrkAlgo[ip]<4||anaTrks[0]->mtrkQual[ip]>0);
+//          if (s.pts<1.5) s.nrec = anaTrks[0]->pNRec[ip];
+//          else s.nrec = (anaTrks[0]->pNRec[ip])*(anaTrks[0]->mtrkQual[ip]);
+         s.acc = anaTrks[0]->pAcc[ip];
+
+         float dr1 = deltaR(s.etas,s.phis,gj.photonEta,gj.photonPhi);
+         float dr2 = deltaR(s.etas,s.phis,gj.lJetEta,gj.lJetPhi);
+         s.jet = 0;
+         s.jeta = -99;
+         s.jdr = -99;
+         if (samplePtHat>0) {
+           if (dr2<0.5&&gj.lJetPt>=40) {
+              s.jet = gj.lJetPt;
+              s.jeta = gj.lJetEta;
+              s.jdr = dr2;
+           }
+         }
+         // Fill
+         effIter.FillSimHistograms(evt,s);
+      }
       // All done
    }
 
