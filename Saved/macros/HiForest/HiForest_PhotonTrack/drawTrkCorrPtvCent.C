@@ -8,7 +8,7 @@
 #include "commonUtility.h"
 
 void drawTrkCorrPtvCent(
-                           TString outdir="fig/trkcorrv14"
+                           TString outdir="fig/trkcorrgjv1"
 )
 {
    TH1::SetDefaultSumw2();
@@ -21,6 +21,7 @@ void drawTrkCorrPtvCent(
    /////////////////////////////////////////////////////////////////////////////////////
    HiForest * c = new HiForest("/net/hidsk0001/d00/scratch/yjlee/merge/v27/pthat170/Dijet170_HydjetDrum_v27_mergedV1.root");
    c->doTrackCorrections = true;
+   c->triggerMode = kMB; // kJET, kPHOTON, kMB
    c->InitTree();
    
    TrackingCorrections * trkCorr = c->trackCorrections[0];
@@ -144,7 +145,7 @@ void drawTrkCorrPtvCent(
    /////////////////////////////////////////////////////////////////////////////////////
       TCanvas * cEff2D = new TCanvas("cEff2D","cEff2D",800,800);
 	gPad->SetLogy();
-   Double_t pt=8,eta=0,jet=101.  ;
+   Double_t pt=8,eta=0,jet=0;
    Int_t cBin = 0;
    cEff2D->Divide(2,2);
    cEff2D->cd(1);
@@ -163,14 +164,14 @@ void drawTrkCorrPtvCent(
    hCorr2DFak->Draw("colz");
    cEff2D->cd(3);
    gPad->SetLogy();
-   hCorr2D = (TH2D*)trkCorr->InspectCorr(0,cBin,cBin,trkCorr->jetBin_->FindBin(200.),trkCorr->jetBin_->FindBin(jet));
+   hCorr2D = (TH2D*)trkCorr->InspectCorr(0,cBin,cBin,trkCorr->jetBin_->FindBin(101.),trkCorr->jetBin_->FindBin(jet));
    gPad->SetRightMargin(0.15);
    hCorr2D->SetAxisRange(1,119.9,"Y");
    hCorr2D->SetAxisRange(0,1,"Z");
    hCorr2D->Draw("colz");
    cEff2D->cd(4);
    gPad->SetLogy();
-   hCorr2DFak= (TH2D*)trkCorr->InspectCorr(1,cBin,cBin,trkCorr->jetBin_->FindBin(200.),trkCorr->jetBin_->FindBin(jet));
+   hCorr2DFak= (TH2D*)trkCorr->InspectCorr(1,cBin,cBin,trkCorr->jetBin_->FindBin(101.),trkCorr->jetBin_->FindBin(jet));
    gPad->SetRightMargin(0.15);
    hCorr2DFak->SetAxisRange(1,119.9,"Y");
    hCorr2DFak->SetAxisRange(0,1,"Z");
@@ -181,7 +182,7 @@ void drawTrkCorrPtvCent(
    // Test corr
    /////////////////////////////////////////////////////////////////////////////////////
    if (doTestCorr) {
-      cout << "trk weight: " << trkCorr->GetCorr(pt,eta,jet,cBin) << endl;
+//       cout << "trk weight: " << trkCorr->GetCorr(4,eta,0,cBin) << endl;
       Double_t corr[4];
       for (Int_t i=1; i<=trkCorr->ptBin_->GetNbinsX(); ++i) {
          trkCorr->GetCorr(trkCorr->ptBin_->GetBinCenter(i),eta,jet,cBin,corr);

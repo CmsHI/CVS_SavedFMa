@@ -90,6 +90,11 @@ ppMode_(false)
       centBin_.push_back("28to35");
    }
    else centBin_.push_back("20to39");
+   if (name.Contains("Forest2GJ")) {
+      centBin_.clear();
+      centBin_.push_back("0to12");
+      centBin_.push_back("12to40");
+   }
    if (name.Contains("Forest2STA")) {
       centBin_.clear();
       centBin_.push_back("0to12");
@@ -237,7 +242,12 @@ void TrackingCorrections::Init()
    // =============================
    sampleCroSec_.reserve(ptHatMin_.size());
    for (UInt_t s=0; s<ptHatMin_.size(); ++s) { // merge pt hat samples with weight
-     if (corrSetName_=="Forest2STAv12") {
+     if (corrSetName_=="Forest2GJ") {
+        if ( ptHatMin_[s]<0) sampleCroSec_[s] = 8;
+        else if ( ptHatMin_[s]==30) sampleCroSec_[s] = 1.59e-06 - 0.767e-06;
+        else if ( ptHatMin_[s]==50) sampleCroSec_[s] = 0.767e-06;
+        else cout << endl << endl << " Error no such pt hat!!!!!" << endl << endl << endl;
+     } else if (corrSetName_=="Forest2STAv12") {
         if ( ptHatMin_[s]==100) sampleCroSec_[s] = 3.069e-05 - 5.310e-07;
         else if ( ptHatMin_[s]==170) sampleCroSec_[s] = 1.470e-06 - 5.310e-07;
         else if ( ptHatMin_[s]==200) sampleCroSec_[s] = 5.310e-07;
@@ -367,7 +377,10 @@ Float_t TrackingCorrections::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float
    
    Int_t bin = -1;   
    // Get the corresponding centrality bin
-   if (corrSetName_.Contains("Forest2STA")) {
+   if (corrSetName_.Contains("Forest2GJ")) {
+      if (cent<12) bin = 0;
+      else bin =1;
+   } else if (corrSetName_.Contains("Forest2STA")) {
       if (cent<12) bin = 0;
       else bin =1;
    } else {

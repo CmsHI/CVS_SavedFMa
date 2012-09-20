@@ -24,6 +24,7 @@
 #include <TString.h>
 #include <TF1.h>
 #include <TCut.h>
+#include "TMath.h"
 
 #include "DummyJetCorrector.h"
 
@@ -43,6 +44,8 @@ namespace names{
   };
 }
 
+enum TriggerType { kJET, kPHOTON, kMB };
+ 
 class HiForest : public TNamed
 {
 
@@ -101,6 +104,8 @@ class HiForest : public TNamed
   //==================================================================================================================================
   // Track utility functions
   //==================================================================================================================================
+  void FindLeadingDiJet();
+  void FindLeadingPhotonJet();
   int getMatchedCaloTowerAllowReuse(int j);
   int getMatchedHBHEAllowReuse(int j);
   void matchTrackCalo(bool allEvents = 1);
@@ -200,7 +205,10 @@ class HiForest : public TNamed
   bool doJetCorrection;
   bool doTrackCorrections;
   bool doTrackingSeparateLeadingSubleading;
-
+  
+  // Data types
+  TriggerType triggerMode;
+  
   // Extra variables
   Float_t* towerEt;
   Float_t* towerdR;
@@ -287,7 +295,8 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
    pp(ispp),
    mc(ismc),
    nEntries(0),
-   currentEvent(0)
+   currentEvent(0),
+   triggerMode(kJET)
 {
    tree = new TTree("tree","");
   SetName(name);
@@ -305,23 +314,25 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
   skimTree         = (TTree*) inf->Get("skimanalysis/HltTree");
   photonTree       = (TTree*) inf->Get("multiPhotonAnalyzer/photon");
   trackTree        = (TTree*) inf->Get("anaTrack/trackTree");
-  towerTree        = (TTree*) inf->Get("rechitanalyzer/tower");
-  icPu5jetTree     = (TTree*) inf->Get("icPu5JetAnalyzer/t");
-  akPu2jetTree     = (TTree*) inf->Get("akPu2PFJetAnalyzer/t");
-  akPu3jetTree     = (TTree*) inf->Get("akPu3PFJetAnalyzer/t");
-  akPu4jetTree     = (TTree*) inf->Get("akPu4PFJetAnalyzer/t");
-  akPu2CaloJetTree = (TTree*) inf->Get("akPu2CaloJetAnalyzer/t");
-  akPu3CaloJetTree = (TTree*) inf->Get("akPu3CaloJetAnalyzer/t");
-  akPu4CaloJetTree = (TTree*) inf->Get("akPu4CaloJetAnalyzer/t");
-  hbheTree         = (TTree*) inf->Get("rechitanalyzer/hbhe");
-  ebTree           = (TTree*) inf->Get("rechitanalyzer/eb");
+//   towerTree        = (TTree*) inf->Get("rechitanalyzer/tower");
+//   icPu5jetTree     = (TTree*) inf->Get("icPu5JetAnalyzer/t");
+//   akPu2jetTree     = (TTree*) inf->Get("akPu2PFJetAnalyzer/t");
+  akPu3jetTree     = (TTree*) inf->Get(Form("%sJetAnalyzer/t",name));
+//   akPu4jetTree     = (TTree*) inf->Get("akPu4PFJetAnalyzer/t");
+//   akPu2CaloJetTree = (TTree*) inf->Get("akPu2CaloJetAnalyzer/t");
+//   akPu3CaloJetTree = (TTree*) inf->Get("akPu3CaloJetAnalyzer/t");
+//   akPu4CaloJetTree = (TTree*) inf->Get("akPu4CaloJetAnalyzer/t");
+//   hbheTree         = (TTree*) inf->Get("rechitanalyzer/hbhe");
+//   ebTree           = (TTree*) inf->Get("rechitanalyzer/eb");
   evtTree          = (TTree*) inf->Get("hiEvtAnalyzer/HiTree");
-  metTree          = (TTree*) inf->Get("anaMET/metTree");
-  pfTree           = (TTree*) inf->Get("pfcandAnalyzer/pfTree");
-  genpTree         = (TTree*) inf->Get("genpana/photon");
+//   metTree          = (TTree*) inf->Get("anaMET/metTree");
+//   pfTree           = (TTree*) inf->Get("pfcandAnalyzer/pfTree");
+//   genpTree         = (TTree*) inf->Get("genpana/photon");
   
   // doesn't load genParticle by default
-  //genParticleTree  = (TTree*) inf->Get("HiGenParticleAna/hi");
+  genParticleTree  = (TTree*) inf->Get("HiGenParticleAna/hi");
+  
+  cout << "*** Using jet algo: " << name << " ***" << endl;
 
   // Check the validity of the trees.
   hasPhotonTree        = (photonTree       	!= 0);
@@ -344,6 +355,7 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
   hasGenpTree	   = (genpTree     		!=0);
   hasGenParticleTree = (genParticleTree   	!=0);
   setupOutput = false;
+  bool doCheck=true;
   
   // Setup branches. See also Setup*.h
   if (hasPhotonTree) {
@@ -363,7 +375,7 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
   if (hasEvtTree) {
     evtTree->SetName("evtTree");
     if (tree == 0) tree = evtTree; else tree->AddFriend(evtTree);
-    setupEvtTree(evtTree,evt);
+    setupEvtTree(evtTree,evt,doCheck);
   }
 
   if (hasMetTree) {
@@ -375,7 +387,7 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
   if (hasHltTree) {
     hltTree->SetName("hltTree");
     if (tree == 0) tree = hltTree; else tree->AddFriend(hltTree);
-    setupHltTree(hltTree,hlt);
+    setupHltTree(hltTree,hlt,doCheck);
   }
 
   if (hasIcPu5JetTree) {
@@ -425,7 +437,7 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
     if (tree == 0) tree = trackTree; else tree->AddFriend(trackTree);
     trackTree->SetAlias("mergedGeneral","(trkAlgo<4||(highPurity))");
     trackTree->SetAlias("mergedSelected","(trkAlgo<4||(highPurity&&trkAlgo==4)))");
-    setupTrackTree(trackTree,track);
+    setupTrackTree(trackTree,track,doCheck);
   }
    
   if (hasPixTrackTree) {
@@ -437,7 +449,7 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
   if (hasSkimTree) {
     skimTree->SetName("skim");
     if (tree == 0) tree = skimTree; else tree->AddFriend(skimTree);
-    setupSkimTree(skimTree,skim);
+    setupSkimTree(skimTree,skim,doCheck);
   }
 
   if (hasTowerTree) {
@@ -488,6 +500,76 @@ HiForest::~HiForest()
   }
 }
 
+void HiForest::FindLeadingDiJet()
+{
+  // Select leading and subleading jet
+  for (int k=0; k<akPu3PF.nref; k++) {
+    if (fabs(akPu3PF.jteta[k])>2) continue;
+    if (akPu3PF.jtpt[k]>leadingJetPtForTrkCor) {
+      leadingJetPtForTrkCor = akPu3PF.jtpt[k];
+      leadingJetEtaForTrkCor = akPu3PF.jteta[k];
+      leadingJetPhiForTrkCor = akPu3PF.jtphi[k];
+    }   
+    if (akPu3PF.jtpt[k]>subleadingJetPtForTrkCor && akPu3PF.jtpt[k] < leadingJetPtForTrkCor) {
+      subleadingJetPtForTrkCor = akPu3PF.jtpt[k];
+      subleadingJetEtaForTrkCor = akPu3PF.jteta[k];
+      subleadingJetPhiForTrkCor = akPu3PF.jtphi[k];
+    }
+    if (akPu3PF.jtpt[k]<subleadingJetPtForTrkCor) break;	 
+  }
+}
+
+void HiForest::FindLeadingPhotonJet()
+{
+  int leadingIndex=-1, awayIndex=-1;
+  for (int ig=0;ig<photon.nPhotons;ig++) {	
+     // loose cut!!! 
+     if ( photon.pt[ig]  < 30 ) continue; 
+     if ( fabs(photon.eta[ig]) > 1.44 ) continue;
+     if (isSpike(ig)) continue;
+     if (!(isLoosePhoton(ig))) continue;           
+     // sort using corrected photon pt        
+     float theCorrPt= getCorrEt(ig);
+     if ( theCorrPt > leadingJetPtForTrkCor) {
+       leadingJetPtForTrkCor = theCorrPt;
+       leadingIndex = ig;
+     }
+  }
+  if (leadingIndex!=-1) {
+    leadingJetEtaForTrkCor = photon.eta[leadingIndex];
+    leadingJetPhiForTrkCor = photon.phi[leadingIndex];
+    float sigmaIetaIeta=photon.sigmaIetaIeta[leadingIndex];
+    float sumIsol=(photon.cr4[leadingIndex]+photon.cc4[leadingIndex]+photon.ct4PtCut20[leadingIndex])/0.9;
+    float genIso   = photon.genCalIsoDR04[leadingIndex];
+    float genMomId = photon.genMomId[leadingIndex];
+    bool isAnaPhoton = (sumIsol<1 && sigmaIetaIeta<0.010 && genIso<5 && fabs(genMomId)<=22);
+    if (!isAnaPhoton) {
+      leadingJetPtForTrkCor = -100;
+      leadingJetEtaForTrkCor = -100;
+      leadingJetPhiForTrkCor = -100;
+    }
+    else {
+      // photon is all set, now let's find the away jet
+      for (int j=0;j<akPu3PF.nref;j++) {
+        if (akPu3PF.jtpt[j]<20) continue;
+        if (fabs(akPu3PF.jteta[j])>2) continue;
+        if (fabs(deltaPhi(akPu3PF.jtphi[j],leadingJetPhiForTrkCor))>TMath::PiOver2() // require jet to be on away side
+            && akPu3PF.jtpt[j] > subleadingJetPtForTrkCor) {
+          subleadingJetPtForTrkCor = akPu3PF.jtpt[j];
+          subleadingJetEtaForTrkCor = akPu3PF.jteta[j];
+          subleadingJetPhiForTrkCor = akPu3PF.jtphi[j];
+          awayIndex = j;
+        }
+      }
+      if (subleadingJetPtForTrkCor < minJetPtForTrkCor) {
+        subleadingJetPtForTrkCor = -100;
+        subleadingJetEtaForTrkCor = -100;
+        subleadingJetPhiForTrkCor = -100;
+      }
+    }
+  }
+}
+
 void HiForest::GetEntry(int i)
 {
 
@@ -514,13 +596,15 @@ void HiForest::GetEntry(int i)
   if (hasGenpTree)     genpTree   ->GetEntry(i);
   if (hasGenParticleTree) genParticleTree   ->GetEntry(i);
 
-  minJetPtForTrkCor = 40;
+  minJetPtForTrkCor = 30;
   leadingJetPtForTrkCor = -100;
   subleadingJetPtForTrkCor = -100;
   leadingJetEtaForTrkCor = -100;
   subleadingJetEtaForTrkCor = -100;
   leadingJetPhiForTrkCor = -100;
   subleadingJetPhiForTrkCor = -100;
+  if (triggerMode==kJET) FindLeadingDiJet();
+  if (triggerMode==kPHOTON) FindLeadingPhotonJet();
 }
 
 int HiForest::GetEntries()
@@ -538,7 +622,11 @@ void HiForest::InitTree()
       trackCorrFromParam = new TrackingParam();
 
       if (!pp) {
-         trackCorrections.push_back(new TrackingCorrections("Forest2STAv14","Forest2_MergedGeneral_jetfine"));
+         // gamma-jet
+         if (triggerMode==kJET) trackCorrections.push_back(new TrackingCorrections("Forest2STAv14","Forest2_MergedGeneral_jetfine"));
+         // dijet
+         else if (triggerMode==kPHOTON) trackCorrections.push_back(new TrackingCorrections("Forest2GJ","Forest2Iter"));
+         else if (triggerMode==kMB) trackCorrections.push_back(new TrackingCorrections("Forest2GJ","Forest2Iter"));
       } else {
          trackCorrections.push_back(new TrackingCorrections("Forest2STApp","Forest2_MergedGeneral_jetfine"));
       }
@@ -546,32 +634,51 @@ void HiForest::InitTree()
 //       trackCorrections.push_back(new TrackingCorrections("Forest2STAv12","Forest2_MergedGeneral_j2"));
 
       for(int i = 0; i < trackCorrections.size(); ++i){
-         if (!pp) {
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj80to100_akPu3PF_100_-1_-1000_genJetMode0.root",80);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj100to170_akPu3PF_100_-1_-1000_genJetMode0.root",100);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj170to200_akPu3PF_100_-1_-1000_genJetMode0.root",170);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj200to250_akPu3PF_100_-1_-1000_genJetMode0.root",200);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj250to300_akPu3PF_100_-1_-1000_genJetMode0.root",250);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj300to9999_akPu3PF_100_-1_-1000_genJetMode0.root",300);
-           // v12: frozen for preapproval
-//            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv12XSec/IterTrkCorrv12XSec_hy18dj100_akPu3PF_100_40_2749_genJetMode0.root",100);
-//            trackCorrections[i]->AddNormFile("trkcorr/IterTrkCorrv12XSec/IterTrkCorrv12XSec_hy18dj100_akPu3PF_-1_-1_-1000_genJetMode0.root");
-//            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv12XSec/IterTrkCorrv12XSec_hy18dj200_akPu3PF_100_40_2749_genJetMode0.root",200);
-//            trackCorrections[i]->AddNormFile("trkcorr/IterTrkCorrv12XSec/IterTrkCorrv12XSec_hy18dj200_akPu3PF_-1_-1_-1000_genJetMode0.root");
-         } else {
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj80to120_akPu3PF_100_-1_-1000_genJetMode0.root",80);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj120to170_akPu3PF_100_-1_-1000_genJetMode0.root",120);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj170to200_akPu3PF_100_-1_-1000_genJetMode0.root",170);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj200to250_akPu3PF_100_-1_-1000_genJetMode0.root",200);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj250to9999_akPu3PF_100_-1_-1000_genJetMode0.root",250);
-         }
-         trackCorrections[i]->weightSamples_ = true;
-         trackCorrections[i]->smoothLevel_ = 0;
-         trackCorrections[i]->trkPhiMode_ = false;
-         trackCorrections[i]->ppMode_ = pp;
-         trackCorrections[i]->Init();
+        if (!pp) {
+          if (triggerMode==kJET) {
+            ///////////////////////////          
+            // dijet
+            ///////////////////////////
+            // v14: frozen for QM12
+            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj80to100_akPu3PF_100_-1_-1000_genJetMode0.root",80);
+            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj100to170_akPu3PF_100_-1_-1000_genJetMode0.root",100);
+            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj170to200_akPu3PF_100_-1_-1000_genJetMode0.root",170);
+            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj200to250_akPu3PF_100_-1_-1000_genJetMode0.root",200);
+            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj250to300_akPu3PF_100_-1_-1000_genJetMode0.root",250);
+            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj300to9999_akPu3PF_100_-1_-1000_genJetMode0.root",300);
+            // v12: frozen for preapproval
+//             trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv12XSec/IterTrkCorrv12XSec_hy18dj100_akPu3PF_100_40_2749_genJetMode0.root",100);
+//             trackCorrections[i]->AddNormFile("trkcorr/IterTrkCorrv12XSec/IterTrkCorrv12XSec_hy18dj100_akPu3PF_-1_-1_-1000_genJetMode0.root");
+//             trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv12XSec/IterTrkCorrv12XSec_hy18dj200_akPu3PF_100_40_2749_genJetMode0.root",200);
+//             trackCorrections[i]->AddNormFile("trkcorr/IterTrkCorrv12XSec/IterTrkCorrv12XSec_hy18dj200_akPu3PF_-1_-1_-1000_genJetMode0.root");
+            trackCorrections[i]->weightSamples_ = true;
+          } else if (triggerMode==kPHOTON) {
+            ///////////////////////////
+            // gamma-jet
+            ///////////////////////////
+//             trackCorrections[i]->AddSample("trkcorr/IterTrkCorr_GammaJetv1/IterTrkCorr_GammaJetv1_hy18gj30to50_akPu3Calo_40_-1_-1000_genSelMode0.root",30);
+            trackCorrections[i]->AddSample("trkcorr/IterTrkCorr_GammaJetv1/IterTrkCorr_GammaJetv1_hy18gj50to9999_akPu3PF_40_-1_-1000_genSelMode0.root",50);
+            trackCorrections[i]->weightSamples_ = false;
+          } else if (triggerMode==kMB) {
+            ///////////////////////////
+            // minbias
+            ///////////////////////////
+            trackCorrections[i]->AddSample("trkcorr/IterTrkCorr_GammaJetv1/IterTrkCorr_GammaJetv1_hy18mb_akPu3PF_-1_-1_-1000_genSelMode0.root",-1);
+            trackCorrections[i]->weightSamples_ = false;
+          }
+        } else {
+          trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj80to120_akPu3PF_100_-1_-1000_genJetMode0.root",80);
+          trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj120to170_akPu3PF_100_-1_-1000_genJetMode0.root",120);
+          trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj170to200_akPu3PF_100_-1_-1000_genJetMode0.root",170);
+          trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj200to250_akPu3PF_100_-1_-1000_genJetMode0.root",200);
+          trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj250to9999_akPu3PF_100_-1_-1000_genJetMode0.root",250);
+        }
+        trackCorrections[i]->smoothLevel_ = 0;
+        trackCorrections[i]->trkPhiMode_ = false;
+        trackCorrections[i]->ppMode_ = pp;
+        trackCorrections[i]->Init();
       }
-      minJetPtForTrkCor = 40;
+      minJetPtForTrkCor = 30;
       initialized = 1;
       if (doTrackingSeparateLeadingSubleading&&trackCorrections.size()<3) {
          cout << "Fatal Error: Not enough correction tables to do separate leading/subleading jet tracking correction" << endl;
