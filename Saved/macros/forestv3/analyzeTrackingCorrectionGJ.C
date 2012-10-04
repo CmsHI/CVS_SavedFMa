@@ -67,26 +67,27 @@ void analyzeTrackingCorrectionGJ(
    ///////////////////////////////////////////////////
    // Setup Analysis
    ///////////////////////////////////////////////////
-   double cutjetPt = 20;
+   double cutjetPt = 30;
    double cutjetEta = 2;
    double cutEtaTrk = 2.4;
    double cutphotonEta = 1.44;
    double preCutPhotonEt = 30;
   
    // Define the input file and HiForest
-//    HiForest * c = new HiForest(inname,"mergedTrack");
-   HiForest * c = new HiForest(inname,trkCol.Data());
-   c->doTrackCorrections = false;
+   HiForest * c = new HiForest(inname,jetAlgo.Data());
+   c->doTrackCorrections = true;
+   c->doTrackingSeparateLeadingSubleading = false;
+   c->triggerMode = kPHOTON; // kJET, kPHOTON, kMB
    c->GetEnergyScaleTable("./photonEnergyScaleTable_Hydjet_GammaJet.root");
 
    // intialize jet variables
-   Jets * anajet = 0;
-   if (jetAlgo=="akPu3PF") anajet = &(c->akPu3PF);
-   else if (jetAlgo=="akPu3Calo") anajet = &(c->akPu3Calo);
-   else {
-      cout << "Fatal Error: jetalgo " << jetAlgo << " not defined" << endl;
-      exit(1);
-   }
+   Jets * anajet = &(c->akPu3PF);
+//    if (jetAlgo=="akPu3PF") anajet = &(c->akPu3PF);
+//    else if (jetAlgo=="akPu3Calo") anajet = &(c->akPu3Calo);
+//    else {
+//       cout << "Fatal Error: jetalgo " << jetAlgo << " not defined" << endl;
+//       exit(1);
+//    }
    
    // Output file
    cout << "Output: " << outname << endl;
@@ -100,9 +101,9 @@ void analyzeTrackingCorrectionGJ(
    // Book Histograms
    ///////////////////////////////////////////////////
    // Tracking Corrections
-   TrkCorrHisAna effIter("Forest2Iter",output,40,isPP);
+   TrkCorrHisAna effIter("Forest2Iter",output,30,isPP);
    effIter.jetBins.clear();
-   float jetBins[6] = {0,40,80,120,200,1000};
+   float jetBins[6] = {0,30,60,120,200,1000};
    effIter.jetBins.insert(effIter.jetBins.begin(),jetBins,jetBins+6);
    effIter.DeclareHistograms();
 
@@ -279,7 +280,7 @@ void analyzeTrackingCorrectionGJ(
          r.jeta = -99;
          r.jdr  = -99;
          if (samplePtHat>0) {
-           if (dr2<0.5&&gj.lJetPt>=40) {
+           if (dr2<0.5&&gj.lJetPt>=cutjetPt) {
               r.jet = gj.lJetPt;
               r.jeta = gj.lJetEta;
               r.jdr = dr2;
@@ -313,7 +314,7 @@ void analyzeTrackingCorrectionGJ(
          s.jeta = -99;
          s.jdr = -99;
          if (samplePtHat>0) {
-           if (dr2<0.5&&gj.lJetPt>=40) {
+           if (dr2<0.5&&gj.lJetPt>=cutjetPt) {
               s.jet = gj.lJetPt;
               s.jeta = gj.lJetEta;
               s.jdr = dr2;
