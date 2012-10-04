@@ -22,11 +22,11 @@ if [[ ($pthat -ge 0) ]]; then
    inputFile="/net/hidsk0001/d00/scratch/jazzitup/macros/hiPhotonAna2011/mergedFiles/forest_loPhoton${pthat}-HYDJET-START44-V12-Aug29th.root"
    outputFile=trkcorr/$corrset"/"$corrset"_hy18gj${pthat}to${pthatMax}.root"
 else
-   inputFile="/net/hidsk0001/d00/scratch/jazzitup/macros/hiPhotonAna2011/mergedFiles/forest_minbias-HYDJET-START44-V12-Aug29th.root
-"
+#   inputFile="/net/hidsk0001/d00/scratch/jazzitup/macros/hiPhotonAna2011/mergedFiles/forest_minbias-HYDJET-START44-V12-Aug29th.root"
+   inputFile="/export/d00/scratch/jazzitup/mergedForest//forest_minbias-HYDJET-START44-V12-Sept19th.root"
    outputFile=trkcorr/$corrset"/"$corrset"_hy18mb.root"
 fi
 # final checks
 echo "input:  "$inputFile
 echo "output: "$outputFile
-root -b -q analyzeTrackingCorrectionGJ.C+'("'$algo'","anaTrack","'$inputFile'","'$outputFile'",0,'$pthat,$pthatMax,$sampleWt','$trkPtMin,$vzMax',5000,'$leadingPtMin,$subleadingPtMin,$sigDPhi,$genJetMode')'
+root -b -q analyzeTrackingCorrectionGJ.C+'("'$algo'","anaTrack","'$inputFile'","'$outputFile'",0,'$pthat,$pthatMax,$sampleWt','$trkPtMin,$vzMax',10,'$leadingPtMin,$subleadingPtMin,$sigDPhi,$genJetMode')'
