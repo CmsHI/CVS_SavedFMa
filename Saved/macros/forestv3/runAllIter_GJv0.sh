@@ -5,10 +5,13 @@ fi
 
 pthat=$1
 pthatMax=$2
-corrset=IterTrkCorr_GammaJetv0
+corrset=IterTrkCorr_GammaJetv1test
 
-# for algo in akPu3PF akPu3Calo; do
-for algo in akPu3Calo; do
-#    ./runGJTrackingCorr.sh $corrset $algo $pthat $pthatMax 15 40 -1 -1 0
-   ./runGJTrackingCorr.sh $corrset $algo $pthat $pthatMax 15 40 20 3.14159/2. 0
+#for algo in akPu3Calo; do
+for algo in akPu3PF; do
+  if [ $pthat -ge 0 ]; then
+    ./runGJTrackingCorr.sh $corrset $algo $pthat $pthatMax 15 40 -1 -1 0
+  else
+    ./runGJTrackingCorr.sh $corrset $algo $pthat $pthatMax 15 -1 -1 -1 0
+  fi
 done
