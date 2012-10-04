@@ -1,4 +1,4 @@
-#include "../HiForest_HEAD/hiForest.h"
+#include "../HiForest/HiForest_PhotonTrack/hiForest.h"
 #include <TFile.h>
 #include <TH1D.h>
 #include <TNtuple.h>
