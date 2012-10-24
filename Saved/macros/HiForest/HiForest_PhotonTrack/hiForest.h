@@ -50,7 +50,7 @@ class HiForest : public TNamed
 {
 
   public: 
-   HiForest(const char *file, const char *name="forest", bool ispp = 0, bool ismc = 0, bool isrecorrected = 0);
+   HiForest(const char *file, const char *name="forest", const char * trkcol="anaTrack", bool ispp = 0, bool ismc = 0, bool isrecorrected = 0);
   ~HiForest();
 
   //==================================================================================================================================
@@ -288,7 +288,7 @@ class HiForest : public TNamed
   
 };
 
-HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, bool recjec):
+HiForest::HiForest(const char *infName, const char* name, const char * trkcol, bool ispp, bool ismc, bool recjec):
    tree(0),
    fGauss(0),
    verbose(0),
@@ -313,7 +313,7 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
   hltTree          = (TTree*) inf->Get("hltanalysis/HltTree");
   skimTree         = (TTree*) inf->Get("skimanalysis/HltTree");
   photonTree       = (TTree*) inf->Get("multiPhotonAnalyzer/photon");
-  trackTree        = (TTree*) inf->Get("anaTrack/trackTree");
+  trackTree        = (TTree*) inf->Get(Form("%s/trackTree",trkcol));
 //   towerTree        = (TTree*) inf->Get("rechitanalyzer/tower");
 //   icPu5jetTree     = (TTree*) inf->Get("icPu5JetAnalyzer/t");
 //   akPu2jetTree     = (TTree*) inf->Get("akPu2PFJetAnalyzer/t");
@@ -333,6 +333,7 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
   genParticleTree  = (TTree*) inf->Get("HiGenParticleAna/hi");
   
   cout << "*** Using jet algo: " << name << " ***" << endl;
+  cout << "    and trk algo: " << ntrkcol << endl;
 
   // Check the validity of the trees.
   hasPhotonTree        = (photonTree       	!= 0);

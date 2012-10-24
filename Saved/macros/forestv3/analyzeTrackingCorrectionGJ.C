@@ -74,7 +74,7 @@ void analyzeTrackingCorrectionGJ(
    double preCutPhotonEt = 30;
   
    // Define the input file and HiForest
-   HiForest * c = new HiForest(inname,jetAlgo.Data());
+   HiForest * c = new HiForest(inname,jetAlgo.Data(),trkCol.Data());
    c->doTrackCorrections = true;
    c->doTrackingSeparateLeadingSubleading = false;
    c->triggerMode = kPHOTON; // kJET, kPHOTON, kMB
