@@ -333,7 +333,7 @@ HiForest::HiForest(const char *infName, const char* name, const char * trkcol, b
   genParticleTree  = (TTree*) inf->Get("HiGenParticleAna/hi");
   
   cout << "*** Using jet algo: " << name << " ***" << endl;
-  cout << "    and trk algo: " << ntrkcol << endl;
+  cout << "    and trk algo: " << trkcol << endl;
 
   // Check the validity of the trees.
   hasPhotonTree        = (photonTree       	!= 0);
