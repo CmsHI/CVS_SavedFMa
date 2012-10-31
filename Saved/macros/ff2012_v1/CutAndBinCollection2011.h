@@ -98,6 +98,7 @@ class DiJet {
   DiJet() :
     pthat(-99),
     lJetPt(-99), slJetPt(-99),
+    lJetRawPt(-99), slJetRawPt(-99),
     lJetEta(-99), slJetEta(-99),
     lJetPhi(-99), slJetPhi(-99),
     lJetPtGM(-99), slJetPtGM(-99),
@@ -107,12 +108,14 @@ class DiJet {
     lJetPhoSum(-99), slJetPhoSum(-99),
     lJetNtrSum(-99), slJetNtrSum(-99),
     lJetRecoEoH(-99), slJetRecoEoH(-99),
-    lJetGenEoH(-99), slJetGenEoH(-99)
+    lJetGenEoH(-99), slJetGenEoH(-99),
+    lJetFlav(-99),    slJetFlav(-99)
     
 
     {}
     float pthat;
     float lJetPt, slJetPt;
+    float lJetRawPt, slJetRawPt;
     float lJetEta, slJetEta;
     float lJetPhi, slJetPhi;
     float lJetPtGM, slJetPtGM;
@@ -123,13 +126,14 @@ class DiJet {
     float lJetNtrSum,   slJetNtrSum;
     float lJetRecoEoH, slJetRecoEoH;
     float lJetGenEoH, slJetGenEoH;
-
+    float lJetFlav,    slJetFlav;
       
 
 
     void clear() {
     pthat=-99;
     lJetPt = -99; slJetPt = -99;
+    lJetRawPt = -99; slJetRawPt = -99;
     lJetEta = -99; slJetEta = -99;
     lJetPhi = -99; slJetPhi = -99;
     lJetPtGM = -99; slJetPtGM = -99;
@@ -140,7 +144,7 @@ class DiJet {
     lJetNtrSum = -99; slJetNtrSum = -99;
     lJetRecoEoH = -99; slJetRecoEoH = -99;
     lJetGenEoH = -99; slJetGenEoH = -99;
-    
+    lJetFlav      = -99; slJetFlav = -99;  
     
     }
 };

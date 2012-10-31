@@ -7,8 +7,7 @@
 #include <iomanip>
 #include <string>
 #include <TMath.h>
- #include "../HiForest_V2_latest/hiForest.h"
-//#include "../HiForest_HEAD/hiForest.h"
+#include "../HiForest/HIN-12-013/hiForest.h"
 #include "CutAndBinCollection2011.h"
 #include <time.h>
 #include <TRandom3.h>
@@ -114,6 +113,7 @@ void forest2jetSkim(TString inputFile_="mc/photon50_25k.root", std::string outna
   float leadingJetPtCut = 100;
   float sublingJetPtCut = -1;
   float slJetPtCutMatch = 100;
+  bool doIcPu5CaloSkim = false;
 
   float tempJetEtaCut  = 2;
   
@@ -131,7 +131,7 @@ void forest2jetSkim(TString inputFile_="mc/photon50_25k.root", std::string outna
   int nCent2 = 40 ; // cent2Hist->GetNbinsX() + 1 ;  // ok back to 40 centrality bins                                               
 
   cout << " number of mixing centrality bins = " << nCent2 << endl; //cent2Hist->GetNbinsX() << endl;
-  bool takeCarePBin = true;
+  bool takeCarePBin = false;
   TString pbinFlag = "yesPbin";
   if ( !takeCarePBin ) pbinFlag = "noPbin";
   int seconds = time(NULL);
@@ -144,7 +144,7 @@ void forest2jetSkim(TString inputFile_="mc/photon50_25k.root", std::string outna
    
   const int nMaxPho = 1000;
   
-  HiForest *c = new HiForest(inputFile_.Data(),"forest",isPP);
+  HiForest *c = new HiForest(inputFile_.Data(),jetAlgo.Data(),isPP);
   c->doTrackingSeparateLeadingSubleading = false;
   c->doTrackCorrections = 1;
   c->InitTree();
@@ -155,7 +155,7 @@ void forest2jetSkim(TString inputFile_="mc/photon50_25k.root", std::string outna
   
   
   // now open new root file
-  TFile* newfile_data = new TFile(Form("%s_jetPt_%.0f_%.0f_jetEtaCut_%.2f_%s_smearCentBin%d_useGenJet%d.root",outname.data(),leadingJetPtCut,sublingJetPtCut,tempJetEtaCut,pbinFlag.Data(),smearCentBin,useGenJet),"recreate");
+  TFile* newfile_data = new TFile(Form("%s_jetPt_%.0f_%.0f_jetEtaCut_%.2f_%s_smearCentBin%d_%s_useGenJet%d.root",outname.data(),leadingJetPtCut,sublingJetPtCut,tempJetEtaCut,pbinFlag.Data(),smearCentBin,jetAlgo.Data(),useGenJet),"recreate");
   
   TH1D* smearingHist ;
   if ( smearCentBin > 0 ) {
@@ -244,9 +244,6 @@ void forest2jetSkim(TString inputFile_="mc/photon50_25k.root", std::string outna
   float genParPhi[maxGenPar];
   int   genParJetMatch[maxGenPar];
   float genParJetDr[maxGenPar];
-
-
-  
   
   TTree *newtreeGenPar;
   if ( isMC ) {
@@ -260,9 +257,27 @@ void forest2jetSkim(TString inputFile_="mc/photon50_25k.root", std::string outna
     newtreeGenPar->Branch("phi",genParPhi,"phi[nGenPar]/F");
     newtreeGenPar->Branch("jetMatch",genParJetMatch,"jetMatch[nGenPar]/I");
     newtreeGenPar->Branch("jetDr",genParJetDr,"jetDr[nGenPar]/F");
-
   }
+
+  // PF
+  int nPF;
+  int   pfId[MAXTRK];
+  float pfPt[MAXTRK];
+  float pfEta[MAXTRK];
+  float pfPhi[MAXTRK];
+  int   pfJetMatch[MAXTRK];
+  float pfJetDr[MAXTRK];
   
+  TTree *newtreePF;
+  newtreePF = new TTree("pf","pf candidates");
+  newtreePF->SetMaxTreeSize(30000000000);
+  newtreePF->Branch("nPF",&nPF,"nPF/I");
+  newtreePF->Branch("pfId",pfId,"pfId[nPF]/I");
+  newtreePF->Branch("pt",pfPt,"pt[nPF]/F");
+  newtreePF->Branch("eta",pfEta,"eta[nPF]/F");
+  newtreePF->Branch("phi",pfPhi,"phi[nPF]/F");
+  newtreePF->Branch("jetMatch",pfJetMatch,"jetMatch[nPF]/I");
+  newtreePF->Branch("jetDr",pfJetDr,"jetDr[nPF]/F");
   
   // For centrality reweighting
   cout << " change the centrality reweighting table for dijets" << endl;
@@ -276,7 +291,7 @@ void forest2jetSkim(TString inputFile_="mc/photon50_25k.root", std::string outna
     tdj = new TTree("tdj","Dijet tree");
     tdj->SetMaxTreeSize(30000000000);
     tdj->Branch("evt",&evt.run,"run/I:evt:cBin:pBin:nG:nJ:nT:trig/O:offlSel:noiseFilt:anaEvtSel:vz/F:reweight/F"); // todo : add ncoll later
-    tdj->Branch("dijet",&dj.pthat,"pthat/F:lJetPt:slJetPt:lJetEta:slJetEta:lJetPhi:slJetPhi:lJetPtGM:slJetPtGM:lJetEtaGM:slJetEtaGM:lJetPhiGM:slJetPhiGM:lChgSum:slChgSum:lPhoSum:slPhoSum:lNtrSum:slNtrSum:lJetRecoEoH:slJetRecoEoH:lJetGenEoH:slJetGenEoH");
+    tdj->Branch("dijet",&dj.pthat,"pthat/F:lJetPt:slJetPt:lJetRawPt:slJetRawPt:lJetEta:slJetEta:lJetPhi:slJetPhi:lJetPtGM:slJetPtGM:lJetEtaGM:slJetEtaGM:lJetPhiGM:slJetPhiGM:lChgSum:slChgSum:lPhoSum:slPhoSum:lNtrSum:slNtrSum:lJetRecoEoH:slJetRecoEoH:lJetGenEoH:slJetGenEoH:lJetFlav:slJetFlav");
   }
    
   int   nMtrk=0;
@@ -460,18 +475,20 @@ void forest2jetSkim(TString inputFile_="mc/photon50_25k.root", std::string outna
        continue;
      if ( (!isMC) && (c->skim.pHBHENoiseFilter != 1) ) 
        continue; 
+     if (doIcPu5CaloSkim && !(c->icPu5.jtpt[0]>90 && fabs(c->icPu5.jteta[0])<3) )
+       continue;
 
      dj.clear();
      if (isMC)    dj.pthat = c->photon.ptHat;
      
-     Jets* theJet;
-     if ( jetAlgo == "akPu3PF" ) theJet = &(c->akPu3PF) ;
-     else if ( jetAlgo == "icPu5" ) theJet = &(c->icPu5) ;
-     else if ( jetAlgo == "akPu3Calo" ) theJet = &(c->akPu3Calo) ;
-     else {
-       cout << "jet algo =" << jetAlgo << " : no such jet algo!!" << endl ;
-       continue;
-     }
+     Jets* theJet = &(c->akPu3PF) ;
+//      if ( jetAlgo == "akPu3PF" ) theJet = &(c->akPu3PF) ;
+//      else if ( jetAlgo == "icPu5" ) theJet = &(c->icPu5) ;
+//      else if ( jetAlgo == "akPu3Calo" ) theJet = &(c->akPu3Calo) ;
+//      else {
+//        cout << "jet algo =" << jetAlgo << " : no such jet algo!!" << endl ;
+//        continue;
+//      }
      
      int lJetIndex(-99);
      int nJets                          = theJet->nref; 
@@ -526,13 +543,15 @@ void forest2jetSkim(TString inputFile_="mc/photon50_25k.root", std::string outna
        if ( theJtpt > dj.lJetPt ) { 
 	 lJetIndex = ij;
 	 dj.lJetPt = theJtpt;
+	 dj.lJetRawPt = theJet->rawpt[ij];
 	 dj.lJetEta = theJteta;
 	 dj.lJetPhi = theJtphi;
-	 if ( useGenJet)
-	   dj.lJetPtGM = dj.lJetPt;
+	 if ( useGenJet) 
+	   dj.lJetPtGM = dj.lJetPt; 
 	 else
 	   dj.lJetPtGM = theJet->refpt[ij];
 	 
+         dj.lJetFlav  = theJet->refparton_flavor[ij];
 	 //dj.lJetChgSum = theJet->chargedSum[ij];
 	 // dj.lJetPhoSum = theJet->photonSum[ij];
 	 //dj.lJetNtrSum = theJet->neutralSum[ij];
@@ -562,9 +581,12 @@ void forest2jetSkim(TString inputFile_="mc/photon50_25k.root", std::string outna
 
        if ( theJtpt > dj.slJetPt ) {
          dj.slJetPt = theJtpt;
+	 dj.slJetRawPt = theJet->rawpt[ij];
 	 dj.slJetEta = theJteta;
          dj.slJetPhi = theJtphi;
 	 dj.slJetPtGM = theJet->refpt[ij];
+
+	 dj.slJetFlav  = theJet->refparton_flavor[ij];
 	 //dj.slJetChgSum = theJet->chargedSum[ij];
 	 //dj.slJetPhoSum = theJet->photonSum[ij];
 	 //dj.slJetNtrSum = theJet->neutralSum[ij];
@@ -623,8 +645,50 @@ void forest2jetSkim(TString inputFile_="mc/photon50_25k.root", std::string outna
        
        nTrk++;
      }
+
+     ///////////////////////////////////////////
+     /// track is done now it's pf candidates
+     ///////////////////////////////////////////
+     nPF = 0;
+     for ( int ic = 0 ; ic < c->pf.nPFpart ; ic++) {
+       if ( c->pf.pfPt[ic] < cuttrkPt ) continue;
+       if ( fabs( c->pf.pfEta[ic] ) > cuttrkEta ) continue;
+       
+       float drFromLjet  = getDR( c->pf.pfEta[ic], c->pf.pfPhi[ic], dj.lJetEta,  dj.lJetPhi);
+       float drFromSljet = 100;
+       if ( dj.slJetPt > 20 ) drFromSljet = getDR( c->pf.pfEta[ic], c->pf.pfPhi[ic], dj.slJetEta, dj.slJetPhi);
+       
+       pfJetMatch[nPF] =0;
+       if  (drFromLjet<=drMatching) {	    //  matchedJetPt = dj.lJetPt;
+         pfJetMatch[nPF] = 1;
+         pfJetDr[nPF] = drFromLjet;
+       }
+       else if ( (dj.slJetPt > slJetPtCutMatch) && (drFromSljet<=drMatching)) {  //            matchedJetPt = dj.slJetPt;
+         pfJetMatch[nPF] = 2;
+         pfJetDr[nPF] = drFromSljet;
+       }
+       else if ( getDR(c->pf.pfEta[ic], c->pf.pfPhi[ic], -dj.lJetEta,  dj.lJetPhi) <=drMatching ) {
+         pfJetMatch[nPF] = -1; 
+         pfJetDr[nPF] =  getDR(c->pf.pfEta[ic], c->pf.pfPhi[ic], -dj.lJetEta,  dj.lJetPhi);
+       }
+       else if (  (dj.slJetPt > slJetPtCutMatch) && (getDR(c->pf.pfEta[ic], c->pf.pfPhi[ic], -dj.slJetEta, dj.slJetPhi) <=drMatching) ) {
+         pfJetMatch[nPF] = -2;
+         pfJetDr[nPF] =  getDR(c->pf.pfEta[ic], c->pf.pfPhi[ic], -dj.slJetEta, dj.slJetPhi);
+       }
+       else {        //        matchedJetPt = 0;
+         pfJetMatch[nPF] = 0;
+         pfJetDr[nPF] = 999;
+         if (saveOnlyJetConeTrks) continue;  // just tantatively... July 8th 2012  
+       }
+       
+       pfPt[nPF]  = c->pf.pfPt[ic];
+       pfEta[nPF] = c->pf.pfEta[ic];
+       pfPhi[nPF] = c->pf.pfPhi[ic];	
+       pfId[nPF] = c->pf.pfId[ic];       
+       nPF++;
+     }
      
-     /// track is done now it's gen particie
+     /// pf candidate is done now it's gen particie
      nGenPar = 0;
      if ( isMC ) {
        float lGenESum(0), slGenESum(0), lGenHSum(0), slGenHSum(0);
@@ -822,6 +886,7 @@ void forest2jetSkim(TString inputFile_="mc/photon50_25k.root", std::string outna
        newtreeEvt->Fill();
        //      newtreeAk3pfJet->Fill();
        newtreeTrack->Fill();
+       newtreePF->Fill();
        if (saveMixTracks) tmixTrk->Fill();
        if ( isMC ) {
 	 newtreeGenPar->Fill();
