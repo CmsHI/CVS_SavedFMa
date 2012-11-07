@@ -14,7 +14,7 @@
 
 void TrkClosure(
    int anaMode=0, // 0=pt, 1=eta, 2=dphi, 3=xi
-   TString outdir="fig/07.28_closure"
+   TString outdir="fig/trkcorrv14_closure"
 )
 {
    TH1::SetDefaultSumw2();
@@ -28,19 +28,20 @@ void TrkClosure(
    trkCorr.AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj80to100_akPu3Calo_100_-1_-1000_genJetMode0.root",80);
    trkCorr.Init();
    
-//  TFile * inf = new TFile("output_hy18dj80_fv27_ntv1_corrv13_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0.root");
-//   TFile * inf = new TFile("output_hy18dj100_fv27_ntv1_corrv13_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0.root");
+//   TFile * inf = new TFile("output_hy18dj100_fv27_ntv1_corrv14_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0.root");
   TFile * inf = new TFile("output_hy18dj80_fv27_ntv1_corrv14_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0.root");
 //    TFile * inf = new TFile("output_sigdj80_fv27_ntv1_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0_corrhi.root");
 //    TFile * inf = new TFile("output_sigdj80_fv27_ntv1_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0_corrppv14jetfinexsec.root");
+//     TFile * inf = new TFile("output_sigdj80_fv27_ntv1_corrv14_akPu3PF_100_-1_-1000_saveTrk1_jmin100_tmin1_genJetMode0.root");
    TTree * t = (TTree*)inf->Get("tgj");
    
    //////////////////////////////////////////
    // Analysis Setup
    //////////////////////////////////////////
-   TString tag=Form("trkClos%d_0to30_jpt100_incone",anaMode);
-   TCut sel = "cBin<12&&pt1>100";
-//    TCut sel = "pt1>100";
+  TString tag=Form("trkClos%d_0to12_jpt100_pthat80",anaMode);
+  TCut sel = "cBin<12&&pt1>100";
+//     TString tag=Form("trkClos%d_pp_jpt100_pthat80",anaMode);
+//     TCut sel = "pt1>100";
   TCut genpSel = "";
   TCut trkSel = "";
 //     TCut genpSel = "simAsso==1||simAsso==2";
