@@ -1,4 +1,4 @@
-#include "../HiForest_HEAD/hiForest.h"
+#include "../HiForest/HIN-12-013/hiForest.h"
 #include <TFile.h>
 #include <TH1D.h>
 #include <TNtuple.h>
@@ -37,7 +37,7 @@ void analyzeDiJetMPT(
    // Setup Analysis
    ///////////////////////////////////////////////////
    int saveTracks = 1; // 0=none, 1=all, 10=cone
-   double cutjetPt = 100;
+   double cutjetPt = 10;
    double cutjetEta = 2;
    double cutPtTrk=1.;
    double cutEtaTrk = 2.4;
@@ -56,19 +56,13 @@ void analyzeDiJetMPT(
    CentralityReWeight cw(datafname,mcfname,"offlSel&&pt1>100&&pt2>0&&acos(cos(phi2-phi1))>2./3*3.14159");
 
    // Define the input file and HiForest
-   HiForest * c = new HiForest(inname,trkCol.Data(),isPP);
+   HiForest * c = new HiForest(inname,jetAlgo.Data(),isPP);
    c->doTrackCorrections = true;
    c->doTrackingSeparateLeadingSubleading = false;
    c->InitTree();
 
    // intialize jet variables
-   Jets * anajet = 0;
-   if (jetAlgo=="akPu3PF") anajet = &(c->akPu3PF);
-   else if (jetAlgo=="akPu3Calo") anajet = &(c->akPu3Calo);
-   else {
-      cout << "Fatal Error: jetalgo " << jetAlgo << " not defined" << endl;
-      exit(1);
-   }
+   Jets* anajet = &(c->akPu3PF) ;
    
    // Output file
    cout << "Output: " << outname << endl;
@@ -96,14 +90,11 @@ void analyzeDiJetMPT(
    BookGJBranches(tgj,evt,gj);
 
    // pp triggers
-   int HLT_Photon15_CaloIdVL_v1=0;
-   int HLT_Photon50_CaloIdVL_v3=0;
-   int HLT_Photon50_CaloIdVL_IsoL_v6=0;
+   int HLT_Jet40_v1=0;
    if (dataSrcType==2) {
-      c->hltTree->SetBranchAddress("HLT_Photon15_CaloIdVL_v1",&HLT_Photon15_CaloIdVL_v1);
+      c->hltTree->SetBranchAddress("HLT_Jet40_v1",&HLT_Jet40_v1);
    } else if (dataSrcType==3) {
-      c->hltTree->SetBranchAddress("HLT_Photon50_CaloIdVL_v3",&HLT_Photon50_CaloIdVL_v3);
-      c->hltTree->SetBranchAddress("HLT_Photon50_CaloIdVL_IsoL_v6",&HLT_Photon50_CaloIdVL_IsoL_v6);
+      c->hltTree->SetBranchAddress("HLT_Jet40_v1",&HLT_Jet40_v1);
    }
 
    ///////////////////////////////////////////////////
@@ -116,7 +107,7 @@ void analyzeDiJetMPT(
       evt.run = c->hlt.Run;
       evt.evt = c->hlt.Event;
       evt.cBin = c->evt.hiBin;
-      if (dataSrcType>1) evt.cBin = 39;
+      if (isPP) evt.cBin = 39;
       evt.evtPlane = c->evt.hiEvtPlanes[21];
       evt.nJ = anajet->nref;
       evt.nT = c->track.nTrk;
@@ -126,11 +117,11 @@ void analyzeDiJetMPT(
       evt.noiseFilt = (c->skim.pHBHENoiseFilter > 0);
       if (dataSrcType>1) {
          if (dataSrcType==2) {
-            evt.trig = (HLT_Photon15_CaloIdVL_v1>0);
+            evt.trig = (HLT_Jet40_v1>0);
          } else if (dataSrcType==3) {
-            evt.trig = (HLT_Photon50_CaloIdVL_v3>0)||(HLT_Photon50_CaloIdVL_IsoL_v6>0);
+            evt.trig = (HLT_Jet40_v1>0);
          }
-         evt.offlSel = (c->skim.phfCoincFilter && c->skim.ppurityFractionFilter);
+//          evt.offlSel = (c->skim.phfCoincFilter && c->skim.ppurityFractionFilter);
       }
       if (!c->hasHltTree) evt.trig = true;
       evt.anaEvtSel = evt.offlSel;
@@ -158,7 +149,7 @@ void analyzeDiJetMPT(
       for (int j=0;j<anajet->nref;j++) {
          if (anajet->jtpt[j]<cutjetPt) continue;
          if (fabs(anajet->jteta[j])>cutjetEta) continue;
-	 if ((anajet->trackMax[j]/anajet->jtpt[j])<0.01) continue;
+         if ((anajet->trackMax[j]/anajet->jtpt[j])<0.01) continue;
          if (anajet->jtpt[j] > gj.pt1) {
             gj.pt1 = anajet->jtpt[j];
             leadingIndex = j;
