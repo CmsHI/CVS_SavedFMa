@@ -8,7 +8,9 @@
 #include <vector>
 #include "TChain.h"
 #include "TMath.h"
+#include "CutAndBinCollection2011.h"
 #include "analyzeTrackingCorrection.h"
+#include "SmearingFactors.h"
 using namespace std;
 using namespace TMath;
 
@@ -28,6 +30,7 @@ void analyzeDiJetMPT(
    double subleadingJetPtMin=-1,
    double sigDPhi=-1,
    bool genJetMode=false,
+   int smearCentBin = 0,
    bool doCentReWeight=false,
    TString mcfname="",
    TString datafname="output-data-Photon-v7_v30.root"
@@ -43,13 +46,14 @@ void analyzeDiJetMPT(
    double cutEtaTrk = 2.4;
    double trkJetAssoR=0.3;
 
-   TString tag=Form("%s_%.0f_%.0f_%.0f_saveTrk%d_jmin%.0f_tmin%.0f_genJetMode%d",jetAlgo.Data(),leadingJetPtMin,subleadingJetPtMin,sigDPhi*1000,saveTracks,cutjetPt,cutPtTrk,genJetMode);
+   TString tag=Form("%s_%.0f_%.0f_%.0f_saveTrk%d_jmin%.0f_tmin%.0f_genj%d_sm%d",jetAlgo.Data(),leadingJetPtMin,subleadingJetPtMin,sigDPhi*1000,saveTracks,cutjetPt,cutPtTrk,genJetMode,smearCentBin);
    outname.ReplaceAll(".root",Form("_%s.root",tag.Data()));
    cout << "Input: " << inname << " isPP: " << isPP << endl;
    cout << "Sample pthat = " << samplePtHat << " ptHatMax = " << ptHatMax << endl;
    cout << "Track pt min = " << cutPtTrk << endl;
    cout << "skim: leading Jet > " << leadingJetPtMin << " subleading > " << subleadingJetPtMin << " dphi > " << sigDPhi  << endl;
    cout << "Genjet mode: " << genJetMode << endl;
+   cout << "SmearCentBin  = " << smearCentBin << endl;
    cout << "Output: " << outname << endl;
 
    // Centrality reweiting
@@ -95,6 +99,13 @@ void analyzeDiJetMPT(
       c->hltTree->SetBranchAddress("HLT_Jet40_v1",&HLT_Jet40_v1);
    } else if (dataSrcType==3) {
       c->hltTree->SetBranchAddress("HLT_Jet40_v1",&HLT_Jet40_v1);
+   }
+
+   ////////////////////////
+   // Smearing Setup
+   ////////////////////////
+   if (smearCentBin>0) {
+     LoadParameters();
    }
 
    ///////////////////////////////////////////////////
@@ -143,6 +154,23 @@ void analyzeDiJetMPT(
       int awayIndex=-1,genAwayIndex=-1;
       gj.clear();
       
+      // smearing for pp
+      int tempn=0;
+      if (smearCentBin>0) {	
+        for (int j=0;j<anajet->nref;j++) {
+         if (anajet->jtpt[j]<cutjetPt) continue;
+         if (fabs(anajet->jteta[j])>cutjetEta) continue;
+         if ((anajet->trackMax[j]/anajet->jtpt[j])<0.01) continue;
+          //if (anajet->jtpt[j]>200) cout << "Before smearing: " << anajet->jtpt[j] << endl;
+          int smCentBin = GetCBin( centBin[smearCentBin] );
+          //cout << "smCentBin: " << smCentBin << endl;
+          gj.inclJetUnSmPt[tempn] = anajet->jtpt[j] ;
+          anajet->jtpt[j]  = GetSmearedPtData(2,smCentBin,anajet->jtpt[j],0,"");
+          //if (anajet->jtpt[j]>200) cout << "After smearing: " << anajet->jtpt[j] << endl;
+          ++tempn;
+        }
+      }
+
       ///////////////////////////////////////////////////////
       // Find Leading jets
       ///////////////////////////////////////////////////////
@@ -173,6 +201,7 @@ void analyzeDiJetMPT(
          for (int j=0;j<anajet->nref;j++) {
             if (anajet->jtpt[j]<cutjetPt) continue;
             if (fabs(anajet->jteta[j])>cutjetEta) continue;
+            if ((anajet->trackMax[j]/anajet->jtpt[j])<0.01) continue;
             gj.inclJetPt[gj.nJet] = anajet->jtpt[j];
             gj.inclJetEta[gj.nJet] = anajet->jteta[j];
             gj.inclJetPhi[gj.nJet] = anajet->jtphi[j];
@@ -265,6 +294,8 @@ void analyzeDiJetMPT(
       ///////////////////////////////////////////////////////
       // Tracks
       ///////////////////////////////////////////////////////
+      bool doTracks = false;
+      if (doTracks) {
       double trkcorr[4];
       gj.nTrk=0;
       const int nTrkSet=1;
@@ -343,6 +374,7 @@ void analyzeDiJetMPT(
          gj.simPhi[gj.nSim] = simPhi;
          gj.simHasRec[gj.nSim] = (anaTrks[0]->pNRec[ip]==1&&(anaTrks[0]->mtrkAlgo[ip]<4||anaTrks[0]->mtrkQual[ip]>0));
          ++gj.nSim;
+      }
       }
       
       // All done
