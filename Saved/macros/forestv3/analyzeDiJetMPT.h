@@ -60,7 +60,9 @@ public:
    float inclJetRefPt[MAXTRK];
    float inclJetRefPartonPt[MAXTRK];
    float inclJetRefResp[MAXTRK];
+   int nUnSmJet;
    float inclJetUnSmPt[MAXTRK];
+   float inclJetSm[MAXTRK];
    int nGenJet;
    float inclGenJetPt[MAXTRK];
    float inclGenJetEta[MAXTRK];
@@ -92,7 +94,7 @@ public:
       jlpfPt=-99; jlpfEta=-99; jlpfPhi=-99; jlpfJetDr=-99; jlpfId=-99; pfPhoPt=0;
       ref1pt=-99; ref1eta=-99; ref1phi=-99; ref1partonpt=-99; ref1partonflavor=-99; ref2pt=-99; ref2eta=-99; ref2phi=-99; ref2partonpt=-99; ref2partonflavor;
       genjetpt1=-99; genjeteta1=-99; genjetphi1=-99; genjetpt2=-99; genjeteta2=-99; genjetphi2;
-      nTrk=0; nJet=0; nGenJet=0; nPf=0; nGenp=0; nSim=0;
+      nTrk=0; nJet=0; nGenJet=0; nPf=0; nGenp=0; nSim=0; nUnSmJet=0;
    }
    void clearParticles() {
       nTrk=0; nPf=0; nGenp=0; nSim=0;
@@ -130,7 +132,9 @@ void BookGJBranches(TTree * tgj, EvtSel & evt, DiJet & gj) {
    tgj->Branch("inclJetRefPt",gj.inclJetRefPt,"inclJetRefPt[nJet]/F");
    tgj->Branch("inclJetRefPartonPt",gj.inclJetRefPartonPt,"inclJetRefPartonPt[nJet]/F");
 //    tgj->Branch("inclJetRefResp",gj.inclJetRefResp,"inclJetRefResp[nJet]/F");
-   tgj->Branch("inclJetUnSmPt",gj.inclJetUnSmPt,"inclJetUnSmPt[nJet]/F");
+   tgj->Branch("nUnSmJet",&gj.nUnSmJet,"nUnSmJet/I");
+   tgj->Branch("inclJetUnSmPt",gj.inclJetUnSmPt,"inclJetUnSmPt[nUnSmJet]/F");
+   tgj->Branch("inclJetSm",gj.inclJetSm,"inclJetSm[nUnSmJet]/F");
    tgj->Branch("nGenJet",&gj.nGenJet,"nGenJet/I");
    tgj->Branch("inclGenJetPt",gj.inclGenJetPt,"inclGenJetPt[nGenJet]/F");
    tgj->Branch("inclGenJetEta",gj.inclGenJetEta,"inclGenJetEta[nGenJet]/F");

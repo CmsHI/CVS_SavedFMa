@@ -87,7 +87,10 @@ void analyzeDiJetMPT(
    TH1D * hTrkPt = new TH1D("hTrkPt",";p_{T} (GeV/c)",200,0,200);
    TH1D * hTrkCorrPt = new TH1D("hTrkCorrPt",";p_{T} (GeV/c)",200,0,200);
    TH1D * hGenpPt = new TH1D("hGenpPt",";p_{T} (GeV/c)",200,0,200);
-
+   TH1D* smearingHist=0;
+   if ( smearCentBin > 0 ) {
+      smearingHist = new TH1D("smearingH","",100,-2,2);
+   }
    EvtSel evt;
    DiJet gj;
    TTree * tgj = new TTree("tgj","dijet jet tree");
@@ -155,7 +158,7 @@ void analyzeDiJetMPT(
       gj.clear();
       
       // smearing for pp
-      int tempn=0;
+      gj.nUnSmJet=0;
       if (smearCentBin>0) {	
         for (int j=0;j<anajet->nref;j++) {
          if (anajet->jtpt[j]<cutjetPt) continue;
@@ -164,10 +167,13 @@ void analyzeDiJetMPT(
           //if (anajet->jtpt[j]>200) cout << "Before smearing: " << anajet->jtpt[j] << endl;
           int smCentBin = GetCBin( centBin[smearCentBin] );
           //cout << "smCentBin: " << smCentBin << endl;
-          gj.inclJetUnSmPt[tempn] = anajet->jtpt[j] ;
+          gj.inclJetUnSmPt[gj.nUnSmJet] = anajet->jtpt[j];
           anajet->jtpt[j]  = GetSmearedPtData(2,smCentBin,anajet->jtpt[j],0,"");
+          gj.inclJetSm[gj.nUnSmJet] = anajet->jtpt[j]/gj.inclJetUnSmPt[gj.nUnSmJet];
           //if (anajet->jtpt[j]>200) cout << "After smearing: " << anajet->jtpt[j] << endl;
-          ++tempn;
+          if ( (gj.inclJetUnSmPt[gj.nUnSmJet] > 100) && (fabs(anajet->jteta[j])<2.0))
+            smearingHist->Fill( (anajet->jtpt[j] - gj.inclJetUnSmPt[gj.nUnSmJet] )/gj.inclJetUnSmPt[gj.nUnSmJet] );
+          ++gj.nUnSmJet;
         }
       }
 
