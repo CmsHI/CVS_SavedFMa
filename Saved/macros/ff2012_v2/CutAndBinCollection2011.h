@@ -159,7 +159,8 @@ class IndividualJet {
       jetPhi(-99),
       jetPtGM(-99),
       jetEtaGM(-99),
-      jetPhiGM(-99)
+      jetPhiGM(-99),
+      jetInd(-99)
 
   {}
     float  pthat;
@@ -169,6 +170,7 @@ class IndividualJet {
     float  jetPtGM;
     float  jetEtaGM;
     float  jetPhiGM;
+    int jetInd;
 
 
     void clear() {
@@ -179,7 +181,7 @@ class IndividualJet {
       jetPtGM=-99;
       jetEtaGM=-99;
       jetPhiGM=-99;
-
+      jetInd=-99;
     }
 };
 
