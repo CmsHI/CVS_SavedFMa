@@ -200,6 +200,8 @@ class HiForest : public TNamed
   bool doJetCorrection;
   bool doTrackCorrections;
   bool doTrackingSeparateLeadingSubleading;
+  
+  bool checkMaxEntry;
 
   // Extra variables
   Float_t* towerEt;
@@ -286,6 +288,7 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
    verbose(0),
    pp(ispp),
    mc(ismc),
+   checkMaxEntry(false),
    nEntries(0),
    currentEvent(0)
 {
@@ -308,7 +311,8 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
   towerTree        = (TTree*) inf->Get("rechitanalyzer/tower");
   icPu5jetTree     = (TTree*) inf->Get("icPu5JetAnalyzer/t");
   akPu2jetTree     = (TTree*) inf->Get("akPu2PFJetAnalyzer/t");
-  akPu3jetTree     = (TTree*) inf->Get("akPu3PFJetAnalyzer/t");
+//   akPu3jetTree     = (TTree*) inf->Get("akPu3PFJetAnalyzer/t");
+  akPu3jetTree     = (TTree*) inf->Get(Form("%sJetAnalyzer/t",name));
   akPu4jetTree     = (TTree*) inf->Get("akPu4PFJetAnalyzer/t");
   akPu2CaloJetTree = (TTree*) inf->Get("akPu2CaloJetAnalyzer/t");
   akPu3CaloJetTree = (TTree*) inf->Get("akPu3CaloJetAnalyzer/t");
@@ -321,8 +325,10 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
   genpTree         = (TTree*) inf->Get("genpana/photon");
   
   // doesn't load genParticle by default
-  //genParticleTree  = (TTree*) inf->Get("HiGenParticleAna/hi");
+  genParticleTree  = (TTree*) inf->Get("HiGenParticleAna/hi");
 
+  cout << "Jet Algo used: " << name << endl;
+  
   // Check the validity of the trees.
   hasPhotonTree        = (photonTree       	!= 0);
   hasPFTree            = (pfTree     		!= 0);
@@ -350,73 +356,73 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
     photonTree->SetName("photon");
     photonTree->SetAlias("swiss","1-(eRight+eLeft+eTop+eBottom)/eMax");
     if (tree == 0) tree = photonTree; else tree->AddFriend(photonTree);
-    setupPhotonTree(photonTree,photon);
+    setupPhotonTree(photonTree,photon,checkMaxEntry);
   }
 
   if (hasPFTree) {
     pfTree->SetName("pf");
     if (tree == 0) tree = pfTree; else tree->AddFriend(pfTree);
-    setupPFTree(pfTree,pf);
+    setupPFTree(pfTree,pf,checkMaxEntry);
   }
 
 
   if (hasEvtTree) {
     evtTree->SetName("evtTree");
     if (tree == 0) tree = evtTree; else tree->AddFriend(evtTree);
-    setupEvtTree(evtTree,evt);
+    setupEvtTree(evtTree,evt,checkMaxEntry);
   }
 
   if (hasMetTree) {
     metTree->SetName("met");
     if (tree == 0) tree = metTree; else tree->AddFriend(metTree);
-    setupMetTree(metTree,met);
+    setupMetTree(metTree,met,checkMaxEntry);
   }
 
   if (hasHltTree) {
     hltTree->SetName("hltTree");
     if (tree == 0) tree = hltTree; else tree->AddFriend(hltTree);
-    setupHltTree(hltTree,hlt);
+    setupHltTree(hltTree,hlt,checkMaxEntry);
   }
 
   if (hasIcPu5JetTree) {
     icPu5jetTree->SetName("icPu5");
     if (tree == 0) tree = icPu5jetTree; else tree->AddFriend(icPu5jetTree);
-    setupJetTree(icPu5jetTree,icPu5);
+    setupJetTree(icPu5jetTree,icPu5,checkMaxEntry);
   }
 
   if (hasAkPu2JetTree) {
     akPu2jetTree->SetName("akPu2PF");
     if (tree == 0) tree = akPu2jetTree; else tree->AddFriend(akPu2jetTree);
-    setupJetTree(akPu2jetTree,akPu2PF);
+    setupJetTree(akPu2jetTree,akPu2PF,checkMaxEntry);
   }
 
   if (hasAkPu3JetTree) {
     akPu3jetTree->SetName("akPu3PF");
     if (tree == 0) tree = akPu3jetTree; else tree->AddFriend(akPu3jetTree);
-    setupJetTree(akPu3jetTree,akPu3PF);
+    setupJetTree(akPu3jetTree,akPu3PF,checkMaxEntry);
   }
 
   if (hasAkPu4JetTree) {
     akPu4jetTree->SetName("akPu4PF");
     if (tree == 0) tree = akPu4jetTree; else tree->AddFriend(akPu4jetTree);
-    setupJetTree(akPu4jetTree,akPu4PF);
+    setupJetTree(akPu4jetTree,akPu4PF,checkMaxEntry);
   }
   if (hasAkPu2CaloJetTree) {
     akPu2CaloJetTree->SetName("akPu2Calo");
     if (tree == 0) tree = akPu2CaloJetTree; else tree->AddFriend(akPu2CaloJetTree);
-    setupJetTree(akPu2CaloJetTree,akPu2Calo);
+    setupJetTree(akPu2CaloJetTree,akPu2Calo,checkMaxEntry);
   }
 
   if (hasAkPu3CaloJetTree) {
     akPu3CaloJetTree->SetName("akPu3Calo");
     if (tree == 0) tree = akPu3CaloJetTree; else tree->AddFriend(akPu3CaloJetTree);
-    setupJetTree(akPu3CaloJetTree,akPu3Calo);
+    setupJetTree(akPu3CaloJetTree,akPu3Calo,checkMaxEntry);
   }
 
   if (hasAkPu4CaloJetTree) {
     akPu4CaloJetTree->SetName("akPu4Calo");
     if (tree == 0) tree = akPu4CaloJetTree; else tree->AddFriend(akPu4CaloJetTree);
-    setupJetTree(akPu4CaloJetTree,akPu4Calo);
+    setupJetTree(akPu4CaloJetTree,akPu4Calo,checkMaxEntry);
   }
 
 
@@ -425,49 +431,49 @@ HiForest::HiForest(const char *infName, const char* name, bool ispp, bool ismc, 
     if (tree == 0) tree = trackTree; else tree->AddFriend(trackTree);
     trackTree->SetAlias("mergedGeneral","(trkAlgo<4||(highPurity))");
     trackTree->SetAlias("mergedSelected","(trkAlgo<4||(highPurity&&trkAlgo==4)))");
-    setupTrackTree(trackTree,track);
+    setupTrackTree(trackTree,track,checkMaxEntry);
   }
    
   if (hasPixTrackTree) {
     pixtrackTree->SetName("pixtrack");
     if (tree == 0) tree = pixtrackTree; else tree->AddFriend(pixtrackTree);
-    setupTrackTree(pixtrackTree,pixtrack);
+    setupTrackTree(pixtrackTree,pixtrack,checkMaxEntry);
   }
    
   if (hasSkimTree) {
     skimTree->SetName("skim");
     if (tree == 0) tree = skimTree; else tree->AddFriend(skimTree);
-    setupSkimTree(skimTree,skim);
+    setupSkimTree(skimTree,skim,checkMaxEntry);
   }
 
   if (hasTowerTree) {
     towerTree->SetName("tower");
     if (tree == 0) tree = towerTree; else tree->AddFriend(towerTree);
-    setupHitTree(towerTree,tower);
+    setupHitTree(towerTree,tower,checkMaxEntry);
   }
 
   if (hasHbheTree) {
     hbheTree->SetName("hbhe");
     if (tree == 0) tree = hbheTree; else tree->AddFriend(hbheTree);
-    setupHitTree(hbheTree,hbhe);
+    setupHitTree(hbheTree,hbhe,checkMaxEntry);
   }
 
   if (hasEbTree) {
     ebTree->SetName("eb");
     if (tree == 0) tree = ebTree; else tree->AddFriend(ebTree);
-    setupHitTree(ebTree,eb);
+    setupHitTree(ebTree,eb,checkMaxEntry);
   }
   
   if (hasGenpTree) {
     genpTree->SetName("genp");
     if (tree == 0) tree = genpTree; else tree->AddFriend(genpTree);
-    setupGenpTree(genpTree,genp);
+    setupGenpTree(genpTree,genp,checkMaxEntry);
   }
 
   if (hasGenParticleTree) {
     genParticleTree->SetName("genParticle");
     if (tree == 0) tree = genParticleTree; else tree->AddFriend(genParticleTree);
-    setupGenParticleTree(genParticleTree,genparticle);
+    setupGenParticleTree(genParticleTree,genparticle,checkMaxEntry);
   }
 
   tree->SetMarkerStyle(20);
@@ -633,6 +639,7 @@ void HiForest::PrintStatus()
   if (hasAkPu3JetTree) CheckTree(akPu3jetTree, "AkPu3jetTree");
   if (hasAkPu4JetTree) CheckTree(akPu4jetTree, "AkPu4jetTree");
   if (hasAkPu2CaloJetTree) CheckTree(akPu2CaloJetTree, "AkPu2CaloJetTree");
+  if (hasAkPu3CaloJetTree) CheckTree(akPu3CaloJetTree, "AkPu3CaloJetTree");
   if (hasAkPu3CaloJetTree) CheckTree(akPu3CaloJetTree, "AkPu3CaloJetTree");
   if (hasAkPu4CaloJetTree) CheckTree(akPu4CaloJetTree, "AkPu4CaloJetTree");
   if (hasTrackTree)    CheckTree(trackTree,    "TrackTree");
