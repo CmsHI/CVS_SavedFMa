@@ -278,6 +278,7 @@ float GetSmearedPtData(int nj,int ic,float recopt,float fpercent,const char *csy
       //else tsmf += afsmf[nj][icen][ib];
       //}
     }
+    if (recopt>100&&recopt<101) cout << "ic: " << ic << " smpt: " << smpt << " tsmf: " << tsmf << endl;
     smpt = gRandom->Gaus(smpt,tsmf);
   }
   return smpt;

@@ -95,7 +95,6 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   // smear Cent Bin = 0 : no smearing     1,2,3,4 corresponds to 0-10%, 30%,50%,100%
   TH1D* smearingCents = getCentDistDj();
   TH1D* smearingCents2=0;
-  TH1D* smearingHist=0;
   if ( smearCentBin > 0 ) {
     cout << " smearCentBin  = " << smearCentBin << endl;
     if ( smearCentBin > 0 ) {
@@ -115,8 +114,6 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
     TCanvas *c3 = new TCanvas("c3","",400,400);
     smearingCents2->Draw();
     c3->Print(Form("centSm_%d.gif",smearCentBin));
-    // the actual smearing hist
-    smearingHist = new TH1D("smearingH","",100,-2,2);
     // Finally setup smearing functions
     LoadParameters();
   }
@@ -178,6 +175,14 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   TH1D * hEvtPtHat = new TH1D("hEvtPtHat",";#hat{p}_{T} (GeV/c);",100,0,500);
   TH1D * hJet1Pt = new TH1D("hJet1Pt",";Leading Jet p_{T} (GeV/c);",100,0,300);
   TH1D * hJet2Pt = new TH1D("hJet2Pt",";Subleading Jet p_{T} (GeV/c);",100,0,300);
+  TH1D* smearingHist=0;
+  TH2D* smearingBin=0, *smearingPt=0;
+  if ( smearCentBin > 0 ) {  
+    // the actual smearing hist
+    smearingHist = new TH1D("smearingH","",100,-2,2);
+    smearingBin = new TH2D("smearingBin",";bin;factor",10,0,10,100,-2,2);
+    smearingPt = new TH2D("smearingPt",";p_{T} (GeV/c);factor",30,0,300,100,-2,2);
+  }
   
   // Analysis ntuples
   TTree* newtreehlt;
@@ -490,8 +495,12 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
         theJet->jtpt[ij]  = GetSmearedPtData(2,smCentBin,theJet->jtpt[ij],0,"");
         if (theJet->jtpt[ij]>200) cout << "After smearing: " << theJet->jtpt[ij] << endl;
       
-        if ( (tttejej > 100) && (fabs(theJet->jteta[ij])<2.0))
-          smearingHist->Fill( (theJet->jtpt[ij] - tttejej )/tttejej );
+        if ( (tttejej > 100) && (fabs(theJet->jteta[ij])<2.0)) {
+          float sm=(theJet->jtpt[ij] - tttejej )/tttejej;
+          smearingHist->Fill( sm );
+          smearingBin->Fill( sm );
+          smearingPt->Fill( sm );
+        }
       }
     }
 
