@@ -167,7 +167,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   //////////////////////////////////////////////////////////////////////////
   // Analysis Output
   //////////////////////////////////////////////////////////////////////////
-  TFile* newfile_data = new TFile(Form("%s_jetPt_%.0f_jetEtaCut_%.2f_%s_smearCentBin%d_%s_useGenJet%d.root",outname.data(),InclusiveJetPtCut,tempJetEtaCut,pbinFlag.Data(),smearCentBin,jetAlgo.Data(),useGenJet),"recreate");
+  TFile* newfile_data = new TFile(Form("%s_jetPt_%.0f_jetEtaCut_%.2f_%s_sm%d_%s_gj%d.root",outname.data(),InclusiveJetPtCut,tempJetEtaCut,pbinFlag.Data(),smearCentBin,jetAlgo.Data(),useGenJet),"recreate");
   // XCheck Histograms
   TH1D * hEvtCentNoSkim = new TH1D("hEvtCentNoSkim",";Centrality Bin;",40,0,40);
   TH1D * hEvtCent = new TH1D("hEvtCent",";Centrality Bin;",40,0,40);
@@ -176,12 +176,13 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   TH1D * hJet1Pt = new TH1D("hJet1Pt",";Leading Jet p_{T} (GeV/c);",100,0,300);
   TH1D * hJet2Pt = new TH1D("hJet2Pt",";Subleading Jet p_{T} (GeV/c);",100,0,300);
   TH1D* smearingHist=0;
-  TH2D* smearingBin=0, *smearingPt=0;
+  TH2D* smearingBin=0, *smearingPt=0, *smearingPtBin0=0;
   if ( smearCentBin > 0 ) {  
     // the actual smearing hist
     smearingHist = new TH1D("smearingH","",100,-2,2);
     smearingBin = new TH2D("smearingBin",";bin;factor",10,0,10,100,-2,2);
     smearingPt = new TH2D("smearingPt",";p_{T} (GeV/c);factor",30,0,300,100,-2,2);
+    smearingPtBin0 = new TH2D("smearingPtBin0",";p_{T} (GeV/c);factor",30,0,300,100,-2,2);
   }
   
   // Analysis ntuples
@@ -498,8 +499,9 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
         if ( (tttejej > 100) && (fabs(theJet->jteta[ij])<2.0)) {
           float sm=(theJet->jtpt[ij] - tttejej )/tttejej;
           smearingHist->Fill( sm );
-          smearingBin->Fill( sm );
-          smearingPt->Fill( sm );
+          smearingBin->Fill( smCentBin, sm );
+          smearingPt->Fill( tttejej, sm );
+          if (smCentBin==0) smearingPtBin0->Fill( tttejej, sm );
         }
       }
     }
