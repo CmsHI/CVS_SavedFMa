@@ -84,6 +84,7 @@ void drawFromHist(TString infname,int smearPP=1) {
   c1->SaveAs(Form("fig/Nov14_ptbins/pp_smearing%d_spectrum_comparison.gif",smearPP));
   c1->SaveAs(Form("fig/Nov14_ptbins/pp_smearing%d_spectrum_comparison.pdf",smearPP));
 }
+
 void drawReweghtingPlotIncl(int smearPP=1) {
   TH1::SetDefaultSumw2();
   
@@ -102,7 +103,7 @@ void drawReweghtingPlotIncl(int smearPP=1) {
   }  
   
   // Make Histograms
-  TFile * outf = new TFile("histograms.root","recreate");
+  TFile * outf = new TFile(Form("hisSmear%d.root",smearPP),"recreate");
   for ( int icent=1; icent<=4 ; icent++) {
     pbpb[icent] = new TH1D(Form("hjetPt_hi_inclusiveJet_icent%d",icent),";p_{T} (GeV/c);",nptbin,ptbins);
     pp[icent] = new TH1D(Form("hjetPt_pp_inclusiveJet_icent%d",icent),";p_{T} (GeV/c);",nptbin,ptbins);
