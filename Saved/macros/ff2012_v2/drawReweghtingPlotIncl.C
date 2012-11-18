@@ -15,7 +15,7 @@ using namespace std;
 const int nptbin=11;
 double ptbins[nptbin+1] ={100, 110, 120, 130, 140, 150, 160, 170, 180, 200, 240, 300};
 
-void drawFromHist(TString infname,int smearPP=1) {
+void drawFromHist(TString infname,int smearPP=1, TString outname="fig/pp_spectrum_comparison") {
   TH1D * pp[5] ;
   TH1D * pbpb[5] ;
   TH1D * ratio[5] ;
@@ -81,13 +81,16 @@ void drawFromHist(TString infname,int smearPP=1) {
 //       drawPatch(0.0,0.05,0.1,0.147,     0,1001,"NDC");
   }
   
-  c1->SaveAs(Form("fig/Nov14_ptbins/pp_smearing%d_spectrum_comparison.gif",smearPP));
-  c1->SaveAs(Form("fig/Nov14_ptbins/pp_smearing%d_spectrum_comparison.pdf",smearPP));
+  c1->SaveAs(outname+".gif");
+  c1->SaveAs(outname+".pdf");
 }
 
-void drawReweghtingPlotIncl(int smearPP=1) {
+void drawReweghtingPlotIncl(int smearPP=1, int rewtJet=1) {
   TH1::SetDefaultSumw2();
   
+  //////////////////////////////////////////////////
+  // Input
+  //////////////////////////////////////////////////
   TTree * thi;
   TTree * vtpp[5];
   TH1D * pp[5] ;
@@ -97,28 +100,40 @@ void drawReweghtingPlotIncl(int smearPP=1) {
   TFile* inf1 = new TFile("jskim_hltjet80-v21_akPu3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm0_akPu3PF_gj0.root");
   thi = (TTree*)inf1->Get("tdj");
   for ( int icent=1; icent<=4 ; icent++) {
-    if (smearPP==0) inf1 = new TFile(Form("jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm0_ak3PF_gj0.root",icent));
-    else inf1 = new TFile(Form("jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm%d_ak3PF_gj0.root",icent));
+    TString inf1name;
+    if (smearPP==0) inf1name = Form("jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm0_ak3PF_gj0.root",icent);
+    else inf1name = Form("jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm%d_ak3PF_gj0.root",icent);
+    if (rewtJet==1) inf1name.ReplaceAll(".root","_addedReweight.root");
+    inf1 = new TFile(inf1name);
     vtpp[icent] = (TTree*)inf1->Get("tdj");
   }  
   
-  // Make Histograms
-  TFile * outf = new TFile(Form("hisSmear%d.root",smearPP),"recreate");
+  //////////////////////////////////////////////////
+  // Output
+  //////////////////////////////////////////////////
+  TFile * outf = new TFile(Form("hisSmear%d_Rewt%d.root",smearPP,rewtJet),"recreate");
+  TString outname=Form("fig/pp_sm%d_rewt%d_spectrum_comparison",smearPP,rewtJet);
+
   for ( int icent=1; icent<=4 ; icent++) {
     pbpb[icent] = new TH1D(Form("hjetPt_hi_inclusiveJet_icent%d",icent),";p_{T} (GeV/c);",nptbin,ptbins);
     pp[icent] = new TH1D(Form("hjetPt_pp_inclusiveJet_icent%d",icent),";p_{T} (GeV/c);",nptbin,ptbins);
   }
   
+  //////////////////////////////////////////////////
+  // Analysis
+  //////////////////////////////////////////////////
   TCut jetSel = "jetPt>100";
   for ( int icent=1; icent<=4 ; icent++) {
     TCut centCut = Form("cBin>=%.1f&&cBin<%.1f",centBin1[icent-1],centBin1[icent]);
     cout << TString(centCut) << " ";
     cout << "pbpb: " << thi->Project(pbpb[icent]->GetName(),"jetPt",centCut&&jetSel) << endl;
-    cout << "pp: " << vtpp[icent]->Project(pp[icent]->GetName(),"jetPt",jetSel) << endl;
+    TCut ppJetSel=jetSel;
+    if (rewtJet==1) ppJetSel*="rewtPt";
+    cout << "pp: " << vtpp[icent]->Project(pp[icent]->GetName(),"jetPt",ppJetSel) << endl;
   }
   outf->Write();
   outf->Close();
   
   // Draw
-  drawFromHist(outf->GetName(),smearPP);
+  drawFromHist(outf->GetName(),smearPP,outname);
 }
