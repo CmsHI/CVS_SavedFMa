@@ -75,7 +75,7 @@ void addJetWeight(string infntpp="jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2
     
   JetReweight jetRewt;
   TTree* tjnew = (TTree*)tjin->CloneTree(0);
-  tjin->Branch("jetRewt",&jetRewt.inputPt,"inputPt/F:rewtPt:rewtCent:rewtAj");
+  tjnew->Branch("jetRewt",&jetRewt.inputPt,"inputPt/F:rewtPt:rewtCent:rewtAj");
 
   TTree* yongsunTrackin = (TTree*)inf1->Get("yongsunTrack");
   TTree* newyongsunTrack= (TTree*)yongsunTrackin->CloneTree(0);
