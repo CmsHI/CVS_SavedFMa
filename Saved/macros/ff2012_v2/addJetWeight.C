@@ -69,8 +69,9 @@ void addJetWeight(string infntpp="jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2
   tjin->SetBranchAddress("indiJet", &dj, &b_dj);
 
   // Set Output
-  string outputFile="newfile.root";
-  TFile* newfile = new TFile(outputFile.data(),"recreate");
+  TString outputFile=infntpp.substr(infntpp.find_last_of('/')+1);
+  outputFile.ReplaceAll(".root","_addedReweight.root");
+  TFile* newfile = new TFile(outputFile,"recreate");
   cout << "Output file :" << outputFile << endl;
     
   JetReweight jetRewt;
