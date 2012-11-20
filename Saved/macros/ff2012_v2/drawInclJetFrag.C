@@ -87,7 +87,7 @@ void drawInclJetFragSingleSet(int fragMode, int dataset, float trackPtMin, float
   const int nZBin = 21;
   double zBin[nZBin+1] = { 0,0.003,0.007,0.012,0.016,0.02,0.03,0.04, 0.06, 0.1, 0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.6,0.7,0.8,1};
   
-  for (int icent = 1; icent<=1; icent++) {
+  for (int icent = 1; icent<=4; icent++) {
     for (int irj = 999; irj<=999 ; irj++) {
       int index = icent;
       for (int j=0; j<1; ++j) {
@@ -107,7 +107,7 @@ void drawInclJetFragSingleSet(int fragMode, int dataset, float trackPtMin, float
         htrkFF[index][j][kBKG]  = (TH1D*)htrkFF[index][j][kRAW]->Clone(Form( "hpt_jet_mbTrk_%s",suffix.Data()));
         htrkFF[index][j][kSIG] = (TH1D*)htrkFF[index][j][kRAW]->Clone(Form(  "hpt_jet_sigTrk_%s",suffix.Data()));
 
-        drawInclJetFragSingle(htrkFF[index],dataset, icent, irj, fragMode,trackPtMin,trackPtMax,doClosure,usingPara);
+        drawInclJetFragSingle(htrkFF[index],dataset, icent, irj, fragMode,trackPtMin,trackPtMax,doClosure,usingPara,rewtJet);
       }  
     }
   }
@@ -177,6 +177,8 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   
   cout << " ================================================= " << endl;
   cout << " working on dataset, icent, irj = " << datasetName << ", "<<icent<<", "<<irj<<endl;
+  cout << " doClosure: " << doClosure << " rewtJet: " << rewtJet << endl;
+  cout << " ================================================= " << endl;
 
   ////////////////////////////////////////////////////////  
   // Weights
