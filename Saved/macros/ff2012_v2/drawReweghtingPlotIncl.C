@@ -85,7 +85,7 @@ void drawFromHist(TString infname,int smearPP=1, TString outname="fig/pp_spectru
   c1->SaveAs(outname+".pdf");
 }
 
-void drawReweghtingPlotIncl(int smearPP=1, int rewtJet=1) {
+void drawReweghtingPlotIncl(int smearPP=1, int rewtJet=0) {
   TH1::SetDefaultSumw2();
   
   //////////////////////////////////////////////////
@@ -97,7 +97,7 @@ void drawReweghtingPlotIncl(int smearPP=1, int rewtJet=1) {
   TH1D * pbpb[5] ;
   TH1D * ratio[5] ;
 
-  TFile* inf1 = new TFile("jskim_hltjet80-v21_akPu3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm0_akPu3PF_gj0.root");
+  TFile* inf1 = new TFile("jskim_hltjet80-pt90-v20_akPu3PF_Nov20_jetPt_50_jetEtaCut_2.00_noPbin_sm0_akPu3PF_gj0.root");
   thi = (TTree*)inf1->Get("tdj");
   for ( int icent=1; icent<=4 ; icent++) {
     TString inf1name;
@@ -111,8 +111,8 @@ void drawReweghtingPlotIncl(int smearPP=1, int rewtJet=1) {
   //////////////////////////////////////////////////
   // Output
   //////////////////////////////////////////////////
-  TFile * outf = new TFile(Form("hisSmear%d_Rewt%d.root",smearPP,rewtJet),"recreate");
-  TString outname=Form("fig/pp_sm%d_rewt%d_spectrum_comparison",smearPP,rewtJet);
+  TFile * outf = new TFile(Form("fig/Nov20/hisSmear%d_Rewt%d.root",smearPP,rewtJet),"recreate");
+  TString outname=Form("fig/Nov20/pp_sm%d_rewt%d_spectrum_comparison",smearPP,rewtJet);
 
   for ( int icent=1; icent<=4 ; icent++) {
     pbpb[icent] = new TH1D(Form("hjetPt_hi_inclusiveJet_icent%d",icent),";p_{T} (GeV/c);",nptbin,ptbins);
