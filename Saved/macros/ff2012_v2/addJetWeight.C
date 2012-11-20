@@ -32,11 +32,14 @@ float getWeight(float pt, TH1D * ratio) {
 void drawWeight(TH1D ** pp, TH1D ** pbpb, TH1D ** ratio);
 
 // --- Main Function ----------------------------------------------------------
-void addJetWeight(string infntpp="jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm1_ak3PF_gj0.root",int rewtBin=1) {
+void addJetWeight(
+  string infntpp="jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm1_ak3PF_gj0.root",
+  int rewtBin=1,
+  TString inhisname="fig/Nov20/hisSmear1_Rewt0.root"
+  ) {
   ////////////////////////////////////////////
   // Get Histograms
   ////////////////////////////////////////////
-  TString inhisname="fig/Nov14_ptbins/histograms.root";
   TH1D * pp[5] ;
   TH1D * pbpb[5] ;
   TH1D * ratio[5] ;
@@ -88,6 +91,7 @@ void addJetWeight(string infntpp="jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2
   for (Long64_t jentry=0;  jentry<nentries;jentry++) {
     if (jentry% 1000 == 0) cout <<jentry<<" / "<<nentries<<" "<<setprecision(4)<<(double)jentry/nentries*100<<endl;
     tjin->GetEntry(jentry);
+    yongsunTrackin->GetEntry(jentry);
     jetRewt.inputPt = dj.jetPt;
     if (rewtBin>0) jetRewt.rewtPt = getWeight(jetRewt.inputPt,ratio[rewtBin]);
     else jetRewt.rewtPt = 1.;
