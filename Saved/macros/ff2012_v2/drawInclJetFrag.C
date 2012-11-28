@@ -37,7 +37,7 @@ void drawInclJetFrag() {
   TH1::SetDefaultSumw2();
 
   bool doHIMC = 0;
-  bool doHIDATA = 0;
+  bool doHIDATA = 1;
   bool doPPDATA = 1;
   bool doPPMC = 0;
   bool usingPara = false;
@@ -162,6 +162,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
 		"tdj", jetSelCut && centCut,1);
   } else if ( dataset == kHIMC) {
   } else if ( dataset == kPPDATA) {
+//     dj->addFile(Form("jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm0_ak3PF_gj0_addedReweight.root",icent),
     dj->addFile(Form("jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm%d_ak3PF_gj0_addedReweight.root",icent),
 		"tdj", jetSelCut, 1); // no centrality cut
   } else if ( dataset == kPPMC) {
