@@ -137,7 +137,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   // Analysis Options
   //////////////////////////////////////////////////////////////////////////
   float InclusiveJetPtCut = 50;
-  float smearingPtMin=40;
+  float smearingPtMin=60;
   bool doIcPu5CaloSkim = false;
   float tempJetEtaCut  = 2;
   float drMatching = 0.3;
