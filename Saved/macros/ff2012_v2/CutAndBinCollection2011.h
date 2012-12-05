@@ -160,6 +160,7 @@ class IndividualJet {
       jetPtGM(-99),
       jetEtaGM(-99),
       jetPhiGM(-99),
+      jetUnSmPt(-99),
       jetInd(-99)
 
   {}
@@ -170,6 +171,7 @@ class IndividualJet {
     float  jetPtGM;
     float  jetEtaGM;
     float  jetPhiGM;
+    float  jetUnSmPt;
     int jetInd;
 
 
@@ -181,6 +183,7 @@ class IndividualJet {
       jetPtGM=-99;
       jetEtaGM=-99;
       jetPhiGM=-99;
+      jetUnSmPt=-99;
       jetInd=-99;
     }
 };

@@ -137,6 +137,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   // Analysis Options
   //////////////////////////////////////////////////////////////////////////
   float InclusiveJetPtCut = 50;
+  float smearingPtMin=40;
   bool doIcPu5CaloSkim = false;
   float tempJetEtaCut  = 2;
   float drMatching = 0.3;
@@ -173,16 +174,20 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   TH1D * hEvtCent = new TH1D("hEvtCent",";Centrality Bin;",40,0,40);
   TH1D * hEvtVz = new TH1D("hEvtVz",";vz (cm);",240,-30,30);
   TH1D * hEvtPtHat = new TH1D("hEvtPtHat",";#hat{p}_{T} (GeV/c);",100,0,500);
+  TH1D * hSmJetPtRaw = new TH1D("hSmJetPtRaw",";Leading Jet p_{T} (GeV/c);",100,0,300);
+  TH1D * hSmJetPtSm = new TH1D("hSmJetPtSm",";Leading Jet p_{T} (GeV/c);",100,0,300);
   TH1D * hJet1Pt = new TH1D("hJet1Pt",";Leading Jet p_{T} (GeV/c);",100,0,300);
   TH1D * hJet2Pt = new TH1D("hJet2Pt",";Subleading Jet p_{T} (GeV/c);",100,0,300);
   TH1D* smearingHist=0;
-  TH2D* smearingBin=0, *smearingPt=0, *smearingPtBin0=0;
+  TH2D* smearingBin=0, *smearingvRawPt=0, *smearingvSmPt=0, *smearingPtBin0=0, *smPtvRawPt=0;
   if ( smearCentBin > 0 ) {  
     // the actual smearing hist
     smearingHist = new TH1D("smearingH","",100,-2,2);
     smearingBin = new TH2D("smearingBin",";bin;factor",10,0,10,100,-2,2);
-    smearingPt = new TH2D("smearingPt",";p_{T} (GeV/c);factor",30,0,300,100,-2,2);
+    smearingvRawPt = new TH2D("smearingvRawPt",";p_{T} (GeV/c);factor",30,0,300,100,-2,2);
+    smearingvSmPt = new TH2D("smearingvSmPt",";p_{T} (GeV/c);factor",30,0,300,100,-2,2);
     smearingPtBin0 = new TH2D("smearingPtBin0",";p_{T} (GeV/c);factor",30,0,300,100,-2,2);
+    smPtvRawPt = new TH2D("smPtvRawPt",";Raw p_{T} (GeV/c);Smeared p_{T} (GeV/c)",30,0,300,30,0,300);
   }
   
   // Analysis ntuples
@@ -290,7 +295,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   tdj = new TTree("tdj","Dijet tree");
   tdj->SetMaxTreeSize(30000000000);
   tdj->Branch("evt",&evt.run,"run/I:evt:cBin:pBin:nG:nJ:nT:trig/O:offlSel:noiseFilt:anaEvtSel:vz/F:reweight/F"); // todo : add ncoll later
-  tdj->Branch("indiJet",&dj.pthat,"pthat/F:jetPt:jetEta:jetPhi:jetPtGM:jetEtaGM:jetPhiGM:jetInd/I");
+  tdj->Branch("indiJet",&dj.pthat,"pthat/F:jetPt:jetEta:jetPhi:jetPtGM:jetEtaGM:jetPhiGM:jetUnSmPt:jetInd/I");
 
   int   nMtrk=0;
   float ptMtrk[MAXMTRK];
@@ -480,9 +485,10 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
     ////////////////////////
     // Apply Smearing
     ////////////////////////
+    float jetUnSmPt[MAXMTRK];  
     if (smearCentBin>0) {	
       for (int ij=0; ij< nJets ; ij++) {
-        if (theJet->jtpt[ij]>200) cout << "Before smearing: " << theJet->jtpt[ij] << endl;
+        hSmJetPtRaw->Fill(theJet->jtpt[ij]);
         int tempCentBin=-100;
         while (  (tempCentBin >= centBin1[smearCentBin] ) || ( tempCentBin < centBin1[smearCentBin-1] ) ) {
           tempCentBin = smearingCents2->GetRandom() ;
@@ -492,17 +498,21 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
           }
         }
         int smCentBin = GetCBin( tempCentBin );
-        float tttejej = theJet->jtpt[ij] ;
-        theJet->jtpt[ij]  = GetSmearedPtData(2,smCentBin,theJet->jtpt[ij],0,"");
-        if (theJet->jtpt[ij]>200) cout << "After smearing: " << theJet->jtpt[ij] << endl;
+        jetUnSmPt[ij]=theJet->jtpt[ij];
+        if (jetUnSmPt[ij]>smearingPtMin) theJet->jtpt[ij]  = GetSmearedPtData(2,smCentBin,theJet->jtpt[ij],0,"");
+
+        float sm=(theJet->jtpt[ij] - jetUnSmPt[ij] )/jetUnSmPt[ij];
+//         if ((jetUnSmPt[ij] > 100) && (fabs(theJet->jteta[ij])<2.0)) cout << "smCentBin: " << smCentBin << " Pt Before: " << jetUnSmPt[ij] << " After smearing: " << theJet->jtpt[ij] << " factor: " << sm << endl;
       
-        if ( (tttejej > 100) && (fabs(theJet->jteta[ij])<2.0)) {
-          float sm=(theJet->jtpt[ij] - tttejej )/tttejej;
+        if ( (jetUnSmPt[ij] > 100) && (fabs(theJet->jteta[ij])<2.0)) {
           smearingHist->Fill( sm );
           smearingBin->Fill( smCentBin, sm );
-          smearingPt->Fill( tttejej, sm );
-          if (smCentBin==0) smearingPtBin0->Fill( tttejej, sm );
+          smearingvRawPt->Fill( jetUnSmPt[ij], sm );
+          smearingvSmPt->Fill( theJet->jtpt[ij], sm );
+          smPtvRawPt->Fill(jetUnSmPt[ij],theJet->jtpt[ij]);
+          if (smCentBin==0) smearingPtBin0->Fill( jetUnSmPt[ij], sm );
         }
+        hSmJetPtSm->Fill(theJet->jtpt[ij]);
       }
     }
 
@@ -525,6 +535,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
         theJtphi = theJet->jtphi[ij];
       }
 
+
       // Jet selection
       if ( fabs( theJteta ) > tempJetEtaCut ) continue;
       if ( (!useGenJet) && ((theJet->trackMax[ij]/theJet->jtpt[ij])<0.01) ) continue;
@@ -541,6 +552,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
       dj.jetPhi = theJtphi;
       if ( useGenJet) dj.jetPtGM = 0;
       else dj.jetPtGM = theJet->refpt[ij];
+      if (smearCentBin>0) dj.jetUnSmPt = jetUnSmPt[ij];
       
       ////////////////////////
       //  Jet business is done..  loop on tracks
