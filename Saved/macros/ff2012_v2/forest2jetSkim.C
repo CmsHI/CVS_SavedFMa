@@ -84,10 +84,10 @@ TH1D* getCentDistDj();
 
 
 void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/pbpbDijet_v20/promptskim-hihighpt-hltjet80-pt90-v20.root", std::string outname = "jskim.root", bool needReweight=false, int maxEvents=-1, TString MinbiasFname="/mnt/hadoop/cms/store/user/jazzitup/hiForest/skimmed/yskim_HiForestMinBias_v6_first_July-v8-8VtxBin-24PlnBin-40CentBin.root", bool isMC=false, TString jetAlgo="akPu3PF", 
-    bool isPP = false,   int smearCentBin = 0,bool useGenJet=false)
+    bool isPP = false,   int smearMode=0, int smearCentBin = 0,bool useGenJet=false)
 {
   // Print setup
-  cout << "needReweight: " << needReweight << " isMC: " << isMC << " maxEvents: " << maxEvents << " isPP: " << isPP << " smearCentBin: " << smearCentBin << " useGenJet: " << useGenJet << endl;
+  cout << "needReweight: " << needReweight << " isMC: " << isMC << " maxEvents: " << maxEvents << " isPP: " << isPP << " smearMode: " << smearMode << " smearCentBin: " << smearCentBin << " useGenJet: " << useGenJet << endl;
     
   //////////////////////////////////////////////////////////////////////////
   // Setup Centrality for smearing, centrality reweighting
@@ -95,9 +95,8 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   // smear Cent Bin = 0 : no smearing     1,2,3,4 corresponds to 0-10%, 30%,50%,100%
   TH1D* smearingCents = getCentDistDj();
   TH1D* smearingCents2=0;
-  if ( smearCentBin > 0 ) {
-    cout << " smearCentBin  = " << smearCentBin << endl;
-    if ( smearCentBin > 0 ) {
+  if ( smearMode>0) {
+    if ( isPP && smearCentBin > 0 ) {
       for ( int icent40=0;icent40<40;icent40++ ) {
         cout << " centBin1[smearCentBin] =" << centBin1[smearCentBin];
         cout << " centBin1[smearCentBin-1] =" << centBin1[smearCentBin-1];
@@ -110,11 +109,11 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
       for ( int icent40 = centBin1[smearCentBin-1]; icent40<=centBin1[smearCentBin]; icent40++ ) {
         smearingCents2->SetBinContent(icent40- centBin1[smearCentBin-1] +1,  smearingCents->GetBinContent(icent40+1) );
       }
+      TCanvas *c3 = new TCanvas("c3","",400,400);
+      smearingCents2->Draw();
+      c3->Print(Form("centSm_%d.gif",smearCentBin));
     }
-    TCanvas *c3 = new TCanvas("c3","",400,400);
-    smearingCents2->Draw();
-    c3->Print(Form("centSm_%d.gif",smearCentBin));
-    // Finally setup smearing functions
+    // Setup smearing functions
     LoadParameters();
   }
 
@@ -136,7 +135,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   //////////////////////////////////////////////////////////////////////////
   // Analysis Options
   //////////////////////////////////////////////////////////////////////////
-  float InclusiveJetPtCut = 50;
+  float InclusiveJetPtCut = 60;
   float smearingPtMin=60;
   bool doIcPu5CaloSkim = false;
   float tempJetEtaCut  = 2;
@@ -168,7 +167,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   //////////////////////////////////////////////////////////////////////////
   // Analysis Output
   //////////////////////////////////////////////////////////////////////////
-  TFile* newfile_data = new TFile(Form("%s_jetPt_%.0f_jetEtaCut_%.2f_%s_sm%d_%s_gj%d.root",outname.data(),InclusiveJetPtCut,tempJetEtaCut,pbinFlag.Data(),smearCentBin,jetAlgo.Data(),useGenJet),"recreate");
+  TFile* newfile_data = new TFile(Form("%s_jetPt_%.0f_jetEtaCut_%.2f_%s_sm%dbin%d_%s_gj%d.root",outname.data(),InclusiveJetPtCut,tempJetEtaCut,pbinFlag.Data(),smearMode,smearCentBin,jetAlgo.Data(),useGenJet),"recreate");
   // XCheck Histograms
   TH1D * hEvtCentNoSkim = new TH1D("hEvtCentNoSkim",";Centrality Bin;",40,0,40);
   TH1D * hEvtCent = new TH1D("hEvtCent",";Centrality Bin;",40,0,40);
@@ -180,7 +179,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   TH1D * hJet2Pt = new TH1D("hJet2Pt",";Subleading Jet p_{T} (GeV/c);",100,0,300);
   TH1D* smearingHist=0;
   TH2D* smearingBin=0, *smearingvRawPt=0, *smearingvSmPt=0, *smearingPtBin0=0, *smPtvRawPt=0;
-  if ( smearCentBin > 0 ) {  
+  if ( smearMode > 0 ) {  
     // the actual smearing hist
     smearingHist = new TH1D("smearingH","",100,-2,2);
     smearingBin = new TH2D("smearingBin",";bin;factor",10,0,10,100,-2,2);
@@ -486,20 +485,35 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
     // Apply Smearing
     ////////////////////////
     float jetUnSmPt[MAXMTRK];  
-    if (smearCentBin>0) {	
+    if (smearMode>0) {	
       for (int ij=0; ij< nJets ; ij++) {
         hSmJetPtRaw->Fill(theJet->jtpt[ij]);
-        int tempCentBin=-100;
-        while (  (tempCentBin >= centBin1[smearCentBin] ) || ( tempCentBin < centBin1[smearCentBin-1] ) ) {
-          tempCentBin = smearingCents2->GetRandom() ;
-          if ( (tempCentBin >= centBin1[smearCentBin] ) || ( tempCentBin < centBin1[smearCentBin-1] ) ) {
-            cout << "smearCentBin = " << smearCentBin << "   and tempCentBin= " << tempCentBin << endl;
-            cout << " NO!!! the centrality bin from dice throw is out of the range.  Trying once again" << endl;
+        // 1. Get Smearing Cent bin
+        int tempCentBin=evt.cBin;
+        if (isPP && smearCentBin > 0) {
+          while (  (tempCentBin >= centBin1[smearCentBin] ) || ( tempCentBin < centBin1[smearCentBin-1] ) ) {
+            tempCentBin = smearingCents2->GetRandom() ;
+            if ( (tempCentBin >= centBin1[smearCentBin] ) || ( tempCentBin < centBin1[smearCentBin-1] ) ) {
+              cout << "smearCentBin = " << smearCentBin << "   and tempCentBin= " << tempCentBin << endl;
+              cout << " NO!!! the centrality bin from dice throw is out of the range.  Trying once again" << endl;
+            }
           }
         }
         int smCentBin = GetCBin( tempCentBin );
+        // 2. save original pt
         jetUnSmPt[ij]=theJet->jtpt[ij];
-        if (jetUnSmPt[ij]>smearingPtMin) theJet->jtpt[ij]  = GetSmearedPtData(2,smCentBin,theJet->jtpt[ij],0,"");
+        // 3. Smear
+        if (jetUnSmPt[ij]>smearingPtMin) {
+          if (isPP) {
+            // for pp
+            if (smearMode==1)      theJet->jtpt[ij]  = GetSmearedPtData_OnlyMeanShift(2,smCentBin,theJet->jtpt[ij],0,"");
+            else if (smearMode==2) theJet->jtpt[ij]  = GetSmearedPtData_NoMeanShift(2,smCentBin,theJet->jtpt[ij],0,"");
+            else if (smearMode==3) theJet->jtpt[ij]  = GetSmearedPtData(2,smCentBin,theJet->jtpt[ij],0,"");
+          } else {
+            // for PbPb
+            if (smearMode==1)      theJet->jtpt[ij]  = GetPbPbCorrectedScaleData(2,smCentBin,theJet->jtpt[ij]);
+          }
+        }
 
         float sm=(theJet->jtpt[ij] - jetUnSmPt[ij] )/jetUnSmPt[ij];
 //         if ((jetUnSmPt[ij] > 100) && (fabs(theJet->jteta[ij])<2.0)) cout << "smCentBin: " << smCentBin << " Pt Before: " << jetUnSmPt[ij] << " After smearing: " << theJet->jtpt[ij] << " factor: " << sm << endl;
@@ -552,7 +566,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
       dj.jetPhi = theJtphi;
       if ( useGenJet) dj.jetPtGM = 0;
       else dj.jetPtGM = theJet->refpt[ij];
-      if (smearCentBin>0) dj.jetUnSmPt = jetUnSmPt[ij];
+      if (smearMode>0) dj.jetUnSmPt = jetUnSmPt[ij];
       
       ////////////////////////
       //  Jet business is done..  loop on tracks
@@ -740,7 +754,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   //////////////////////////////////////////////////////////////////////////
   // All Done Take care of finishing business
   //////////////////////////////////////////////////////////////////////////
-  if (smearCentBin>0) {
+  if (smearMode>0) {
     smearingHist->Draw();
     smearingHist->Fit("gaus");
   }
