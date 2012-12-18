@@ -127,11 +127,13 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
 			  int rewtJet
 			  ) {
   
-  float finalEtaCut = 2.0;
   ///////////////////////////////////////////////////////
   // Setup cuts
   ///////////////////////////////////////////////////////
-  TCut jetSelCut = "jetPt>=100&&jetPt<300";
+  float finalEtaCut = 2.0;
+  float finalJetPtMin = 100;
+  float finalJetPtMax = 300;
+  TCut jetSelCut = Form("jetPt>=%.0f&&jetPt<%.0f",finalJetPtMin,finalJetPtMax);
 
   TString datasetName = "";
   if (dataset == kHIDATA)       datasetName = "hidata";
@@ -166,7 +168,8 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
 //     dj->addFile(Form("jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm0_ak3PF_gj0_addedReweight.root",icent),
 //     dj->addFile(Form("jskim_pp-full_ak3PF_Dec5newsm_jetPt_50_jetEtaCut_2.00_noPbin_sm%d_ak3PF_gj0_addedReweight.root",icent),
 //     dj->addFile(Form("jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root",icent),
-    dj->addFile(Form("jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
+    // dj->addFile(Form("jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
+    dj->addFile(Form("jskim_pp-full_ak3PF_Dec18_sm17_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
 		"tdj", jetSelCut, 1); // no centrality cut
   } else if ( dataset == kPPMC) {
   }
@@ -404,7 +407,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   }
 
   // All Done, write output  
-  TFile outf = TFile(Form("inclJetFF_output_trackPtCut%.0f_FinaletaCut%.2f_Dec5FinalPbPbCorr.root",ptranges[0],(float)finalEtaCut),"update");
+  TFile outf = TFile(Form("inclJetFF_output_trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Dec18.root",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut),"update");
   hjetPt->Write();
   for (int j=0; j<1; ++j) {
     htrkPt[j][kRAW]->Write();

@@ -15,6 +15,12 @@ using namespace std;
 const int nptbin=11;
 double ptbins[nptbin+1] ={100, 110, 120, 130, 140, 150, 160, 170, 180, 200, 240, 300};
 
+// const int nptbin=33;
+// double ptbins[nptbin+1] = {30,40,50,60,70,80,90,100,
+//           110,120,130,140,150,160,170,180,190,200,
+//           210,220,230,240,250,260,270,280,290,300,
+//           310,320,330,340,350,400};
+
 void drawFromHist(TString infname,TString outname="fig/pp_spectrum_comparison", int cmpMode=1) {
   TH1D * pp[5] ;
   TH1D * pbpb[5] ;
@@ -45,7 +51,7 @@ void drawFromHist(TString infname,TString outname="fig/pp_spectrum_comparison", 
       handsomeTH1(pp[icent],1,1,kFullCircle);
       handsomeTH1(pbpb[icent],1,1,kOpenCircle);
     }
-    pp[icent]->SetAxisRange(100,290,"X");
+    pp[icent]->SetAxisRange(80,290,"X");
     pp[icent]->SetAxisRange(2e-5,0.2,"Y");
     pp[icent]->SetNdivisions(505);
     fixedFontHist(pp[icent],2,2.5);
@@ -82,8 +88,8 @@ void drawFromHist(TString infname,TString outname="fig/pp_spectrum_comparison", 
     c1->cd(9-icent);
     handsomeTH1(ratio[icent],1);
     ratio[icent]->SetMarkerStyle(20);
-    ratio[icent]->SetAxisRange(100,290,"X");
-    ratio[icent]->SetAxisRange(0,2.1,"Y");
+    ratio[icent]->SetAxisRange(80,290,"X");
+    ratio[icent]->SetAxisRange(0.5,1.5,"Y");
     ratio[icent]->SetNdivisions(505);
     fixedFontHist(ratio[icent],1.8,2.5);
     if (cmpMode==1) ratio[icent]->SetYTitle("PbPb/pp");
@@ -128,7 +134,7 @@ void drawReweghtingPlotIncl(int smearPP=1, int rewtJet=0, int cmpMode=1) { // mo
     TString inf1name;
     if (cmpMode<3) {
       if (smearPP==0) inf1name = Form("jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root");
-      else inf1name = Form("jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
+      else inf1name = Form("jskim_pp-full_ak3PF_Dec18_sm17_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
       if (rewtJet==1) inf1name.ReplaceAll(".root","_addedReweight.root");
     } else if (cmpMode==3) {
       inf1name="jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
@@ -141,8 +147,8 @@ void drawReweghtingPlotIncl(int smearPP=1, int rewtJet=0, int cmpMode=1) { // mo
   //////////////////////////////////////////////////
   // Output
   //////////////////////////////////////////////////
-  TFile * outf = new TFile(Form("fig/Dec5FinalPbPbCorr/hisCmp%d_Smear%d_Rewt%d.root",cmpMode,smearPP,rewtJet),"recreate");
-  TString outname=Form("fig/Dec5FinalPbPbCorr/pp_spectrum_cmp%d_sm%d_rewt%d",cmpMode,smearPP,rewtJet);
+  TFile * outf = new TFile(Form("fig/Dec18/hisCmp%d_Smear%d_Rewt%d.root",cmpMode,smearPP,rewtJet),"recreate");
+  TString outname=Form("fig/Dec18/jet_spectrum_cmp%d_sm%d_rewt%d",cmpMode,smearPP,rewtJet);
 
   for ( int icent=1; icent<=4 ; icent++) {
     pbpb[icent] = new TH1D(Form("hjetPt_hi_inclusiveJet_icent%d",icent),";p_{T} (GeV/c);",nptbin,ptbins);
