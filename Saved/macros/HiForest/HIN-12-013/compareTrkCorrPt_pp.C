@@ -8,7 +8,7 @@
 #include "commonUtility.h"
 
 void compareTrkCorrPt_pp(
-                           TString outdir="fig/Dec20_TrkCorr14b"
+                           TString outdir="fig/Dec20_TrkCorr14"
 )
 {
    TH1::SetDefaultSumw2();
@@ -118,7 +118,7 @@ void compareTrkCorrPt_pp(
    leg2->AddEntry(trkCorr->vhPtHat[1][icent],title,"p");
    leg2->AddEntry(trkCorrRef->vhPtHat[1][icentRef],reftitle,"p");
    leg2->Draw();
-   cEff->Print(outdir+"/"+tag+"_pthat.gif");
+   cJet->Print(outdir+"/"+tag+"_pthat.gif");
 
 	TCanvas * cCent = new TCanvas("cCent","cCent",500,500);
    TH1D * hCent = (TH1D*)trkCorr->sample_[0]->Get("hCent");
