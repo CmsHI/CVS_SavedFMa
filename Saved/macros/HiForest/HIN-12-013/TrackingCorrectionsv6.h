@@ -80,33 +80,37 @@ isLeadingJet_(true),
 trkPhiMode_(false),
 ppMode_(false)
 {
-   centBin_.push_back("0to1");
-   centBin_.push_back("2to3");
-   centBin_.push_back("4to11");
-   centBin_.push_back("12to19");
-   if (name=="QM2011") centBin_.push_back("20to35");
-   else if (name=="RAA2012") {
-      centBin_.push_back("20to27");
-      centBin_.push_back("28to35");
-   }
-   else centBin_.push_back("20to39");
-   if (name.Contains("Forest2STA")) {
-      centBin_.clear();
-      centBin_.push_back("0to12");
-      centBin_.push_back("12to40");
-   }
-   if (name.Contains("Forest2STAv14b")) {
-      centBin_.clear();
-      centBin_.push_back("0to4");
-      centBin_.push_back("4to12");
-      centBin_.push_back("12to20");
-      centBin_.push_back("20to40");
-   }
-   if (name.Contains("Forest2STAv10")) {
-      centBin_.clear();
-      centBin_.push_back("0to12");
-      centBin_.push_back("12to30");
-   }
+  if (name=="QM2011") {
+    centBin_.push_back("0to1");
+    centBin_.push_back("2to3");
+    centBin_.push_back("4to11");
+    centBin_.push_back("12to19");
+    centBin_.push_back("20to35");
+  } else if (name=="RAA2012") {
+    centBin_.push_back("0to1");
+    centBin_.push_back("2to3");
+    centBin_.push_back("4to11");
+    centBin_.push_back("12to19");
+    centBin_.push_back("20to27");
+    centBin_.push_back("28to35");
+  } else if (name=="Forest2STAv14") {
+    centBin_.clear();
+    centBin_.push_back("0to12");
+    centBin_.push_back("12to40");
+  } else if (name=="Forest2STAv14b") {
+    centBin_.clear();
+    centBin_.push_back("0to4");
+    centBin_.push_back("4to12");
+    centBin_.push_back("12to20");
+    centBin_.push_back("20to40");
+  } else if (name=="Forest2STAv10") {
+    centBin_.clear();
+    centBin_.push_back("0to12");
+    centBin_.push_back("12to30");
+  } else {
+    cout << "No such correction set: " << name << endl;
+    exit(1);
+  }
    
    levelName_.push_back("Eff");
    levelName_.push_back("Fak");
@@ -375,20 +379,17 @@ Float_t TrackingCorrections::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float
    
    Int_t bin = -1;   
    // Get the corresponding centrality bin
-   if (corrSetName_.Contains("Forest2STA")) {
+   if (corrSetName_=="Forest2STAv14") {
       if (cent<12) bin = 0;
       else bin =1;
-   } else if (corrSetName_.Contains("Forest2STAv14b")) {
+   } else if (corrSetName_=="Forest2STAv14b") {
       if (cent<4) bin = 0;
       else if (cent<12) bin = 1;
       else if (cent<20) bin = 2;
       else bin = 3;
    } else {
-      if (cent<2) bin = 0;
-      else if (cent<4) bin = 1;
-      else if (cent<12) bin = 2;
-      else if (cent<20) bin = 3;   
-      else bin = 4;
+      cout << "Error: no such corrSetName: " << corrSetName_ << endl;
+      exit(1);
    }
    if (ppMode_) bin=0;
    Double_t corr[4]={1,1,1,1};
