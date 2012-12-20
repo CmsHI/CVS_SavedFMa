@@ -161,7 +161,9 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   multiTreeUtil* dj  = new multiTreeUtil();
   if ( dataset == kHIDATA) {
 //     dj->addFile("jskim_hltjet80-pt90-v20_akPu3PF_Nov20_jetPt_50_jetEtaCut_2.00_noPbin_sm0_akPu3PF_gj0.root",
-    dj->addFile("jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root",
+    // dj->addFile("jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root",
+    // dj->addFile("jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root",
+    dj->addFile("jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root",
 		"tdj", jetSelCut && centCut,1);
   } else if ( dataset == kHIMC) {
   } else if ( dataset == kPPDATA) {
@@ -169,7 +171,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
 //     dj->addFile(Form("jskim_pp-full_ak3PF_Dec5newsm_jetPt_50_jetEtaCut_2.00_noPbin_sm%d_ak3PF_gj0_addedReweight.root",icent),
 //     dj->addFile(Form("jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root",icent),
     // dj->addFile(Form("jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
-    dj->addFile(Form("jskim_pp-full_ak3PF_Dec18_sm17_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
+    dj->addFile(Form("jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
 		"tdj", jetSelCut, 1); // no centrality cut
   } else if ( dataset == kPPMC) {
   }
@@ -395,19 +397,21 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   hjetPt->Draw();
   gPad->SetLogy();
   drawText("Jet p_{T}", 0.55,0.63,1);
-    
+  
+  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Dec20",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
+
   if ( fragMode==2) {
-    c1->SaveAs(Form("plotsOfDijetFF/dijetFF_xi_doClosure%d_icent%d_irj%d_%s_%s%s_akPu3PF.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data()));
+    c1->SaveAs(Form("plotsOfDijetFF/dijetFF_xi_doClosure%d_icent%d_irj%d_%s_%s%s_%s.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data(),outnameTag.Data()));
   }
   else if ( fragMode==1) {
-    c1->SaveAs(Form("plotsOfDijetFF/dijetFF_pt_doClosure%d_icent%d_irj%d_%s_%s%s_akPu3PF.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data()));
+    c1->SaveAs(Form("plotsOfDijetFF/dijetFF_pt_doClosure%d_icent%d_irj%d_%s_%s%s_%s.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data(),outnameTag.Data()));
   }
   else if ( fragMode==10) {
-    c1->SaveAs(Form("plotsOfDijetFF/dijetFF_dr_pt%.0fto%.0f_doClosure%d_wtMode%d_icent%d_irj%d_%s_%s%s_akPu3PF.pdf",trackPtMin,trackPtMax,doClosure,weightMode,icent,irj,datasetName.Data(),clsText.Data(),tag.Data()));
+    c1->SaveAs(Form("plotsOfDijetFF/dijetFF_dr_pt%.0fto%.0f_doClosure%d_wtMode%d_icent%d_irj%d_%s_%s%s_akPu3PF.pdf",trackPtMin,trackPtMax,doClosure,weightMode,icent,irj,datasetName.Data(),clsText.Data(),tag.Data(),outnameTag.Data()));
   }
 
   // All Done, write output  
-  TFile outf = TFile(Form("inclJetFF_output_trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Dec18.root",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut),"update");
+  TFile outf = TFile(Form("inclJetFF_output_%s.root",outnameTag.Data()),"update");
   hjetPt->Write();
   for (int j=0; j<1; ++j) {
     htrkPt[j][kRAW]->Write();
