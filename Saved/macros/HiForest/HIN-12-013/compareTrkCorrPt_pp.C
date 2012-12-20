@@ -8,14 +8,14 @@
 #include "commonUtility.h"
 
 void compareTrkCorrPt_pp(
-                           TString outdir="fig/07.28_TrkCorr14"
+                           TString outdir="fig/Dec20_TrkCorr14b"
 )
 {
    TH1::SetDefaultSumw2();
    gSystem->mkdir(outdir,kTRUE);
    float xmin=1,xmax=179.9;
-   TString title="pp";
-   TString reftitle="PbPb";
+   TString title="PYTHIA";
+   TString reftitle="PYTHIA+HYDJET";
 
    /////////////////////////////////////////////////////////////////////////////////////
    // Load Histograms
@@ -34,7 +34,7 @@ void compareTrkCorrPt_pp(
 
 
    cout << endl << "========= plot =========" << endl;
-   Int_t etaPM=5.; // 7+2,-3 for |eta|<1.2, 7+5,-6 for full eta
+   Int_t etaPM=2.; // 7+2,-3 for |eta|<1.2, 7+5,-6 for full eta
    Float_t jetPtMin=0;
    Int_t jetBegBin = trkCorr->jetBin_->FindBin(jetPtMin);
    Int_t jetEndBin = trkCorr->numJEtBins_;
@@ -49,6 +49,7 @@ void compareTrkCorrPt_pp(
 	TH1D * vhCorrPtRef[2][5], *vhCorrPt[2][5];
 	Int_t colors[10] = {kBlack,kRed,kYellow+2,kGreen+2,kBlue};
    Int_t styles[2] = {kFullCircle,kOpenCircle};
+   TString centTitle[4]={"0-10%","10-30%","30-50%","50-100%"};
 
    int icent=0;
    int icentRef=numCentBinRef-1;
@@ -57,69 +58,77 @@ void compareTrkCorrPt_pp(
 		for (Int_t c=0; c<numCentBin; ++c) {
 			vhCorrPt[lv][c] = (TH1D*) trkCorr->InspectCorr(lv,c,c,jetBegBin,jetEndBin,2,7-etaPM-1,7+etaPM);
 			handsomeTH1(vhCorrPt[lv][c],kBlue,1,kOpenCircle);
-         vhCorrPt[lv][icent]->SetAxisRange(xmin,xmax,"X");
-         vhCorrPt[lv][icent]->SetAxisRange(0,1,"Y");
+         vhCorrPt[lv][c]->SetAxisRange(xmin,xmax,"X");
+         vhCorrPt[lv][c]->SetAxisRange(0,1,"Y");
 		}
 		for (Int_t c=0; c<numCentBinRef; ++c) {
 			vhCorrPtRef[lv][c] = (TH1D*) trkCorrRef->InspectCorr(lv,c,c,jetBegBin,jetEndBin,2,7-etaPM-1,7+etaPM);
 			handsomeTH1(vhCorrPtRef[lv][c],colors[c]);
-         vhCorrPtRef[lv][icent]->SetAxisRange(xmin,xmax,"X");
-         vhCorrPtRef[lv][icent]->SetAxisRange(0,1,"Y");
+         vhCorrPtRef[lv][c]->SetAxisRange(xmin,xmax,"X");
+         vhCorrPtRef[lv][c]->SetAxisRange(0,1,"Y");
 		}
 	}
    
 	TCanvas * cEff = new TCanvas("cEff","cEff",500,500);
    cEff->SetLogx();
-   vhCorrPt[0][icent]->SetTitle(";Track p_{T} (GeV/c);A #times #epsilon");
+   vhCorrPt[0][icent]->SetTitle(";Track p_{T} (GeV/c);Tracking Performance");
    vhCorrPt[0][icent]->SetTitleOffset(1.2);
    vhCorrPt[0][icent]->SetTitleSize(0.055);
 	vhCorrPt[0][icent]->Draw("E");
 	vhCorrPt[1][icent]->Draw("sameE");
-	vhCorrPtRef[0][0]->Draw("sameE");
-	vhCorrPtRef[1][0]->Draw("sameE");
-	vhCorrPtRef[0][icentRef]->Draw("sameE");
-	vhCorrPtRef[1][icentRef]->Draw("sameE");
+   for (Int_t c=numCentBinRef-1; c>=0; --c) {
+      vhCorrPtRef[0][c]->Draw("sameE");
+      vhCorrPtRef[1][c]->Draw("sameE");
+   }   
 
-   TLegend *leg0 = new TLegend(0.16,0.84,0.46,0.92);
+   TLegend *leg0 = new TLegend(0.16,0.8,0.46,0.92);
    leg0->SetFillStyle(0);
    leg0->SetBorderSize(0);
    leg0->SetTextSize(0.04);
-   leg0->AddEntry(vhCorrPt[0][0],"PYTHIA+HYDJET","");
-   if (etaPM==5)   leg0->AddEntry(vhCorrPt[0][0],Form("Track |#eta|<2.4"),"");
+   leg0->AddEntry(vhCorrPt[0][0],"CMS Simulation","");
+   if (etaPM==5) leg0->AddEntry(vhCorrPt[0][0],Form("Track |#eta|<2.4"),"");
    if (etaPM==2) leg0->AddEntry(vhCorrPt[0][0],Form("Track |#eta|<1.2"),"");
 	leg0->Draw();
    TLine * l = new TLine(xmin,1,xmax,1);
    l->SetLineStyle(2);
    l->Draw();
 	
-   TLegend *leg = new TLegend(0.34,0.32,0.60,0.43);
-   leg->SetFillStyle(0);
-   leg->SetBorderSize(0);
-   leg->SetTextSize(0.035);
+   TLegend *leg = new TLegend(0.26,0.28,0.52,0.56);
+   easyLeg(leg);
+   for (Int_t c=0; c<numCentBinRef; ++c) leg->AddEntry(vhCorrPtRef[0][c],reftitle+" "+centTitle[c],"p");  
    leg->AddEntry(vhCorrPt[0][icent],title,"p");
-	leg->AddEntry(vhCorrPtRef[0][icentRef],reftitle+ " 30-100%","p");
-	leg->AddEntry(vhCorrPtRef[0][0],reftitle+" 0-30%","p");
    leg->Draw();
    
-	drawText("CMS Simulation",0.64,0.89);
-	drawText("Fake Rate",0.69,0.26);
+	// drawText("CMS Simulation",0.64,0.89);
+   if (etaPM==5) drawText("Acc. #times Efficiency",0.6,0.74);
+   if (etaPM==2) drawText("Acc. #times Efficiency",0.6,0.79);
+	drawText("Fake track rate",0.6,0.2);
    
    cEff->Print(outdir+"/"+tag+".gif");
    cEff->Print(outdir+"/"+tag+".pdf");
 
 	TCanvas * cJet = new TCanvas("cJet","cJet",500,500);
 	cJet->SetLogy();
-	trkCorrRef->vhPtHat[1][icentRef]->SetMarkerColor(kRed);
-	trkCorrRef->vhPtHat[1][icentRef]->SetMarkerStyle(kOpenCircle);
-	trkCorrRef->vhPtHat[1][icentRef]->Draw("E");
-	trkCorr->vhPtHat[1][icent]->Draw("sameE");
+   handsomeTH1(trkCorr->vhPtHat[1][icent],kBlue,1,kOpenCircle);
+   trkCorr->vhPtHat[1][icent]->SetTitle(";#hat{p}_{T} (GeV/c);a.u.");
+	trkCorr->vhPtHat[1][icent]->Draw("E");
+	trkCorrRef->vhPtHat[1][icentRef]->Draw("sameE");
+   TLegend *leg2 = new TLegend(0.16,0.28,0.46,0.40);
+   easyLeg(leg2);
+   leg2->AddEntry(trkCorr->vhPtHat[1][icent],title,"p");
+   leg2->AddEntry(trkCorrRef->vhPtHat[1][icentRef],reftitle,"p");
+   leg2->Draw();
+   cEff->Print(outdir+"/"+tag+"_pthat.gif");
 
 	TCanvas * cCent = new TCanvas("cCent","cCent",500,500);
    TH1D * hCent = (TH1D*)trkCorr->sample_[0]->Get("hCent");
    TH1D * hCentRef = (TH1D*)trkCorrRef->sample_[0]->Get("hCent");
-	hCentRef->SetMarkerStyle(kOpenCircle);
-	hCentRef->Scale(1./hCentRef->GetEntries());
+   hCent->SetMarkerColor(kBlue);
+	hCent->SetMarkerStyle(kOpenCircle);
+   handsomeTH1(hCent,kBlue,1,kOpenCircle);
 	hCent->Scale(1./hCent->GetEntries());
-	hCentRef->Draw("p");
-	hCent->Draw("samep");
+   hCentRef->Scale(1./hCentRef->GetEntries());
+	hCent->Draw("p");
+	hCentRef->Draw("samep");
+   leg2->Draw();
 }

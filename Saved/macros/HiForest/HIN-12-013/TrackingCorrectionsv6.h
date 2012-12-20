@@ -95,6 +95,13 @@ ppMode_(false)
       centBin_.push_back("0to12");
       centBin_.push_back("12to40");
    }
+   if (name.Contains("Forest2STAv14b")) {
+      centBin_.clear();
+      centBin_.push_back("0to4");
+      centBin_.push_back("4to12");
+      centBin_.push_back("12to20");
+      centBin_.push_back("20to40");
+   }
    if (name.Contains("Forest2STAv10")) {
       centBin_.clear();
       centBin_.push_back("0to12");
@@ -235,6 +242,7 @@ void TrackingCorrections::Init()
    // =============================
    // set sample weights
    // =============================
+   cout << "Calculate xsections for " << corrSetName_ << endl;
    sampleCroSec_.reserve(ptHatMin_.size());
    for (UInt_t s=0; s<ptHatMin_.size(); ++s) { // merge pt hat samples with weight
      if (corrSetName_=="Forest2STAv12") {
@@ -242,7 +250,7 @@ void TrackingCorrections::Init()
         else if ( ptHatMin_[s]==170) sampleCroSec_[s] = 1.470e-06 - 5.310e-07;
         else if ( ptHatMin_[s]==200) sampleCroSec_[s] = 5.310e-07;
         else cout << endl << endl << " Error no such pt hat!!!!!" << endl << endl << endl;
-     } else if (corrSetName_=="Forest2STAv14") {
+     } else if (corrSetName_.Contains("Forest2STAv14")) {
         if ( ptHatMin_[s]==50 ) sampleCroSec_[s] = 1.021e-03 - 9.913e-05;
         else if ( ptHatMin_[s]==80 ) sampleCroSec_[s] = 9.913e-05 - 3.0698e-05;
         else if ( ptHatMin_[s]==100) sampleCroSec_[s] = 3.069e-05 - 1.470e-06;
@@ -370,6 +378,11 @@ Float_t TrackingCorrections::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float
    if (corrSetName_.Contains("Forest2STA")) {
       if (cent<12) bin = 0;
       else bin =1;
+   } else if (corrSetName_.Contains("Forest2STAv14b")) {
+      if (cent<4) bin = 0;
+      else if (cent<12) bin = 1;
+      else if (cent<20) bin = 2;
+      else bin = 3;
    } else {
       if (cent<2) bin = 0;
       else if (cent<4) bin = 1;
