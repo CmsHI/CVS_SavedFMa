@@ -86,6 +86,9 @@ TH1D* getCentDistDj();
 void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/pbpbDijet_v20/promptskim-hihighpt-hltjet80-pt90-v20.root", std::string outname = "jskim.root", bool needReweight=false, int maxEvents=-1, TString MinbiasFname="/mnt/hadoop/cms/store/user/jazzitup/hiForest/skimmed/yskim_HiForestMinBias_v6_first_July-v8-8VtxBin-24PlnBin-40CentBin.root", bool isMC=false, TString jetAlgo="akPu3PF", 
     bool isPP = false,   int smearMode=0, int smearCentBin = 0,bool useGenJet=false)
 {
+  // Environment setup
+  gRandom->SetSeed(time(0));
+  
   // Print setup
   cout << "needReweight: " << needReweight << " isMC: " << isMC << " maxEvents: " << maxEvents << " isPP: " << isPP << " smearMode: " << smearMode << " smearCentBin: " << smearCentBin << " useGenJet: " << useGenJet << endl;
     
