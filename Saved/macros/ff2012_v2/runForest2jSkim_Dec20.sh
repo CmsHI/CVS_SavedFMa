@@ -4,6 +4,7 @@ subName='Dec20_4bin_sm18'
 jetAlgo='akPu3PF'
 for smMode in 1 0; do # 0=do nothing, 1=shift
   root -l -b -q 'forest2jetSkim.C+("/net/hidsk0001/d00/scratch/yjlee/merge/pbpbDijet_v20/promptskim-hihighpt-hltjet80-pt90-v20.root","jskim_hltjet80-pt90-v20_'$jetAlgo'_'$subName'",false,-1,"",false,"'$jetAlgo'",0,'$smMode',0,0)'
+  root -l -b -q 'forest2jetSkim.C+("/mnt/hadoop/cms/store/user/frankmalocal/forest/HiForest-promptskim-hiForest2_v21_HLTFix.root ","jskim_hltjet80-v21_'$jetAlgo'_'$subName'",false,-1,"",false,"'$jetAlgo'",0,'$smMode',0,0)'
 done
 
 # pp
