@@ -79,39 +79,7 @@ smoothLevel_(0),
 isLeadingJet_(true),
 trkPhiMode_(false),
 ppMode_(false)
-{
-  if (name=="QM2011") {
-    centBin_.push_back("0to1");
-    centBin_.push_back("2to3");
-    centBin_.push_back("4to11");
-    centBin_.push_back("12to19");
-    centBin_.push_back("20to35");
-  } else if (name=="RAA2012") {
-    centBin_.push_back("0to1");
-    centBin_.push_back("2to3");
-    centBin_.push_back("4to11");
-    centBin_.push_back("12to19");
-    centBin_.push_back("20to27");
-    centBin_.push_back("28to35");
-  } else if (name=="Forest2STAv14") {
-    centBin_.clear();
-    centBin_.push_back("0to12");
-    centBin_.push_back("12to40");
-  } else if (name=="Forest2STAv14b") {
-    centBin_.clear();
-    centBin_.push_back("0to4");
-    centBin_.push_back("4to12");
-    centBin_.push_back("12to20");
-    centBin_.push_back("20to40");
-  } else if (name=="Forest2STAv10") {
-    centBin_.clear();
-    centBin_.push_back("0to12");
-    centBin_.push_back("12to30");
-  } else {
-    cout << "No such correction set: " << name << endl;
-    exit(1);
-  }
-   
+{  
    levelName_.push_back("Eff");
    levelName_.push_back("Fak");
    levelName_.push_back("Mul");
@@ -139,18 +107,52 @@ void TrackingCorrections::Init()
    // Setup Inputs
    // =============================
    for (UInt_t i=0; i<sample_.size(); ++i) cout << sample_[i]->GetName() << endl;
-   
+
    if (sample_.size()==0||!sample_[0]) {
-      cout << "No input correction file" << endl;
-      exit(1);
+   cout << "No input correction file" << endl;
+   exit(1);
    }
 
    if (ppMode_) {
       centBin_.clear();
       centBin_.push_back("0to40");
+   } else {
+      if (corrSetName_=="QM2011") {
+         centBin_.clear();
+         centBin_.push_back("0to1");
+         centBin_.push_back("2to3");
+         centBin_.push_back("4to11");
+         centBin_.push_back("12to19");
+         centBin_.push_back("20to35");
+      } else if (corrSetName_=="RAA2012") {
+         centBin_.clear();
+         centBin_.push_back("0to1");
+         centBin_.push_back("2to3");
+         centBin_.push_back("4to11");
+         centBin_.push_back("12to19");
+         centBin_.push_back("20to27");
+         centBin_.push_back("28to35");
+      } else if (corrSetName_=="Forest2STAv14") {
+         centBin_.clear();
+         centBin_.push_back("0to12");
+         centBin_.push_back("12to40");
+      } else if (corrSetName_=="Forest2STAv14b") {
+         centBin_.clear();
+         centBin_.push_back("0to4");
+         centBin_.push_back("4to12");
+         centBin_.push_back("12to20");
+         centBin_.push_back("20to40");
+      } else if (corrSetName_=="Forest2STAv10") {
+         centBin_.clear();
+         centBin_.push_back("0to12");
+         centBin_.push_back("12to30");
+      } else {
+         cout << "No such correction set: " << corrSetName_ << endl;
+         exit(1);
+      }
    }
    numCentBins_ = centBin_.size();
-   
+
    // =============================
    // Get x,y,z bins
    // =============================
@@ -379,19 +381,21 @@ Float_t TrackingCorrections::GetCorr(Float_t pt, Float_t eta, Float_t jet, Float
    
    Int_t bin = -1;   
    // Get the corresponding centrality bin
-   if (corrSetName_=="Forest2STAv14") {
-      if (cent<12) bin = 0;
-      else bin =1;
-   } else if (corrSetName_=="Forest2STAv14b") {
-      if (cent<4) bin = 0;
-      else if (cent<12) bin = 1;
-      else if (cent<20) bin = 2;
-      else bin = 3;
-   } else {
-      cout << "Error: no such corrSetName: " << corrSetName_ << endl;
-      exit(1);
-   }
    if (ppMode_) bin=0;
+   else {
+      if (corrSetName_=="Forest2STAv14") {
+         if (cent<12) bin = 0;
+         else bin =1;
+      } else if (corrSetName_=="Forest2STAv14b") {
+         if (cent<4) bin = 0;
+         else if (cent<12) bin = 1;
+         else if (cent<20) bin = 2;
+         else bin = 3;
+      } else {
+         cout << "Error: no such corrSetName: " << corrSetName_ << endl;
+         exit(1);
+      }
+   }
    Double_t corr[4]={1,1,1,1};
    for (Int_t lv=0; lv<numLevels_; ++lv) {
       corr[lv] = correctionHists_[lv][bin]->GetBinContent(etaBin,ptBin,jetBin);
