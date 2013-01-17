@@ -12,14 +12,14 @@
 #include "HisMath.C"
 using namespace std;
 
-// const int nptbin=11;
-// double ptbins[nptbin+1] ={100, 110, 120, 130, 140, 150, 160, 170, 180, 200, 240, 300};
+const int nptbin=11;
+double ptbins[nptbin+1] ={100, 110, 120, 130, 140, 150, 160, 170, 180, 200, 240, 300};
 
 // const int nptbin=16;
 // double ptbins[nptbin+1] ={90,95,100,105,110,115,120,130,140,150,160,170,180,200,220,260,300};
 
-const int nptbin=14;
-double ptbins[nptbin+1] ={100,105,110,115,120,130,140,150,160,170,180,200,220,260,300};
+// const int nptbin=14;
+// double ptbins[nptbin+1] ={100,105,110,115,120,130,140,150,160,170,180,200,220,260,300};
 
 // const int nptbin=33;
 // double ptbins[nptbin+1] = {30,40,50,60,70,80,90,100,
@@ -73,7 +73,9 @@ void drawFromHist(TString infname,TString outname="fig/pp_spectrum_comparison", 
       } else if (cmpMode==3) {
         l1->AddEntry(pp[icent],"PbPb","p");
         l1->AddEntry(pbpb[icent],"raw PbPb","p");
-      }
+      } else if (cmpMode==4) {
+        l1->AddEntry(pp[icent],"PbPb","p");
+        l1->AddEntry(pbpb[icent],"PbPb jet90 skim","p");      }
       l1->Draw();
     }
     int lowCent = centBin1[icent-1];
@@ -93,7 +95,7 @@ void drawFromHist(TString infname,TString outname="fig/pp_spectrum_comparison", 
     ratio[icent]->SetNdivisions(505);
     fixedFontHist(ratio[icent],1.8,2.5);
     if (cmpMode==1) ratio[icent]->SetYTitle("PbPb/pp");
-    else ratio[icent]->SetYTitle("smeared/raw");
+    else ratio[icent]->SetYTitle("ratio");
     ratio[icent]->Draw();
     TLine * hline = new TLine(100,1,290,1);
     hline->SetLineStyle(2);
@@ -129,20 +131,62 @@ void drawReweghtingPlotIncl(int smearPP=2, int rewtJet=0, int cmpMode=1) { // mo
   TFile * vinf[5];
   for ( int icent=1; icent<=4 ; icent++) {
     // Specify files
+    // Dec 5
+    // if (cmpMode==1) {
+    //   numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    //   denName[icent] = "../ntout/jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+    //   if (smearPP)
+    //     denName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
+    // } else if (cmpMode==2) {
+    //   numName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
+    //   denName[icent] = "../ntout/jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+    // } else if (cmpMode==3) {
+    //   numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    //   denName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
+    // }
+    // Dec 20
+    // if (cmpMode==1) {
+    //   numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    //   // numName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
+    //   denName[icent] = "../ntout/jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+    //   if (smearPP)
+    //     denName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",smearPP,icent);
+    // } else if (cmpMode==2) {
+    //   numName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",smearPP,icent);
+    //   denName[icent] = "../ntout/jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+    // } else if (cmpMode==3) {
+    //   // numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    //   // denName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
+    //   numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    //   denName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    // }
+    // Jan 16
+    // if (cmpMode==1) {
+    //   // numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    //   // numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    //   numName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    //   denName[icent] = "../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+    //   if (smearPP)
+    //     denName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
+    // } else if (cmpMode==2) {
+    //   numName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
+    //   denName[icent] = "../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+    // } else if (cmpMode==3) {
+    //   numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    //   denName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
+    // } else if (cmpMode==4) {
+    //   numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    //   denName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    // }
+    // Jan 16 mc
     if (cmpMode==1) {
-      // numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-      numName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
-      denName[icent] = "../ntout/jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+      numName[icent] = "../ntout/jskim_hydj50_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+      denName[icent] = "../ntout/jskim_dj50_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
       if (smearPP)
-        denName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",smearPP,icent);
+        denName[icent] = Form("../ntout/jskim_dj50_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
     } else if (cmpMode==2) {
-      numName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",smearPP,icent);
-      denName[icent] = "../ntout/jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
-    } else if (cmpMode==3) {
-      // numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-      // denName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
-      numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-      denName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+      numName[icent] = Form("../ntout/jskim_dj50_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
+      denName[icent] = "../ntout/jskim_dj50_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
     }
     // load trees
     vinf[icent] = new TFile(numName[icent]);
@@ -156,8 +200,8 @@ void drawReweghtingPlotIncl(int smearPP=2, int rewtJet=0, int cmpMode=1) { // mo
   //////////////////////////////////////////////////
   // Output
   //////////////////////////////////////////////////
-  TFile * outf = new TFile(Form("fig/Jan15/hisCmp%d_Smear%d_Rewt%d.root",cmpMode,smearPP,rewtJet),"recreate");
-  TString outname=Form("fig/Jan15/jet_spectrum_cmp%d_sm%d_rewt%d",cmpMode,smearPP,rewtJet);
+  TString outname=Form("fig/Jan16mc/jet_spectrum_cmp%d_sm%d_rewt%d_pbpbJan16no90skim_ppJan16",cmpMode,smearPP,rewtJet);
+  TFile * outf = new TFile(outname+".root","recreate");
 
   for ( int icent=1; icent<=4 ; icent++) {
     pbpb[icent] = new TH1D(Form("hjetPt_hi_inclusiveJet_icent%d",icent),";p_{T} (GeV/c);",nptbin,ptbins);
@@ -167,7 +211,7 @@ void drawReweghtingPlotIncl(int smearPP=2, int rewtJet=0, int cmpMode=1) { // mo
   //////////////////////////////////////////////////
   // Analysis
   //////////////////////////////////////////////////
-  TCut jetSel = "jetPt>90";
+  TCut jetSel = "jetPt>100";
   for ( int icent=1; icent<=4 ; icent++) {
     TCut hiJetSel=jetSel && Form("cBin>=%.1f&&cBin<%.1f",centBin1[icent-1],centBin1[icent]);
     TCut ppJetSel=jetSel;
@@ -181,7 +225,7 @@ void drawReweghtingPlotIncl(int smearPP=2, int rewtJet=0, int cmpMode=1) { // mo
     } else if (cmpMode==2) {
       cout << "pp smeared: " << vthi[icent]->Project(pbpb[icent]->GetName(),"jetPt",ppJetSel) << endl;      
       cout << "pp raw:     " << vtpp[icent]->Project(pp[icent]->GetName(),"jetPt",jetSel) << endl;
-    } else if (cmpMode==3) {
+    } else if (cmpMode==3||cmpMode==4) {
       cout << "corr pbpb: " << vthi[icent]->Project(pbpb[icent]->GetName(),"jetPt",hiJetSel) << endl;      
       cout << "raw pbpb:  " << vtpp[icent]->Project(pp[icent]->GetName(),"jetPt",hiJetSel) << endl;
     }
