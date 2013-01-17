@@ -88,7 +88,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
 {
   // Environment setup
   gRandom->SetSeed(time(0));
-  
+
   // Print setup
   cout << "needReweight: " << needReweight << " isMC: " << isMC << " maxEvents: " << maxEvents << " isPP: " << isPP << " smearMode: " << smearMode << " smearCentBin: " << smearCentBin << " useGenJet: " << useGenJet << endl;
     
@@ -129,7 +129,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   int seconds = time(NULL);
   //  cout << " time = " <<seconds%10000<< endl;
   TRandom3 rand(seconds%10000);
-  TString datafname  = "/net/hidsk0001/d00/scratch/yjlee/merge/pbpb/mergedFile.root";
+  TString datafname  = "/net/hidsk0001/d00/scratch/yjlee/merge/pbpbDijet_v20/promptskim-hihighpt-hltjet80-pt90-v20.root";
   // For centrality reweighting
   cout << " change the centrality reweighting table for dijets" << endl;
   CentralityReWeight cw(datafname,inputFile_,"");
