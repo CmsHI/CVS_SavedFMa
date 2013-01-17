@@ -12,8 +12,14 @@
 #include "HisMath.C"
 using namespace std;
 
-const int nptbin=11;
-double ptbins[nptbin+1] ={100, 110, 120, 130, 140, 150, 160, 170, 180, 200, 240, 300};
+// const int nptbin=11;
+// double ptbins[nptbin+1] ={100, 110, 120, 130, 140, 150, 160, 170, 180, 200, 240, 300};
+
+// const int nptbin=16;
+// double ptbins[nptbin+1] ={90,95,100,105,110,115,120,130,140,150,160,170,180,200,220,260,300};
+
+const int nptbin=14;
+double ptbins[nptbin+1] ={100,105,110,115,120,130,140,150,160,170,180,200,220,260,300};
 
 // const int nptbin=33;
 // double ptbins[nptbin+1] = {30,40,50,60,70,80,90,100,
@@ -31,10 +37,9 @@ void drawFromHist(TString infname,TString outname="fig/pp_spectrum_comparison", 
     ratio[icent]  = (TH1D*)pbpb[icent]->Clone(Form("hjetPt_ratio_inclusiveJet_icent%d",icent));
     normHist(pbpb[icent],1,true);
     normHist(pp[icent],1,true);
-//     normHist(pbpb[icent],0,true);
-//     normHist(pp[icent],0,true);
-    if (cmpMode==1) ratio[icent]->Divide(pbpb[icent],pp[icent]);
-    else ratio[icent]->Divide(pp[icent],pbpb[icent]);
+    // normHist(pbpb[icent],0,true);
+    // normHist(pp[icent],0,true);
+    ratio[icent]->Divide(pbpb[icent],pp[icent]);
   }
 
   TCanvas* c1 =new TCanvas("c1","",1000,600);
@@ -44,13 +49,8 @@ void drawFromHist(TString infname,TString outname="fig/pp_spectrum_comparison", 
   for ( int icent=1; icent<=4 ; icent++) {
     c1->cd(5-icent);
     
-    if (cmpMode==1) {
-      handsomeTH1(pp[icent],1,1,kOpenCircle);
-      handsomeTH1(pbpb[icent],1,1,kFullCircle);
-    } else {
-      handsomeTH1(pp[icent],1,1,kFullCircle);
-      handsomeTH1(pbpb[icent],1,1,kOpenCircle);
-    }
+    handsomeTH1(pp[icent],1,1,kOpenCircle);
+    handsomeTH1(pbpb[icent],1,1,kFullCircle);
     pp[icent]->SetAxisRange(80,290,"X");
     pp[icent]->SetAxisRange(2e-5,0.2,"Y");
     pp[icent]->SetNdivisions(505);
@@ -108,47 +108,56 @@ void drawFromHist(TString infname,TString outname="fig/pp_spectrum_comparison", 
   c1->SaveAs(outname+".pdf");
 }
 
-void drawReweghtingPlotIncl(int smearPP=1, int rewtJet=0, int cmpMode=1) { // mode: 1=pbpb/pp, 2=pp/ppraw
+void drawReweghtingPlotIncl(int smearPP=2, int rewtJet=0, int cmpMode=1) { // mode: 1=pbpb/pp, 2=pp/ppraw
   TH1::SetDefaultSumw2();
   
   //////////////////////////////////////////////////
   // Input
   //////////////////////////////////////////////////
-  TTree * thi;
+  TTree * vthi[5];
   TTree * vtpp[5];
   TH1D * pp[5] ;
   TH1D * pbpb[5] ;
   TH1D * ratio[5] ;
+  // cmpModes:
+  // 1. PbPb/pp_[sm/unsm]
+  // 2. pp_sm/pp_unsm
+  // 3. PbPb_sm/PbPb_unsm
 
-  // pbpb
-  TFile* inf1;
-//   if (cmpMode==1) inf1 = new TFile("jskim_hltjet80-pt90-v20_akPu3PF_Nov20_jetPt_50_jetEtaCut_2.00_noPbin_sm0_akPu3PF_gj0.root");
-//   if (cmpMode==1) inf1 = new TFile("jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root");
-  if (cmpMode==1) inf1 = new TFile("jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root");
-  else if (cmpMode==2) inf1 = new TFile("jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root");
-  else if (cmpMode==3) inf1 = new TFile("jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root");
-  cout << "Single: " << inf1->GetName() << endl;
-  thi = (TTree*)inf1->Get("tdj");
-  // pp
+  TString numName[5];
+  TString denName[5];
+  TFile * vinf[5];
   for ( int icent=1; icent<=4 ; icent++) {
-    TString inf1name;
-    if (cmpMode<3) {
-      if (smearPP==0) inf1name = Form("jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root");
-      else inf1name = Form("jskim_pp-full_ak3PF_Dec18_sm17_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
-      if (rewtJet==1) inf1name.ReplaceAll(".root","_addedReweight.root");
+    // Specify files
+    if (cmpMode==1) {
+      // numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+      numName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
+      denName[icent] = "../ntout/jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+      if (smearPP)
+        denName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",smearPP,icent);
+    } else if (cmpMode==2) {
+      numName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",smearPP,icent);
+      denName[icent] = "../ntout/jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
     } else if (cmpMode==3) {
-      inf1name="jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+      // numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+      // denName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
+      numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+      denName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
     }
-    inf1 = new TFile(inf1name);
-    cout << "Var Cent: " << inf1->GetName() << endl;
-    vtpp[icent] = (TTree*)inf1->Get("tdj");
-  }  
+    // load trees
+    vinf[icent] = new TFile(numName[icent]);
+    cout << "Numerator: " << vinf[icent]->GetName() << endl;
+    vthi[icent] = (TTree*)vinf[icent]->Get("tdj");
+    vinf[icent] = new TFile(denName[icent]);
+    cout << "Denominator: " << vinf[icent]->GetName() << endl;
+    vtpp[icent] = (TTree*)vinf[icent]->Get("tdj");
+  }
   
   //////////////////////////////////////////////////
   // Output
   //////////////////////////////////////////////////
-  TFile * outf = new TFile(Form("fig/Dec18/hisCmp%d_Smear%d_Rewt%d.root",cmpMode,smearPP,rewtJet),"recreate");
-  TString outname=Form("fig/Dec18/jet_spectrum_cmp%d_sm%d_rewt%d",cmpMode,smearPP,rewtJet);
+  TFile * outf = new TFile(Form("fig/Jan15/hisCmp%d_Smear%d_Rewt%d.root",cmpMode,smearPP,rewtJet),"recreate");
+  TString outname=Form("fig/Jan15/jet_spectrum_cmp%d_sm%d_rewt%d",cmpMode,smearPP,rewtJet);
 
   for ( int icent=1; icent<=4 ; icent++) {
     pbpb[icent] = new TH1D(Form("hjetPt_hi_inclusiveJet_icent%d",icent),";p_{T} (GeV/c);",nptbin,ptbins);
@@ -158,18 +167,26 @@ void drawReweghtingPlotIncl(int smearPP=1, int rewtJet=0, int cmpMode=1) { // mo
   //////////////////////////////////////////////////
   // Analysis
   //////////////////////////////////////////////////
-  TCut jetSel = "jetPt>100";
+  TCut jetSel = "jetPt>90";
   for ( int icent=1; icent<=4 ; icent++) {
-    TCut centCut = Form("cBin>=%.1f&&cBin<%.1f",centBin1[icent-1],centBin1[icent]);
-    cout << TString(centCut) << " ";
-    if (cmpMode==1) cout << "pbpb: " << thi->Project(pbpb[icent]->GetName(),"jetPt",centCut&&jetSel) << endl;
-    else if (cmpMode==2) cout << "pp raw: " << thi->Project(pbpb[icent]->GetName(),"jetPt",jetSel) << endl;
-    else if (cmpMode==3) cout << "pbpb raw: " << thi->Project(pbpb[icent]->GetName(),"jetPt",centCut&&jetSel) << endl;
+    TCut hiJetSel=jetSel && Form("cBin>=%.1f&&cBin<%.1f",centBin1[icent-1],centBin1[icent]);
     TCut ppJetSel=jetSel;
     if (rewtJet==1) ppJetSel*="rewtPt";
-    if (cmpMode<3) cout << "pp: " << vtpp[icent]->Project(pp[icent]->GetName(),"jetPt",ppJetSel) << endl;
-    else cout << "corr pbpb: " << vtpp[icent]->Project(pp[icent]->GetName(),"jetPt",centCut&&jetSel) << endl;;
+    cout << "hi cut: " << TString(hiJetSel) << endl;
+    cout << "pp cut: " << TString(ppJetSel) << endl;
+
+    if (cmpMode==1) {
+      cout << "pbpb: " << vthi[icent]->Project(pbpb[icent]->GetName(),"jetPt",hiJetSel) << endl;
+      cout << "pp:   " << vtpp[icent]->Project(pp[icent]->GetName(),"jetPt",ppJetSel) << endl;
+    } else if (cmpMode==2) {
+      cout << "pp smeared: " << vthi[icent]->Project(pbpb[icent]->GetName(),"jetPt",ppJetSel) << endl;      
+      cout << "pp raw:     " << vtpp[icent]->Project(pp[icent]->GetName(),"jetPt",jetSel) << endl;
+    } else if (cmpMode==3) {
+      cout << "corr pbpb: " << vthi[icent]->Project(pbpb[icent]->GetName(),"jetPt",hiJetSel) << endl;      
+      cout << "raw pbpb:  " << vtpp[icent]->Project(pp[icent]->GetName(),"jetPt",hiJetSel) << endl;
+    }
   }
+
   outf->Write();
   outf->Close();
   
