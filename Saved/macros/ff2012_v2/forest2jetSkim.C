@@ -519,7 +519,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
         }
 
         float sm=(theJet->jtpt[ij] - jetUnSmPt[ij] )/jetUnSmPt[ij];
-//         if ((jetUnSmPt[ij] > 100) && (fabs(theJet->jteta[ij])<2.0)) cout << "smCentBin: " << smCentBin << " Pt Before: " << jetUnSmPt[ij] << " After smearing: " << theJet->jtpt[ij] << " factor: " << sm << endl;
+        // if ((jetUnSmPt[ij] > 100) && (fabs(theJet->jteta[ij])<2.0)) cout << "smCentBin: " << smCentBin << " Pt Before: " << jetUnSmPt[ij] << " After smearing: " << theJet->jtpt[ij] << " factor: " << sm << endl;
       
         if ( (jetUnSmPt[ij] > 100) && (fabs(theJet->jteta[ij])<2.0)) {
           smearingHist->Fill( sm );
@@ -530,6 +530,21 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
           if (smCentBin==0) smearingPtBin0->Fill( jetUnSmPt[ij], sm );
         }
         hSmJetPtSm->Fill(theJet->jtpt[ij]);
+      }
+      // Set Unsmeared Leading Jet and Subleading jet energies for tracking efficiency look up
+      for (int k=0; k<nJets; k++) {
+        if (fabs(theJet->jteta[k])>2) continue;
+        if (theJet->jtpt[k]>c->leadingJetPtForTrkCor) {
+          c->leadingJetPtForTrkCor = theJet->jtpt[k];
+          c->leadingJetEtaForTrkCor = theJet->jteta[k];
+          c->leadingJetPhiForTrkCor = theJet->jtphi[k];
+        }   
+        if (theJet->jtpt[k]>c->subleadingJetPtForTrkCor && theJet->jtpt[k] < c->leadingJetPtForTrkCor) {
+          c->subleadingJetPtForTrkCor = theJet->jtpt[k];
+          c->subleadingJetEtaForTrkCor = theJet->jteta[k];
+          c->subleadingJetPhiForTrkCor = theJet->jtphi[k];
+        }
+        if (theJet->jtpt[k]<c->subleadingJetPtForTrkCor) break;   
       }
     }
 
