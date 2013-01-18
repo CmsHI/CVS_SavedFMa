@@ -13,7 +13,7 @@ const int nptrange = 1;
 float ptranges[nptrange+1] = {1,300};
 
 int weightMode = 0; // 0=no weight, 1=trakpt, 2=trakppt/jetpt, 20=trackpt/jetrawpt
-bool intPt=true;
+bool intPt=true; // whether we want cumulative pt ranges in track, true for fragmenation function
 
 TString tag="";
 
@@ -34,10 +34,14 @@ void drawInclJetFragSingleSet(int fragMode = 2, int dataset = kHIDATA, float tra
 
 // Main Function --------------------------------------------------------------------
 void drawInclJetFrag() {
+  /////////////////////////////////////////////////////////////////
+  // This is the entry function that runs the full analysis
+  //   * It decides what to run.
+  /////////////////////////////////////////////////////////////////
   TH1::SetDefaultSumw2();
 
   bool doHIMC = 0;
-  bool doHIDATA = 1;
+  bool doHIDATA = 0;
   bool doPPDATA = 1;
   bool doPPMC = 0;
   bool usingPara = false;
@@ -60,7 +64,7 @@ void drawInclJetFrag() {
       }
       if ( doPPDATA ) {
         drawInclJetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, 100, usingPara);     
-        drawInclJetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, 100, usingPara,1); // jet reweighting: 0=raw, 1=reweight
+        // drawInclJetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, 100, usingPara,1); // jet reweighting: 0=raw, 1=reweight
       }
       if ( doHIDATA) {
         drawInclJetFragSingleSet(fragMode, kHIDATA, trackPtMin,trackPtMax, 100, usingPara);
@@ -71,15 +75,20 @@ void drawInclJetFrag() {
 
 // Helper Functions --------------------------------------------------------------------
 void drawInclJetFragSingleSet(int fragMode, int dataset, float trackPtMin, float trackPtMax, int doClosure, bool usingPara,int rewtJet) {
-  
-  TString attPara = ( (usingPara == true) ? "Para" : "" ) ;
-  
-  TString datasetName = ""; 
+  /////////////////////////////////////////////////////////////////
+  // This is the function that sets up analysis for each
+  // dataset, and booking the needed histograms
+  /////////////////////////////////////////////////////////////////  
+  TString datasetName; 
   if (dataset == kHIDATA)       datasetName = "hidata";
   else if (dataset == kHIMC)    datasetName = "himc";
   else if (dataset == kPPDATA)  datasetName = "ppdata";
-  else if (dataset == kPPMC)  datasetName = "ppmc";
+  else if (dataset == kPPMC)    datasetName = "ppmc";
+  TString attPara = ( (usingPara == true) ? "Para" : "" ) ; // Do we want to use parametrization (Krisztian) version of tracking correction?
   
+  /////////////////////////////////////////////////////////////////
+  // Here The main result histograms are booked.
+  /////////////////////////////////////////////////////////////////
   TH1D* htrkFF[5][3][5];
   const int nPtBin = 22;
   double ptBin[nPtBin+1] = { 0,1,1.2,1.4,1.6,1.8,2,2.2,2.4,2.6,2.8,3,4,5,6,8,10,12,14,16,20,25,50};
@@ -87,26 +96,28 @@ void drawInclJetFragSingleSet(int fragMode, int dataset, float trackPtMin, float
   const int nZBin = 21;
   double zBin[nZBin+1] = { 0,0.003,0.007,0.012,0.016,0.02,0.03,0.04, 0.06, 0.1, 0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.6,0.7,0.8,1};
   
-  for (int icent = 1; icent<=4; icent++) {
-    for (int irj = 999; irj<=999 ; irj++) {
+  for (int icent = 1; icent<=4; icent++) { // centrality bins in the analysis
+    for (int irj = 999; irj<=999 ; irj++) { // asymmetry bins in the analysis, we don't bin here for QM12 analysis
       int index = icent;
       for (int j=0; j<1; ++j) {
         ///////////////////////////////////////  define what to draw!! ///////////////////////
         TString suffix = Form("%s_icent%d_irj%d_fragMode%d_closure%d%s%s_jtrewt%d",datasetName.Data(),icent,irj,fragMode,doClosure,attPara.Data(),tag.Data(),rewtJet);
         suffix += Form("_wtmode%d_pt%dto%d",weightMode,(int)trackPtMin,(int)trackPtMax);
-        if ( fragMode   == 1 )
+        if ( fragMode   == 1 ) // Track pt analysis
           htrkFF[index][j][kRAW]= new TH1D(Form("hpt_jet_rawTrk_%s",suffix.Data()),";track p_{T} (GeV/c);dN/dp_{T} (GeV/c)^{-1}",nPtBin,ptBin);
-        else if ( fragMode==2)
+        else if ( fragMode==2) // Xi analysis
           htrkFF[index][j][kRAW]= new TH1D(Form("hpt_jet_rawTrk_%s",suffix.Data()),";#xi = ln(1/z);dN/d#xi",14,0,7);
-        else if ( fragMode==3)
+        else if ( fragMode==3) // z analysis
           htrkFF[index][j][kRAW]= new TH1D(Form("hpt_jet_rawTrk_%s",suffix.Data()),";z;dN/d#xi;dN/dz",nZBin,zBin);
-        else if ( fragMode==10)
+        else if ( fragMode==10) // rocket analysis
           htrkFF[index][j][kRAW]= new TH1D(Form("hpt_jet_rawTrk_%s",suffix.Data()),";r;#Sigma p_{T} (GeV/c);",6,0,0.3);
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////      
 
+        // Needed for background subtraction
         htrkFF[index][j][kBKG]  = (TH1D*)htrkFF[index][j][kRAW]->Clone(Form( "hpt_jet_mbTrk_%s",suffix.Data()));
         htrkFF[index][j][kSIG] = (TH1D*)htrkFF[index][j][kRAW]->Clone(Form(  "hpt_jet_sigTrk_%s",suffix.Data()));
 
+        // All histograms booked, now we do the real work
         drawInclJetFragSingle(htrkFF[index],dataset, icent, irj, fragMode,trackPtMin,trackPtMax,doClosure,usingPara,rewtJet);
       }  
     }
@@ -124,18 +135,14 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
 			  float trackPtMax,
 			  int doClosure,
 			  bool usingPara,
-			  int rewtJet
-			  ) {
-  
-  ///////////////////////////////////////////////////////
-  // Setup cuts
-  ///////////////////////////////////////////////////////
-  float finalEtaCut = 2.0;
-  float finalJetPtMin = 100;
-  float finalJetPtMax = 300;
-  TCut jetSelCut = Form("jetPt>=%.0f&&jetPt<%.0f",finalJetPtMin,finalJetPtMax);
-
-  TString datasetName = "";
+        int rewtJet
+        ) {
+  /////////////////////////////////////////////////////////////////
+  // This function is given the booked histograms
+  // and does the real work of filling the histograms
+  // for each dataset and each analysis setup
+  /////////////////////////////////////////////////////////////////
+  TString datasetName;
   if (dataset == kHIDATA)       datasetName = "hidata";
   else if (dataset == kHIMC)    datasetName = "himc";
   else if (dataset == kPPDATA)  datasetName = "ppdata";
@@ -150,29 +157,55 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
     clsText = "etaRefl";
     clsText_ = "#eta reflection method";
   }
+
+  ///////////////////////////////////////////////////////
+  // Book histograms for Intermediate checks
+  ///////////////////////////////////////////////////////
+  TH1D* hjetPt = new TH1D(Form("hjetPt_%s",suffix.Data()),";Jet p_{T} (GeV/c);Entries;",50,0,500);
+
+  ///////////////////////////////////////////////////////
+  // Setup cuts
+  ///////////////////////////////////////////////////////
+  float finalEtaCut = 2.0;
+  float finalJetPtMin = 100;
+  float finalJetPtMax = 300;
+  TCut jetSelCut = Form("jetPt>=%.0f&&jetPt<%.0f",finalJetPtMin,finalJetPtMax);
   
   TCut centCut = "1==1";
   if ( (icent >= 1) && (icent<=4) )
     centCut = Form("cBin>=%d && cBin<%d", (int)centBin1[icent-1], (int)centBin1[icent]);
+
+  ////////////////////////////////////////////////////////  
+  // Jet Selection
+  ////////////////////////////////////////////////////////  
+  // inclusive /////////
+  TString jet1Cut = Form("abs(jetEta)<%.2f",finalEtaCut);
+  if (doClosure>=100&&doClosure!=101) {
+    jet1Cut = Form("%s && abs(jetEta)>0.3",jet1Cut.Data());
+  }
+
+  ////////////////////////////////////////////////////////  
+  // Weights
+  ////////////////////////////////////////////////////////  
+  float jetDrCut = 0.3;
+  TString jetRewt= "1";
+  if ( rewtJet==1 ) {
+    jetRewt = Form("rewtPt");
+  }
   
   ///////////////////////////////////////////////////////
   // Input trees
   ///////////////////////////////////////////////////////
   multiTreeUtil* dj  = new multiTreeUtil();
   if ( dataset == kHIDATA) {
-//     dj->addFile("jskim_hltjet80-pt90-v20_akPu3PF_Nov20_jetPt_50_jetEtaCut_2.00_noPbin_sm0_akPu3PF_gj0.root",
-    // dj->addFile("jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root",
-    // dj->addFile("jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root",
-    dj->addFile("jskim_hltjet80-pt90-v20_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root",
-		"tdj", jetSelCut && centCut,1);
+    dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root",
+    "tdj", jetSelCut && centCut,1);
   } else if ( dataset == kHIMC) {
   } else if ( dataset == kPPDATA) {
-//     dj->addFile(Form("jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm0_ak3PF_gj0_addedReweight.root",icent),
-//     dj->addFile(Form("jskim_pp-full_ak3PF_Dec5newsm_jetPt_50_jetEtaCut_2.00_noPbin_sm%d_ak3PF_gj0_addedReweight.root",icent),
-//     dj->addFile(Form("jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root",icent),
-    // dj->addFile(Form("jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
-    dj->addFile(Form("jskim_pp-full_ak3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
-		"tdj", jetSelCut, 1); // no centrality cut
+    dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0.root",icent),
+    // dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
+    // dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_seed2_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0.root",icent),
+    "tdj", jetSelCut, 1); // no centrality cut
   } else if ( dataset == kPPMC) {
   }
   
@@ -188,26 +221,6 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   cout << " working on dataset, icent, irj = " << datasetName << ", "<<icent<<", "<<irj<<endl;
   cout << " doClosure: " << doClosure << " rewtJet: " << rewtJet << endl;
   cout << " ================================================= " << endl;
-
-  ////////////////////////////////////////////////////////  
-  // Weights
-  ////////////////////////////////////////////////////////  
-  float jetDrCut = 0.3;
-  TString jetRewt= "1";
-  if ( rewtJet==1 ) {
-    jetRewt = Form("rewtPt");
-  }
-
-  ////////////////////////////////////////////////////////  
-  // Jet Selection
-  ////////////////////////////////////////////////////////  
-  // inclusive /////////
-  TString jet1Cut = Form("abs(jetEta)<%.2f",finalEtaCut);
-  if (doClosure>=100&&doClosure!=101) {
-    jet1Cut = Form("%s && abs(jetEta)>0.3",jet1Cut.Data());
-  }
-
-  TH1D* hjetPt = new TH1D(Form("hjetPt_%s",suffix.Data()),";Jet p_{T} (GeV/c);Entries;",50,0,500);
 
   ////////////////////////////////////////////////////////  
   // Draw From Tree
@@ -398,7 +411,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   gPad->SetLogy();
   drawText("Jet p_{T}", 0.55,0.63,1);
   
-  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Dec20",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
+  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Dec52ppraw",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
 
   if ( fragMode==2) {
     c1->SaveAs(Form("plotsOfDijetFF/dijetFF_xi_doClosure%d_icent%d_irj%d_%s_%s%s_%s.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data(),outnameTag.Data()));
@@ -413,10 +426,8 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   // All Done, write output  
   TFile outf = TFile(Form("inclJetFF_output_%s.root",outnameTag.Data()),"update");
   hjetPt->Write();
-  for (int j=0; j<1; ++j) {
-    htrkPt[j][kRAW]->Write();
-    htrkPt[j][kSIG]->Write();
-    htrkPt[j][kBKG]->Write();
-  }
+  htrkPt[0][kRAW]->Write();
+  htrkPt[0][kSIG]->Write();
+  htrkPt[0][kBKG]->Write();
   outf.Close();
 }
