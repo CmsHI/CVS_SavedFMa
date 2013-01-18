@@ -7,6 +7,7 @@
 #include "TCut.h"
 #include <TRandom3.h>
 #include <time.h>
+#include <cassert>
 // #include "commonUtility.h"
 #include "CutAndBinCollection2011.h"
 #include "HisMath.C"
@@ -113,6 +114,8 @@ void drawFromHist(TString infname,TString outname="fig/pp_spectrum_comparison", 
 void drawReweghtingPlotIncl(int smearPP=2, int rewtJet=0, int cmpMode=1) { // mode: 1=pbpb/pp, 2=pp/ppraw
   TH1::SetDefaultSumw2();
   
+  assert(rewtJet&&cmpMode==1);
+
   //////////////////////////////////////////////////
   // Input
   //////////////////////////////////////////////////
@@ -161,32 +164,38 @@ void drawReweghtingPlotIncl(int smearPP=2, int rewtJet=0, int cmpMode=1) { // mo
     //   denName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Dec20_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
     // }
     // Jan 16
-    // if (cmpMode==1) {
-    //   // numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-    //   // numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-    //   numName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-    //   denName[icent] = "../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
-    //   if (smearPP)
-    //     denName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
-    // } else if (cmpMode==2) {
-    //   numName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
-    //   denName[icent] = "../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
-    // } else if (cmpMode==3) {
-    //   numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-    //   denName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
-    // } else if (cmpMode==4) {
-    //   numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-    //   denName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-    // }
-    // Jan 16 mc
     if (cmpMode==1) {
-      numName[icent] = "../ntout/jskim_hydj50_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-      denName[icent] = "../ntout/jskim_dj50_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+      // numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+      numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+      // numName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+      denName[icent] = "../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
       if (smearPP)
-        denName[icent] = Form("../ntout/jskim_dj50_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
+        denName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
     } else if (cmpMode==2) {
-      numName[icent] = Form("../ntout/jskim_dj50_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
-      denName[icent] = "../ntout/jskim_dj50_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+      numName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
+      denName[icent] = "../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+    } else if (cmpMode==3) {
+      numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+      denName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
+    } else if (cmpMode==4) {
+      numName[icent] = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+      denName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    }
+    // Jan 16 mc
+    // if (cmpMode==1) {
+    //   numName[icent] = "../ntout/jskim_hydj50_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    //   denName[icent] = "../ntout/jskim_dj50_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+    //   if (smearPP)
+    //     denName[icent] = Form("../ntout/jskim_dj50_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
+    // } else if (cmpMode==2) {
+    //   numName[icent] = Form("../ntout/jskim_dj50_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
+    //   denName[icent] = "../ntout/jskim_dj50_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+    // }
+    if (rewtJet==1) denName[icent]=denName[icent].ReplaceAll(".root","_addedReweight.root");
+    if (rewtJet==2) numName[icent]=numName[icent].ReplaceAll(".root","_addedReweight.root");
+    if (rewtJet==3) {
+      numName[icent]=numName[icent].ReplaceAll(".root","_addedReweight.root");
+      denName[icent]=denName[icent].ReplaceAll(".root","_addedReweight.root");
     }
     // load trees
     vinf[icent] = new TFile(numName[icent]);
@@ -200,7 +209,7 @@ void drawReweghtingPlotIncl(int smearPP=2, int rewtJet=0, int cmpMode=1) { // mo
   //////////////////////////////////////////////////
   // Output
   //////////////////////////////////////////////////
-  TString outname=Form("fig/Jan16mc/jet_spectrum_cmp%d_sm%d_rewt%d_pbpbJan16no90skim_ppJan16",cmpMode,smearPP,rewtJet);
+  TString outname=Form("fig/Jan16Report/jet_spectrum_cmp%d_sm%d_rewt%d_pbpbJan16_ppJan16",cmpMode,smearPP,rewtJet);
   TFile * outf = new TFile(outname+".root","recreate");
 
   for ( int icent=1; icent<=4 ; icent++) {
@@ -216,6 +225,11 @@ void drawReweghtingPlotIncl(int smearPP=2, int rewtJet=0, int cmpMode=1) { // mo
     TCut hiJetSel=jetSel && Form("cBin>=%.1f&&cBin<%.1f",centBin1[icent-1],centBin1[icent]);
     TCut ppJetSel=jetSel;
     if (rewtJet==1) ppJetSel*="rewtPt";
+    if (rewtJet==2) hiJetSel*="rewtPt";
+    if (rewtJet==3) {
+      ppJetSel*="rewtPt";
+      hiJetSel*="rewtPt";
+    }
     cout << "hi cut: " << TString(hiJetSel) << endl;
     cout << "pp cut: " << TString(ppJetSel) << endl;
 

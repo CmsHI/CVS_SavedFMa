@@ -9,7 +9,6 @@
 #include "TCut.h"
 #include <TRandom3.h>
 #include <time.h>
-// #include "commonUtility.h"
 #include "CutAndBinCollection2011.h"
 #include "HisMath.C"
 using namespace std;
@@ -72,7 +71,7 @@ void addJetWeight(
   tjin->SetBranchAddress("indiJet", &dj, &b_dj);
 
   // Set Output
-  TString outputFile=infntpp.substr(infntpp.find_last_of('/')+1);
+  TString outputFile=infntpp.c_str();
   outputFile.ReplaceAll(".root","_addedReweight.root");
   TFile* newfile = new TFile(outputFile,"recreate");
   cout << "Output file :" << outputFile << endl;
