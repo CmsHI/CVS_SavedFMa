@@ -34,21 +34,29 @@ void drawWeight(TH1D ** pp, TH1D ** pbpb, TH1D ** ratio);
 void addJetWeight(
   string infntpp="jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm1_ak3PF_gj0.root",
   int rewtBin=1,
-  TString inhisname="fig/Nov20/hisSmear1_Rewt0.root"
+  TString inhisname="fig/Nov20/hisSmear1_Rewt0.root",
+  int wtType=0 // 0=pbpb/pp, 1=pbpbskim90/pbpb
   ) {
+  if (wtType==1) rewtBin=1;
   ////////////////////////////////////////////
   // Get Histograms
   ////////////////////////////////////////////
   TH1D * pp[5] ;
   TH1D * pbpb[5] ;
   TH1D * ratio[5] ;
+  // Load histograms
   for ( int icent=1; icent<=4 ; icent++) {
     pbpb[icent]   = (TH1D*)load(inhisname,Form("hjetPt_hi_inclusiveJet_icent%d",icent));
     pp[icent]     = (TH1D*)load(inhisname,Form("hjetPt_pp_inclusiveJet_icent%d",icent));
+    if (wtType==1 && icent!=1) pbpb[1]->Add(pbpb[icent]); // for wtType==1 this is a jet skim correction, merge centraity bins together
+  }
+  // Get ratios
+  for ( int icent=1; icent<=4 ; icent++) {
     ratio[icent]  = (TH1D*)pbpb[icent]->Clone(Form("hjetPt_ratio_inclusiveJet_icent%d",icent));
     normHist(pbpb[icent],1,true);
     normHist(pp[icent],1,true);
-    ratio[icent]->Divide(pbpb[icent],pp[icent]);
+    if (wtType==0) ratio[icent]->Divide(pbpb[icent],pp[icent]);
+    else if (wtType==1) ratio[icent]->Divide(pp[icent],pbpb[icent]);
   }
   
   ////////////////////////////////////////////
