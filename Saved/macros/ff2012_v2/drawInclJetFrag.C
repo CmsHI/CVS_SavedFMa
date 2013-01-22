@@ -40,7 +40,7 @@ void drawInclJetFrag() {
   /////////////////////////////////////////////////////////////////
   TH1::SetDefaultSumw2();
 
-  bool doHIMC = 0;
+  bool doHIMC = 1;
   bool doHIDATA = 0;
   bool doPPDATA = 0;
   bool doPPMC = 1;
@@ -55,13 +55,15 @@ void drawInclJetFrag() {
     if (intPt) begbin=0;
     float trackPtMin = ptranges[begbin];
     float trackPtMax = ptranges[ip+1];
-    for (int fragMode = 2; fragMode<=2 ; fragMode++) {
+    for (int fragMode = 1; fragMode<=2 ; fragMode++) {
       if ( doPPMC ) {
         drawInclJetFragSingleSet(fragMode, kPPMC, trackPtMin,trackPtMax, 100, usingPara);     
         // drawInclJetFragSingleSet(fragMode, kPPMC, trackPtMin,trackPtMax, 100, usingPara,1);     
       }
       if ( doHIMC ) {
         drawInclJetFragSingleSet(fragMode, kHIMC, trackPtMin,trackPtMax, 100, usingPara);
+        drawInclJetFragSingleSet(fragMode, kHIMC, trackPtMin,trackPtMax, 101, usingPara);
+        drawInclJetFragSingleSet(fragMode, kHIMC, trackPtMin,trackPtMax, 102, usingPara);
       }
       if ( doPPDATA ) {
         drawInclJetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, 100, usingPara);     
@@ -92,8 +94,11 @@ void drawInclJetFragSingleSet(int fragMode, int dataset, float trackPtMin, float
   // Here The main result histograms are booked.
   /////////////////////////////////////////////////////////////////
   TH1D* htrkFF[5][3][5];
-  const int nPtBin = 22;
-  double ptBin[nPtBin+1] = { 0,1,1.2,1.4,1.6,1.8,2,2.2,2.4,2.6,2.8,3,4,5,6,8,10,12,14,16,20,25,50};
+  // const int nPtBin = 22;
+  // double ptBin[nPtBin+1] = { 0,1,1.2,1.4,1.6,1.8,2,2.2,2.4,2.6,2.8,3,4,5,6,8,10,12,14,16,20,25,50};
+  const int nPtBin = 27;
+  double ptBin[nPtBin+1] = {0, 0.5, 1, 1.203915, 1.449412, 1.74497, 2.100796, 2.529181, 3.04492, 3.665826, 4.413344, 5.313293, 6.396755, 7.701152, 9.271536, 11.16214, 13.43828, 16.17855, 19.47761, 23.44939, 28.23108, 33.98783, 40.91848, 49.26238, 59.30774, 71.40151, 85.96137, 103.4902}; 
+
 
   const int nZBin = 21;
   double zBin[nZBin+1] = { 0,0.003,0.007,0.012,0.016,0.02,0.03,0.04, 0.06, 0.1, 0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.6,0.7,0.8,1};
@@ -213,8 +218,8 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
     dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
     "tdj", jetSelCut, 1); // no centrality cut
   } else if ( dataset == kPPMC) {
-    dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root"),
-    // dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
+    // dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root"),
+    dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
     "tdj", jetSelCut, 1); // no centrality cut
   }
   
@@ -422,7 +427,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   gPad->SetLogy();
   drawText("Jet p_{T}", 0.55,0.63,1);
   
-  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Jan17mc_ppraw",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
+  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Jan17mc",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
 
   if ( fragMode==2) {
     c1->SaveAs(Form("plotsOfDijetFF/dijetFF_xi_doClosure%d_icent%d_irj%d_%s_%s%s_%s.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data(),outnameTag.Data()));
