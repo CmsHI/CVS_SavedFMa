@@ -35,9 +35,14 @@ void checkPtHats() {
   multiTreeUtil* mt  = new multiTreeUtil();
   TCut jetSelCut = "jetPt>100";
   TCut centCut = "";
-
-  mt->addFile("../ntout/jskim_dj50_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=50&&pthat<80",1.021e-3*1.e3);
-  mt->addFile("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=80&&pthat<9999",9.913e-5*1.e3);
+  // pp
+  mt->addFile("../ntout/jskim_dj50_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=50&&pthat<80",1.021e-3*1.e9);
+  mt->addFile("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=80&&pthat<120",9.913e-5*1.e9);
+  mt->addFile("../ntout/jskim_dj120_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=120&&pthat<9999",1.128e-5*1.e9);
+  // hi
+  // mt->addFile("../ntout/jskim_hydj50_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=50&&pthat<80",1.021e-3*1.e9);
+  // mt->addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=80&&pthat<120",9.913e-5*1.e9);
+  // mt->addFile("../ntout/jskim_hydj120_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=120&&pthat<9999",1.128e-5*1.e9);
   mt->NormalizeScales(2,"","hEvtCentNoSkim");
 
   TCanvas * c2 = new TCanvas("c2","c2",500,500);

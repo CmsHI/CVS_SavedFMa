@@ -212,8 +212,10 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
     dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root",
     "tdj", jetSelCut && centCut,1);
   } else if ( dataset == kHIMC) {
+    // dj->addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut && "pthat>=80&&pthat<9999", 9.913e-5*1.e9);
     dj->addFile("../ntout/jskim_hydj50_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut && "pthat>=50&&pthat<80", 1.021e-3*1.e9);
-    dj->addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut && "pthat>=80&&pthat<9999", 9.913e-5*1.e9);
+    dj->addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut && "pthat>=80&&pthat<120", 9.913e-5*1.e9);
+    dj->addFile("../ntout/jskim_hydj120_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut && "pthat>=120&&pthat<9999", 1.128e-5*1.e9);
   } else if ( dataset == kPPDATA) {
     // dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0.root",icent),
     // dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
@@ -221,8 +223,10 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
     dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
     "tdj", jetSelCut, 1); // no centrality cut
   } else if ( dataset == kPPMC) {
+    // dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root"),"tdj", jetSelCut && "pthat>=80&&pthat<9999", 9.913e-5*1.e9); // no centrality cut
     dj->addFile(Form("../ntout/jskim_dj50_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root"),"tdj", jetSelCut && "pthat>=50&&pthat<80", 1.021e-3*1.e9); // no centrality cut
-    dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root"),"tdj", jetSelCut && "pthat>=80&&pthat<9999", 9.913e-5*1.e9); // no centrality cut
+    dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root"),"tdj", jetSelCut && "pthat>=80&&pthat<120", 9.913e-5*1.e9); // no centrality cut
+    dj->addFile(Form("../ntout/jskim_dj120_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root"),"tdj", jetSelCut && "pthat>=120&&pthat<9999", 1.128e-5*1.e9); // no centrality cut
     // dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0.root",icent),"tdj", jetSelCut, 1); // no centrality cut
     // dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),"tdj", jetSelCut, 1); // no centrality cut
   }
@@ -433,7 +437,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   gPad->SetLogy();
   drawText("Jet p_{T}", 0.55,0.63,1);
   
-  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Jan17mc50and80_hi_ppunsmjet",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
+  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Jan17mc50and80and120_hi_ppunsmjet",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
 
   if ( fragMode==2) {
     c1->SaveAs(Form("plotsOfInclJetFF/inclJetFF_xi_doClosure%d_icent%d_irj%d_%s_%s%s_%s.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data(),outnameTag.Data()));
