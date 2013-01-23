@@ -38,6 +38,9 @@ public:
     color[10]=kPink+4;
   }
   ~multiTreeUtil() {
+    for (int i=0;i<(int)trees_.size();i++) {
+      tfiles_[i]->Close();
+    }
   }
   void addFile(TString filename, TString treeName, TCut cut, Float_t scaleFactor=1);
   void NormalizeScales(Int_t normMode=1, TCut cut="", TString name="");
