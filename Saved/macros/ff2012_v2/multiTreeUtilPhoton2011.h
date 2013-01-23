@@ -112,12 +112,13 @@ void multiTreeUtil::Draw(TH1D *h, TString expression, TCut cut,TString indWeight
     htmp->SetName(Form("my_htmp_%d",i));
     htmp->Reset();
     TCut fCut = cut&&tcuts_[i];
+    float nPass;
     if ( indWeight=="") {
-      trees_[i]->Draw(Form("%s>>my_htmp_%d",expression.Data(),i),  Form("(%s)", fCut.GetTitle() ));
+      nPass = trees_[i]->Draw(Form("%s>>my_htmp_%d",expression.Data(),i),  Form("(%s)", fCut.GetTitle() ));
     } else {
-      trees_[i]->Draw(Form("%s>>my_htmp_%d",expression.Data(),i),  Form("(%s) * (%s)", fCut.GetTitle(), indWeight.Data() ) );
+      nPass = trees_[i]->Draw(Form("%s>>my_htmp_%d",expression.Data(),i),  Form("(%s) * (%s)", fCut.GetTitle(), indWeight.Data() ) );
     }
-    cout << "cut * weight :  " << endl << Form("   ( %s )   *   (%s)", fCut.GetTitle(),  indWeight.Data()) << endl;
+    cout << "cut * weight :  " << nPass << endl << Form("   ( %s )   *   (%s)", fCut.GetTitle(),  indWeight.Data()) << endl;
     cout << " and scale factor = " << double(scaleFactors_[i]) << endl;
     htmp->Scale(scaleFactors_[i]);
     h->Add(htmp);
@@ -139,12 +140,13 @@ void multiTreeUtil::Draw2(TH1D *h, TString expression, TCut cut, TString indWeig
     htmp->SetName(hName.Data());
     htmp->Reset();
     TCut fCut = cut&&tcuts_[i];
+    float nPass;
     if ( indWeight=="" ) {
-      trees_[i]->Draw(Form("%s>>%s",expression.Data(),hName.Data()), Form("(%s)", fCut.GetTitle() ));
+      nPass = trees_[i]->Draw(Form("%s>>%s",expression.Data(),hName.Data()), Form("(%s)", fCut.GetTitle() ));
     } else {
-      trees_[i]->Draw(Form("%s>>%s",expression.Data(),hName.Data()), Form("( %s ) * (%s)", fCut.GetTitle(), indWeight.Data()) );
+      nPass = trees_[i]->Draw(Form("%s>>%s",expression.Data(),hName.Data()), Form("( %s ) * (%s)", fCut.GetTitle(), indWeight.Data()) );
     }
-    cout << "cut * weight :  " << endl << Form("   ( %s )   *   (%s)", fCut.GetTitle(),  indWeight.Data()) << endl;
+    cout << "cut * weight :  " << nPass << endl << Form("   ( %s )   *   (%s)", fCut.GetTitle(),  indWeight.Data()) << endl;
     cout << " and scale factor = " << double(scaleFactors_[i]) << endl;
     htmp->Scale(scaleFactors_[i]);
     h->Add(htmp);
