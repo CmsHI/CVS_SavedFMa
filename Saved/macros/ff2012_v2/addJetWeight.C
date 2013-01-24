@@ -13,6 +13,10 @@
 #include "HisMath.C"
 using namespace std;
 
+
+// --- Global Options ----------------------------------------------------------
+int useFit = 1;
+
 // --- Helper functions ----------------------------------------------------------
 class JetReweight {
   public:
@@ -24,20 +28,26 @@ float getWeight(float pt, TH1D * ratio) {
     printf("\n\n\n bad ratio histogram!! \n\n\n");
     exit(1);
   }
-  float wt = ratio->GetBinContent( ratio->FindBin(pt) );
+  float wt = 1;
+  if (!useFit) wt = ratio->GetBinContent( ratio->FindBin(pt) );
+  else if (useFit==1) {
+    if (pt>100) wt = ratio->GetFunction("fr")->Eval(pt);
+  }
   return wt;
 }
 
 void drawWeight(TH1D ** pp, TH1D ** pbpb, TH1D ** ratio);
 
+
 // --- Main Function ----------------------------------------------------------
 void addJetWeight(
-  string infntpp="jskim_pp-full_ak3PF_Nov14_jetPt_50_jetEtaCut_2.00_noPbin_sm1_ak3PF_gj0.root",
+  string infntpp="../ntout/jskim_pp-full_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root",
   int rewtBin=1,
-  TString inhisname="fig/Nov20/hisSmear1_Rewt0.root",
+  TString inhisname="fig/Jan17/jet_spectrum_cmp1_sm2_rewt0_evsel0_pbpbJan17_ppJan17.root",
   int wtType=0 // 0=pbpb/pp, 1=pbpbskim90/pbpb
   ) {
   if (wtType==1) rewtBin=1;
+
   ////////////////////////////////////////////
   // Get Histograms
   ////////////////////////////////////////////
@@ -80,7 +90,7 @@ void addJetWeight(
 
   // Set Output
   TString outputFile=infntpp.c_str();
-  outputFile.ReplaceAll(".root","_addedReweight.root");
+  outputFile.ReplaceAll(".root","_addedFitRewt.root");
   TFile* newfile = new TFile(outputFile,"recreate");
   cout << "Output file :" << outputFile << endl;
     
@@ -161,6 +171,9 @@ void drawWeight(TH1D ** pp, TH1D ** pbpb, TH1D ** ratio) {
     ratio[icent]->SetNdivisions(505);
     fixedFontHist(ratio[icent],1.8,2.5);
     ratio[icent]->SetYTitle("Ratio");
+    TF1 * fr = new TF1("fr","[0]+[1]*log(x-85)",0,500);
+    fr->SetParameters(0.88,0.03);
+    if (useFit) ratio[icent]->Fit("fr");
     ratio[icent]->Draw();
   }
 }
