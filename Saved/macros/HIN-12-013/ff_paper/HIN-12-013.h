@@ -143,8 +143,7 @@ static const int MAXTRK = 30000;
 // double ptBin[nPtBin+1] = { 0,1,1.2,1.4,1.6,1.8,2,2.2,2.4,2.6,2.8,3,4,5,6,8,10,12,14,16,20,25,50};
 const int nPtBin = 27;
 double ptBin[nPtBin+1] = {0, 0.5, 1, 1.203915, 1.449412, 1.74497, 2.100796, 2.529181, 3.04492, 3.665826, 4.413344, 5.313293, 6.396755, 7.701152, 9.271536, 11.16214, 13.43828, 16.17855, 19.47761, 23.44939, 28.23108, 33.98783, 40.91848, 49.26238, 59.30774, 71.40151, 85.96137, 103.4902}; 
-
-void GetQM12TrkPt(  TH1D* ffppcmp[3][5], TH1D* ffhicmp[3][5]);
+int sysMarkerColor[20] = {kBlack,kGray+2,kBlue,kGreen+2,kOrange+2,kRed,kYellow-3,kCyan+3};
 
 class SysErrors {
 public:
@@ -154,8 +153,9 @@ public:
   int NErrorPp;
   int ana;
   int binMode;
+  int doFit;
 
-  // Systematics
+  // Systematics Uncertainty Inputs
   static const int NErrorTot = 8;
 
   TH1* jesError[3][5];
@@ -173,8 +173,14 @@ public:
   TH1* vErrorHi[3][5][NErrorTot];
   TH1* vErrorPp[3][5][NErrorTot];
 
-  SysErrors(int myana=0, int bm=2) // ana: 0=ff, 1=trkpt
-  : ana(myana),binMode(bm)
+  // Systematic Uncertainty Results
+  TF1 * fe[NErrorTot];
+  TH1D * hErrorTot;
+  TH1D * hHigh, * hLow;
+
+
+  SysErrors(int myana=0, int bm=2, int fit=1) // ana: 0=ff, 1=trkpt
+  : ana(myana),binMode(bm),doFit(fit)
   {
 
     TString jname[3] = {"jet","lJet","slJet"};
@@ -256,6 +262,99 @@ public:
         vErrorHi[ijet][iaj][0] = constError[ijet][iaj];
       } // iaj
     } // end of if ana
+  }
+
+  void Combine(TH1* h, TH1** he, int Nerror) {
+    // allocate memory for final error
+    hErrorTot = (TH1D*)h->Clone(Form("%s_toterr",h->GetName()));
+    hErrorTot->Reset();
+
+    // fit errors
+    for(int ie = 0; ie< Nerror; ++ie){
+      if (ie<6) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",0,5.5);
+      else fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol4",0,5.5);
+      he[ie]->Fit(fe[ie],"QRN");
+    }
+
+    // combine errors
+    for(int i = 1; i <=hErrorTot->GetNbinsX() ; ++i){
+      // conform all error input binning to the final result binning
+      double x0 = hErrorTot->GetBinCenter(i);
+      // Add Errors in Quadrature
+      double tote=0;
+      for(int ie = 0; ie< Nerror; ++ie){
+        double xbin = he[ie]->FindBin(x0);
+        double ec=0,sign=1;
+        if (doFit) ec = fe[ie]->Eval(x0) - 1.;
+        else       ec = he[ie]->GetBinContent(xbin) - 1.;
+        tote+= pow(ec,2);
+      }
+      tote=sqrt(tote);
+      hErrorTot->SetBinContent(i,tote);
+      cout << "total error: " << i << ": " << hErrorTot->GetBinContent(i) << endl;
+    }
+  }
+
+  void Apply(TH1* h) {
+    hHigh = (TH1D*)h->Clone(Form("%s_high",h->GetName()));
+    hLow = (TH1D*)h->Clone(Form("%s_low",h->GetName()));
+    for (int i=1; i<=h->GetNbinsX(); ++i) {
+      double y=h->GetBinContent(i);
+      double e=hErrorTot->GetBinContent(i);
+      hHigh->SetBinContent(i,y*(1+e));
+      hLow->SetBinContent(i,y*(1-e));
+    }
+  }
+
+  void ApplyOnRel(TH1* h, TH1* h2, int cmpStyle=1) {
+    hHigh = (TH1D*)h->Clone(Form("%s_highrat",h->GetName()));
+    hLow = (TH1D*)h->Clone(Form("%s_lowrat",h->GetName()));
+    for (int i=1; i<=h->GetNbinsX(); ++i) {
+      double y=h->GetBinContent(i);
+      double e=hErrorTot->GetBinContent(i);
+      hHigh->SetBinContent(i,y*(1+e));
+      hLow->SetBinContent(i,y*(1-e));
+    }
+    if (cmpStyle==1) {
+      hHigh->Divide(h2);
+      hLow->Divide(h2);
+    } else if (cmpStyle==2) {
+      hHigh->Add(h2,-1);
+      hLow->Add(h2,-1);
+    }
+  }
+
+  void Draw(TH1* h, float xmax=-1, int theColor=TColor::GetColor(0xFFEE00), int theStyle=1001) {
+    for ( int i=1 ; i<= h->GetNbinsX(); i++) {
+      if (xmax>0&&h->GetBinCenter(i)>xmax) break;
+      float yhigh = hHigh->GetBinContent(i);
+      float ylow = hLow->GetBinContent(i);
+      if (ylow<0.01) ylow=0.01;
+      TBox* tt = new TBox(h->GetBinLowEdge(i), ylow , h->GetBinLowEdge(i+1), yhigh);
+      tt->SetFillColor(theColor);
+      tt->SetFillStyle(theStyle);
+      tt->Draw();
+    }
+  }
+
+  void Inspect(TH1** he=0, int Nerror=0) {
+    TH1D * hInsp = (TH1D*)hErrorTot->Clone(Form("%s_plot",hErrorTot->GetName()));
+    TF1 * fone = new TF1("fone","1",hErrorTot->GetBinLowEdge(1),hErrorTot->GetBinLowEdge(hErrorTot->GetNbinsX()));
+    hInsp->Add(fone);
+    hInsp->SetAxisRange(0,3,"Y");
+    hInsp->Draw("hist");
+
+    for(int ie = 0; ie< Nerror; ++ie){
+     cout << "draw errors" << he[ie]->GetName() << endl;
+      he[ie]->SetMarkerStyle(kOpenCircle);
+      he[ie]->SetMarkerColor(sysMarkerColor[ie]);
+      if (ie==0) he[ie]->DrawClone();
+      else he[ie]->DrawClone("same");
+      if (fe[ie]){
+        fe[ie]->SetLineColor(sysMarkerColor[ie]);
+        fe[ie]->Draw("same");
+      }
+    }    
   }
 };
 

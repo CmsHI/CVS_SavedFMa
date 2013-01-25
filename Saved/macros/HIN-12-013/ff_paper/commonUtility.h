@@ -1356,6 +1356,9 @@ TGraph* cheatFit(TH1* h, TF1* f){
 
 
 TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd = 0,int npar = 3, bool symmetric = 1, int opt = 0, int infill = 0, TF1* f = 0, TPad * inc=0, TPad * cerr=0, int theColor=TColor::GetColor(0xFFEE00), int theStyle=1001){
+  ////////////////////////////////////////////////////////////////////////
+  // Setup
+  ////////////////////////////////////////////////////////////////////////
   bool plot = 1;
   
   int color[2] = {theColor,1};
@@ -1386,6 +1389,9 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
     cout<<"FITTED Data"<<endl;
   }
 
+  ////////////////////////////////////////////////////////////////////////
+  // Add Errors
+  ////////////////////////////////////////////////////////////////////////
   TF1* fe[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   for(int ie = 0; ie< Nerror; ++ie){
     if (ie<6) fe[ie] = new TF1(Form("%s_fit%d_%d",h->GetName(),fill,ie),"pol3",0,5.5);
@@ -1435,6 +1441,10 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
     }
     hErrorTot->SetBinContent(i,1+sqrt(e[i]));
     cout << "tothist: " << i << ": " << hErrorTot->GetBinContent(i) << endl;
+
+    ////////////////////////////////////////////////////////////////////////
+    // Apply Errors
+    ////////////////////////////////////////////////////////////////////////
     // Multiply error to y value
     double y = h->GetBinContent(i);
     if (fitData) if(y > 1.5) y = f->Eval(x0);
@@ -1459,9 +1469,9 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
       gp->SetPoint(4,xg-left*wg,yg-eg);
       
       if(fabs(yg)-eg < 0){
-        gp->SetPoint(0,xg-left*wg,0.1);
-        gp->SetPoint(3,xg+right*wg,0.1);
-        gp->SetPoint(4,xg-left*wg,0.1);
+        gp->SetPoint(0,xg-left*wg,0.07);
+        gp->SetPoint(3,xg+right*wg,0.07);
+        gp->SetPoint(4,xg-left*wg,0.07);
       }
       
       if(opt == 1){

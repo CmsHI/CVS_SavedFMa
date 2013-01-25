@@ -41,7 +41,8 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17.root";
   // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17.root";
   std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_ppfitrewt.root";
-  std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_ppfitrewt.root";
+  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_ppfitrewt.root";
+  std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_pprewt.root";
   // mc
   // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc_pprewt_hi_twtmax.root";
   // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc_pprewt_hi_twtmax.root";
@@ -166,20 +167,24 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
     if (doNorm) {scaleInt(ffpp[ijet][iaj]); scaleInt(ffhi[ijet][iaj]);}
     if (doNorm) ffpp[ijet][iaj]->SetAxisRange(0.00025,1,"Y");
 
-    if(ijet == 1){
-      hPadFF->Draw();
-    }
-
+    // Draw Spectrum
+    if(ijet == 1) hPadFF->Draw();
     int iajSys = iaj;
     if (binMode==1) iaj=5-iaj;
     if (fragMode==1) gPad->SetLogx();
-    gPad->SetLogy();      
-    drawSysErr(ffhi[ijet][iaj],sysff.vErrorHi[ijet][iajSys],sysff.NErrorHi,ijet-1,1,2,1,ijet == 1,0,0,(TPad*)c->GetPad(5-iaj),(TPad*)cerr->GetPad(5-iaj));
+    gPad->SetLogy();
+    // drawSysErr(ffhi[ijet][iaj],sysff.vErrorHi[ijet][iajSys],sysff.NErrorHi,ijet-1,1,2,1,ijet == 1,0,0,(TPad*)c->GetPad(5-iaj),(TPad*)cerr->GetPad(5-iaj));
+    sysff.Combine(ffhi[ijet][iaj],sysff.vErrorHi[ijet][iajSys],sysff.NErrorHi);
+    sysff.Apply(ffhi[ijet][iaj]);
+    sysff.Draw(ffhi[ijet][iaj],xmax);
+
     ffppcmp[ijet][iaj]->Draw("hist same");
     ffpp[ijet][iaj]->Draw(   "hist same");
     ffhi[ijet][iaj]->Draw("same");
     ffhicmp[ijet][iaj]->Draw("sameE");
     gPad->RedrawAxis();
+
+    // Draw Comparison
     c->cd(9-iaj);
     if (fragMode==1) gPad->SetLogx();
     ffratio[ijet][iaj]= (TH1D*)ffhi[ijet][iaj]->Clone(Form("ffRattio_ijet%d_iaj%d",ijet,iaj));
@@ -187,8 +192,9 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
     else if (cmpStyle==2) ffratio[ijet][iaj]->Add(ffpp[ijet][iaj],-1);
 
     if(ijet == 1)hPadR->Draw();
-    drawSysErr(ffratio[ijet][iaj],sysff.vErrorRat[ijet][iajSys],sysff.NErrorRatio,ijet-1,1,2,1,ijet == 1,0,0);
-//       drawSysErr(ffratiocmp[ijet][iaj],vErrorRat[ijet][iajSys],Nerror,ijet-1,1,2,1,0,0,0);
+    sysff.Combine(ffratio[ijet][iaj],sysff.vErrorRat[ijet][iajSys],sysff.NErrorRatio);
+    sysff.ApplyOnRel(ffhi[ijet][iaj],ffpp[ijet][iaj],cmpStyle);
+    sysff.Draw(ffratio[ijet][iaj],xmax);
     ffratiocmp[ijet][iaj]->Draw("sameE");
     ffratio[ijet][iaj]->Draw("same");
     if (cmpStyle==1) jumSun(xmin,1,xmax,1);
