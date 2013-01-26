@@ -34,33 +34,19 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   //////////////////////////////////////////////////////////////////////
   // Specify Inputs
   //////////////////////////////////////////////////////////////////////
-  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17_pprewt_hirewt_twtmax.root";
-  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17_pprewt_hirewt_twtmax.root";
-  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17_pprewt_hirewt_twtmax.root";
-  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17_pprewt_hirewt_twtmax.root";
-  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17.root";
-  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17.root";
-  std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_ppfitrewt.root";
-  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_ppfitrewt.root";
-  std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_pprewt.root";
+  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_ppfitrewt.root";
+  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_pprewt.root";
   // mc
-  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc_pprewt_hi_twtmax.root";
-  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc_pprewt_hi_twtmax.root";
-  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc.root";
-  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc.root";
-  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcpprawjet.root";
-  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt120to300eta2.00_Jan17mc_hi_ppunsm.root";
-  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt120to300eta2.00_Jan17mc_hi_ppunsm.root";
+  std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
+  std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
   // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcrefjetsel.root";
   // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcrefjetsel.root";
   // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet_closure101limjeteta.root";
   // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet_closure101limjeteta.root";
-  int doMC=0;
+  int doMC=1;
 
   std::string Input_QM="dijetFF_output_histograms_trkPtProjectOnJetAxis_trackPtCut1_FinaletaCut2.00_pas.root";
 
-  // Define Sys Error inputs
-  SysErrors sysff(fragMode,binMode);
 
   /////////////////////////////////////////////////
   // Get Result Histograms
@@ -149,15 +135,16 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   fixedFontHist(hPadR,2.2,2.5,25);
   fixedFontHist(hPadPt,2.2,2.5,25);
 
-   TCanvas * cerr = new TCanvas("cerr","cerr",4*300,300);
-   cerr->Divide(4,1);
-
-  TCanvas *c = new TCanvas("c","",1500,860);
-  makeMultiPanelCanvasNew(c,4,2,0.0,0.0,0.22,0.22,0.01,1.0,0.95);
+  /////////////////////////////////////////////////
+  // Define Systematic Uncertainties
+  /////////////////////////////////////////////////
+  SysErrors sysff(fragMode,binMode,1,xmin,xmax);
 
   /////////////////////////////////////////////////
   // Draw Result
   /////////////////////////////////////////////////
+  TCanvas *c = new TCanvas("c","",1500,860);
+  makeMultiPanelCanvasNew(c,4,2,0.0,0.0,0.22,0.22,0.01,1.0,0.95);
   for ( int iaj=1 ; iaj<=4 ; iaj++) {
     cout << "=============== " << Form("%.0f%% - %.0f%%", float(centBin1[iaj-1]*2.5), float(centBin1[iaj]*2.5)) << " ================" << endl;
 
@@ -176,7 +163,7 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
     // drawSysErr(ffhi[ijet][iaj],sysff.vErrorHi[ijet][iajSys],sysff.NErrorHi,ijet-1,1,2,1,ijet == 1,0,0,(TPad*)c->GetPad(5-iaj),(TPad*)cerr->GetPad(5-iaj));
     sysff.Combine(ffhi[ijet][iaj],sysff.vErrorHi[ijet][iajSys],sysff.NErrorHi);
     sysff.Apply(ffhi[ijet][iaj]);
-    sysff.Draw(ffhi[ijet][iaj],xmax);
+    sysff.Draw(ffhi[ijet][iaj]);
 
     ffppcmp[ijet][iaj]->Draw("hist same");
     ffpp[ijet][iaj]->Draw(   "hist same");
@@ -192,9 +179,9 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
     else if (cmpStyle==2) ffratio[ijet][iaj]->Add(ffpp[ijet][iaj],-1);
 
     if(ijet == 1)hPadR->Draw();
-    sysff.Combine(ffratio[ijet][iaj],sysff.vErrorRat[ijet][iajSys],sysff.NErrorRatio);
+    sysff.Combine(ffhi[ijet][iaj],sysff.vErrorRat[ijet][iajSys],sysff.NErrorRatio);
     sysff.ApplyOnRel(ffhi[ijet][iaj],ffpp[ijet][iaj],cmpStyle);
-    sysff.Draw(ffratio[ijet][iaj],xmax);
+    sysff.Draw(ffratio[ijet][iaj]);
     ffratiocmp[ijet][iaj]->Draw("sameE");
     ffratio[ijet][iaj]->Draw("same");
     if (cmpStyle==1) jumSun(xmin,1,xmax,1);
@@ -261,5 +248,20 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   c->SaveAs(outdir+Form("/FFana%d_%s.gif",fragMode,tag.Data()));
   c->SaveAs(outdir+Form("/FFana%d_%s.pdf",fragMode,tag.Data()));
   c->SaveAs(outdir+Form("/FFana%d_%s.C",fragMode,tag.Data()));
+
+  /////////////////////////////////////////////////
+  // Inspect Errors
+  /////////////////////////////////////////////////
+  TCanvas *c2 = new TCanvas("c2","",1500,430);
+  //makeMultiPanelCanvasNew(c,4,2,0.0,0.0,0.22,0.22,0.01,1.0,0.95);
+  c2->Divide(4,1);
+  for ( int icent=1 ; icent<=4 ; icent++) {
+    c2->cd(5-icent);
+    if (fragMode==1) gPad->SetLogx();
+    sysff.Combine(ffhi[ijet][icent],sysff.vErrorRat[ijet][icent],sysff.NErrorRatio);
+    int doLeg=(icent==4);
+    sysff.Inspect(sysff.vErrorRat[ijet][icent],sysff.NErrorRatio,doLeg);
+    drawText(Form("%.0f%% - %.0f%%", float(centBin1[icent-1]*2.5), float(centBin1[icent]*2.5)), 2,0.03,kBlack,25,false);
+  }
 }
 

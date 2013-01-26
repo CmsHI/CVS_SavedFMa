@@ -143,7 +143,8 @@ static const int MAXTRK = 30000;
 // double ptBin[nPtBin+1] = { 0,1,1.2,1.4,1.6,1.8,2,2.2,2.4,2.6,2.8,3,4,5,6,8,10,12,14,16,20,25,50};
 const int nPtBin = 27;
 double ptBin[nPtBin+1] = {0, 0.5, 1, 1.203915, 1.449412, 1.74497, 2.100796, 2.529181, 3.04492, 3.665826, 4.413344, 5.313293, 6.396755, 7.701152, 9.271536, 11.16214, 13.43828, 16.17855, 19.47761, 23.44939, 28.23108, 33.98783, 40.91848, 49.26238, 59.30774, 71.40151, 85.96137, 103.4902}; 
-int sysMarkerColor[20] = {kBlack,kGray+2,kBlue,kGreen+2,kOrange+2,kRed,kYellow-3,kCyan+3};
+// int sysMarkerColor[20] = {kGray+2,kBlue,kAzure+3,kSpring-7,kCyan+3,kGreen+2,kOrange-3,kOrange+2,kRed,kYellow-3,kPink+4};
+int sysMarkerColor[20] = {kGray+3,kRed,kBlue,kGreen+2,kOrange-3,kOrange+2,kYellow-3,kPink+4,1,1,1,1};
 
 class SysErrors {
 public:
@@ -154,9 +155,11 @@ public:
   int ana;
   int binMode;
   int doFit;
+  float xmin,xmax;
 
   // Systematics Uncertainty Inputs
   static const int NErrorTot = 8;
+  vector<TString> sysTitle;
 
   TH1* jesError[3][5];
   TH1* jetResError[3][5];
@@ -179,89 +182,123 @@ public:
   TH1D * hHigh, * hLow;
 
 
-  SysErrors(int myana=0, int bm=2, int fit=1) // ana: 0=ff, 1=trkpt
+  SysErrors(int myana=0, int bm=2, int fit=1, float myxmin=-1, float myxmax=-1) // ana: 0=ff, 1=trkpt
   : ana(myana),binMode(bm),doFit(fit)
+  , xmin(myxmin), xmax(myxmax)
   {
 
     TString jname[3] = {"jet","lJet","slJet"};
     int ijet=1;
 
-    if (ana==2) {
-      NErrorRatio=6; NErrorHi=8; NErrorPp=8;
-
       // For Ratio
-      const char* JESfile = "./systematics/jes_sys.root";
-      const char* JetResfile = "./systematics/jetres_sys.root";
-      const char* BkgSubfile = "./systematics/bkgsub_sys.root";
-      const char* TrkClosurefile = "./systematics/closure_sys.root";
-      const char* GenBkgSubfile = "./systematics/closure_bkgsub_sys.root";
-      const char* JetAlgofile = "./systematics/systematics_calovspf.root";
+      // // QM12
+      // const char* JESfile = "./systematics/jes_sys.root";
+      // const char* JetResfile = "./systematics/jetres_sys.root";
+      // const char* BkgSubfile = "./systematics/bkgsub_sys.root";
+      // const char* TrkClosurefile = "./systematics/closure_sys.root";
+      // const char* GenBkgSubfile = "./systematics/closure_bkgsub_sys.root";
+      // const char* JetAlgofile = "./systematics/systematics_calovspf.root";
+      // ff paper
+    const char* JESfile = "./systematics/jes_sys.root";
+    const char* JetResfile = "./systematics/jetres_sys.root";
+    const char* BkgSubfile = "./systematics/bkgsub_sys.root";
+    const char* TrkClosurefile = "./systematics/mctrk.root";
+    const char* GenBkgSubfile = "./systematics/mcgenp.root";
+    const char* JetAlgofile = "./systematics/systematics_calovspf.root";
       // For FF distribution
-      const char* PyquenJetRecoRefPtfile = "./systematics/PYQUEN80_useGenJet0_closureTestRatio_between_100_103.root";
-      const char* PyquenGenJetSelfile = "./systematics/closureTestRatio_pyquen80_genJet_recojet_selectionRatio.root";
+    const char* PyquenJetRecoRefPtfile = "./systematics/PYQUEN80_useGenJet0_closureTestRatio_between_100_103.root";
+    const char* PyquenGenJetSelfile = "./systematics/closureTestRatio_pyquen80_genJet_recojet_selectionRatio.root";
 
-      for ( int iaj=1;iaj<=4;iaj++) {
-        if (binMode==1) {
-          jesError[ijet][iaj] =  loadError(JESfile,Form("hpt_%s_sigTrk_hidata_icent999_iaj%d_fragMode2_closure0_sys2",jname[ijet].Data(),iaj));
-          jetResError[ijet][iaj] =  loadError(JetResfile,Form("hpt_%s_sigTrk_hidata_icent999_iaj%d_fragMode2_closure0",jname[ijet].Data(),iaj));
-          bkgSubError[ijet][iaj] = loadError(BkgSubfile,Form("hpt_%s_sigTrk_hidata_icent999_iaj%d_fragMode2_closure100",jname[ijet].Data(),iaj));
-          trkError[ijet][iaj] = loadError(TrkClosurefile,Form("hpt_%s_sigTrk_himc_icent999_iaj%d_fragMode2_closure101",jname[ijet].Data(),iaj));
-        } else if (binMode==2) {
-          jesError[ijet][iaj] =  loadError(JESfile,Form("hpt_%s_sigTrk_hidata_icent2_irj999_fragMode2_closure100_sys7",jname[ijet].Data(),iaj));
-          jetResError[ijet][iaj] =  loadError(JetResfile,Form("hpt_%s_sigTrk_hidata_icent%d_irj999_fragMode2_closure100",jname[ijet].Data(),iaj));
-          bkgSubError[ijet][iaj] =  loadError(BkgSubfile,Form("hpt_%s_sigTrk_hidata_icent%d_irj999_fragMode2_closure0",jname[ijet].Data(),iaj));
+    for ( int iaj=1;iaj<=4;iaj++) {
+      if (binMode==1) {
+        jesError[ijet][iaj] =  loadError(JESfile,Form("hpt_%s_sigTrk_hidata_icent999_iaj%d_fragMode2_closure0_sys2",jname[ijet].Data(),iaj));
+        jetResError[ijet][iaj] =  loadError(JetResfile,Form("hpt_%s_sigTrk_hidata_icent999_iaj%d_fragMode2_closure0",jname[ijet].Data(),iaj));
+        bkgSubError[ijet][iaj] = loadError(BkgSubfile,Form("hpt_%s_sigTrk_hidata_icent999_iaj%d_fragMode2_closure100",jname[ijet].Data(),iaj));
+        trkError[ijet][iaj] = loadError(TrkClosurefile,Form("hpt_%s_sigTrk_himc_icent999_iaj%d_fragMode2_closure101",jname[ijet].Data(),iaj));
+      } else if (binMode==2) {
+        jesError[ijet][iaj] =  loadError(JESfile,Form("hpt_%s_sigTrk_hidata_icent2_irj999_fragMode2_closure100_sys7",jname[ijet].Data(),iaj));
+        jetResError[ijet][iaj] =  loadError(JetResfile,Form("hpt_%s_sigTrk_hidata_icent%d_irj999_fragMode2_closure100",jname[ijet].Data(),iaj));
+        bkgSubError[ijet][iaj] =  loadError(BkgSubfile,Form("hpt_%s_sigTrk_hidata_icent%d_irj999_fragMode2_closure0",jname[ijet].Data(),iaj));
 
-          trkError[ijet][iaj] =  loadError(TrkClosurefile,Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode2_closure100",jname[ijet].Data(),iaj));
+        // trkError[ijet][iaj] =  loadError(TrkClosurefile,Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode2_closure100",jname[ijet].Data(),iaj));
+        trkError[ijet][iaj] =  loadError(TrkClosurefile,Form("hpt_jet_sigTrk_himc_icent%d_irj999_fragMode%d_closure100_jtrewt0_wtmode0_pt1to300_ratio",iaj,ana));
 
-          genBkgSubError[ijet][iaj] =  loadError(GenBkgSubfile,Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode2_closure102",jname[ijet].Data(),iaj));
+        // genBkgSubError[ijet][iaj] =  loadError(GenBkgSubfile,Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode2_closure102",jname[ijet].Data(),iaj));
+        genBkgSubError[ijet][iaj] =  loadError(GenBkgSubfile,Form("hpt_jet_sigTrk_himc_icent%d_irj999_fragMode%d_closure102_jtrewt0_wtmode0_pt1to300_ratio",iaj,ana));
+
 
             // For FF distribution
-          pyquenJetRecoRefPtError[ijet][iaj] = loadError(PyquenJetRecoRefPtfile,Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode2_closure103",jname[ijet].Data(),iaj));
-          pyquenGenJetSelError[ijet][iaj] = loadError(PyquenGenJetSelfile,Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode2_closure100",jname[ijet].Data(),iaj));
-        }
+        pyquenJetRecoRefPtError[ijet][iaj] = loadError(PyquenJetRecoRefPtfile,Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode2_closure103",jname[ijet].Data(),iaj));
+        pyquenGenJetSelError[ijet][iaj] = loadError(PyquenGenJetSelfile,Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode2_closure100",jname[ijet].Data(),iaj));
+      }
+    }
 
-          // additional track error to be flat 10%, add another 6% from pp reweightin sqrt(10*10+6*6)= 11.7
+    // observable specific
+    if (ana==2) {
+      NErrorRatio=6; NErrorHi=8; NErrorPp=8;
+      for ( int iaj=1;iaj<=4;iaj++) {
+        // additional track error to be flat 10%
         constError[ijet][iaj] =  (TH1D*)jesError[ijet][iaj]->Clone(Form("%s_constsys",jesError[ijet][iaj]->GetName()));
         for(int i = 1; i <= constError[ijet][iaj]->GetNbinsX(); ++i){
-          constError[ijet][iaj]->SetBinContent(i,1.117);
-          constError[ijet][iaj]->SetBinError(i,0.1);
-        }
-
-          // Ratio
-        vErrorRat[ijet][iaj][0] = jesError[ijet][iaj];
-        vErrorRat[ijet][iaj][1] = jetResError[ijet][iaj];
-        vErrorRat[ijet][iaj][2] = bkgSubError[ijet][iaj];
-        vErrorRat[ijet][iaj][3] = trkError[ijet][iaj];
-        vErrorRat[ijet][iaj][4] = constError[ijet][iaj];
-        vErrorRat[ijet][iaj][5] = genBkgSubError[ijet][iaj];
-
-          // HiFF
-        vErrorHi[ijet][iaj][0] = jesError[ijet][iaj];
-        vErrorHi[ijet][iaj][1] = jetResError[ijet][iaj];
-        vErrorHi[ijet][iaj][2] = bkgSubError[ijet][iaj];
-        vErrorHi[ijet][iaj][3] = trkError[ijet][iaj];
-        vErrorHi[ijet][iaj][4] = constError[ijet][iaj];
-        vErrorHi[ijet][iaj][5] = genBkgSubError[ijet][iaj];
-        vErrorHi[ijet][iaj][6] = pyquenJetRecoRefPtError[ijet][iaj];
-        vErrorHi[ijet][iaj][7] = pyquenGenJetSelError[ijet][iaj];
-      } // iaj
-    } else if (ana==1) { // trk pt analysis
-      NErrorRatio=1; NErrorHi=1; NErrorPp=1;
-      for ( int iaj=1;iaj<=4;iaj++) {
-        // additional track error to be flat 10%, add another 6% from pp reweightin sqrt(10*10+6*6)= 11.7
-        constError[ijet][iaj] =  new TH1D(Form("sysfpt_constsys_%d",iaj),";track p_{T} (GeV/c);dN/dp_{T} (GeV/c)^{-1}",nPtBin,ptBin);
-        for(int i = 1; i <= constError[ijet][iaj]->GetNbinsX(); ++i){
-          constError[ijet][iaj]->SetBinContent(i,1.3);
+          constError[ijet][iaj]->SetBinContent(i,1.1);
           constError[ijet][iaj]->SetBinError(i,0.1);
         }
 
         // Ratio
-        vErrorRat[ijet][iaj][0] = constError[ijet][iaj];
+        vErrorRat[ijet][iaj][0] = genBkgSubError[ijet][iaj];
+        vErrorRat[ijet][iaj][1] = trkError[ijet][iaj];
+        vErrorRat[ijet][iaj][2] = constError[ijet][iaj];
+        vErrorRat[ijet][iaj][3] = bkgSubError[ijet][iaj];
+        vErrorRat[ijet][iaj][4] = jesError[ijet][iaj];
+        vErrorRat[ijet][iaj][5] = jetResError[ijet][iaj];
 
         // HiFF
-        vErrorHi[ijet][iaj][0] = constError[ijet][iaj];
+        vErrorHi[ijet][iaj][0] = genBkgSubError[ijet][iaj];
+        vErrorHi[ijet][iaj][1] = trkError[ijet][iaj];
+        vErrorHi[ijet][iaj][2] = bkgSubError[ijet][iaj];
+        vErrorHi[ijet][iaj][3] = constError[ijet][iaj];
+        vErrorHi[ijet][iaj][4] = jesError[ijet][iaj];
+        vErrorHi[ijet][iaj][5] = jetResError[ijet][iaj];
+        vErrorHi[ijet][iaj][6] = pyquenJetRecoRefPtError[ijet][iaj];
+        vErrorHi[ijet][iaj][7] = pyquenGenJetSelError[ijet][iaj];
       } // iaj
+      sysTitle.push_back("Genp. Bkg. Subtr.");
+      sysTitle.push_back("Tracking Closure");
+      sysTitle.push_back("Data Driven Charged Fraction");
+      sysTitle.push_back("Data Driven Bkg. Subt.");
+      sysTitle.push_back("JES");
+      sysTitle.push_back("JER");
+      sysTitle.push_back("Pyquen JES");
+      sysTitle.push_back("Pyquen Jet Selection");
+    } else if (ana==1) { // trk pt analysis
+      NErrorRatio=3; NErrorHi=3; NErrorPp=3;
+      for ( int iaj=1;iaj<=4;iaj++) {
+        // additional track error to be flat 10%, add another 6% from pp reweightin sqrt(10*10+6*6)= 11.7
+        constError[ijet][iaj] =  new TH1D(Form("sysfpt_constsys_%d",iaj),";track p_{T} (GeV/c);dN/dp_{T} (GeV/c)^{-1}",nPtBin,ptBin);
+        for(int i = 1; i <= constError[ijet][iaj]->GetNbinsX(); ++i){
+          constError[ijet][iaj]->SetBinContent(i,1.1);
+          constError[ijet][iaj]->SetBinError(i,0.1);
+        }
+
+        // Ratio
+        vErrorRat[ijet][iaj][0] = genBkgSubError[ijet][iaj];
+        vErrorRat[ijet][iaj][1] = trkError[ijet][iaj];
+        vErrorRat[ijet][iaj][2] = constError[ijet][iaj];
+
+        // HiFF
+        vErrorHi[ijet][iaj][0] = genBkgSubError[ijet][iaj];
+        vErrorHi[ijet][iaj][1] = trkError[ijet][iaj];
+        vErrorHi[ijet][iaj][2] = constError[ijet][iaj];
+      } // iaj
+      sysTitle.push_back("Genp. Bkg. Subtr.");
+      sysTitle.push_back("Tracking Closure");
+      sysTitle.push_back("Data Driven Charged Fraction");
     } // end of if ana
+    // Setup Boundaries
+    if (xmin==xmax) {
+      xmin=vErrorHi[ijet][1][0]->GetBinLowEdge(1);
+      xmax=vErrorHi[ijet][1][0]->GetBinLowEdge(vErrorHi[ijet][1][0]->GetNbinsX()+1);
+    }
   }
 
   void Combine(TH1* h, TH1** he, int Nerror) {
@@ -271,9 +308,22 @@ public:
 
     // fit errors
     for(int ie = 0; ie< Nerror; ++ie){
-      if (ie<6) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",0,5.5);
-      else fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol4",0,5.5);
-      he[ie]->Fit(fe[ie],"QRN");
+      if (ana==1) {
+        fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol6",xmin,xmax);
+        he[ie]->Fit(fe[ie],"QNw");
+      } else if (ana==2) {
+        if (ie==0) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol4",0,6);
+        else if (ie==4) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",0,6);
+        else if (ie<6) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",0,5.5);
+        else fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol4",0,5.5);
+        if (ie==0) he[ie]->Fit(fe[ie],"QRNw",0,5.5);
+        else if (ie==4) he[ie]->Fit(fe[ie],"QRN",0,5.);
+        else he[ie]->Fit(fe[ie],"QRN","",0,5.5);
+        // if (ie==0) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",xmin,xmax);
+        // else if (ie<6) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",xmin,xmax);
+        // else fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol4",xmin,xmax);
+        // he[ie]->Fit(fe[ie],"QRNw","",0,5);
+      }
     }
 
     // combine errors
@@ -324,12 +374,12 @@ public:
     }
   }
 
-  void Draw(TH1* h, float xmax=-1, int theColor=TColor::GetColor(0xFFEE00), int theStyle=1001) {
+  void Draw(TH1* h, int theColor=TColor::GetColor(0xFFEE00), int theStyle=1001) {
     for ( int i=1 ; i<= h->GetNbinsX(); i++) {
-      if (xmax>0&&h->GetBinCenter(i)>xmax) break;
+      if (h->GetBinCenter(i)<xmin||h->GetBinCenter(i)>xmax) continue;
       float yhigh = hHigh->GetBinContent(i);
       float ylow = hLow->GetBinContent(i);
-      if (ylow<0.01) ylow=0.01;
+      // if (ylow<0.01) ylow=0.01;
       TBox* tt = new TBox(h->GetBinLowEdge(i), ylow , h->GetBinLowEdge(i+1), yhigh);
       tt->SetFillColor(theColor);
       tt->SetFillStyle(theStyle);
@@ -337,24 +387,33 @@ public:
     }
   }
 
-  void Inspect(TH1** he=0, int Nerror=0) {
+  void Inspect(TH1** he=0, int Nerror=0, int doLeg=0) {
     TH1D * hInsp = (TH1D*)hErrorTot->Clone(Form("%s_plot",hErrorTot->GetName()));
     TF1 * fone = new TF1("fone","1",hErrorTot->GetBinLowEdge(1),hErrorTot->GetBinLowEdge(hErrorTot->GetNbinsX()));
     hInsp->Add(fone);
-    hInsp->SetAxisRange(0,3,"Y");
+    hInsp->SetAxisRange(xmin,xmax-0.001,"X");
+    hInsp->SetAxisRange(0.5,2,"Y");
+    hInsp->SetLineWidth(3);
     hInsp->Draw("hist");
 
     for(int ie = 0; ie< Nerror; ++ie){
      cout << "draw errors" << he[ie]->GetName() << endl;
       he[ie]->SetMarkerStyle(kOpenCircle);
       he[ie]->SetMarkerColor(sysMarkerColor[ie]);
-      if (ie==0) he[ie]->DrawClone();
-      else he[ie]->DrawClone("same");
+      he[ie]->SetLineColor(sysMarkerColor[ie]);
+      he[ie]->DrawClone("psamehist");
       if (fe[ie]){
         fe[ie]->SetLineColor(sysMarkerColor[ie]);
+        fe[ie]->SetLineWidth(1);
         fe[ie]->Draw("same");
       }
-    }    
+    }
+    if (doLeg) {
+      TLegend * lsys = new  TLegend(0.18,0.96-Nerror*0.06,0.87,0.96,NULL,"brNDC");
+      easyLeg(lsys,"",18);
+      for (int ie=0; ie<Nerror; ++ie) lsys->AddEntry(he[ie],sysTitle[ie],"l");
+        lsys->Draw();
+    }
   }
 };
 
