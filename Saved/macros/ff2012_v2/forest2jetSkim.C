@@ -492,7 +492,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
       for (int ij=0; ij< nJets ; ij++) {
         hSmJetPtRaw->Fill(theJet->jtpt[ij]);
         // 1. Get Smearing Cent bin
-        int tempCentBin=evt.cBin;
+        int tempCentBin=evt.cBin; // if pbpb take centrality directly from event
         if (isPP && smearCentBin > 0) {
           while (  (tempCentBin >= centBin1[smearCentBin] ) || ( tempCentBin < centBin1[smearCentBin-1] ) ) {
             tempCentBin = smearingCents2->GetRandom() ;
@@ -502,7 +502,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
             }
           }
         }
-        int smCentBin = GetCBin( tempCentBin );
+        int smCentBin = GetCBin( tempCentBin ); // Note: smearing is done in 6 merged centrality bins!!
         // 2. save original pt
         jetUnSmPt[ij]=theJet->jtpt[ij];
         // 3. Smear
@@ -514,11 +514,11 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
             else if (smearMode==3) theJet->jtpt[ij]  = GetSmearedPtData(2,smCentBin,theJet->jtpt[ij],0,"");
           } else {
             // for PbPb
-            if (smearMode==1)      theJet->jtpt[ij]  = GetPbPbCorrectedScaleData(2,c->evt.hiBin,theJet->jtpt[ij]);
-            else if (smearMode==2) theJet->jtpt[ij]  = GetSmearedPtData_NoMeanShift(2,c->evt.hiBin,theJet->jtpt[ij],0,"");
+            if (smearMode==1)      theJet->jtpt[ij]  = GetPbPbCorrectedScaleData(2,smCentBin,theJet->jtpt[ij]);
+            else if (smearMode==2) theJet->jtpt[ij]  = GetSmearedPtData_NoMeanShift(2,smCentBin,theJet->jtpt[ij],0,"");
             else if (smearMode==3) {
-              theJet->jtpt[ij]  = GetPbPbCorrectedScaleData(2,c->evt.hiBin,theJet->jtpt[ij]);
-              theJet->jtpt[ij]  = GetSmearedPtData(2,c->evt.hiBin,theJet->jtpt[ij],0,"");
+              theJet->jtpt[ij]  = GetPbPbCorrectedScaleData(2,smCentBin,theJet->jtpt[ij]);
+              theJet->jtpt[ij]  = GetSmearedPtData(2,smCentBin,theJet->jtpt[ij],0,"");
             }
           }
         }
