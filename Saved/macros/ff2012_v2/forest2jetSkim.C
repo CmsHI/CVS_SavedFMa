@@ -514,7 +514,12 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
             else if (smearMode==3) theJet->jtpt[ij]  = GetSmearedPtData(2,smCentBin,theJet->jtpt[ij],0,"");
           } else {
             // for PbPb
-            if (smearMode==1)      theJet->jtpt[ij]  = GetPbPbCorrectedScaleData(2,smCentBin,theJet->jtpt[ij]);
+            if (smearMode==1)      theJet->jtpt[ij]  = GetPbPbCorrectedScaleData(2,c->evt.hiBin,theJet->jtpt[ij]);
+            else if (smearMode==2) theJet->jtpt[ij]  = GetSmearedPtData_NoMeanShift(2,c->evt.hiBin,theJet->jtpt[ij],0,"");
+            else if (smearMode==3) {
+              theJet->jtpt[ij]  = GetPbPbCorrectedScaleData(2,c->evt.hiBin,theJet->jtpt[ij]);
+              theJet->jtpt[ij]  = GetSmearedPtData(2,c->evt.hiBin,theJet->jtpt[ij],0,"");
+            }
           }
         }
 
