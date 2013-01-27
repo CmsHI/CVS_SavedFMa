@@ -1,8 +1,10 @@
 subName='Jan17_4bin_sm18'
 #
 # Fix: Use unsmeared jet pt for looking up tracking efficiency table
+# - Jan 17 Use unsmeared jet pt for looking up tracking efficiency table
+# Features:
+# - Jan 26, more smearing options for pbpb
 #
-
 useGenJet=0
 
 # pp
@@ -23,14 +25,15 @@ done
 
 # pbpb
 jetAlgo='akPu3PF'
-for smMode in 1; do # 0=do nothing, 1=shift
+for smMode in 3; do # 0=do nothing, 1=shift
   echo pbpb: $smMode
   # data
-  # root -l -b -q 'forest2jetSkim.C+("/net/hidsk0001/d00/scratch/yjlee/merge/pbpbDijet_v20/promptskim-hihighpt-hltjet80-pt90-v20.root","jskim_hltjet80-pt90-v20_'$jetAlgo'_'$subName'",false,-1,"",false,"'$jetAlgo'",0,'$smMode',0,'$useGenJet')'
+  root -l -b -q 'forest2jetSkim.C+("/net/hidsk0001/d00/scratch/yjlee/merge/pbpbDijet_v20/promptskim-hihighpt-hltjet80-pt90-v20.root","jskim_hltjet80-pt90-v20_'$jetAlgo'_'$subName'",false,-1,"",false,"'$jetAlgo'",0,'$smMode',0,'$useGenJet')'
+  if [ $smMode -gt 1 ]; then break; fi
   # root -l -b -q 'forest2jetSkim.C+("/mnt/hadoop/cms/store/user/frankmalocal/forest/HiForest-promptskim-hiForest2_v21_HLTFix.root","jskim_hltjet80-v21_'$jetAlgo'_'$subName'",false,-1,"",false,"'$jetAlgo'",0,'$smMode',0,'$useGenJet')'
   # mc
   # root -l -b -q 'forest2jetSkim.C++("/net/hidsk0001/d00/scratch/yjlee/merge/v27/pthat50/Dijet50_HydjetDrum_v27_mergedV1.root","jskim_hydj50_'$jetAlgo'_'$subName'",true,-1,"",true,"'$jetAlgo'",0,'$smMode',0,'$useGenJet')'
   # root -l -b -q 'forest2jetSkim.C++("/net/hidsk0001/d00/scratch/yjlee/merge/v27/pthat80/Dijet80_HydjetDrum_v27_mergedV1.root","jskim_hydj80_'$jetAlgo'_'$subName'",true,-1,"",true,"'$jetAlgo'",0,'$smMode',0,'$useGenJet')'
-  root -l -b -q 'forest2jetSkim.C++("/mnt/hadoop/cms/store/user/yenjie/HiForest_v27/Dijet100_HydjetDrum_v27_mergedV1.root","jskim_hydj100_'$jetAlgo'_'$subName'",true,-1,"",true,"'$jetAlgo'",0,'$smMode',0,'$useGenJet')'
+  # root -l -b -q 'forest2jetSkim.C++("/mnt/hadoop/cms/store/user/yenjie/HiForest_v27/Dijet100_HydjetDrum_v27_mergedV1.root","jskim_hydj100_'$jetAlgo'_'$subName'",true,-1,"",true,"'$jetAlgo'",0,'$smMode',0,'$useGenJet')'
   # root -l -b -q 'forest2jetSkim.C++("/net/hidsk0001/d00/scratch/yjlee/merge/v27/pthat120/mergedFile.root","jskim_hydj120_'$jetAlgo'_'$subName'",true,-1,"",true,"'$jetAlgo'",0,'$smMode',0,'$useGenJet')'
 done
