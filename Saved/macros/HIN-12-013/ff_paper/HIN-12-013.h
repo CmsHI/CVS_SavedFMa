@@ -199,8 +199,10 @@ public:
       // const char* GenBkgSubfile = "./systematics/closure_bkgsub_sys.root";
       // const char* JetAlgofile = "./systematics/systematics_calovspf.root";
       // ff paper
-    const char* JESfile = "./systematics/jes_sys.root";
-    const char* JetResfile = "./systematics/jetres_sys.root";
+    // const char* JESfile = "./systematics/data_sysjes.root";
+    // const char* JESfile = "./systematics/data_sysjes1.07.root";
+    const char* JESfile = "./systematics/data_sysjes0.935exptra.root";
+    const char* JetResfile = "./systematics/data_sysjer.root";
     const char* BkgSubfile = "./systematics/bkgsub_sys.root";
     const char* TrkClosurefile = "./systematics/mctrk.root";
     const char* GenBkgSubfile = "./systematics/mcgenp.root";
@@ -213,11 +215,13 @@ public:
       if (binMode==1) {
         jesError[ijet][iaj] =  loadError(JESfile,Form("hpt_%s_sigTrk_hidata_icent999_iaj%d_fragMode2_closure0_sys2",jname[ijet].Data(),iaj));
         jetResError[ijet][iaj] =  loadError(JetResfile,Form("hpt_%s_sigTrk_hidata_icent999_iaj%d_fragMode2_closure0",jname[ijet].Data(),iaj));
-        bkgSubError[ijet][iaj] = loadError(BkgSubfile,Form("hpt_%s_sigTrk_hidata_icent999_iaj%d_fragMode2_closure100",jname[ijet].Data(),iaj));
+        bkgSubError[ijet][iaj] = loadError(BkgSubfile,Form("hpt_%s_sigTrk_hidata_icent999_iaj%d_fragMode2_closure100",jname[ijet].Data(),iaj)); // from event mixing
         trkError[ijet][iaj] = loadError(TrkClosurefile,Form("hpt_%s_sigTrk_himc_icent999_iaj%d_fragMode2_closure101",jname[ijet].Data(),iaj));
       } else if (binMode==2) {
-        jesError[ijet][iaj] =  loadError(JESfile,Form("hpt_%s_sigTrk_hidata_icent2_irj999_fragMode2_closure100_sys7",jname[ijet].Data(),iaj));
-        jetResError[ijet][iaj] =  loadError(JetResfile,Form("hpt_%s_sigTrk_hidata_icent%d_irj999_fragMode2_closure100",jname[ijet].Data(),iaj));
+        // jesError[ijet][iaj] =  loadError(JESfile,Form("hpt_%s_sigTrk_hidata_icent2_irj999_fragMode2_closure100_sys7",jname[ijet].Data(),iaj));
+        jesError[ijet][iaj] =  loadError(JESfile,Form("hpt_jet_sigTrk_hidata_icent%d_irj999_fragMode%d_closure100_jtrewt1_wtmode0_pt1to300_ratio",iaj,ana));
+        // jetResError[ijet][iaj] =  loadError(JetResfile,Form("hpt_%s_sigTrk_hidata_icent%d_irj999_fragMode2_closure100",jname[ijet].Data(),iaj));
+        jetResError[ijet][iaj] =  loadError(JetResfile,Form("hpt_jet_sigTrk_hidata_icent%d_irj999_fragMode%d_closure100_jtrewt0_wtmode0_pt1to300_ratio",iaj,ana));
         bkgSubError[ijet][iaj] =  loadError(BkgSubfile,Form("hpt_%s_sigTrk_hidata_icent%d_irj999_fragMode2_closure0",jname[ijet].Data(),iaj));
 
         // trkError[ijet][iaj] =  loadError(TrkClosurefile,Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode2_closure100",jname[ijet].Data(),iaj));
@@ -241,7 +245,7 @@ public:
         constError[ijet][iaj] =  (TH1D*)jesError[ijet][iaj]->Clone(Form("%s_constsys",jesError[ijet][iaj]->GetName()));
         for(int i = 1; i <= constError[ijet][iaj]->GetNbinsX(); ++i){
           constError[ijet][iaj]->SetBinContent(i,1.1);
-          constError[ijet][iaj]->SetBinError(i,0.1);
+          constError[ijet][iaj]->SetBinError(i,0.01);
         }
 
         // Ratio
@@ -271,28 +275,50 @@ public:
       sysTitle.push_back("Pyquen JES");
       sysTitle.push_back("Pyquen Jet Selection");
     } else if (ana==1) { // trk pt analysis
-      NErrorRatio=3; NErrorHi=3; NErrorPp=3;
+      NErrorRatio=6; NErrorHi=6; NErrorPp=6;
       for ( int iaj=1;iaj<=4;iaj++) {
         // additional track error to be flat 10%, add another 6% from pp reweightin sqrt(10*10+6*6)= 11.7
         constError[ijet][iaj] =  new TH1D(Form("sysfpt_constsys_%d",iaj),";track p_{T} (GeV/c);dN/dp_{T} (GeV/c)^{-1}",nPtBin,ptBin);
         for(int i = 1; i <= constError[ijet][iaj]->GetNbinsX(); ++i){
           constError[ijet][iaj]->SetBinContent(i,1.1);
-          constError[ijet][iaj]->SetBinError(i,0.1);
+          constError[ijet][iaj]->SetBinError(i,0.01);
         }
+        // translate event mixing bkgsub error from xi
+        TH1* hBkgSubData = (TH1*)constError[ijet][iaj]->Clone(Form("sysfpt_bkgsubdata_%d",iaj));
+        hBkgSubData->Reset();
+        for(int i = 1; i <= hBkgSubData->GetNbinsX(); ++i){
+          float meanJetPt = 121; // mean in data
+          float xi = TMath::Log(meanJetPt/hBkgSubData->GetBinCenter(i));
+          float xibin = bkgSubError[ijet][iaj]->FindBin(xi);
+          // cout << "pt: " << hBkgSubData->GetBinCenter(i) << " xi: " << xi << " xibin: " << xibin << " y: " << bkgSubError[ijet][iaj]->GetBinContent(xibin) << endl;
+          if (xibin<1) xibin=1;
+          hBkgSubData->SetBinContent(i,bkgSubError[ijet][iaj]->GetBinContent(xibin));
+          hBkgSubData->SetBinError(i,bkgSubError[ijet][iaj]->GetBinError(xibin));
+        }
+
 
         // Ratio
         vErrorRat[ijet][iaj][0] = genBkgSubError[ijet][iaj];
         vErrorRat[ijet][iaj][1] = trkError[ijet][iaj];
         vErrorRat[ijet][iaj][2] = constError[ijet][iaj];
+        vErrorRat[ijet][iaj][3] = hBkgSubData;
+        vErrorRat[ijet][iaj][4] = jesError[ijet][iaj];
+        vErrorRat[ijet][iaj][5] = jetResError[ijet][iaj];
 
         // HiFF
         vErrorHi[ijet][iaj][0] = genBkgSubError[ijet][iaj];
         vErrorHi[ijet][iaj][1] = trkError[ijet][iaj];
         vErrorHi[ijet][iaj][2] = constError[ijet][iaj];
+        vErrorHi[ijet][iaj][3] = hBkgSubData;
+        vErrorHi[ijet][iaj][4] = jesError[ijet][iaj];
+        vErrorHi[ijet][iaj][5] = jetResError[ijet][iaj];
       } // iaj
       sysTitle.push_back("Genp. Bkg. Subtr.");
       sysTitle.push_back("Tracking Closure");
       sysTitle.push_back("Data Driven Charged Fraction");
+      sysTitle.push_back("Data Driven Bkg. Subt.");
+      sysTitle.push_back("JES");
+      sysTitle.push_back("JER");
     } // end of if ana
     // Setup Boundaries
     if (xmin==xmax) {
@@ -309,15 +335,16 @@ public:
     // fit errors
     for(int ie = 0; ie< Nerror; ++ie){
       if (ana==1) {
-        fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol6",xmin,xmax);
-        he[ie]->Fit(fe[ie],"QNw");
+        fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol4",xmin,xmax*2);
+        if (ie==1||ie==3) he[ie]->Fit(fe[ie],"QNRll","",xmin,xmax*1.5);
+        else he[ie]->Fit(fe[ie],"QNRw","",xmin,xmax*1.5);
       } else if (ana==2) {
-        if (ie==0) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol4",0,6);
+        if (ie==0) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",0,6);
         else if (ie==4) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",0,6);
         else if (ie<6) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",0,5.5);
         else fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol4",0,5.5);
         if (ie==0) he[ie]->Fit(fe[ie],"QRNw",0,5.5);
-        else if (ie==4) he[ie]->Fit(fe[ie],"QRN",0,5.);
+        else if (ie==4) he[ie]->Fit(fe[ie],"QRNll","",0.5,5.5);
         else he[ie]->Fit(fe[ie],"QRN","",0,5.5);
         // if (ie==0) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",xmin,xmax);
         // else if (ie<6) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",xmin,xmax);
@@ -395,13 +422,18 @@ public:
     hInsp->SetAxisRange(0.5,2,"Y");
     hInsp->SetLineWidth(3);
     hInsp->Draw("hist");
+    // guide the eye
+    TLine * hline = new TLine(xmin,1,xmax,1);
+    hline->SetLineStyle(2);
+    hline->Draw();
 
     for(int ie = 0; ie< Nerror; ++ie){
-     cout << "draw errors" << he[ie]->GetName() << endl;
+     // cout << "draw errors" << he[ie]->GetName() << endl;
       he[ie]->SetMarkerStyle(kOpenCircle);
       he[ie]->SetMarkerColor(sysMarkerColor[ie]);
       he[ie]->SetLineColor(sysMarkerColor[ie]);
-      he[ie]->DrawClone("psamehist");
+      // he[ie]->DrawClone("psamehist");
+      he[ie]->DrawClone("Esame");
       if (fe[ie]){
         fe[ie]->SetLineColor(sysMarkerColor[ie]);
         fe[ie]->SetLineWidth(1);
@@ -409,9 +441,10 @@ public:
       }
     }
     if (doLeg) {
-      TLegend * lsys = new  TLegend(0.18,0.96-Nerror*0.06,0.87,0.96,NULL,"brNDC");
+      TLegend * lsys = new  TLegend(0.18,(int)(ana==2)*0.05+0.96-(Nerror)*0.062,0.87,0.96,NULL,"brNDC");
       easyLeg(lsys,"",18);
       for (int ie=0; ie<Nerror; ++ie) lsys->AddEntry(he[ie],sysTitle[ie],"l");
+      lsys->AddEntry(hInsp,"Total Uncertainty","l");
         lsys->Draw();
     }
   }

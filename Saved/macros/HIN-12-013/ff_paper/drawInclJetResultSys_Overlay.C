@@ -41,7 +41,7 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_pprewt.root";
   std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_pprewt.root";
 
-  int doMC=1;
+  int doMC=0;
   // mc
   if (doMC) {
     // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcrefjetsel.root";
