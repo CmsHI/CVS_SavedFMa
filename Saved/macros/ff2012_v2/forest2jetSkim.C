@@ -539,17 +539,17 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
       // Set Unsmeared Leading Jet and Subleading jet energies for tracking efficiency look up
       for (int k=0; k<nJets; k++) {
         if (fabs(theJet->jteta[k])>2) continue;
-        if (theJet->jtpt[k]>c->leadingJetPtForTrkCor) {
-          c->leadingJetPtForTrkCor = theJet->jtpt[k];
+        if (jetUnSmPt[k]>c->leadingJetPtForTrkCor) {
+          c->leadingJetPtForTrkCor = jetUnSmPt[k];
           c->leadingJetEtaForTrkCor = theJet->jteta[k];
           c->leadingJetPhiForTrkCor = theJet->jtphi[k];
         }   
-        if (theJet->jtpt[k]>c->subleadingJetPtForTrkCor && theJet->jtpt[k] < c->leadingJetPtForTrkCor) {
-          c->subleadingJetPtForTrkCor = theJet->jtpt[k];
+        if (jetUnSmPt[k]>c->subleadingJetPtForTrkCor && jetUnSmPt[k] < c->leadingJetPtForTrkCor) {
+          c->subleadingJetPtForTrkCor = jetUnSmPt[k];
           c->subleadingJetEtaForTrkCor = theJet->jteta[k];
           c->subleadingJetPhiForTrkCor = theJet->jtphi[k];
         }
-        if (theJet->jtpt[k]<c->subleadingJetPtForTrkCor) break;   
+        if (jetUnSmPt[k]<c->subleadingJetPtForTrkCor) break;   
       }
     }
 
