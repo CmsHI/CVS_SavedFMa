@@ -68,12 +68,12 @@ void drawInclJetFrag() {
         drawInclJetFragSingleSet(fragMode, kHIMC, trackPtMin,trackPtMax, 102, usingPara);
       }
       if ( doPPDATA ) {
-        drawInclJetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, 100, usingPara);     
+        // drawInclJetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, 100, usingPara);     
         drawInclJetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, 100, usingPara,1); // jet reweighting: 0=raw, 1=reweight
       }
       if ( doHIDATA) {
         drawInclJetFragSingleSet(fragMode, kHIDATA, trackPtMin,trackPtMax, 100, usingPara);
-        drawInclJetFragSingleSet(fragMode, kHIDATA, trackPtMin,trackPtMax, 100, usingPara,1);
+        // drawInclJetFragSingleSet(fragMode, kHIDATA, trackPtMin,trackPtMax, 100, usingPara,1);
       }
     }
   }
@@ -178,7 +178,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   float finalEtaCut = 2.0;
   float finalJetPtMin = 100;
   float finalJetPtMax = 300;
-  TCut jetSelCut = Form("jetPt>=%.0f&&jetPt<%.0f",finalJetPtMin,finalJetPtMax);
+  TCut jetSelCut = Form("finalJetPt>=%.0f&&finalJetPt<%.0f",finalJetPtMin,finalJetPtMax);
   // TCut jetSelCut = Form("jetPtGM>=%.0f&&jetPtGM<%.0f",finalJetPtMin,finalJetPtMax);
   
   TCut centCut = "1==1";
@@ -202,6 +202,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   TString jetRewt= "1";
   if ( rewtJet==1 ) {
     jetRewt = Form("rewtPt");
+    // jetRewt = Form("(1+0.5*(rewtPt-1))");
   }
   
   ///////////////////////////////////////////////////////
@@ -210,7 +211,8 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   multiTreeUtil* dj  = new multiTreeUtil();
   if ( dataset == kHIDATA) {
     // dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root",
-    dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root","tdj", jetSelCut && centCut,1);
+    // dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root","tdj", jetSelCut && centCut,1);
+    dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan26_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm3bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut,1);
   } else if ( dataset == kHIMC) {
     // dj->addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut && "pthat>=80&&pthat<9999", 9.913e-5*1.e9);
     // dj->addFile("../ntout/jskim_hydj50_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut && "pthat>=50&&pthat<80", 1.021e-3*1.e9);
@@ -223,8 +225,9 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
     // dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0.root",icent),
     // dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
     // dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_seed2_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0.root",icent),
-    // dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
-    dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedFitRewt.root",icent),"tdj", jetSelCut, 1); // no centrality cut
+    dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
+    // dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedFitRewt.root",icent),
+    "tdj", jetSelCut, 1); // no centrality cut
   } else if ( dataset == kPPMC) {
     // dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root"),"tdj", jetSelCut && "pthat>=80&&pthat<9999", 9.913e-5*1.e9); // no centrality cut
     // dj->addFile(Form("../ntout/jskim_dj50_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root"),"tdj", jetSelCut && "pthat>=50&&pthat<80", 1.021e-3*1.e9); // no centrality cut
@@ -243,6 +246,8 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
     dj->AddFriend("genPar");
 //     dj->AddFriend("mGenPar");
   }
+  dj->SetAlias("finalJetPt","jetPt");
+  cout << "finalJetPt = " << dj->trees_[0]->GetAlias("finalJetPt") << endl;
   
   cout << " ================================================= " << endl;
   cout << " working on dataset, icent, irj = " << datasetName << ", "<<icent<<", "<<irj<<endl;
@@ -252,7 +257,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   ////////////////////////////////////////////////////////  
   // Draw From Tree
   ////////////////////////////////////////////////////////  
-  dj->Draw(hjetPt, "jetPt" ,jet1Cut.Data() ,jetRewt);
+  dj->Draw(hjetPt, "finalJetPt" ,jet1Cut.Data() ,jetRewt);
   
   double NoE1 = hjetPt->Integral();
   
@@ -294,9 +299,9 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
       matchedTrackWeight[j]+="*mTrk.pt";
       genpWeight[j] += "*genPar.pt";
     } else if (weightMode==2) {
-      trackWeight[j]+="*yTrk.pt/jetPt";
-      matchedTrackWeight[j]+="*mTrk.pt/jetPt";
-      genpWeight[j] += "*genPar.pt/jetPt";
+      trackWeight[j]+="*yTrk.pt/finalJetPt";
+      matchedTrackWeight[j]+="*mTrk.pt/finalJetPt";
+      genpWeight[j] += "*genPar.pt/finalJetPt";
     }
   }
 
@@ -320,27 +325,27 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
 //       }
     } else if ( fragMode   == 2 ) {
       if (doClosure == 0) {
-        dj->Draw(htrkPt[j][kRAW],"-log(yTrk.pt * cos(yTrk.jetDr)  *(cosh(yTrk.eta)/cosh(jetEta)) /jetPt )",
+        dj->Draw(htrkPt[j][kRAW],"-log(yTrk.pt * cos(yTrk.jetDr)  *(cosh(yTrk.eta)/cosh(jetEta)) /finalJetPt )",
           Form("%s && %s", jet1Cut.Data(), trkCutJet1.Data()), trackWeight[j]);
-        dj->Draw(htrkPt[j][kBKG],"-log(mTrk.pt * cos(mTrk.jetDr) * (cosh(mTrk.eta)/cosh(jetEta)) /jetPt )",
+        dj->Draw(htrkPt[j][kBKG],"-log(mTrk.pt * cos(mTrk.jetDr) * (cosh(mTrk.eta)/cosh(jetEta)) /finalJetPt )",
           Form("%s && %s", jet1Cut.Data(), bkgTrkCutJet1.Data()), matchedTrackWeight[j]);
       }
       else if ( doClosure == 100 ) {
-        dj->Draw(htrkPt[j][kRAW],"-log(yTrk.pt * cos(yTrk.jetDr) *(cosh(yTrk.eta)/cosh(jetEta)) /jetPt)",
+        dj->Draw(htrkPt[j][kRAW],"-log(yTrk.pt * cos(yTrk.jetDr) *(cosh(yTrk.eta)/cosh(jetEta)) /finalJetPt)",
           Form("%s && %s", jet1Cut.Data(), trkCutJet1.Data()), trackWeight[j]);
-        dj->Draw(htrkPt[j][kBKG], "-log(yTrk.pt * cos(yTrk.jetDr) * (cosh(yTrk.eta)/cosh(jetEta)) /jetPt)",
+        dj->Draw(htrkPt[j][kBKG], "-log(yTrk.pt * cos(yTrk.jetDr) * (cosh(yTrk.eta)/cosh(jetEta)) /finalJetPt)",
           Form("%s && %s", jet1Cut.Data(), bkgTrkCutJet1.Data()), trackWeight[j]);
       }
       else if ( doClosure == 1|| doClosure == 101 || doClosure == 102) {
-        dj->Draw(htrkPt[j][kRAW], "-log( genPar.pt * cos(genPar.jetDr)  *(cosh(genPar.eta)/cosh(jetEta)) /jetPt)", Form("%s && %s",
+        dj->Draw(htrkPt[j][kRAW], "-log( genPar.pt * cos(genPar.jetDr)  *(cosh(genPar.eta)/cosh(jetEta)) /finalJetPt)", Form("%s && %s",
           jet1Cut.Data(), trkCutJet1.Data()), genpWeight[j]);
-        dj->Draw(htrkPt[j][kBKG], "-log( genPar.pt * cos(genPar.jetDr)  *(cosh(genPar.eta)/cosh(jetEta))  /jetPt)", Form("%s && %s",
+        dj->Draw(htrkPt[j][kBKG], "-log( genPar.pt * cos(genPar.jetDr)  *(cosh(genPar.eta)/cosh(jetEta))  /finalJetPt)", Form("%s && %s",
           jet1Cut.Data(), bkgTrkCutJet1.Data()), genpWeight[j]);
       }
 //       else if ( doClosure == 2 ) {
-//         dj->Draw(htrkPt[j][kRAW], "-log( genPar.pt * cos(genPar.jetDr)  *(cosh(genPar.eta)/cosh(jetEta)) /jetPt)", Form("%s && %s",
+//         dj->Draw(htrkPt[j][kRAW], "-log( genPar.pt * cos(genPar.jetDr)  *(cosh(genPar.eta)/cosh(jetEta)) /finalJetPt)", Form("%s && %s",
 //           jet1Cut.Data(), trkCutJet1.Data()), genpWeight[j]);
-//         dj->Draw(htrkPt[j][kBKG], "-log(mGenPar.pt * cos(mGenPar.jetDr)  *(cosh(mGenPar.eta)/cosh(jetEta)) /jetPt)", Form("%s && %s",
+//         dj->Draw(htrkPt[j][kBKG], "-log(mGenPar.pt * cos(mGenPar.jetDr)  *(cosh(mGenPar.eta)/cosh(jetEta)) /finalJetPt)", Form("%s && %s",
 //           jet1Cut.Data(), bkgTrkCutJet1.Data()), genpWeight[j]);
 //       }
     }
@@ -441,7 +446,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   drawText("Jet p_{T}", 0.55,0.63,1);
   
   // TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Jan17mc80and100and120_hi",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
-  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Jan17data_hi_ppfitrewt",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
+  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Jan17data_hism3",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
 
   if ( fragMode==2) {
     c1->SaveAs(Form("plotsOfInclJetFF/inclJetFF_xi_doClosure%d_icent%d_irj%d_%s_%s%s_%s.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data(),outnameTag.Data()));
