@@ -25,28 +25,35 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   // Setup
   //////////////////////////////////////////////////////////////////////
   int binMode =2; // 1 : aj, 2 : cent
+  int doCompare=1;
+
   TString tag = Form("trkPtProj_binMode2_hi_rewt%d_pp_rewt%d",jtrewthi,jtrewtpp);
   if (cmpStyle==1) tag += "_rat";
   else tag += "_diff";
   if (doEtaRef) tag += "_EtaRef";
+  if (doCompare==1) tag+="_vs_qm12";
+  if (doCompare==2) tag+="_vs_data";
   TString outdir="plotsFinalFF";
 
   //////////////////////////////////////////////////////////////////////
   // Specify Inputs
   //////////////////////////////////////////////////////////////////////
-  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_ppfitrewt.root";
-  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_pprewt.root";
-  // mc
-  std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
-  std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
-  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcrefjetsel.root";
-  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcrefjetsel.root";
-  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet_closure101limjeteta.root";
-  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet_closure101limjeteta.root";
+  std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_pprewt.root";
+  std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_pprewt.root";
+
   int doMC=1;
+  // mc
+  if (doMC) {
+    // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcrefjetsel.root";
+    // Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcrefjetsel.root";
+    Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
+    Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
+    doCompare=2;
+  }
 
   std::string Input_QM="dijetFF_output_histograms_trkPtProjectOnJetAxis_trackPtCut1_FinaletaCut2.00_pas.root";
-
+  TString cmpFile = Input_QM.data();
+  if (doCompare==2) cmpFile = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_pprewt.root"; // latest data
 
   /////////////////////////////////////////////////
   // Get Result Histograms
@@ -74,7 +81,7 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
     handsomeTH1(ffpp[ijet][iaj],1,1.3);
     handsomeTH1(ffhi[ijet][iaj],1,1.3);
   }
-  if (doMC) tag += "_mc80and120__closure101limjeteta_ppunsm";
+  if (doMC) tag += "_mc80and120";
 
   /////////////////////////////////////////////////
   // Get Comparison Histograms
@@ -82,12 +89,36 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   TH1D* ffhicmp[3][5];
   TH1D* ffppcmp[3][5];
   TH1D* ffratiocmp[3][5];
-  // QM Comparison
-  if (fragMode==2) {
-    TString cmpFile = Input_QM.data();
+  if (doCompare==1) {
+    // QM Comparison
+    if (fragMode==2) {
+      for ( int iaj=1;iaj<=4;iaj++) {
+        ffhicmp[ijet][iaj]  = (TH1D*)load(cmpFile.Data(),Form("hpt_%s_sigTrk_hidata_icent%d_irj999_fragMode2_closure100_wtmode0_pt1to500",jname[ijet].Data(),iaj));
+        ffppcmp[ijet][iaj]  = (TH1D*)load(cmpFile.Data(),Form("hpt_%s_sigTrk_ppdata_icent%d_irj999_fragMode2_closure100_wtmode0_pt1to500",jname[ijet].Data(),iaj));
+        ffratiocmp[ijet][iaj]  = (TH1D*)ffhicmp[ijet][iaj]->Clone(Form("%s_ratcmp",ffhicmp[ijet][iaj]->GetName()));
+        if (cmpStyle==1) ffratiocmp[ijet][iaj]->Divide(ffppcmp[ijet][iaj]);
+        else if (cmpStyle==2) ffratiocmp[ijet][iaj]->Add(ffppcmp[ijet][iaj],-1);
+        handsomeTH1(ffppcmp[ijet][iaj],kRed,0,0);
+        ffppcmp[ijet][iaj]->SetLineStyle(2);
+        handsomeTH1(ffhicmp[ijet][iaj],kRed,1.3,kOpenCircle);
+        handsomeTH1(ffratiocmp[ijet][iaj],kRed,1.3,kOpenCircle);
+      }
+    } else if (fragMode==1) {
+      GetQM12TrkPt(ffppcmp,ffhicmp);
+      for ( int iaj=1;iaj<=4;iaj++) {
+        ffratiocmp[1][iaj]  = (TH1D*)ffhicmp[ijet][iaj]->Clone(Form("%s_ratcmp",ffhicmp[ijet][iaj]->GetName()));
+        if (cmpStyle==1) ffratiocmp[ijet][iaj]->Divide(ffppcmp[ijet][iaj]);
+        else if (cmpStyle==2) ffratiocmp[ijet][iaj]->Add(ffppcmp[ijet][iaj],-1);
+        handsomeTH1(ffppcmp[ijet][iaj],kRed,0,0);
+        ffppcmp[ijet][iaj]->SetLineStyle(2);
+        handsomeTH1(ffhicmp[ijet][iaj],kRed,1.3,kOpenCircle);
+        handsomeTH1(ffratiocmp[ijet][iaj],kRed,1.3,kOpenCircle);
+      }    
+    }
+  } else if (doCompare==2) {
     for ( int iaj=1;iaj<=4;iaj++) {
-      ffhicmp[ijet][iaj]  = (TH1D*)load(cmpFile.Data(),Form("hpt_%s_sigTrk_hidata_icent%d_irj999_fragMode2_closure100_wtmode0_pt1to500",jname[ijet].Data(),iaj));
-      ffppcmp[ijet][iaj]  = (TH1D*)load(cmpFile.Data(),Form("hpt_%s_sigTrk_ppdata_icent%d_irj999_fragMode2_closure100_wtmode0_pt1to500",jname[ijet].Data(),iaj));
+      ffhicmp[ijet][iaj]  = (TH1D*)load(cmpFile.Data(),Form("hpt_%s_sigTrk_hidata_icent%d_irj999_fragMode%d_closure100_jtrewt1_wtmode0_pt1to300",jname[0].Data(),iaj,fragMode));
+      ffppcmp[ijet][iaj]  = (TH1D*)load(cmpFile.Data(),Form("hpt_%s_sigTrk_ppdata_icent%d_irj999_fragMode%d_closure100_jtrewt1_wtmode0_pt1to300",jname[0].Data(),iaj,fragMode));
       ffratiocmp[ijet][iaj]  = (TH1D*)ffhicmp[ijet][iaj]->Clone(Form("%s_ratcmp",ffhicmp[ijet][iaj]->GetName()));
       if (cmpStyle==1) ffratiocmp[ijet][iaj]->Divide(ffppcmp[ijet][iaj]);
       else if (cmpStyle==2) ffratiocmp[ijet][iaj]->Add(ffppcmp[ijet][iaj],-1);
@@ -96,17 +127,6 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
       handsomeTH1(ffhicmp[ijet][iaj],kRed,1.3,kOpenCircle);
       handsomeTH1(ffratiocmp[ijet][iaj],kRed,1.3,kOpenCircle);
     }
-  } else if (fragMode==1) {
-    GetQM12TrkPt(ffppcmp,ffhicmp);
-    for ( int iaj=1;iaj<=4;iaj++) {
-      ffratiocmp[1][iaj]  = (TH1D*)ffhicmp[ijet][iaj]->Clone(Form("%s_ratcmp",ffhicmp[ijet][iaj]->GetName()));
-      if (cmpStyle==1) ffratiocmp[ijet][iaj]->Divide(ffppcmp[ijet][iaj]);
-      else if (cmpStyle==2) ffratiocmp[ijet][iaj]->Add(ffppcmp[ijet][iaj],-1);
-      handsomeTH1(ffppcmp[ijet][iaj],kRed,0,0);
-      ffppcmp[ijet][iaj]->SetLineStyle(2);
-      handsomeTH1(ffhicmp[ijet][iaj],kRed,1.3,kOpenCircle);
-      handsomeTH1(ffratiocmp[ijet][iaj],kRed,1.3,kOpenCircle);
-    }    
   }
 
   /////////////////////////////////////////////////
@@ -122,8 +142,8 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   if (fragMode==1) { xmin=1; xmax=51; }
   if (cmpStyle==2) { rmin=-0.8; rmax=1.8; }
   TH2F * hPadFF, *hPadR, * hPadPt;
-  hPadPt = new TH2F("hPadPt",";p_{T}^{ jet} (GeV/c);1/N_{ jet} dN_{ jet} /dp_{T}",150,0,320,100,0.000002,300);
-  hPadFF = new TH2F("hPadFF",";#xi = ln(1/z);1/N_{ jet} dN_{ track} /d#xi",100,xmin,xmax,100,0.006,20);
+  hPadPt = new TH2F("hPadPt",";p_{T}^{ jet} (GeV/c);1/N_{ jet} dN_{ jet} /dp_{T}",150,xmin,xmax,100,8e-3,20);
+  hPadFF = new TH2F("hPadFF",";#xi = ln(1/z);1/N_{ jet} dN_{ track} /d#xi",100,xmin,xmax,100,0.02,20);
   hPadR = new TH2F("hPadR",";#xi = ln(1/z);PbPb/pp",100,xmin,xmax,20000,rmin,rmax);
   if (cmpStyle==2) hPadR->SetYTitle("PbPb - pp");
 
@@ -155,7 +175,8 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
     if (doNorm) ffpp[ijet][iaj]->SetAxisRange(0.00025,1,"Y");
 
     // Draw Spectrum
-    if(ijet == 1) hPadFF->Draw();
+    if(fragMode==1) hPadPt->Draw();
+    else if(fragMode==2) hPadFF->Draw();
     int iajSys = iaj;
     if (binMode==1) iaj=5-iaj;
     if (fragMode==1) gPad->SetLogx();
@@ -165,10 +186,10 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
     sysff.Apply(ffhi[ijet][iaj]);
     sysff.Draw(ffhi[ijet][iaj]);
 
-    ffppcmp[ijet][iaj]->Draw("hist same");
+    if (doCompare) ffppcmp[ijet][iaj]->Draw("hist same");
     ffpp[ijet][iaj]->Draw(   "hist same");
     ffhi[ijet][iaj]->Draw("same");
-    ffhicmp[ijet][iaj]->Draw("sameE");
+    if (doCompare) ffhicmp[ijet][iaj]->Draw("sameE");
     gPad->RedrawAxis();
 
     // Draw Comparison
@@ -182,7 +203,7 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
     sysff.Combine(ffhi[ijet][iaj],sysff.vErrorRat[ijet][iajSys],sysff.NErrorRatio);
     sysff.ApplyOnRel(ffhi[ijet][iaj],ffpp[ijet][iaj],cmpStyle);
     sysff.Draw(ffratio[ijet][iaj]);
-    ffratiocmp[ijet][iaj]->Draw("sameE");
+    if (doCompare) ffratiocmp[ijet][iaj]->Draw("sameE");
     ffratio[ijet][iaj]->Draw("same");
     if (cmpStyle==1) jumSun(xmin,1,xmax,1);
     else if (cmpStyle==2) jumSun(xmin,0,xmax,0);
@@ -207,15 +228,17 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
      // l2[ijet]->AddEntry(ffhi[ijet][1],"PbPb, 4 Cent. Trk. Eff.","p");
      // l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb, QM12 Trk. Eff.","p");
      // l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp, 100<Jet<300 GeV","l");
-    l2[ijet]->AddEntry(ffhi[ijet][1],"PbPb (Full)","p");
-    l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb QM12","p");
+    l2[ijet]->AddEntry(ffhi[ijet][1],"PbPb","p");
+    if (doCompare==1) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb QM12","p");
     l2[ijet]->AddEntry(ffpp[ijet][1],"pp reference","l");
-    l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp reference QM12","l");
+    if (doCompare==1) l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp reference QM12","l");
   } else {
     l2[ijet]->AddEntry(ffhi[ijet][1],"PYTHIA+HYDJET","p");
-    l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb QM12","p");
+    if (doCompare==1) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb QM12","p");
+    else if (doCompare==2) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb data","p");
     l2[ijet]->AddEntry(ffpp[ijet][1],"PYTHIA","l");
-    l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp reference QM12","l");      
+    if (doCompare==1) l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp reference QM12","l");      
+    else if (doCompare==2) l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp data","l");
   }
   for ( int iaj=1 ; iaj<=4 ; iaj++) {
     c->cd(5-iaj);
@@ -261,7 +284,9 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
     sysff.Combine(ffhi[ijet][icent],sysff.vErrorRat[ijet][icent],sysff.NErrorRatio);
     int doLeg=(icent==4);
     sysff.Inspect(sysff.vErrorRat[ijet][icent],sysff.NErrorRatio,doLeg);
-    drawText(Form("%.0f%% - %.0f%%", float(centBin1[icent-1]*2.5), float(centBin1[icent]*2.5)), 2,0.03,kBlack,25,false);
+    drawText(Form("%.0f%% - %.0f%%", float(centBin1[icent-1]*2.5), float(centBin1[icent]*2.5)), 2,0.6,kBlack,25,false);
   }
+  c2->SaveAs(outdir+Form("/sysana%d_%s.gif",fragMode,tag.Data()));
+  c2->SaveAs(outdir+Form("/sysana%d_%s.pdf",fragMode,tag.Data()));
 }
 
