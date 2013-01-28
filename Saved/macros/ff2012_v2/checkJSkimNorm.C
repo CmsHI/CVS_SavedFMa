@@ -5,9 +5,11 @@
   t0=(TTree*)_file0->Get("tdj");
   t1=(TTree*)_file1->Get("tdj");
   // TCut jetSel="cBin<4 && jetPt>100";
-  TCut jetSel="jetPt>100";
-  TCut usjetSel="jetPt>100";
-  // TCut usjetSel="jetUnSmPt>100";
+  // TCut jetSel="jetPt>100";
+  // TCut usjetSel="jetPt>100";
+  TCut jetSel="jetUnSmPt>100";
+  TCut usjetSel="jetUnSmPt>100";
+  cout << "old: " << usjetSel.GetTitle() << " new: " << jetSel.GetTitle() << endl;
   TCanvas * c2 = new TCanvas("c2","c2",800,400);
   c2->Divide(2,1);
   c2->cd(1);
