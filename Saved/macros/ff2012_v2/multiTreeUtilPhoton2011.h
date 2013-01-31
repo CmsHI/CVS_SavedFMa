@@ -114,9 +114,9 @@ void multiTreeUtil::Draw(TH1D *h, TString expression, TCut cut,TString indWeight
     TCut fCut = cut&&tcuts_[i];
     float nPass;
     if ( indWeight=="") {
-      nPass = trees_[i]->Draw(Form("%s>>my_htmp_%d",expression.Data(),i),  Form("(%s)", fCut.GetTitle() ));
+      nPass = trees_[i]->Draw(Form("%s>>my_htmp_%d",expression.Data(),i),  Form("(%s)", fCut.GetTitle() ), "goff");
     } else {
-      nPass = trees_[i]->Draw(Form("%s>>my_htmp_%d",expression.Data(),i),  Form("(%s) * (%s)", fCut.GetTitle(), indWeight.Data() ) );
+      nPass = trees_[i]->Draw(Form("%s>>my_htmp_%d",expression.Data(),i),  Form("(%s) * (%s)", fCut.GetTitle(), indWeight.Data() ), "goff");
     }
     cout << "cut * weight :  " << nPass << endl << Form("   ( %s )   *   (%s)", fCut.GetTitle(),  indWeight.Data()) << endl;
     cout << " and scale factor = " << double(scaleFactors_[i]) << endl;
@@ -170,26 +170,21 @@ void multiTreeUtil::Draw2D(TH2D *h, TString expression, TCut cut, TString indWei
   h->Reset();
   for (int i=0;i<(int)trees_.size();i++) {
     TString hName = Form("%s_Draw_%d",h->GetName(),i);
-    TH2D *htmp= (TH2D*)h->Clone();
-    htmp->SetName(hName.Data());
+    TH2D *htmp= (TH2D*)h->Clone(hName.Data());
+    htmp->Reset();
     TCut fCut = cut&&tcuts_[i];
     if ( indWeight=="" ) {
-      trees_[i]->Draw(Form("%s>>%s",expression.Data(),hName.Data()), Form("(%s)", fCut.GetTitle() ));
+      trees_[i]->Draw(Form("%s>>%s",expression.Data(),hName.Data()), Form("(%s)", fCut.GetTitle() ), "goff");
     } else {
-      trees_[i]->Draw(Form("%s>>%s",expression.Data(),hName.Data()), Form("( %s ) * %s", fCut.GetTitle(),  indWeight.Data()) );
+      trees_[i]->Draw(Form("%s>>%s",expression.Data(),hName.Data()), Form("( %s ) * %s", fCut.GetTitle(),  indWeight.Data()), "goff");
     }
     htmp->Scale(scaleFactors_[i]);
     h->Add(htmp);
     hComponent[i]=htmp;
   }
-   h->DrawCopy(opt.Data());
+  if (opt!="") h->DrawCopy(opt.Data());
 
   for (int i=0;i<(int)trees_.size();i++) {
-    hComponent[i]->SetLineColor(color[i]);
-    hComponent[i]->SetMarkerColor(color[i]);
-    hComponent[i]->SetFillColor(color[i]);
-    if ( hist) opt ="hist";
-    hComponent[i]->DrawCopy(Form("%s same",opt.Data()));
     delete hComponent[i];
   }
 }
@@ -217,7 +212,7 @@ void multiTreeUtil::Draw3(TH1D *h, TString expression, TCut cut, TString indWeig
     hComponent[i]->SetMarkerColor(color[i]);
     hComponent[i]->SetFillColor(color[i]);
   }
-  h->DrawCopy(opt.Data());
+  if (opt!="") h->DrawCopy(opt.Data());
 
   for (int i=0;i<(int)trees_.size();i++) {
     if ( i<(int)trees_.size() -1 ) {
