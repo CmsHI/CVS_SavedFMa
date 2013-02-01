@@ -4,23 +4,47 @@
 
 void compInclJetFrag()
 {
+  // Jet Selection: used for jet selecting the jets
   // TCut jetSelCut[2] = {"jetPt>100&&jetPt<300","jetPt>100&&jetPt<300"};
   // TCut jetSelCut[2] = {"jetPtGM>100&&jetPtGM<300","jetPtGM>100&&jetPtGM<300"};
-  TCut jetSelCut[2] = {"jetPt>100&&jetPt<300&&jetPtGM>300","jetPtGM<100&&jetPtGM<300"};
+  TCut jetSelCut[2] = {"jetPt>100&&jetPt<300","jetPtGM>100&&jetPtGM<300"};
   // TCut jetSelCut[2] = {"jetPtGM<100","jetPtGM>100&&jetPtGM<300"};
 
-  multiTreeUtil vmt[2];
-  // vmt[0].addFile("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root","tdj", jetSelCut[0] && "pthat>=80&&pthat<120", 9.913e-5*1.e9); // no centrality cut
-  // vmt[0].addFile("../ntout/jskim_dj120_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root","tdj", jetSelCut[0] && "pthat>=120&&pthat<9999", 1.128e-5*1.e9); // no centrality cut
-  vmt[0].addFile("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root","tdj", jetSelCut[0] && "pthat>=80&&pthat<120", 9.913e-5*1.e9); // no centrality cut
-  vmt[0].addFile("../ntout/jskim_dj120_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root","tdj", jetSelCut[0] && "pthat>=120&&pthat<9999", 1.128e-5*1.e9); // no centrality cut
-
-  vmt[1].addFile("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root","tdj", jetSelCut[1] && "pthat>=80&&pthat<120", 9.913e-5*1.e9); // no centrality cut
-  vmt[1].addFile("../ntout/jskim_dj120_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root","tdj", jetSelCut[1] && "pthat>=120&&pthat<9999", 1.128e-5*1.e9); // no centrality cut
-
+  // Jet Alias: used for plotting the selected jets.
   // TString jetAlias[2] = {"jetPt","jetPt"};
   // TString jetAlias[2] = {"jetPtGM","jetPtGM"};
   TString jetAlias[2] = {"jetPt","jetPtGM"};
+
+  multiTreeUtil vmt[2];
+  // measurement in MC
+  // smeared pp
+  // vmt[0].addFile("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root","tdj", jetSelCut[0] && "pthat>=80&&pthat<120", 9.913e-5*1.e9); // no centrality cut
+  // vmt[0].addFile("../ntout/jskim_dj120_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root","tdj", jetSelCut[0] && "pthat>=120&&pthat<9999", 1.128e-5*1.e9); // no centrality cut
+  // unsmeared pp
+  // vmt[0].addFile("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root","tdj", jetSelCut[0] && "pthat>=80&&pthat<120", 9.913e-5*1.e9); // no centrality cut
+  // vmt[0].addFile("../ntout/jskim_dj120_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root","tdj", jetSelCut[0] && "pthat>=120&&pthat<9999", 1.128e-5*1.e9); // no centrality cut
+  // pbpb
+  TCut centCut = "cBin>=0&&cBin<4";
+  vmt[0].addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut[0] && centCut && "pthat>=80&&pthat<100",9.913e-5*1.e9);
+  // vmt[0].addFile("../ntout/jskim_hydj120_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut[0] && centCut && "pthat>=120&&pthat<9999",1.128e-5*1.e9);
+  vmt[0].addFile("../ntout/jskim_hydj100_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut[0] && centCut && "pthat>=100&&pthat<9999",3.069e-5*1.e9);
+  // vmt[0].addFile("../ntout/jskim_hydj120_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut[0] && centCut && "pthat>=120&&pthat<9999",1.128e-5*1.e9);
+
+  // reference
+  // unsmeared pp
+  // vmt[1].addFile("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root","tdj", jetSelCut[1] && "pthat>=80&&pthat<120", 9.913e-5*1.e9); // no centrality cut
+  // vmt[1].addFile("../ntout/jskim_dj120_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root","tdj", jetSelCut[1] && "pthat>=120&&pthat<9999", 1.128e-5*1.e9); // no centrality cut
+  // smeared pp
+  // vmt[1].addFile("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root","tdj", jetSelCut[1] && "pthat>=80&&pthat<120", 9.913e-5*1.e9); // no centrality cut
+  // vmt[1].addFile("../ntout/jskim_dj120_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root","tdj", jetSelCut[1] && "pthat>=120&&pthat<9999", 1.128e-5*1.e9); // no centrality cut
+  // pbpb
+  vmt[1].addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut[1] && centCut && "pthat>=80&&pthat<100",9.913e-5*1.e9);
+  vmt[1].addFile("../ntout/jskim_hydj100_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut[1] && centCut && "pthat>=100&&pthat<9999",3.069e-5*1.e9);
+
+  for (int i=0; i<2; ++i) {
+    vmt[i].NormalizeScales(2,"","hEvtCentNoSkim");
+  }
+
   for (int i=0; i<2; ++i) {
     vmt[i].AddFriend("yTrk=yongsunTrack");
     vmt[i].AddFriend("genPar");
@@ -43,6 +67,7 @@ void compInclJetFrag()
   c0->Divide(2,1);
   c0->cd(1);
   gPad->SetLogy();
+  cleverRange(hJetPt[0],hJetPt[1],5);
   hJetPt[0]->DrawCopy("E");
   hJetPt[1]->DrawCopy("same hist");
   c0->cd(2);
@@ -63,7 +88,8 @@ void compInclJetFrag()
   // TCut trkCut="yTrk.jetMatch==1 && yTrk.jetDr<0.30 && yTrk.pt>1.00 && yTrk.pt<300.00";
   // TString trkWeight="(yTrk.trkWeight)";
   // TString trkWeight="(yTrk.trkWeight*(yTrk.trkWeight<3.5)+1.47*(yTrk.trkWeight>=3.5))";
-  TCut trkCut="abs(genPar.chg)>0 && (genPar.jetMatch==1) && (genPar.jetDr<0.30) && (genPar.pt>1.00 && genPar.pt<300.00)";
+  TCut trkCut="abs(genPar.chg)>0 && genPar.jetMatch==1 && genPar.jetDr<0.30 && genPar.pt>1.00 && genPar.pt<300.00";
+  trkCut=trkCut&&"genPar.sube==0";
   TString trkWeight="1";
   TH1D * hTrkPt[2], * hXi[2];
   for (int i=0; i<2; ++i) {
