@@ -40,10 +40,10 @@ void drawInclJetFrag() {
   /////////////////////////////////////////////////////////////////
   TH1::SetDefaultSumw2();
 
-  bool doHIMC = 0;
+  bool doHIMC = 1;
   bool doHIDATA = 1;
   bool doPPDATA = 1;
-  bool doPPMC = 0;
+  bool doPPMC = 1;
   bool usingPara = false;
   
   // doClosure  //////
@@ -57,10 +57,10 @@ void drawInclJetFrag() {
     float trackPtMax = ptranges[ip+1];
     for (int fragMode = 1; fragMode<=2 ; fragMode++) {
       if ( doPPMC ) {
-        drawInclJetFragSingleSet(fragMode, kPPMC, trackPtMin,trackPtMax, 100, usingPara);     
-        // drawInclJetFragSingleSet(fragMode, kPPMC, trackPtMin,trackPtMax, 101, usingPara);     
-        // drawInclJetFragSingleSet(fragMode, kPPMC, trackPtMin,trackPtMax, 102, usingPara);     
-        // drawInclJetFragSingleSet(fragMode, kPPMC, trackPtMin,trackPtMax, 100, usingPara,1);     
+        drawInclJetFragSingleSet(fragMode, kPPMC, trackPtMin,trackPtMax, 100, usingPara);
+        drawInclJetFragSingleSet(fragMode, kPPMC, trackPtMin,trackPtMax, 101, usingPara);
+        drawInclJetFragSingleSet(fragMode, kPPMC, trackPtMin,trackPtMax, 102, usingPara);
+        // drawInclJetFragSingleSet(fragMode, kPPMC, trackPtMin,trackPtMax, 100, usingPara,1);
       }
       if ( doHIMC ) {
         drawInclJetFragSingleSet(fragMode, kHIMC, trackPtMin,trackPtMax, 100, usingPara);
@@ -175,11 +175,14 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   ///////////////////////////////////////////////////////
   // Setup cuts
   ///////////////////////////////////////////////////////
-  float finalEtaCut = 2.0;
+  // float finalEtaCut = 2.0;
+  float finalEtaCut = 0.8;
   float finalJetPtMin = 100;
   float finalJetPtMax = 300;
   TCut jetSelCut = Form("finalJetPt>=%.0f&&finalJetPt<%.0f",finalJetPtMin,finalJetPtMax);
+  // TCut jetSelCut = Form("finalJetPt>=%.0f&&finalJetPt<%.0f&&jetPtGM>100",finalJetPtMin,finalJetPtMax);
   // TCut jetSelCut = Form("jetPtGM>=%.0f&&jetPtGM<%.0f",finalJetPtMin,finalJetPtMax);
+  // jetSelCut=jetSelCut&&"abs(vz)<4";
   
   TCut centCut = "1==1";
   if ( (icent >= 1) && (icent<=4) )
@@ -214,11 +217,15 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
     dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root","tdj", jetSelCut && centCut,1);
     // dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan26_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm3bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut,1);
   } else if ( dataset == kHIMC) {
+
+
     // dj->addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut && "pthat>=80&&pthat<9999", 9.913e-5*1.e9);
     // dj->addFile("../ntout/jskim_hydj50_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut && "pthat>=50&&pthat<80", 1.021e-3*1.e9);
+    // dj->addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=80&&pthat<100",9.913e-5*1.e9);
+    // dj->addFile("../ntout/jskim_hydj100_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=100&&pthat<120",3.069e-5*1.e9);
+    // dj->addFile("../ntout/jskim_hydj120_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=120&&pthat<9999",1.128e-5*1.e9);
     dj->addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=80&&pthat<100",9.913e-5*1.e9);
-    dj->addFile("../ntout/jskim_hydj100_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=100&&pthat<120",3.069e-5*1.e9);
-    dj->addFile("../ntout/jskim_hydj120_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=120&&pthat<9999",1.128e-5*1.e9);
+    dj->addFile("../ntout/jskim_hydj100_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=100&&pthat<9999",3.069e-5*1.e9);
     // dj->addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut && "pthat>=80&&pthat<100", 9.913e-5*1.e9);
     // dj->addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut && "pthat>=80&&pthat<9999", 3.069e-5*1.e9);
   } else if ( dataset == kPPDATA) {
@@ -246,8 +253,8 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
     dj->AddFriend("genPar");
 //     dj->AddFriend("mGenPar");
   }
-  // dj->SetAlias("finalJetPt","jetPt");
-  dj->SetAlias("finalJetPt","(jetPt*(0.935+0.065*cBin/40.))"); // systematic check for uncertainty in jes
+  dj->SetAlias("finalJetPt","jetPt");
+  // dj->SetAlias("finalJetPt","(jetPt*(0.935+0.065*cBin/40.))"); // systematic check for uncertainty in jes
   cout << "finalJetPt = " << dj->trees_[0]->GetAlias("finalJetPt") << endl;
   
   cout << " ================================================= " << endl;
@@ -446,8 +453,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   gPad->SetLogy();
   drawText("Jet p_{T}", 0.55,0.63,1);
   
-  // TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Jan17mc80and100and120_hi",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
-  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Jan17dataJes0.935extrap_hi_pprewt",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
+  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Jan17data_and_mc80and100",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
 
   if ( fragMode==2) {
     c1->SaveAs(Form("plotsOfInclJetFF/inclJetFF_xi_doClosure%d_icent%d_irj%d_%s_%s%s_%s.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data(),outnameTag.Data()));
