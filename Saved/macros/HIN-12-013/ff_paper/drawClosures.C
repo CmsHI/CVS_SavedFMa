@@ -24,21 +24,23 @@ void drawClosures() {
   Plot4x4::title2="Gen. Particles";
   // Plot4x4::title1="All Gen. Particles";
   // Plot4x4::title2="Sig. Gen Particles";
-  Plot4x4::outpath="closure/mcgenp";
+  Plot4x4::outpath="closure/mc_trk_clos102_refpt_gt100";
   TFile outf(Plot4x4::outpath+".root","recreate"); outf.Close();
 
   makeMultiPanelCanvas(c1,4,2,0.0,0.0,0.25,0.2,0.02);
   // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
   // reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
-  infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100and120_hi.root";
-  reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100and120_hi.root";
+  infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi_refpt_gt100.root";
+  reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi_refpt_gt100.root";
+  cout << "Study:     " << infname << endl;
+  cout << "Reference: " << reffname << endl;
   TH1D * h[3][5], * href[3][5];
   for ( int icent=1; icent<=4 ; icent++) {
     h[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_himc_icent%d_irj999_fragMode2_closure102_jtrewt0_",icent));
     href[ijet][icent] = (TH1D*)load(reffname,Form("hjetPt_himc_icent%d_irj999_fragMode2_closure101_jtrewt0_",icent));
   }
   Plot4x4 p1(h,href,1,"jetpt");
-  p1.Draw(c1,100,299.9);
+  p1.Draw(c1,90,299.9);
   p1.DrawLeg(c1,3);
 
   int ana[2] = {1,2};

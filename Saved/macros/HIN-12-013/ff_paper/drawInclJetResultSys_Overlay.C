@@ -17,6 +17,7 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   int cmpStyle = 1, // 1=ratio, 2=diff
   int jtrewthi = 1,
   int jtrewtpp = 1,
+  int doMC=1,
   bool doEtaRef = true ) 
 { 
   TH1::SetDefaultSumw2();
@@ -40,14 +41,18 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   //////////////////////////////////////////////////////////////////////
   std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_pprewt.root";
   std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_pprewt.root";
+  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta0.80_Jan17data_and_mc80and100.root";
+  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta0.80_Jan17data_and_mc80and100.root";
 
-  int doMC=1;
   // mc
   if (doMC) {
     // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcrefjetsel.root";
     // Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcrefjetsel.root";
-    Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
+    // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
+    Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi.root";
     Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_pp.root";
+    // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta0.80_Jan17data_and_mc80and100.root";
+    // Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta0.80_Jan17data_and_mc80and100.root";
     doCompare=2;
   }
 
@@ -230,8 +235,10 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
      // l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp, 100<Jet<300 GeV","l");
     l2[ijet]->AddEntry(ffhi[ijet][1],"PbPb","p");
     if (doCompare==1) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb QM12","p");
+    else if (doCompare==2) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb data","p");
     l2[ijet]->AddEntry(ffpp[ijet][1],"pp reference","l");
     if (doCompare==1) l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp reference QM12","l");
+    else if (doCompare==2) l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp data","l");
   } else {
     l2[ijet]->AddEntry(ffhi[ijet][1],"PYTHIA+HYDJET","p");
     if (doCompare==1) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb QM12","p");

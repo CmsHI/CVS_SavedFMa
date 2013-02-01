@@ -335,15 +335,17 @@ public:
     // fit errors
     for(int ie = 0; ie< Nerror; ++ie){
       if (ana==1) {
-        fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol4",xmin,xmax*2);
-        if (ie==1||ie==3) he[ie]->Fit(fe[ie],"QNRll","",xmin,xmax*1.5);
+        if (ie==0) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol5",xmin,xmax*2);
+        else       fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol4",xmin,xmax*2);
+        if (ie==0) he[ie]->Fit(fe[ie],"QNRll","",xmin,xmax*1.2);
+        else if (ie==1||ie==3) he[ie]->Fit(fe[ie],"QNRll","",xmin,xmax*1.5);
         else he[ie]->Fit(fe[ie],"QNRw","",xmin,xmax*1.5);
       } else if (ana==2) {
-        if (ie==0) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",0,6);
+        if (ie==0) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol8",0,6);
         else if (ie==4) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",0,6);
         else if (ie<6) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",0,5.5);
         else fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol4",0,5.5);
-        if (ie==0) he[ie]->Fit(fe[ie],"QRNw",0,5.5);
+        if (ie==0) he[ie]->Fit(fe[ie],"QRNll","",0,5.5);
         else if (ie==4) he[ie]->Fit(fe[ie],"QRNll","",0.5,5.5);
         else he[ie]->Fit(fe[ie],"QRN","",0,5.5);
         // if (ie==0) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",xmin,xmax);
