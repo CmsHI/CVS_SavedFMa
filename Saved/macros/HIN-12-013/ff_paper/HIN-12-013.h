@@ -44,6 +44,7 @@ public:
       // Get Ratio
       hrat[ijet][icent]  = (TH1D*)h[ijet][icent]->Clone(Form("%s_ratio",h[ijet][icent]->GetName()));
       hrat[ijet][icent]->Divide(href[ijet][icent]);
+      hrat[ijet][icent]->SetYTitle("Ratio");
     }
   }
 
@@ -201,7 +202,8 @@ public:
       // ff paper
     // const char* JESfile = "./systematics/data_sysjes.root";
     // const char* JESfile = "./systematics/data_sysjes1.07.root";
-    const char* JESfile = "./systematics/data_sysjes0.935exptra.root";
+    // const char* JESfile = "./systematics/data_sysjes0.935exptra.root";
+    const char* JESfile = "./systematics/data_sysjes0.949exptrap.root";
     const char* JetResfile = "./systematics/data_sysjer.root";
     const char* BkgSubfile = "./systematics/bkgsub_sys.root";
     const char* TrkClosurefile = "./systematics/mctrk.root";
@@ -341,7 +343,7 @@ public:
         else if (ie==1||ie==3) he[ie]->Fit(fe[ie],"QNRll","",xmin,xmax*1.5);
         else he[ie]->Fit(fe[ie],"QNRw","",xmin,xmax*1.5);
       } else if (ana==2) {
-        if (ie==0) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol8",0,6);
+        if (ie==0) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol5",0,6);
         else if (ie==4) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",0,6);
         else if (ie<6) fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol3",0,5.5);
         else fe[ie] = new TF1(Form("%s_fit_%d",h->GetName(),ie),"pol4",0,5.5);
@@ -675,10 +677,12 @@ void GetQM12TrkPt(  TH1D* ffppcmp[3][5], TH1D* ffhicmp[3][5]) {
   hTrk4->SetBinError(28,0.001373209);
   hTrk4->SetEntries(26431.71);
 
-  ffhicmp[1][1]=hTrk1;
-  ffhicmp[1][2]=hTrk2;
-  ffhicmp[1][3]=hTrk3;
-  ffhicmp[1][4]=hTrk4;
+  if (ffhicmp) {
+    ffhicmp[1][1]=hTrk1;
+    ffhicmp[1][2]=hTrk2;
+    ffhicmp[1][3]=hTrk3;
+    ffhicmp[1][4]=hTrk4;
+  }
 
   // pp
   TH1D *hTrkmc1 = new TH1D("hTrkmc1"," zy projection",27, xAxis1);
@@ -901,8 +905,10 @@ void GetQM12TrkPt(  TH1D* ffppcmp[3][5], TH1D* ffhicmp[3][5]) {
   hTrkmc4->SetBinError(28,0.001205137);
   hTrkmc4->SetEntries(42172.03);
 
-  ffppcmp[1][1]=hTrkmc1;
-  ffppcmp[1][2]=hTrkmc2;
-  ffppcmp[1][3]=hTrkmc3;
-  ffppcmp[1][4]=hTrkmc4;
+  if (ffppcmp) {
+    ffppcmp[1][1]=hTrkmc1;
+    ffppcmp[1][2]=hTrkmc2;
+    ffppcmp[1][3]=hTrkmc3;
+    ffppcmp[1][4]=hTrkmc4;
+  }
 }

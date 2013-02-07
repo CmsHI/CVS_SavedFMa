@@ -21,23 +21,27 @@ void drawClosures() {
 
   TCanvas* c1 =new TCanvas("c1","",1000,600);
   Plot4x4::title1="Reco. Tracks";
-  Plot4x4::title2="Gen. Particles";
+  Plot4x4::title2="Sig Gen. Particles";
   // Plot4x4::title1="All Gen. Particles";
   // Plot4x4::title2="Sig. Gen Particles";
-  Plot4x4::outpath="closure/mc_trk_clos102_refpt_gt100";
+  // Plot4x4::outpath="closure/mc_trk_clos102_refpt_gt100";
+  // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
+  // reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
+  // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi_refpt_gt100.root";
+  // reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi_refpt_gt100.root";
+  // Pyquen wide xcheck
+  infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcquenwide80and100_hi.root";
+  reffname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcquenwide80and100_hi.root";
+  Plot4x4::outpath="closure/mc_trk_clos100vs102_pyquenwide";
   TFile outf(Plot4x4::outpath+".root","recreate"); outf.Close();
 
   makeMultiPanelCanvas(c1,4,2,0.0,0.0,0.25,0.2,0.02);
-  // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
-  // reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
-  infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi_refpt_gt100.root";
-  reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi_refpt_gt100.root";
   cout << "Study:     " << infname << endl;
   cout << "Reference: " << reffname << endl;
   TH1D * h[3][5], * href[3][5];
   for ( int icent=1; icent<=4 ; icent++) {
-    h[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_himc_icent%d_irj999_fragMode2_closure102_jtrewt0_",icent));
-    href[ijet][icent] = (TH1D*)load(reffname,Form("hjetPt_himc_icent%d_irj999_fragMode2_closure101_jtrewt0_",icent));
+    h[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_himc_icent%d_irj999_fragMode2_closure100_jtrewt0_",icent));
+    href[ijet][icent] = (TH1D*)load(reffname,Form("hjetPt_himc_icent%d_irj999_fragMode2_closure102_jtrewt0_",icent));
   }
   Plot4x4 p1(h,href,1,"jetpt");
   p1.Draw(c1,90,299.9);
@@ -50,8 +54,8 @@ void drawClosures() {
       TCanvas* c2 =new TCanvas(Form("c2_%d_%d",ana[ia],isub),Form("c2_%d_%d",ana[ia],isub),1000,600);
       makeMultiPanelCanvas(c2,4,2,0.0,0.0,0.25,0.2,0.02);
       for ( int icent=1; icent<=4 ; icent++) {
-        h[ijet][icent]    = (TH1D*)load(infname,  Form("hpt_jet_%sTrk_himc_icent%d_irj999_fragMode%d_closure102_jtrewt0_wtmode0_pt1to300",sub[isub].Data(),icent,ana[ia]));
-        href[ijet][icent] = (TH1D*)load(reffname, Form("hpt_jet_%sTrk_himc_icent%d_irj999_fragMode%d_closure101_jtrewt0_wtmode0_pt1to300",sub[isub].Data(),icent,ana[ia]));
+        h[ijet][icent]    = (TH1D*)load(infname,  Form("hpt_jet_%sTrk_himc_icent%d_irj999_fragMode%d_closure100_jtrewt0_wtmode0_pt1to300",sub[isub].Data(),icent,ana[ia]));
+        href[ijet][icent] = (TH1D*)load(reffname, Form("hpt_jet_%sTrk_himc_icent%d_irj999_fragMode%d_closure102_jtrewt0_wtmode0_pt1to300",sub[isub].Data(),icent,ana[ia]));
       }
       Plot4x4 p2(h,href,0,Form("ffana%d_sub%d",ana[ia],isub));
       if (ana[ia]==1) {

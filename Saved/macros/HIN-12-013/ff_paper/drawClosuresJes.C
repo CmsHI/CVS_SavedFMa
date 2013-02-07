@@ -19,13 +19,15 @@ void drawClosuresJes() {
   // Setup
   int ijet=1;
   TString infname,reffname;
-  Plot4x4::title1="JES*{0.97 to 0.935)";
+  Plot4x4::title1="JES*{0.97 to 0.949)";
   Plot4x4::title2="JES*1";
   // Inputs
   // data
-  infname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17dataJes0.935extrap_hi_pprewt.root";
-  reffname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_pprewt.root";
-  Plot4x4::outpath="closure/data_sysjes0.935exptra";
+  // infname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17dataJes0.935extrap_hi_pprewt.root";
+  // reffname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_pprewt.root";
+  infname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_and_mc80and100_Jes0.949extrap.root";
+  reffname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_and_mc80and100.root";
+  Plot4x4::outpath="closure/data_sysjes0.949exptrap";
 
   int doMC=0;
 

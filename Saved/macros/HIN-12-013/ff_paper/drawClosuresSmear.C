@@ -30,7 +30,6 @@ void drawClosuresSmear() {
   // reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
   // Plot4x4::outpath="closure/mc_ppsmear";
   // pbpb vs pp
-  // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100and120_hi.root";
   infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi.root";
   reffname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_pp.root";
   Plot4x4::outpath="closure/mc_hipp_clos102";
