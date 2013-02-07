@@ -175,8 +175,8 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   ///////////////////////////////////////////////////////
   // Setup cuts
   ///////////////////////////////////////////////////////
-  // float finalEtaCut = 2.0;
-  float finalEtaCut = 0.8;
+  float finalEtaCut = 2.0;
+  // float finalEtaCut = 1.2;
   float finalJetPtMin = 100;
   float finalJetPtMax = 300;
   TCut jetSelCut = Form("finalJetPt>=%.0f&&finalJetPt<%.0f",finalJetPtMin,finalJetPtMax);
