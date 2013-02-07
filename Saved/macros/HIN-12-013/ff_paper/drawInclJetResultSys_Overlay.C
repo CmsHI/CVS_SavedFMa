@@ -17,7 +17,7 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   int cmpStyle = 1, // 1=ratio, 2=diff
   int jtrewthi = 1,
   int jtrewtpp = 1,
-  int doMC=1,
+  int doMC=0,
   bool doEtaRef = true ) 
 { 
   TH1::SetDefaultSumw2();
@@ -26,14 +26,13 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   // Setup
   //////////////////////////////////////////////////////////////////////
   int binMode =2; // 1 : aj, 2 : cent
-  int doCompare=1;
+  int doCompare=1; // 1=qm12, 2=paper data
 
   TString tag = Form("trkPtProj_binMode2_hi_rewt%d_pp_rewt%d",jtrewthi,jtrewtpp);
+  // tag+="_eta1.2";
   if (cmpStyle==1) tag += "_rat";
   else tag += "_diff";
   if (doEtaRef) tag += "_EtaRef";
-  if (doCompare==1) tag+="_vs_qm12";
-  if (doCompare==2) tag+="_vs_data";
   TString outdir="plotsFinalFF";
 
   //////////////////////////////////////////////////////////////////////
@@ -41,8 +40,11 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   //////////////////////////////////////////////////////////////////////
   std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_pprewt.root";
   std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_hi_pprewt.root";
-  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta0.80_Jan17data_and_mc80and100.root";
-  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta0.80_Jan17data_and_mc80and100.root";
+  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta1.20_Jan17data_and_mc80and100.root";
+  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta1.20_Jan17data_and_mc80and100.root";
+  // higher jet pt thresholds
+  // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt120to300eta2.00_Jan17data_and_mc80and100.root";
+  // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt120to300eta2.00_Jan17data_and_mc80and100.root";
 
   // mc
   if (doMC) {
@@ -51,10 +53,12 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
     // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
     Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi.root";
     Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_pp.root";
-    // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta0.80_Jan17data_and_mc80and100.root";
-    // Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta0.80_Jan17data_and_mc80and100.root";
+    // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta1.20_Jan17data_and_mc80and100.root";
+    // Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta1.20_Jan17data_and_mc80and100.root";
     doCompare=2;
   }
+  if (doCompare==1) tag+="_vs_qm12";
+  if (doCompare==2) tag+="_vs_data";
 
   std::string Input_QM="dijetFF_output_histograms_trkPtProjectOnJetAxis_trackPtCut1_FinaletaCut2.00_pas.root";
   TString cmpFile = Input_QM.data();
@@ -147,9 +151,10 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   if (fragMode==1) { xmin=1; xmax=51; }
   if (cmpStyle==2) { rmin=-0.8; rmax=1.8; }
   TH2F * hPadFF, *hPadR, * hPadPt;
-  hPadPt = new TH2F("hPadPt",";p_{T}^{ jet} (GeV/c);1/N_{ jet} dN_{ jet} /dp_{T}",150,xmin,xmax,100,8e-3,20);
+  hPadPt = new TH2F("hPadPt",";p_{T}^{ jet} (GeV/c);1/N_{ jet} dN_{ jet} /dp_{T}",150,xmin,xmax,100,6e-3,20);
   hPadFF = new TH2F("hPadFF",";#xi = ln(1/z);1/N_{ jet} dN_{ track} /d#xi",100,xmin,xmax,100,0.02,20);
   hPadR = new TH2F("hPadR",";#xi = ln(1/z);PbPb/pp",100,xmin,xmax,20000,rmin,rmax);
+  if (fragMode==1) hPadR->SetXTitle("p_{T}^{Track} (GeV/c)");
   if (cmpStyle==2) hPadR->SetYTitle("PbPb - pp");
 
   handsomeTH1(hPadFF,1,1.2);
@@ -235,17 +240,17 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
      // l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp, 100<Jet<300 GeV","l");
     l2[ijet]->AddEntry(ffhi[ijet][1],"PbPb","p");
     if (doCompare==1) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb QM12","p");
-    else if (doCompare==2) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb data","p");
+    else if (doCompare==2) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb (paper)","p");
     l2[ijet]->AddEntry(ffpp[ijet][1],"pp reference","l");
     if (doCompare==1) l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp reference QM12","l");
-    else if (doCompare==2) l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp data","l");
+    else if (doCompare==2) l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp (paper)","l");
   } else {
     l2[ijet]->AddEntry(ffhi[ijet][1],"PYTHIA+HYDJET","p");
     if (doCompare==1) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb QM12","p");
-    else if (doCompare==2) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb data","p");
+    else if (doCompare==2) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb (paper)","p");
     l2[ijet]->AddEntry(ffpp[ijet][1],"PYTHIA","l");
     if (doCompare==1) l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp reference QM12","l");      
-    else if (doCompare==2) l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp data","l");
+    else if (doCompare==2) l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp (paper)","l");
   }
   for ( int iaj=1 ; iaj<=4 ; iaj++) {
     c->cd(5-iaj);
@@ -272,6 +277,8 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
     if (iaj==1) {
       float ptx(0.08),pty1(0.89);
       drawText("Jet p_{T}  > 100GeV/c, |#eta| < 2",ptx,pty1,kBlack,25);
+      // drawText("Jet p_{T}  > 100GeV/c, |#eta| < 1.2",ptx,pty1,kBlack,25);
+      // drawText("Jet p_{T}  > 120GeV/c, |#eta| < 2",ptx,pty1,kBlack,25);
       drawText("Track p_{T}  > 1 GeV/c, r < 0.3",ptx,pty1-0.09,kBlack,25);
     }
   }
