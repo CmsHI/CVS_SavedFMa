@@ -45,20 +45,27 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   // higher jet pt thresholds
   // std::string Input_="inclJetFF_output_trackPtCut1_FinalJetPt120to300eta2.00_Jan17data_and_mc80and100.root";
   // std::string Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt120to300eta2.00_Jan17data_and_mc80and100.root";
-
+  
   // mc
   if (doMC) {
     // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcrefjetsel.root";
     // Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcrefjetsel.root";
     // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
-    Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi.root";
-    Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_pp.root";
-    // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta1.20_Jan17data_and_mc80and100.root";
-    // Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta1.20_Jan17data_and_mc80and100.root";
+    // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi.root";
+    // Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_pp.root";
+    Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta1.20_Jan17data_and_mc80and100.root";
+    Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta1.20_Jan17data_and_mc80and100.root";
+    // Input_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_refpt_gt100.root";
+    // Inputpp_="inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_refpt_gt100.root";
     doCompare=2;
   }
   if (doCompare==1) tag+="_vs_qm12";
   if (doCompare==2) tag+="_vs_data";
+
+  float finalEtaCut=2.;
+  TString addText="";
+  // addText+="genjet > 100 GeV/c";
+  // tag+="_refpt_gt100";
 
   std::string Input_QM="dijetFF_output_histograms_trkPtProjectOnJetAxis_trackPtCut1_FinaletaCut2.00_pas.root";
   TString cmpFile = Input_QM.data();
@@ -90,7 +97,10 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
     handsomeTH1(ffpp[ijet][iaj],1,1.3);
     handsomeTH1(ffhi[ijet][iaj],1,1.3);
   }
-  if (doMC) tag += "_mc80and120";
+  if (doMC) {
+    tag += "_mc80and120_clos100";
+    // addText += ", all genp";
+  }
 
   /////////////////////////////////////////////////
   // Get Comparison Histograms
@@ -259,6 +269,7 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
       drawText("CMS Preliminary",0.27,0.9,1,25); 
       // drawText("L_{Int} = 129 #mub^{-1}",0.27,0.80,1,25);
       if (!doMC) drawText("L_{Int} = 150 #mub^{-1}",0.27,0.80,1,25);
+      if (addText) drawText(addText,0.27,0.75,1,25);
     }
     float legdx = 0.2;
     if (binMode==1&&iaj==4) legdx=+0.15;
@@ -276,9 +287,7 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
 
     if (iaj==1) {
       float ptx(0.08),pty1(0.89);
-      drawText("Jet p_{T}  > 100GeV/c, |#eta| < 2",ptx,pty1,kBlack,25);
-      // drawText("Jet p_{T}  > 100GeV/c, |#eta| < 1.2",ptx,pty1,kBlack,25);
-      // drawText("Jet p_{T}  > 120GeV/c, |#eta| < 2",ptx,pty1,kBlack,25);
+      drawText(Form("Jet p_{T}  > 100GeV/c, |#eta| < %.1f",finalEtaCut),ptx,pty1,kBlack,25);
       drawText("Track p_{T}  > 1 GeV/c, r < 0.3",ptx,pty1-0.09,kBlack,25);
     }
   }
