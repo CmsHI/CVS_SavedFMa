@@ -91,20 +91,20 @@ double HiForest::getTrackCorrection(int j)
    if (initialized) {
       // check if the leading and subleading jet is found
       if (leadingJetPtForTrkCor<-1) {
-      // Select leading and subleading jet
+         // Select leading and subleading jet
          for (int k=0; k<akPu3PF.nref; k++) {
             if (fabs(akPu3PF.jteta[k])>2) continue;
             if (akPu3PF.jtpt[k]>leadingJetPtForTrkCor) {
-     	       leadingJetPtForTrkCor = akPu3PF.jtpt[k];
-	       leadingJetEtaForTrkCor = akPu3PF.jteta[k];
-	       leadingJetPhiForTrkCor = akPu3PF.jtphi[k];
-   	    }   
-	    if (akPu3PF.jtpt[k]>subleadingJetPtForTrkCor && akPu3PF.jtpt[k] < leadingJetPtForTrkCor) {
-	       subleadingJetPtForTrkCor = akPu3PF.jtpt[k];
-	       subleadingJetEtaForTrkCor = akPu3PF.jteta[k];
-	       subleadingJetPhiForTrkCor = akPu3PF.jtphi[k];
+               leadingJetPtForTrkCor = akPu3PF.jtpt[k];
+               leadingJetEtaForTrkCor = akPu3PF.jteta[k];
+               leadingJetPhiForTrkCor = akPu3PF.jtphi[k];
+            }   
+            if (akPu3PF.jtpt[k]>subleadingJetPtForTrkCor && akPu3PF.jtpt[k] < leadingJetPtForTrkCor) {
+               subleadingJetPtForTrkCor = akPu3PF.jtpt[k];
+               subleadingJetEtaForTrkCor = akPu3PF.jteta[k];
+               subleadingJetPhiForTrkCor = akPu3PF.jtphi[k];
             }
-	    if (akPu3PF.jtpt[k]<subleadingJetPtForTrkCor) break;	 
+            if (akPu3PF.jtpt[k]<subleadingJetPtForTrkCor) break;	 
          }
       }
    } else {
