@@ -143,6 +143,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   bool doIcPu5CaloSkim = false;
   float tempJetEtaCut  = 2;
   float drMatching = 0.3;
+  // float drMatching = 0.5;
 
   bool saveOnlyJetConeTrks = true;
   bool saveMixTracks = true; 
@@ -174,8 +175,11 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   // XCheck Histograms
   TH1D * hEvtCentNoSkim = new TH1D("hEvtCentNoSkim",";Centrality Bin;",40,0,40);
   TH1D * hEvtCent = new TH1D("hEvtCent",";Centrality Bin;",40,0,40);
-  TH1D * hEvtVz = new TH1D("hEvtVz",";vz (cm);",240,-30,30);
+  TH1D * hEvtVz = new TH1D("hEvtVz",";vz (cm);",60,-30,30);
   TH1D * hEvtPtHat = new TH1D("hEvtPtHat",";#hat{p}_{T} (GeV/c);",100,0,500);
+  TH1D * hEvtCentPtHat80 = new TH1D("hEvtCentPtHat80",";Centrality Bin;",40,0,40);
+  TH1D * hEvtVzPtHat80 = new TH1D("hEvtVzPtHat80",";vz (cm);",60,-30,30);
+  TH1D * hEvtPtHat80 = new TH1D("hEvtPtHat80",";#hat{p}_{T} (GeV/c);",100,0,500);
   TH1D * hSmJetPtRaw = new TH1D("hSmJetPtRaw",";Leading Jet p_{T} (GeV/c);",100,0,300);
   TH1D * hSmJetPtSm = new TH1D("hSmJetPtSm",";Leading Jet p_{T} (GeV/c);",100,0,300);
   TH1D * hJet1Pt = new TH1D("hJet1Pt",";Leading Jet p_{T} (GeV/c);",100,0,300);
@@ -470,11 +474,28 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
     int vzBin = hvz->FindBin(evt.vz) -1;
     if ( (vzBin<0) || ( vzBin >= nVtxBin) ) continue;
     // New centrality bin 
-    int cBin2 = evt.cBin;     //   cent2Hist->FindBin(c->evt.hiHF) -1 ; // ok.. go back to 40 centrality bins                           
+    int cBin2 = evt.cBin;     //   cent2Hist->FindBin(c->evt.hiHF) -1 ; // ok.. go back to 40 centrality bins
+    // Pt hat determination for mc analysis
+    int leadingIndex=-1;
+    float pt1=-99;
+    for (int j=0;j<c->akPu3PF.nref;j++) {
+      if (c->akPu3PF.jtpt[j]<40) continue;
+      if (fabs(c->akPu3PF.jteta[j])>2) continue;
+      if (c->akPu3PF.jtpt[j] > pt1) {
+        pt1 = c->akPu3PF.jtpt[j];
+        leadingIndex = j;
+      }
+    }
+    if (isMC && leadingIndex>=0&&c->akPu3PF.subid[leadingIndex]>0) continue; // protection against high pt jet from background event
     // check
     hEvtCent->Fill(evt.cBin);
     hEvtVz->Fill(evt.vz);
     hEvtPtHat->Fill(c->akPu3PF.pthat);
+    if (pt1>100 && c->akPu3PF.pthat>=80&&c->akPu3PF.pthat<100) {
+      hEvtCentPtHat80->Fill(evt.cBin);
+      hEvtVzPtHat80->Fill(evt.vz);
+      hEvtPtHat80->Fill(c->akPu3PF.pthat);
+    }
 
     ////////////////////////
     // Jet
