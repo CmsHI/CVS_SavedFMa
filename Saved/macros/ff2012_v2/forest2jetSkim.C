@@ -84,14 +84,15 @@ TH1D* getCentDistDj();
 
 
 void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/pbpbDijet_v20/promptskim-hihighpt-hltjet80-pt90-v20.root", std::string outname = "jskim.root", bool needReweight=false, int maxEvents=-1, TString MinbiasFname="/mnt/hadoop/cms/store/user/jazzitup/hiForest/skimmed/yskim_HiForestMinBias_v6_first_July-v8-8VtxBin-24PlnBin-40CentBin.root", bool isMC=false, TString jetAlgo="akPu3PF", 
-    bool isPP = false,   int smearMode=0, int smearCentBin = 0,bool useGenJet=false)
+    bool isPP = false,   int smearMode=0, int smearCentBin = 0,bool useGenJet=false, float pthatMin=-1, float pthatMax=-1)
 {
   // Environment setup
   gRandom->SetSeed(time(0));
 
   // Print setup
   cout << "needReweight: " << needReweight << " isMC: " << isMC << " maxEvents: " << maxEvents << " isPP: " << isPP << " smearMode: " << smearMode << " smearCentBin: " << smearCentBin << " useGenJet: " << useGenJet << endl;
-    
+  if (isMC && (pthatMax>pthatMin) ) cout << "pthat cut: " << pthatMin << " to " << pthatMax << endl;
+
   //////////////////////////////////////////////////////////////////////////
   // Setup Centrality for smearing, centrality reweighting
   //////////////////////////////////////////////////////////////////////////
@@ -177,9 +178,9 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   TH1D * hEvtCent = new TH1D("hEvtCent",";Centrality Bin;",40,0,40);
   TH1D * hEvtVz = new TH1D("hEvtVz",";vz (cm);",60,-30,30);
   TH1D * hEvtPtHat = new TH1D("hEvtPtHat",";#hat{p}_{T} (GeV/c);",100,0,500);
-  TH1D * hEvtCentPtHat80 = new TH1D("hEvtCentPtHat80",";Centrality Bin;",40,0,40);
-  TH1D * hEvtVzPtHat80 = new TH1D("hEvtVzPtHat80",";vz (cm);",60,-30,30);
-  TH1D * hEvtPtHat80 = new TH1D("hEvtPtHat80",";#hat{p}_{T} (GeV/c);",100,0,500);
+  TH1D * hEvtCentPtHatCut = new TH1D("hEvtCentPtHatCut",";Centrality Bin;",40,0,40);
+  TH1D * hEvtVzPtHatCut = new TH1D("hEvtVzPtHatCut",";vz (cm);",60,-30,30);
+  TH1D * hEvtPtHatCut = new TH1D("hEvtPtHatCut",";#hat{p}_{T} (GeV/c);",100,0,500);
   TH1D * hSmJetPtRaw = new TH1D("hSmJetPtRaw",";Leading Jet p_{T} (GeV/c);",100,0,300);
   TH1D * hSmJetPtSm = new TH1D("hSmJetPtSm",";Leading Jet p_{T} (GeV/c);",100,0,300);
   TH1D * hJet1Pt = new TH1D("hJet1Pt",";Leading Jet p_{T} (GeV/c);",100,0,300);
@@ -480,21 +481,26 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
     float pt1=-99;
     for (int j=0;j<c->akPu3PF.nref;j++) {
       if (c->akPu3PF.jtpt[j]<40) continue;
+      if ( (c->akPu3PF.trackMax[j]/c->akPu3PF.jtpt[j])<0.01 ) continue;
       if (fabs(c->akPu3PF.jteta[j])>2) continue;
       if (c->akPu3PF.jtpt[j] > pt1) {
         pt1 = c->akPu3PF.jtpt[j];
         leadingIndex = j;
       }
     }
-    if (isMC && leadingIndex>=0&&c->akPu3PF.subid[leadingIndex]>0) continue; // protection against high pt jet from background event
+    // if (!isPP && (isMC && leadingIndex>=0&&c->akPu3PF.subid[leadingIndex]>0) ) continue; // PbPb: protection against high pt jet from background event
     // check
     hEvtCent->Fill(evt.cBin);
     hEvtVz->Fill(evt.vz);
     hEvtPtHat->Fill(c->akPu3PF.pthat);
-    if (pt1>100 && c->akPu3PF.pthat>=80&&c->akPu3PF.pthat<100) {
-      hEvtCentPtHat80->Fill(evt.cBin);
-      hEvtVzPtHat80->Fill(evt.vz);
-      hEvtPtHat80->Fill(c->akPu3PF.pthat);
+    // pthat skim for mc
+    if (isMC && (pthatMax>pthatMin) ) {
+      if (c->akPu3PF.pthat<pthatMin||c->akPu3PF.pthat>=pthatMax) continue;
+    }
+    if (pt1>100) {
+      hEvtCentPtHatCut->Fill(evt.cBin);
+      hEvtVzPtHatCut->Fill(evt.vz);
+      hEvtPtHatCut->Fill(c->akPu3PF.pthat);
     }
 
     ////////////////////////
