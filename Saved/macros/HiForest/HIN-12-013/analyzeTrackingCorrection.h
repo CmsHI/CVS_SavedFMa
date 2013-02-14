@@ -155,8 +155,13 @@ TrkCorrHisAna::TrkCorrHisAna(TString name, TFile * outf, float jPtMin, bool pp) 
 
    //centrality bins
    if (!isPP_) {
+      // centBins.push_back(0);
+      // centBins.push_back(12);
+      // centBins.push_back(40);
       centBins.push_back(0);
+      centBins.push_back(4);
       centBins.push_back(12);
+      centBins.push_back(20);
       centBins.push_back(40);
    } else {
       centBins.push_back(0);
