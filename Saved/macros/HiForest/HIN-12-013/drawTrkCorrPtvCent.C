@@ -8,7 +8,7 @@
 #include "commonUtility.h"
 
 void drawTrkCorrPtvCent(
-                           TString outdir="fig/trkcorrv14"
+                           TString outdir="fig/trkcorrv14d"
 )
 {
    TH1::SetDefaultSumw2();
@@ -22,22 +22,24 @@ void drawTrkCorrPtvCent(
    HiForest * c = new HiForest("/net/hidsk0001/d00/scratch/yjlee/merge/v27/pthat170/Dijet170_HydjetDrum_v27_mergedV1.root");
    c->doTrackCorrections = true;
    c->InitTree();
-   
+      
    TrackingCorrections * trkCorr = c->trackCorrections[0];
       
    cout << endl << "========= plot =========" << endl;
    Int_t etaPM=2; // 7 +2,-3 for |eta|<1.2, 7 =5,-6 for full eta
-   Float_t jetPtMin=0;
+   Float_t jetPtMin=100;
    Int_t jetBegBin = trkCorr->jetBin_->FindBin(jetPtMin);
    Int_t jetEndBin = trkCorr->numJEtBins_;
    cout << Form("jet pt %.0f bin: ",jetPtMin) << jetBegBin << " to " << jetEndBin << endl;
    cout << "========================" << endl;
    bool doTestCorr = true;
    
+
    string infpath=trkCorr->sample_[0]->GetName();
    TString src=infpath.substr(infpath.find_last_of('/')+1);
    src.ReplaceAll(".root","");
    TString tag = src+"_"+trkCorr->trkCorrModule_+Form("_vs_Pt_jet%.0f_ieta%d_wts%d",jetPtMin,etaPM,trkCorr->weightSamples_);
+
 
    /////////////////////////////////////////////////////////////////////////////////////
    // Inspect Projection
@@ -50,6 +52,7 @@ void drawTrkCorrPtvCent(
    for (Int_t lv=0; lv<2; ++lv) {
      for (Int_t c=0; c<numCentBin; ++c) {
        vhCorrPt[lv][c] = (TH1D*) trkCorr->InspectCorr(lv,c,c,jetBegBin,jetEndBin,2,7-etaPM-1,7+etaPM);
+       cout << "lv: " << lv << " c: " << c << " " << vhCorrPt[lv][c] << endl;
        vhCorrPt[lv][c]->SetMarkerStyle(styles[lv]);
        handsomeTH1(vhCorrPt[lv][c],colors[c]);
        vhCorrPt[lv][c]->SetAxisRange(xmin,xmax,"X");
@@ -87,13 +90,15 @@ void drawTrkCorrPtvCent(
    leg->SetBorderSize(0);
    leg->SetTextSize(0.035);
    leg->AddEntry(vhCorrPt[0][0],title,"");
-// 	leg->AddEntry(vhCorrPt[0][0],"0-5%","p");
-// 	leg->AddEntry(vhCorrPt[0][1],"5-10%","p");
-// 	leg->AddEntry(vhCorrPt[0][2],"10-20%","p");
-// 	leg->AddEntry(vhCorrPt[0][3],"30-50%","p");
-// 	leg->AddEntry(vhCorrPt[0][4],"50-90%","p");
-	leg->AddEntry(vhCorrPt[0][0],"0-30%","p");
-	leg->AddEntry(vhCorrPt[0][1],"30-100%","p");
+   if (numCentBin==2) {
+      leg->AddEntry(vhCorrPt[0][0],"0-30%","p");
+      leg->AddEntry(vhCorrPt[0][1],"30-100%","p");
+   } else if (numCentBin==4) {
+     leg->AddEntry(vhCorrPt[0][0],"0-10%","p");
+     leg->AddEntry(vhCorrPt[0][1],"10-30%","p");
+     leg->AddEntry(vhCorrPt[0][2],"30-50%","p");
+     leg->AddEntry(vhCorrPt[0][3],"50-100%","p");
+   }
    leg->Draw();
    
 	drawText("CMS Simulation",0.64,0.89);

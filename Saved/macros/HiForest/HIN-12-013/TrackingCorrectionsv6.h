@@ -174,8 +174,10 @@ void TrackingCorrections::Init()
 	for (Int_t i=1; i<=numPtBins_+1; ++i) cout << ptBin_->GetBinLowEdge(i) << " ";
 	cout << endl << "Eta " << numEtaBins_ << " bins:";
 	for (Int_t i=1; i<=numEtaBins_+1; ++i) cout << etaBin_->GetBinLowEdge(i) << " ";
-	cout << endl << "JEt " << numJEtBins_ << " bins:";
-	for (Int_t i=1; i<=numJEtBins_+1; ++i) cout << jetBin_->GetBinLowEdge(i) << " ";
+  cout << endl << "JEt " << numJEtBins_ << " bins:";
+  for (Int_t i=1; i<=numJEtBins_+1; ++i) cout << jetBin_->GetBinLowEdge(i) << " ";
+	cout << endl << "Centrality " << numCentBins_ << " bins:";
+	for (Int_t i=0; i<numCentBins_; ++i) cout << centBin_[i] << " ";
 	cout << endl;
    
    // =============================

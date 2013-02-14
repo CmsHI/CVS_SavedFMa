@@ -8,14 +8,16 @@
 #include "commonUtility.h"
 
 void compareTrkCorrPt_pp(
-                           TString outdir="fig/Dec20_TrkCorr14"
+                           TString outdir="fig/Feb14_TrkCorr14d"
 )
 {
    TH1::SetDefaultSumw2();
    gSystem->mkdir(outdir,kTRUE);
    float xmin=1,xmax=179.9;
-   TString title="PYTHIA";
-   TString reftitle="PYTHIA+HYDJET";
+   // TString title="PYTHIA";
+   // TString reftitle="PYTHIA+HYDJET";
+   TString title="pp";
+   TString reftitle="PbPb";
 
    /////////////////////////////////////////////////////////////////////////////////////
    // Load Histograms
@@ -34,8 +36,9 @@ void compareTrkCorrPt_pp(
 
 
    cout << endl << "========= plot =========" << endl;
-   Int_t etaPM=2.; // 7+2,-3 for |eta|<1.2, 7+5,-6 for full eta
-   Float_t jetPtMin=0;
+   // Int_t etaPM=2.; // 7+2,-3 for |eta|<1.2, 7+5,-6 for full eta
+   Int_t etaPM=5.; // 7+2,-3 for |eta|<1.2, 7+5,-6 for full eta
+   Float_t jetPtMin=100;
    Int_t jetBegBin = trkCorr->jetBin_->FindBin(jetPtMin);
    Int_t jetEndBin = trkCorr->numJEtBins_;
    cout << Form("jet pt %.0f bin: ",jetPtMin) << jetBegBin << " to " << jetEndBin << endl;
@@ -100,8 +103,8 @@ void compareTrkCorrPt_pp(
    leg->Draw();
    
 	// drawText("CMS Simulation",0.64,0.89);
-   if (etaPM==5) drawText("Acc. #times Efficiency",0.6,0.74);
-   if (etaPM==2) drawText("Acc. #times Efficiency",0.6,0.79);
+   if (etaPM==5) drawText("Acc. #times Efficiency",0.6,0.77);
+   if (etaPM==2) drawText("Acc. #times Efficiency",0.6,0.82);
 	drawText("Fake track rate",0.6,0.2);
    
    cEff->Print(outdir+"/"+tag+".gif");
@@ -110,12 +113,13 @@ void compareTrkCorrPt_pp(
 	TCanvas * cJet = new TCanvas("cJet","cJet",500,500);
 	cJet->SetLogy();
    handsomeTH1(trkCorr->vhPtHat[1][icent],kBlue,1,kOpenCircle);
+   handsomeTH1(trkCorrRef->vhPtHat[1][icentRef],kBlack,1,kOpenCircle);
    trkCorr->vhPtHat[1][icent]->SetTitle(";#hat{p}_{T} (GeV/c);a.u.");
-	trkCorr->vhPtHat[1][icent]->Draw("E");
+	trkCorr->vhPtHat[1][icent]->Draw("hist");
 	trkCorrRef->vhPtHat[1][icentRef]->Draw("sameE");
-   TLegend *leg2 = new TLegend(0.16,0.28,0.46,0.40);
+   TLegend *leg2 = new TLegend(0.50,0.79,0.80,0.91);
    easyLeg(leg2);
-   leg2->AddEntry(trkCorr->vhPtHat[1][icent],title,"p");
+   leg2->AddEntry(trkCorr->vhPtHat[1][icent],title,"l");
    leg2->AddEntry(trkCorrRef->vhPtHat[1][icentRef],reftitle,"p");
    leg2->Draw();
    cJet->Print(outdir+"/"+tag+"_pthat.gif");
@@ -126,9 +130,10 @@ void compareTrkCorrPt_pp(
    hCent->SetMarkerColor(kBlue);
 	hCent->SetMarkerStyle(kOpenCircle);
    handsomeTH1(hCent,kBlue,1,kOpenCircle);
+   handsomeTH1(hCentRef,kBlack,1,kOpenCircle);
 	hCent->Scale(1./hCent->GetEntries());
    hCentRef->Scale(1./hCentRef->GetEntries());
-	hCent->Draw("p");
+	hCent->Draw("hist");
 	hCentRef->Draw("samep");
    leg2->Draw();
 }

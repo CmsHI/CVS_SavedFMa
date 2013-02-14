@@ -265,6 +265,7 @@ class HiForest : public TNamed
   int nEntries;
   int currentEvent;
   double cone;
+  double trkCorrDrMatch;
   bool initialized;
 
   vector<JetCorrectorParameters> vpar_HI310x;
@@ -538,11 +539,15 @@ int HiForest::GetEntries()
 
 void HiForest::InitTree()
 {
+   // trkCorrDrMatch = 0.5;
+   trkCorrDrMatch = 0.3;
+
    // Setup Track Corrections 	 
    if(doTrackCorrections){
 
       trackCorrFromParam = new TrackingParam();
 
+      // Tracking Correction Sets
       if (!pp) {
         // Paper: 4 centrality bins xcheck
          trackCorrections.push_back(new TrackingCorrections("Forest2STAv14b","Forest2_MergedGeneral_jetfine"));
@@ -554,15 +559,25 @@ void HiForest::InitTree()
 //       trackCorrections.push_back(new TrackingCorrections("Forest2STAv12","Forest2_MergedGeneral_j1"));
 //       trackCorrections.push_back(new TrackingCorrections("Forest2STAv12","Forest2_MergedGeneral_j2"));
 
+      // Tracking correction input files
       for(int i = 0; i < trackCorrections.size(); ++i){
          if (!pp) {
+          // Paper: 4 centrality bins, drMatch=0.3, w/ jet id
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec/IterTrkCorrv14dXSec_hy18dj80to100_akPu3PF_100_-1_-1000_genJetMode0.root",80);
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec/IterTrkCorrv14dXSec_hy18dj100to170_akPu3PF_100_-1_-1000_genJetMode0.root",100);
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec/IterTrkCorrv14dXSec_hy18dj170to200_akPu3PF_100_-1_-1000_genJetMode0.root",170);
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec/IterTrkCorrv14dXSec_hy18dj200to250_akPu3PF_100_-1_-1000_genJetMode0.root",200);
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec/IterTrkCorrv14dXSec_hy18dj250to300_akPu3PF_100_-1_-1000_genJetMode0.root",250);
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec/IterTrkCorrv14dXSec_hy18dj300to9999_akPu3PF_100_-1_-1000_genJetMode0.root",300);
+          // Paper: 4 centrality bins, drMatch=0.3
+           // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14cXSec/IterTrkCorrv14cXSec_hy18dj80to100_akPu3PF_100_-1_-1000_genJetMode0.root",80);
           // Paper: 4 centrality bins xcheck
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14bXSec/IterTrkCorrv14bXSec_hy18dj80to100_akPu3PF_100_-1_-1000_genJetMode0.root",80);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14bXSec/IterTrkCorrv14bXSec_hy18dj100to170_akPu3PF_100_-1_-1000_genJetMode0.root",100);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14bXSec/IterTrkCorrv14bXSec_hy18dj170to200_akPu3PF_100_-1_-1000_genJetMode0.root",170);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14bXSec/IterTrkCorrv14bXSec_hy18dj200to250_akPu3PF_100_-1_-1000_genJetMode0.root",200);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14bXSec/IterTrkCorrv14bXSec_hy18dj250to300_akPu3PF_100_-1_-1000_genJetMode0.root",250);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14bXSec/IterTrkCorrv14bXSec_hy18dj300to9999_akPu3PF_100_-1_-1000_genJetMode0.root",300);
+           // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14bXSec/IterTrkCorrv14bXSec_hy18dj80to100_akPu3PF_100_-1_-1000_genJetMode0.root",80);
+           // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14bXSec/IterTrkCorrv14bXSec_hy18dj100to170_akPu3PF_100_-1_-1000_genJetMode0.root",100);
+           // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14bXSec/IterTrkCorrv14bXSec_hy18dj170to200_akPu3PF_100_-1_-1000_genJetMode0.root",170);
+           // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14bXSec/IterTrkCorrv14bXSec_hy18dj200to250_akPu3PF_100_-1_-1000_genJetMode0.root",200);
+           // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14bXSec/IterTrkCorrv14bXSec_hy18dj250to300_akPu3PF_100_-1_-1000_genJetMode0.root",250);
+           // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14bXSec/IterTrkCorrv14bXSec_hy18dj300to9999_akPu3PF_100_-1_-1000_genJetMode0.root",300);
           // QM12
            // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj80to100_akPu3PF_100_-1_-1000_genJetMode0.root",80);
            // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec/IterTrkCorrv14XSec_hy18dj100to170_akPu3PF_100_-1_-1000_genJetMode0.root",100);
@@ -576,11 +591,18 @@ void HiForest::InitTree()
 //            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv12XSec/IterTrkCorrv12XSec_hy18dj200_akPu3PF_100_40_2749_genJetMode0.root",200);
 //            trackCorrections[i]->AddNormFile("trkcorr/IterTrkCorrv12XSec/IterTrkCorrv12XSec_hy18dj200_akPu3PF_-1_-1_-1000_genJetMode0.root");
          } else {
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj80to120_akPu3PF_100_-1_-1000_genJetMode0.root",80);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj120to170_akPu3PF_100_-1_-1000_genJetMode0.root",120);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj170to200_akPu3PF_100_-1_-1000_genJetMode0.root",170);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj200to250_akPu3PF_100_-1_-1000_genJetMode0.root",200);
-           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj250to9999_akPu3PF_100_-1_-1000_genJetMode0.root",250);
+          // Paper: ak3pf, drMatch=0.3, w/ jet id, no bkg leading jet filter
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec_pp/IterTrkCorrv14dXSec_pp_sigdj80to120_ak3PF_100_-1_-1000_genJetMode0.root",80);
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec_pp/IterTrkCorrv14dXSec_pp_sigdj120to170_ak3PF_100_-1_-1000_genJetMode0.root",120);
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec_pp/IterTrkCorrv14dXSec_pp_sigdj170to200_ak3PF_100_-1_-1000_genJetMode0.root",170);
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec_pp/IterTrkCorrv14dXSec_pp_sigdj200to250_ak3PF_100_-1_-1000_genJetMode0.root",200);
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec_pp/IterTrkCorrv14dXSec_pp_sigdj250to9999_ak3PF_100_-1_-1000_genJetMode0.root",250);
+          // QM12
+           // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj80to120_akPu3PF_100_-1_-1000_genJetMode0.root",80);
+           // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj120to170_akPu3PF_100_-1_-1000_genJetMode0.root",120);
+           // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj170to200_akPu3PF_100_-1_-1000_genJetMode0.root",170);
+           // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj200to250_akPu3PF_100_-1_-1000_genJetMode0.root",200);
+           // trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14XSec_pp/IterTrkCorrv14XSec_pp_sigdj250to9999_akPu3PF_100_-1_-1000_genJetMode0.root",250);
          }
          trackCorrections[i]->weightSamples_ = true;
          trackCorrections[i]->smoothLevel_ = 0;
