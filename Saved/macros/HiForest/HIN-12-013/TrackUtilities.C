@@ -120,9 +120,9 @@ double HiForest::getTrackCorrection(int j)
       leadingSet=1;
       subleadingSet=2;
    }
-   if (leadingJetPtForTrkCor>=minJetPtForTrkCor&&dr1<0.5) {
+   if (leadingJetPtForTrkCor>=minJetPtForTrkCor&&dr1<trkCorrDrMatch) {
       trkWt = trackCorrections[leadingSet]->GetCorr(track.trkPt[j],track.trkEta[j],leadingJetPtForTrkCor,evt.hiBin);
-   } else if (subleadingJetPtForTrkCor>=minJetPtForTrkCor&&dr2<0.5) {
+   } else if (subleadingJetPtForTrkCor>=minJetPtForTrkCor&&dr2<trkCorrDrMatch) {
       trkWt = trackCorrections[subleadingSet]->GetCorr(track.trkPt[j],track.trkEta[j],subleadingJetPtForTrkCor,evt.hiBin);
    } else {
       trkWt = trackCorrections[0]->GetCorr(track.trkPt[j],track.trkEta[j],0,evt.hiBin);

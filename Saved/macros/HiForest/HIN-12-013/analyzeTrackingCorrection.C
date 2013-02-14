@@ -1,4 +1,4 @@
-#include "../HiForest_HEAD/hiForest.h"
+#include "../HiForest/HIN-12-013/hiForest.h"
 #include <TFile.h>
 #include <TH1D.h>
 #include <TNtuple.h>
@@ -45,21 +45,30 @@ void analyzeTrackingCorrection(
    double cutjetPt = 40;
    double cutjetEta = 2;
    double cutEtaTrk = 2.4;
+   double drMatch = 0.3;
+   cout << "tracking table jet ptmin|etamax: " << cutjetPt << "|" << cutjetEta << endl;
+   cout << "tracking table drMatch: " << drMatch << endl;
    
-   // Define the input file and HiForest
-//    HiForest * c = new HiForest(inname,"mergedTrack");
-   HiForest * c = new HiForest(inname,trkCol.Data());
+   //////////////////////////////////////////////////////////////////////////
+   // Run Forest Run!
+   //////////////////////////////////////////////////////////////////////////
+   HiForest *c = new HiForest(inname,jetAlgo.Data(),isPP);
    c->doTrackCorrections = false;
+   // top level overwrites to save speed
+   if (c->hasPFTree) c->hasPFTree            = false;
+   if (c->hasMetTree) c->hasMetTree           = false;
+   if (c->hasAkPu2JetTree) c->hasAkPu2JetTree      = false;
+   if (c->hasAkPu4JetTree) c->hasAkPu4JetTree      = false;
+   if (c->hasAkPu2CaloJetTree) c->hasAkPu2CaloJetTree  = false;
+   if (c->hasAkPu3CaloJetTree) c->hasAkPu3CaloJetTree  = false;
+   if (c->hasAkPu4CaloJetTree) c->hasAkPu4CaloJetTree  = false;
+   if (c->hasPixTrackTree) c->hasPixTrackTree      = false;
+   if (c->hasTowerTree) c->hasTowerTree         = false;
+   if (c->hasHbheTree) c->hasHbheTree          = false;
+   if (c->hasEbTree) c->hasEbTree            = false;
 
-   // intialize jet variables
-   Jets * anajet = 0;
-   if (jetAlgo=="akPu3PF") anajet = &(c->akPu3PF);
-   else if (jetAlgo=="akPu3Calo") anajet = &(c->akPu3Calo);
-   else {
-      cout << "Fatal Error: jetalgo " << jetAlgo << " not defined" << endl;
-      exit(1);
-   }
-   
+   Jets * anajet = &(c->akPu3PF);
+
    // Output file
    cout << "Output: " << outname << endl;
    TFile *output = new TFile(outname,"recreate");
@@ -140,6 +149,8 @@ void analyzeTrackingCorrection(
       for (int j=0;j<anajet->nref;j++) {
          if (anajet->jtpt[j]<cutjetPt) continue;
          if (fabs(anajet->jteta[j])>cutjetEta) continue;
+         if ( (anajet->trackMax[j]/anajet->jtpt[j])<0.01 ) continue;
+
          if (anajet->jtpt[j] > gj.pt1) {
             gj.pt1 = anajet->jtpt[j];
             leadingIndex = j;
@@ -163,6 +174,7 @@ void analyzeTrackingCorrection(
          for (int j=0;j<anajet->nref;j++) {
             if (anajet->jtpt[j]<cutjetPt) continue;
             if (fabs(anajet->jteta[j])>cutjetEta) continue;
+            if ( (anajet->trackMax[j]/anajet->jtpt[j])<0.01 ) continue;
             gj.inclJetPt[gj.nJet] = anajet->jtpt[j];
             gj.inclJetEta[gj.nJet] = anajet->jteta[j];
             gj.inclJetPhi[gj.nJet] = anajet->jtphi[j];
@@ -238,8 +250,7 @@ void analyzeTrackingCorrection(
       if (!evt.offlSel) continue;
       if (samplePtHat>0 && evt.pthat>=ptHatMax) continue;
       if (vzMax>0 && fabs(evt.vz)>vzMax) continue;
-      // protection against high pt jet from background event
-      if (leadingIndex>=0&&anajet->subid[leadingIndex]>0) continue;
+      if (!isPP && (leadingIndex>=0&&anajet->subid[leadingIndex]>0) ) continue; // PbPb: protection against high pt jet from background event
       hPtHatBeforeSel->Fill(evt.pthat);
       for (int ib=0; ib<effMergedGeneral.centBins.size(); ++ib) {
          if(evt.cBin>=effMergedGeneral.centBins[ib] && evt.cBin<effMergedGeneral.centBins[ib+1]){
@@ -290,12 +301,12 @@ void analyzeTrackingCorrection(
          r.jeta = -99;
          r.jdr  = -99;
          if (samplePtHat>0) {
-           if (dr1<0.5&&gj.pt1>=40) {
+           if (dr1<drMatch&&gj.pt1>=40) {
               r.jet = gj.pt1;
               r.jeta = gj.eta1;
               r.jdr = dr1;
               effMergedGeneral_j1.FillRecHistograms(evt,gj,r);
-           } else if (dr2<0.5&&gj.pt2>=40) {
+           } else if (dr2<drMatch&&gj.pt2>=40) {
               r.jet = gj.pt2;
               r.jeta = gj.eta2;
               r.jdr = dr2;
@@ -337,12 +348,12 @@ void analyzeTrackingCorrection(
          s.jeta = -99;
          s.jdr = -99;
          if (samplePtHat>0) {
-           if (dr1<0.5&&gj.pt1>=40) {
+           if (dr1<drMatch&&gj.pt1>=40) {
               s.jet = gj.pt1;
               s.jeta = gj.eta1;
               s.jdr = dr1;
               effMergedGeneral_j1.FillSimHistograms(evt,gj,s);
-           } else if (dr2<0.5&&gj.pt2>=40) {
+           } else if (dr2<drMatch&&gj.pt2>=40) {
               s.jet = gj.pt2;
               s.jeta = gj.eta2;
               s.jdr = dr2;
