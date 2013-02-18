@@ -17,8 +17,9 @@ cp /net/hidsk0001/d00/scratch/yjlee/merge/v27/pthat250/Dijet250_HydjetDrum_v28_m
 cp /net/hidsk0001/d00/scratch/yjlee/merge/v27/pthat300/Dijet300_HydjetDrum_v28_mergedV1.root $se/
 
 # pp mc
-cp /net/hisrv0001/home/zhukova/scratch/HIHighPt/forest/pthat80/mergedFile.root $se/
-cp /net/hisrv0001/home/zhukova/scratch/HIHighPt/forest/pthat120/mergedFile.root $se/
+cp /net/hisrv0001/home/zhukova/scratch/HIHighPt/forest/pthat50/mergedFile.root $se/Dijet50_v27_merged.root
+cp /net/hisrv0001/home/zhukova/scratch/HIHighPt/forest/pthat80/mergedFile.root $se/Dijet80_v27_merged.root
+cp /net/hisrv0001/home/zhukova/scratch/HIHighPt/forest/pthat120/mergedFile.root $se/Dijet120_v27_merged.root
 cp /net/hisrv0001/home/zhukova/scratch/HIHighPt/forest/pthat200/mergedFile.root $se/Dijet200_v27_merged.root
 cp /net/hisrv0001/home/zhukova/scratch/HIHighPt/forest/pthat250/mergedFile.root $se/Dijet250_v27_merged.root
 cp /net/hisrv0001/home/zhukova/scratch/HIHighPt/forest/pthat300/mergedFile.root $se/Dijet300_v27_merged.root

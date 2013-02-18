@@ -563,6 +563,7 @@ void HiForest::InitTree()
       for(int i = 0; i < trackCorrections.size(); ++i){
          if (!pp) {
           // Paper: 4 centrality bins, drMatch=0.3, w/ jet id
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec/IterTrkCorrv14dXSec_hy18dj50to80_akPu3PF_100_-1_-1000_genJetMode0.root",50);
            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec/IterTrkCorrv14dXSec_hy18dj80to100_akPu3PF_100_-1_-1000_genJetMode0.root",80);
            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec/IterTrkCorrv14dXSec_hy18dj100to170_akPu3PF_100_-1_-1000_genJetMode0.root",100);
            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec/IterTrkCorrv14dXSec_hy18dj170to200_akPu3PF_100_-1_-1000_genJetMode0.root",170);
@@ -592,6 +593,7 @@ void HiForest::InitTree()
 //            trackCorrections[i]->AddNormFile("trkcorr/IterTrkCorrv12XSec/IterTrkCorrv12XSec_hy18dj200_akPu3PF_-1_-1_-1000_genJetMode0.root");
          } else {
           // Paper: ak3pf, drMatch=0.3, w/ jet id, no bkg leading jet filter
+           trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec_pp/IterTrkCorrv14dXSec_pp_sigdj50to80_ak3PF_100_-1_-1000_genJetMode0.root",50);
            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec_pp/IterTrkCorrv14dXSec_pp_sigdj80to120_ak3PF_100_-1_-1000_genJetMode0.root",80);
            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec_pp/IterTrkCorrv14dXSec_pp_sigdj120to170_ak3PF_100_-1_-1000_genJetMode0.root",120);
            trackCorrections[i]->AddSample("trkcorr/IterTrkCorrv14dXSec_pp/IterTrkCorrv14dXSec_pp_sigdj170to200_ak3PF_100_-1_-1000_genJetMode0.root",170);

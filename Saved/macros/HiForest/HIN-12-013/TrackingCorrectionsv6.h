@@ -280,7 +280,8 @@ void TrackingCorrections::Init()
         else cout << endl << endl << " Error no such pt hat!!!!!" << endl << endl << endl;
      }
      if (ppMode_) {
-        if ( ptHatMin_[s]==80 ) sampleCroSec_[s] = 9.913e-05 - 1.128e-05;
+        if ( ptHatMin_[s]==50 ) sampleCroSec_[s] = 1.021e-03 - 9.913e-05;
+        else if ( ptHatMin_[s]==80 ) sampleCroSec_[s] = 9.913e-05 - 1.128e-05;
         else if ( ptHatMin_[s]==120) sampleCroSec_[s] = 1.128e-05 - 1.470e-06;
         else if ( ptHatMin_[s]==170) sampleCroSec_[s] = 1.470e-06 - 5.310e-07;
         else if ( ptHatMin_[s]==200) sampleCroSec_[s] = 5.310e-07 - 1.192e-07;
