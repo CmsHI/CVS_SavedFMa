@@ -88,7 +88,10 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
 {
   // Environment setup
   // gRandom->SetSeed(time(0));
-  gRandom->SetSeed(20130215);
+  int randJob=1;
+  int randSeed = 20130214+randJob+smearCentBin;
+  cout << "random seed: " << randSeed << endl;
+  gRandom->SetSeed(randSeed);
 
   // Print setup
   cout << "needReweight: " << needReweight << " isMC: " << isMC << " maxEvents: " << maxEvents << " isPP: " << isPP << " smearMode: " << smearMode << " smearCentBin: " << smearCentBin << " useGenJet: " << useGenJet << endl;
