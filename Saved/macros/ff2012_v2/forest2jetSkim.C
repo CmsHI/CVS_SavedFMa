@@ -88,7 +88,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
 {
   // Environment setup
   // gRandom->SetSeed(time(0));
-  int randJob=1;
+  int randJob=2;
   int randSeed = 20130214+randJob+smearCentBin;
   cout << "random seed: " << randSeed << endl;
   gRandom->SetSeed(randSeed);
