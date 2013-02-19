@@ -80,6 +80,7 @@ void multiTreeUtil::addFile(TString filename, TString treeName, TCut cut, Float_
     trees_.push_back(t);
     tcuts_.push_back(cut);
     scaleFactors_.push_back(scaleFactor);
+    cout << filename << " added." << endl;
   }
   else
     cout << " there is no such tree in this file :" << treeName << endl;
