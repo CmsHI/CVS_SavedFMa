@@ -360,12 +360,13 @@ void handsomeTH2( TH2 *a=0)
    a->GetYaxis()->CenterTitle();
 }
 
-void handsomeTH1( TH1 *a=0, int col =1, float size=1, int markerstyle=20)
+void handsomeTH1( TH1 *a=0, int col =1, float size=1, int markerstyle=20, int linestyle=1)
 {
   a->SetMarkerColor(col);
   a->SetMarkerSize(size);
   a->SetMarkerStyle(markerstyle);
   a->SetLineColor(col);
+  a->SetLineStyle(linestyle);
   a->GetYaxis()->SetTitleOffset(1.25);
   a->GetXaxis()->CenterTitle();
   a->GetYaxis()->CenterTitle();
@@ -1366,7 +1367,9 @@ TGraph* cheatFit(TH1* h, TF1* f){
 
 
 TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd = 0,int npar = 3, bool symmetric = 1, int opt = 0, int infill = 0, TF1* f = 0, TPad * inc=0, TPad * cerr=0, int theColor=TColor::GetColor(0xFFEE00), int theStyle=1001){
-
+  ////////////////////////////////////////////////////////////////////////
+  // Setup
+  ////////////////////////////////////////////////////////////////////////
   bool plot = 1;
   
   int color[2] = {theColor,1};
@@ -1397,6 +1400,9 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
     cout<<"FITTED Data"<<endl;
   }
 
+  ////////////////////////////////////////////////////////////////////////
+  // Add Errors
+  ////////////////////////////////////////////////////////////////////////
   TF1* fe[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   for(int ie = 0; ie< Nerror; ++ie){
     if (ie<6) fe[ie] = new TF1(Form("%s_fit%d_%d",h->GetName(),fill,ie),"pol3",0,5.5);
@@ -1404,7 +1410,7 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
     he[ie]->Fit(fe[ie],"QRN");
   }
   
-  TH1D * hErrorTot = (TH1D*)he[1]->Clone(Form("%s_tot",he[1]->GetName()));
+  TH1D * hErrorTot = (TH1D*)he[0]->Clone(Form("%s_tot",he[0]->GetName()));
   if (cerr) {
      cerr->cd();
      for(int ie = 0; ie< Nerror; ++ie){
@@ -1446,6 +1452,10 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
     }
     hErrorTot->SetBinContent(i,1+sqrt(e[i]));
     cout << "tothist: " << i << ": " << hErrorTot->GetBinContent(i) << endl;
+
+    ////////////////////////////////////////////////////////////////////////
+    // Apply Errors
+    ////////////////////////////////////////////////////////////////////////
     // Multiply error to y value
     double y = h->GetBinContent(i);
     if (fitData) if(y > 1.5) y = f->Eval(x0);
@@ -1453,7 +1463,7 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
     // Make Box for Final Errors
     if(box && plot){
       double xg = h->GetBinCenter(i);
-      double wg = h->GetBinWidth(1)/2;
+      double wg = h->GetBinWidth(i)/2;
       double yg = h->GetBinContent(i);
       double eg = fabs(e[i]);
 
@@ -1469,7 +1479,7 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
       gp->SetPoint(3,xg+right*wg,yg-eg);
       gp->SetPoint(4,xg-left*wg,yg-eg);
       
-      if(yg-eg < 0){
+      if(fabs(yg)-eg < 0){
         gp->SetPoint(0,xg-left*wg,0.07);
         gp->SetPoint(3,xg+right*wg,0.07);
         gp->SetPoint(4,xg-left*wg,0.07);
@@ -1477,9 +1487,9 @@ TGraph* drawSysErr(TH1* h, TH1** he, int Nerror = 1, int ijet = 0, bool cheatEnd
       
       if(opt == 1){
         gp->SetFillColor(errorColor);
-	gp->SetFillStyle(theStyle);
+        gp->SetFillStyle(theStyle);
 
-	gp->Draw("F same");
+        gp->Draw("F same");
 //         cout << "x: " << xg << ": " << eg << " low: " << yg-eg << " high: " << yg+eg << endl;
       }else{
         gp->Draw("l same");	  
