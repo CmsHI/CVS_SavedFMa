@@ -537,14 +537,24 @@ double getCleverRange(TH1* h)
   return maxY;
 }
 
-double cleverRange(TH1* h,TH1* h2, float fac=1.2, float minY=1.e-3)
+double cleverRange(TH1* h,TH1* h2, float fac=1.2, float minY=1e9)
 {
+  // Find Max Range
   float maxY1 =  fac * h->GetBinContent(h->GetMaximumBin());
-  float maxY2 =  fac * h2->GetBinContent(h2->GetMaximumBin());
-  
-  //   cout <<" range will be set as " << minY << " ~ " << maxY << endl;                                                                    
-  h->SetAxisRange(minY,max(maxY1,maxY2),"Y");
-  h2->SetAxisRange(minY,max(maxY1,maxY2),"Y");
+  float maxY2 =  fac * h2->GetBinContent(h2->GetMaximumBin());  
+  float maxY = max(maxY1,maxY2);
+
+  // Find Min Range
+  if (minY<1e9*1.1) {
+    for ( int ibin = 1 ; ibin <= h->GetNbinsX() ; ibin++) {
+      if (h->GetBinContent(ibin)>0 && h->GetBinContent(ibin) < minY) minY = h->GetBinContent(ibin);
+      if (h2->GetBinContent(ibin)>0 && h2->GetBinContent(ibin) < minY) minY = h2->GetBinContent(ibin);
+    }
+  }
+  minY/=fac;
+  // cout <<" Range will be set as " << minY << " ~ " << maxY << endl;                                                                    
+  h->SetAxisRange(minY,maxY,"Y");
+  h2->SetAxisRange(minY,maxY,"Y");
   return max(maxY1,maxY2);
 }
 
