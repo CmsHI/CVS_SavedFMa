@@ -34,7 +34,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5]=0,
 void drawInclJetFragSingleSet(int fragMode = 2, int dataset = kHIDATA, float trackPtMin=1, float trackPtMax=200, int doClosure=0, bool usingPara =true, int rewtJet=0, int ppsm=0) ;
 
 // Main Function --------------------------------------------------------------------
-void drawInclJetFrag() {
+void drawInclJetFrag_plotrefjet() {
   /////////////////////////////////////////////////////////////////
   // This is the entry function that runs the full analysis
   //   * It decides what to run.
@@ -42,8 +42,8 @@ void drawInclJetFrag() {
   TH1::SetDefaultSumw2();
 
   bool doHIMC = 1;
-  bool doHIDATA = 1;
-  bool doPPDATA = 1;
+  bool doHIDATA = 0;
+  bool doPPDATA = 0;
   bool doPPMC = 1;
   bool usingPara = false;
   
@@ -196,7 +196,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   float finalEtaCut = 2.0;
   float finalJetPtMin = 100;
   float finalJetPtMax = 300;
-  TCut jetSelCut = Form("finalJetPt>=%.0f&&finalJetPt<%.0f",finalJetPtMin,finalJetPtMax);
+  TCut jetSelCut = Form("jetPt>=%.0f&&jetPt<%.0f",finalJetPtMin,finalJetPtMax);
   // TCut jetSelCut = Form("finalJetPt>=%.0f&&finalJetPt<%.0f&&jetPtGM>100",finalJetPtMin,finalJetPtMax);
   // TCut jetSelCut = Form("jetPtGM>=%.0f&&jetPtGM<%.0f",finalJetPtMin,finalJetPtMax);
   // jetSelCut=jetSelCut&&"abs(vz)<4";
@@ -275,7 +275,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
     dj->AddFriend("genPar");
 //     dj->AddFriend("mGenPar");
   }
-  dj->SetAlias("finalJetPt","jetPt");
+  dj->SetAlias("finalJetPt","jetPtGM");
   // dj->SetAlias("finalJetPt","(jetPt*(0.935+0.065*cBin/40.))"); // systematic check for uncertainty in jes
   cout << "finalJetPt = " << dj->trees_[0]->GetAlias("finalJetPt") << endl;
   
@@ -475,7 +475,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   gPad->SetLogy();
   drawText("Jet p_{T}", 0.55,0.63,1);
   
-  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Feb14v2_data_mc80to170_hi_pp",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
+  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Feb14v2_mc80to170_plotrefjet_hi_pp",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut);
 
   if ( fragMode==2) {
     c1->SaveAs(Form("plotsOfInclJetFF/inclJetFF_xi_doClosure%d_icent%d_irj%d_%s_%s%s_%s.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data(),outnameTag.Data()));
