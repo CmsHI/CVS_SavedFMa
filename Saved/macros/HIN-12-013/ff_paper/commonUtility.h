@@ -360,12 +360,13 @@ void handsomeTH2( TH2 *a=0)
    a->GetYaxis()->CenterTitle();
 }
 
-void handsomeTH1( TH1 *a=0, int col =1, float size=1, int markerstyle=20)
+void handsomeTH1( TH1 *a=0, int col =1, float size=1, int markerstyle=20, int linestyle=1)
 {
   a->SetMarkerColor(col);
   a->SetMarkerSize(size);
   a->SetMarkerStyle(markerstyle);
   a->SetLineColor(col);
+  a->SetLineStyle(linestyle);
   a->GetYaxis()->SetTitleOffset(1.25);
   a->GetXaxis()->CenterTitle();
   a->GetYaxis()->CenterTitle();

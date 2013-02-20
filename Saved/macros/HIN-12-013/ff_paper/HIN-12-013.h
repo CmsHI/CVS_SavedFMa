@@ -22,11 +22,12 @@ public:
   static TString title2;
   static TString outpath;
   TString outname;
+  int cycle;
 
   // Functions
-  Plot4x4(TH1D* hnum[3][5], TH1D* hden[3][5], int normMode=0, TString on="pt")
+  Plot4x4(TH1D* hnum[3][5], TH1D* hden[3][5], int normMode=0, TString on="pt", int cyc=0)
   : ijet(1)
-  , outname(on) {
+  , outname(on), cycle(cyc) {
     // Get Histograms
     for ( int icent=1; icent<=4 ; icent++) {
       h[ijet][icent]    = hnum[ijet][icent];
@@ -35,8 +36,13 @@ public:
       assert(href[ijet][icent]);
       normHist(h[ijet][icent],normMode,true);
       normHist(href[ijet][icent],normMode,true);
-      handsomeTH1(h[ijet][icent],kRed,1,kFullCircle);
-      handsomeTH1(href[ijet][icent],kBlack,1,kOpenCircle);
+      if (cycle==0) {
+        handsomeTH1(h[ijet][icent],kRed,1,kFullCircle);
+        handsomeTH1(href[ijet][icent],kBlack,1,kOpenCircle);
+      } else if (cycle==1) {
+        handsomeTH1(h[ijet][icent],kBlue,1,kOpenCircle);
+        handsomeTH1(href[ijet][icent],kBlue,1,kOpenCircle,7);
+      }
       h[ijet][icent]->SetNdivisions(505);
       href[ijet][icent]->SetNdivisions(505);
       fixedFontHist(h[ijet][icent],1.8,2.5);
@@ -48,7 +54,7 @@ public:
     }
   }
 
-  void Draw(TCanvas *c1, float xmin=-1, float xmax=-1, int doLog=1, float ymin=-1, float ymax=-1, int cycle=0) {
+  void Draw(TCanvas *c1, float xmin=-1, float xmax=-1, int doLog=1, float ymin=-1, float ymax=-1) {
     // Set Ranges
     if (xmin==xmax) {
       xmin = h[ijet][1]->GetBinLowEdge(1);
@@ -81,31 +87,43 @@ public:
       hrat[ijet][icent]->SetAxisRange(xmin,xmax,"X");
       hrat[ijet][icent]->SetAxisRange(0.,2.,"Y");
       fixedFontHist(hrat[ijet][icent],1.8,2.5);
-      hrat[ijet][icent]->DrawCopy();
+      if (cycle==0) hrat[ijet][icent]->DrawCopy("E");
+      else hrat[ijet][icent]->DrawCopy("sameE");
       TLine * hline = new TLine(xmin,1,xmax,1);
       hline->SetLineStyle(2);
       hline->Draw();      
     }
   }
 
-  void DrawLeg(TCanvas *c1, int idraw=3, float x1=0.02,float y1=0.03, float x2=0.50, float y2=0.32) {
+  void DrawLeg(TCanvas *c1, int idraw=3, float x1=0.096,float y1=0.028, float x2=0.577, float y2=0.238, TString pref="") {
+    TString mytitle1=title1;
+    TString mytitle2=title2;
+    if (pref!="") {
+      mytitle1=pref+" "+mytitle1;
+      mytitle2=pref+" "+mytitle2;
+    }
+
     // Book Legend
-    l1 = new TLegend(0.23,0.06,0.66,0.27,NULL,"brNDC");
-    easyLeg(l1);
-    l1->AddEntry(h[ijet][1],"|#eta_{jet}| < 2","");
+    if (cycle==0) {
+      l1 = new TLegend(0.39,0.07,0.82,0.28,NULL,"brNDC");
+      easyLeg(l1);
+      l1->AddEntry(h[ijet][1],"|#eta_{jet}| < 2","");
+    }
     l2 = new TLegend(x1,y1,x2,y2,NULL,"brNDC");
     easyLeg(l2,"",20);
     // Annotate
     for ( int icent=1; icent<=4 ; icent++) {
       c1->cd(5-icent);  
+      if ( icent == idraw) {
+        l2->AddEntry(h[ijet][icent],mytitle1,"p");
+        l2->AddEntry(href[ijet][icent],mytitle2,"l");
+        l2->Draw();
+      }
+      // meta info
+      if (cycle>0) continue;
       if ( icent == 4) {
         drawText("CMS Preliminary",0.3,0.89,1,20);
         l1->Draw();
-      }
-      if ( icent == idraw) {
-        l2->AddEntry(h[ijet][icent],title1,"p");
-        l2->AddEntry(href[ijet][icent],title2,"l");
-        l2->Draw();
       }
       c1->cd(9-icent);
       int lowCent = centBin1[icent-1];
@@ -116,8 +134,10 @@ public:
         drawText(Form("%.0f%% - %.0f%%", float((float)lowCent*2.5), float((float)(highCent+1)*2.5)),  0.15,0.25,kBlack,20);
     }
 
-    c1->SaveAs(outpath+outname+".gif");
-    c1->SaveAs(outpath+outname+".pdf");
+    if (cycle==0) {
+      c1->SaveAs(outpath+outname+".gif");
+      c1->SaveAs(outpath+outname+".pdf");
+    }
 
       // All Done, write output  
     TFile outf = TFile(outpath+".root","update");
