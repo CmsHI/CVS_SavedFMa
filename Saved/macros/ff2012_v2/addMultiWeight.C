@@ -83,14 +83,14 @@ public:
 
 // --- Main Function ----------------------------------------------------------
 void addMultiWeight(
-  // TString infnt="../ntout/jskim_dj80_ak3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root",
-  // bool isPP=true,
-  // int rewtBin=1,
-  // int doMC=1
-  TString infnt="../ntout/jskim_pp-full_ak3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root",
+  TString infnt="../ntout/jskim_dj80_ak3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root",
   bool isPP=true,
   int rewtBin=1,
-  int doMC=0
+  int doMC=1
+  // TString infnt="../ntout/jskim_pp-full_ak3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root",
+  // bool isPP=true,
+  // int rewtBin=1,
+  // int doMC=0
   ) {
   ////////////////////////////////////////////
   // Setup Inputs
@@ -240,7 +240,7 @@ void addMultiWeight(
     // Fill tree
     tjnew->Fill();
     newyongsunTrack->Fill();
-    if ( doMC && genParIn) newGenPar->Fill();
+    if ( doMC && newGenPar) newGenPar->Fill();
   }
 
   ////////////////////////////////////////////
@@ -248,5 +248,10 @@ void addMultiWeight(
   ////////////////////////////////////////////
   tjnew->AutoSave();
   newyongsunTrack->AutoSave();
+  newGenPar->AutoSave();
+  // other needed histograms
+  TH1D * hEvtCentNoSkim = (TH1D*)inf1->Get("hEvtCentNoSkim");
+  newfile->cd();
+  hEvtCentNoSkim->Write();
   newfile->Close();
 }
