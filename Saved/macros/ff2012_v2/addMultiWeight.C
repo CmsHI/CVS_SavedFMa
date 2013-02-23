@@ -23,7 +23,7 @@ class JetReweight {
 int FindAnaCentBin(int cBin) {
   if (cBin<0||cBin>=40) {
     cout << endl << endl << "!!!!!! cBin=" << cBin << " is out of centrality table range !!!!!!" << endl << endl;
-    return 40;
+    return 3;
   }
   int anaCent;
   for (int ic=0; ic<4; ++ic) {
@@ -255,7 +255,7 @@ void addMultiWeight(
       if (genParJetMatch[ig]==1) {
         genParJetBiasWt[ig]=wcJetBias.GetWeight(genParPt[ig],rewtBin);
       } else if (genParJetMatch[ig]==-1) {
-        if (!isPP) genParBkgBiasWt[ig]=wcBkgBias.GetWeight(genParPt[ig],rewtBin);
+        if (!isPP&&rewtBin<3) genParBkgBiasWt[ig]=wcBkgBias.GetWeight(genParPt[ig],rewtBin);
       }
     }
 
@@ -270,7 +270,7 @@ void addMultiWeight(
   ////////////////////////////////////////////
   tjnew->AutoSave();
   newyongsunTrack->AutoSave();
-  newGenPar->AutoSave();
+  if ( doMC && newGenPar) newGenPar->AutoSave();
   // other needed histograms
   TH1D * hEvtCentNoSkim = (TH1D*)inf1->Get("hEvtCentNoSkim");
   newfile->cd();
