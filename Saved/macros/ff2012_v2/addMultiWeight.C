@@ -100,7 +100,7 @@ void addMultiWeight(
   // Setup Inputs
   ////////////////////////////////////////////
   ReweightCorrection wcJetRatio("wcJetRatio",0,1);
-  ReweightCorrection wcJetBias("wcJetBias",1);
+  ReweightCorrection wcJetBias("wcJetBias",0);
   ReweightCorrection wcBkgBias("wcBkgBias",1);
 
   TString dataset="hi";
@@ -111,21 +111,30 @@ void addMultiWeight(
   }
 
   // Load histograms
+  TH1D * bkg[5];
   for ( int icent=1; icent<=4 ; icent++) {
+    // data jet reweighting
     wcJetRatio.ana[icent]   = (TH1D*)load("fig/Jan17/jet_spectrum_cmp1_sm2_rewt0_evsel0_pbpbJan17_ppJan17.root",
       Form("hjetPt_hi_inclusiveJet_icent%d",icent));
     wcJetRatio.ref[icent]    = (TH1D*)load("fig/Jan17/jet_spectrum_cmp1_sm2_rewt0_evsel0_pbpbJan17_ppJan17.root",
       Form("hjetPt_pp_inclusiveJet_icent%d",icent));
 
+    // mc jet reco bias
     wcJetBias.ana[icent] = (TH1D*)load("His/Feb19/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root",
-      Form("hpt_jet_rawTrk_%smc_icent%d_irj999_fragMode1_closure100_rewt0_ppsm%d_wtmode0_pt1to300",dataset.Data(),icent,ppsm));
-    wcJetBias.ref[icent]  = (TH1D*)load("His/Feb19/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_mc80to170_refjetsel_hi_pp.root",
-      Form("hpt_jet_rawTrk_%smc_icent%d_irj999_fragMode1_closure100_rewt0_ppsm%d_wtmode0_pt1to300",dataset.Data(),icent,ppsm));
+      Form("hpt_jet_sigTrk_himc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0_wtmode0_pt1to300",icent));
+    wcJetBias.ref[icent] = (TH1D*)load("His/Feb19/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root",
+      Form("hpt_jet_sigTrk_ppmc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm%d_wtmode0_pt1to300",icent,ppsm));
+    // factorized correction for pp to match pbpb
+    bkg[icent]           = (TH1D*)load("His/Feb19/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root",
+      Form("hpt_jet_mbTrk_himc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0_wtmode0_pt1to300",icent));
+    wcJetBias.ana[icent]->Add(bkg[icent]);
+    wcJetBias.ref[icent]->Add(bkg[icent]);
 
+    // jet background bias
     wcBkgBias.ana[icent] = (TH1D*)load("His/Feb19/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root",
-      Form("hpt_jet_mbTrk_%smc_icent%d_irj999_fragMode1_closure102_rewt0_ppsm%d_wtmode0_pt1to300",dataset.Data(),icent,ppsm));
+      Form("hpt_jet_mbTrk_himc_icent%d_irj999_fragMode1_closure102_rewt0_ppsm0_wtmode0_pt1to300",icent));
     wcBkgBias.ref[icent]  = (TH1D*)load("His/Feb19/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root",
-      Form("hpt_jet_mbTrk_%smc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm%d_wtmode0_pt1to300",dataset.Data(),icent,ppsm));
+      Form("hpt_jet_mbTrk_himc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0_wtmode0_pt1to300",icent));
   }
   
   ////////////////////////////////////////////
@@ -241,9 +250,9 @@ void addMultiWeight(
       trkJetBiasWt[it]=1;
       trkBkgBiasWt[it]=1;
       if (trkJetMatch[it]==1) {
-        trkJetBiasWt[it]=wcJetBias.GetWeight(trkPt[it],rewtBin);
+        if (isPP) trkJetBiasWt[it]=wcJetBias.GetWeight(trkPt[it],rewtBin);
       } else if (trkJetMatch[it]==-1) {
-        if (!isPP) trkBkgBiasWt[it]=wcBkgBias.GetWeight(trkPt[it],rewtBin);
+        if (!isPP&&rewtBin<=2) trkBkgBiasWt[it]=wcBkgBias.GetWeight(trkPt[it],rewtBin);
       }
     }
 
@@ -253,9 +262,9 @@ void addMultiWeight(
     for (int ig=0; ig<nGenPar; ++ig) {
       genParJetBiasWt[ig]=1;
       if (genParJetMatch[ig]==1) {
-        genParJetBiasWt[ig]=wcJetBias.GetWeight(genParPt[ig],rewtBin);
+        if (isPP) genParJetBiasWt[ig]=wcJetBias.GetWeight(genParPt[ig],rewtBin);
       } else if (genParJetMatch[ig]==-1) {
-        if (!isPP&&rewtBin<3) genParBkgBiasWt[ig]=wcBkgBias.GetWeight(genParPt[ig],rewtBin);
+        if (!isPP&&rewtBin<=2) genParBkgBiasWt[ig]=wcBkgBias.GetWeight(genParPt[ig],rewtBin);
       }
     }
 

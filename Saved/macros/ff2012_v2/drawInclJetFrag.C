@@ -60,6 +60,7 @@ void drawInclJetFrag() {
     float trackPtMax = ptranges[ip+1];
     for (int fragMode = 1; fragMode<=2 ; fragMode++) {
       for (int corrBias=0; corrBias<=2; ++corrBias) {
+        if (corrBias==1) continue;
         if ( doPPMC ) {
           vector<pair<int,int> > wt_sm;
           wt_sm.push_back(pair<int,int>(0,0));
@@ -201,6 +202,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   float finalEtaCut = 2.0;
   float finalJetPtMin = 100;
   float finalJetPtMax = 300;
+  float jetDrCut = 0.3;
   TCut jetSelCut = Form("finalJetPt>=%.0f&&finalJetPt<%.0f",finalJetPtMin,finalJetPtMax);
   // TCut jetSelCut = Form("finalJetPt>=%.0f&&finalJetPt<%.0f&&jetPtGM>100",finalJetPtMin,finalJetPtMax);
   // TCut jetSelCut = Form("jetPtGM>=%.0f&&jetPtGM<%.0f",finalJetPtMin,finalJetPtMax);
@@ -221,9 +223,8 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   }
 
   ////////////////////////////////////////////////////////  
-  // Weights
+  // Jet Weights
   ////////////////////////////////////////////////////////  
-  float jetDrCut = 0.3;
   TString jetRewt= "1";
   if ( rewtJet==1 ) {
     jetRewt = Form("rewtPt");
@@ -345,11 +346,24 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
 
     // Jet bias corrections
     if (correctJetBias==1) {
-      trackWeight[j]+="*yTrk.jetBiasWt";
-      genpWeight[j] += "*genPar.jetBiasWt";
-    } else if (correctJetBias==2&& (dataset == kHIDATA || dataset == kHIMC)) {
-      bkgtrackWeight[j]+="*yTrk.bkgBiasWt";
-      bkggenpWeight[j] += "*genPar.bkgBiasWt";      
+      if (dataset == kPPMC || dataset == kPPDATA) {
+        trackWeight[j]+="*yTrk.jetBiasWt";
+        genpWeight[j] += "*genPar.jetBiasWt";
+      }
+    } else if (correctJetBias==2) {
+      if (dataset == kHIDATA || dataset == kHIMC) {
+        bkgtrackWeight[j]+="*yTrk.bkgBiasWt";
+        bkggenpWeight[j] += "*genPar.bkgBiasWt";
+      }
+    } else if (correctJetBias==3) {
+      if (dataset == kPPMC || dataset == kPPDATA) {
+        trackWeight[j]+="*yTrk.jetBiasWt";
+        genpWeight[j] += "*genPar.jetBiasWt";
+      }
+      if (dataset == kHIDATA || dataset == kHIMC) {
+        bkgtrackWeight[j]+="*yTrk.bkgBiasWt";
+        bkggenpWeight[j] += "*genPar.bkgBiasWt";
+      }      
     }
   }
 
@@ -494,7 +508,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   gPad->SetLogy();
   drawText("Jet p_{T}", 0.55,0.63,1);
   
-  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_Feb14v2_data_mc80to170_hi_pp_corrjbias%d",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut,correctJetBias);
+  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_jdr%0.1f_Feb14v2_data_mc80to170_hi_pp_corrjbias%d_v2",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut,jetDrCut,correctJetBias);
 
   if ( fragMode==2) {
     c1->SaveAs(Form("plotsOfInclJetFF/inclJetFF_xi_doClosure%d_icent%d_irj%d_%s_%s%s_%s.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data(),outnameTag.Data()));
