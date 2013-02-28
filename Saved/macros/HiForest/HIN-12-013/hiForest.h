@@ -58,7 +58,7 @@ class HiForest : public TNamed
   void GetEntry(int i);
   int  GetEntries();  						// Get the number of entries 
   void GetEnergyScaleTable(char *fileNameTable);                // Get photon energy scale table
-  void InitTree();						// Initialize track correction
+  void InitTree(float drMatch = 0.3);						// Initialize track correction
   void PrintStatus();						// Print the status of the hiForest
   void SetOutputFile(const char *name);               		// Set output file name for skim
   void AddCloneTree(TTree* t, const char *dirName, const char *treeName);   // Add a clone tree to the clone forest
@@ -537,10 +537,10 @@ int HiForest::GetEntries()
 }
 
 
-void HiForest::InitTree()
+void HiForest::InitTree(float drMatch)
 {
-   // trkCorrDrMatch = 0.5;
-   trkCorrDrMatch = 0.3;
+   trkCorrDrMatch = drMatch;
+   cout << endl << "Tracking correction table drMatch at: " << trkCorrDrMatch << endl << endl;
 
    // Setup Track Corrections 	 
    if(doTrackCorrections){
