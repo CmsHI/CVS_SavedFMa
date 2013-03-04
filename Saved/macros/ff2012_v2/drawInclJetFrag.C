@@ -59,7 +59,7 @@ void drawInclJetFrag() {
     float trackPtMin = ptranges[begbin];
     float trackPtMax = ptranges[ip+1];
     for (int fragMode = 1; fragMode<=2 ; fragMode++) {
-      for (int corrBias=0; corrBias<=2; ++corrBias) {
+      for (int corrBias=0; corrBias<=0; ++corrBias) {
         if (corrBias==1) continue;
         if ( doPPMC ) {
           vector<pair<int,int> > wt_sm;
@@ -238,38 +238,18 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   if (ppsm==0) ppsmCent=0;
   multiTreeUtil* dj  = new multiTreeUtil();
   if ( dataset == kHIDATA) {
-    // dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root","tdj", jetSelCut && centCut,1);
-    // dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan26_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm3bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut,1);
-    // Feb 14 ntuples
-    dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root","tdj", jetSelCut && centCut,1);
+    dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut,1);
   } else if ( dataset == kHIMC) {
-    // arc paper meeting Feb 05
-    // dj->addFile("../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=80&&pthat<100",9.913e-5*1.e9);
-    // dj->addFile("../ntout/jskim_hydj100_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=100&&pthat<9999",3.069e-5*1.e9);
-    // Feb 14 ntuples
-    dj->addFile("../ntout/jskim_hydj80_akPu3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root", "tdj", jetSelCut && centCut && "pthat>=80&&pthat<100",9.913e-5*1.e9);
-    dj->addFile("../ntout/jskim_hydj100_akPu3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root", "tdj", jetSelCut && centCut && "pthat>=100&&pthat<170",3.069e-5*1.e9);
-    dj->addFile("../ntout/jskim_hydj170_akPu3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root", "tdj", jetSelCut && centCut && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
+    dj->addFile("../ntout/jskim_hydj80_akPu3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=80&&pthat<100",9.913e-5*1.e9);
+    dj->addFile("../ntout/jskim_hydj100_akPu3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=100&&pthat<170",3.069e-5*1.e9);
+    dj->addFile("../ntout/jskim_hydj170_akPu3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
   } else if ( dataset == kPPDATA) {
-      // archive
-    // dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Dec5newsmgt60steps_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0.root",icent),
-      // arc paper meeting Feb 05
-    // dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),
-    // Feb 14 ntuples
-    // dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0.root",icent),
-    dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",ppsm,ppsmCent),
+    dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",ppsm,ppsmCent),
     "tdj", jetSelCut, 1); // no centrality cut
   } else if ( dataset == kPPMC) {
-    // dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root"),"tdj", jetSelCut && "pthat>=80&&pthat<9999", 9.913e-5*1.e9); // no centrality cut
-    // dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0.root",icent),"tdj", jetSelCut, 1); // no centrality cut
-    // dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0_addedReweight.root",icent),"tdj", jetSelCut, 1); // no centrality cut
-    // arc paper meeting Feb 05
-    // dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0.root",icent),"tdj", jetSelCut && "pthat>=80&&pthat<120", 9.913e-5*1.e9); // no centrality cut
-    // dj->addFile(Form("../ntout/jskim_dj120_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin%d_ak3PF_gj0.root",icent),"tdj", jetSelCut && "pthat>=120&&pthat<9999", 1.128e-5*1.e9); // no centrality cut
-    // Feb 14 ntuples
-    dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",ppsm,ppsmCent), "tdj", jetSelCut && "pthat>=80&&pthat<120",9.913e-5*1.e9); // no centrality cut!
-    dj->addFile(Form("../ntout/jskim_dj120_ak3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",ppsm,ppsmCent), "tdj", jetSelCut && "pthat>=120&&pthat<170",1.128e-5*1.e9);
-    dj->addFile(Form("../ntout/jskim_dj170_ak3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",ppsm,ppsmCent), "tdj", jetSelCut && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
+    dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",ppsm,ppsmCent), "tdj", jetSelCut && "pthat>=80&&pthat<120",9.913e-5*1.e9); // no centrality cut!
+    dj->addFile(Form("../ntout/jskim_dj120_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",ppsm,ppsmCent), "tdj", jetSelCut && "pthat>=120&&pthat<170",1.128e-5*1.e9);
+    dj->addFile(Form("../ntout/jskim_dj170_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",ppsm,ppsmCent), "tdj", jetSelCut && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
   }
   // pthat scaling normalization
   if ( dataset == kHIMC || dataset == kPPMC) dj->NormalizeScales(2,"","hEvtCentNoSkim");
@@ -327,7 +307,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   for (int j=0; j<3; ++j) {
     // trackWeight[j] = jetRewt;
     // mixTrackWeight[j] = jetRewt;
-    trackWeight[j] = jetRewt+"*(yTrk.trkWeight*(yTrk.trkWeight<3.5)+1.47*(yTrk.trkWeight>=3.5))";
+    trackWeight[j] = jetRewt+"*( yTrk.trkWeight*(yTrk.trkWeight<20) + 1.47*(yTrk.trkWeight>=20) )";
     // mixTrackWeight[j] = jetRewt+"*(mTrk.trkWeight*(mTrk.trkWeight<3.5)+1.47*(mTrk.trkWeight>=3.5))";
     genpWeight[j] = jetRewt;
 
@@ -508,7 +488,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   gPad->SetLogy();
   drawText("Jet p_{T}", 0.55,0.63,1);
   
-  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_jdr%0.1f_Feb14v2_data_mc80to170_hi_pp_corrjbias%d_v2",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut,jetDrCut,correctJetBias);
+  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_jdr%0.1f_Mar04job0_data_mc80to170_hi_pp_corrjbias%d_v2",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut,jetDrCut,correctJetBias);
 
   if ( fragMode==2) {
     c1->SaveAs(Form("plotsOfInclJetFF/inclJetFF_xi_doClosure%d_icent%d_irj%d_%s_%s%s_%s.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data(),outnameTag.Data()));
