@@ -84,12 +84,11 @@ TH1D* getCentDistDj();
 
 
 void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/pbpbDijet_v20/promptskim-hihighpt-hltjet80-pt90-v20.root", std::string outname = "jskim.root", bool needReweight=false, int maxEvents=-1, TString MinbiasFname="/mnt/hadoop/cms/store/user/jazzitup/hiForest/skimmed/yskim_HiForestMinBias_v6_first_July-v8-8VtxBin-24PlnBin-40CentBin.root", bool isMC=false, TString jetAlgo="akPu3PF", 
-    bool isPP = false,   int smearMode=0, int smearCentBin = 0,bool useGenJet=false, float pthatMin=-1, float pthatMax=-1)
+    bool isPP = false,   int smearMode=0, int smearCentBin = 0,bool useGenJet=false, int randJob=0, float pthatMin=-1, float pthatMax=-1)
 {
   // Environment setup
   // gRandom->SetSeed(time(0));
-  int randJob=2;
-  int randSeed = 20130214+randJob+smearCentBin;
+  int randSeed = randJob+smearCentBin;
   cout << "random seed: " << randSeed << endl;
   gRandom->SetSeed(randSeed);
 
@@ -485,14 +484,26 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
     float pt1=-99;
     for (int j=0;j<c->akPu3PF.nref;j++) {
       if (c->akPu3PF.jtpt[j]<40) continue;
-      if ( (c->akPu3PF.trackMax[j]/c->akPu3PF.jtpt[j])<0.01 ) continue;
       if (fabs(c->akPu3PF.jteta[j])>2) continue;
+      if ( (c->akPu3PF.trackMax[j]/c->akPu3PF.jtpt[j])<0.01 ) continue;
       if (c->akPu3PF.jtpt[j] > pt1) {
         pt1 = c->akPu3PF.jtpt[j];
         leadingIndex = j;
       }
     }
-    // if (!isPP && (isMC && leadingIndex>=0&&c->akPu3PF.subid[leadingIndex]>0) ) continue; // PbPb: protection against high pt jet from background event
+    // if (!isPP && (isMC && leadingIndex>=0&&c->akPu3PF.subid[leadingIndex]>0) ) continue; // ana xcheck: effect of PbPb selection protection against high pt jet from background event
+    // subleading jet
+    int awayIndex=-1;
+    float pt2=-99;
+    for (int j=0;j<c->akPu3PF.nref;j++) {
+      if (c->akPu3PF.jtpt[j]<40) continue;
+      if (fabs(c->akPu3PF.jteta[j])>cutjetEta) continue;
+      if ( (c->akPu3PF.trackMax[j]/c->akPu3PF.jtpt[j])<0.01 ) continue;
+      if (j!=leadingIndex&&c->akPu3PF.jtpt[j] > pt2) {
+        pt2 = c->akPu3PF.jtpt[j];
+        awayIndex = j;
+      }
+   }
     // check
     hEvtCent->Fill(evt.cBin);
     hEvtVz->Fill(evt.vz);
@@ -519,7 +530,15 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
     // Apply Smearing
     ////////////////////////
     float jetUnSmPt[MAXMTRK];  
-    if (smearMode>0) {	
+    if (smearMode>0) {  
+      // Set Unsmeared Leading Jet and Subleading jet energies for tracking efficiency look up
+      // c->leadingJetPtForTrkCor = c->akPu3PF.jtpt[leadingIndex];
+      // c->leadingJetEtaForTrkCor = c->akPu3PF.jteta[leadingIndex];
+      // c->leadingJetPhiForTrkCor = c->akPu3PF.jtphi[leadingIndex];
+      // c->subleadingJetPtForTrkCor = c->akPu3PF.jtpt[awayIndex];
+      // c->subleadingJetEtaForTrkCor = c->akPu3PF.jteta[awayIndex];
+      // c->subleadingJetPhiForTrkCor = c->akPu3PF.jtphi[awayIndex];
+      // Get Smearing
       for (int ij=0; ij< nJets ; ij++) {
         hSmJetPtRaw->Fill(theJet->jtpt[ij]);
         // 1. Get Smearing Cent bin
@@ -566,21 +585,6 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
           if (smCentBin==0) smearingPtBin0->Fill( jetUnSmPt[ij], sm );
         }
         hSmJetPtSm->Fill(theJet->jtpt[ij]);
-      }
-      // Set Unsmeared Leading Jet and Subleading jet energies for tracking efficiency look up
-      for (int k=0; k<nJets; k++) {
-        if (fabs(theJet->jteta[k])>2) continue;
-        if (jetUnSmPt[k]>c->leadingJetPtForTrkCor) {
-          c->leadingJetPtForTrkCor = jetUnSmPt[k];
-          c->leadingJetEtaForTrkCor = theJet->jteta[k];
-          c->leadingJetPhiForTrkCor = theJet->jtphi[k];
-        }   
-        if (jetUnSmPt[k]>c->subleadingJetPtForTrkCor && jetUnSmPt[k] < c->leadingJetPtForTrkCor) {
-          c->subleadingJetPtForTrkCor = jetUnSmPt[k];
-          c->subleadingJetEtaForTrkCor = theJet->jteta[k];
-          c->subleadingJetPhiForTrkCor = theJet->jtphi[k];
-        }
-        if (jetUnSmPt[k]<c->subleadingJetPtForTrkCor) break;   
       }
     }
 
