@@ -532,12 +532,14 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
     float jetUnSmPt[MAXMTRK];  
     if (smearMode>0) {  
       // Set Unsmeared Leading Jet and Subleading jet energies for tracking efficiency look up
-      // c->leadingJetPtForTrkCor = c->akPu3PF.jtpt[leadingIndex];
-      // c->leadingJetEtaForTrkCor = c->akPu3PF.jteta[leadingIndex];
-      // c->leadingJetPhiForTrkCor = c->akPu3PF.jtphi[leadingIndex];
-      // c->subleadingJetPtForTrkCor = c->akPu3PF.jtpt[awayIndex];
-      // c->subleadingJetEtaForTrkCor = c->akPu3PF.jteta[awayIndex];
-      // c->subleadingJetPhiForTrkCor = c->akPu3PF.jtphi[awayIndex];
+      if (isPP) {
+        c->leadingJetPtForTrkCor = c->akPu3PF.jtpt[leadingIndex];
+        c->leadingJetEtaForTrkCor = c->akPu3PF.jteta[leadingIndex];
+        c->leadingJetPhiForTrkCor = c->akPu3PF.jtphi[leadingIndex];
+        c->subleadingJetPtForTrkCor = c->akPu3PF.jtpt[awayIndex];
+        c->subleadingJetEtaForTrkCor = c->akPu3PF.jteta[awayIndex];
+        c->subleadingJetPhiForTrkCor = c->akPu3PF.jtphi[awayIndex];
+      }
       // Get Smearing
       for (int ij=0; ij< nJets ; ij++) {
         hSmJetPtRaw->Fill(theJet->jtpt[ij]);
