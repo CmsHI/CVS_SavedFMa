@@ -45,22 +45,24 @@ void drawInclJetFrag() {
 
   bool doHIDATA = 1;
   bool doPPDATA = 1;
-  bool doHIMC = 1;
-  bool doPPMC = 1;
+  bool doHIMC = 0;
+  bool doPPMC = 0;
   bool usingPara = false;
   
   // doClosure  //////
   // 0 : default
   // -1 : only used for pp data : no weighting
-  // 100 : eta refelction
-  for (int ip=0; ip<nptrange; ++ip) {
-    int begbin=ip;
-    if (intPt) begbin=0;
-    float trackPtMin = ptranges[begbin];
-    float trackPtMax = ptranges[ip+1];
-    for (int fragMode = 1; fragMode<=2 ; fragMode++) {
-      for (int corrBias=0; corrBias<=0; ++corrBias) {
-        if (corrBias==1) continue;
+  // 100 : eta refelctio
+  float vbias[10] = {11,12,1,2,10}; // 1=jet rel bias corr, 2=jet bias corr, 10=bkg bias corr
+  for (int ic=0; ic<5; ++ic) {
+    int corrBias=vbias[ic];
+    if (corrBias<0) continue;
+    for (int ip=0; ip<nptrange; ++ip) {
+      int begbin=ip;
+      if (intPt) begbin=0;
+      float trackPtMin = ptranges[begbin];
+      float trackPtMax = ptranges[ip+1];
+      for (int fragMode = 1; fragMode<=2 ; fragMode++) {
         if ( doPPMC ) {
           vector<pair<int,int> > wt_sm;
           wt_sm.push_back(pair<int,int>(0,0));
@@ -82,15 +84,18 @@ void drawInclJetFrag() {
         }
         if ( doPPDATA ) {
           vector<pair<int,int> > wt_sm;
-          wt_sm.push_back(pair<int,int>(0,0));
-          wt_sm.push_back(pair<int,int>(0,2));
+          // wt_sm.push_back(pair<int,int>(0,0));
+          // wt_sm.push_back(pair<int,int>(0,2));
+          wt_sm.push_back(pair<int,int>(1,0));
+          wt_sm.push_back(pair<int,int>(1,2));
           for (int iset=0; iset<wt_sm.size(); ++iset) {
             drawInclJetFragSingleSet(fragMode, kPPDATA, trackPtMin,trackPtMax, 100, usingPara, wt_sm[iset].first,wt_sm[iset].second,corrBias);  // no smear
           }
         }
         if ( doHIDATA) {
           vector<pair<int,int> > wt_sm;
-          wt_sm.push_back(pair<int,int>(0,0));
+          // wt_sm.push_back(pair<int,int>(0,0));
+          wt_sm.push_back(pair<int,int>(1,0));
           for (int iset=0; iset<wt_sm.size(); ++iset) {
             drawInclJetFragSingleSet(fragMode, kHIDATA, trackPtMin,trackPtMax, 100, usingPara, wt_sm[iset].first,wt_sm[iset].second,corrBias);
           }
@@ -235,21 +240,20 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   // Input trees
   ///////////////////////////////////////////////////////
   int ppsmCent=icent;
-  if (ppsm==0) ppsmCent=0;
   multiTreeUtil* dj  = new multiTreeUtil();
   if ( dataset == kHIDATA) {
-    dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root","tdj", jetSelCut && centCut,1);
+    dj->addFile("../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root","tdj", jetSelCut && centCut,1);
   } else if ( dataset == kHIMC) {
-    dj->addFile("../ntout/jskim_hydj80_akPu3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=80&&pthat<100",9.913e-5*1.e9);
-    dj->addFile("../ntout/jskim_hydj100_akPu3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=100&&pthat<170",3.069e-5*1.e9);
-    dj->addFile("../ntout/jskim_hydj170_akPu3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut && centCut && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
+    dj->addFile("../ntout/jskim_hydj80_akPu3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root", "tdj", jetSelCut && centCut && "pthat>=80&&pthat<100",9.913e-5*1.e9);
+    dj->addFile("../ntout/jskim_hydj100_akPu3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root", "tdj", jetSelCut && centCut && "pthat>=100&&pthat<170",3.069e-5*1.e9);
+    dj->addFile("../ntout/jskim_hydj170_akPu3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0_addedReweight.root", "tdj", jetSelCut && centCut && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
   } else if ( dataset == kPPDATA) {
-    dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",ppsm,ppsmCent),
+    dj->addFile(Form("../ntout/jskim_pp-full_ak3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",ppsm,ppsmCent),
     "tdj", jetSelCut, 1); // no centrality cut
   } else if ( dataset == kPPMC) {
-    dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",ppsm,ppsmCent), "tdj", jetSelCut && "pthat>=80&&pthat<120",9.913e-5*1.e9); // no centrality cut!
-    dj->addFile(Form("../ntout/jskim_dj120_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",ppsm,ppsmCent), "tdj", jetSelCut && "pthat>=120&&pthat<170",1.128e-5*1.e9);
-    dj->addFile(Form("../ntout/jskim_dj170_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",ppsm,ppsmCent), "tdj", jetSelCut && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
+    dj->addFile(Form("../ntout/jskim_dj80_ak3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",ppsm,ppsmCent), "tdj", jetSelCut && "pthat>=80&&pthat<120",9.913e-5*1.e9); // no centrality cut!
+    dj->addFile(Form("../ntout/jskim_dj120_ak3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",ppsm,ppsmCent), "tdj", jetSelCut && "pthat>=120&&pthat<170",1.128e-5*1.e9);
+    dj->addFile(Form("../ntout/jskim_dj170_ak3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0_addedReweight.root",ppsm,ppsmCent), "tdj", jetSelCut && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
   }
   // pthat scaling normalization
   if ( dataset == kHIMC || dataset == kPPMC) dj->NormalizeScales(2,"","hEvtCentNoSkim");
@@ -307,7 +311,7 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   for (int j=0; j<3; ++j) {
     // trackWeight[j] = jetRewt;
     // mixTrackWeight[j] = jetRewt;
-    trackWeight[j] = jetRewt+"*( yTrk.trkWeight*(yTrk.trkWeight<20) + 1.47*(yTrk.trkWeight>=20) )";
+    trackWeight[j] = jetRewt+"*( yTrk.trkWeight*(yTrk.trkWeight<10) + 1.47*(yTrk.trkWeight>=10) )";
     // mixTrackWeight[j] = jetRewt+"*(mTrk.trkWeight*(mTrk.trkWeight<3.5)+1.47*(mTrk.trkWeight>=3.5))";
     genpWeight[j] = jetRewt;
 
@@ -325,25 +329,21 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
     bkggenpWeight[j] = genpWeight[j];
 
     // Jet bias corrections
-    if (correctJetBias==1) {
+    if (correctJetBias%10==1) {
       if (dataset == kPPMC || dataset == kPPDATA) {
-        trackWeight[j]+="*yTrk.jetBiasWt";
-        genpWeight[j] += "*genPar.jetBiasWt";
+        trackWeight[j]+="*yTrk.jetRelBiasWt";
+        genpWeight[j] += "*genPar.jetRelBiasWt";
       }
-    } else if (correctJetBias==2) {
+    }
+    if (correctJetBias%10==2) {
+      trackWeight[j]+="*yTrk.jetBiasWt";
+      genpWeight[j] += "*genPar.jetBiasWt";
+    }
+    if (correctJetBias/10==1) {
       if (dataset == kHIDATA || dataset == kHIMC) {
         bkgtrackWeight[j]+="*yTrk.bkgBiasWt";
         bkggenpWeight[j] += "*genPar.bkgBiasWt";
       }
-    } else if (correctJetBias==3) {
-      if (dataset == kPPMC || dataset == kPPDATA) {
-        trackWeight[j]+="*yTrk.jetBiasWt";
-        genpWeight[j] += "*genPar.jetBiasWt";
-      }
-      if (dataset == kHIDATA || dataset == kHIMC) {
-        bkgtrackWeight[j]+="*yTrk.bkgBiasWt";
-        bkggenpWeight[j] += "*genPar.bkgBiasWt";
-      }      
     }
   }
 
@@ -488,7 +488,8 @@ void drawInclJetFragSingle( TH1D* htrkPt[3][5],
   gPad->SetLogy();
   drawText("Jet p_{T}", 0.55,0.63,1);
   
-  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_jdr%0.1f_Mar04job0_data_mc80to170_hi_pp_corrjbias%d_v2",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut,jetDrCut,correctJetBias);
+  TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_jdr%0.1f_Mar04v3job0_data_mc80to170_hi_pp_corrjbias%d_v3",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut,jetDrCut,correctJetBias);
+  // TString outnameTag=Form("trackPtCut%.0f_FinalJetPt%.0fto%.0feta%.2f_jdr%0.1f_Mar04v3job0_mc80to170_hi_pp_corrjbias%d_v3",ptranges[0],finalJetPtMin,finalJetPtMax,finalEtaCut,jetDrCut,correctJetBias);
 
   if ( fragMode==2) {
     c1->SaveAs(Form("plotsOfInclJetFF/inclJetFF_xi_doClosure%d_icent%d_irj%d_%s_%s%s_%s.pdf",doClosure,icent,irj,datasetName.Data(),clsText.Data(),tag.Data(),outnameTag.Data()));
