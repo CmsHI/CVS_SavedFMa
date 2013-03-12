@@ -83,24 +83,18 @@ public:
 
 // --- Main Function ----------------------------------------------------------
 void addMultiWeight(
-  // TString infnt="../ntout/jskim_dj80_ak3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root",
-  // bool isPP=true,
-  // int rewtBin=1,
-  // int doMC=1
-  TString infnt="../ntout/jskim_hydj80_akPu3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root",
+  TString infnt="../ntout/jskim_hydj80_akPu3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root",
   bool isPP=false,
   int rewtBin=1,
   int doMC=1
-  // TString infnt="../ntout/jskim_pp-full_ak3PF_Feb14v2_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root",
-  // bool isPP=true,
-  // int rewtBin=1,
-  // int doMC=0
   ) {
   ////////////////////////////////////////////
   // Setup Inputs
   ////////////////////////////////////////////
-  ReweightCorrection wcJetRatio("wcJetRatio",0,1);
-  ReweightCorrection wcJetBias("wcJetBias",0);
+  ReweightCorrection wcJetRatio("wcJetRatio",0,1); // pp reweighting
+  if (!isPP) wcJetRatio.wtType = 1; // calo90 efficiency correction
+  ReweightCorrection wcJetRelBias("wcJetRelBias",0);
+  ReweightCorrection wcJetBias("wcJetBias",1);
   ReweightCorrection wcBkgBias("wcBkgBias",1);
 
   TString dataset="hi";
@@ -112,35 +106,45 @@ void addMultiWeight(
 
   // Load histograms
   TH1D * bkg[5];
+  TString infjetwt="His/Mar04/jet_spectrum_cmp4_sm1_rewt0_evsel1_Mar04v3job0.root";
+  if (isPP) infjetwt=Form("His/Mar04/jet_spectrum_cmp1_sm%d_rewt0_evsel0_Mar04v3job0.root",ppsm);
+  TString infhisanahi="His/Mar04/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04job0_data_mc80to170_hi_pp_corrjbias0_v2.root";
+  TString infhisanapp="His/Mar04/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v2job0_data_mc80to170_hi_pp_corrjbias0_v2.root";
+  TString infhisanahi_refjetgt100="His/Mar04/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04job0_mc80to170_refjetgt100_hi_pp_corrjbias0_v2.root";
+  TString infhisanapp_refjetgt100="His/Mar04/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v2job0_mc80to170_refjetgt100_hi_pp_corrjbias0_v2.root";
   for ( int icent=1; icent<=4 ; icent++) {
     // data jet reweighting
-    wcJetRatio.ana[icent]   = (TH1D*)load("fig/Jan17/jet_spectrum_cmp1_sm2_rewt0_evsel0_pbpbJan17_ppJan17.root",
-      Form("hjetPt_hi_inclusiveJet_icent%d",icent));
-    wcJetRatio.ref[icent]    = (TH1D*)load("fig/Jan17/jet_spectrum_cmp1_sm2_rewt0_evsel0_pbpbJan17_ppJan17.root",
-      Form("hjetPt_pp_inclusiveJet_icent%d",icent));
+    wcJetRatio.ana[icent]   = (TH1D*)load(infjetwt, Form("hjetPt_hi_inclusiveJet_icent%d",icent));
+    wcJetRatio.ref[icent]   = (TH1D*)load(infjetwt, Form("hjetPt_pp_inclusiveJet_icent%d",icent));
+
+    // mc jet reco bias relative
+    wcJetRelBias.ana[icent] = (TH1D*)load(infhisanahi, Form("hpt_jet_sigTrk_himc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0_wtmode0_pt1to300",icent));
+    wcJetRelBias.ref[icent] = (TH1D*)load(infhisanapp, Form("hpt_jet_sigTrk_ppmc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm%d_wtmode0_pt1to300",icent,ppsm));
+    // factorized correction for pp to match pbpb
+    bkg[icent]              = (TH1D*)load(infhisanahi, Form("hpt_jet_mbTrk_himc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0_wtmode0_pt1to300",icent));
+    wcJetRelBias.ana[icent]->Add(bkg[icent]);
+    wcJetRelBias.ref[icent]->Add(bkg[icent]);
 
     // mc jet reco bias
-    wcJetBias.ana[icent] = (TH1D*)load("His/Feb19/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root",
-      Form("hpt_jet_sigTrk_himc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0_wtmode0_pt1to300",icent));
-    wcJetBias.ref[icent] = (TH1D*)load("His/Feb19/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root",
-      Form("hpt_jet_sigTrk_ppmc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm%d_wtmode0_pt1to300",icent,ppsm));
-    // factorized correction for pp to match pbpb
-    bkg[icent]           = (TH1D*)load("His/Feb19/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root",
-      Form("hpt_jet_mbTrk_himc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0_wtmode0_pt1to300",icent));
-    wcJetBias.ana[icent]->Add(bkg[icent]);
-    wcJetBias.ref[icent]->Add(bkg[icent]);
+    TString temphisana=infhisanahi, temphisref=infhisanahi_refjetgt100;
+    if (isPP) {temphisana=infhisanapp; temphisref=infhisanapp_refjetgt100;};
+    wcJetBias.ana[icent] = (TH1D*)load(temphisana, Form("hpt_jet_sigTrk_%smc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0_wtmode0_pt1to300",dataset.Data(),icent));
+    wcJetBias.ref[icent] = (TH1D*)load(temphisref, Form("hpt_jet_sigTrk_%smc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm%d_wtmode0_pt1to300",dataset.Data(),icent,ppsm));
+    if (!isPP) {
+      wcJetBias.ana[icent]->Add(bkg[icent]);
+      wcJetBias.ref[icent]->Add(bkg[icent]);
+    }
 
     // jet background bias
-    wcBkgBias.ana[icent] = (TH1D*)load("His/Feb19/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root",
-      Form("hpt_jet_mbTrk_himc_icent%d_irj999_fragMode1_closure102_rewt0_ppsm0_wtmode0_pt1to300",icent));
-    wcBkgBias.ref[icent]  = (TH1D*)load("His/Feb19/inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root",
-      Form("hpt_jet_mbTrk_himc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0_wtmode0_pt1to300",icent));
+    wcBkgBias.ana[icent] = (TH1D*)load(infhisanahi, Form("hpt_jet_mbTrk_himc_icent%d_irj999_fragMode1_closure102_rewt0_ppsm0_wtmode0_pt1to300",icent));
+    wcBkgBias.ref[icent]  = (TH1D*)load(infhisanahi, Form("hpt_jet_mbTrk_himc_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0_wtmode0_pt1to300",icent));
   }
   
   ////////////////////////////////////////////
   // Make Corrections
   ////////////////////////////////////////////
   wcJetRatio.Init();
+  wcJetRelBias.Init();
   wcJetBias.Init();
   wcBkgBias.Init();
 
@@ -151,13 +155,18 @@ void addMultiWeight(
 
   TCanvas* c2 = new TCanvas("c2","",1000,600);
   c2->Divide(4,2);
-  Plot4x4 p2(wcJetBias.ana,wcJetBias.ref,wcJetBias.normMode,wcJetBias.name);
+  Plot4x4 p2(wcJetRelBias.ana,wcJetRelBias.ref,wcJetRelBias.normMode,wcJetRelBias.name);
   p2.Draw(c2,1,103);
 
   TCanvas* c3 = new TCanvas("c3","",1000,600);
   c3->Divide(4,2);
-  Plot4x4 p3(wcBkgBias.ana,wcBkgBias.ref,wcBkgBias.normMode,wcBkgBias.name);
+  Plot4x4 p3(wcJetBias.ana,wcJetBias.ref,wcJetBias.normMode,wcJetBias.name);
   p3.Draw(c3,1,103);
+
+  TCanvas* c4 = new TCanvas("c4","",1000,600);
+  c4->Divide(4,2);
+  Plot4x4 p4(wcBkgBias.ana,wcBkgBias.ref,wcBkgBias.normMode,wcBkgBias.name);
+  p4.Draw(c4,1,103);
 
   ////////////////////////////////////////////
   // Setup input and output trees
@@ -174,7 +183,7 @@ void addMultiWeight(
   tjin->SetBranchAddress("indiJet", &dj, &b_dj);
 
   // Set Input Track trees ---------------
-  int nTrk;
+  int nTrk=0;
   float trkPt[MAXTRK];
   int trkJetMatch[MAXTRK];
   TTree* yongsunTrackin = (TTree*)inf1->Get("yongsunTrack");
@@ -184,7 +193,7 @@ void addMultiWeight(
   yongsunTrackin->SetBranchAddress("jetMatch",trkJetMatch);
 
   const int maxGenPar = 25000;
-  int nGenPar;
+  int nGenPar=0;
   float genParPt[maxGenPar];
   int   genParJetMatch[maxGenPar];
   TTree * genParIn = (TTree*)inf1->Get("genPar");
@@ -197,6 +206,7 @@ void addMultiWeight(
   // Set Output Jet trees ---------------
   TString outputFile=infnt;
   outputFile.ReplaceAll(".root","_addedReweight.root");
+  if (isPP && infnt.Contains("_sm0bin0")) outputFile.ReplaceAll("_sm0bin0",Form("_sm0bin%d",rewtBin));
   TFile* newfile = new TFile(outputFile,"recreate");
   cout << "Output file :" << outputFile << endl;
     
@@ -205,16 +215,18 @@ void addMultiWeight(
   tjnew->Branch("jetRewt",&jetRewt.inputPt,"inputPt/F:rewtPt:rewtCent:rewtAj");
 
   TTree* newyongsunTrack= (TTree*)yongsunTrackin->CloneTree(0);
-  float trkJetBiasWt[MAXTRK];
+  float trkJetRelBiasWt[MAXTRK], trkJetBiasWt[MAXTRK];
   float trkBkgBiasWt[MAXTRK];
+  newyongsunTrack->Branch("jetRelBiasWt",trkJetRelBiasWt,"jetRelBiasWt[ntrk]/F");
   newyongsunTrack->Branch("jetBiasWt",trkJetBiasWt,"jetBiasWt[ntrk]/F");
   newyongsunTrack->Branch("bkgBiasWt",trkBkgBiasWt,"bkgBiasWt[ntrk]/F");
 
   TTree * newGenPar;
-  float genParJetBiasWt[maxGenPar];
+  float genParJetRelBiasWt[maxGenPar], genParJetBiasWt[maxGenPar];
   float genParBkgBiasWt[maxGenPar];
   if ( doMC && genParIn) {
     newGenPar = (TTree*)genParIn->CloneTree(0);
+    newGenPar->Branch("jetRelBiasWt",genParJetRelBiasWt,"jetRelBiasWt[nGenPar]/F");
     newGenPar->Branch("jetBiasWt",genParJetBiasWt,"jetBiasWt[nGenPar]/F");
     newGenPar->Branch("bkgBiasWt",genParBkgBiasWt,"bkgBiasWt[nGenPar]/F");
   }
@@ -240,17 +252,19 @@ void addMultiWeight(
     // Get weights to jet branches
     ////////////////////////////////
     jetRewt.inputPt = dj.jetPt;
+    jetRewt.rewtPt = 1.;
     if (rewtBin>0) jetRewt.rewtPt = wcJetRatio.GetWeight(jetRewt.inputPt,rewtBin);
-    else jetRewt.rewtPt = 1.;
 
     ////////////////////////////////
     // Get weights to track branches
     ////////////////////////////////
     for (int it=0; it<nTrk; ++it) {
+      trkJetRelBiasWt[it]=1;
       trkJetBiasWt[it]=1;
       trkBkgBiasWt[it]=1;
       if (trkJetMatch[it]==1) {
-        if (isPP) trkJetBiasWt[it]=wcJetBias.GetWeight(trkPt[it],rewtBin);
+        if (isPP) trkJetRelBiasWt[it]=wcJetRelBias.GetWeight(trkPt[it],rewtBin);
+        trkJetBiasWt[it] = wcJetBias.GetWeight(trkPt[it],rewtBin);
       } else if (trkJetMatch[it]==-1) {
         if (!isPP&&rewtBin<=2) trkBkgBiasWt[it]=wcBkgBias.GetWeight(trkPt[it],rewtBin);
       }
@@ -260,9 +274,12 @@ void addMultiWeight(
     // Get weights to gen particle branches
     ////////////////////////////////
     for (int ig=0; ig<nGenPar; ++ig) {
+      genParJetRelBiasWt[ig]=1;
       genParJetBiasWt[ig]=1;
+      genParBkgBiasWt[ig]=1;
       if (genParJetMatch[ig]==1) {
-        if (isPP) genParJetBiasWt[ig]=wcJetBias.GetWeight(genParPt[ig],rewtBin);
+        if (isPP) genParJetRelBiasWt[ig]=wcJetRelBias.GetWeight(genParPt[ig],rewtBin);
+        genParJetBiasWt[ig] = wcJetBias.GetWeight(genParPt[ig],rewtBin);
       } else if (genParJetMatch[ig]==-1) {
         if (!isPP&&rewtBin<=2) genParBkgBiasWt[ig]=wcBkgBias.GetWeight(genParPt[ig],rewtBin);
       }
