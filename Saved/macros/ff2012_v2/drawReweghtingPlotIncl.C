@@ -137,55 +137,36 @@ void drawReweghtingPlotIncl(int smearPP=2, int rewtJet=0, int cmpMode=1, int evt
   TString numName[5];
   TString denName[5];
   TFile * vinf[5];
+  string pbpbName = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+  string rawpbpbName = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
+  if (evtSel==0) {
+    pbpbName = "../ntout/jskim_hltjet80-v21_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+    rawpbpbName = "../ntout/jskim_hltjet80-v21_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
+  }
+  
   for ( int icent=1; icent<=4 ; icent++) {
+    int smBin = icent;
+    if (smearPP==0) smBin = 0;
     // Specify files
-    // // Jan 17
-    string pbpbName = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-    string rawpbpbName = "../ntout/jskim_hltjet80-pt90-v20_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
-    if (evtSel==0) {
-      pbpbName = "../ntout/jskim_hltjet80-v21_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-      rawpbpbName = "../ntout/jskim_hltjet80-v21_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_akPu3PF_gj0.root";
-    }
     if (cmpMode==1) {
       numName[icent] = pbpbName;
-      denName[icent] = "../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
-      if (smearPP)
-        denName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
+      denName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,smBin);
     } else if (cmpMode==2) {
-      numName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
-      denName[icent] = "../ntout/jskim_pp-full_ak3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
+      numName[icent] = Form("../ntout/jskim_pp-full_ak3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,smBin);
+      denName[icent] = "../ntout/jskim_pp-full_ak3PF_Mar04v3job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
     } else if (cmpMode==3) {
       numName[icent] = pbpbName;
       denName[icent] = rawpbpbName;
+      smearPP=1;
     } else if (cmpMode==4) {
       numName[icent] = pbpbName;
       denName[icent] = "../ntout/jskim_hltjet80-v21_akPu3PF_Jan16_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
+      smearPP=1;
     }
-    // Jan 17 mc
-    // string pbpbName = "../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-    // string rawpbpbName = "../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
-    // if (evtSel==0) {
-    //   pbpbName = "../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-    //   rawpbpbName = "../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-    // }
-    // if (cmpMode==1) {
-    //   numName[icent] = pbpbName;
-    //   denName[icent] = "../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
-    //   if (smearPP)
-    //     denName[icent] = Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
-    // } else if (cmpMode==2) {
-    //   numName[icent] = Form("../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm%dbin%d_ak3PF_gj0.root",smearPP,icent);
-    //   denName[icent] = "../ntout/jskim_dj80_ak3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root";
-    // } else if (cmpMode==3) {
-    //   numName[icent] = pbpbName;
-    //   denName[icent] = rawpbpbName;
-    // } else if (cmpMode==4) {
-    //   numName[icent] = pbpbName;
-    //   denName[icent] = "../ntout/jskim_hydj80_akPu3PF_Jan17_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root";
-    // }
+
     // Reweight mode
-    // TString app="_addedReweight";
-    TString app="_addedFitRewt";
+    TString app="_addedReweight";
+    // TString app="_addedFitRewt";
     if (rewtJet==1) denName[icent]=denName[icent].ReplaceAll(".root",app+".root");
     if (rewtJet==2) numName[icent]=numName[icent].ReplaceAll(".root",app+".root");
     if (rewtJet==3) {
@@ -204,8 +185,8 @@ void drawReweghtingPlotIncl(int smearPP=2, int rewtJet=0, int cmpMode=1, int evt
   //////////////////////////////////////////////////
   // Output
   //////////////////////////////////////////////////
-  // TString outname=Form("fig/Jan17/jet_spectrum_cmp%d_sm%d_rewt%d_evsel%d_pbpbJan17_ppJan17",cmpMode,smearPP,rewtJet,evtSel);
-  TString outname=Form("fig/Jan17/mc_jet_spectrum_cmp%d_sm%d_rewt%d_evsel%d_pbpbJan17_ppJan17",cmpMode,smearPP,rewtJet,evtSel);
+  TString outname=Form("fig/Mar04/jet_spectrum_cmp%d_sm%d_rewt%d_evsel%d_Mar04v3job0",cmpMode,smearPP,rewtJet,evtSel);
+  // TString outname=Form("fig/Feb14/mc_jet_spectrum_cmp%d_sm%d_rewt%d_evsel%d_pbpbJan17_ppJan17",cmpMode,smearPP,rewtJet,evtSel);
   TFile * outf = new TFile(outname+".root","recreate");
 
   for ( int icent=1; icent<=4 ; icent++) {

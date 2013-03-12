@@ -11,7 +11,7 @@ double ptBin[nPtBin+1] = {1,1.2,1.5,2,2.5,3,4,5,7.5,10,12,15,20,25,30,45,60,90,1
 void drawTrackingClosure()
 {
   TCut centCut = "cBin>=0&&cBin<4";
-  TCut jetSelCut[2] = {"jetPt>100&&jetPt<300","jetPt>100&&jetPt<300"};
+  TCut jetSelCut[2] = {"jetPt>100&&jetPt<300&&jetUnSmPt<100","jetPt>100&&jetPt<300&&jetUnSmPt<100"};
   // TCut jetSelCut[2] = {"jetUnSmPt>100&&jetUnSmPt<300","jetUnSmPt>100&&jetUnSmPt<300"};
   TString jetAlias[2] = {"jetPt","jetPt"};
   // TString jetAlias[2] = {"jetUnSmPt","jetUnSmPt"};
@@ -27,20 +27,20 @@ void drawTrackingClosure()
   vmt[1].addFile("../ntout/jskim_hydj100_akPu3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut[1] && centCut && "pthat>=100&&pthat<170",3.069e-5*1.e9);
   vmt[1].addFile("../ntout/jskim_hydj170_akPu3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm1bin0_akPu3PF_gj0.root", "tdj", jetSelCut[1] && centCut && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
   // pp
-  // vmt[0].addFile("../ntout/jskim_dj80_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root", "tdj", jetSelCut[0] && "pthat>=80&&pthat<120",9.913e-5*1.e9);
-  // vmt[0].addFile("../ntout/jskim_dj120_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root", "tdj", jetSelCut[0] && "pthat>=120&&pthat<170",1.128e-5*1.e9);
-  // vmt[0].addFile("../ntout/jskim_dj170_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root", "tdj", jetSelCut[0] && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
-  // vmt[1].addFile("../ntout/jskim_dj80_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root", "tdj", jetSelCut[1] && "pthat>=80&&pthat<120",9.913e-5*1.e9);
-  // vmt[1].addFile("../ntout/jskim_dj120_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root", "tdj", jetSelCut[1] && "pthat>=120&&pthat<170",1.128e-5*1.e9);
-  // vmt[1].addFile("../ntout/jskim_dj170_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm0bin0_ak3PF_gj0.root", "tdj", jetSelCut[1] && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
+  // vmt[0].addFile("../ntout/jskim_dj80_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root", "tdj", jetSelCut[0] && "pthat>=80&&pthat<120",9.913e-5*1.e9);
+  // vmt[0].addFile("../ntout/jskim_dj120_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root", "tdj", jetSelCut[0] && "pthat>=120&&pthat<170",1.128e-5*1.e9);
+  // vmt[0].addFile("../ntout/jskim_dj170_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root", "tdj", jetSelCut[0] && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
+  // vmt[1].addFile("../ntout/jskim_dj80_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root", "tdj", jetSelCut[1] && "pthat>=80&&pthat<120",9.913e-5*1.e9);
+  // vmt[1].addFile("../ntout/jskim_dj120_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root", "tdj", jetSelCut[1] && "pthat>=120&&pthat<170",1.128e-5*1.e9);
+  // vmt[1].addFile("../ntout/jskim_dj170_ak3PF_Mar04job0_4bin_sm18_jetPt_60_jetEtaCut_2.00_noPbin_sm2bin1_ak3PF_gj0.root", "tdj", jetSelCut[1] && "pthat>=170&&pthat<9999",1.470e-6*1.e9);
 
   for (int i=0; i<2; ++i) {
     vmt[i].NormalizeScales(2,"","hEvtCentNoSkim");
   }
 
   TString annotation="#DeltaR<0.3";
-  TString tag="hiMar04job0trkcorr14d_dr3_limcorr";
-  // TString tag="ppMar04job0trkcorr14d_dr3_limcorr";
+  TString tag="hiMar04job0trkcorr14d_dr3_limcorr_unsmptlt100";
+  // TString tag="ppMar04job0trkcorr14d_dr3_limcorr_sm2bin1";
 
   for (int i=0; i<2; ++i) {
     vmt[i].AddFriend("yTrk=yongsunTrack");
@@ -100,7 +100,7 @@ void drawTrackingClosure()
   // trkCut[1]=trkCut[1]&&"genPar.sube==0";
   // TString trkWeight[2]={"(yTrk.trkWeight)","1"};
   // TString trkWeight[2]={"((yTrk.trkWeight)*(1-yTrk.jetDr/0.3*0.08*(yTrk.jetDr<0.3)))","1"};
-  TString trkWeight[2]={"(yTrk.trkWeight*(yTrk.trkWeight<20)+1.47*(yTrk.trkWeight>=20))","1"};
+  TString trkWeight[2]={"(yTrk.trkWeight*(yTrk.trkWeight<10)+1.47*(yTrk.trkWeight>=10))","1"};
   TH1D * hTrkPt[2], * hXi[2];
   for (int i=0; i<2; ++i) {
     hTrkPt[i] = new TH1D(Form("hTrkPt_%d",i),";Track p_{T} (GeV/c);",nPtBin,ptBin);
