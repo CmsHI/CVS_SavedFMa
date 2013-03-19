@@ -305,7 +305,7 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
   tdj = new TTree("tdj","Dijet tree");
   tdj->SetMaxTreeSize(30000000000);
   tdj->Branch("evt",&evt.run,"run/I:evt:cBin:pBin:nG:nJ:nT:trig/O:offlSel:noiseFilt:anaEvtSel:vz/F:reweight/F"); // todo : add ncoll later
-  tdj->Branch("indiJet",&dj.pthat,"pthat/F:jetPt:jetEta:jetPhi:jetPtGM:jetEtaGM:jetPhiGM:jetUnSmPt:jetInd/I");
+  tdj->Branch("indiJet",&dj.pthat,"pthat/F:jetPt:jetEta:jetPhi:jetPtGM:jetEtaGM:jetPhiGM:jetUnSmPt:jetInd/I:partonPt/F:partonFlav/I");
 
   int   nMtrk=0;
   float ptMtrk[MAXMTRK];
@@ -625,8 +625,14 @@ void forest2jetSkim(TString inputFile_="/net/hidsk0001/d00/scratch/yjlee/merge/p
       dj.jetEta = theJteta;
       dj.jetPhi = theJtphi;
       if ( useGenJet) dj.jetPtGM = 0;
-      else dj.jetPtGM = theJet->refpt[ij];
+      else {
+        dj.jetPtGM = theJet->refpt[ij];
+        dj.jetEtaGM = theJet->refeta[ij];
+        dj.jetPhiGM = theJet->refphi[ij];
+      }
       if (smearMode>0) dj.jetUnSmPt = jetUnSmPt[ij];
+      dj.partonPt = theJet->refparton_pt[ij];
+      dj.partonFlav = theJet->refparton_flavor[ij];
       
       ////////////////////////
       //  Jet business is done..  loop on tracks
