@@ -65,6 +65,10 @@ public:
       normHist(ref[icent],normMode,true);
       if (wtType==0) ratio[icent]->Divide(ana[icent],ref[icent]);
       else if (wtType==1) ratio[icent]->Divide(ref[icent],ana[icent]);
+      // if use fit
+      TF1 * fr = new TF1("fr","[0]+[1]*log(x-85)",0,500);
+      fr->SetParameters(0.88,0.03);
+      if (useFit) ratio[icent]->Fit("fr");
     }
   }
 
@@ -73,7 +77,7 @@ public:
     float wt = 1;
 
     if (useFit==1) {
-      wt = ratio[icent]->GetFunction("fr")->Eval(x);
+      if (x>100) wt = ratio[icent]->GetFunction("fr")->Eval(x);
     } else  {
       wt = ratio[icent]->GetBinContent( ratio[icent]->FindBin(x) );
     }
@@ -148,24 +152,25 @@ void addMultiWeight(
   wcJetBias.Init();
   wcBkgBias.Init();
 
+
   TCanvas* c1 = new TCanvas("c1","",1000,600);
   c1->Divide(4,2);
-  Plot4x4 p1(wcJetRatio.ana,wcJetRatio.ref,wcJetRatio.normMode,wcJetRatio.name);
+  Plot4x4 p1(wcJetRatio.ana,wcJetRatio.ref,wcJetRatio.ratio,wcJetRatio.normMode,wcJetRatio.name);
   p1.Draw(c1,100,299.9);
 
   TCanvas* c2 = new TCanvas("c2","",1000,600);
   c2->Divide(4,2);
-  Plot4x4 p2(wcJetRelBias.ana,wcJetRelBias.ref,wcJetRelBias.normMode,wcJetRelBias.name);
+  Plot4x4 p2(wcJetRelBias.ana,wcJetRelBias.ref,wcJetRelBias.ratio,wcJetRelBias.normMode,wcJetRelBias.name);
   p2.Draw(c2,1,103);
 
   TCanvas* c3 = new TCanvas("c3","",1000,600);
   c3->Divide(4,2);
-  Plot4x4 p3(wcJetBias.ana,wcJetBias.ref,wcJetBias.normMode,wcJetBias.name);
+  Plot4x4 p3(wcJetBias.ana,wcJetBias.ref,wcJetBias.ratio,wcJetBias.normMode,wcJetBias.name);
   p3.Draw(c3,1,103);
 
   TCanvas* c4 = new TCanvas("c4","",1000,600);
   c4->Divide(4,2);
-  Plot4x4 p4(wcBkgBias.ana,wcBkgBias.ref,wcBkgBias.normMode,wcBkgBias.name);
+  Plot4x4 p4(wcBkgBias.ana,wcBkgBias.ref,wcBkgBias.ratio,wcBkgBias.normMode,wcBkgBias.name);
   p4.Draw(c4,1,103);
 
   ////////////////////////////////////////////
@@ -206,6 +211,7 @@ void addMultiWeight(
   // Set Output Jet trees ---------------
   TString outputFile=infnt;
   outputFile.ReplaceAll(".root","_addedReweight.root");
+  // outputFile.ReplaceAll(".root","_addedFitRewt.root");
   if (isPP && infnt.Contains("_sm0bin0")) outputFile.ReplaceAll("_sm0bin0",Form("_sm0bin%d",rewtBin));
   TFile* newfile = new TFile(outputFile,"recreate");
   cout << "Output file :" << outputFile << endl;
