@@ -72,7 +72,7 @@ public:
     }
   }
 
-  float GetWeight(float x, int icent) {
+  float GetWeight(float x, int icent, float rmin=-999, float rmax=999) {
     assert(ratio[icent]);
     float wt = 1;
 
@@ -81,6 +81,9 @@ public:
     } else  {
       wt = ratio[icent]->GetBinContent( ratio[icent]->FindBin(x) );
     }
+
+    if (wt<rmin) wt=rmin;
+    if (wt>rmax) wt=rmax;
     return wt;
   }
 };
@@ -272,7 +275,7 @@ void addMultiWeight(
         if (isPP) trkJetRelBiasWt[it]=wcJetRelBias.GetWeight(trkPt[it],rewtBin);
         trkJetBiasWt[it] = wcJetBias.GetWeight(trkPt[it],rewtBin);
       } else if (trkJetMatch[it]==-1) {
-        if (!isPP&&rewtBin<=2) trkBkgBiasWt[it]=wcBkgBias.GetWeight(trkPt[it],rewtBin);
+        if (!isPP&&rewtBin<=2) trkBkgBiasWt[it]=wcBkgBias.GetWeight(trkPt[it],rewtBin,0.8,1.2);
       }
     }
 
@@ -287,7 +290,7 @@ void addMultiWeight(
         if (isPP) genParJetRelBiasWt[ig]=wcJetRelBias.GetWeight(genParPt[ig],rewtBin);
         genParJetBiasWt[ig] = wcJetBias.GetWeight(genParPt[ig],rewtBin);
       } else if (genParJetMatch[ig]==-1) {
-        if (!isPP&&rewtBin<=2) genParBkgBiasWt[ig]=wcBkgBias.GetWeight(genParPt[ig],rewtBin);
+        if (!isPP&&rewtBin<=2) genParBkgBiasWt[ig]=wcBkgBias.GetWeight(genParPt[ig],rewtBin,0.8,1.2);
       }
     }
 
