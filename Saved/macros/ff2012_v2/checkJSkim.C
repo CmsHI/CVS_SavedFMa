@@ -19,7 +19,7 @@
   // check trk
   // TCut trkSel="cBin<4 && jetPt>100 && yTrk.jetMatch==1 && yTrk.jetDr<0.3"; // pbpb
   TCut trkSel="jetPt>100 && yTrk.jetMatch==1 && yTrk.jetDr<0.3"; // pp
-  TString trkWt="(yTrk.trkWeight*(yTrk.trkWeight<20)+1.47*(yTrk.trkWeight>=20))";
+  TString trkWt="(yTrk.trkWeight*(yTrk.trkWeight<10)+1.47*(yTrk.trkWeight>=10))";
   // TCut trkSel="jetPt>100 && yTrk.jetMatch==1 && yTrk.jetDr<0.3 && yTrk.trkWeight<20"; // pp
   // TString trkWt="yTrk.trkWeight";
   t0->AddFriend("yTrk=yongsunTrack",_file0);
