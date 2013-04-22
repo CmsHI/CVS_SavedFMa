@@ -20,31 +20,29 @@ void drawClosures() {
   TString infname,reffname;
 
   TCanvas* c1 =new TCanvas("c1","",1000,600);
-  Plot4x4::title1="Reco. Tracks";
-  Plot4x4::title2="All Gen. Particles";
-  // Plot4x4::title1="All Gen. Particles";
-  // Plot4x4::title2="Sig. Gen Particles";
-  infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta0.80_Jan17data_and_mc80and100.root";
-  reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta0.80_Jan17data_and_mc80and100.root";
-  Plot4x4::outpath="closure/mc_trk_clos100_hi";
-  // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi_refpt_gt100.root";
-  // reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and100_hi_refpt_gt100.root";
-  // Pyquen wide xcheck
-  // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcquenwide80and100_hi.root";
-  // reffname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mcquenwide80and100_hi.root";
-  // Plot4x4::outpath="closure/mc_trk_clos100vs102_pyquenwide";
-  TFile outf(Plot4x4::outpath+".root","recreate"); outf.Close();
-
+  // Plot4x4::title1="Reco. Tracks";
+  // Plot4x4::title2="Gen. Particles";
+  Plot4x4::title1="Gen. Particles";
+  Plot4x4::title2="Sig. Gen. Particles";
+  // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root";
+  // reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root";
+  infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_data_mc80to170_refjetgt100_hi_pp_corrjbias0_v3.root";
+  reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_data_mc80to170_refjetgt100_hi_pp_corrjbias0_v3.root";
+  Plot4x4::outpath="closure/mc_corrjbias0_trk_closure102_Mar04v3_hi_refjetgt100";
+  // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias0_v3.root";
+  // reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias0_v3.root";
+  // Plot4x4::outpath="closure/mc_corrjbias0_trk_closure102_Mar19_hi";
   TString dataset="himc";
-  // TString dataset="ppmc";
+  
+  TFile outf(Plot4x4::outpath+".root","recreate"); outf.Close();
 
   makeMultiPanelCanvas(c1,4,2,0.0,0.0,0.25,0.2,0.02);
   cout << "Study:     " << infname << endl;
   cout << "Reference: " << reffname << endl;
   TH1D * h[3][5], * href[3][5];
   for ( int icent=1; icent<=4 ; icent++) {
-    h[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_%s_icent%d_irj999_fragMode2_closure100_jtrewt0_",dataset.Data(),icent));
-    href[ijet][icent] = (TH1D*)load(reffname,Form("hjetPt_%s_icent%d_irj999_fragMode2_closure102_jtrewt0_",dataset.Data(),icent));
+    h[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_%s_icent%d_irj999_fragMode2_closure102_rewt0_ppsm0__",dataset.Data(),icent));
+    href[ijet][icent] = (TH1D*)load(reffname,Form("hjetPt_%s_icent%d_irj999_fragMode2_closure101_rewt0_ppsm0__",dataset.Data(),icent));
   }
   Plot4x4 p1(h,href,1,"jetpt");
   p1.Draw(c1,90,299.9);
@@ -57,8 +55,8 @@ void drawClosures() {
       TCanvas* c2 =new TCanvas(Form("c2_%d_%d",ana[ia],isub),Form("c2_%d_%d",ana[ia],isub),1000,600);
       makeMultiPanelCanvas(c2,4,2,0.0,0.0,0.25,0.2,0.02);
       for ( int icent=1; icent<=4 ; icent++) {
-        h[ijet][icent]    = (TH1D*)load(infname,  Form("hpt_jet_%sTrk_%s_icent%d_irj999_fragMode%d_closure100_jtrewt0_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
-        href[ijet][icent] = (TH1D*)load(reffname, Form("hpt_jet_%sTrk_%s_icent%d_irj999_fragMode%d_closure102_jtrewt0_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
+        h[ijet][icent]    = (TH1D*)load(infname,  Form("hpt_jet_%sTrk_%s_icent%d_irj999_fragMode%d_closure102_rewt0_ppsm0_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
+        href[ijet][icent] = (TH1D*)load(reffname, Form("hpt_jet_%sTrk_%s_icent%d_irj999_fragMode%d_closure101_rewt0_ppsm0_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
       }
       Plot4x4 p2(h,href,0,Form("ffana%d_sub%d",ana[ia],isub));
       if (ana[ia]==1) {
@@ -66,7 +64,10 @@ void drawClosures() {
       } else if (ana[ia]==2) {
         p2.Draw(c2,0,5.49,1,2e-3);
       }
-      p2.DrawLeg(c2,3);
+      if (isub==1) {
+        p2.DrawLeg(c2,3,0.26,0.76,0.74,1,"Bkg. Cone","True. Bkg.");
+      }
+      else p2.DrawLeg(c2,3);
     }
   }
 }

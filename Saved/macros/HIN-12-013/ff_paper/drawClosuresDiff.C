@@ -16,17 +16,27 @@ using namespace std;
 void drawClosuresDiff() {
   TH1::SetDefaultSumw2();
 
-  int doCompare=1; // 1=qm12, 2=paper data
+  int doCompare=2; // 1=qm12, 2=paper data
 
   // Setup
   int ijet=1;
   TString infname,reffname;
-  Plot4x4::title1="Paper pp";
-  Plot4x4::title2="QM12 pp";
-  // paper vs qm12
-  infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_and_mc80and100.root";
-  reffname  = "dijetFF_output_histograms_trkPtProjectOnJetAxis_trackPtCut1_FinaletaCut2.00_pas.root";
-  Plot4x4::outpath="closure/data_pp_vs_qm12";
+  // Plot4x4::title1="Paper pp";
+  // Plot4x4::title2="QM12 pp";
+  // // paper vs qm12
+  // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_and_mc80and100.root";
+  // reffname  = "dijetFF_output_histograms_trkPtProjectOnJetAxis_trackPtCut1_FinaletaCut2.00_pas.root";
+  // Plot4x4::outpath="closure/data_pp_vs_qm12";
+  Plot4x4::title1="Feb14v2";
+  Plot4x4::title2="Feb14";
+  // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14data_ppunsm.root";
+  // reffname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17data_ppunsm.root";
+  // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14mc80n120n170_ppunsm.root";
+  // reffname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17mc80and120_hi_ppunsmjet.root";
+  // infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2data_pp.root";
+  infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2data_pp.root";
+  reffname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14data_pp.root";
+  Plot4x4::outpath="closure/ppdata_closure100_Feb14v2_vs_Feb14";
   // data
 
   int doMC=0;
@@ -45,10 +55,12 @@ void drawClosuresDiff() {
   TCanvas* c1 =new TCanvas("c1","",1000,600);
   makeMultiPanelCanvas(c1,4,2,0.0,0.0,0.25,0.2,0.02);
   for ( int icent=1; icent<=4 ; icent++) {
-    h[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_%s_icent%d_irj999_fragMode2_closure100_jtrewt1_",dataset.Data(),icent));
+    // h[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_%s_icent%d_irj999_fragMode2_closure100_jtrewt1_",dataset.Data(),icent));
+    h[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_%s_icent%d_irj999_fragMode2_closure100_jtrewt0_",dataset.Data(),icent));
         // QM Comparison
     if (doCompare==1) href[ijet][icent] = (TH1D*)load(reffname,Form("hLjetPt_%s_icent%d_irj999_fragMode2_closure100",dataset.Data(),icent));
-    else if (doCompare==2) href[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_%s_icent%d_irj999_fragMode2_closure100_jtrewt1_",dataset.Data(),icent));
+    // else if (doCompare==2) href[ijet][icent]    = (TH1D*)load(reffname, Form("hjetPt_%s_icent%d_irj999_fragMode2_closure100_jtrewt1_",dataset.Data(),icent));
+    else if (doCompare==2) href[ijet][icent]    = (TH1D*)load(reffname, Form("hjetPt_%s_icent%d_irj999_fragMode2_closure100_jtrewt0_",dataset.Data(),icent));
   }
 
 
@@ -63,7 +75,8 @@ void drawClosuresDiff() {
       TCanvas* c2 =new TCanvas(Form("c2_%d_%d",ana[ia],isub),Form("c2_%d_%d",ana[ia],isub),1000,600);
       makeMultiPanelCanvas(c2,4,2,0.0,0.0,0.25,0.2,0.02);
       for ( int icent=1; icent<=4 ; icent++) {
-        h[ijet][icent]    = (TH1D*)load(infname,  Form("hpt_jet_%sTrk_%s_icent%d_irj999_fragMode%d_closure100_jtrewt1_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
+        // h[ijet][icent]    = (TH1D*)load(infname,  Form("hpt_jet_%sTrk_%s_icent%d_irj999_fragMode%d_closure100_jtrewt1_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
+        h[ijet][icent]    = (TH1D*)load(infname,  Form("hpt_jet_%sTrk_%s_icent%d_irj999_fragMode%d_closure100_jtrewt0_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
         /////////////////////////////////////////////////
         // Get Comparison Histograms
         /////////////////////////////////////////////////
@@ -73,7 +86,8 @@ void drawClosuresDiff() {
           // else if (ana[ia]==1) GetQM12TrkPt(0,href);
           else if (ana[ia]==1) GetQM12TrkPt(href,0);
         } else if (doCompare==2) {
-          href[ijet][icent]  = (TH1D*)load(reffname.Data(),Form("hpt_jet_%sTrk_%s_icent%d_irj999_fragMode%d_closure100_jtrewt1_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
+          // href[ijet][icent]  = (TH1D*)load(reffname.Data(),Form("hpt_jet_%sTrk_%s_icent%d_irj999_fragMode%d_closure100_jtrewt1_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
+          href[ijet][icent]  = (TH1D*)load(reffname.Data(),Form("hpt_jet_%sTrk_%s_icent%d_irj999_fragMode%d_closure100_jtrewt0_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
         }
       }
 

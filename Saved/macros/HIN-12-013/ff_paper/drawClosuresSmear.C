@@ -22,12 +22,16 @@ void drawClosuresSmear() {
   Plot4x4::title2="PYTHIA";
 
   // hi vs pp
-  TString infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root";
-  TString reffname = infname;
-  Plot4x4::outpath="closure/mc_ana_closure102";
+  // TString infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root";
+  // TString infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Feb14v2_data_mc80to170_hi_pp_corrjbias2_v2.root";
+  // TString infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Feb14v2_data_mc80to170_hi_pp_corrjbias2_v2.root";
+  TString infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias0_v3.root";
+  TString reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias0_v3.root";
+
+  Plot4x4::outpath="closure/mc_corrjias0_ana_closure101";
   // TString infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17_data_mc80to100_hi_pp.root";
   // TString reffname = infname;
-  // Plot4x4::outpath="closure/mc_ana_closure102_Jan17";
+  // Plot4x4::outpath="closure/mc_ana_closure101_Jan17";
 
   int doMC=1;
   TString dataset="mc";
@@ -40,8 +44,8 @@ void drawClosuresSmear() {
   TCanvas* c1 =new TCanvas("c1","",1000,600);
   makeMultiPanelCanvas(c1,4,2,0.0,0.0,0.25,0.2,0.02);
   for ( int icent=1; icent<=4 ; icent++) {
-    h[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_hi%s_icent%d_irj999_fragMode2_closure102_rewt0_ppsm0_",dataset.Data(),icent));
-    href[ijet][icent] = (TH1D*)load(reffname,Form("hjetPt_pp%s_icent%d_irj999_fragMode2_closure102_rewt0_ppsm%d_",dataset.Data(),icent,ppsm));
+    h[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_hi%s_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0__",dataset.Data(),icent));
+    href[ijet][icent] = (TH1D*)load(reffname,Form("hjetPt_pp%s_icent%d_irj999_fragMode1_closure101_rewt0_ppsm%d__",dataset.Data(),icent,ppsm));
   }
   Plot4x4 p1(h,href,1,"_jetpt");
   p1.Draw(c1,100,299.9);
@@ -54,8 +58,8 @@ void drawClosuresSmear() {
       TCanvas* c2 =new TCanvas(Form("c2_%d_%d",ana[ia],isub),Form("c2_%d_%d",ana[ia],isub),1000,600);
       makeMultiPanelCanvas(c2,4,2,0.0,0.0,0.25,0.2,0.02);
       for ( int icent=1; icent<=4 ; icent++) {
-        h[ijet][icent]    = (TH1D*)load(infname,  Form("hpt_jet_%sTrk_hi%s_icent%d_irj999_fragMode%d_closure102_rewt0_ppsm0_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
-        href[ijet][icent] = (TH1D*)load(reffname, Form("hpt_jet_%sTrk_pp%s_icent%d_irj999_fragMode%d_closure102_rewt0_ppsm%d_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia],ppsm));
+        h[ijet][icent]    = (TH1D*)load(infname,  Form("hpt_jet_%sTrk_hi%s_icent%d_irj999_fragMode%d_closure101_rewt0_ppsm0_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
+        href[ijet][icent] = (TH1D*)load(reffname, Form("hpt_jet_%sTrk_pp%s_icent%d_irj999_fragMode%d_closure101_rewt0_ppsm%d_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia],ppsm));
       }
       Plot4x4 p2(h,href,0,Form("_ffana%d_sub%d",ana[ia],isub));
       if (ana[ia]==1) {

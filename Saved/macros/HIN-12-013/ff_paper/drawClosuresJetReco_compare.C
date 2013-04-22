@@ -21,10 +21,13 @@ void drawClosuresJetReco_compare() {
   Plot4x4::title1="Reco Jet";
   Plot4x4::title2="Gen Jet";
   // Inputs
-  TString infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root";
-  TString reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_mc80to170_refjetsel_hi_pp.root";
+  // TString infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp.root";
+  // TString infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_data_mc80to170_hi_pp_corrjbias1.root";
+  // TString reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_mc80to170_refjetsel_hi_pp.root";
   // TString infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17_data_mc80to100_hi_pp.root";
   // TString reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Jan17_mc80to100_refjetsel_hi_pp.root";
+  TString infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_data_mc80to170_hi_pp_corrjbias12_v3.root";
+  TString reffname = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v2job0_mc80to170_refjetgt100_hi_pp_corrjbias0_v2.root";
 
   // isolate effect of selection
   // TString infname  = "inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_Feb14v2_mc80to170_pureselbias_hi_pp.root";
@@ -38,7 +41,7 @@ void drawClosuresJetReco_compare() {
   TString infnamecmp  = infname;
   TString reffnamecmp = reffname;
 
-  Plot4x4::outpath="closure/mc_jetreco_bias_closure102_hi_pp";
+  Plot4x4::outpath="closure/mccorr12_jetreco_bias_closure101_hi_pp";
 
   int doMC=1;
   TString dataset="mc";
@@ -53,10 +56,10 @@ void drawClosuresJetReco_compare() {
   TCanvas* c1 =new TCanvas("c1","",1000,600);
   makeMultiPanelCanvas(c1,4,2,0.0,0.0,0.25,0.2,0.02);
   for ( int icent=1; icent<=4 ; icent++) {
-    h[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_hi%s_icent%d_irj999_fragMode2_closure102_rewt0_ppsm0_",dataset.Data(),icent));
-    href[ijet][icent] = (TH1D*)load(reffname,Form("hjetPt_hi%s_icent%d_irj999_fragMode2_closure102_rewt0_ppsm0_",dataset.Data(),icent));
-    hcmp[ijet][icent]    = (TH1D*)load(infnamecmp, Form("hjetPt_pp%s_icent%d_irj999_fragMode2_closure102_rewt0_ppsm%d_",dataset.Data(),icent,ppsm));
-    hrefcmp[ijet][icent] = (TH1D*)load(reffnamecmp,Form("hjetPt_pp%s_icent%d_irj999_fragMode2_closure102_rewt0_ppsm%d_",dataset.Data(),icent,ppsm));
+    h[ijet][icent]    = (TH1D*)load(infname, Form("hjetPt_hi%s_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0__",dataset.Data(),icent));
+    href[ijet][icent] = (TH1D*)load(reffname,Form("hjetPt_hi%s_icent%d_irj999_fragMode1_closure101_rewt0_ppsm0__",dataset.Data(),icent));
+    hcmp[ijet][icent]    = (TH1D*)load(infnamecmp, Form("hjetPt_pp%s_icent%d_irj999_fragMode1_closure101_rewt0_ppsm%d__",dataset.Data(),icent,ppsm));
+    hrefcmp[ijet][icent] = (TH1D*)load(reffnamecmp,Form("hjetPt_pp%s_icent%d_irj999_fragMode1_closure101_rewt0_ppsm%d__",dataset.Data(),icent,ppsm));
   }
 
   Plot4x4 p1(h,href,1,"_jetpt");
@@ -73,10 +76,10 @@ void drawClosuresJetReco_compare() {
       TCanvas* c2 =new TCanvas(Form("c2_%d_%d",ana[ia],isub),Form("c2_%d_%d",ana[ia],isub),1000,600);
       makeMultiPanelCanvas(c2,4,2,0.0,0.0,0.25,0.2,0.02);
       for ( int icent=1; icent<=4 ; icent++) {
-        h[ijet][icent]    = (TH1D*)load(infname,  Form("hpt_jet_%sTrk_hi%s_icent%d_irj999_fragMode%d_closure102_rewt0_ppsm0_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
-        href[ijet][icent] = (TH1D*)load(reffname, Form("hpt_jet_%sTrk_hi%s_icent%d_irj999_fragMode%d_closure102_rewt0_ppsm0_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
-        hcmp[ijet][icent]    = (TH1D*)load(infname,  Form("hpt_jet_%sTrk_pp%s_icent%d_irj999_fragMode%d_closure102_rewt0_ppsm%d_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia],ppsm));
-        hrefcmp[ijet][icent] = (TH1D*)load(reffname, Form("hpt_jet_%sTrk_pp%s_icent%d_irj999_fragMode%d_closure102_rewt0_ppsm%d_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia],ppsm));
+        h[ijet][icent]    = (TH1D*)load(infname,  Form("hpt_jet_%sTrk_hi%s_icent%d_irj999_fragMode%d_closure101_rewt0_ppsm0_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
+        href[ijet][icent] = (TH1D*)load(reffname, Form("hpt_jet_%sTrk_hi%s_icent%d_irj999_fragMode%d_closure101_rewt0_ppsm0_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia]));
+        hcmp[ijet][icent]    = (TH1D*)load(infnamecmp,  Form("hpt_jet_%sTrk_pp%s_icent%d_irj999_fragMode%d_closure101_rewt0_ppsm%d_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia],ppsm));
+        hrefcmp[ijet][icent] = (TH1D*)load(reffnamecmp, Form("hpt_jet_%sTrk_pp%s_icent%d_irj999_fragMode%d_closure101_rewt0_ppsm%d_wtmode0_pt1to300",sub[isub].Data(),dataset.Data(),icent,ana[ia],ppsm));
       }
 
       Plot4x4 p2(h,href,0,Form("_ffana%d_sub%d",ana[ia],isub));
