@@ -25,7 +25,7 @@ public:
   int cycle;
 
   // Functions
-  Plot4x4(TH1D* hnum[5], TH1D* hden[5], int normMode=0, TString on="pt", int cyc=0)
+  Plot4x4(TH1D* hnum[5], TH1D* hden[5], TH1D* hr[5], int normMode=0, TString on="pt", int cyc=0)
   : ijet(1)
   , outname(on), cycle(cyc) {
     // Get Histograms
@@ -48,15 +48,19 @@ public:
       fixedFontHist(h[ijet][icent],1.8,2.5);
       fixedFontHist(href[ijet][icent],1.6,2.5);
       // Get Ratio
-      hrat[ijet][icent]  = (TH1D*)h[ijet][icent]->Clone(Form("%s_ratio",h[ijet][icent]->GetName()));
-      hrat[ijet][icent]->Divide(href[ijet][icent]);
+      if (!hr) {
+        hrat[ijet][icent]  = (TH1D*)h[ijet][icent]->Clone(Form("%s_ratio",h[ijet][icent]->GetName()));
+        hrat[ijet][icent]->Divide(href[ijet][icent]);
+      } else {
+        hrat[ijet][icent]  = hr[icent];
+      }
       hrat[ijet][icent]->SetYTitle("Ratio");
     }
   }
 
   Plot4x4(TH1D* hnum[3][5], TH1D* hden[3][5], int normMode=0, TString on="pt", int cyc=0)
   {
-    Plot4x4(hnum[ijet],hden[ijet],normMode,on,cyc);
+    Plot4x4(hnum[ijet],hden[ijet],0,normMode,on,cyc);
   }
 
   void Draw(TCanvas *c1, float xmin=-1, float xmax=-1, int doLog=1, float ymin=-1, float ymax=-1) {
