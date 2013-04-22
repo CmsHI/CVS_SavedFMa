@@ -1,3 +1,6 @@
+# centrality xcheck
+root -b -q drawInclJetFrag_sysCent.C+
+
 # genjet analysis
 # echo gluon genjet ================================================
 # cat drawInclJetFrag_flavor.C | sed 's/void drawInclJetFrag_flavor()/void drawInclJetFrag_tmp()/' | sed 's/SetAlias("finalJetPt","jetPt")/SetAlias("finalJetPt","jetPtGM")/' | sed 's/_gluon_/_gluon_genjet_/g' > drawInclJetFrag_tmp.C
@@ -20,11 +23,23 @@
 # root -b -q drawInclJetFrag_tmp.C+
 
 # pt dependence
-cat drawInclJetFrag.C | sed 's/void drawInclJetFrag()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 100;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 120;/' > drawInclJetFrag_tmp.C
+# cat drawInclJetFrag.C | sed 's/void drawInclJetFrag()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 100;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 120;/' > drawInclJetFrag_tmp.C
+# root -b -q drawInclJetFrag_tmp.C+
+# cat drawInclJetFrag.C | sed 's/void drawInclJetFrag()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 120;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 150;/' > drawInclJetFrag_tmp.C
+# root -b -q drawInclJetFrag_tmp.C+
+# cat drawInclJetFrag.C | sed 's/void drawInclJetFrag()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 150;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 200;/' > drawInclJetFrag_tmp.C
+# root -b -q drawInclJetFrag_tmp.C+
+# cat drawInclJetFrag.C | sed 's/void drawInclJetFrag()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 200;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 300;/' > drawInclJetFrag_tmp.C
+# root -b -q drawInclJetFrag_tmp.C+
+
+# pt systematic xcheck with jet shape
+cat drawInclJetFrag_jetshapexcheck.C | sed 's/void drawInclJetFrag_jetshapexcheck()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 100;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 110;/' > drawInclJetFrag_tmp.C
 root -b -q drawInclJetFrag_tmp.C+
-cat drawInclJetFrag.C | sed 's/void drawInclJetFrag()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 120;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 150;/' > drawInclJetFrag_tmp.C
+cat drawInclJetFrag_jetshapexcheck.C | sed 's/void drawInclJetFrag_jetshapexcheck()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 110;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 120;/' > drawInclJetFrag_tmp.C
 root -b -q drawInclJetFrag_tmp.C+
-cat drawInclJetFrag.C | sed 's/void drawInclJetFrag()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 150;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 200;/' > drawInclJetFrag_tmp.C
+cat drawInclJetFrag_jetshapexcheck.C | sed 's/void drawInclJetFrag_jetshapexcheck()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 120;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 130;/' > drawInclJetFrag_tmp.C
 root -b -q drawInclJetFrag_tmp.C+
-cat drawInclJetFrag.C | sed 's/void drawInclJetFrag()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 200;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 300;/' > drawInclJetFrag_tmp.C
+cat drawInclJetFrag_jetshapexcheck.C | sed 's/void drawInclJetFrag_jetshapexcheck()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 130;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 140;/' > drawInclJetFrag_tmp.C
+root -b -q drawInclJetFrag_tmp.C+
+cat drawInclJetFrag_jetshapexcheck.C | sed 's/void drawInclJetFrag_jetshapexcheck()/void drawInclJetFrag_tmp()/' | sed 's/float finalJetPtMin = 100;/float finalJetPtMin = 140;/' | sed 's/float finalJetPtMax = 300;/float finalJetPtMax = 150;/' > drawInclJetFrag_tmp.C
 root -b -q drawInclJetFrag_tmp.C+
