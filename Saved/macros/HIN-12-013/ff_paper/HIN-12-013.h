@@ -1,3 +1,6 @@
+#ifndef HIN_12_013_h
+#define HIN_12_013_h
+
 #include <iostream>
 #include "TFile.h"
 #include "TTree.h"
@@ -183,7 +186,7 @@ public:
   float xmin,xmax;
 
   // Systematics Uncertainty Inputs
-  static const int NErrorTot = 8;
+  static const int NErrorTot = 20;
   vector<TString> sysTitle;
 
   TH1* jesError[3][5];
@@ -193,6 +196,8 @@ public:
   TH1* genBkgSubError[3][5];
   TH1* jetAlgoError[3][5];
   TH1* constError[3][5];
+  TH1* xchkGluonError[3][5];
+  TH1* xchkQuarkError[3][5];
 
   TH1* pyquenJetRecoRefPtError[3][5];
   TH1* pyquenGenJetSelError[3][5];
@@ -233,7 +238,10 @@ public:
     const char* TrkClosurefile = "./systematics/mc_corrjbias0_trk_closure100_Mar04v3_hi.root";
     const char* GenBkgSubfile = "./systematics/mc_corrjbias0_trk_closure102_Mar04v3_hi.root";
     const char* JetAlgofile = "./systematics/systematics_calovspf.root";
-      // For FF distribution
+    // xchecks
+    TString XCheckGluonFile = Form("./systematics/xcheckana%d_gluon_hydjet.root",ana);
+    TString XCheckQuarkFile = Form("./systematics/xcheckana%d_quark_hydjet.root",ana);
+    // For FF distribution
     const char* PyquenJetRecoRefPtfile = "./systematics/PYQUEN80_useGenJet0_closureTestRatio_between_100_103.root";
     const char* PyquenGenJetSelfile = "./systematics/closureTestRatio_pyquen80_genJet_recojet_selectionRatio.root";
 
@@ -261,8 +269,17 @@ public:
           genBkgSubError[ijet][iaj]->SetBinError(i,genBkgSubError[ijet][iaj]->GetBinError(i)*0.5);
         }        
 
+        // xchecks
+        xchkGluonError[ijet][iaj] = loadError(XCheckGluonFile,Form("ffRattio_ijet1_iaj%d",iaj));
+        xchkQuarkError[ijet][iaj] = loadError(XCheckQuarkFile,Form("ffRattio_ijet1_iaj%d",iaj));
+        for(int i = 1; i <= xchkGluonError[ijet][iaj]->GetNbinsX(); ++i){
+          xchkGluonError[ijet][iaj]->SetBinContent(i,1+(xchkGluonError[ijet][iaj]->GetBinContent(i)-1)*0.5);
+          // xchkGluonError[ijet][iaj]->SetBinError(i,xchkGluonError[ijet][iaj]->GetBinError(i)*0.3);
+          xchkQuarkError[ijet][iaj]->SetBinContent(i,1+(xchkQuarkError[ijet][iaj]->GetBinContent(i)-1)*0.5);
+          // xchkQuarkError[ijet][iaj]->SetBinError(i,xchkQuarkError[ijet][iaj]->GetBinError(i));
+        }        
 
-            // For FF distribution
+        // For FF distribution
         pyquenJetRecoRefPtError[ijet][iaj] = loadError(PyquenJetRecoRefPtfile,Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode2_closure103",jname[ijet].Data(),iaj));
         pyquenGenJetSelError[ijet][iaj] = loadError(PyquenGenJetSelfile,Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode2_closure100",jname[ijet].Data(),iaj));
       }
@@ -270,7 +287,7 @@ public:
 
     // observable specific
     if (ana==2) {
-      NErrorRatio=6; NErrorHi=8; NErrorPp=8;
+      NErrorRatio=8; NErrorHi=10; NErrorPp=10;
       for ( int iaj=1;iaj<=4;iaj++) {
         // additional track error to be flat 10%
         constError[ijet][iaj] =  (TH1D*)jesError[ijet][iaj]->Clone(Form("%s_constsys",jesError[ijet][iaj]->GetName()));
@@ -286,6 +303,8 @@ public:
         vErrorRat[ijet][iaj][3] = bkgSubError[ijet][iaj];
         vErrorRat[ijet][iaj][4] = jesError[ijet][iaj];
         vErrorRat[ijet][iaj][5] = jetResError[ijet][iaj];
+        vErrorRat[ijet][iaj][6] = xchkGluonError[ijet][iaj];
+        vErrorRat[ijet][iaj][7] = xchkQuarkError[ijet][iaj];
 
         // HiFF
         vErrorHi[ijet][iaj][0] = genBkgSubError[ijet][iaj];
@@ -294,19 +313,23 @@ public:
         vErrorHi[ijet][iaj][3] = constError[ijet][iaj];
         vErrorHi[ijet][iaj][4] = jesError[ijet][iaj];
         vErrorHi[ijet][iaj][5] = jetResError[ijet][iaj];
-        vErrorHi[ijet][iaj][6] = pyquenJetRecoRefPtError[ijet][iaj];
-        vErrorHi[ijet][iaj][7] = pyquenGenJetSelError[ijet][iaj];
+        vErrorHi[ijet][iaj][6] = xchkQuarkError[ijet][iaj];
+        vErrorHi[ijet][iaj][7] = xchkGluonError[ijet][iaj];
+        vErrorHi[ijet][iaj][8] = pyquenJetRecoRefPtError[ijet][iaj];
+        vErrorHi[ijet][iaj][9] = pyquenGenJetSelError[ijet][iaj];
       } // iaj
       sysTitle.push_back("Genp. Bkg. Subtr.");
       sysTitle.push_back("Tracking Closure");
-      sysTitle.push_back("Data Driven Charged Fraction");
+      sysTitle.push_back("Data Driven Chg. Frac.");
       sysTitle.push_back("Data Driven Bkg. Subt.");
       sysTitle.push_back("JES");
       sysTitle.push_back("JER");
+      sysTitle.push_back("xcheck gluon jet");
+      sysTitle.push_back("xcheck quark jet");
       sysTitle.push_back("Pyquen JES");
       sysTitle.push_back("Pyquen Jet Selection");
     } else if (ana==1) { // trk pt analysis
-      NErrorRatio=6; NErrorHi=6; NErrorPp=6;
+      NErrorRatio=8; NErrorHi=8; NErrorPp=8;
       for ( int iaj=1;iaj<=4;iaj++) {
         // additional track error to be flat 10%, add another 6% from pp reweightin sqrt(10*10+6*6)= 11.7
         constError[ijet][iaj] =  new TH1D(Form("sysfpt_constsys_%d",iaj),";track p_{T} (GeV/c);dN/dp_{T} (GeV/c)^{-1}",nPtBin,ptBin);
@@ -335,6 +358,8 @@ public:
         vErrorRat[ijet][iaj][3] = hBkgSubData;
         vErrorRat[ijet][iaj][4] = jesError[ijet][iaj];
         vErrorRat[ijet][iaj][5] = jetResError[ijet][iaj];
+        vErrorRat[ijet][iaj][6] = xchkGluonError[ijet][iaj];
+        vErrorRat[ijet][iaj][7] = xchkQuarkError[ijet][iaj];
 
         // HiFF
         vErrorHi[ijet][iaj][0] = genBkgSubError[ijet][iaj];
@@ -343,13 +368,17 @@ public:
         vErrorHi[ijet][iaj][3] = hBkgSubData;
         vErrorHi[ijet][iaj][4] = jesError[ijet][iaj];
         vErrorHi[ijet][iaj][5] = jetResError[ijet][iaj];
+        vErrorHi[ijet][iaj][6] = xchkGluonError[ijet][iaj];
+        vErrorHi[ijet][iaj][7] = xchkQuarkError[ijet][iaj];
       } // iaj
       sysTitle.push_back("Genp. Bkg. Subtr.");
       sysTitle.push_back("Tracking Closure");
-      sysTitle.push_back("Data Driven Charged Fraction");
+      sysTitle.push_back("Data Driven Chg. Frac.");
       sysTitle.push_back("Data Driven Bkg. Subt.");
       sysTitle.push_back("JES");
       sysTitle.push_back("JER");
+      sysTitle.push_back("xcheck gluon jet");
+      sysTitle.push_back("xcheck quark jet");
     } // end of if ana
     // Setup Boundaries
     if (xmin==xmax) {
@@ -457,8 +486,9 @@ public:
     TF1 * fone = new TF1("fone","1",hErrorTot->GetBinLowEdge(1),hErrorTot->GetBinLowEdge(hErrorTot->GetNbinsX()));
     hInsp->Add(fone);
     hInsp->SetAxisRange(xmin,xmax-0.001,"X");
-    hInsp->SetAxisRange(0.5,2,"Y");
+    hInsp->SetAxisRange(0.75,1.55,"Y");
     hInsp->SetLineWidth(3);
+    fixedFontHist(hInsp,2.0,2.0);
     hInsp->Draw("hist");
     // guide the eye
     TLine * hline = new TLine(xmin,1,xmax,1);
@@ -467,9 +497,7 @@ public:
 
     for(int ie = 0; ie< Nerror; ++ie){
      // cout << "draw errors" << he[ie]->GetName() << endl;
-      he[ie]->SetMarkerStyle(kOpenCircle);
-      he[ie]->SetMarkerColor(sysMarkerColor[ie]);
-      he[ie]->SetLineColor(sysMarkerColor[ie]);
+      handsomeTH1(he[ie],sysMarkerColor[ie],1,kOpenCircle);
       // he[ie]->DrawClone("psamehist");
       he[ie]->DrawClone("Esame");
       if (fe[ie]){
@@ -479,7 +507,7 @@ public:
       }
     }
     if (doLeg) {
-      TLegend * lsys = new  TLegend(0.18,(int)(ana==2)*0.05+0.96-(Nerror)*0.062,0.87,0.96,NULL,"brNDC");
+      TLegend * lsys = new  TLegend(0.41,(int)(ana==2)*0.05+0.96-(Nerror)*0.062,0.92,1,NULL,"brNDC");
       easyLeg(lsys,"",18);
       for (int ie=0; ie<Nerror; ++ie) lsys->AddEntry(he[ie],sysTitle[ie],"l");
       lsys->AddEntry(hInsp,"Total Uncertainty","l");
@@ -487,6 +515,16 @@ public:
     }
   }
 };
+
+void mergeCentralities(TH1D * ff[3][5], TH1D * jetpt[3][5], int ic1, int ic2) {
+  float nJet1 = jetpt[1][ic1]->Integral();
+  float nJet2 = jetpt[1][ic2]->Integral();
+  float nJetSum = nJet1+nJet2;
+  cout << "merge: " << ic1 << " and " << ic2 << " fractions: " << nJet1/nJetSum << " and " << nJet2/nJetSum << endl;
+  ff[1][ic1]->Scale(nJet1/nJetSum);
+  ff[1][ic2]->Scale(nJet2/nJetSum);
+  ff[1][ic1]->Add(ff[1][ic2]);
+}
 
 void GetQM12TrkPt(  TH1D* ffppcmp[3][5], TH1D* ffhicmp[3][5]) {
   // pbpb
@@ -1948,3 +1986,96 @@ void drawQM12TrackPtRatioSysBand_0to4() {
    
    graph->Draw("f ");
 }
+
+void drawFF2010(TH1D *xsin4_1_0_R) {
+  TGraph *graph1 = new TGraph(5);
+  TGraph *graph2 = new TGraph(5);
+  //////// 2010 0-10% leading jet xi
+  xsin4_1_0_R->SetBinContent(3,1.20505);
+  xsin4_1_0_R->SetBinContent(4,1.040817);
+  xsin4_1_0_R->SetBinContent(5,0.8804085);
+  xsin4_1_0_R->SetBinContent(6,0.850761);
+  xsin4_1_0_R->SetBinContent(7,0.8131551);
+  xsin4_1_0_R->SetBinContent(8,0.7969801);
+  xsin4_1_0_R->SetBinContent(9,0.8939498);
+  xsin4_1_0_R->SetBinContent(10,1.098302);
+  xsin4_1_0_R->SetBinContent(11,0.7099872);
+  xsin4_1_0_R->SetBinError(3,0.2486326);
+  xsin4_1_0_R->SetBinError(4,0.07325915);
+  xsin4_1_0_R->SetBinError(5,0.03967401);
+  xsin4_1_0_R->SetBinError(6,0.02982589);
+  xsin4_1_0_R->SetBinError(7,0.02485484);
+  xsin4_1_0_R->SetBinError(8,0.02288269);
+  xsin4_1_0_R->SetBinError(9,0.02875025);
+  xsin4_1_0_R->SetBinError(10,0.09731627);
+  xsin4_1_0_R->SetBinError(11,0.3331674);
+  handsomeTH1(xsin4_1_0_R,kRed,1.3,24);
+  xsin4_1_0_R->SetLineWidth(2);
+  xsin4_1_0_R->Draw("sameE");
+    //////// end of 2010 0-10% leading jet xi
+
+  graph1->SetName("");
+  graph1->SetTitle("");
+  graph1->SetFillColor(90);
+  graph1->SetMarkerStyle(20);
+  graph1->SetMarkerSize(1.3);
+
+  int ient = 0;
+    //  graph1->SetPoint(ient,0,0.827905485);  ient++;
+  graph1->SetPoint(ient,0,0.7941284219);  ient++;
+  graph1->SetPoint(ient,0,1.615971456);  ient++;
+  graph1->SetPoint(ient,0.5,1.615971456);  ient++;
+  graph1->SetPoint(ient,0.5,1.30570635);  ient++;
+  graph1->SetPoint(ient,1,1.30570635);  ient++;
+  graph1->SetPoint(ient,1,1.054754209);  ient++;
+  graph1->SetPoint(ient,1.5,1.054754209);  ient++;
+  graph1->SetPoint(ient,1.5,0.99417728);  ient++;
+  graph1->SetPoint(ient,2,0.99417728);  ient++;
+  graph1->SetPoint(ient,2,0.9416682292);  ient++;
+  graph1->SetPoint(ient,2.5,0.9416682292);  ient++;
+  graph1->SetPoint(ient,2.5,0.9237305945);  ient++;
+  graph1->SetPoint(ient,3,0.9237305945);  ient++;
+  graph1->SetPoint(ient,3,1.0476436);  ient++;
+  graph1->SetPoint(ient,3.5,1.0476436);  ient++;
+  graph1->SetPoint(ient,3.5,1.322757561);  ient++;
+  graph1->SetPoint(ient,4,1.322757561);  ient++;
+  graph1->SetPoint(ient,4,0.8974300895);  ient++;
+  graph1->SetPoint(ient,4.5,0.8974300895);  ient++;
+
+    // half way!                                                                                                                 
+  graph2->SetName("");
+  graph2->SetTitle("");
+  graph2->SetFillColor(90);
+  graph2->SetMarkerStyle(20);
+  graph2->SetMarkerSize(1.3);
+
+  ient = 0;
+  graph2->SetPoint(ient,4.5,0.8974300895);  ient++;
+  graph2->SetPoint(ient,4.5,0.5225442278); ient++; 
+  graph2->SetPoint(ient,4,0.5225442278); ient++;
+  graph2->SetPoint(ient,4,0.8738474167); ient++;
+  graph2->SetPoint(ient,3.5,0.8738474167); ient++;
+  graph2->SetPoint(ient,3.5,0.7402560788); ient++;
+  graph2->SetPoint(ient,3,0.7402560788); ient++;
+  graph2->SetPoint(ient,3,0.670229673); ient++;
+  graph2->SetPoint(ient,2.5,0.670229673); ient++;
+  graph2->SetPoint(ient,2.5,0.6846419401); ient++;
+  graph2->SetPoint(ient,2,0.6846419401); ient++;
+  graph2->SetPoint(ient,2,0.7073446889); ient++;
+  graph2->SetPoint(ient,1.5,0.7073446889); ient++;
+  graph2->SetPoint(ient,1.5,0.7060627085); ient++;
+  graph2->SetPoint(ient,1,0.7060627085); ient++;
+  graph2->SetPoint(ient,1,0.7759279165); ient++;
+  graph2->SetPoint(ient,0.5,0.7759279165); ient++;
+  graph2->SetPoint(ient,0.5,0.7941284219); ient++;
+  graph2->SetPoint(ient,0,0.7941284219); ient++;
+
+  graph1->SetLineWidth(2);
+  graph2->SetLineWidth(2);
+  graph1->SetLineColor(2);
+  graph2->SetLineColor(2);
+  graph1->Draw("l");
+  graph2->Draw("l");
+}
+
+#endif
