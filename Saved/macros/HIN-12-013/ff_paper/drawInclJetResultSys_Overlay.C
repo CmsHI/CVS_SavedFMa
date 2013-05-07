@@ -32,6 +32,8 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   //////////////////////////////////////////////////////////////////////
   int binMode =2; // 1 : aj, 2 : cent
   int doCompare=0; // 1=qm12, 2=paper data, 3=Feb04
+  if (doMC) { jtrewthi=0; jtrewtpp=0; } // no jet reweight for mc
+  int saveOutput = 1;
 
   TString tag = Form("trkPtProj_binMode2_hi_rewt%d_pp_sm%drewt%d_bc%d_mc%d",jtrewthi,ppsm,jtrewtpp,biascorr,doMC);
   // TString tag = Form("trkPtProj_binMode2_centMinus2_hi_rewt%d_pp_sm%drewt%d_bc%d_mc%d",jtrewthi,ppsm,jtrewtpp,biascorr,doMC);
@@ -52,8 +54,8 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   if (doMC) {
     // Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias%d_v3.root",biascorr);
     // Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_centMinus2_hi_pp_corrjbias%d_v3.root",biascorr);
-    Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias%d_v4.root",biascorr);
-    Inputpp_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias%d_v4.root",biascorr);
+    Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias%d_v3.root",biascorr);
+    Inputpp_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias%d_v3.root",biascorr);
     if (biascorr==1||biascorr==10) {
       Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_data_mc80to170_hi_pp_corrjbias%d_v3.root",biascorr);
       Inputpp_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_data_mc80to170_hi_pp_corrjbias%d_v3.root",biascorr);
@@ -91,24 +93,25 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   TString jname[3] = {"jet","lJet","slJet"};
   int ijet=1;
   TString dataset="data"; // "data", "mc"
-  if (doMC) dataset="mc";
+  int closure=100;
+  if (doMC) {
+    dataset="mc";
+    if (doMC==2) closure=101;
+    tag += Form("_mc80to170_clos%d",closure);
+  }
   for ( int iaj=1;iaj<=4;iaj++) {
     if ( binMode == 2 ) {
       if (!doEtaRef) ffhi[ijet][iaj]  = (TH1D*)load(Input_.data(),Form("hpt_%s_sigTrk_hidata_icent%d_irj999_fragMode2_closure0_jtrewt0_wtmode0_pt1to300",jname[0].Data(),iaj));
       else {
-        ffhi[ijet][iaj]  = (TH1D*)load(Input_.data(),Form("hpt_%s_sigTrk_hi%s_icent%d_irj999_fragMode%d_closure100_rewt%d_ppsm0_wtmode0_pt1to300",jname[0].Data(),dataset.Data(),iaj,fragMode,jtrewthi));
+        ffhi[ijet][iaj]  = (TH1D*)load(Input_.data(),Form("hpt_jet_sigTrk_hi%s_icent%d_irj999_fragMode%d_closure%d_rewt%d_ppsm0_wtmode0_pt1to300",dataset.Data(),iaj,fragMode,closure,jtrewthi));
       }
-      ffpp[ijet][iaj]  = (TH1D*)load(Inputpp_.data(),Form("hpt_%s_sigTrk_pp%s_icent%d_irj999_fragMode%d_closure100_rewt%d_ppsm%d_wtmode0_pt1to300",jname[0].Data(),dataset.Data(),iaj,fragMode,jtrewtpp,ppsm));
+      ffpp[ijet][iaj]  = (TH1D*)load(Inputpp_.data(),Form("hpt_jet_sigTrk_pp%s_icent%d_irj999_fragMode%d_closure%d_rewt%d_ppsm%d_wtmode0_pt1to300",dataset.Data(),iaj,fragMode,closure,jtrewtpp,ppsm));
         // ffpp[ijet][iaj]  = (TH1D*)load(Inputpp_.data(),Form("hpt_%s_sigTrk_ppdata_icent%d_irj999_fragMode2_closure100_jtrewt0_wtmode0_pt1to300",jname[0].Data(),iaj));
         // QM pp reference
         // ffpp[ijet][iaj]  = (TH1D*)load(Input_QM.data(),Form("hpt_%s_sigTrk_ppdata_icent%d_irj999_fragMode2_closure100_wtmode0_pt1to500",jname[ijet].Data(),iaj));
     } 
     handsomeTH1(ffpp[ijet][iaj],1,1.3);
     handsomeTH1(ffhi[ijet][iaj],1,1.3);
-  }
-  if (doMC) {
-    tag += "_mc80to170_clos100";
-    // addText += ", all genp";
   }
 
   /////////////////////////////////////////////////
@@ -323,20 +326,30 @@ void drawInclJetResultSys_Overlay(int fragMode= 2, // 1=trkpt, 2=ff
   c->SaveAs(outdir+Form("/FFana%d_%s.pdf",fragMode,tag.Data()));
   c->SaveAs(outdir+Form("/FFana%d_%s.C",fragMode,tag.Data()));
 
+  if (saveOutput==1) {
+    TFile * outf = new TFile(outdir+Form("/FFana%d_%s.root",fragMode,tag.Data()),"recreate");
+    for ( int iaj=1 ; iaj<=4 ; iaj++) {
+      ffratio[ijet][iaj]->Write();
+      if (doCompare) ffratiocmp[ijet][iaj]->Write();
+    }
+    outf->Close();
+  }
+
   /////////////////////////////////////////////////
   // Inspect Errors
   /////////////////////////////////////////////////
-  int doInsp=0;
+  int doInsp=1;
   if (doInsp) {
-    TCanvas *c2 = new TCanvas("c2","",1500,430);
-    c2->Divide(4,1);
+    TCanvas *c2 = new TCanvas("c2","",800,800);
+    makeMultiPanelCanvasNew(c2,2,2,0.0,0.0,0.22,0.22,0.01,1.0,0.95);
+    // c2->Divide(2,2);
     for ( int icent=1 ; icent<=4 ; icent++) {
       c2->cd(5-icent);
       if (fragMode==1) gPad->SetLogx();
       sysff.Combine(ffhi[ijet][icent],sysff.vErrorRat[ijet][icent],sysff.NErrorRatio);
       int doLeg=(icent==4);
       sysff.Inspect(sysff.vErrorRat[ijet][icent],sysff.NErrorRatio,doLeg);
-      drawText(Form("%.0f%% - %.0f%%", float(centBinAna[icent-1]*2.5), float(centBinAna[icent]*2.5)), 2,0.6,kBlack,25,false);
+      drawText(Form("%.0f%% - %.0f%%", float(centBinAna[icent-1]*2.5), float(centBinAna[icent]*2.5)), 2,0.85,kBlack,25,false);
     }
     c2->SaveAs(outdir+Form("/sysana%d_%s.gif",fragMode,tag.Data()));
     c2->SaveAs(outdir+Form("/sysana%d_%s.pdf",fragMode,tag.Data()));

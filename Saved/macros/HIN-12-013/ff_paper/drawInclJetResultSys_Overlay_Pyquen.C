@@ -17,9 +17,6 @@ void drawInclJetResultSys_Overlay_Pyquen(int fragMode= 2, // 1=trkpt, 2=ff
   int cmpStyle = 1, // 1=ratio, 2=diff
   int doMC=0,
   int ppsm=2,
-  int biascorr=11,
-  int jtrewthi = 0,
-  int jtrewtpp = 0,
   bool doEtaRef = true ) 
 { 
   TH1::SetDefaultSumw2();
@@ -27,31 +24,33 @@ void drawInclJetResultSys_Overlay_Pyquen(int fragMode= 2, // 1=trkpt, 2=ff
   //////////////////////////////////////////////////////////////////////
   // Setup
   //////////////////////////////////////////////////////////////////////
+  int biascorr=11;
+  int jtrewthi = 0;
+  int jtrewtpp = 0;
   int binMode =2; // 1 : aj, 2 : cent
   int doCompare=1; // 1=reco, 2=gen
   if (doMC==1) biascorr=0;
   int saveOutput = 1;
 
-  TString tag = Form("trkPtProj_binMode2_pyquenwide_hi_rewt%d_pp_sm%drewt%d_bc%d_mc%d",jtrewthi,ppsm,jtrewtpp,biascorr,doMC);
-  // TString tag = Form("trkPtProj_binMode2_gluon_hi_rewt%d_pp_sm%drewt%d_bc%d_mc%d",jtrewthi,ppsm,jtrewtpp,biascorr,doMC);
+  // TString tag = Form("trkPtProj_binMode2_pyquenwide_hi_rewt%d_pp_sm%drewt%d_bc%d_mc%d",jtrewthi,ppsm,jtrewtpp,biascorr,doMC);
+  TString tag = Form("trkPtProj_binMode2_quark_hi_rewt%d_pp_sm%drewt%d_bc%d_mc%d",jtrewthi,ppsm,jtrewtpp,biascorr,doMC);
   // tag+="_eta1.2";
   if (cmpStyle==1) tag += "_rat";
   else tag += "_diff";
   if (doEtaRef) tag += "_EtaRef";
-  TString outdir="plotsFinalFF";
+  TString outdir="plotsFinalFFXChk";
 
   //////////////////////////////////////////////////////////////////////
   // Specify Inputs
   //////////////////////////////////////////////////////////////////////
-  std::string   Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_mc80to170quenwide_hi_pp_corrjbias%d_v3.root",biascorr);
-  // std::string   Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_mc80to170_gluon_hi_pp_corrjbias%d_v3.root",biascorr);
-  // std::string   Inputpp_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_data_mc80to170_hi_pp_corrjbias%d_v3.root",biascorr);
-  std::string   Inputpp_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias%d_v3.root",biascorr);
+  // std::string   Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_mc80to170quenwide_hi_pp_corrjbias11_v3.root");
+  std::string   Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_mc80to170_quark_hi_pp_corrjbias11_v3.root");
+  std::string   Inputpp_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias11_v3.root");
 
   if (doMC) {
-    Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_mc80to170quenwide_genjetana_hi_pp_corrjbias%d_v3.root",biascorr);
-    // Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_mc80to170_gluon_genjet_hi_pp_corrjbias%d_v3.root",biascorr);
-    Inputpp_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias%d_v3.root",biascorr);
+    // Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_mc80to170quenwide_genjetana_hi_pp_corrjbias11_v3.root");
+    Input_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_mc80to170_quark_genjet_hi_pp_corrjbias0_v3.root");
+    Inputpp_=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_data_mc80to170_genjetana_hi_pp_corrjbias0_v3.root");
     if (doCompare) doCompare=2;
   }
 
@@ -60,11 +59,11 @@ void drawInclJetResultSys_Overlay_Pyquen(int fragMode= 2, // 1=trkpt, 2=ff
   // addText+="genjet > 100 GeV/c";
   // tag+="_refpt_gt100";
 
-  TString cmpFile_hi=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias%d_v3.root",biascorr);
-  TString cmpFile_pp=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias%d_v3.root",biascorr);
-  if (doCompare==2) {
-    cmpFile_hi=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_genjet_hi_pp_corrjbias0_v3.root",biascorr);
-    cmpFile_pp=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_genjet_hi_pp_corrjbias0_v3.root",biascorr);
+  TString cmpFile_hi=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias11_v3.root");
+  TString cmpFile_pp=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar19job0_data_mc80to170_hi_pp_corrjbias11_v3.root");
+  if (doMC) {
+    cmpFile_hi=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_data_mc80to170_genjetana_hi_pp_corrjbias0_v3.root");
+    cmpFile_pp=Form("inclJetFF_output_trackPtCut1_FinalJetPt100to300eta2.00_jdr0.3_Mar04v3job0_data_mc80to170_genjetana_hi_pp_corrjbias0_v3.root");
   }
 
   /////////////////////////////////////////////////
@@ -79,11 +78,10 @@ void drawInclJetResultSys_Overlay_Pyquen(int fragMode= 2, // 1=trkpt, 2=ff
   int ijet=1;
   int closure=100;
   if (doMC) closure=101;
-  TString dataset="mc"; // "data", "mc"
   for ( int iaj=1;iaj<=4;iaj++) {
     if ( binMode == 2 ) {
-      ffhi[ijet][iaj]  = (TH1D*)load(Input_.data(),Form("hpt_%s_sigTrk_hi%s_icent%d_irj999_fragMode%d_closure%d_rewt%d_ppsm0_wtmode0_pt1to300",jname[0].Data(),dataset.Data(),iaj,fragMode,closure,jtrewthi));
-      ffpp[ijet][iaj]  = (TH1D*)load(Inputpp_.data(),Form("hpt_%s_sigTrk_pp%s_icent%d_irj999_fragMode%d_closure%d_rewt%d_ppsm%d_wtmode0_pt1to300",jname[0].Data(),dataset.Data(),iaj,fragMode,closure,jtrewtpp,ppsm));
+      ffhi[ijet][iaj]  = (TH1D*)load(Input_.data(),Form("hpt_jet_sigTrk_himc_icent%d_irj999_fragMode%d_closure%d_rewt0_ppsm0_wtmode0_pt1to300",iaj,fragMode,closure));
+      ffpp[ijet][iaj]  = (TH1D*)load(Inputpp_.data(),Form("hpt_jet_sigTrk_ppmc_icent%d_irj999_fragMode%d_closure%d_rewt0_ppsm%d_wtmode0_pt1to300",iaj,fragMode,closure,ppsm));
     } 
     handsomeTH1(ffpp[ijet][iaj],1,1.3);
     handsomeTH1(ffhi[ijet][iaj],1,1.3);
@@ -97,8 +95,8 @@ void drawInclJetResultSys_Overlay_Pyquen(int fragMode= 2, // 1=trkpt, 2=ff
   TH1D* ffratiocmp[3][5];
   if (doCompare) {
     for ( int iaj=1;iaj<=4;iaj++) {
-      ffhicmp[ijet][iaj]  = (TH1D*)load(cmpFile_hi.Data(),Form("hpt_%s_sigTrk_himc_icent%d_irj999_fragMode%d_closure%d_rewt0_ppsm0_wtmode0_pt1to300",jname[0].Data(),iaj,fragMode,closure));
-      ffppcmp[ijet][iaj]  = (TH1D*)load(cmpFile_pp.Data(),Form("hpt_%s_sigTrk_ppmc_icent%d_irj999_fragMode%d_closure%d_rewt0_ppsm%d_wtmode0_pt1to300",jname[0].Data(),iaj,fragMode,closure,ppsm));
+      ffhicmp[ijet][iaj]  = (TH1D*)load(cmpFile_hi.Data(),Form("hpt_jet_sigTrk_himc_icent%d_irj999_fragMode%d_closure%d_rewt0_ppsm0_wtmode0_pt1to300",iaj,fragMode,closure));
+      ffppcmp[ijet][iaj]  = (TH1D*)load(cmpFile_pp.Data(),Form("hpt_jet_sigTrk_ppmc_icent%d_irj999_fragMode%d_closure%d_rewt0_ppsm%d_wtmode0_pt1to300",iaj,fragMode,closure,ppsm));
       ffratiocmp[ijet][iaj]  = (TH1D*)ffhicmp[ijet][iaj]->Clone(Form("%s_ratcmp",ffhicmp[ijet][iaj]->GetName()));
       if (cmpStyle==1) ffratiocmp[ijet][iaj]->Divide(ffppcmp[ijet][iaj]);
       else if (cmpStyle==2) ffratiocmp[ijet][iaj]->Add(ffppcmp[ijet][iaj],-1);
@@ -198,26 +196,15 @@ void drawInclJetResultSys_Overlay_Pyquen(int fragMode= 2, // 1=trkpt, 2=ff
   l2[ijet]  = new TLegend(0,0.747,0.7,1.02,NULL,"brNDC");
   easyLeg(l2[ijet],"",24);
   if (!doMC) {
-     // l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb AkPu3Calo","p");
-     // l2[ijet]->AddEntry(ffratiocmp[ijet][1],"Jet |#eta|<0.8","p");
-     // l2[ijet]->AddEntry(ffhi[ijet][1],"PbPb, 4 Cent. Trk. Eff.","p");
-     // l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PbPb, QM12 Trk. Eff.","p");
-     // l2[ijet]->AddEntry(ffppcmp[ijet][1],"pp, 100<Jet<300 GeV","l");
-    l2[ijet]->AddEntry(ffhi[ijet][1],"PYQUEN^{Wide}+HYDJET","p");
-    // l2[ijet]->AddEntry(ffhi[ijet][1],"PYTHIA^{gluon}+HYDJET","p");
+    // l2[ijet]->AddEntry(ffhi[ijet][1],"PYQUEN^{Wide}+HYDJET","p");
+    l2[ijet]->AddEntry(ffhi[ijet][1],"PYTHIA^{quark}+HYDJET","p");
     if (doCompare==1) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PYTHIA+HYDJET","p");
-    // else if (doCompare==2) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PYTHIA+HYDJET Truth","p");
     l2[ijet]->AddEntry(ffpp[ijet][1],"PYTHIA","l");
-    // if (doCompare==1) l2[ijet]->AddEntry(ffppcmp[ijet][1],"PYTHIA","l");
-    // if (doCompare==2) l2[ijet]->AddEntry(ffppcmp[ijet][1],"PYTHIA Truth","l");
   } else {
-    l2[ijet]->AddEntry(ffhi[ijet][1],"Truth PYQUEN^{Wide}+HYDJET","p");
-    // l2[ijet]->AddEntry(ffhi[ijet][1],"Truth PYTHIA^{gluon}+HYDJET","p");
+    // l2[ijet]->AddEntry(ffhi[ijet][1],"Truth PYQUEN^{Wide}+HYDJET","p");
+    l2[ijet]->AddEntry(ffhi[ijet][1],"Truth PYTHIA^{quark}+HYDJET","p");
     if (doCompare) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"Truth PYTHIA+HYDJET","p");
-    // else if (doCompare==2) l2[ijet]->AddEntry(ffratiocmp[ijet][1],"PYTHIA+HYDJET","p");
     l2[ijet]->AddEntry(ffpp[ijet][1],"Truth PYTHIA","l");
-    // if (doCompare==1) l2[ijet]->AddEntry(ffppcmp[ijet][1],"PYTHIA","l");      
-    // if (doCompare==2) l2[ijet]->AddEntry(ffppcmp[ijet][1],"PYTHIA Truth","l");
   }
   for ( int iaj=1 ; iaj<=4 ; iaj++) {
     c->cd(5-iaj);
